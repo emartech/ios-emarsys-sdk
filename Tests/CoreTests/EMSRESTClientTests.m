@@ -520,7 +520,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                 NSDate *firstDate = [[NSDate alloc] initWithTimeIntervalSince1970:35.3456];
                 NSDate *secondDate = [[NSDate alloc] initWithTimeIntervalSince1970:77.2347];
 
-                EMSTimestampProvider *timestampProvider = [[FakeTimestampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
+                EMSTimestampProvider *timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
 
                 sessionMockWithCannedResponse(model, 200, responseData, nil, ^(NSURLSession *session) {
                     restClient = [EMSRESTClient clientWithSuccessBlock:successBlock

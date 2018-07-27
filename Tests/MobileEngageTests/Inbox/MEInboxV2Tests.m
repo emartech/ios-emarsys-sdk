@@ -1,5 +1,5 @@
 #import "EMSAuthentication.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "Kiwi.h"
 #import "MEInboxV2.h"
 #import "MEConfigBuilder.h"
@@ -7,7 +7,7 @@
 #import "MEDefaultHeaders.h"
 #import "EMSRequestModelMatcher.h"
 #import "MENotificationInboxStatus.h"
-#import "FakeTimestampProvider.h"
+#import "FakeTimeStampProvider.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -225,8 +225,9 @@ SPEC_BEGIN(MEInboxV2Tests)
                 it(@"should do two requests when multiple fetch calls are spread over more than a minute", ^{
                     FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess];
 
-                    FakeTimestampProvider *const timestampProvider = [FakeTimestampProvider new];
-                    timestampProvider.currentDate = [NSDate date];
+                    NSDate *firstDate = [NSDate date];
+                    NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
+                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
                     MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, timestampProvider);
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -241,8 +242,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }];
 
                     [XCTWaiter waitForExpectations:@[exp1] timeout:30];
-
-                    timestampProvider.currentDate = [timestampProvider.currentDate dateByAddingTimeInterval:60];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         secondInboxStatus = inboxStatus;
@@ -259,8 +258,9 @@ SPEC_BEGIN(MEInboxV2Tests)
                 it(@"should only call success blocks one time for every fetch", ^{
                     FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess];
 
-                    FakeTimestampProvider *const timestampProvider = [FakeTimestampProvider new];
-                    timestampProvider.currentDate = [NSDate date];
+                    NSDate *firstDate = [NSDate date];
+                    NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
+                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
 
                     MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, timestampProvider);
 
@@ -282,8 +282,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }];
                     [XCTWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
-                    timestampProvider.currentDate = [timestampProvider.currentDate dateByAddingTimeInterval:60];
-
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         successCount++;
                         [exp3 fulfill];
@@ -298,8 +296,9 @@ SPEC_BEGIN(MEInboxV2Tests)
                 it(@"should only call success blocks one time for every fetch", ^{
                     FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure];
 
-                    FakeTimestampProvider *const timestampProvider = [FakeTimestampProvider new];
-                    timestampProvider.currentDate = [NSDate date];
+                    NSDate *firstDate = [NSDate date];
+                    NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
+                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
 
                     MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, timestampProvider);
 
@@ -321,8 +320,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }];
 
                     [XCTWaiter waitForExpectations:@[exp1, exp2] timeout:30];
-
-                    timestampProvider.currentDate = [timestampProvider.currentDate dateByAddingTimeInterval:60];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                     }                             errorBlock:^(NSError *error) {
@@ -990,14 +987,14 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithSuccessResults:results];
 
-                FakeTimestampProvider *fakeTimestampProvider = [[FakeTimestampProvider alloc] initWithTimestamps:@[
+                FakeTimeStampProvider *fakeTimeStampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[
                     [NSDate date],
                     [NSDate date],
                     [[NSDate date] dateByAddingTimeInterval:60],
                     [[NSDate date] dateByAddingTimeInterval:30]
                 ]];
 
-                MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, fakeTimestampProvider);
+                MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, fakeTimeStampProvider);
 
                 [inbox purgeNotificationCache];
 

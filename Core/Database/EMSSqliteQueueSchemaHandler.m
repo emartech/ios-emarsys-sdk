@@ -3,7 +3,7 @@
 //
 
 #import "EMSSqliteQueueSchemaHandler.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
 
@@ -12,25 +12,25 @@
 - (void)onCreateWithDbHelper:(EMSSQLiteHelper *)dbHelper {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
                     message:@"Creating new database"];
-    [dbHelper executeCommand:SQL_CREATE_TABLE];
+    [self onUpgradeWithDbHelper:dbHelper
+                     oldVersion:0
+                     newVersion:[self schemaVersion]];
 }
 
 - (void)onUpgradeWithDbHelper:(EMSSQLiteHelper *)dbHelper
                    oldVersion:(int)oldVersion
                    newVersion:(int)newVersion {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
-                    message:[NSString stringWithFormat:@"Upgrading existing database from: %@ to: %@", @(oldVersion), @(newVersion)]];
-    switch (oldVersion) {
-        case 1:
-            [dbHelper executeCommand:SCHEMA_UPGRADE_FROM_1_TO_2];
-            [dbHelper executeCommand:SET_DEFAULT_VALUES_FROM_1_TO_2 withTimeIntervalValue:DEFAULT_REQUESTMODEL_EXPIRY];
-        default:
-            break;
+                    message:[NSString stringWithFormat:@"Upgrading existing database from: %@ to: %@",
+                                                       @(oldVersion),
+                                                       @(newVersion)]];
+    for (int i = oldVersion; i < newVersion; ++i) {
+        [dbHelper executeCommand:MIGRATION[i]];
     }
 }
 
 - (int)schemaVersion {
-    return 2;
+    return 3;
 }
 
 @end

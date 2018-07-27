@@ -4,7 +4,7 @@
 #import "FakeInAppHandler.h"
 #import "MEIAMProtocol.h"
 #import "EMSTimestampProvider.h"
-#import "FakeTimestampProvider.h"
+#import "FakeTimeStampProvider.h"
 
 SPEC_BEGIN(MEInAppTests)
         __block MEInApp *iam;
@@ -187,7 +187,7 @@ SPEC_BEGIN(MEInAppTests)
             it(@"should log the on screen time", ^{
                 iam = [[MEInApp alloc] init];
                 NSDate *firstTimestamp = [NSDate date];
-                iam.timestampProvider = [[FakeTimestampProvider alloc] initWithTimestamps:@[firstTimestamp, [firstTimestamp dateByAddingTimeInterval:6], [firstTimestamp dateByAddingTimeInterval:12]]];
+                iam.timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstTimestamp, [firstTimestamp dateByAddingTimeInterval:6], [firstTimestamp dateByAddingTimeInterval:12]]];
 
                 NSString *const campaignId = @"testIdForOnScreenMetric";
 

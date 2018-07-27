@@ -7,7 +7,7 @@
 #import "EMSRequestModelBuilder.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteQueueSchemaHandler.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "EMSRequestModelRepository.h"
 #import "FakeLogRepository.h"
 #import "EMSReachability.h"

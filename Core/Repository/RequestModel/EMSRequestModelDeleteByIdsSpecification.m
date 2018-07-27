@@ -3,7 +3,7 @@
 //
 
 #import "EMSRequestModelDeleteByIdsSpecification.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "EMSCompositeRequestModel.h"
 
 @implementation EMSRequestModelDeleteByIdsSpecification

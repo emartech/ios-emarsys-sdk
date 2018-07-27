@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSRequestModelSelectFirstSpecification.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 
 @implementation EMSRequestModelSelectFirstSpecification
 

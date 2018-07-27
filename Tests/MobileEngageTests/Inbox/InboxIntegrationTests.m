@@ -171,17 +171,6 @@ SPEC_BEGIN(InboxIntegrationTests)
         });
 
         it(@"resetBadgeCount", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:nil];
-
-            [MobileEngage appLoginWithContactFieldId:@3
-                                   contactFieldValue:@"test@test.com"];
-
-
             __block BOOL _success = NO;
             __block BOOL _error = YES;
 

@@ -4,7 +4,7 @@
 
 #import "EMSRequestModelRepository.h"
 #import "EMSRequestModelMapper.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "EMSCountMapper.h"
 #import "EMSSQLiteHelper.h"
 #import <UIKit/UIKit.h>

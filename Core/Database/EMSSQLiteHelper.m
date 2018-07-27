@@ -18,21 +18,26 @@
 @implementation EMSSQLiteHelper
 
 - (instancetype)initWithDefaultDatabase {
-    return [self initWithDatabasePath:DEFAULT_DB_PATH schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
-}
-
-- (instancetype)initWithDatabasePath:(NSString *)path {
-    return [self initWithDatabasePath:path schemaDelegate:nil];
+    return [self initWithDatabasePath:DEFAULT_DB_PATH
+                       schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
 }
 
 - (instancetype)initWithDatabasePath:(NSString *)path
                       schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
         _dbPath = path;
         _schemaHandler = schemaDelegate;
     }
 
+    return self;
+}
+
+- (instancetype)initWithSqlite3Db:(sqlite3 *)db
+                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
+    if (self = [super init]) {
+        _db = db;
+        _schemaHandler = schemaDelegate;
+    }
     return self;
 }
 

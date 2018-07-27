@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSRequestModelCountSpecification.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 
 
 @implementation EMSRequestModelCountSpecification

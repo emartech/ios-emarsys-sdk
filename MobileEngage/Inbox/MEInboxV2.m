@@ -4,7 +4,7 @@
 
 #import "EMSAuthentication.h"
 #import "MEInboxV2.h"
-#import "EMSRequestContract.h"
+#import "EMSSchemaContract.h"
 #import "MEInboxParser.h"
 #import "EMSResponseModel.h"
 #import "MEDefaultHeaders.h"

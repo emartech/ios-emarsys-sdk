@@ -14,7 +14,9 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 - (void)onCreateWithDbHelper:(EMSSQLiteHelper *)dbHelper;
 
-- (void)onUpgradeWithDbHelper:(EMSSQLiteHelper *)dbHelper oldVersion:(int)oldVersion newVersion:(int)newVersion;
+- (void)onUpgradeWithDbHelper:(EMSSQLiteHelper *)dbHelper
+                   oldVersion:(int)oldVersion
+                   newVersion:(int)newVersion;
 
 - (int)schemaVersion;
 
@@ -26,9 +28,8 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 - (instancetype)initWithDefaultDatabase;
 
-- (instancetype)initWithDatabasePath:(NSString *)path;
-
-- (instancetype)initWithDatabasePath:(NSString *)path schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate;
+- (instancetype)initWithDatabasePath:(NSString *)path
+                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate;
 
 - (int)version;
 
@@ -42,11 +43,13 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
              withValue:(NSString *)value;
 
 - (BOOL)executeCommand:(NSString *)command
-             withTimeIntervalValue:(NSTimeInterval)value;
+ withTimeIntervalValue:(NSTimeInterval)value;
 
-- (BOOL)execute:(NSString *)command withBindBlock:(BindBlock)bindBlock;
+- (BOOL)execute:(NSString *)command
+  withBindBlock:(BindBlock)bindBlock;
 
-- (NSArray *)executeQuery:(NSString *)query mapper:(id <EMSModelMapperProtocol>)mapper;
+- (NSArray *)executeQuery:(NSString *)query
+                   mapper:(id <EMSModelMapperProtocol>)mapper;
 
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
