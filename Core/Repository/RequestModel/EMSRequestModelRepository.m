@@ -28,7 +28,8 @@
         [_dbHelper open];
 
         __weak typeof(self) weakSelf = self;
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification object:nil
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification
+                                                          object:nil
                                                            queue:[NSOperationQueue mainQueue]
                                                       usingBlock:^(NSNotification *note) {
                                                           [weakSelf.dbHelper close];
@@ -42,7 +43,7 @@
 - (void)add:(EMSRequestModel *)item {
     NSParameterAssert(item);
     [self.dbHelper insertModel:item
-                     withQuery:SQL_INSERT
+                     withQuery:SQL_REQUEST_INSERT
                         mapper:self.mapper];
 }
 
@@ -56,14 +57,12 @@
     if (!result) {
         result = @[];
     }
-
     return result;
 }
 
 - (BOOL)isEmpty {
-    NSNumber *count = [[self.dbHelper executeQuery:SQL_COUNT mapper:[EMSCountMapper new]] firstObject];
+    NSNumber *count = [[self.dbHelper executeQuery:SQL_REQUEST_COUNT mapper:[EMSCountMapper new]] firstObject];
     return [count integerValue] == 0;
 }
-
 
 @end

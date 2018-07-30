@@ -7,15 +7,15 @@
 
 @interface EMSShard : NSObject
 
-@property(nonatomic, readonly) NSString *category;
+@property(nonatomic, readonly) NSString *shardId;
+@property(nonatomic, readonly) NSString *type;
+@property(nonatomic, readonly) NSDictionary<NSString *, id> *data;
 @property(nonatomic, readonly) NSDate *timestamp;
 @property(nonatomic, readonly) NSTimeInterval ttl;
-@property(nonatomic, readonly) NSDictionary<NSString *, id> *data;
 
-- (instancetype)initWithCategory:(NSString *)category
-                       timestamp:(NSDate *)timestamp
-                             ttl:(NSTimeInterval)ttl
-                            data:(NSDictionary<NSString *, id> *)data;
-
-
+- (instancetype)initWithShardId:(NSString *)shardId
+                           type:(NSString *)type
+                           data:(NSDictionary<NSString *, id> *)data
+                      timestamp:(NSDate *)timestamp
+                            ttl:(NSTimeInterval)ttl;
 @end

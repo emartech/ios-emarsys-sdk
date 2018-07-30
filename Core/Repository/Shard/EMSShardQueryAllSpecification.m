@@ -1,16 +1,17 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSShardQueryAllSpecification.h"
 #import "EMSSchemaContract.h"
 
-@implementation EMSRequestModelSelectFirstSpecification
+@implementation EMSShardQueryAllSpecification
 
 - (NSString *)sql {
-    return SQL_REQUEST_SELECTFIRST;
+    return SQL_SHARD_SELECTALL;
 }
 
 - (void)bindStatement:(sqlite3_stmt *)statement {
+
 }
 
 @end

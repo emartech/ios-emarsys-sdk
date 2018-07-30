@@ -11,8 +11,8 @@
 - (NSData *)dataFromStatement:(sqlite3_stmt *)statement
                         index:(int)index;
 
-- (BOOL)notNull:(sqlite3_stmt *)statement
-        atIndex:(int)index;
+- (BOOL)isNotNull:(sqlite3_stmt *)statement
+          atIndex:(int)index;
 
 @end
 
@@ -24,12 +24,12 @@
     NSString *method = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 1)];
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 2)]];
     NSDictionary<NSString *, NSString *> *headers;
-    if ([self notNull:statement atIndex:3]) {
+    if ([self isNotNull:statement atIndex:3]) {
         headers = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
                                                                      index:3]];
     }
     NSDictionary<NSString *, id> *payload;
-    if ([self notNull:statement atIndex:4]) {
+    if ([self isNotNull:statement atIndex:4]) {
         payload = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
                                                                      index:4]];
     }
@@ -69,8 +69,8 @@
                                   length:size];
 }
 
-- (BOOL)notNull:(sqlite3_stmt *)statement
-        atIndex:(int)index {
+- (BOOL)isNotNull:(sqlite3_stmt *)statement
+          atIndex:(int)index {
     return sqlite3_column_type(statement, index) != SQLITE_NULL;
 }
 

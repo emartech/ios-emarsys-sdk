@@ -304,9 +304,9 @@ SPEC_BEGIN(SQLiteHelperTests)
                 EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
 
                 BOOL returnedValue = [dbHelper insertModel:model
-                                                 withQuery:SQL_INSERT
+                                                 withQuery:SQL_REQUEST_INSERT
                                                     mapper:mapper];
-                NSArray *requests = [dbHelper executeQuery:SQL_SELECTFIRST
+                NSArray *requests = [dbHelper executeQuery:SQL_REQUEST_SELECTFIRST
                                                     mapper:mapper];
                 EMSRequestModel *request = [requests firstObject];
                 [[theValue(returnedValue) should] beTrue];
@@ -339,20 +339,6 @@ SPEC_BEGIN(SQLiteHelperTests)
                 isEqualArrays(expectedShardColumnInfos, currentShardColumnInfos);
             });
 
-            it(@"salala", ^{
-                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[[[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                                                                         columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"]];
-            });
         });
 
         describe(@"schema migration", ^{
@@ -441,6 +427,8 @@ SPEC_BEGIN(SQLiteHelperTests)
                                                           notNull:false]];
 
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = @[
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
+                                                       columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"type"
                                                        columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"data"

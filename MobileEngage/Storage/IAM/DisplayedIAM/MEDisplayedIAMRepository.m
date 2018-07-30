@@ -24,11 +24,11 @@
 }
 
 - (void)add:(MEDisplayedIAM *)item {
-    [self.sqliteHelper insertModel:item withQuery:SQL_INSERT mapper:self.mapper];
+    [self.sqliteHelper insertModel:item withQuery:SQL_REQUEST_INSERT mapper:self.mapper];
 }
 
 - (void)remove:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    [self.sqliteHelper execute:SQL_DELETE_ITEM(sqlSpecification.sql) withBindBlock:^(sqlite3_stmt *statement) {
+    [self.sqliteHelper execute:SQL_REQUEST_DELETE_ITEM(sqlSpecification.sql) withBindBlock:^(sqlite3_stmt *statement) {
         [sqlSpecification bindStatement:statement];
     }];
 }

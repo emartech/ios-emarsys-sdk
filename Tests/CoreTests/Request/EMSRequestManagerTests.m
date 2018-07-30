@@ -29,7 +29,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                         schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
                 [helper open];
-                [helper executeCommand:SQL_PURGE];
+                [helper executeCommand:SQL_REQUEST_PURGE];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
             });
 

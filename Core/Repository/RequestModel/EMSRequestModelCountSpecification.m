@@ -8,7 +8,7 @@
 @implementation EMSRequestModelCountSpecification
 
 - (NSString *)sql {
-    return SQL_SELECTFIRST;
+    return SQL_REQUEST_SELECTFIRST;
 }
 
 - (void)bindStatement:(sqlite3_stmt *)statement {
