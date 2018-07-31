@@ -194,6 +194,34 @@ SPEC_BEGIN(SQLiteHelperTests)
             return result;
         };
 
+
+        NSArray<NSString *> *(^indexedColumnsOfTable)(NSString *tableName) = ^NSArray<NSString *> *(NSString *tableName) {
+            NSMutableArray *result = [NSMutableArray array];
+            sqlite3 *db;
+            sqlite3_open([TEST_DB_PATH UTF8String], &db);
+            sqlite3_stmt *indexListStatement;
+            if (sqlite3_prepare_v2(db, [[NSString stringWithFormat:@"PRAGMA index_list('%@');",
+                                                                   tableName] UTF8String], -1, &indexListStatement, nil) == SQLITE_OK) {
+                while (sqlite3_step(indexListStatement) == SQLITE_ROW) {
+                    NSString *indexName = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(indexListStatement, columnIndexByName(@"name", indexListStatement))];
+                    sqlite3_stmt *indexInfoStatement;
+                    if (sqlite3_prepare_v2(db, [[NSString stringWithFormat:@"PRAGMA index_info('%@');",
+                                                                           indexName] UTF8String], -1, &indexInfoStatement, nil) == SQLITE_OK) {
+                        while (sqlite3_step(indexInfoStatement) == SQLITE_ROW) {
+                            NSString *indexedColumnName = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(indexInfoStatement, columnIndexByName(@"name", indexInfoStatement))];
+                            [result addObject:indexedColumnName];
+                        }
+                    } else {
+                        fail(@"sqlite3_prepare_v2 failed");
+                    };
+                }
+            } else {
+                fail(@"sqlite3_prepare_v2 failed");
+            };
+            sqlite3_close(db);
+            return result;
+        };
+
         void (^initializeDbWithVersion)(int version) = ^(int version) {
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
@@ -447,6 +475,15 @@ SPEC_BEGIN(SQLiteHelperTests)
 
                 isEqualArrays(expectedRequestColumnInfos, currentRequestColumnInfos);
                 isEqualArrays(expectedShardColumnInfos, currentShardColumnInfos);
+
+                NSArray<NSString *> *indexedRequestColumns = indexedColumnsOfTable(@"request");
+                [[indexedRequestColumns should] beEmpty];
+
+                NSArray<NSString *> *indexedShardColumns = indexedColumnsOfTable(@"shard");
+
+                [[theValue(indexedShardColumns.count) should] equal:theValue(2)];
+                [[indexedShardColumns should] contain:@"shard_id"];
+                [[indexedShardColumns should] contain:@"type"];
             });
         });
 

@@ -25,7 +25,9 @@
                                                        @(oldVersion),
                                                        @(newVersion)]];
     for (int i = oldVersion; i < newVersion; ++i) {
-        [dbHelper executeCommand:MIGRATION[i]];
+        for (NSString *sqlCommand in MIGRATION[(NSUInteger) i]) {
+            [dbHelper executeCommand:sqlCommand];
+        }
     }
 }
 
