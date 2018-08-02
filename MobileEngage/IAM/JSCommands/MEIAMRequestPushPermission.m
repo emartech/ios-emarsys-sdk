@@ -20,18 +20,18 @@
     [application registerForRemoteNotifications];
     NSString *eventId = message[@"id"];
 
-    if (SYSTEM_VERSION_LESS_THAN(@"10.0")) {
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge)
-                                                                                 categories:nil];
-        [application registerUserNotificationSettings:settings];
-        resultBlock([self createResultWithJSCommandId:eventId
-                                              success:[application isRegisteredForRemoteNotifications]]);
-    } else {
+    if (@available(iOS 10.0, *)) {
         [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge
                                                                             completionHandler:^(BOOL granted, NSError *error) {
                                                                                 resultBlock([self createResultWithJSCommandId:eventId
                                                                                                                       success:granted]);
                                                                             }];
+    } else {
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge)
+                                                                                 categories:nil];
+        [application registerUserNotificationSettings:settings];
+        resultBlock([self createResultWithJSCommandId:eventId
+                                              success:[application isRegisteredForRemoteNotifications]]);
     }
 }
 
@@ -42,7 +42,7 @@
         result = [MEIAMCommandResultUtils createSuccessResultWith:jsCommandId];
     } else {
         result = [MEIAMCommandResultUtils createErrorResultWith:jsCommandId
-                                                    errorMessage:@"Registering for push notifications failed!"];
+                                                   errorMessage:@"Registering for push notifications failed!"];
     }
     return result;
 }

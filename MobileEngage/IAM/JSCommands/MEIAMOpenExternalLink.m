@@ -30,16 +30,16 @@
     } else {
         NSURL *url = [NSURL URLWithString:message[kExternalLink]];
         if ([application canOpenURL:url]) {
-            if (SYSTEM_VERSION_LESS_THAN(@"10.0")) {
-                resultBlock([self createResultWithJSCommandId:eventId
-                                                      success:[application openURL:url]]);
-            } else {
+            if(@available(iOS 10.0, *)){
                 [application openURL:url
                              options:@{}
                    completionHandler:^(BOOL success) {
                        resultBlock([self createResultWithJSCommandId:eventId
                                                              success:success]);
                    }];
+            } else {
+                resultBlock([self createResultWithJSCommandId:eventId
+                                                      success:[application openURL:url]]);
             }
         } else {
             resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId

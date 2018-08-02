@@ -40,7 +40,7 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler NS_AVAILABLE_IOS(10_0) {
     if (self.delegate) {
         [self.delegate userNotificationCenter:center
                       willPresentNotification:notification
@@ -51,7 +51,7 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler {
+         withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10_0) {
     if (self.delegate) {
         [self.delegate userNotificationCenter:center
                didReceiveNotificationResponse:response
@@ -79,8 +79,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
             [self.mobileEngage trackInternalCustomEvent:@"richNotification:actionClicked"
                                         eventAttributes:@{
-                                            @"button_id": action[@"id"],
-                                            @"title": action[@"title"]
+                                                @"button_id": action[@"id"],
+                                                @"title": action[@"title"]
                                         }];
         }
         NSString *type = action[@"type"];
@@ -99,7 +99,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     completionHandler();
 }
 
-- (NSDictionary *)actionFromResponse:(UNNotificationResponse *)response {
+- (NSDictionary *)actionFromResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0) {
     NSDictionary *action;
     for (NSDictionary *actionDict in response.notification.request.content.userInfo[@"ems"][@"actions"]) {
         if ([response.actionIdentifier isEqualToString:actionDict[@"id"]]) {
