@@ -163,7 +163,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             it(@"should throw an exception when there is no displayedIAMRepository", ^{
                 @try {
-                    MERequestRepositoryProxy *factory = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
+                    (void)[[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
                                                                                                    buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                   displayedIAMRepository:nil
                                                                                                                    inApp:[MEInApp mock]

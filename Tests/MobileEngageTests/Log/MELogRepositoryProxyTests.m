@@ -44,7 +44,7 @@ SPEC_BEGIN(MELogRepositoryProxyTests)
 
         it(@"should throw exception when logRepository is nil", ^{
             @try {
-                [[MELogRepositoryProxy alloc] initWithLogRepository:nil
+                (void)[[MELogRepositoryProxy alloc] initWithLogRepository:nil
                                                            handlers:handlers];
                 fail(@"Expected Exception when logRepository is nil!");
             } @catch (NSException *exception) {
@@ -54,7 +54,7 @@ SPEC_BEGIN(MELogRepositoryProxyTests)
 
         it(@"should throw exception when handlers is nil", ^{
             @try {
-                [[MELogRepositoryProxy alloc] initWithLogRepository:logRepository
+                (void)[[MELogRepositoryProxy alloc] initWithLogRepository:logRepository
                                                            handlers:nil];
                 fail(@"Expected Exception when handlers is nil!");
             } @catch (NSException *exception) {
@@ -64,7 +64,7 @@ SPEC_BEGIN(MELogRepositoryProxyTests)
 
         it(@"should throw exception when handlers is empty", ^{
             @try {
-                [[MELogRepositoryProxy alloc] initWithLogRepository:logRepository
+                (void)[[MELogRepositoryProxy alloc] initWithLogRepository:logRepository
                                                            handlers:@[]];
                 fail(@"Expected Exception when handlers is empty!");
             } @catch (NSException *exception) {

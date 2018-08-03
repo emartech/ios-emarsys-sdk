@@ -57,7 +57,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
             });
 
             itShouldThrowException(@"should throw exception, when repository is nil", ^{
-                [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
+                (void)[[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                requestRepository:nil
                                                    logRepository:[FakeLogRepository mock]
                                                     successBlock:successBlock
@@ -66,7 +66,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
 
             itShouldThrowException(@"should throw exception, when watchdog is nil", ^{
-                [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
+                (void)[[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                requestRepository:repository
                                               connectionWatchdog:nil
                                                       restClient:[EMSRESTClient new]];
@@ -74,7 +74,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
 
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
-                [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
+                (void)[[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                requestRepository:repository
                                               connectionWatchdog:[EMSConnectionWatchdog new]
                                                       restClient:nil];
