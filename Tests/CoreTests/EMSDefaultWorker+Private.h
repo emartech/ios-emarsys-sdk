@@ -21,4 +21,6 @@
 
 - (EMSRESTClient *)client;
 
+- (EMSRequestModel *)nextNonExpiredModel;
+
 @end
