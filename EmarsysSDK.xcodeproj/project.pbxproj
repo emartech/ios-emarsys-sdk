@@ -2496,7 +2496,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
-				INFOPLIST_FILE = MobileEngageTests.plist;
+				INFOPLIST_FILE = Tests/MobileEngageTests.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
@@ -2513,7 +2513,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
-				INFOPLIST_FILE = MobileEngageTests.plist;
+				INFOPLIST_FILE = Tests/MobileEngageTests.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
@@ -2530,7 +2530,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
-				INFOPLIST_FILE = CoreTests.plist;
+				INFOPLIST_FILE = Tests/CoreTests.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
@@ -2547,7 +2547,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
-				INFOPLIST_FILE = CoreTests.plist;
+				INFOPLIST_FILE = Tests/CoreTests.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
