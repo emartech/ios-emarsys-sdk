@@ -232,6 +232,91 @@
 		3746036063D9763B0F621F19 /* EMSSchemaContract.h in Headers */ = {isa = PBXBuildFile; fileRef = 3746001BAA2BBE1B6527CA8C /* EMSSchemaContract.h */; };
 		3746037E586801930F61916E /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
 		37460539F7223A2AB737AF84 /* FakeTimeStampProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 374609973B222C522AC186B1 /* FakeTimeStampProvider.m */; };
+		8A102D702112F3B50046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
+		8A102D712112F3B50046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
+		8A102DCB2112F4580046BAFB /* NSData+MobileEngageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */; };
+		8A102DCC2112F45C0046BAFB /* IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BB21075B270030E659 /* IntegrationTests.m */; };
+		8A102DCD2112F4680046BAFB /* InboxV2IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */; };
+		8A102DCE2112F4680046BAFB /* MEInboxV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BE21075B270030E659 /* MEInboxV2Tests.m */; };
+		8A102DCF2112F4680046BAFB /* MEInboxParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BF21075B270030E659 /* MEInboxParserTests.m */; };
+		8A102DD02112F4680046BAFB /* InboxIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9C021075B270030E659 /* InboxIntegrationTests.m */; };
+		8A102DD12112F4680046BAFB /* MEInboxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9C121075B270030E659 /* MEInboxTests.m */; };
+		8A102DD22112F46E0046BAFB /* NSDictionary+MobileEngageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9C321075B270030E659 /* NSDictionary+MobileEngageTests.m */; };
+		8A102DD32112F47C0046BAFB /* MEIAMButtonClickedTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9C721075B270030E659 /* MEIAMButtonClickedTests.m */; };
+		8A102DD42112F47C0046BAFB /* MEIAMCloseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CB21075B270030E659 /* MEIAMCloseTests.m */; };
+		8A102DD52112F47C0046BAFB /* MEIAMOpenExternalLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CC21075B270030E659 /* MEIAMOpenExternalLinkTests.m */; };
+		8A102DD62112F47C0046BAFB /* MEIAMRequestPushPermissionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CD21075B270030E659 /* MEIAMRequestPushPermissionTests.m */; };
+		8A102DD72112F47C0046BAFB /* MEIAMTriggerMEEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CE21075B270030E659 /* MEIAMTriggerMEEventTests.m */; };
+		8A102DD82112F47C0046BAFB /* MEIAMTriggerAppEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CF21075B270030E659 /* MEIAMTriggerAppEventTests.m */; };
+		8A102DD92112F47C0046BAFB /* MEIAMJSCommandFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D021075B270030E659 /* MEIAMJSCommandFactoryTests.m */; };
+		8A102DDA2112F4810046BAFB /* MEIAMDidAppear.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CA21075B270030E659 /* MEIAMDidAppear.m */; };
+		8A102DDB2112F48E0046BAFB /* MEIAMResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D221075B270030E659 /* MEIAMResponseHandlerTests.m */; };
+		8A102DDC2112F48E0046BAFB /* MEIDResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D321075B270030E659 /* MEIDResponseHandlerTests.m */; };
+		8A102DDD2112F48E0046BAFB /* MEIAMCleanupResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerTests.m */; };
+		8A102DDE2112F48E0046BAFB /* AbstractResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */; };
+		8A102DDF2112F49B0046BAFB /* FakeResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */; };
+		8A102DE02112F49B0046BAFB /* FakeInAppHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */; };
+		8A102DE12112F49B0046BAFB /* FakeRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DF21075B270030E659 /* FakeRequestManager.m */; };
+		8A102DE22112F49B0046BAFB /* FakeStatusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E021075B270030E659 /* FakeStatusDelegate.m */; };
+		8A102DE32112F49B0046BAFB /* FakeInboxNotificationRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRestClient.m */; };
+		8A102DE42112F49B0046BAFB /* FakeDbHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E221075B270030E659 /* FakeDbHelper.m */; };
+		8A102DE52112F49B0046BAFB /* FakeJSBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E421075B270030E659 /* FakeJSBridge.m */; };
+		8A102DE62112F49B0046BAFB /* FakeRequestRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E721075B270030E659 /* FakeRequestRepository.m */; };
+		8A102DE72112F49B0046BAFB /* FakeSpecification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E821075B270030E659 /* FakeSpecification.m */; };
+		8A102DE82112F4AD0046BAFB /* MEInAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9EC21075B270030E659 /* MEInAppTests.m */; };
+		8A102DE92112F4AD0046BAFB /* EMSRequestToolsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9EE21075B270030E659 /* EMSRequestToolsTests.m */; };
+		8A102DEA2112F4AD0046BAFB /* RequestModelSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9EF21075B270030E659 /* RequestModelSpecificationTests.m */; };
+		8A102DEB2112F4AD0046BAFB /* MEButtonClickRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F021075B270030E659 /* MEButtonClickRepositoryTests.m */; };
+		8A102DEC2112F4AD0046BAFB /* MERequestRepositoryProxyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F121075B270030E659 /* MERequestRepositoryProxyTests.m */; };
+		8A102DED2112F4AD0046BAFB /* DisplayedIAMTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F221075B270030E659 /* DisplayedIAMTests.m */; };
+		8A102DEE2112F4AD0046BAFB /* MEButtonClickTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F321075B270030E659 /* MEButtonClickTests.m */; };
+		8A102DEF2112F4AD0046BAFB /* MERequestModelRepositoryFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F421075B270030E659 /* MERequestModelRepositoryFactoryTests.m */; };
+		8A102DF02112F4AD0046BAFB /* MEDisplayedIAMRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F521075B270030E659 /* MEDisplayedIAMRepositoryTests.m */; };
+		8A102DF12112F4AD0046BAFB /* MEJSBridgeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F721075B270030E659 /* MEJSBridgeTests.m */; };
+		8A102DF22112F4B70046BAFB /* MELogRepositoryProxyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9F921075B270030E659 /* MELogRepositoryProxyTests.m */; };
+		8A102DF32112F4B70046BAFB /* MEIAMMetricsLogHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9FB21075B270030E659 /* MEIAMMetricsLogHandlerTests.m */; };
+		8A102DF42112F4BE0046BAFB /* EMSRequestModelMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9FD21075B270030E659 /* EMSRequestModelMatcher.m */; };
+		8A102DF52112F4BE0046BAFB /* MERequestFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9FE21075B270030E659 /* MERequestFactoryTests.m */; };
+		8A102DF62112F4BE0046BAFB /* MERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9FF21075B270030E659 /* MERequestContextTests.m */; };
+		8A102DF72112F4BE0046BAFB /* MERequestMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0021075B270030E659 /* MERequestMatcherTests.m */; };
+		8A102DF82112F4CE0046BAFB /* FlipperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0221075B270030E659 /* FlipperTests.m */; };
+		8A102DF92112F4CE0046BAFB /* BuilderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0321075B270030E659 /* BuilderTests.m */; };
+		8A102DFA2112F4CE0046BAFB /* MEDownloaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0521075B270030E659 /* MEDownloaderTests.m */; };
+		8A102DFB2112F4CE0046BAFB /* MEUserNotificationDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */; };
+		8A102DFC2112F4CE0046BAFB /* MENotificationServiceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */; };
+		8A102DFD2112F4CE0046BAFB /* MobileEngageInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */; };
+		8A102DFE2112F4CE0046BAFB /* MobileEngageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0A21075B270030E659 /* MobileEngageTests.m */; };
+		8A102DFF2112F4CE0046BAFB /* MEIAMViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */; };
+		8A102E002112F4CE0046BAFB /* MENotificationCenterManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */; };
+		8A102E012112F7410046BAFB /* FakeTimeStampProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 374609973B222C522AC186B1 /* FakeTimeStampProvider.m */; };
+		8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
+		8A102E402112F7F90046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
+		8A102E472112F8AA0046BAFB /* ResponseModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99121075B270030E659 /* ResponseModelTests.m */; };
+		8A102E482112F8AA0046BAFB /* EMSRequestModelRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99321075B270030E659 /* EMSRequestModelRepositoryTests.m */; };
+		8A102E492112F8AA0046BAFB /* EMSShardRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F3CA2497F122191C9888 /* EMSShardRepositoryTests.m */; };
+		8A102E4A2112F8AA0046BAFB /* EMSDefaultWorkerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99421075B270030E659 /* EMSDefaultWorkerTests.m */; };
+		8A102E4B2112F8AA0046BAFB /* EMSTimestampProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99621075B270030E659 /* EMSTimestampProviderTests.m */; };
+		8A102E4C2112F8AA0046BAFB /* EMSUUIDProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99721075B270030E659 /* EMSUUIDProviderTests.m */; };
+		8A102E4D2112F8AA0046BAFB /* TestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99921075B270030E659 /* TestUtils.m */; };
+		8A102E4E2112F8AA0046BAFB /* EMSRESTClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99B21075B270030E659 /* EMSRESTClientTests.m */; };
+		8A102E4F2112F8AA0046BAFB /* OfflineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99C21075B270030E659 /* OfflineTests.m */; };
+		8A102E502112F8AA0046BAFB /* DennaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99D21075B270030E659 /* DennaTests.m */; };
+		8A102E512112F8AA0046BAFB /* AuthenticationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99F21075B270030E659 /* AuthenticationTests.m */; };
+		8A102E522112F8AA0046BAFB /* EMSRequestManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A221075B270030E659 /* EMSRequestManagerTests.m */; };
+		8A102E532112F8AA0046BAFB /* EMSRequestModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A321075B270030E659 /* EMSRequestModelTests.m */; };
+		8A102E542112F8AA0046BAFB /* EMSDictionaryValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A421075B270030E659 /* EMSDictionaryValidatorTests.m */; };
+		8A102E552112F8AA0046BAFB /* ConnectionWatchdogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A521075B270030E659 /* ConnectionWatchdogTests.m */; };
+		8A102E562112F8AA0046BAFB /* EMSDeviceInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A621075B270030E659 /* EMSDeviceInfoTests.m */; };
+		8A102E572112F8AA0046BAFB /* FakeCompletionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9A921075B270030E659 /* FakeCompletionHandler.m */; };
+		8A102E582112F8AA0046BAFB /* FakeLogRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9AA21075B270030E659 /* FakeLogRepository.m */; };
+		8A102E592112F8AA0046BAFB /* FakeConnectionWatchdog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9AB21075B270030E659 /* FakeConnectionWatchdog.m */; };
+		8A102E5A2112F8AA0046BAFB /* FakeConnectionChangeListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9AD21075B270030E659 /* FakeConnectionChangeListener.m */; };
+		8A102E5B2112F8AA0046BAFB /* FakeTimeStampProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 374609973B222C522AC186B1 /* FakeTimeStampProvider.m */; };
+		8A102E5C2112F8AA0046BAFB /* NSURLRequest+CoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B421075B270030E659 /* NSURLRequest+CoreTests.m */; };
+		8A102E5D2112F8AA0046BAFB /* NSDate+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B521075B270030E659 /* NSDate+EMSCoreTests.m */; };
+		8A102E5E2112F8AA0046BAFB /* NSDictionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */; };
+		8A102E5F2112F8AA0046BAFB /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
+		8A102E602112F8AA0046BAFB /* SqliteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* SqliteHelperTests.m */; };
 		8AB2FA0D21075B270030E659 /* ResponseModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99121075B270030E659 /* ResponseModelTests.m */; };
 		8AB2FA0E21075B270030E659 /* EMSRequestModelRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99321075B270030E659 /* EMSRequestModelRepositoryTests.m */; };
 		8AB2FA0F21075B270030E659 /* EMSDefaultWorkerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99421075B270030E659 /* EMSDefaultWorkerTests.m */; };
@@ -321,6 +406,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8A102D1C2112F3B50046BAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 32C6FAA19703DD99CB977427 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8ADAA670210773D500B3AC44;
+			remoteInfo = SdkHost;
+		};
+		8A102E042112F7F90046BAFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 32C6FAA19703DD99CB977427 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8ADAA670210773D500B3AC44;
+			remoteInfo = SdkHost;
+		};
 		8ADAA687210773DD00B3AC44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 32C6FAA19703DD99CB977427 /* Project object */;
@@ -397,6 +496,7 @@
 		32C6F2ADFCD590B379C56ACA /* EMSReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSReachability.m; sourceTree = "<group>"; };
 		32C6F2E223241C1A5493875D /* EMSLockableProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLockableProtocol.h; sourceTree = "<group>"; };
 		32C6F2F0BA92D79A082AC496 /* MERequestTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MERequestTools.h; sourceTree = "<group>"; };
+		32C6F2F5AD62A5F7D05AE845 /* MobileEngageTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = MobileEngageTests.plist; sourceTree = "<group>"; };
 		32C6F2F8E1DB666EF56A42F7 /* MEIdResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIdResponseHandler.m; sourceTree = "<group>"; };
 		32C6F32531107829CE19187F /* NSDictionary+EMSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+EMSCore.h"; sourceTree = "<group>"; };
 		32C6F32B0A39EF55F7D7B6E9 /* MEDisplayedIAMFilterNoneSpecification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEDisplayedIAMFilterNoneSpecification.h; sourceTree = "<group>"; };
@@ -447,6 +547,7 @@
 		32C6F5A809AF7946DDCB53B7 /* EMSDefaultWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDefaultWorker.h; sourceTree = "<group>"; };
 		32C6F5C3CD1E98CDFB68CC96 /* MEConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEConfig.m; sourceTree = "<group>"; };
 		32C6F602949AD3C28D90B34D /* MENotificationCenterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MENotificationCenterManager.h; sourceTree = "<group>"; };
+		32C6F61215FE1C0E560ACA2C /* CoreTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = CoreTests.plist; sourceTree = "<group>"; };
 		32C6F62900BAA30719F76C21 /* MENotificationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationService.m; sourceTree = "<group>"; };
 		32C6F629A1230F3868F33599 /* MENotificationService+Attachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MENotificationService+Attachment.m"; sourceTree = "<group>"; };
 		32C6F639763768AE0062EB47 /* MEIAMViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMViewController.h; sourceTree = "<group>"; };
@@ -578,6 +679,8 @@
 		374604BA7F9A098F99FC39B7 /* FakeTimeStampProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeTimeStampProvider.h; sourceTree = "<group>"; };
 		374609973B222C522AC186B1 /* FakeTimeStampProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeTimeStampProvider.m; sourceTree = "<group>"; };
 		37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EMSShardTests.m; path = Shard/EMSShardTests.m; sourceTree = "<group>"; };
+		8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileEngageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB2F98421075A8D0030E659 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB2F98821075A8D0030E659 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AB2F99121075B270030E659 /* ResponseModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponseModelTests.m; sourceTree = "<group>"; };
@@ -609,7 +712,6 @@
 		8AB2F9B421075B270030E659 /* NSURLRequest+CoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+CoreTests.m"; sourceTree = "<group>"; };
 		8AB2F9B521075B270030E659 /* NSDate+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+EMSCoreTests.m"; sourceTree = "<group>"; };
 		8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+EMSCoreTests.m"; sourceTree = "<group>"; };
-		8AB2F9B721075B270030E659 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AB2F9B921075B270030E659 /* MEExperimental+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MEExperimental+Test.h"; sourceTree = "<group>"; };
 		8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MobileEngageTest.m"; sourceTree = "<group>"; };
 		8AB2F9BB21075B270030E659 /* IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTests.m; sourceTree = "<group>"; };
@@ -678,7 +780,6 @@
 		8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEUserNotificationDelegateTests.m; sourceTree = "<group>"; };
 		8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationServiceTests.m; sourceTree = "<group>"; };
 		8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileEngageInternalTests.m; sourceTree = "<group>"; };
-		8AB2FA0921075B270030E659 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AB2FA0A21075B270030E659 /* MobileEngageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileEngageTests.m; sourceTree = "<group>"; };
 		8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMViewControllerTests.m; sourceTree = "<group>"; };
 		8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationCenterManagerTests.m; sourceTree = "<group>"; };
@@ -701,6 +802,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8A102D6F2112F3B50046BAFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A102D702112F3B50046BAFB /* EmarsysSDK.framework in Frameworks */,
+				8A102D712112F3B50046BAFB /* libPods-Tests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A102E3E2112F7F90046BAFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */,
+				8A102E402112F7F90046BAFB /* libPods-Tests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AB2F98121075A8D0030E659 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -817,6 +936,8 @@
 				8AB2F98421075A8D0030E659 /* Tests.xctest */,
 				8ADAA671210773D500B3AC44 /* SdkHost.app */,
 				8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */,
+				8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */,
+				8A102E452112F7F90046BAFB /* CoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1251,6 +1372,8 @@
 				8AB2F99021075B270030E659 /* CoreTests */,
 				8AB2F9B821075B270030E659 /* MobileEngageTests */,
 				8AB2F98821075A8D0030E659 /* Info.plist */,
+				32C6F61215FE1C0E560ACA2C /* CoreTests.plist */,
+				32C6F2F5AD62A5F7D05AE845 /* MobileEngageTests.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1274,7 +1397,6 @@
 				8AB2F9A621075B270030E659 /* EMSDeviceInfoTests.m */,
 				8AB2F9A821075B270030E659 /* Fake */,
 				8AB2F9B321075B270030E659 /* Categories */,
-				8AB2F9B721075B270030E659 /* Info.plist */,
 				37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */,
 				32C6FAC9086886577E9A79B4 /* Database */,
 			);
@@ -1368,7 +1490,6 @@
 				8AB2FA0321075B270030E659 /* BuilderTests.m */,
 				8AB2FA0421075B270030E659 /* RichNotificationExtension */,
 				8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */,
-				8AB2FA0921075B270030E659 /* Info.plist */,
 				8AB2FA0A21075B270030E659 /* MobileEngageTests.m */,
 				8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */,
 				8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */,
@@ -1666,6 +1787,44 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		8A102D1A2112F3B50046BAFB /* MobileEngageTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A102D732112F3B50046BAFB /* Build configuration list for PBXNativeTarget "MobileEngageTests" */;
+			buildPhases = (
+				8A102D1D2112F3B50046BAFB /* [CP] Check Pods Manifest.lock */,
+				8A102D1E2112F3B50046BAFB /* Sources */,
+				8A102D6F2112F3B50046BAFB /* Frameworks */,
+				8A102D722112F3B50046BAFB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8A102D1B2112F3B50046BAFB /* PBXTargetDependency */,
+			);
+			name = MobileEngageTests;
+			productName = Tests;
+			productReference = 8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8A102E022112F7F90046BAFB /* CoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A102E422112F7F90046BAFB /* Build configuration list for PBXNativeTarget "CoreTests" */;
+			buildPhases = (
+				8A102E052112F7F90046BAFB /* [CP] Check Pods Manifest.lock */,
+				8A102E062112F7F90046BAFB /* Sources */,
+				8A102E3E2112F7F90046BAFB /* Frameworks */,
+				8A102E412112F7F90046BAFB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8A102E032112F7F90046BAFB /* PBXTargetDependency */,
+			);
+			name = CoreTests;
+			productName = Tests;
+			productReference = 8A102E452112F7F90046BAFB /* CoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8AB2F98321075A8D0030E659 /* Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AB2F98E21075A8D0030E659 /* Build configuration list for PBXNativeTarget "Tests" */;
@@ -1728,8 +1887,18 @@
 		32C6FAA19703DD99CB977427 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Emarsys;
 				TargetAttributes = {
+					8A102D1A2112F3B50046BAFB = {
+						DevelopmentTeam = 7ZFXXDJH82;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 8ADAA670210773D500B3AC44;
+					};
+					8A102E022112F7F90046BAFB = {
+						DevelopmentTeam = 7ZFXXDJH82;
+						ProvisioningStyle = Automatic;
+					};
 					8AB2F98321075A8D0030E659 = {
 						CreatedOnToolsVersion = 9.4.1;
 						DevelopmentTeam = 7ZFXXDJH82;
@@ -1764,11 +1933,27 @@
 				8AB2F98321075A8D0030E659 /* Tests */,
 				8ADAA670210773D500B3AC44 /* SdkHost */,
 				8AEBEC5B210866C200FC6E83 /* EmarsysSDK */,
+				8A102D1A2112F3B50046BAFB /* MobileEngageTests */,
+				8A102E022112F7F90046BAFB /* CoreTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8A102D722112F3B50046BAFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A102E412112F7F90046BAFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AB2F98221075A8D0030E659 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1796,6 +1981,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		8A102D1D2112F3B50046BAFB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Tests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A102E052112F7F90046BAFB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Tests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A83965A988AFD1FD624541F6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1817,6 +2038,101 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8A102D1E2112F3B50046BAFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A102DD92112F47C0046BAFB /* MEIAMJSCommandFactoryTests.m in Sources */,
+				8A102DED2112F4AD0046BAFB /* DisplayedIAMTests.m in Sources */,
+				8A102DFA2112F4CE0046BAFB /* MEDownloaderTests.m in Sources */,
+				8A102DDF2112F49B0046BAFB /* FakeResponseHandler.m in Sources */,
+				8A102DCE2112F4680046BAFB /* MEInboxV2Tests.m in Sources */,
+				8A102DCC2112F45C0046BAFB /* IntegrationTests.m in Sources */,
+				8A102DE92112F4AD0046BAFB /* EMSRequestToolsTests.m in Sources */,
+				8A102DD12112F4680046BAFB /* MEInboxTests.m in Sources */,
+				8A102DF22112F4B70046BAFB /* MELogRepositoryProxyTests.m in Sources */,
+				8A102DE22112F49B0046BAFB /* FakeStatusDelegate.m in Sources */,
+				8A102DE62112F49B0046BAFB /* FakeRequestRepository.m in Sources */,
+				8A102DD32112F47C0046BAFB /* MEIAMButtonClickedTests.m in Sources */,
+				8A102DEE2112F4AD0046BAFB /* MEButtonClickTests.m in Sources */,
+				8A102DF32112F4B70046BAFB /* MEIAMMetricsLogHandlerTests.m in Sources */,
+				8A102DDE2112F48E0046BAFB /* AbstractResponseHandlerTests.m in Sources */,
+				8A102DF42112F4BE0046BAFB /* EMSRequestModelMatcher.m in Sources */,
+				8A102DE32112F49B0046BAFB /* FakeInboxNotificationRestClient.m in Sources */,
+				8A102DE12112F49B0046BAFB /* FakeRequestManager.m in Sources */,
+				8A102DCD2112F4680046BAFB /* InboxV2IntegrationTests.m in Sources */,
+				8A102DE82112F4AD0046BAFB /* MEInAppTests.m in Sources */,
+				8A102DD02112F4680046BAFB /* InboxIntegrationTests.m in Sources */,
+				8A102DD62112F47C0046BAFB /* MEIAMRequestPushPermissionTests.m in Sources */,
+				8A102DE52112F49B0046BAFB /* FakeJSBridge.m in Sources */,
+				8A102DD52112F47C0046BAFB /* MEIAMOpenExternalLinkTests.m in Sources */,
+				8A102DF72112F4BE0046BAFB /* MERequestMatcherTests.m in Sources */,
+				8A102DEC2112F4AD0046BAFB /* MERequestRepositoryProxyTests.m in Sources */,
+				8A102DFC2112F4CE0046BAFB /* MENotificationServiceTests.m in Sources */,
+				8A102DEF2112F4AD0046BAFB /* MERequestModelRepositoryFactoryTests.m in Sources */,
+				8A102DEA2112F4AD0046BAFB /* RequestModelSpecificationTests.m in Sources */,
+				8A102DFD2112F4CE0046BAFB /* MobileEngageInternalTests.m in Sources */,
+				8A102DF12112F4AD0046BAFB /* MEJSBridgeTests.m in Sources */,
+				8A102DE42112F49B0046BAFB /* FakeDbHelper.m in Sources */,
+				8A102DD72112F47C0046BAFB /* MEIAMTriggerMEEventTests.m in Sources */,
+				8A102DF62112F4BE0046BAFB /* MERequestContextTests.m in Sources */,
+				8A102DE72112F49B0046BAFB /* FakeSpecification.m in Sources */,
+				8A102DF82112F4CE0046BAFB /* FlipperTests.m in Sources */,
+				8A102DF92112F4CE0046BAFB /* BuilderTests.m in Sources */,
+				8A102DDC2112F48E0046BAFB /* MEIDResponseHandlerTests.m in Sources */,
+				8A102DFF2112F4CE0046BAFB /* MEIAMViewControllerTests.m in Sources */,
+				8A102DDB2112F48E0046BAFB /* MEIAMResponseHandlerTests.m in Sources */,
+				8A102DD42112F47C0046BAFB /* MEIAMCloseTests.m in Sources */,
+				8A102DCF2112F4680046BAFB /* MEInboxParserTests.m in Sources */,
+				8A102DD22112F46E0046BAFB /* NSDictionary+MobileEngageTests.m in Sources */,
+				8A102DFB2112F4CE0046BAFB /* MEUserNotificationDelegateTests.m in Sources */,
+				8A102DDD2112F48E0046BAFB /* MEIAMCleanupResponseHandlerTests.m in Sources */,
+				8A102DF52112F4BE0046BAFB /* MERequestFactoryTests.m in Sources */,
+				8A102DE02112F49B0046BAFB /* FakeInAppHandler.m in Sources */,
+				8A102DCB2112F4580046BAFB /* NSData+MobileEngageTest.m in Sources */,
+				8A102DDA2112F4810046BAFB /* MEIAMDidAppear.m in Sources */,
+				8A102E002112F4CE0046BAFB /* MENotificationCenterManagerTests.m in Sources */,
+				8A102DFE2112F4CE0046BAFB /* MobileEngageTests.m in Sources */,
+				8A102DF02112F4AD0046BAFB /* MEDisplayedIAMRepositoryTests.m in Sources */,
+				8A102DEB2112F4AD0046BAFB /* MEButtonClickRepositoryTests.m in Sources */,
+				8A102E012112F7410046BAFB /* FakeTimeStampProvider.m in Sources */,
+				8A102DD82112F47C0046BAFB /* MEIAMTriggerAppEventTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A102E062112F7F90046BAFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A102E5A2112F8AA0046BAFB /* FakeConnectionChangeListener.m in Sources */,
+				8A102E502112F8AA0046BAFB /* DennaTests.m in Sources */,
+				8A102E582112F8AA0046BAFB /* FakeLogRepository.m in Sources */,
+				8A102E4D2112F8AA0046BAFB /* TestUtils.m in Sources */,
+				8A102E492112F8AA0046BAFB /* EMSShardRepositoryTests.m in Sources */,
+				8A102E5C2112F8AA0046BAFB /* NSURLRequest+CoreTests.m in Sources */,
+				8A102E572112F8AA0046BAFB /* FakeCompletionHandler.m in Sources */,
+				8A102E562112F8AA0046BAFB /* EMSDeviceInfoTests.m in Sources */,
+				8A102E522112F8AA0046BAFB /* EMSRequestManagerTests.m in Sources */,
+				8A102E5E2112F8AA0046BAFB /* NSDictionary+EMSCoreTests.m in Sources */,
+				8A102E592112F8AA0046BAFB /* FakeConnectionWatchdog.m in Sources */,
+				8A102E4B2112F8AA0046BAFB /* EMSTimestampProviderTests.m in Sources */,
+				8A102E512112F8AA0046BAFB /* AuthenticationTests.m in Sources */,
+				8A102E5B2112F8AA0046BAFB /* FakeTimeStampProvider.m in Sources */,
+				8A102E4A2112F8AA0046BAFB /* EMSDefaultWorkerTests.m in Sources */,
+				8A102E4F2112F8AA0046BAFB /* OfflineTests.m in Sources */,
+				8A102E542112F8AA0046BAFB /* EMSDictionaryValidatorTests.m in Sources */,
+				8A102E602112F8AA0046BAFB /* SqliteHelperTests.m in Sources */,
+				8A102E4E2112F8AA0046BAFB /* EMSRESTClientTests.m in Sources */,
+				8A102E5D2112F8AA0046BAFB /* NSDate+EMSCoreTests.m in Sources */,
+				8A102E532112F8AA0046BAFB /* EMSRequestModelTests.m in Sources */,
+				8A102E4C2112F8AA0046BAFB /* EMSUUIDProviderTests.m in Sources */,
+				8A102E552112F8AA0046BAFB /* ConnectionWatchdogTests.m in Sources */,
+				8A102E482112F8AA0046BAFB /* EMSRequestModelRepositoryTests.m in Sources */,
+				8A102E5F2112F8AA0046BAFB /* EMSShardTests.m in Sources */,
+				8A102E472112F8AA0046BAFB /* ResponseModelTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AB2F98021075A8D0030E659 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2020,6 +2336,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8A102D1B2112F3B50046BAFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8ADAA670210773D500B3AC44 /* SdkHost */;
+			targetProxy = 8A102D1C2112F3B50046BAFB /* PBXContainerItemProxy */;
+		};
+		8A102E032112F7F90046BAFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8ADAA670210773D500B3AC44 /* SdkHost */;
+			targetProxy = 8A102E042112F7F90046BAFB /* PBXContainerItemProxy */;
+		};
 		8ADAA688210773DD00B3AC44 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8ADAA670210773D500B3AC44 /* SdkHost */;
@@ -2164,6 +2490,74 @@
 			};
 			name = Debug;
 		};
+		8A102D742112F3B50046BAFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FABA8A031C0C953133043E10 /* Pods-Tests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = MobileEngageTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
+			};
+			name = Debug;
+		};
+		8A102D752112F3B50046BAFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CD9C358A1E433F41B69A689 /* Pods-Tests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = MobileEngageTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
+			};
+			name = Release;
+		};
+		8A102E432112F7F90046BAFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FABA8A031C0C953133043E10 /* Pods-Tests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = CoreTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
+			};
+			name = Debug;
+		};
+		8A102E442112F7F90046BAFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CD9C358A1E433F41B69A689 /* Pods-Tests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = CoreTests.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
+			};
+			name = Release;
+		};
 		8AB2F98C21075A8D0030E659 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FABA8A031C0C953133043E10 /* Pods-Tests.debug.xcconfig */;
@@ -2233,6 +2627,7 @@
 		8AEBEC74210866C200FC6E83 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -2258,6 +2653,7 @@
 		8AEBEC75210866C200FC6E83 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -2288,6 +2684,24 @@
 			buildConfigurations = (
 				32C6FDF092DBA385E9D7E6A1 /* Debug */,
 				32C6F35D09C29B32C04BAD04 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A102D732112F3B50046BAFB /* Build configuration list for PBXNativeTarget "MobileEngageTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A102D742112F3B50046BAFB /* Debug */,
+				8A102D752112F3B50046BAFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A102E422112F7F90046BAFB /* Build configuration list for PBXNativeTarget "CoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A102E432112F7F90046BAFB /* Debug */,
+				8A102E442112F7F90046BAFB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
