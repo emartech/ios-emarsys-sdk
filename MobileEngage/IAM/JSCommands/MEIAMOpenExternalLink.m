@@ -38,8 +38,11 @@
                                                              success:success]);
                    }];
             } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 resultBlock([self createResultWithJSCommandId:eventId
                                                       success:[application openURL:url]]);
+#pragma clang diagnostic pop
             }
         } else {
             resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId

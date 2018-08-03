@@ -27,11 +27,15 @@
                                                                                                                       success:granted]);
                                                                             }];
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge)
                                                                                  categories:nil];
         [application registerUserNotificationSettings:settings];
         resultBlock([self createResultWithJSCommandId:eventId
                                               success:[application isRegisteredForRemoteNotifications]]);
+
+#pragma clang diagnostic pop
     }
 }
 
