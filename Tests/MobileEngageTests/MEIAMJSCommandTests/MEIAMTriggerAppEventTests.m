@@ -2,6 +2,7 @@
 #import "MEIAMTriggerAppEvent.h"
 #import "MEEventHandler.h"
 #import "FakeInAppHandler.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEIAMTriggerAppEventTests)
 
@@ -52,7 +53,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[@"Missing 'name' key with type: NSString."]}];
 
@@ -68,7 +69,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @YES, @"id": @"123"}];
             });
@@ -83,7 +84,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @NO, @"id": @"123", @"errors": @[@"Missing 'name' key with type: NSString."]}];
             });
@@ -99,7 +100,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{
                         @"success": @NO,
@@ -132,7 +133,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
                 [appEvent handleMessage:scriptMessage
                             resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[_mainThread should] equal:@(YES)];
             });

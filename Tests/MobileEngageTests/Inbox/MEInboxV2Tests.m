@@ -8,6 +8,7 @@
 #import "EMSRequestModelMatcher.h"
 #import "MENotificationInboxStatus.h"
 #import "FakeTimeStampProvider.h"
+#import "EMSWaiter.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -178,7 +179,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         secondInboxStatus = inboxStatus;
@@ -186,7 +187,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                     [[theValue([fakeRestClient.submittedRequests count]) shouldEventually] equal:theValue(1)];
                     [[firstInboxStatus.notifications should] equal:fakeNotifications];
@@ -215,7 +216,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp1, exp2] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
                     [[theValue([fakeRestClient.submittedRequests count]) shouldEventually] equal:theValue(1)];
                     [[firstInboxStatus.notifications should] equal:fakeNotifications];
@@ -241,7 +242,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         secondInboxStatus = inboxStatus;
@@ -249,7 +250,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp2] timeout:30];
                     [[theValue([fakeRestClient.submittedRequests count]) shouldEventually] equal:theValue(2)];
                     [[firstInboxStatus.notifications should] equal:fakeNotifications];
                     [[secondInboxStatus.notifications should] equal:fakeNotifications];
@@ -280,7 +281,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                         [exp2 fulfill];
                     }                             errorBlock:^(NSError *error) {
                     }];
-                    [XCTWaiter waitForExpectations:@[exp1, exp2] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         successCount++;
@@ -288,7 +289,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                     }                             errorBlock:^(NSError *error) {
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp3] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp3] timeout:30];
 
                     [[theValue(successCount) should] equal:theValue(3)];
                 });
@@ -319,7 +320,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                         [exp2 fulfill];
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp1, exp2] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
                     [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                     }                             errorBlock:^(NSError *error) {
@@ -327,7 +328,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                         [exp3 fulfill];
                     }];
 
-                    [XCTWaiter waitForExpectations:@[exp3] timeout:30];
+                    [EMSWaiter waitForExpectations:@[exp3] timeout:30];
 
                     [[theValue(errorCount) should] equal:theValue(3)];
                 });
@@ -690,7 +691,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                                                 _error = error;
                                                 [exp fulfill];
                                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[_error shouldNot] beNil];
             });
@@ -712,7 +713,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                                                 _error = error;
                                                 [exp fulfill];
                                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[_error shouldNot] beNil];
             });
 
@@ -817,7 +818,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                 [[firstInboxStatus.notifications should] equal:expectedNotifications1];
 
@@ -826,7 +827,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                         [expectationForReset fulfill];
                     }
                                             errorBlock:nil];
-                [XCTWaiter waitForExpectations:@[expectationForReset] timeout:30];
+                [EMSWaiter waitForExpectations:@[expectationForReset] timeout:30];
 
                 XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
                 __block MENotificationInboxStatus *secondInboxStatus;
@@ -836,7 +837,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                 [[secondInboxStatus.notifications should] equal:expectedNotifications1];
                 [[theValue(secondInboxStatus.badgeCount) should] equal:theValue(0)];
@@ -879,7 +880,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                 [[firstInboxStatus.notifications should] equal:expectedNotifications1];
 
@@ -891,7 +892,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                 [[secondInboxStatus.notifications should] equal:expectedNotifications2];
             });
@@ -932,7 +933,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                 [[firstInboxStatus.notifications should] equal:expectedNotifications1];
 
@@ -946,7 +947,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                 [[secondInboxStatus.notifications should] equal:expectedNotifications2];
 
@@ -960,7 +961,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp3] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp3] timeout:30];
 
                 [[thirdInboxStatus.notifications should] equal:expectedNotifications2];
             });
@@ -1006,7 +1007,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp1] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
                 [[firstInboxStatus.notifications should] equal:expectedNotifications1];
 
@@ -1020,7 +1021,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 }                             errorBlock:^(NSError *error) {
                 }];
 
-                [XCTWaiter waitForExpectations:@[exp2] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                 [[secondInboxStatus.notifications should] equal:expectedNotifications2];
             });

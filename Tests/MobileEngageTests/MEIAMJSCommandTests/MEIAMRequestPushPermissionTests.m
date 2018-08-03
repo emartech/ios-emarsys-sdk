@@ -2,6 +2,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import "MEIAMRequestPushPermission.h"
 #import "MEOsVersionUtils.h"
+#import "EMSWaiter.h"
 
 
 SPEC_BEGIN(MEIAMRequestPushPermissionTests)
@@ -45,7 +46,7 @@ SPEC_BEGIN(MEIAMRequestPushPermissionTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @YES, @"id": @1}];
             });
@@ -88,7 +89,7 @@ SPEC_BEGIN(MEIAMRequestPushPermissionTests)
                 void (^handler)(BOOL granted, NSError *__nullable error) = spy.argument;
                 handler(YES, nil);
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @YES, @"id": @1}];
             });

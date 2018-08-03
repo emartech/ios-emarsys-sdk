@@ -1,5 +1,6 @@
 #import "Kiwi.h"
 #import "MEIAMButtonClicked.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEIAMButtonClickedTests)
 
@@ -50,7 +51,7 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                                           returnedResult = result;
                                           [exp fulfill];
                                       }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:3];
+                [EMSWaiter waitForExpectations:@[exp] timeout:3];
                 [[returnedResult[@"success"] should] beFalse];
             });
 
@@ -104,7 +105,7 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                                           returnedResult = result;
                                           [exp fulfill];
                                       }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @YES, @"id": @"999"}];
             });
@@ -118,7 +119,7 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                                           returnedResult = result;
                                           [exp fulfill];
                                       }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[@"Missing buttonId!"]}];
             });

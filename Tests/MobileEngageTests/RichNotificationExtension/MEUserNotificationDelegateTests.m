@@ -8,9 +8,9 @@
 #import "MEUserNotificationDelegate.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
-#import "MEIAMProtocol.h"
-#import "KWReceiveMatcher.h"
 #import "MEInAppMessage.h"
+#import "EMSWaiter.h"
+#import <XCTest/XCTWaiter.h>
 
 SPEC_BEGIN(MEUserNotificationDelegateTests)
         if (@available(iOS 10.0, *)) {
@@ -162,7 +162,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
                 });
 
                 it(@"should not call MobileEngage.notification.eventHandler with the defined eventName and payload if the action is not MEAppEvent type", ^{
@@ -189,7 +189,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
                 });
 
                 it(@"should call trackCustomEvent on MobileEngage with the defined eventName and payload if the action is type of MECustomEvent", ^{
@@ -216,7 +216,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 });
 
@@ -247,7 +247,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 });
 
@@ -274,7 +274,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 });
 
@@ -307,7 +307,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 });
 
@@ -327,7 +327,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                            withCompletionHandler:^{
                                                [exp fulfill];
                                            }];
-                    [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                    [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 });
 
@@ -352,7 +352,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                            withCompletionHandler:^{
                                                [exp fulfill];
                                            }];
-                        [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                        [EMSWaiter waitForExpectations:@[exp] timeout:5];
                     });
                 }
 
@@ -380,7 +380,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                [EMSWaiter waitForExpectations:@[exp] timeout:5];
                 MEInAppMessage *message = [messageSpy argument];
                 [[message.campaignId should] equal:@"42"];
                 [[message.html should] equal:@"<html/>"];

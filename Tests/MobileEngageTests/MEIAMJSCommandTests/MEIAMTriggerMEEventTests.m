@@ -1,6 +1,7 @@
 #import "Kiwi.h"
 #import "MEIAMTriggerMEEvent.h"
 #import "MobileEngage.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEIAMTriggerMEEventTests)
 
@@ -28,7 +29,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[@"Missing 'name' key with type: NSString."]}];
             });
 
@@ -44,7 +45,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{
                         @"success": @NO,
                         @"id": @"999",
@@ -70,7 +71,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{
                         @"success": @YES,
                         @"id": @"997",
@@ -102,7 +103,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                                 returnedResult = result;
                                 [exp fulfill];
                             }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{
                         @"success": @YES,
                         @"id": @"997",

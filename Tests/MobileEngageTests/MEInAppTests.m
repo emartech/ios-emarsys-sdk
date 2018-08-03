@@ -5,6 +5,7 @@
 #import "MEIAMProtocol.h"
 #import "EMSTimestampProvider.h"
 #import "FakeTimeStampProvider.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEInAppTests)
         __block MEInApp *iam;
@@ -95,7 +96,7 @@ SPEC_BEGIN(MEInAppTests)
                       [exp fulfill];
                   }];
                }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:3];
+                [EMSWaiter waitForExpectations:@[exp] timeout:3];
             });
 
         });
@@ -116,7 +117,7 @@ SPEC_BEGIN(MEInAppTests)
                completionHandler:^{
                    [exp fulfill];
                }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[[((id <MEIAMProtocol>) iam) currentCampaignId] should] equal:@"testIdForCurrentCampaignId"];
             });
 
@@ -137,7 +138,7 @@ SPEC_BEGIN(MEInAppTests)
                completionHandler:^{
                    [exp fulfill];
                }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
             });
 
             it(@"should log the rendering time", ^{
@@ -162,7 +163,7 @@ SPEC_BEGIN(MEInAppTests)
                completionHandler:^{
                    [exp fulfill];
                }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
             });
 
             it(@"should not log the rendering time when responseModel is nil", ^{
@@ -178,7 +179,7 @@ SPEC_BEGIN(MEInAppTests)
                completionHandler:^{
                    [exp fulfill];
                }];
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:30];
             });
         });
@@ -210,13 +211,13 @@ SPEC_BEGIN(MEInAppTests)
                completionHandler:^{
                    [expForRendering fulfill];
                }];
-                [XCTWaiter waitForExpectations:@[expForRendering] timeout:30];
+                [EMSWaiter waitForExpectations:@[expForRendering] timeout:30];
 
                 XCTestExpectation *expForClosing = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [iam closeInAppMessageWithCompletionBlock:^{
                     [expForClosing fulfill];
                 }];
-                [XCTWaiter waitForExpectations:@[expForClosing] timeout:30];
+                [EMSWaiter waitForExpectations:@[expForClosing] timeout:30];
             });
         });
 

@@ -2,6 +2,7 @@
 #import "MEIAMViewController.h"
 #import "MEJSBridge.h"
 #import "FakeJSBridge.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEIAMViewControllerTests)
 
@@ -34,7 +35,7 @@ SPEC_BEGIN(MEIAMViewControllerTests)
                          completionHandler:^{
                              [exp fulfill];
                          }];
-            [XCTWaiter waitForExpectations:@[exp]
+            [EMSWaiter waitForExpectations:@[exp]
                                    timeout:30];
 
             WKScriptMessage *scriptMessage = spy.argument;
@@ -74,7 +75,7 @@ SPEC_BEGIN(MEIAMViewControllerTests)
                              meJsBridge.jsResultBlock(expectedDictionary);
                          }];
 
-            [XCTWaiter waitForExpectations:@[exp]
+            [EMSWaiter waitForExpectations:@[exp]
                                    timeout:30];
 
             [[_result.name should] equal:@"IAMDidAppear"];

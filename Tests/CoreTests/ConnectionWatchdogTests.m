@@ -5,6 +5,7 @@
 #import "Kiwi.h"
 #import "EMSConnectionWatchdog.h"
 #import "FakeConnectionChangeListener.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(EMSConnectionWatchdogTest)
 
@@ -118,7 +119,7 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityMock];
 
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];
 
                 [[theValue(listener.networkStatus) should] equal:theValue(ReachableViaWiFi)];
@@ -145,7 +146,7 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityMock];
 
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];
 
                 [[result should] equal:queue];

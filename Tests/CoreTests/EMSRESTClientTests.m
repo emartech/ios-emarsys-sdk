@@ -14,6 +14,7 @@
 #import "EMSTimestampProvider.h"
 #import "FakeTimeStampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(EMSRESTClientTests)
 
@@ -345,7 +346,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                     }];
                 });
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
                 [[theValue([_requestIds count]) should] equal:theValue(3)];
                 [[_requestIds[0] should] equal:originalRequestModel1.requestId];
@@ -382,7 +383,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                     }];
                 });
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
                 [[theValue([_requestIds count]) should] equal:theValue(3)];
                 [[_requestIds[0] should] equal:originalRequestModel1.requestId];
@@ -470,7 +471,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                                                                                 [exp fulfill];
                                                                             }];
                 });
-                [XCTWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
                 NSDictionary<NSString *, id> *logElement = [logRepository.loggedElements firstObject];
                 [[logElement shouldNot] beNil];
@@ -500,7 +501,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                                                                                 [exp fulfill];
                                                                             }];
                 });
-                [XCTWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
                 NSDictionary<NSString *, id> *logElement = [logRepository.loggedElements firstObject];
                 [[logElement should] equal:@{
@@ -533,7 +534,7 @@ SPEC_BEGIN(EMSRESTClientTests)
                                                                                 [exp fulfill];
                                                                             }];
                 });
-                [XCTWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
                 NSDictionary<NSString *, id> *logElement = [logRepository.loggedElements lastObject];
                 [[logElement should] equal:@{

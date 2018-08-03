@@ -13,6 +13,7 @@
 #import "EMSReachability.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSWaiter.h"
 
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -155,7 +156,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 [[reachabilityOnlineMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi) withCountAtLeast:0];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityOnlineMock];
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:60];
+                [EMSWaiter waitForExpectations:@[exp] timeout:60];
                 [[theValue(successCount) should] equal:theValue(100)];
                 [[theValue(errorCount) should] equal:theValue(0)];
             });

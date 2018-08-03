@@ -11,7 +11,6 @@
 #import "MobileEngageVersion.h"
 #import "MERequestContext.h"
 #import "FakeRequestManager.h"
-#import "EMSResponseModel.h"
 #import "MEIdResponseHandler.h"
 #import "MEIAMResponseHandler.h"
 #import "MobileEngageInternal+Test.h"
@@ -23,6 +22,7 @@
 #import "MERequestModelRepositoryFactory.h"
 #import "MEExperimental+Test.h"
 #import "NSDate+EMSCore.h"
+#import "EMSWaiter.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -1744,7 +1744,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                        resultSource = source;
                                        [exp fulfill];
                                    }];
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:2];
 
                 [[resultSource should] equal:source];

@@ -3,6 +3,7 @@
 #import "MEConfigBuilder.h"
 #import "MEConfig.h"
 #import "MENotificationInboxStatus.h"
+#import "EMSWaiter.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -75,7 +76,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                                                            fail(@"error block invoked");
                                                        }];
 
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
             [[returnedNotification shouldNot] beNil];
             [[returnedNotification.id should] equal:notificationId];
@@ -120,7 +121,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                                                            fail(@"error block invoked");
                                                        }];
 
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
             [[returnedNotification shouldNot] beNil];
             [[returnedNotification.id should] equal:notificationId];
@@ -165,7 +166,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                                                            [exp fulfill];
                                                        }];
 
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
             [[resultInboxStatus shouldNot] beNil];
         });

@@ -7,6 +7,7 @@
 #import "MENotificationService+Attachment.h"
 #import "MENotificationService+Actions.h"
 #import "MENotificationService+PushToInApp.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MENotificationServiceTests)
 
@@ -27,7 +28,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                       completionHandler:^(NSArray<UNNotificationAttachment *> *attachments) {
                                           [exp fulfill];
                                       }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
                 };
 
@@ -46,7 +47,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                           result = attachments;
                                           [exp fulfill];
                                       }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
 
                     [[result should] beNil];
@@ -80,7 +81,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                           result = attachments;
                                           [exp fulfill];
                                       }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
 
                     [[result shouldNot] beNil];
@@ -124,7 +125,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                         result = category;
                                         [exp fulfill];
                                     }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
 
                     return result;
@@ -327,7 +328,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                                  result = userInfo;
                                                  [exp fulfill];
                                              }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
                     return result;
                 };
@@ -494,7 +495,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                                             result = contentToDeliver;
                                             [exp fulfill];
                                         }];
-                    [XCTWaiter waitForExpectations:@[exp]
+                    [EMSWaiter waitForExpectations:@[exp]
                                            timeout:30];
                     return result;
                 };

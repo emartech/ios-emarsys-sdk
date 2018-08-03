@@ -4,6 +4,7 @@
 
 #import "Kiwi.h"
 #import "MEDownloader.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEDownloaderTests)
 
@@ -19,7 +20,7 @@ SPEC_BEGIN(MEDownloaderTests)
                              completionHandler:^(NSURL *destinationUrl, NSError *error) {
                                  [exp fulfill];
                              }];
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
         };
 
         describe(@"downloadFileFromUrl:completionHandler:", ^{
@@ -32,7 +33,7 @@ SPEC_BEGIN(MEDownloaderTests)
                                      resultError = error;
                                      [exp fulfill];
                                  }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[resultError.localizedDescription should] equal:@"Source url doesn't exist."];
             });
@@ -51,7 +52,7 @@ SPEC_BEGIN(MEDownloaderTests)
                                      resultError = error;
                                      [exp fulfill];
                                  }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[resultError shouldNot] beNil];
             });
@@ -72,7 +73,7 @@ SPEC_BEGIN(MEDownloaderTests)
                                      resultError = error;
                                      [exp fulfill];
                                  }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[resultError shouldNot] beNil];
             });
@@ -93,7 +94,7 @@ SPEC_BEGIN(MEDownloaderTests)
                                      result = destinationUrl;
                                      [exp fulfill];
                                  }];
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[result shouldNot] beNil];
                 [[[result scheme] should] equal:@"file"];

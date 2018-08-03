@@ -1,6 +1,7 @@
 #import "Kiwi.h"
 #import "MEIAMOpenExternalLink.h"
 #import "MEOsVersionUtils.h"
+#import "EMSWaiter.h"
 
 SPEC_BEGIN(MEIAMOpenExternalLinkTests)
 
@@ -28,7 +29,7 @@ SPEC_BEGIN(MEIAMOpenExternalLinkTests)
                             [exp fulfill];
                         }];
 
-            [XCTWaiter waitForExpectations:@[exp]
+            [EMSWaiter waitForExpectations:@[exp]
                                    timeout:30];
 
             [[theValue(returnedContent) should] beNo];
@@ -43,7 +44,7 @@ SPEC_BEGIN(MEIAMOpenExternalLinkTests)
                             returnedResult = result;
                             [exp fulfill];
                         }];
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
             [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[@"Missing 'url' key with type: NSString."]}];
 
@@ -59,7 +60,7 @@ SPEC_BEGIN(MEIAMOpenExternalLinkTests)
                             returnedResult = result;
                             [exp fulfill];
                         }];
-            [XCTWaiter waitForExpectations:@[exp] timeout:30];
+            [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
             [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[[NSString stringWithFormat:@"Type mismatch for key 'url', expected type: NSString, but was: %@.", NSStringFromClass([urlValue class])]]}];
 
@@ -98,7 +99,7 @@ SPEC_BEGIN(MEIAMOpenExternalLinkTests)
                                 [exp fulfill];
                             }];
 
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:30];
 
                 [[theValue(returnedValue) should] equal:theValue(expectedValue)];
@@ -151,7 +152,7 @@ SPEC_BEGIN(MEIAMOpenExternalLinkTests)
                 void (^completionBlock)(BOOL success) = spy.argument;
                 completionBlock(expectedValue);
 
-                [XCTWaiter waitForExpectations:@[exp]
+                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:30];
 
                 [[theValue(returnedValue) should] equal:theValue(expectedValue)];

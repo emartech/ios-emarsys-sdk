@@ -4,6 +4,7 @@
 
 #import "FakeRequestManager.h"
 #import "EMSResponseModel.h"
+#import "EMSWaiter.h"
 #import <XCTest/XCTest.h>
 
 @implementation FakeRequestManager {
@@ -48,7 +49,7 @@
 }
 
 - (void)waitForAllExpectations {
-    [XCTWaiter waitForExpectations:[_expectations copy] timeout:30];
+    [EMSWaiter waitForExpectations:[_expectations copy] timeout:30];
 }
 
 @end

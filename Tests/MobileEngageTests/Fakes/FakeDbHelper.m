@@ -3,6 +3,7 @@
 //
 
 #import "FakeDbHelper.h"
+#import "EMSWaiter.h"
 #import <XCTest/XCTest.h>
 
 @implementation FakeDbHelper {
@@ -23,7 +24,7 @@
 }
 
 - (void)waitForInsert {
-    [XCTWaiter waitForExpectations:@[_expectation] timeout:30];
+    [EMSWaiter waitForExpectations:@[_expectation] timeout:30];
 }
 
 @end

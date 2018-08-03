@@ -10,6 +10,7 @@
 #import "MEExperimental+Test.h"
 #import "FakeStatusDelegate.h"
 #import "MERequestContext.h"
+#import "EMSWaiter.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -68,7 +69,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                                                                fail(@"Unexpected error");
                                                            }];
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[_inboxStatus shouldNot] beNil];
             });
@@ -87,7 +88,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                                                              fail(@"Unexpected error");
                                                          }];
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[theValue(_success) should] beYes];
             });
@@ -107,7 +108,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                                                                fail(@"Unexpected error");
                                                            }];
 
-                [XCTWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[theValue([_inboxStatus.notifications count]) should] beGreaterThan:theValue(0)];
 

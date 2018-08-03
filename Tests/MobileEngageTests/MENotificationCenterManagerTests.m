@@ -1,5 +1,6 @@
 #import "Kiwi.h"
 #import "MENotificationCenterManager.h"
+#import "EMSWaiter.h"
 
 
 SPEC_BEGIN(MENotificationCenterManagerTests)
@@ -18,7 +19,7 @@ SPEC_BEGIN(MENotificationCenterManagerTests)
 
             [[NSNotificationCenter defaultCenter] postNotificationName:@"testNotification" object:nil];
 
-            [XCTWaiter waitForExpectations:@[exp] timeout:5];
+            [EMSWaiter waitForExpectations:@[exp] timeout:5];
         });
     });
 

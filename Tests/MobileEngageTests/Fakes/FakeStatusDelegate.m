@@ -3,6 +3,7 @@
 //
 
 #import "FakeStatusDelegate.h"
+#import "EMSWaiter.h"
 #import <XCTest/XCTest.h>
 
 @implementation FakeStatusDelegate {
@@ -43,7 +44,7 @@
 
 - (void)waitForNextSuccess {
     _nextExpectation = [[XCTestExpectation alloc] initWithDescription:@"wait"];
-    [XCTWaiter waitForExpectations:@[_nextExpectation] timeout:30.0];
+    [EMSWaiter waitForExpectations:@[_nextExpectation] timeout:30.0];
 }
 
 @end

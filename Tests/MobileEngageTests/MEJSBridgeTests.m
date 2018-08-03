@@ -4,6 +4,7 @@
 #import "MEIAMViewController.h"
 #import "MEIAMDidAppear.h"
 #import "MEIAMJSCommandFactory.h"
+#import "EMSWaiter.h"
 
 MEJSBridge *_meJsBridge;
 
@@ -40,7 +41,7 @@ MEJSBridge *_meJsBridge;
                      completionHandler:^{
                          [exp fulfill];
                      }];
-        [XCTWaiter waitForExpectations:@[exp]
+        [EMSWaiter waitForExpectations:@[exp]
                                timeout:30];
 
         WKScriptMessage *scriptMessage = spy.argument;
