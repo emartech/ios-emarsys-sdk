@@ -7,8 +7,11 @@
 #import "EMSWaiter.h"
 #import <XCTest/XCTest.h>
 
+@interface FakeRequestManager()
+@property (nonatomic, strong) NSMutableArray<XCTestExpectation *> *expectations;
+@end
+
 @implementation FakeRequestManager {
-    NSMutableArray<XCTestExpectation *> *_expectations;
 }
 
 
@@ -34,15 +37,16 @@
     [_expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForResult"]];
 
 
+    __weak typeof(self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         EMSResponseModel *nextResponse = [_responseModels firstObject];
         [_responseModels removeObject:nextResponse];
-        if (nextResponse && self.successBlock) {
-            self.successBlock(model.requestId, nextResponse);
+        if (nextResponse && weakSelf.successBlock) {
+            weakSelf.successBlock(model.requestId, nextResponse);
         }
 
-        XCTestExpectation *expectation = [_expectations firstObject];
-        [_expectations removeObject:expectation];
+        XCTestExpectation *expectation = [weakSelf.expectations firstObject];
+        [weakSelf.expectations removeObject:expectation];
         [expectation fulfill];
     });
 
