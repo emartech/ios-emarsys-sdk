@@ -18,7 +18,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
         }];
         [MobileEngage setupWithConfig:config
-                        launchOptions:nil];
+                        launchOptions:[NSDictionary new]];
 
         [MobileEngage appLoginWithContactFieldId:@3
                                contactFieldValue:@"test@test.com"];

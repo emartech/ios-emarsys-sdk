@@ -16,6 +16,8 @@
 
 @interface MERequestContext : NSObject
 
+NS_ASSUME_NONNULL_BEGIN
+
 @property(nonatomic, strong, nullable) NSDictionary *lastAppLoginPayload;
 @property(nonatomic, strong, nullable) NSString *meId;
 @property(nonatomic, strong, nullable) NSString *meIdSignature;
@@ -25,6 +27,9 @@
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
 
 - (instancetype)initWithConfig:(MEConfig *)config;
+
 - (void)reset;
+
+NS_ASSUME_NONNULL_END
 
 @end

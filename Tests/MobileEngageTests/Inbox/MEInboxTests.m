@@ -503,7 +503,7 @@ SPEC_BEGIN(MEInboxTests)
                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 }];
                 [MobileEngage setupWithConfig:config
-                                launchOptions:nil];
+                                launchOptions:[NSDictionary new]];
                 FakeStatusDelegate *statusDelegate = createStatusDelegate();
                 [MobileEngage setStatusDelegate:statusDelegate];
 

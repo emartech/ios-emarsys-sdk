@@ -15,6 +15,8 @@ typedef void (^MECompletionHandler)(void);
 
 @interface MEInApp (Private) <MEIAMProtocol>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @property(nonatomic, weak, nullable) id <MEInAppTrackingProtocol> inAppTracker;
 @property(nonatomic, strong) MELogRepository *logRepository;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
@@ -25,5 +27,7 @@ typedef void (^MECompletionHandler)(void);
 
 - (void)showMessage:(MEInAppMessage *)message
   completionHandler:(MECompletionHandler)completionHandler;
+
+NS_ASSUME_NONNULL_END
 
 @end

@@ -36,7 +36,7 @@ SPEC_BEGIN(MobileEngageTests)
 
             [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
                                                  config:config
-                                          launchOptions:nil];
+                                          launchOptions:[NSDictionary new]];
             return mobileEngageInternalMock;
         };
 
@@ -80,7 +80,7 @@ SPEC_BEGIN(MobileEngageTests)
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
                                                      config:config
-                                              launchOptions:nil];
+                                              launchOptions:[NSDictionary new]];
 
                 [[spy.argument shouldNot] beNil];
             });
@@ -105,7 +105,7 @@ SPEC_BEGIN(MobileEngageTests)
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
                                                      config:config
-                                              launchOptions:nil];
+                                              launchOptions:[NSDictionary new]];
 
                 [[spy.argument shouldNot] beNil];
             });
@@ -125,7 +125,7 @@ SPEC_BEGIN(MobileEngageTests)
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
                                                      config:config
-                                              launchOptions:nil];
+                                              launchOptions:[NSDictionary new]];
 
                 [[MobileEngage.inApp.logRepository should] equal:spy.argument];
             });
@@ -141,7 +141,7 @@ SPEC_BEGIN(MobileEngageTests)
 
                 [MobileEngage setupWithMobileEngageInternal:[MobileEngageInternal nullMock]
                                                      config:config
-                                              launchOptions:nil];
+                                              launchOptions:[NSDictionary new]];
 
                 [[MobileEngage.inApp.timestampProvider shouldNot] beNil];
             });
@@ -194,7 +194,7 @@ SPEC_BEGIN(MobileEngageTests)
                                            applicationPassword:applicationPassword];
                 }];
                 [MobileEngage setupWithConfig:config
-                                launchOptions:nil];
+                                launchOptions:[NSDictionary new]];
                 [MobileEngage appLoginWithContactFieldId:@5
                                        contactFieldValue:@"three"];
 
@@ -248,7 +248,7 @@ SPEC_BEGIN(MobileEngageTests)
                                                applicationPassword:applicationPassword];
                     }];
                     [MobileEngage setupWithConfig:config
-                                    launchOptions:nil];
+                                    launchOptions:[NSDictionary new]];
 
                     [[theValue([MobileEngage.inbox isKindOfClass:[MEInbox class]]) should] beYes];
                 });
@@ -263,7 +263,7 @@ SPEC_BEGIN(MobileEngageTests)
                         [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
                     }];
                     [MobileEngage setupWithConfig:config
-                                    launchOptions:nil];
+                                    launchOptions:[NSDictionary new]];
 
                     [[theValue([MobileEngage.inbox isKindOfClass:[MEInboxV2 class]]) should] beYes];
                 });

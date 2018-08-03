@@ -10,9 +10,9 @@
 @class MEConfig;
 @protocol MobileEngageStatusDelegate;
 
-typedef void(^MESourceHandler)(NSString *source);
-
 NS_ASSUME_NONNULL_BEGIN
+
+typedef void(^MESourceHandler)(NSString *source);
 
 @interface MobileEngage : NSObject
 

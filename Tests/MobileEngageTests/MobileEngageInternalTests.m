@@ -58,7 +58,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             requestContext = [[MERequestContext alloc] initWithConfig:config];
             [_mobileEngage setupWithConfig:config
-                             launchOptions:nil
+                             launchOptions:[NSDictionary new]
                   requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                    requestContext:[MERequestContext mock]]
                              logRepository:nil
@@ -88,7 +88,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             requestContext = [[MERequestContext alloc] initWithConfig:config];
             [_mobileEngage setupWithRequestManager:requestManager
                                             config:config
-                                     launchOptions:nil
+                                     launchOptions:[NSDictionary new]
                                     requestContext:requestContext];
             return requestManager;
         };
@@ -210,7 +210,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     }];
                     MobileEngageInternal *internal = [MobileEngageInternal new];
                     [internal setupWithConfig:config
-                                launchOptions:nil
+                                launchOptions:[NSDictionary new]
                      requestRepositoryFactory:nil
                                 logRepository:nil
                                requestContext:requestContext];
@@ -231,7 +231,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
                                                       atIndex:0];
                 [internal setupWithConfig:config
-                            launchOptions:nil
+                            launchOptions:[NSDictionary new]
                  requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                   requestContext:requestContext]
                             logRepository:nil
@@ -250,7 +250,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
                                                       atIndex:0];
                 [internal setupWithConfig:config
-                            launchOptions:nil
+                            launchOptions:[NSDictionary new]
                  requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                   requestContext:requestContext]
                             logRepository:nil
@@ -269,7 +269,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
                                                       atIndex:0];
                 [internal setupWithConfig:config
-                            launchOptions:nil
+                            launchOptions:[NSDictionary new]
                  requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                   requestContext:requestContext]
                             logRepository:nil
@@ -288,7 +288,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
                                                       atIndex:0];
                 [internal setupWithConfig:config
-                            launchOptions:nil
+                            launchOptions:[NSDictionary new]
                  requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                   requestContext:requestContext]
                             logRepository:nil
@@ -399,7 +399,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 [internal setupWithConfig:config
-                            launchOptions:nil
+                            launchOptions:[NSDictionary new]
                  requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                   requestContext:requestContext]
                             logRepository:nil
@@ -498,7 +498,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage setupWithRequestManager:requestManager
                                                 config:config
-                                         launchOptions:nil
+                                         launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
                 [MEExperimental reset];
 
@@ -545,7 +545,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage setupWithRequestManager:requestManager
                                                 config:config
-                                         launchOptions:nil
+                                         launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
                 [MEExperimental reset];
 
@@ -601,7 +601,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage setupWithRequestManager:requestManager
                                                 config:config
-                                         launchOptions:nil
+                                         launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
                 [MEExperimental reset];
 
@@ -657,7 +657,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 [_mobileEngage setupWithRequestManager:requestManager
                                                 config:config
-                                         launchOptions:nil
+                                         launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
                 [MEExperimental reset];
 
@@ -691,7 +691,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 _mobileEngage = [MobileEngageInternal new];
                 [_mobileEngage setupWithRequestManager:requestManager
                                                 config:config
-                                         launchOptions:nil
+                                         launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
 
                 [_mobileEngage appLoginWithContactFieldId:@3
@@ -883,7 +883,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                     [_mobileEngage setupWithRequestManager:requestManager
                                                     config:config
-                                             launchOptions:nil
+                                             launchOptions:[NSDictionary new]
                                             requestContext:requestContext];
 
                     NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @{}}];
@@ -923,7 +923,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                     [_mobileEngage setupWithRequestManager:requestManager
                                                     config:config
-                                             launchOptions:nil
+                                             launchOptions:[NSDictionary new]
                                             requestContext:requestContext];
                 });
 
@@ -1373,7 +1373,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1519,7 +1519,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1557,7 +1557,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [userDefaults synchronize];
 
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1576,7 +1576,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                            applicationPassword:applicationPassword];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1604,7 +1604,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1642,7 +1642,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [userDefaults synchronize];
 
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1666,7 +1666,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                  forKey:kMEID_SIGNATURE];
                 [userDefaults synchronize];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1690,7 +1690,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setExperimentalFeatures:features];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil
@@ -1800,7 +1800,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
                 }];
                 [_mobileEngage setupWithConfig:config
-                                 launchOptions:nil
+                                 launchOptions:[NSDictionary new]
                       requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
                                                                                        requestContext:requestContext]
                                  logRepository:nil

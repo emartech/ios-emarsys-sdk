@@ -92,7 +92,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     MEUserNotificationDelegate *userNotification = [MEUserNotificationDelegate new];
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     __block UNNotificationPresentationOptions _option;
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                                      willPresentNotification:nil
                                        withCompletionHandler:^(UNNotificationPresentationOptions options) {
                                            _option = options;
@@ -128,7 +128,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 it(@"should call completion handler", ^{
                     MEUserNotificationDelegate *userNotification = [MEUserNotificationDelegate new];
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil didReceiveNotificationResponse:nil withCompletionHandler:^{
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock] didReceiveNotificationResponse:nil withCompletionHandler:^{
                         [exp fulfill];
                     }];
 
@@ -157,7 +157,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                         ]}};
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -184,7 +184,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                         ]}};
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -211,7 +211,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:) withArguments:eventName, payload];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -242,7 +242,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     [[mobileEngage shouldNot] receive:@selector(trackInternalCustomEvent:eventAttributes:) withArguments:eventName, payload];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -269,7 +269,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     }];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -302,7 +302,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     [[mockMEInternal should] receive:@selector(trackCustomEvent:eventAttributes:) withArguments:eventName, payload];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [userNotification userNotificationCenter:nil
+                    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                               didReceiveNotificationResponse:notificationResponseWithUserInfoWithActionId(userInfo, @"uniqueId2")
                                        withCompletionHandler:^{
                                            [exp fulfill];
@@ -347,7 +347,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                         ]}};
 
                         XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                        [userNotification userNotificationCenter:nil
+                        [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
                                   didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
                                            withCompletionHandler:^{
                                                [exp fulfill];

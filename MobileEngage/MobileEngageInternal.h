@@ -17,11 +17,12 @@
 @class MERequestModelRepositoryFactory;
 @class MELogRepository;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^MESuccessBlock)(NSString *requestId, EMSResponseModel *);
 typedef void (^MEErrorBlock)(NSString *requestId, NSError *error);
 typedef void (^MESourceHandler)(NSString *source);
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface MobileEngageInternal : NSObject <MEInAppTrackingProtocol>
 

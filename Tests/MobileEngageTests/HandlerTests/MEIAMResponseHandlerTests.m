@@ -117,7 +117,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                                            applicationPassword:@"pw"];
                 }];
 
-                [MobileEngage setupWithConfig:config launchOptions:nil];
+                [MobileEngage setupWithConfig:config launchOptions:[NSDictionary new]];
                 FakeDbHelper *dbHelper = [FakeDbHelper new];
                 [MobileEngage setDbHelper:dbHelper];
                 MobileEngage.inApp.timestampProvider = timestampProvider;

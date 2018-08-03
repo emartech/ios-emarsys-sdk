@@ -38,7 +38,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                 [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
             }];
             [MobileEngage setupWithConfig:config
-                            launchOptions:nil];
+                            launchOptions:[NSDictionary new]];
 
             FakeStatusDelegate *statusDelegate = [FakeStatusDelegate new];
 
