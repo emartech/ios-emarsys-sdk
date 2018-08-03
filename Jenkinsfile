@@ -1,64 +1,74 @@
+import groovy.transform.TupleConstructor
+
 @Library('general-pipeline') _
 
-def clone(udid) {
-    checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$udid/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
+def clone(device) {
+    checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$device.udid/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
 }
 
-def podi(udid) {
+def podi(device) {
     lock("pod") {
         sh "pod repo update"
-        sh "cd $udid/ios-emarsys-sdk && pod install --verbose"
+        sh "cd $device.udid/ios-emarsys-sdk && pod install --verbose"
     }
 }
 
-def podiLinti(udid) {
-    lock(udid) {
-        sh "cd $udid/ios-emarsys-sdk && pod lib lint --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+def build(device) {
+    lock(device.udid) {
+        def uuid = UUID.randomUUID().toString()
+        sh "mkdir /tmp/$uuid"
+        sh "cd $device.udid/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme EmarsysSDK -configuration debug -derivedDataPath $uuid"
     }
 }
 
-def buildAndTest(platform, udid) {
-    lock(udid) {
+def test(device, scheme) {
+	lock(device.udid) {
         def uuid = UUID.randomUUID().toString()
         try {
-            sh "mkdir /tmp/$uuid"
             retry(3) {
-                sh "cd $udid/ios-emarsys-sdk && scan --scheme Tests -d 'platform=$platform,id=$udid' --derived_data_path $uuid -o test_output/unit/"
+                sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ "
             }
         } catch (e) {
             currentBuild.result = 'FAILURE'
             throw e
         } finally {
-            junit "$udid/ios-emarsys-sdk/test_output/unit/*.junit"
-            archiveArtifacts "$udid/ios-emarsys-sdk/test_output/unit/*"
+            junit "$device.udid/ios-emarsys-sdk/test_output/unit/*.junit"
+            archiveArtifacts "$device.udid/ios-emarsys-sdk/test_output/unit/*"
         }
     }
 }
 
+def testCore(device) {
+    test(device, 'CoreTests')
+}
+
+def testMobileEngage(device) {
+    test(device, 'MobileEngageTests')
+}
+
+@TupleConstructor()
+class Device {
+	def udid
+	def platform
+}
+
 def doParallel(Closure action) {
-    println '2'
     def devices = [
-        [iPhone_5S: env.IPHONE_5S],
-        [iPhone_6S: env.IPHONE_6S],
-        [iPad_Pro: env.IPAD_PRO],
-        [iOS_9_3_Simulator: env.IOS93SIMULATOR]
+        [iPhone_5S: new Device(env.IPHONE_5S, 'iOS')],
+        [iPhone_6S: new Device(env.IPHONE_6S, 'iOS')],
+        [iPad_Pro: new Device(env.IPAD_PRO, 'iOS')],
+        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')]
     ]
-    println '3'
     def parallelActions = [:]
-    println '4'
     for (device in devices) {
         device.each { key, value ->
             parallelActions[key] = {
-                println '7'
                 action(value)
             }
         }
-        println '6'
     }
     parallelActions['failFast'] = false
-    println '8'
     parallel parallelActions
-    println '9'
 }
 
 node('master') {
@@ -67,27 +77,23 @@ node('master') {
             deleteDir()
         }
         stage('Git Clone') {
-            println '1'
             doParallel(this.&clone)
         }
         stage('Pod install') {
             sh 'eval $(ssh-agent) && ssh-add ~/.ssh/ios-pod-private-repo'
             doParallel(this.&podi)
         }
-        stage('Pod lint') {
-            doParallel(this.&podiLinti)
+        stage('Build') {
+            doParallel(this.&build)
         }
-        stage('Build and Test') {
-            parallel iPhone_5S: {
-                buildAndTest 'iOS', env.IPHONE_5S
-            }, iPhone_6S: {
-                // echo "Skipped, please trust mac mini when you can open the rack."
-                buildAndTest 'iOS', env.IPHONE_6S
-            }, iPad_Pro: {
-                buildAndTest 'iOS', env.IPAD_PRO
-            }, iOS_9_3_Simulator: {
-                buildAndTest 'iOS Simulator', env.IOS93SIMULATOR
-            }, failFast: false
+        stage('Pod lint') {
+        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+        }
+        stage('Test Core') {
+        	doParallel(this.&testCore)
+        }
+        stage('Test MobileEngage') {
+        	doParallel(this.&testMobileEngage)
         }
         stage('Deploy to private pod repo') {
             sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
