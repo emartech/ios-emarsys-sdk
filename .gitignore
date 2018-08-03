@@ -71,3 +71,4 @@ Pods/
 
 #Appcode workspace
 .idea/
+/test_output/
