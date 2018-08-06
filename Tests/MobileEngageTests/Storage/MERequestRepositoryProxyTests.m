@@ -121,7 +121,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             it(@"should throw an exception when there is no inApp", ^{
                 @try {
-                    MERequestRepositoryProxy *factory = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
+                    [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
                                                                                                    buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                   displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                                    inApp:nil
@@ -135,7 +135,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             it(@"should throw an exception when there is no requestModelRepository", ^{
                 @try {
-                    MERequestRepositoryProxy *factory = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:nil
+                    [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:nil
                                                                                                    buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                   displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                                    inApp:[MEInApp mock]
@@ -149,7 +149,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             it(@"should throw an exception when there is no clickRepository", ^{
                 @try {
-                    MERequestRepositoryProxy *factory = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
+                    [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
                                                                                                    buttonClickRepository:nil
                                                                                                   displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                                    inApp:[MEInApp mock]
