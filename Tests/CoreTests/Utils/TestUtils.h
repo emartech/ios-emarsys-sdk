@@ -10,5 +10,5 @@
 
 @interface TestUtils : NSObject
 
-+ (void)assertForException:(void (^)())exceptionBlock reason:(NSString *)reasonString;
++ (void)assertForException:(void (^)(void))exceptionBlock reason:(NSString *)reasonString;
 @end

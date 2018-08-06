@@ -20,7 +20,7 @@ SPEC_BEGIN(MobileEngageTests)
            [MEExperimental reset];
         });
 
-        id (^mobileEngageInternal)() = ^id() {
+        id (^mobileEngageInternal)(void) = ^id() {
             id mobileEngageInternalMock = [MobileEngageInternal mock];
 
             [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:)];

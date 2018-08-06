@@ -112,7 +112,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     id userNotificationCenterDelegate = [KWMock mockForProtocol:@protocol(UNUserNotificationCenterDelegate)];
                     UNUserNotificationCenter *center = [UNUserNotificationCenter nullMock];
                     UNNotificationResponse *notificationResponse = [UNNotificationResponse nullMock];
-                    void (^ const completionHandler)()=^{
+                    void (^ const completionHandler)(void)=^{
                     };
 
                     [[userNotificationCenterDelegate should] receive:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) withArguments:center, notificationResponse, completionHandler];

@@ -46,7 +46,7 @@ SPEC_BEGIN(MEInboxTests)
             return inbox;
         };
 
-        id (^inboxNotifications)() = ^id() {
+        id (^inboxNotifications)(void) = ^id() {
             MEInbox *inbox = [[MEInbox alloc] initWithRestClient:[EMSRESTClient mock]
                                                           config:config
                                                   requestContext:nil];
@@ -54,7 +54,7 @@ SPEC_BEGIN(MEInboxTests)
             return inbox;
         };
 
-        id (^expectedHeaders)() = ^id() {
+        id (^expectedHeaders)(void) = ^id() {
             NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:config];
             NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
             mutableHeaders[@"x-ems-me-hardware-id"] = [EMSDeviceInfo hardwareId];
@@ -491,7 +491,7 @@ SPEC_BEGIN(MEInboxTests)
 
         describe(@"inbox.trackMessageOpen", ^{
 
-            FakeStatusDelegate *(^createStatusDelegate)() = ^FakeStatusDelegate *() {
+            FakeStatusDelegate *(^createStatusDelegate)(void) = ^FakeStatusDelegate *() {
                 FakeStatusDelegate *statusDelegate = [FakeStatusDelegate new];
                 statusDelegate.printErrors = YES;
                 return statusDelegate;

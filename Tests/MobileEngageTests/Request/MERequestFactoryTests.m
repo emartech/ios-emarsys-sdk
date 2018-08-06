@@ -209,7 +209,7 @@ SPEC_BEGIN(MERequestFactoryTests)
 
         describe(@"createTrackMessageOpenRequestWithNotification:requestContext:", ^{
 
-            typedef MENotification *(^NotificationBlock)();
+            typedef MENotification *(^NotificationBlock)(void);
 
             NotificationBlock notificationBlock = ^MENotification * {
                 MENotification *notification = [MENotification new];

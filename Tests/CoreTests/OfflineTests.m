@@ -38,7 +38,7 @@ SPEC_BEGIN(OfflineTests)
                                                    requestRepository:repository];
         };
 
-        NSOperationQueue *(^testQueue)() = ^NSOperationQueue * {
+        NSOperationQueue *(^testQueue)(void) = ^NSOperationQueue * {
             NSOperationQueue *queue = [NSOperationQueue new];
             queue.maxConcurrentOperationCount = 1;
             queue.qualityOfService = NSQualityOfServiceUtility;

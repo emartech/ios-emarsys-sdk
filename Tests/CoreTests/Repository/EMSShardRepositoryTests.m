@@ -43,7 +43,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                                                  ttl:42.42];
         };
 
-        EMSShard *(^createShard)() = ^EMSShard *() {
+        EMSShard *(^createShard)(void) = ^EMSShard *() {
             return createShardWithType(@"shardType");
         };
 

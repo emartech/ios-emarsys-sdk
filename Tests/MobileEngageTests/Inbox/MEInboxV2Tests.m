@@ -56,7 +56,7 @@ SPEC_BEGIN(MEInboxV2Tests)
             return inbox;
         };
 
-        id (^expectedHeaders)() = ^id() {
+        id (^expectedHeaders)(void) = ^id() {
             NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:config];
             NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
             mutableHeaders[@"x-ems-me-application-code"] = config.applicationCode;

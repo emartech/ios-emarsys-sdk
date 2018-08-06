@@ -66,7 +66,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
         });
 
-        id (^requestManagerMock)() = ^id() {
+        id (^requestManagerMock)(void) = ^id() {
             NSString *applicationCode = kAppId;
             NSString *applicationPassword = @"appSecret";
             NSDictionary *additionalHeaders = @{
