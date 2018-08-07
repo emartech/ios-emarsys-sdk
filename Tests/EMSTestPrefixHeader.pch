@@ -1,0 +1,12 @@
+//  Copyright © 2018. Emarsys. All rights reserved.
+//
+
+#ifndef EMSPrefixHeader_pch
+#define EMSPrefixHeader_pch
+
+#define IGNORE_NONNULL_BEGIN \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wnonnull\"")
+#define IGNORE_NONNULL_END _Pragma("clang diagnostic pop")
+
+#endif /* EMSPrefixHeader_pch */
