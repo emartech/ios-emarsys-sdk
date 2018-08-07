@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIamWindow:(UIWindow *)window;
 
 - (void)showMessage:(MEInAppMessage *)message
-  completionHandler:(MECompletionHandler)completionHandler;
+  completionHandler:(MECompletionHandler _Nullable)completionHandler;
 
 NS_ASSUME_NONNULL_END
 

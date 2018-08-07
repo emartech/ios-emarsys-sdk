@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                         logRepository:(id <EMSLogRepositoryProtocol>)logRepository
+                         logRepository:(id <EMSLogRepositoryProtocol> _Nullable)logRepository
                           successBlock:(CoreSuccessBlock)successBlock
                             errorBlock:(CoreErrorBlock)errorBlock;
 @end

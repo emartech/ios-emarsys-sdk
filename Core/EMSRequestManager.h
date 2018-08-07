@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)managerWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
                              errorBlock:(nullable CoreErrorBlock)errorBlock
                       requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                          logRepository:(id <EMSLogRepositoryProtocol>)logRepository;
+                          logRepository:(id <EMSLogRepositoryProtocol> _Nullable)logRepository;
 
 - (void)submit:(EMSRequestModel *)model;
 
