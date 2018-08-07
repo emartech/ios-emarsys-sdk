@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
 	spec.summary              = 'Mobile Engage iOS SDK'
 	spec.platform             = :ios, '9.0'
-	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
+	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
 	     'MobileEngage/**/*.{h,m}',
 	     'Core/**/*.{h,m}'
