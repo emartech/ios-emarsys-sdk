@@ -47,7 +47,7 @@
     sqlite3_stmt *statement;
     int result = sqlite3_prepare_v2(_db, [@"PRAGMA user_version;" UTF8String], -1, &statement, nil);
     if (result == SQLITE_OK) {
-        int version = -2;
+        int version = 0;
         int step = sqlite3_step(statement);
         if (step == SQLITE_ROW) {
             version = sqlite3_column_int(statement, 0);
