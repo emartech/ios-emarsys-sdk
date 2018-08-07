@@ -41,10 +41,11 @@ SPEC_BEGIN(IntegrationTests)
             [MobileEngage setStatusDelegate:statusDelegate];
 
             NSString *eventId = [MobileEngage appLogin];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
         it(@"should return with eventId, and finish with success for appLogin", ^{
@@ -59,10 +60,11 @@ SPEC_BEGIN(IntegrationTests)
 
             NSString *eventId = [MobileEngage appLoginWithContactFieldId:@3
                                                        contactFieldValue:@"test@test.com"];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
         it(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
@@ -77,9 +79,11 @@ SPEC_BEGIN(IntegrationTests)
 
             NSString *eventId = [MobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}];
 
+            [statusDelegate waitForNextSuccess];
+
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
@@ -97,10 +101,11 @@ SPEC_BEGIN(IntegrationTests)
 
             NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
                                                eventAttributes:nil];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@2];
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
@@ -122,10 +127,11 @@ SPEC_BEGIN(IntegrationTests)
                                                        @"drink": @"palinka",
                                                        @"food": @"pizza"
                                                }];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@2];
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
@@ -142,10 +148,11 @@ SPEC_BEGIN(IntegrationTests)
 
             NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
                                                eventAttributes:nil];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
@@ -166,10 +173,11 @@ SPEC_BEGIN(IntegrationTests)
                                                        @"drink": @"palinka",
                                                        @"food": @"pizza"
                                                }];
+            [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
         it(@"should return with eventId, and finish with success for appLogout", ^{
@@ -184,9 +192,11 @@ SPEC_BEGIN(IntegrationTests)
 
             NSString *eventId = [MobileEngage appLogout];
 
+            [statusDelegate waitForNextSuccess];
+
             [[eventId shouldNot] beNil];
-            [[expectFutureValue(@(statusDelegate.errorCount)) shouldEventually] equal:@0];
-            [[expectFutureValue(@(statusDelegate.successCount)) shouldEventually] equal:@1];
+            [[@(statusDelegate.errorCount) should] equal:@0];
+            [[@(statusDelegate.successCount) should] equal:@1];
         });
     });
 
