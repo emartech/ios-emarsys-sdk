@@ -1,3 +1,5 @@
+import groovy.transform.TupleConstructor
+
 @Library('general-pipeline') _
 
 def printBuildToolVersions(){
@@ -33,7 +35,7 @@ def podi(device) {
 }
 
 def testSampleUI(device) {
-    _test(device, 'Emarsys SampleUITests')
+    _test(device, 'Emarsys\\ SampleUITests')
 }
 
 def _test(device, scheme) {
