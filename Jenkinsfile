@@ -2,6 +2,13 @@ import groovy.transform.TupleConstructor
 
 @Library('general-pipeline') _
 
+def printBuildToolVersions(){
+	def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
+	echo "CocoaPod version: $podVersion"
+    sh "echo `xcodebuild -version`"
+    echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
+}
+
 def clone(device) {
     checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$device.udid/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
 }
@@ -16,8 +23,8 @@ def podi(device) {
 def build(device) {
     lock(device.udid) {
         def uuid = UUID.randomUUID().toString()
-        sh "mkdir /tmp/$uuid"
         sh "cd $device.udid/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme EmarsysSDK -configuration debug -derivedDataPath $uuid"
+        sh "rm -rf $device.udid/ios-emarsys-sdk/$uuid"
     }
 }
 
@@ -26,12 +33,13 @@ def test(device, scheme) {
         def uuid = UUID.randomUUID().toString()
         try {
             retry(3) {
-                sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ "
+                sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
             }
         } catch (e) {
             currentBuild.result = 'FAILURE'
             throw e
         } finally {
+        	sh "rm -rf $device.udid/ios-emarsys-sdk/$uuid"
             junit "$device.udid/ios-emarsys-sdk/test_output/unit/*.junit"
             archiveArtifacts "$device.udid/ios-emarsys-sdk/test_output/unit/*"
         }
@@ -73,8 +81,9 @@ def doParallel(Closure action) {
 
 node('master') {
     withSlack channel: 'jenkins', {
-        stage('Start') {
+        stage('Init') {
             deleteDir()
+            printBuildToolVersions()
         }
         stage('Git Clone') {
             doParallel(this.&clone)
@@ -97,6 +106,9 @@ node('master') {
         }
         stage('Deploy to private pod repo') {
             sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
+        }
+        stage('Deploy NotificationService to private pod repo') {
+            sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-NSRelease.sh ${env.BUILD_NUMBER}.0.0"
         }
         stage('Finish') {
             echo "That is just pure awesome!"

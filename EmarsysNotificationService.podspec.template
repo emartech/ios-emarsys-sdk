@@ -1,0 +1,15 @@
+Pod::Spec.new do |spec|
+	spec.name                 = 'EmarsysNotificationService'
+	spec.version              = '<VERSION_NUMBER>'
+	spec.homepage             = 'https://help.emarsys.com/hc/en-us/articles/115002410625'
+	spec.license              = 'Mozilla Public License 2.0'
+    spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
+	spec.summary              = 'Emarsys NotificationService'
+	spec.platform             = :ios, '9.0'
+	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', <COMMIT_REF> }
+	spec.source_files         = 'MobileEngage/RichNotificationExtension/**/*.{h,m}'
+	spec.public_header_files  = [
+        'MobileEngage/RichNotificationExtension/MENotificationService.h'
+	]
+	spec.libraries = 'z', 'c++'
+end
