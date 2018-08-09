@@ -682,6 +682,7 @@
 		32C6FFB6D9583CE992D47DEB /* MENotificationService+PushToInApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MENotificationService+PushToInApp.h"; sourceTree = "<group>"; };
 		32C6FFB8EEB608FFD147A5F5 /* EMSShardQueryAllSpecification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSShardQueryAllSpecification.h; sourceTree = "<group>"; };
 		32C6FFC3D4299F03D765C3A8 /* MEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEConfig.h; sourceTree = "<group>"; };
+		32C6FFE40B7734BA2DABF652 /* Jenkinsfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Jenkinsfile; path = "Emarsys Sample/Jenkinsfile"; sourceTree = "<group>"; };
 		32C6FFE46EF60F1D1A93B8EA /* NSData+MobileEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MobileEngine.m"; sourceTree = "<group>"; };
 		32C6FFE6D39053168DFCD5ED /* EMSModelMapperProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSModelMapperProtocol.h; sourceTree = "<group>"; };
 		32C6FFE6FB7194B0162340B5 /* EMSReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSReachability.h; sourceTree = "<group>"; };
@@ -866,6 +867,7 @@
 			children = (
 				FABA8A031C0C953133043E10 /* Pods-Tests.debug.xcconfig */,
 				1CD9C358A1E433F41B69A689 /* Pods-Tests.release.xcconfig */,
+				32C6FFE40B7734BA2DABF652 /* Jenkinsfile */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
