@@ -6,7 +6,6 @@
 #import "MENotificationService+Actions.h"
 #import "MENotificationService+PushToInApp.h"
 #import "MENotificationService+Attachment.h"
-#import "MEDownloader.h"
 
 typedef void(^ContentHandler)(UNNotificationContent *contentToDeliver);
 

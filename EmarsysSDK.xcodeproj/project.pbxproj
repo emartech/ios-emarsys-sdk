@@ -629,7 +629,7 @@
 		32C6FB14FB4A6541BF316131 /* EMSRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestManager.m; sourceTree = "<group>"; };
 		32C6FB2A54BC6177E5F09C4C /* MobileEngageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileEngageInternal.h; sourceTree = "<group>"; };
 		32C6FB41E86494A1EA73A269 /* MEInApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEInApp.m; sourceTree = "<group>"; };
-		32C6FB6ABC5937B793BDE506 /* EmarsysNotificationService.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.podspec; path = EmarsysNotificationService.podspec; sourceTree = "<group>"; };
+		32C6FB6ABC5937B793BDE506 /* EmarsysNotificationService.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.podspec; path = EmarsysNotificationService.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		32C6FB95D36E9CF6BFE92911 /* EMSCoreCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreCompletion.h; sourceTree = "<group>"; };
 		32C6FB9A9DC769C88BE3D0C5 /* MEButtonClickRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEButtonClickRepository.h; sourceTree = "<group>"; };
 		32C6FBA47372BFA4A53F018F /* MEButtonClick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEButtonClick.m; sourceTree = "<group>"; };
