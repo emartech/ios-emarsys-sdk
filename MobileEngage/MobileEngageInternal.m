@@ -36,6 +36,7 @@
 - (void) setupWithConfig:(nonnull MEConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
+         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
            logRepository:(MELogRepository *)logRepository
           requestContext:(MERequestContext *)requestContext {
     NSParameterAssert(requestRepositoryFactory);
@@ -63,6 +64,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:self.successBlock
                                                                  errorBlock:self.errorBlock
                                                           requestRepository:requestRepository
+                                                            shardRepository:shardRepository
                                                               logRepository:logRepository];
     [self setupWithRequestManager:manager
                            config:config
@@ -86,9 +88,9 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     }
     if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
         [responseHandlers addObjectsFromArray:@[
-            [MEIAMResponseHandler new],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                          displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
+                [MEIAMResponseHandler new],
+                [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
+                                                              displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
         ];
     }
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
@@ -147,8 +149,8 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
     [self.requestManager submit:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
                                                                       eventAttributes:@{
-                                                                          @"message_id": campaignId,
-                                                                          @"button_id": buttonId
+                                                                              @"message_id": campaignId,
+                                                                              @"button_id": buttonId
                                                                       }
                                                                                  type:@"internal"
                                                                        requestContext:self.requestContext]];

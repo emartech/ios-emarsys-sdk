@@ -23,7 +23,7 @@ SPEC_BEGIN(MobileEngageTests)
         id (^mobileEngageInternal)(void) = ^id() {
             id mobileEngageInternalMock = [MobileEngageInternal mock];
 
-            [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:)];
+            [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
             [[mobileEngageInternalMock should] receive:@selector(setNotificationCenterManager:) withArguments:kw_any()];
 
             NSString *applicationCode = kAppId;
@@ -66,7 +66,7 @@ SPEC_BEGIN(MobileEngageTests)
 
             it(@"should create MENotificationCenterManager instance", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal mock];
-                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:)];
+                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
                 [[mobileEngageInternalMock should] receive:@selector(setNotificationCenterManager:) withArguments:kw_any()];
                 KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setNotificationCenterManager:) atIndex:0];
 
@@ -92,8 +92,8 @@ SPEC_BEGIN(MobileEngageTests)
 
             it(@"should call internal's setup with non-null logRepository", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal nullMock];
-                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:)];
-                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:) atIndex:3];
+                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
+                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:) atIndex:4];
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
@@ -112,8 +112,8 @@ SPEC_BEGIN(MobileEngageTests)
 
             it(@"should set logRepository on MEInApp instance", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal nullMock];
-                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:)];
-                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:logRepository:requestContext:) atIndex:3];
+                [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
+                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:) atIndex:4];
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";

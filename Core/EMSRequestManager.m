@@ -27,6 +27,7 @@ typedef void (^RunnerBlock)(void);
 + (instancetype)managerWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
                              errorBlock:(nullable CoreErrorBlock)errorBlock
                       requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+                        shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
                           logRepository:(id <EMSLogRepositoryProtocol>)logRepository {
     return [[EMSRequestManager alloc] initWithSuccessBlock:successBlock
                                                 errorBlock:errorBlock

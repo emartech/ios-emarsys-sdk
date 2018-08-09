@@ -9,6 +9,7 @@
 #import "EMSSqliteQueueSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSRequestModelRepository.h"
+#import "EMSShardRepository.h"
 #import "FakeLogRepository.h"
 #import "EMSReachability.h"
 #import "EMSTimestampProvider.h"
@@ -21,7 +22,7 @@
 SPEC_BEGIN(EMSRequestManagerTests)
 
         __block EMSSQLiteHelper *helper;
-        __block EMSRequestModelRepository *repository;
+        __block EMSRequestModelRepository *requestModelRepository;
 
 
         describe(@"EMSRequestManager", ^{
@@ -31,7 +32,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                         schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
-                repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
             });
 
             afterEach(^{
@@ -50,11 +51,13 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 __block NSString *checkableRequestId;
 
                 EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    checkableRequestId = requestId;
-                }                                                         errorBlock:^(NSString *requestId, NSError *error) {
-                    NSLog(@"ERROR: %@", error);
-                    fail([NSString stringWithFormat:@"errorBlock: %@", error]);
-                }                                                  requestRepository:repository logRepository:nil];
+                            checkableRequestId = requestId;
+                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                            NSLog(@"ERROR: %@", error);
+                            fail([NSString stringWithFormat:@"errorBlock: %@", error]);
+                        }                                          requestRepository:requestModelRepository
+                                                                     shardRepository:[EMSShardRepository new]
+                                                                       logRepository:nil];
 
                 [core submit:model];
 
@@ -73,11 +76,13 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 __block NSError *checkableError;
 
                 EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    fail([NSString stringWithFormat:@"SuccessBlock: %@", response]);
-                }                                                         errorBlock:^(NSString *requestId, NSError *error) {
-                    checkableRequestId = requestId;
-                    checkableError = error;
-                }                                                  requestRepository:repository logRepository:nil];
+                            fail([NSString stringWithFormat:@"SuccessBlock: %@", response]);
+                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                            checkableRequestId = requestId;
+                            checkableError = error;
+                        }                                          requestRepository:requestModelRepository
+                                                                     shardRepository:[EMSShardRepository new]
+                                                                       logRepository:nil];
                 [core submit:model];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
@@ -87,9 +92,11 @@ SPEC_BEGIN(EMSRequestManagerTests)
             it(@"should throw an exception, when model is nil", ^{
                 EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
 
-                }                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
 
-                }                                                  requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]] logRepository:nil];
+                        }                                          requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
+                                                                     shardRepository:[EMSShardRepository new]
+                                                                       logRepository:nil];
 
                 @try {
                     [core submit:nil];
@@ -113,27 +120,27 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                            schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
                 EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper];
                 EMSRequestManager *requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        successCount++;
-                        if (successCount + errorCount >= 100) {
-                            [exp fulfill];
-                        }
+                            successCount++;
+                            if (successCount + errorCount >= 100) {
+                                [exp fulfill];
+                            }
 
-                        if (successCount == 30) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                EMSReachability *reachabilityOfflineMock = [EMSReachability nullMock];
-                                [[reachabilityOfflineMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(NotReachable) withCountAtLeast:0];
-                                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityOfflineMock];
-                            });
-                        }
+                            if (successCount == 30) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    EMSReachability *reachabilityOfflineMock = [EMSReachability nullMock];
+                                    [[reachabilityOfflineMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(NotReachable) withCountAtLeast:0];
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityOfflineMock];
+                                });
+                            }
 
-                        if (successCount == 70) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];
-                                [[reachabilityOnlineMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi) withCountAtLeast:0];
-                                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityOnlineMock];
-                            });
+                            if (successCount == 70) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];
+                                    [[reachabilityOnlineMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi) withCountAtLeast:0];
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityOnlineMock];
+                                });
+                            }
                         }
-                    }
                                                                                     errorBlock:^(NSString *requestId, NSError *error) {
                                                                                         errorCount++;
                                                                                         if (successCount + errorCount >= 100) {
@@ -141,6 +148,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                                         }
                                                                                     }
                                                                              requestRepository:repository
+                                                                               shardRepository:[EMSShardRepository new]
                                                                                  logRepository:[FakeLogRepository new]];
 
 

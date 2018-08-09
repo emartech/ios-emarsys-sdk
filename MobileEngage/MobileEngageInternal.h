@@ -41,6 +41,7 @@ typedef void (^MESourceHandler)(NSString *source);
 - (void) setupWithConfig:(nonnull MEConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
+         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
            logRepository:(MELogRepository *)logRepository
           requestContext:(MERequestContext *)requestContext;
 

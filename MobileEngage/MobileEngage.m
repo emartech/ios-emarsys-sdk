@@ -14,6 +14,7 @@
 #import "MEExperimental.h"
 #import "MEInboxV2.h"
 #import "MEInbox.h"
+#import "EMSShardRepository.h"
 #import "MEUserNotificationDelegate.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
@@ -68,6 +69,7 @@ static EMSSQLiteHelper *_dbHelper;
                              launchOptions:launchOptions
                   requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:_iam
                                                                                    requestContext:requestContext]
+                           shardRepository:[[EMSShardRepository alloc] initWithDbHelper:_dbHelper]
                              logRepository:logRepository
                             requestContext:requestContext];
 
