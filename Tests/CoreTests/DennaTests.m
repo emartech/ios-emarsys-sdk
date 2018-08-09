@@ -46,7 +46,7 @@ SPEC_BEGIN(DennaTest)
                     }                                          requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
                                                                  shardRepository:[EMSShardRepository new]
                                                                    logRepository:nil];
-            [core submit:model];
+            [core submitRequestModel:model];
 
             [[expectFutureValue(resultMethod) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:method];
             [[theValue(expectedSubsetOfResultHeaders) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:theValue(YES)];
@@ -83,7 +83,7 @@ SPEC_BEGIN(DennaTest)
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
 
-                [core submit:model];
+                [core submitRequestModel:model];
                 [[expectFutureValue(checkableRequestId) shouldEventually] beNil];
             });
 

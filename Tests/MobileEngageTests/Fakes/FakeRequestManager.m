@@ -32,7 +32,7 @@
     return self;
 }
 
-- (void)submit:(EMSRequestModel *)model {
+- (void)submitRequestModel:(EMSRequestModel *)model {
     [_submittedModels addObject:model];
     [_expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForResult"]];
 

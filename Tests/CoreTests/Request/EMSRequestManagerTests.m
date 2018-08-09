@@ -59,7 +59,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
 
-                [core submit:model];
+                [core submitRequestModel:model];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
             });
@@ -83,7 +83,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                         }                                          requestRepository:requestModelRepository
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
-                [core submit:model];
+                [core submitRequestModel:model];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
                 [[checkableError shouldNotEventually] beNil];
@@ -99,7 +99,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                        logRepository:nil];
 
                 @try {
-                    [core submit:nil];
+                    [core submitRequestModel:nil];
                     fail(@"Expected exception when model is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -157,7 +157,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                         [builder setUrl:@"https://ems-denna.herokuapp.com/echo"];
                         [builder setMethod:HTTPMethodGET];
                     }                                       timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
-                    [requestManager submit:model];
+                    [requestManager submitRequestModel:model];
                 }
 
                 EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];

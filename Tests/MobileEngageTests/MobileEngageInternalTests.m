@@ -330,7 +330,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             });
 
             it(@"appLogin should save last anonymous AppLogin parameters", ^{
-                [[requestManagerMock() should] receive:@selector(submit:)];
+                [[requestManagerMock() should] receive:@selector(submitRequestModel:)];
                 [_mobileEngage appLogin];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] beNil];
@@ -338,7 +338,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             });
 
             it(@"appLogin should save last AppLogin parameters", ^{
-                [[requestManagerMock() should] receive:@selector(submit:)];
+                [[requestManagerMock() should] receive:@selector(submitRequestModel:)];
                 [_mobileEngage appLoginWithContactFieldId:@3 contactFieldValue:@"test@test.com"];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] equal:@3];
@@ -356,7 +356,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"anonymous appLogin", ^{
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
                 NSString *uuid = [_mobileEngage appLogin];
@@ -365,9 +365,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should return with requestModel's requestId", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 NSString *uuid = [_mobileEngage appLogin];
                 EMSRequestModel *actualModel = spy.argument;
@@ -389,9 +389,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage appLogin];
 
@@ -445,7 +445,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"appLoginWithContactFieldId:contactFieldValue:", ^{
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
                 NSString *uuid = [_mobileEngage appLoginWithContactFieldId:@3
@@ -455,9 +455,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should return with requestModel's requestId", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 NSString *uuid = [_mobileEngage appLoginWithContactFieldId:@3
                                                          contactFieldValue:@"test@test.com"];
@@ -482,9 +482,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage appLoginWithContactFieldId:@3
                                         contactFieldValue:@"test@test.com"];
@@ -713,7 +713,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"applogout", ^{
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
                 NSString *uuid = [_mobileEngage appLogout];
                 [[uuid shouldNot] beNil];
@@ -721,9 +721,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should return with requestModel's requestId", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 NSString *uuid = [_mobileEngage appLogout];
 
@@ -738,9 +738,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"hardware_id": [EMSDeviceInfo hardwareId],
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage appLogout];
 
@@ -757,9 +757,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"contact_field_value": @"test@test.com"
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
 
                 [_mobileEngage.requestContext setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:@3
@@ -772,7 +772,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should clear appLoginParameters", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)];
+                [[requestManager should] receive:@selector(submitRequestModel:)];
 
                 [_mobileEngage.requestContext setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:@3
                                                                                                      contactFieldValue:@"test@test.com"]];
@@ -782,7 +782,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should clear lastAppLoginPayload", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)];
+                [[requestManager should] receive:@selector(submitRequestModel:)];
 
                 [_mobileEngage.requestContext setLastAppLoginPayload:@{@"t": @"v"}];
                 [_mobileEngage appLogout];
@@ -800,7 +800,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 it(@"must not return with nil", ^{
                     id requestManager = requestManagerMock();
-                    [[requestManager should] receive:@selector(submit:)
+                    [[requestManager should] receive:@selector(submitRequestModel:)
                                        withArguments:kw_any(), kw_any(), kw_any()];
                     NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"123456789\"}"}];
                     [[uuid shouldNot] beNil];
@@ -808,9 +808,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 it(@"should return with requestModel's requestId", ^{
                     id requestManager = requestManagerMock();
-                    [[requestManager should] receive:@selector(submit:)
+                    [[requestManager should] receive:@selector(submitRequestModel:)
                                        withArguments:kw_any(), kw_any(), kw_any()];
-                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                                 atIndex:0];
                     NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"123456789\"}"}];
 
@@ -828,10 +828,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             @"sid": @"123456789"
                     });
 
-                    [[requestManager should] receive:@selector(submit:)
+                    [[requestManager should] receive:@selector(submitRequestModel:)
                                        withArguments:kw_any(), kw_any(), kw_any()];
 
-                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                                 atIndex:0];
                     [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"123456789\"}"}];
 
@@ -855,10 +855,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             @"sid": @"123456789"
                     });
 
-                    [[requestManager should] receive:@selector(submit:)
+                    [[requestManager should] receive:@selector(submitRequestModel:)
                                        withArguments:kw_any(), kw_any(), kw_any()];
 
-                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                                 atIndex:0];
                     [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"123456789\"}"}];
 
@@ -1024,10 +1024,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"source": @"inbox"
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 MENotification *message = [MENotification new];
                 message.sid = @"testID";
@@ -1055,10 +1055,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"source": @"inbox"
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 MENotification *message = [MENotification new];
                 message.sid = @"valueOfSid";
@@ -1078,10 +1078,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"source": @"inbox"
                 });
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 MENotification *message = [MENotification new];
                 message.sid = @"valueOfSid";
@@ -1094,10 +1094,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should return with the requestModel's requestID", ^{
                 id requestManager = requestManagerMock();
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 MENotification *message = [MENotification new];
                 message.sid = @"valueOfSid";
@@ -1111,7 +1111,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 id requestManager = requestManagerMock();
                 MENotification *message = [MENotification new];
                 message.sid = @"testID";
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
                 NSString *uuid = [_mobileEngage trackMessageOpenWithInboxMessage:message];
@@ -1123,7 +1123,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"trackCustomEvent:eventAttributes:", ^{
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
                 _mobileEngage.requestContext.meId = kMEID;
                 _mobileEngage.requestContext.meIdSignature = kMEID_SIGNATURE;
@@ -1134,9 +1134,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should return with requestModel's requestId", ^{
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 _mobileEngage.requestContext.meId = kMEID;
                 _mobileEngage.requestContext.meIdSignature = kMEID_SIGNATURE;
@@ -1188,10 +1188,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 EMSRequestModel *model = requestModelV3([NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events", kMEID], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
 
                 [_mobileEngage trackCustomEvent:eventName
@@ -1229,10 +1229,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 EMSRequestModel *model = requestModelV3([NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events", kMEID], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
 
                 [_mobileEngage trackCustomEvent:eventName
@@ -1258,10 +1258,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@", eventName], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage trackCustomEvent:eventName
                                 eventAttributes:eventAttributes];
@@ -1294,10 +1294,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
                                                                                  eventName], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage trackCustomEvent:eventName
                                 eventAttributes:eventAttributes];
@@ -1321,10 +1321,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
                                                                                  eventName], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage trackCustomEvent:eventName
                                 eventAttributes:nil];
@@ -1356,10 +1356,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
                                                                                  eventName], payload);
 
-                [[requestManager should] receive:@selector(submit:)
+                [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submit:)
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
                 [_mobileEngage trackCustomEvent:eventName
                                 eventAttributes:nil];
@@ -1416,8 +1416,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                                                            atIndex:0];
 
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCountAtLeast:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
                 MEHandlerBlock block = spy.argument;
                 block();
 
@@ -1433,8 +1433,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
 
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCountAtLeast:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
 
                 [_mobileEngage trackInAppDisplay:@"testCampaignId"];
 
@@ -1450,8 +1450,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
 
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCountAtLeast:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
 
                 [_mobileEngage trackInAppClick:@"testCampaignId" buttonId:@"123"];
 
@@ -1475,7 +1475,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                                                            atIndex:0];
 
                 id requestManager = requestManagerMock();
-                [[requestManager shouldNot] receive:@selector(submit:)];
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:)];
                 MEHandlerBlock block = spy.argument;
                 block();
             });
@@ -1500,8 +1500,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
 
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCountAtLeast:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
 
                 [_mobileEngage trackInternalCustomEvent:@"richNotification:clicked"
                                         eventAttributes:@{
@@ -1774,8 +1774,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [[userActivity should] receive:@selector(webpageURL)
                                      andReturn:[[NSURL alloc] initWithString:source]];
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCount:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCount:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
 
                 [_mobileEngage trackDeepLinkWith:userActivity
                                    sourceHandler:nil];
@@ -1794,8 +1794,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [[userActivity should] receive:@selector(webpageURL)
                                      andReturn:[[NSURL alloc] initWithString:source]];
                 id requestManager = requestManagerMock();
-                [[requestManager should] receive:@selector(submit:) withCount:1];
-                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submit:) atIndex:0];
+                [[requestManager should] receive:@selector(submitRequestModel:) withCount:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:) atIndex:0];
 
                 [_mobileEngage trackDeepLinkWith:userActivity
                                    sourceHandler:nil];

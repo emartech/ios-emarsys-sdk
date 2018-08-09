@@ -66,7 +66,7 @@ typedef void (^RunnerBlock)(void);
 
 #pragma mark - Public methods
 
-- (void)submit:(EMSRequestModel *)model {
+- (void)submitRequestModel:(EMSRequestModel *)model {
     NSParameterAssert(model);
     [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
                     message:[NSString stringWithFormat:@"Argument: %@", model]];

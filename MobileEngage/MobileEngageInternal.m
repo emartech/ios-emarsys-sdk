@@ -98,10 +98,10 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     __weak typeof(self) weakSelf = self;
     [_notificationCenterManager addHandlerBlock:^{
         if (self.requestContext.meId != nil) {
-            [weakSelf.requestManager submit:[MERequestFactory createCustomEventModelWithEventName:@"app:start"
-                                                                                  eventAttributes:nil
-                                                                                             type:@"internal"
-                                                                                   requestContext:weakSelf.requestContext]];
+            [weakSelf.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"app:start"
+                                                                                              eventAttributes:nil
+                                                                                                         type:@"internal"
+                                                                                               requestContext:weakSelf.requestContext]];
         }
     }                           forNotification:UIApplicationDidBecomeActiveNotification];
 }
@@ -119,8 +119,8 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
             if (sourceHandler) {
                 sourceHandler(webPageURL);
             }
-            [self.requestManager submit:[MERequestFactory createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
-                                                                                    requestContext:self.requestContext]];
+            [self.requestManager submitRequestModel:[MERequestFactory createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
+                                                                                                requestContext:self.requestContext]];
         }
     }
     return result;
@@ -140,20 +140,20 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 
 
 - (void)trackInAppDisplay:(NSString *)campaignId {
-    [self.requestManager submit:[MERequestFactory createCustomEventModelWithEventName:@"inapp:viewed"
-                                                                      eventAttributes:@{@"message_id": campaignId}
-                                                                                 type:@"internal"
-                                                                       requestContext:self.requestContext]];
+    [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:viewed"
+                                                                                  eventAttributes:@{@"message_id": campaignId}
+                                                                                             type:@"internal"
+                                                                                   requestContext:self.requestContext]];
 }
 
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
-    [self.requestManager submit:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
-                                                                      eventAttributes:@{
-                                                                              @"message_id": campaignId,
-                                                                              @"button_id": buttonId
-                                                                      }
-                                                                                 type:@"internal"
-                                                                       requestContext:self.requestContext]];
+    [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
+                                                                                  eventAttributes:@{
+                                                                                          @"message_id": campaignId,
+                                                                                          @"button_id": buttonId
+                                                                                  }
+                                                                                             type:@"internal"
+                                                                                   requestContext:self.requestContext]];
 }
 
 - (void)handleResponse:(EMSResponseModel *)model {
@@ -183,14 +183,14 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 
     EMSRequestModel *requestModel = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
                                                                                            requestContext:self.requestContext];
-    [self.requestManager submit:requestModel];
+    [self.requestManager submitRequestModel:requestModel];
     return requestModel.requestId;
 }
 
 
 - (NSString *)appLogout {
     EMSRequestModel *requestModel = [MERequestFactory createAppLogoutRequestWithRequestContext:self.requestContext];
-    [self.requestManager submit:requestModel];
+    [self.requestManager submitRequestModel:requestModel];
     [self.requestContext reset];
     return requestModel.requestId;
 }
@@ -200,7 +200,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
                                                                                   requestContext:self.requestContext];
     if (messageId) {
-        [self.requestManager submit:requestModel];
+        [self.requestManager submitRequestModel:requestModel];
     } else {
         self.errorBlock(requestModel.requestId, [NSError errorWithCode:1
                                                   localizedDescription:@"Missing messageId"]);
@@ -221,12 +221,12 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
             self.errorBlock(requestModel.requestId, [NSError errorWithCode:1
                                                       localizedDescription:@"Missing sid"]);
         } else {
-            [self.requestManager submit:requestModel];
+            [self.requestManager submitRequestModel:requestModel];
         }
     } else {
         requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxMessage
                                                                         requestContext:self.requestContext];
-        [self.requestManager submit:requestModel];
+        [self.requestManager submitRequestModel:requestModel];
     }
     return [requestModel requestId];
 }
@@ -238,7 +238,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
                                                                                  eventAttributes:eventAttributes
                                                                                   requestContext:self.requestContext];
-    [self.requestManager submit:requestModel];
+    [self.requestManager submitRequestModel:requestModel];
     return requestModel.requestId;
 }
 
@@ -249,7 +249,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
                                                                           eventAttributes:eventAttributes
                                                                                      type:@"internal"
                                                                            requestContext:self.requestContext];
-    [self.requestManager submit:requestModel];
+    [self.requestManager submitRequestModel:requestModel];
     return requestModel.requestId;
 }
 
