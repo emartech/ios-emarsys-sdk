@@ -10,6 +10,7 @@
 #import "EMSSchemaContract.h"
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
+#import "EMSShard.h"
 #import "FakeLogRepository.h"
 #import "EMSReachability.h"
 #import "EMSTimestampProvider.h"
@@ -20,12 +21,12 @@
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
 SPEC_BEGIN(EMSRequestManagerTests)
-
         __block EMSSQLiteHelper *helper;
         __block EMSRequestModelRepository *requestModelRepository;
 
-
         describe(@"EMSRequestManager", ^{
+            __block EMSRequestManager *requestManager;
+            __block EMSShardRepository *shardRepository;
 
             beforeEach(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
@@ -33,6 +34,15 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
                 requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+
+                shardRepository = [EMSShardRepository mock];
+                requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+
+                        }                                        errorBlock:^(NSString *requestId, NSError *error) {
+
+                        }                                 requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
+                                                            shardRepository:shardRepository
+                                                              logRepository:nil];
             });
 
             afterEach(^{
@@ -89,21 +99,30 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 [[checkableError shouldNotEventually] beNil];
             });
 
-            it(@"should throw an exception, when model is nil", ^{
-                EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-
-                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
-
-                        }                                          requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
-                                                                     shardRepository:[EMSShardRepository new]
-                                                                       logRepository:nil];
-
+            it(@"should throw an exception, when requestModel is nil", ^{
                 @try {
-                    [core submitRequestModel:nil];
-                    fail(@"Expected exception when model is nil");
+                    [requestManager submitRequestModel:nil];
+                    fail(@"Expected exception when requestModel is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
                 }
+            });
+
+            it(@"should throw an exception, when shardModel is nil", ^{
+                @try {
+                    [requestManager submitShardModel:nil];
+                    fail(@"Expected exception when shardModel is nil");
+                } @catch (NSException *exception) {
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should save shard via shardRepository", ^{
+                EMSShard *shard = [EMSShard mock];
+
+                [[shardRepository shouldEventually] receive:@selector(add:) withArguments:shard];
+
+                [requestManager submitShardModel:shard];
             });
 
         });

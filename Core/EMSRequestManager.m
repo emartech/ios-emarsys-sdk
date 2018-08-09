@@ -32,12 +32,14 @@ typedef void (^RunnerBlock)(void);
     return [[EMSRequestManager alloc] initWithSuccessBlock:successBlock
                                                 errorBlock:errorBlock
                                          requestRepository:requestRepository
+                                           shardRepository:shardRepository
                                              logRepository:logRepository];
 }
 
 - (instancetype)initWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
                           errorBlock:(nullable CoreErrorBlock)errorBlock
                    requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+                     shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
                        logRepository:(id <EMSLogRepositoryProtocol>)logRepository {
     if (self = [super init]) {
         _coreQueue = [NSOperationQueue new];
@@ -49,6 +51,7 @@ typedef void (^RunnerBlock)(void);
                                                       successBlock:successBlock
                                                         errorBlock:errorBlock];
         _repository = requestRepository;
+        _shardRepository = shardRepository;
     }
     return self;
 }
@@ -93,6 +96,16 @@ typedef void (^RunnerBlock)(void);
         }
         [weakSelf.repository add:requestModel];
         [weakSelf.worker run];
+    }];
+}
+
+- (void)submitShardModel:(EMSShard *)shardModel {
+    NSParameterAssert(shardModel);
+    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
+                    message:[NSString stringWithFormat:@"Argument: %@", shardModel]];
+
+    [self runInCoreQueueWithBlock:^{
+        [[self shardRepository] add:shardModel];
     }];
 }
 
