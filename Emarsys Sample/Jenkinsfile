@@ -29,30 +29,7 @@ def clone(device) {
 
 def podi(device) {
     lock("pod") {
-        sh "pod repo update"
         sh "cd $device.udid/ios-emarsys-sdk/Emarsys\\ Sample/ && pod install --verbose"
-    }
-}
-
-def testSampleUI(device) {
-    _test(device, 'Emarsys\\ SampleUITests')
-}
-
-def _test(device, scheme) {
-  lock(device.udid) {
-        def uuid = UUID.randomUUID().toString()
-        try {
-            retry(3) {
-                sh "cd $device.udid/ios-emarsys-sdk/Emarsys\\ Sample/ && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
-            }
-        } catch (e) {
-            currentBuild.result = 'FAILURE'
-            throw e
-        } finally {
-            sh "rm -rf $device.udid/ios-emarsys-sdk/Emarsys\\ Sample/$uuid"
-            junit "$device.udid/ios-emarsys-sdk/Emarsys\\ Sample/test_output/unit/*.junit"
-            archiveArtifacts "$device.udid/ios-emarsys-sdk/Emarsys\\ Sample/test_output/unit/*"
-        }
     }
 }
 
@@ -97,13 +74,10 @@ node('master') {
       stage('Pod install') {
           doParallel(this.&podi)
       }
-      stage('Test'){
-          doParallel(this.&testSampleUI)
-      }
       stage('Create Enterprise Distribution Package') {
         sh "mkdir artifacts"
         def udid = env.IPAD_PRO
-        sh "cd $udid/ios-emarsys-sdk/Emarsys\\ Sample/ && gym --scheme 'Emarsys Sample' --export_method enterprise -o ../../artifacts/ --verbose"
+        sh "cd $udid/ios-emarsys-sdk/Emarsys\\ Sample/ && gym --scheme Emarsys\\ Sample --export_method enterprise -o ../../../artifacts/ --verbose && ls -lah"
         archiveArtifacts "artifacts/*"
       }
       stage('Deploy IPA to Amazon S3') {
