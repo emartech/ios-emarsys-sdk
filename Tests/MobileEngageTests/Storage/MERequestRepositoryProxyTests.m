@@ -336,12 +336,12 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 [[result[2] should] beSimilarWithRequest:model2];
             });
 
-            it(@"should return NO if request repository is NOT empty", ^{
+            it(@"should return NO if request requestModelRepository is NOT empty", ^{
                 [[requestModelRepository should] receive:@selector(isEmpty) andReturn:theValue(NO)];
                 [[theValue([compositeRequestModelRepository isEmpty]) should] beNo];
             });
 
-            it(@"should return YES if request repository is empty", ^{
+            it(@"should return YES if request requestModelRepository is empty", ^{
                 [[requestModelRepository should] receive:@selector(isEmpty) andReturn:theValue(YES)];
                 [[theValue([compositeRequestModelRepository isEmpty]) should] beYes];
             });

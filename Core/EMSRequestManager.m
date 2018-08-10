@@ -50,7 +50,7 @@ typedef void (^RunnerBlock)(void);
                                                      logRepository:logRepository
                                                       successBlock:successBlock
                                                         errorBlock:errorBlock];
-        _repository = requestRepository;
+        _requestModelRepository = requestRepository;
         _shardRepository = shardRepository;
     }
     return self;
@@ -61,7 +61,7 @@ typedef void (^RunnerBlock)(void);
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository {
     if (self = [super init]) {
         _coreQueue = operationQueue;
-        _repository = repository;
+        _requestModelRepository = repository;
         _worker = worker;
     }
     return self;
@@ -94,7 +94,7 @@ typedef void (^RunnerBlock)(void);
                                                               headers:[NSDictionary dictionaryWithDictionary:headers]
                                                                extras:[NSDictionary dictionaryWithDictionary:model.extras]];
         }
-        [weakSelf.repository add:requestModel];
+        [weakSelf.requestModelRepository add:requestModel];
         [weakSelf.worker run];
     }];
 }

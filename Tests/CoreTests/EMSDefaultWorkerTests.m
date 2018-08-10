@@ -56,7 +56,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [[createWorker() shouldNot] beNil];
             });
 
-            itShouldThrowException(@"should throw exception, when repository is nil", ^{
+            itShouldThrowException(@"should throw exception, when requestModelRepository is nil", ^{
                 (void)[[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                requestRepository:nil
                                                    logRepository:[FakeLogRepository mock]
@@ -169,7 +169,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [worker run];
             });
 
-            it(@"should invoke peek on repository, when its running", ^{
+            it(@"should invoke peek on requestModelRepository, when its running", ^{
                 EMSRequestModelRepository *repositoryMock = [EMSRequestModelRepository mock];
                 EMSConnectionWatchdog *watchdogMock = [EMSConnectionWatchdog mock];
                 EMSRESTClient *restClient = [EMSRESTClient new];
@@ -351,7 +351,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:theValue(3)];
             });
 
-            it(@"should unlock if only expired models were in the repository", ^{
+            it(@"should unlock if only expired models were in the requestModelRepository", ^{
                 [repository add:requestModel(@"https://url1.com", nil, YES)];
                 [repository add:requestModel(@"https://url1.com", nil, YES)];
                 [repository add:requestModel(@"https://url1.com", nil, YES)];

@@ -241,7 +241,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             logRepository:nil
                            requestContext:requestContext];
                 EMSRequestManager *manager = spy.argument;
-                [[NSStringFromClass([manager.repository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
+                [[NSStringFromClass([manager.requestModelRepository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
             });
 
             it(@"should call setupWithRequestManager:config:launchOptions: with EMSRequestModelRepository when INAPP and INBOX is turned off", ^{
@@ -261,7 +261,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             logRepository:nil
                            requestContext:requestContext];
                 EMSRequestManager *manager = spy.argument;
-                [[NSStringFromClass([manager.repository class]) should] equal:NSStringFromClass([EMSRequestModelRepository class])];
+                [[NSStringFromClass([manager.requestModelRepository class]) should] equal:NSStringFromClass([EMSRequestModelRepository class])];
             });
 
             it(@"should call setupWithRequestManager:config:launchOptions: with MERequestRepositoryProxy when INBOX feature turned on", ^{
@@ -281,7 +281,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             logRepository:nil
                            requestContext:requestContext];
                 EMSRequestManager *manager = spy.argument;
-                [[NSStringFromClass([manager.repository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
+                [[NSStringFromClass([manager.requestModelRepository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
             });
 
             it(@"should call setupWithRequestManager:config:launchOptions: with MERequestRepositoryProxy when INAPP and INBOX feature turned on", ^{
@@ -301,7 +301,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             logRepository:nil
                            requestContext:requestContext];
                 EMSRequestManager *manager = spy.argument;
-                [[NSStringFromClass([manager.repository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
+                [[NSStringFromClass([manager.requestModelRepository class]) should] equal:NSStringFromClass([MERequestRepositoryProxy class])];
             });
 
         });

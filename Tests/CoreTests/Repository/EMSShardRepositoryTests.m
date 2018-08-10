@@ -64,7 +64,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                 }
             });
 
-            it(@"should insert the shard into the repository", ^{
+            it(@"should insert the shard into the requestModelRepository", ^{
                 EMSShard *expectedModel = createShard();
                 [repository add:expectedModel];
                 NSArray<EMSShard *> *result = [repository query:[EMSShardQueryAllSpecification new]];

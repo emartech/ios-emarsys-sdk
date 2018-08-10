@@ -69,7 +69,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             }
         });
 
-        it(@"should insert the requestModel to the repository", ^{
+        it(@"should insert the requestModel to the requestModelRepository", ^{
             EMSRequestModel *expectedModel = requestModel(@"https://url1.com", @{@"key1": @"value1"});
             [repository add:expectedModel];
             NSArray<EMSRequestModel *> *result = [repository query:[EMSRequestModelSelectFirstSpecification new]];

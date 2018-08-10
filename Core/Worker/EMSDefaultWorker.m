@@ -69,7 +69,7 @@
                     message:@"Entered run"];
     if (![self isLocked] && [self.connectionWatchdog isConnected] && ![self.repository isEmpty]) {
         [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
-                        message:@"Connection is OK and repository is not empty"];
+                        message:@"Connection is OK and requestModelRepository is not empty"];
         [self lock];
         EMSRequestModel *model = [self nextNonExpiredModel];
         [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic

@@ -26,7 +26,7 @@ SPEC_BEGIN(MEDisplayedIAMRepositoryTests)
         [helper close];
     });
 
-    describe(@"repository", ^{
+    describe(@"requestModelRepository", ^{
         it(@"should add the element to the database", ^{
             MEDisplayedIAM *displayedIAM = [[MEDisplayedIAM alloc] initWithCampaignId:@"12345678" timestamp:[NSDate date]];
 

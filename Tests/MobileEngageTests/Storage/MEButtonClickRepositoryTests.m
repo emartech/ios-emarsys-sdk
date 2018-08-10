@@ -27,7 +27,7 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
                                                    error:nil];
     });
 
-    describe(@"repository", ^{
+    describe(@"requestModelRepository", ^{
         it(@"should add the element to the database", ^{
             MEButtonClick *buttonClick = [[MEButtonClick alloc] initWithCampaignId:@"campaignId"
                                                                           buttonId:@"buttonId"

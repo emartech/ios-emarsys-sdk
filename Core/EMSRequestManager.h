@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSRequestManager : NSObject
 
-@property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> repository;
+@property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> requestModelRepository;
 @property(nonatomic, readonly) id <EMSShardRepositoryProtocol> shardRepository;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> *additionalHeaders;
 
