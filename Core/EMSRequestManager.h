@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
                           logRepository:(id <EMSLogRepositoryProtocol> _Nullable)logRepository;
 
 - (void)submitRequestModel:(EMSRequestModel *)model;
-- (void)submitShardModel:(EMSShard *)shardModel;
+- (void)submitShard:(EMSShard *)shard;
 
 @end
 

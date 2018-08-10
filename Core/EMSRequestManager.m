@@ -99,13 +99,13 @@ typedef void (^RunnerBlock)(void);
     }];
 }
 
-- (void)submitShardModel:(EMSShard *)shardModel {
-    NSParameterAssert(shardModel);
+- (void)submitShard:(EMSShard *)shard {
+    NSParameterAssert(shard);
     [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Argument: %@", shardModel]];
+                    message:[NSString stringWithFormat:@"Argument: %@", shard]];
 
     [self runInCoreQueueWithBlock:^{
-        [[self shardRepository] add:shardModel];
+        [[self shardRepository] add:shard];
     }];
 }
 

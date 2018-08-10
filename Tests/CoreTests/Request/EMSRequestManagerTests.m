@@ -110,7 +110,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
             it(@"should throw an exception, when shardModel is nil", ^{
                 @try {
-                    [requestManager submitShardModel:nil];
+                    [requestManager submitShard:nil];
                     fail(@"Expected exception when shardModel is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -122,7 +122,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 [[shardRepository shouldEventually] receive:@selector(add:) withArguments:shard];
 
-                [requestManager submitShardModel:shard];
+                [requestManager submitShard:shard];
             });
 
         });
