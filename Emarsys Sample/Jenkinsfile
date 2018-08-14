@@ -1,79 +1,25 @@
-import groovy.transform.TupleConstructor
-
 @Library('general-pipeline') _
-
-def printBuildToolVersions(){
-  def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
-  echo "CocoaPod version: $podVersion"
-  sh "echo `xcodebuild -version`"
-  echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
-}
-
-def uninstall(device) {
-    lock(device.udid) {
-        if (device.platform.equals('iOS')) {
-            sh "${env.CFG_UTIL}cfgutil --ecid $device.ecid remove-app com.emarsys.Emarsys-Sample || true"
-        } else {
-            sh "xcrun simctl uninstall booted com.emarsys.Emarsys-Sample || true"
-        }
-    }
-}
-
-def clone(device) {
-    checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$device.udid/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
-}
-
-def podi(device) {
-    lock("pod") {
-        sh "cd $device.udid/ios-emarsys-sdk/Emarsys\\ Sample/ && pod install --verbose"
-    }
-}
-
-@TupleConstructor()
-class Device {
-  def udid
-  def platform
-  def ecid
-}
-
-def doParallel(Closure action) {
-    def devices = [
-        [iPhone_5S: new Device(env.IPHONE_5S, 'iOS', env.IPHONE_5S_ECID)],
-        [iPhone_6S: new Device(env.IPHONE_6S, 'iOS', env.IPHONE_6S_ECID)],
-        [iPad_Pro: new Device(env.IPAD_PRO, 'iOS', env.IPAD_PRO_ECID)],
-        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')]
-    ]
-    def parallelActions = [:]
-    for (device in devices) {
-        device.each { key, value ->
-            parallelActions[key] = {
-                action(value)
-            }
-        }
-    }
-    parallelActions['failFast'] = false
-    parallel parallelActions
-}
 
 node('master') {
   withSlack channel:'jenkins', {
       stage('Init') {
           deleteDir()
-          printBuildToolVersions()
-      }
-      stage('Remove previous') {
-          doParallel(this.&uninstall)
+          def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
+          echo "CocoaPod version: $podVersion"
+          sh "echo `xcodebuild -version`"
+          echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
       }
       stage('Git Clone') {
-          doParallel(this.&clone)
+          checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "ios-emarsys-sample"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
       }
       stage('Pod install') {
-          doParallel(this.&podi)
+        lock("pod") {
+            sh "cd ios-emarsys-sample/Emarsys\\ Sample/ && pod install --verbose"
+        }
       }
       stage('Build as Enterprise Distribution Package') {
         sh "mkdir artifacts"
-        def udid = env.IPAD_PRO
-        sh "cd $udid/ios-emarsys-sdk/Emarsys\\ Sample/ && gym --scheme Emarsys\\ Sample --export_method enterprise -o ../../../artifacts/ --verbose && ls -lah"
+        sh "cd ios-emarsys-sample/Emarsys\\ Sample/ && gym --scheme Emarsys\\ Sample --export_method enterprise -o ../../artifacts/ --verbose"
         archiveArtifacts "artifacts/*"
       }
       stage('Deploy IPA to Amazon S3') {
