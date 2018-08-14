@@ -368,8 +368,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
             it(@"should update from 0 to 1 by adding Request table to database", ^{
 
-                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[[[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                                                                         columnType:@"TEXT"],
+                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                       columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
                                                        columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
@@ -379,7 +380,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
                                                        columnType:@"BLOB"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"]];
+                                                       columnType:@"REAL"]
+                ];
 
                 sqlite3 *db;
                 sqlite3_open([TEST_DB_PATH UTF8String], &db);
@@ -399,8 +401,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             it(@"should update from 1 to 2 by adding expiry column to the schema", ^{
                 initializeDbWithVersion(1);
 
-                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[[[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                                                                         columnType:@"TEXT"],
+                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                       columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
                                                        columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
@@ -415,7 +418,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                                                        columnType:@"DOUBLE"
                                                      defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
                                                        primaryKey:false
-                                                          notNull:false]];
+                                                          notNull:false]
+                ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper
                                           oldVersion:1
@@ -431,8 +435,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             it(@"should update from 2 to 3 by adding Shard table to database", ^{
                 initializeDbWithVersion(2);
 
-                NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[[[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                                                                                columnType:@"TEXT"],
+                NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                       columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
                                                        columnType:@"TEXT"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
@@ -447,7 +452,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                                                        columnType:@"DOUBLE"
                                                      defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
                                                        primaryKey:false
-                                                          notNull:false]];
+                                                          notNull:false]
+                ];
 
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = @[
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
@@ -459,7 +465,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
                                                        columnType:@"REAL"],
                     [[EMSTestColumnInfo alloc] initWithColumnName:@"ttl"
-                                                       columnType:@"REAL"]];
+                                                       columnType:@"REAL"]
+                ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper
                                           oldVersion:2
