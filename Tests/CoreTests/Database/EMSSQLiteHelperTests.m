@@ -117,7 +117,7 @@
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
-SPEC_BEGIN(SQLiteHelperTests)
+SPEC_BEGIN(EMSSQLiteHelperTests)
 
         __block EMSSQLiteHelper *dbHelper;
         __block EMSSqliteQueueSchemaHandler *schemaHandler;
@@ -242,9 +242,9 @@ SPEC_BEGIN(SQLiteHelperTests)
 
         describe(@"getVersion", ^{
 
-            it(@"should return the default version", ^{
+            it(@"should return the latest version", ^{
                 [dbHelper open];
-                [[theValue([dbHelper version]) should] equal:@0];
+                [[theValue([dbHelper version]) should] equal:@3];
             });
 
             it(@"should assert when version called in case of the db is not opened", ^{
@@ -255,12 +255,6 @@ SPEC_BEGIN(SQLiteHelperTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
 
-            });
-
-            it(@"should return the version set", ^{
-                runCommandOnTestDB(@"PRAGMA user_version=42;");
-                [dbHelper open];
-                [[theValue([dbHelper version]) should] equal:@42];
             });
 
         });
@@ -344,7 +338,7 @@ SPEC_BEGIN(SQLiteHelperTests)
 
         describe(@"schemaHandler onCreate", ^{
 
-            it(@"should initialize the database with latest version", ^{
+            it(@"should initialize the database with version three", ^{
                 initializeDbWithVersion(3);
 
                 NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = tableSchemes(@"request");
@@ -361,10 +355,11 @@ SPEC_BEGIN(SQLiteHelperTests)
 
                 NSArray<EMSTestColumnInfo *> *currentRequestColumnInfos = tableSchemes(@"request");
                 NSArray<EMSTestColumnInfo *> *currentShardColumnInfos = tableSchemes(@"shard");
-                [dbHelper close];
 
                 isEqualArrays(expectedRequestColumnInfos, currentRequestColumnInfos);
                 isEqualArrays(expectedShardColumnInfos, currentShardColumnInfos);
+
+                [[theValue([dbHelper version]) should] equal:@3];
             });
 
         });
@@ -398,7 +393,7 @@ SPEC_BEGIN(SQLiteHelperTests)
 
                 isEqualArrays(expectedColumnInfos, currentRequestColumnInfos);
 
-
+                [[theValue([dbHelper version]) should] equal:@1];
             });
 
             it(@"should update from 1 to 2 by adding expiry column to the schema", ^{
@@ -430,7 +425,7 @@ SPEC_BEGIN(SQLiteHelperTests)
 
                 isEqualArrays(expectedColumnInfos, currentRequestColumnInfos);
 
-
+                [[theValue([dbHelper version]) should] equal:@2];
             });
 
             it(@"should update from 2 to 3 by adding Shard table to database", ^{
@@ -484,6 +479,8 @@ SPEC_BEGIN(SQLiteHelperTests)
                 [[theValue(indexedShardColumns.count) should] equal:theValue(2)];
                 [[indexedShardColumns should] contain:@"shard_id"];
                 [[indexedShardColumns should] contain:@"type"];
+
+                [[theValue([dbHelper version]) should] equal:@3];
             });
         });
 

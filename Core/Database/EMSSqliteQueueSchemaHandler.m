@@ -28,6 +28,7 @@
         for (NSString *sqlCommand in MIGRATION[(NSUInteger) i]) {
             [dbHelper executeCommand:sqlCommand];
         }
+        [dbHelper executeCommand:SCHEMA_UPGRADE_SET_VERSION(i + 1)];
     }
 }
 

@@ -37,4 +37,6 @@
 #define SCHEMA_UPGRADE_FROM_1_TO_2 @[[NSString stringWithFormat:@"ALTER TABLE request ADD COLUMN expiry DOUBLE DEFAULT %f", DEFAULT_REQUESTMODEL_EXPIRY ]]
 #define SCHEMA_UPGRADE_FROM_2_TO_3 @[@"CREATE TABLE IF NOT EXISTS shard (shard_id TEXT,type TEXT,data BLOB,timestamp REAL,ttl REAL);",@"CREATE INDEX shard_id_index ON shard (shard_id);",@"CREATE INDEX shard_type_index ON shard (type);"]
 
+#define SCHEMA_UPGRADE_SET_VERSION(version) [NSString stringWithFormat:@"PRAGMA user_version=%d;", version]
+
 #define MIGRATION @[SCHEMA_UPGRADE_FROM_0_TO_1,SCHEMA_UPGRADE_FROM_1_TO_2,SCHEMA_UPGRADE_FROM_2_TO_3]

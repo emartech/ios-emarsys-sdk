@@ -116,7 +116,7 @@
 		166B3F4B2119A840006CD35C /* NSDate+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B521075B270030E659 /* NSDate+EMSCoreTests.m */; };
 		166B3F4C2119A840006CD35C /* NSDictionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */; };
 		166B3F4D2119A840006CD35C /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
-		166B3F4E2119A840006CD35C /* SqliteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* SqliteHelperTests.m */; };
+		166B3F4E2119A840006CD35C /* EMSSQLiteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */; };
 		166B3F4F2119A840006CD35C /* IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BB21075B270030E659 /* IntegrationTests.m */; };
 		166B3F502119A840006CD35C /* InboxV2IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */; };
 		166B3F512119A840006CD35C /* MEInboxV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BE21075B270030E659 /* MEInboxV2Tests.m */; };
@@ -204,7 +204,7 @@
 		166B40332119A8E5006CD35C /* NSDate+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B521075B270030E659 /* NSDate+EMSCoreTests.m */; };
 		166B40342119A8E5006CD35C /* NSDictionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */; };
 		166B40352119A8E5006CD35C /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
-		166B40362119A8E5006CD35C /* SqliteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* SqliteHelperTests.m */; };
+		166B40362119A8E5006CD35C /* EMSSQLiteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */; };
 		166B40392119A91F006CD35C /* NSData+MobileEngageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */; };
 		166B403A2119A91F006CD35C /* IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BB21075B270030E659 /* IntegrationTests.m */; };
 		166B403B2119A91F006CD35C /* InboxV2IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */; };
@@ -648,7 +648,7 @@
 		32C6FCBBDDBE324696F6C2A0 /* EMSUUIDProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSUUIDProvider.m; sourceTree = "<group>"; };
 		32C6FCD1015597DEDF73A3DA /* EMSRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRequestManager.h; sourceTree = "<group>"; };
 		32C6FCEEC7817C393987293D /* EMSConnectionWatchdog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSConnectionWatchdog.m; sourceTree = "<group>"; };
-		32C6FCF0A5E8F8B314BA1036 /* SqliteHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SqliteHelperTests.m; sourceTree = "<group>"; };
+		32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSSQLiteHelperTests.m; sourceTree = "<group>"; };
 		32C6FD0E624E501C31B88FDA /* MERequestModelRepositoryFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MERequestModelRepositoryFactory.m; sourceTree = "<group>"; };
 		32C6FD114698750154B042F3 /* EMSLoggerSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLoggerSettings.m; sourceTree = "<group>"; };
 		32C6FD169CDA588BA802150F /* NSDictionary+EMSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+EMSCore.m"; sourceTree = "<group>"; };
@@ -1182,7 +1182,7 @@
 		32C6FAC9086886577E9A79B4 /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				32C6FCF0A5E8F8B314BA1036 /* SqliteHelperTests.m */,
+				32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */,
 				32C6F9B35971E5720FCAB213 /* EMSSQLiteHelper+Test.h */,
 			);
 			path = Database;
@@ -2157,7 +2157,7 @@
 				166B40332119A8E5006CD35C /* NSDate+EMSCoreTests.m in Sources */,
 				166B40342119A8E5006CD35C /* NSDictionary+EMSCoreTests.m in Sources */,
 				166B40352119A8E5006CD35C /* EMSShardTests.m in Sources */,
-				166B40362119A8E5006CD35C /* SqliteHelperTests.m in Sources */,
+				166B40362119A8E5006CD35C /* EMSSQLiteHelperTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2203,7 +2203,7 @@
 				166B3F4B2119A840006CD35C /* NSDate+EMSCoreTests.m in Sources */,
 				166B3F4C2119A840006CD35C /* NSDictionary+EMSCoreTests.m in Sources */,
 				166B3F4D2119A840006CD35C /* EMSShardTests.m in Sources */,
-				166B3F4E2119A840006CD35C /* SqliteHelperTests.m in Sources */,
+				166B3F4E2119A840006CD35C /* EMSSQLiteHelperTests.m in Sources */,
 				166B3F4F2119A840006CD35C /* IntegrationTests.m in Sources */,
 				166B3F502119A840006CD35C /* InboxV2IntegrationTests.m in Sources */,
 				166B3F512119A840006CD35C /* MEInboxV2Tests.m in Sources */,
