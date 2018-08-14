@@ -5,8 +5,8 @@ import groovy.transform.TupleConstructor
 def printBuildToolVersions(){
 	def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
 	echo "CocoaPod version: $podVersion"
-    sh "echo `xcodebuild -version`"
-    echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
+  sh "echo `xcodebuild -version`"
+  echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
 }
 
 def clone(device) {
@@ -32,16 +32,14 @@ def test(device, scheme) {
 	lock(device.udid) {
         def uuid = UUID.randomUUID().toString()
         try {
-            retry(3) {
-                sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
-            }
+            sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
         } catch (e) {
             currentBuild.result = 'FAILURE'
             throw e
         } finally {
         	sh "rm -rf $device.udid/ios-emarsys-sdk/$uuid"
-            junit "$device.udid/ios-emarsys-sdk/test_output/unit/*.junit"
-            archiveArtifacts "$device.udid/ios-emarsys-sdk/test_output/unit/*"
+          junit "$device.udid/ios-emarsys-sdk/test_output/unit/*.junit"
+          archiveArtifacts "$device.udid/ios-emarsys-sdk/test_output/unit/*"
         }
     }
 }
@@ -96,7 +94,7 @@ node('master') {
             doParallel(this.&build)
         }
         stage('Pod lint') {
-        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Test Core') {
         	doParallel(this.&testCore)
