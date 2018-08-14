@@ -5,22 +5,18 @@ import groovy.transform.TupleConstructor
 def printBuildToolVersions(){
   def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
   echo "CocoaPod version: $podVersion"
-    sh "echo `xcodebuild -version`"
-    echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
+  sh "echo `xcodebuild -version`"
+  echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
 }
 
 def uninstall(device) {
     lock(device.udid) {
         if (device.platform.equals('iOS')) {
-            _uninstallSample device.ecid
+            sh "${env.CFG_UTIL}cfgutil --ecid $device.ecid remove-app com.emarsys.Emarsys-Sample || true"
         } else {
             sh "xcrun simctl uninstall booted com.emarsys.Emarsys-Sample || true"
         }
     }
-}
-
-def _uninstallSample(ecid) {
-    sh "${env.CFG_UTIL}cfgutil --ecid $ecid remove-app com.emarsys.Emarsys-Sample || true"
 }
 
 def clone(device) {
@@ -74,7 +70,7 @@ node('master') {
       stage('Pod install') {
           doParallel(this.&podi)
       }
-      stage('Create Enterprise Distribution Package') {
+      stage('Build as Enterprise Distribution Package') {
         sh "mkdir artifacts"
         def udid = env.IPAD_PRO
         sh "cd $udid/ios-emarsys-sdk/Emarsys\\ Sample/ && gym --scheme Emarsys\\ Sample --export_method enterprise -o ../../../artifacts/ --verbose && ls -lah"
