@@ -38,6 +38,7 @@
         _db = db;
         _schemaHandler = schemaDelegate;
     }
+    EMSDBTriggerType.after
     return self;
 }
 
@@ -81,6 +82,13 @@
     _db = nil;
 }
 
+- (void)registerTriggerWithTableName:(NSString *)tableName
+                     withTriggerType:(id <EMSTriggerType>)triggerType
+                    withTriggerEvent:(id <EMSTriggerEvent>)triggerEvent
+                     forTriggerBlock:(EMSTriggerBlock)triggerBlock {
+}
+
+
 - (BOOL)executeCommand:(NSString *)command {
     sqlite3_stmt *statement;
     if (sqlite3_prepare_v2(_db, [command UTF8String], -1, &statement, nil) == SQLITE_OK) {
@@ -106,9 +114,11 @@
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
              mapper:(id <EMSModelMapperProtocol>)mapper {
-    return [self execute:insertSQL withBindBlock:^(sqlite3_stmt *statement) {
-        [mapper bindStatement:statement fromModel:model];
-    }];
+    return [self execute:insertSQL
+           withBindBlock:^(sqlite3_stmt *statement) {
+               [mapper bindStatement:statement
+                           fromModel:model];
+           }];
 }
 
 - (NSArray *)executeQuery:(NSString *)query

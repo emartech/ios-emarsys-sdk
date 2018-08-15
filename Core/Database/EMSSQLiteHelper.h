@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
+#import "EMSDBTrigger.h"
 
 typedef void(^BindBlock)(sqlite3_stmt *statement);
 
@@ -37,6 +38,15 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 - (void)close;
 
+- (void)registerTriggerWithTableName:(NSString *)tableName
+                     withTriggerType:(id <EMSTriggerType>)triggerType
+                    withTriggerEvent:(id <EMSTriggerEvent>)triggerEvent
+                     forTriggerBlock:(EMSTriggerBlock)triggerBlock;
+
+- (BOOL)insertModel:(id)model
+          withQuery:(NSString *)insertSQL
+             mapper:(id <EMSModelMapperProtocol>)mapper;
+
 - (BOOL)executeCommand:(NSString *)command;
 
 - (BOOL)execute:(NSString *)command
@@ -44,9 +54,5 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 - (NSArray *)executeQuery:(NSString *)query
                    mapper:(id <EMSModelMapperProtocol>)mapper;
-
-- (BOOL)insertModel:(id)model
-          withQuery:(NSString *)insertSQL
-             mapper:(id <EMSModelMapperProtocol>)mapper;
 
 @end
