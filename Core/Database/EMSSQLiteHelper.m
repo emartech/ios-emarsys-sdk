@@ -33,7 +33,7 @@
 }
 
 - (instancetype)initWithSqlite3Db:(sqlite3 *)db
-                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
+                   schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
     if (self = [super init]) {
         _db = db;
         _schemaHandler = schemaDelegate;
@@ -59,7 +59,6 @@
     };
 }
 
-
 - (void)open {
     if (sqlite3_open([self.dbPath UTF8String], &_db) == SQLITE_OK) {
 
@@ -69,7 +68,9 @@
         } else {
             int newVersion = [self.schemaHandler schemaVersion];
             if (version < newVersion) {
-                [self.schemaHandler onUpgradeWithDbHelper:self oldVersion:version newVersion:newVersion];
+                [self.schemaHandler onUpgradeWithDbHelper:self
+                                               oldVersion:version
+                                               newVersion:newVersion];
             }
         }
     }
@@ -79,7 +80,6 @@
     sqlite3_close(_db);
     _db = nil;
 }
-
 
 - (BOOL)executeCommand:(NSString *)command {
     sqlite3_stmt *statement;
@@ -101,18 +101,6 @@
         return value == SQLITE_ROW || value == SQLITE_DONE;
     }
     return NO;
-}
-
-- (BOOL)executeCommand:(NSString *)command withValue:(NSString *)value {
-    return [self execute:command withBindBlock:^(sqlite3_stmt *statement) {
-        sqlite3_bind_text(statement, 1, [value UTF8String], -1, SQLITE_TRANSIENT);
-    }];
-}
-
-- (BOOL)executeCommand:(NSString *)command withTimeIntervalValue:(NSTimeInterval)value {
-    return [self execute:command withBindBlock:^(sqlite3_stmt *statement) {
-        sqlite3_bind_double(statement, 1, value);
-    }];
 }
 
 - (BOOL)insertModel:(id)model
