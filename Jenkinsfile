@@ -94,7 +94,7 @@ node('master') {
             doParallel(this.&build)
         }
         stage('Pod lint') {
-        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint --sources=git@github.com:emartech/pod-private.git,master"
+        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysSDK.podspec --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Test Core') {
         	doParallel(this.&testCore)
