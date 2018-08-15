@@ -38,7 +38,6 @@
         _db = db;
         _schemaHandler = schemaDelegate;
     }
-    EMSDBTriggerType.after
     return self;
 }
 
