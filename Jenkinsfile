@@ -96,6 +96,9 @@ node('master') {
         stage('Pod lint') {
         	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysSDK.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
         }
+        stage('Pod lint NotificationService') {
+            sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+        }
         stage('Test Core') {
         	doParallel(this.&testCore)
         }
