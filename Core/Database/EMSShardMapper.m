@@ -5,6 +5,7 @@
 #import "EMSShardMapper.h"
 #import "NSDictionary+EMSCore.h"
 #import "EMSShard.h"
+#import "EMSSchemaContract.h"
 
 @interface EMSShardMapper ()
 
@@ -61,5 +62,15 @@
           atIndex:(int)index {
     return sqlite3_column_type(statement, index) != SQLITE_NULL;
 }
+
+- (NSString *)tableName {
+    return SHARD_TABLE_NAME;
+}
+
+
+- (NSUInteger)fieldCount {
+    return 5;
+}
+
 
 @end

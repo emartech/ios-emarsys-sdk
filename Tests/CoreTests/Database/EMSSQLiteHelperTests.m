@@ -12,6 +12,8 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSSQLiteHelper+Test.h"
+#import "EMSShard.h"
+#import "EMSShardMapper.h"
 
 @interface EMSTestColumnInfo : NSObject
 
@@ -315,13 +317,13 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
         });
 
-        describe(@"insertModel", ^{
+        describe(@"insertModel:withQuery:mapper:", ^{
             it(@"should insert the correct model in the database", ^{
                 EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSRequestModel *model = requestModel(@"https://www.google.com", @{
-                    @"key": @"value"
+                        @"key": @"value"
                 });
                 EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
 
@@ -335,6 +337,43 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 [[model should] equal:request];
             });
         });
+
+        describe(@"insertModel:mapper:", ^{
+            it(@"should insert the correct model in the database", ^{
+                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSRequestModel *model = requestModel(@"https://www.google.com", @{
+                        @"key": @"value"
+                });
+                EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
+
+                BOOL returnedValue = [dbHelper insertModel:model
+                                                    mapper:mapper];
+                NSArray *requests = [dbHelper executeQuery:SQL_REQUEST_SELECTFIRST
+                                                    mapper:mapper];
+                EMSRequestModel *request = [requests firstObject];
+                [[theValue(returnedValue) should] beTrue];
+                [[model should] equal:request];
+            });
+
+            it(@"should insert the correct model in the database", ^{
+                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                BOOL returnedValue = [dbHelper insertModel:model
+                                                    mapper:mapper];
+                NSArray *shards = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                  mapper:mapper];
+                EMSShard *expectedShard = [shards lastObject];
+                [[theValue(returnedValue) should] beTrue];
+                [[model should] equal:expectedShard];
+            });
+        });
+
 
         describe(@"schemaHandler onCreate", ^{
 
@@ -369,18 +408,18 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             it(@"should update from 0 to 1 by adding Request table to database", ^{
 
                 NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"]
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                           columnType:@"REAL"]
                 ];
 
                 sqlite3 *db;
@@ -402,23 +441,23 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 initializeDbWithVersion(1);
 
                 NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
-                                                       columnType:@"DOUBLE"
-                                                     defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
-                                                       primaryKey:false
-                                                          notNull:false]
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                           columnType:@"REAL"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
+                                                           columnType:@"DOUBLE"
+                                                         defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
+                                                           primaryKey:false
+                                                              notNull:false]
                 ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper
@@ -436,36 +475,36 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 initializeDbWithVersion(2);
 
                 NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
-                                                       columnType:@"DOUBLE"
-                                                     defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
-                                                       primaryKey:false
-                                                          notNull:false]
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                           columnType:@"REAL"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
+                                                           columnType:@"DOUBLE"
+                                                         defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
+                                                           primaryKey:false
+                                                              notNull:false]
                 ];
 
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = @[
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"type"
-                                                       columnType:@"TEXT"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"data"
-                                                       columnType:@"BLOB"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                       columnType:@"REAL"],
-                    [[EMSTestColumnInfo alloc] initWithColumnName:@"ttl"
-                                                       columnType:@"REAL"]
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"type"
+                                                           columnType:@"TEXT"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"data"
+                                                           columnType:@"BLOB"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                           columnType:@"REAL"],
+                        [[EMSTestColumnInfo alloc] initWithColumnName:@"ttl"
+                                                           columnType:@"REAL"]
                 ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper

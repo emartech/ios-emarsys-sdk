@@ -39,12 +39,15 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 - (void)close;
 
 - (void)registerTriggerWithTableName:(NSString *)tableName
-                     withTriggerType:(id <EMSTriggerType>)triggerType
-                    withTriggerEvent:(id <EMSTriggerEvent>)triggerEvent
+                     withTriggerType:(EMSDBTriggerType *)triggerType
+                    withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
                      forTriggerBlock:(EMSTriggerBlock)triggerBlock;
 
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
+             mapper:(id <EMSModelMapperProtocol>)mapper;
+
+- (BOOL)insertModel:(id)model
              mapper:(id <EMSModelMapperProtocol>)mapper;
 
 - (BOOL)executeCommand:(NSString *)command;

@@ -5,6 +5,7 @@
 #import "EMSRequestModelMapper.h"
 #import "EMSRequestModel.h"
 #import "NSDictionary+EMSCore.h"
+#import "EMSSchemaContract.h"
 
 @interface EMSRequestModelMapper ()
 
@@ -73,5 +74,15 @@
           atIndex:(int)index {
     return sqlite3_column_type(statement, index) != SQLITE_NULL;
 }
+
+- (NSString *)tableName {
+    return REQUEST_TABLE_NAME;
+}
+
+
+- (NSUInteger)fieldCount {
+    return 7;
+}
+
 
 @end

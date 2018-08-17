@@ -2,9 +2,11 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
+#import <KWEqualMatcher.h>
 #import "EMSSQLiteHelper.h"
 #import "EMSModelMapperProtocol.h"
 #import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSDBTriggerKey.h"
 
 #define DEFAULT_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -12,6 +14,7 @@
 
 @property(nonatomic, assign) sqlite3 *db;
 @property(nonatomic, strong) NSString *dbPath;
+@property(nonatomic, strong) NSMutableDictionary *triggers;
 
 @end
 
@@ -27,6 +30,7 @@
     if (self = [super init]) {
         _dbPath = path;
         _schemaHandler = schemaDelegate;
+        _triggers = [NSMutableDictionary new];
     }
 
     return self;
@@ -37,6 +41,7 @@
     if (self = [super init]) {
         _db = db;
         _schemaHandler = schemaDelegate;
+        _triggers = [NSMutableDictionary new];
     }
     return self;
 }
@@ -82,11 +87,21 @@
 }
 
 - (void)registerTriggerWithTableName:(NSString *)tableName
-                     withTriggerType:(id <EMSTriggerType>)triggerType
-                    withTriggerEvent:(id <EMSTriggerEvent>)triggerEvent
+                     withTriggerType:(EMSDBTriggerType *)triggerType
+                    withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
                      forTriggerBlock:(EMSTriggerBlock)triggerBlock {
-}
 
+    EMSDBTriggerKey *triggerKey = [[EMSDBTriggerKey alloc] initWithTableName:tableName
+                                                                   withEvent:triggerEvent
+                                                                    withType:triggerType];
+    NSMutableArray *actions = self.triggers[triggerKey];
+    if (actions == nil) {
+        actions = [NSMutableArray new];
+        self.triggers[triggerKey] = actions;
+    }
+
+    [actions addObject:[[EMSDBTriggerAction alloc] initWithTriggerActionBlock:triggerBlock]];
+}
 
 - (BOOL)executeCommand:(NSString *)command {
     sqlite3_stmt *statement;
@@ -120,6 +135,24 @@
            }];
 }
 
+- (BOOL)insertModel:(id)model
+             mapper:(id <EMSModelMapperProtocol>)mapper {
+    [self runTriggerWithTableName:[mapper tableName]
+                            event:[EMSDBTriggerEvent insertEvent]
+                             type:[EMSDBTriggerType beforeType]];
+
+    BOOL result = [self insertModel:model
+                          withQuery:[self createInsertSql:mapper]
+                             mapper:mapper];
+
+
+    [self runTriggerWithTableName:[mapper tableName]
+                            event:[EMSDBTriggerEvent insertEvent]
+                             type:[EMSDBTriggerType afterType]];
+
+    return result;
+}
+
 - (NSArray *)executeQuery:(NSString *)query
                    mapper:(id <EMSModelMapperProtocol>)mapper {
     NSMutableArray *models = [NSMutableArray new];
@@ -132,6 +165,32 @@
         return [NSArray arrayWithArray:models];
     }
     return nil;
+}
+
+- (NSString *)createInsertSql:(id <EMSModelMapperProtocol>)mapper {
+    NSMutableString *placeholderString = [NSMutableString new];
+    for (int i = 0; i < [mapper fieldCount]; ++i) {
+        [placeholderString appendString:@"?"];
+        if (i < [mapper fieldCount] - 1) {
+            [placeholderString appendString:@","];
+        }
+    }
+
+    NSString *sqlQuery = [NSString stringWithFormat:@"INSERT INTO %@ VALUES (%@)", [mapper tableName], placeholderString];
+    return sqlQuery;
+}
+
+- (void)runTriggerWithTableName:(NSString *)tableName
+                          event:(EMSDBTriggerEvent *)event
+                           type:(EMSDBTriggerType *)type {
+
+    EMSDBTriggerKey *key = [[EMSDBTriggerKey alloc] initWithTableName:tableName
+                                                            withEvent:event
+                                                             withType:type];
+    NSMutableArray *actions = self.triggers[key];
+    for (EMSDBTriggerAction *action in actions) {
+        [action run];
+    }
 }
 
 @end

@@ -11,4 +11,8 @@
 
 - (sqlite3_stmt *)bindStatement:(sqlite3_stmt *)statement fromModel:(id)model;
 
+- (NSString *)tableName;
+
+- (NSUInteger)fieldCount;
+
 @end

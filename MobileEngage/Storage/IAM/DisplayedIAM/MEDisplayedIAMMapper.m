@@ -4,6 +4,7 @@
 
 #import "MEDisplayedIAMMapper.h"
 #import "MEDisplayedIAM.h"
+#import "MEDisplayedIAMContract.h"
 
 @implementation MEDisplayedIAMMapper
 
@@ -18,5 +19,15 @@
     sqlite3_bind_double(statement, 2, [[model timestamp] timeIntervalSince1970]);
     return statement;
 }
+
+- (NSString *)tableName {
+    return TABLE_NAME_DISPLAYED_IAM;
+}
+
+
+- (NSUInteger)fieldCount {
+    return 2;
+}
+
 
 @end

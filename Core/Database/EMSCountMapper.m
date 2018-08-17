@@ -16,5 +16,13 @@
     return NULL;
 }
 
+- (NSString *)tableName {
+    return nil;
+}
+
+
+- (NSUInteger)fieldCount {
+    return 1;
+}
 
 @end

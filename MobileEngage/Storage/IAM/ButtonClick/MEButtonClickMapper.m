@@ -4,6 +4,7 @@
 
 #import "MEButtonClickMapper.h"
 #import "MEButtonClick.h"
+#import "MEButtonClickContract.h"
 
 @implementation MEButtonClickMapper
 
@@ -21,6 +22,15 @@
     sqlite3_bind_text(statement, 2, [[model buttonId] UTF8String], -1, SQLITE_TRANSIENT);
     sqlite3_bind_double(statement, 3, [[model timestamp] timeIntervalSince1970]);
     return statement;
+}
+
+- (NSString *)tableName {
+    return TABLE_NAME_BUTTON_CLICK;
+}
+
+
+- (NSUInteger)fieldCount {
+    return 3;
 }
 
 @end
