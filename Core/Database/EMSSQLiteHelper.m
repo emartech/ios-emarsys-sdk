@@ -125,6 +125,21 @@
     return NO;
 }
 
+- (BOOL)remove:(NSString *)fromTable :(NSString *)where :(NSArray<NSString *> *)whereArgs {
+    NSString *sqlCommand;
+    if (where == nil || [where isEqualToString:@""]) {
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@", fromTable];
+    } else {
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", fromTable, where];
+    }
+    return [self execute:sqlCommand
+           withBindBlock:^(sqlite3_stmt *statement) {
+               for (int i = 0; i < whereArgs.count; ++i) {
+                   sqlite3_bind_text(statement, i + 1, [whereArgs[(NSUInteger) i] UTF8String], -1, SQLITE_TRANSIENT);
+               }
+           }];
+}
+
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
              mapper:(id <EMSModelMapperProtocol>)mapper {

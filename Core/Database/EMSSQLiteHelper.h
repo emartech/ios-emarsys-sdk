@@ -43,6 +43,10 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
                     withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
                      forTriggerBlock:(EMSTriggerBlock)triggerBlock;
 
+- (BOOL)remove:(NSString *)fromTable
+         where:(NSString *)where
+     whereArgs:(NSArray<NSString *> *)whereArgs;
+
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
              mapper:(id <EMSModelMapperProtocol>)mapper;

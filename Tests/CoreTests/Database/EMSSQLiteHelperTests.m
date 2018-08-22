@@ -317,6 +317,59 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
         });
 
+        describe(@"remove:fromTable:where:whereArgs:", ^{
+            it(@"should remove every rows when called with no where", ^{
+                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper remove:[mapper tableName] where:nil whereArgs:nil];
+
+                NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
+                [[result should] beEmpty];
+            });
+
+            it(@"should remove every rows that matches to the where parameters", ^{
+                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper insertModel:model2 mapper:mapper];
+                [dbHelper remove:[mapper tableName] where:@"type=? AND ttl=?" whereArgs:@[@"type", @"200"]];
+
+                NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
+
+                [[result should] contain:model2];
+            });
+
+            it(@"should remove every rows that matches to the where parameters", ^{
+                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper insertModel:model2 mapper:mapper];
+                [dbHelper remove:[mapper tableName] where:@"type=? AND ttl=?" whereArgs:@[@"type", @"300"]];
+
+                NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
+
+                [[result should] contain:model2];
+                [[result should] contain:model];
+                [[theValue([result count]) should] equal:theValue(2)];
+            });
+        });
+
         describe(@"insertModel:withQuery:mapper:", ^{
             it(@"should insert the correct model in the database", ^{
                 EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
@@ -339,6 +392,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         });
 
         describe(@"insertModel:mapper:", ^{
+            
             it(@"should insert the correct model in the database", ^{
                 EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
@@ -373,7 +427,6 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 [[model should] equal:expectedShard];
             });
         });
-
 
         describe(@"schemaHandler onCreate", ^{
 
