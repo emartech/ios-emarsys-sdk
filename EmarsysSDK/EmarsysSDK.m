@@ -5,4 +5,11 @@
 #import "EmarsysSDK.h"
 
 @implementation EmarsysSDK
+
++ (void)setCustomerWithCustomerId:(NSString *)customerId
+                      resultBlock:(EMAResultBlock)resultBlock {
+    NSParameterAssert(customerId);
+}
+
+
 @end

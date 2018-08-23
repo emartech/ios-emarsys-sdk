@@ -28,6 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8A5C589D212EDED60014EB78"
+               BuildableName = "EmarsysSDKTests.xctest"
+               BlueprintName = "EmarsysSDKTests"
+               ReferencedContainer = "container:EmarsysSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8A5C58AB212EDF010014EB78"
+               BuildableName = "PredictTests.xctest"
+               BlueprintName = "PredictTests"
+               ReferencedContainer = "container:EmarsysSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
