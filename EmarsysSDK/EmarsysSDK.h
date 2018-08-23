@@ -2,14 +2,34 @@
 //  Copyright © 2018. Emarsys. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "EMAConfig.h"
+#import "EMAConstants.h"
+#import "EMAPushNotificationProtocol.h"
+#import "EMAInboxProtocol.h"
+#import "EMAInAppProtocol.h"
+#import "EMAPredictProtocol.h"
 
-//! Project version number for sdk.
-FOUNDATION_EXPORT double sdkVersionNumber;
+@interface EmarsysSDK : NSObject
 
-//! Project version string for sdk.
-FOUNDATION_EXPORT const unsigned char sdkVersionString[];
+@property(class, nonatomic, readonly) id<EMAPushNotificationProtocol> pushNotification;
+@property(class, nonatomic, readonly) id<EMAInboxProtocol> inbox;
+@property(class, nonatomic, readonly) id<EMAInAppProtocol> inApp;
+@property(class, nonatomic, readonly) id<EMAPredictProtocol> predict;
 
-// In this header, you should import all the public headers of your framework using statements like #import <sdk/PublicHeader.h>
++ (void)setupWithConfig:(EMAConfig *)config;
 
++ (void)setCustomerWithCustomerId:(NSString *)customerId
+                      resultBlock:(EMAResultBlock)resultBlock;
 
++ (void)clearCustomerWithResultBlock:(EMAResultBlock)resultBlock;
+
++ (void)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
+                        sourceHandler:(EMASourceHandler)sourceHandler
+                          resultBlock:(EMAResultBlock)resultBlock;
+
++ (void)trackCustomEventWithEventName:(NSString *)eventName
+                      eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+                          resultBlock:(EMAResultBlock)resultBlock;
+
+@end
