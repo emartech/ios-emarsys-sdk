@@ -2,7 +2,6 @@
 //  Copyright © 2018. Emarsys. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
 #import "Kiwi.h"
 #import "Predict.h"
 

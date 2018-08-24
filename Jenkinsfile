@@ -52,6 +52,14 @@ def testMobileEngage(device) {
     test(device, 'MobileEngageTests')
 }
 
+def testPredict(device) {
+    test(device, 'PredictTests')
+}
+
+def testEmarsysSDK(device) {
+    test(device, 'EmarsysSDKTests')
+}
+
 @TupleConstructor()
 class Device {
 	def udid
@@ -104,6 +112,12 @@ node('master') {
         }
         stage('Test MobileEngage') {
         	doParallel(this.&testMobileEngage)
+        }
+        stage('Test Predict') {
+        	doParallel(this.&testPredict)
+        }
+        stage('Test EmarsysSDK') {
+        	doParallel(this.&testEmarsysSDK)
         }
         stage('Deploy to private pod repo') {
             sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
