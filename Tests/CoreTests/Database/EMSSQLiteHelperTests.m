@@ -327,7 +327,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model mapper:mapper];
-                [dbHelper remove:[mapper tableName] where:nil whereArgs:nil];
+                [dbHelper removefromTable:[mapper tableName]
+                                    where:nil
+                                whereArgs:nil];
 
                 NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
                 [[result should] beEmpty];
@@ -343,7 +345,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model2 mapper:mapper];
-                [dbHelper remove:[mapper tableName] where:@"type=? AND ttl=?" whereArgs:@[@"type", @"200"]];
+                [dbHelper removefromTable:[mapper tableName]
+                                    where:@"type=? AND ttl=?"
+                                whereArgs:@[@"type", @"200"]];
 
                 NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
 
@@ -360,7 +364,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model2 mapper:mapper];
-                [dbHelper remove:[mapper tableName] where:@"type=? AND ttl=?" whereArgs:@[@"type", @"300"]];
+                [dbHelper removefromTable:[mapper tableName]
+                                    where:@"type=? AND ttl=?"
+                                whereArgs:@[@"type", @"300"]];
 
                 NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
 

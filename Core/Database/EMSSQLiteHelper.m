@@ -124,12 +124,14 @@
     return NO;
 }
 
-- (BOOL)remove:(NSString *)fromTable :(NSString *)where :(NSArray<NSString *> *)whereArgs {
+- (BOOL)removefromTable:(NSString *)tableName
+                  where:(NSString *)where
+              whereArgs:(NSArray<NSString *> *)whereArgs {
     NSString *sqlCommand;
     if (where == nil || [where isEqualToString:@""]) {
-        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@", fromTable];
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@", tableName];
     } else {
-        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", fromTable, where];
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, where];
     }
     return [self execute:sqlCommand
            withBindBlock:^(sqlite3_stmt *statement) {
@@ -190,7 +192,9 @@
         }
     }
 
-    NSString *sqlQuery = [NSString stringWithFormat:@"INSERT INTO %@ VALUES (%@)", [mapper tableName], placeholderString];
+    NSString *sqlQuery = [NSString stringWithFormat:@"INSERT INTO %@ VALUES (%@)",
+                                                    [mapper tableName],
+                                                    placeholderString];
     return sqlQuery;
 }
 
