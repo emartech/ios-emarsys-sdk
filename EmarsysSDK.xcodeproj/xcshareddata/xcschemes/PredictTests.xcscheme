@@ -39,6 +39,15 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8A5C58AB212EDF010014EB78"
+            BuildableName = "PredictTests.xctest"
+            BlueprintName = "PredictTests"
+            ReferencedContainer = "container:EmarsysSDK.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
