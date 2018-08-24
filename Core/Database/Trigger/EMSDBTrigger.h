@@ -39,7 +39,7 @@
 @end
 
 @interface EMSDBTriggerAction : NSObject
-typedef void(^EMSTriggerBlock)();
+typedef void(^EMSTriggerBlock)(void);
 @property (nonatomic, readonly) EMSTriggerBlock triggerBlock;
 
 - (instancetype)initWithTriggerActionBlock:(EMSTriggerBlock)triggerActionBlock;

@@ -2,7 +2,6 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import <KWEqualMatcher.h>
 #import "EMSSQLiteHelper.h"
 #import "EMSModelMapperProtocol.h"
 #import "EMSSqliteQueueSchemaHandler.h"
