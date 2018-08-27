@@ -27,7 +27,16 @@ SPEC_BEGIN(MEInAppTests)
                     }
                 };
 
-                FakeInAppHandler *inAppHandler = [FakeInAppHandler mock];
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+                __block NSString *returnedEventName;
+                __block NSDictionary<NSString *, NSObject *> *returnedPayload;
+
+                FakeInAppHandler *inAppHandler = [[FakeInAppHandler alloc] initWithHandlerBlock:^(NSString *eventName, NSDictionary<NSString *, NSObject *> *payload) {
+                    returnedEventName = eventName;
+                    returnedPayload = payload;
+                    [expectation fulfill];
+                }];
                 [iam setEventHandler:inAppHandler];
                 NSString *message = @"<!DOCTYPE html>\n"
                                     "<html lang=\"en\">\n"
@@ -41,9 +50,6 @@ SPEC_BEGIN(MEInAppTests)
                                     "  <body style=\"background: transparent;\">\n"
                                     "  </body>\n"
                                     "</html>";
-                [[inAppHandler shouldEventually] receive:@selector(handleEvent:payload:)
-                                           withArguments:expectedName, expectedPayload];
-
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": message}}
                                                                options:0
                                                                  error:nil];
@@ -52,8 +58,12 @@ SPEC_BEGIN(MEInAppTests)
                                                                                      body:body
                                                                              requestModel:[EMSRequestModel mock]
                                                                                 timestamp:[NSDate date]];
-                [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response] completionHandler:^{
-                }];
+                [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response] completionHandler:^{}];
+
+                [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+
+                [[returnedEventName should] equal:expectedName];
+                [[returnedPayload should] equal:expectedPayload];
             });
 
             it(@"should not try to display inapp in case if there is already one being displayed", ^{

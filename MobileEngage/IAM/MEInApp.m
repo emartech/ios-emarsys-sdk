@@ -40,7 +40,7 @@
             __weak typeof(self) weakSelf = self;
             [meiamViewController loadMessage:message.html
                            completionHandler:^{
-                               if (message.response) {
+                               if (message.response && weakSelf.timestampProvider) {
                                    NSDictionary *const loadingMetric = @{
                                        @"loading_time": [[weakSelf.timestampProvider provideTimestamp] numberValueInMillisFromDate:message.response.timestamp],
                                        @"id": message.campaignId};
@@ -88,7 +88,7 @@
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                           completion:^{
-                                                              if (weakSelf.currentCampaignId && weakSelf.onScreenShowTimestamp) {
+                                                              if (weakSelf.currentCampaignId && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
                                                                   NSDictionary *const onScreenMetrics = @{
                                                                       @"on_screen_time": [[weakSelf.timestampProvider provideTimestamp] numberValueInMillisFromDate:weakSelf.onScreenShowTimestamp],
                                                                       @"id": weakSelf.currentCampaignId};
