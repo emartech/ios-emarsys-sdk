@@ -68,10 +68,9 @@ class Device {
 
 def doParallel(Closure action) {
     def devices = [
-        [iPhone_5S: new Device(env.IPHONE_5S, 'iOS')],
-        [iPhone_6S: new Device(env.IPHONE_6S, 'iOS')],
         [iPad_Pro: new Device(env.IPAD_PRO, 'iOS')],
-        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')]
+        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')],
+        [iOS_10_3_1_Simulator: new Device(env.IOS1031SIMULATOR, 'iOS Simulator')]
     ]
     def parallelActions = [:]
     for (device in devices) {
