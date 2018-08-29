@@ -89,6 +89,7 @@ node('master') {
         stage('Init') {
             deleteDir()
             printBuildToolVersions()
+            sh 'killall Simulator'
         }
         stage('Git Clone') {
             doParallel(this.&clone)
