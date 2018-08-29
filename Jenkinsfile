@@ -60,6 +60,10 @@ def testEmarsysSDK(device) {
     test(device, 'EmarsysSDKTests')
 }
 
+def killSimulator() {
+	sh 'killall Simulator || true'
+}
+
 @TupleConstructor()
 class Device {
 	def udid
@@ -89,7 +93,6 @@ node('master') {
         stage('Init') {
             deleteDir()
             printBuildToolVersions()
-            sh 'killall Simulator || true'
         }
         stage('Git Clone') {
             doParallel(this.&clone)
@@ -108,15 +111,19 @@ node('master') {
             sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Test Core') {
+					killSimulator()
         	doParallel(this.&testCore)
         }
         stage('Test MobileEngage') {
+					killSimulator()
         	doParallel(this.&testMobileEngage)
         }
         stage('Test Predict') {
+					killSimulator()
         	doParallel(this.&testPredict)
         }
         stage('Test EmarsysSDK') {
+					killSimulator()
         	doParallel(this.&testEmarsysSDK)
         }
         stage('Deploy to private pod repo') {
