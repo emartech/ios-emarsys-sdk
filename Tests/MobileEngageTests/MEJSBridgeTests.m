@@ -32,7 +32,7 @@ MEJSBridge *_meJsBridge;
                                                                "</html>", commandName];
         XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:[NSString stringWithFormat:@"wait - %@", commandName]];
 
-        [[_meJsBridge shouldEventually] receive:@selector(userContentController:didReceiveScriptMessage:) withArguments:kw_any(), kw_any()];
+        [[_meJsBridge should] receive:@selector(userContentController:didReceiveScriptMessage:) withArguments:kw_any(), kw_any()];
         KWCaptureSpy *spy = [_meJsBridge captureArgument:@selector(userContentController:didReceiveScriptMessage:)
                                                  atIndex:1];
         MEIAMViewController *iamViewController = [[MEIAMViewController alloc] initWithJSBridge:_meJsBridge];
@@ -45,8 +45,8 @@ MEJSBridge *_meJsBridge;
                                timeout:30];
 
         WKScriptMessage *scriptMessage = spy.argument;
-        [[scriptMessage.name shouldEventually] equal:commandName];
-        [[scriptMessage.body shouldEventually] equal:@{@"success": @YES}];
+        [[scriptMessage.name should] equal:commandName];
+        [[scriptMessage.body should] equal:@{@"success": @YES}];
     });
 }
 

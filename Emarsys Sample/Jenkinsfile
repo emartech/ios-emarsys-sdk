@@ -8,6 +8,7 @@ node('master') {
           echo "CocoaPod version: $podVersion"
           sh "echo `xcodebuild -version`"
           echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
+          sh 'killall Simulator || true'
       }
       stage('Git Clone') {
           checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "ios-emarsys-sample"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]

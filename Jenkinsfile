@@ -60,6 +60,10 @@ def testEmarsysSDK(device) {
     test(device, 'EmarsysSDKTests')
 }
 
+def killSimulator() {
+	sh 'killall Simulator || true'
+}
+
 @TupleConstructor()
 class Device {
 	def udid
@@ -68,10 +72,9 @@ class Device {
 
 def doParallel(Closure action) {
     def devices = [
-        [iPhone_5S: new Device(env.IPHONE_5S, 'iOS')],
-        [iPhone_6S: new Device(env.IPHONE_6S, 'iOS')],
         [iPad_Pro: new Device(env.IPAD_PRO, 'iOS')],
-        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')]
+        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')],
+        [iOS_10_3_1_Simulator: new Device(env.IOS1031SIMULATOR, 'iOS Simulator')]
     ]
     def parallelActions = [:]
     for (device in devices) {
@@ -108,15 +111,19 @@ node('master') {
             sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Test Core') {
+					killSimulator()
         	doParallel(this.&testCore)
         }
         stage('Test MobileEngage') {
+					killSimulator()
         	doParallel(this.&testMobileEngage)
         }
         stage('Test Predict') {
+					killSimulator()
         	doParallel(this.&testPredict)
         }
         stage('Test EmarsysSDK') {
+					killSimulator()
         	doParallel(this.&testEmarsysSDK)
         }
         stage('Deploy to private pod repo') {
