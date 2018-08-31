@@ -2,6 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+#import "EMSTrigger.h"
 
 @interface EMSDBTriggerType : NSObject <NSCopying>
 
@@ -39,7 +40,6 @@
 @end
 
 @interface EMSDBTriggerAction : NSObject
-typedef void(^EMSTriggerBlock)(void);
 @property (nonatomic, readonly) EMSTriggerBlock triggerBlock;
 
 - (instancetype)initWithTriggerActionBlock:(EMSTriggerBlock)triggerActionBlock;
