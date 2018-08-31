@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8A5C589D212EDED60014EB78"
+               BlueprintIdentifier = "8AFCA42421393CF60052FEFA"
                BuildableName = "EmarsysSDKTests.xctest"
                BlueprintName = "EmarsysSDKTests"
                ReferencedContainer = "container:EmarsysSDK.xcodeproj">
@@ -32,13 +32,22 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8A5C589D212EDED60014EB78"
+               BlueprintIdentifier = "8AFCA42421393CF60052FEFA"
                BuildableName = "EmarsysSDKTests.xctest"
                BlueprintName = "EmarsysSDKTests"
                ReferencedContainer = "container:EmarsysSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8AFCA42421393CF60052FEFA"
+            BuildableName = "EmarsysSDKTests.xctest"
+            BlueprintName = "EmarsysSDKTests"
+            ReferencedContainer = "container:EmarsysSDK.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -55,7 +64,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8A5C589D212EDED60014EB78"
+            BlueprintIdentifier = "8AFCA42421393CF60052FEFA"
             BuildableName = "EmarsysSDKTests.xctest"
             BlueprintName = "EmarsysSDKTests"
             ReferencedContainer = "container:EmarsysSDK.xcodeproj">
@@ -70,6 +79,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8AFCA42421393CF60052FEFA"
+            BuildableName = "EmarsysSDKTests.xctest"
+            BlueprintName = "EmarsysSDKTests"
+            ReferencedContainer = "container:EmarsysSDK.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

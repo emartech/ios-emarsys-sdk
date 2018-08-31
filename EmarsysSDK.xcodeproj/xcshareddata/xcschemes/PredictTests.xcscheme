@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8A5C58AB212EDF010014EB78"
+               BlueprintIdentifier = "8AFCA3F921393CF30052FEFA"
                BuildableName = "PredictTests.xctest"
                BlueprintName = "PredictTests"
                ReferencedContainer = "container:EmarsysSDK.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8A5C58AB212EDF010014EB78"
+               BlueprintIdentifier = "8AFCA3F921393CF30052FEFA"
                BuildableName = "PredictTests.xctest"
                BlueprintName = "PredictTests"
                ReferencedContainer = "container:EmarsysSDK.xcodeproj">
