@@ -2,6 +2,12 @@ import groovy.transform.TupleConstructor
 
 @Library('general-pipeline') _
 
+@TupleConstructor()
+class Device {
+	def udid
+	def platform
+}
+
 def printBuildToolVersions(){
 	def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
 	echo "CocoaPod version: $podVersion"
@@ -9,83 +15,115 @@ def printBuildToolVersions(){
   echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
 }
 
-def clone(device) {
-    checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$device.udid/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
+def clone(key, device) {
+    checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "$key/ios-emarsys-sdk"]], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:emartech/ios-emarsys-sdk.git']]]
 }
 
-def podi(device) {
+def podi(key, device) {
     lock("pod") {
         sh "pod repo update"
-        sh "cd $device.udid/ios-emarsys-sdk && pod install --verbose"
+        sh "cd $key/ios-emarsys-sdk && pod install --verbose"
     }
 }
 
-def build(device) {
+def build(key, device) {
     lock(device.udid) {
         def uuid = UUID.randomUUID().toString()
-        sh "cd $device.udid/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme EmarsysSDK -configuration debug -derivedDataPath $uuid"
-        sh "rm -rf $device.udid/ios-emarsys-sdk/$uuid"
+        sh "cd $key/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme EmarsysSDK -configuration debug -derivedDataPath $uuid"
+        sh "rm -rf $key/ios-emarsys-sdk/$uuid"
     }
 }
 
-def test(device, scheme) {
+def test(key, device, scheme) {
 	lock(device.udid) {
-        def uuid = UUID.randomUUID().toString()
-        try {
-            sh "cd $device.udid/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
-        } catch (e) {
-            currentBuild.result = 'FAILURE'
-            throw e
-        } finally {
-        	sh "rm -rf $device.udid/ios-emarsys-sdk/$uuid"
-          junit "$device.udid/ios-emarsys-sdk/test_output/unit/*.junit"
-          archiveArtifacts "$device.udid/ios-emarsys-sdk/test_output/unit/*"
-        }
-    }
+			def action = {
+				def uuid = UUID.randomUUID().toString()
+				try {
+						sh "cd $key/ios-emarsys-sdk && scan --scheme $scheme -d 'platform=$device.platform,id=$device.udid' --derived_data_path $uuid -o test_output/unit/ --clean"
+				} catch (e) {
+						currentBuild.result = 'FAILURE'
+						throw e
+				} finally {
+					sh "rm -rf $key/ios-emarsys-sdk/$uuid"
+					junit "$key/ios-emarsys-sdk/test_output/unit/*.junit"
+					archiveArtifacts "$key/ios-emarsys-sdk/test_output/unit/*"
+				}
+			}
+
+			if(device.platform == 'iOS Simulator') {
+        lock('iOS Simulator') {
+					sh "xcrun simctl boot $device.udid"
+					sh "sleep 20"
+					action()
+				}
+    	} else {
+				action()
+			}
+		}
 }
 
-def testCore(device) {
-    test(device, 'CoreTests')
+def testCore(key, device) {
+    test(key, device, 'CoreTests')
 }
 
-def testMobileEngage(device) {
-    test(device, 'MobileEngageTests')
+def testMobileEngage(key, device) {
+    test(key, device, 'MobileEngageTests')
 }
 
-def testPredict(device) {
-    test(device, 'PredictTests')
+def testPredict(key, device) {
+    test(key, device, 'PredictTests')
 }
 
-def testEmarsysSDK(device) {
-    test(device, 'EmarsysSDKTests')
+def testEmarsysSDK(key, device) {
+    test(key, device, 'EmarsysSDKTests')
 }
 
-def killSimulator() {
-	sh 'killall Simulator || true'
+def createSimulator(deviceType, runtimeType) {
+	def name = UUID.randomUUID().toString()
+	return sh(returnStdout: true, script: "xcrun simctl create $name $deviceType $runtimeType").trim()
 }
 
-@TupleConstructor()
-class Device {
-	def udid
-	def platform
+def killSimulators(simulators){
+	for (simulator in simulators) {
+			simulator.each { key, device ->
+				sh "xcrun simctl shutdown $device.udid || true"
+				sh "xcrun simctl erase $device.udid"
+			}
+	}
 }
 
-def doParallel(Closure action) {
-    def devices = [
-        [iPad_Pro: new Device(env.IPAD_PRO, 'iOS')],
-        [iOS_9_3_Simulator: new Device(env.IOS93SIMULATOR, 'iOS Simulator')],
-        [iOS_10_3_1_Simulator: new Device(env.IOS1031SIMULATOR, 'iOS Simulator')]
-    ]
+def doParallel(devices, Closure action) {
     def parallelActions = [:]
     for (device in devices) {
         device.each { key, value ->
             parallelActions[key] = {
-                action(value)
+                action(key, value)
             }
         }
     }
     parallelActions['failFast'] = false
     parallel parallelActions
+}
+
+def runActionOnAllDevices(Closure action) {
+	def realDevices = getTestDevices()
+	def simulators = createTestSimulators()
+	def devices = realDevices + simulators
+	doParallel(devices, action)
+	killSimulators(simulators)
+}
+
+def getTestDevices() {
+	return [
+		[iPad_Pro: new Device(env.IPAD_PRO, 'iOS')]
+	]
+}
+
+def createTestSimulators() {
+	return [
+		[Simulator93: new Device(createSimulator('com.apple.CoreSimulator.SimDeviceType.iPhone-6s', 'com.apple.CoreSimulator.SimRuntime.iOS-9-3'), 'iOS Simulator')],
+		[Simulator103: new Device(createSimulator('com.apple.CoreSimulator.SimDeviceType.iPhone-6s', 'com.apple.CoreSimulator.SimRuntime.iOS-10-3'), 'iOS Simulator')]
+	]
 }
 
 node('master') {
@@ -95,42 +133,38 @@ node('master') {
             printBuildToolVersions()
         }
         stage('Git Clone') {
-            doParallel(this.&clone)
+					runActionOnAllDevices(this.&clone)
         }
         stage('Pod install') {
             sh 'eval $(ssh-agent) && ssh-add ~/.ssh/ios-pod-private-repo'
-            doParallel(this.&podi)
+            runActionOnAllDevices(this.&podi)
         }
         stage('Build') {
-            doParallel(this.&build)
+            runActionOnAllDevices(this.&build)
         }
         stage('Pod lint') {
-        	sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysSDK.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+        	sh "cd iPad_Pro/ios-emarsys-sdk && pod lib lint EmarsysSDK.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Pod lint NotificationService') {
-            sh "cd $env.IPAD_PRO/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
+            sh "cd iPad_Pro/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
         }
         stage('Test Core') {
-					killSimulator()
-        	doParallel(this.&testCore)
+        	runActionOnAllDevices(this.&testCore)
         }
         stage('Test MobileEngage') {
-					killSimulator()
-        	doParallel(this.&testMobileEngage)
+        	runActionOnAllDevices(this.&testMobileEngage)
         }
         stage('Test Predict') {
-					killSimulator()
-        	doParallel(this.&testPredict)
+        	runActionOnAllDevices(this.&testPredict)
         }
         stage('Test EmarsysSDK') {
-					killSimulator()
-        	doParallel(this.&testEmarsysSDK)
+        	runActionOnAllDevices(this.&testEmarsysSDK)
         }
         stage('Deploy to private pod repo') {
-            sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
+            sh "cd iPad_Pro/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
         }
         stage('Deploy NotificationService to private pod repo') {
-            sh "cd $env.IPAD_PRO/ios-emarsys-sdk && ./private-NSRelease.sh ${env.BUILD_NUMBER}.0.0"
+            sh "cd iPad_Pro/ios-emarsys-sdk && ./private-NSRelease.sh ${env.BUILD_NUMBER}.0.0"
         }
         stage('Finish') {
             echo "That is just pure awesome!"
