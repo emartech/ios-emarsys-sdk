@@ -4,5 +4,5 @@
 #import <Foundation/Foundation.h>
 
 
-@interface EMAConfig : NSObject
+@interface EMSConfig : NSObject
 @end

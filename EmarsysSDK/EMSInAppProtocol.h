@@ -4,7 +4,7 @@
 #import <Foundation/Foundation.h>
 #import "MEEventHandler.h"
 
-@protocol EMAInAppProtocol <NSObject>
+@protocol EMSInAppProtocol <NSObject>
 
 @property(nonatomic, weak) id <MEEventHandler> eventHandler;
 

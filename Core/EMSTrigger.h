@@ -1,1 +1,1 @@
-typedef void(^EMSTriggerBlock)();
+typedef void(^EMSTriggerBlock)(void);

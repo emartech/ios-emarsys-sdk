@@ -1,10 +1,10 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "EMAConstants.h"
+#import "EMSConfig.h"
 
 
-@implementation EMAConstants {
+@implementation EMSConfig {
 
 }
 @end

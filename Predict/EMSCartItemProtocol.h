@@ -3,7 +3,7 @@
 //
 #import <Foundation/Foundation.h>
 
-@protocol PRECartItemProtocol <NSObject>
+@protocol EMSCartItemProtocol <NSObject>
 
 - (NSString *)itemId;
 
