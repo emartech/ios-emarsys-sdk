@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Kiwi.h"
-#import "EmarsysSDK.h"
+#import "Emarsys.h"
 
 SPEC_BEGIN(EmarsysSDKTests)
 

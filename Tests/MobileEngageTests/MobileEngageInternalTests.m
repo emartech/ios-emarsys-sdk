@@ -1719,7 +1719,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             });
         });
 
-        describe(@"trackDeepLinkWith:sourceHandler:", ^{
+        describe(@"trackDeepLinkWithUserActivity:sourceHandler:", ^{
             it(@"should return true when the userActivity type is NSUserActivityTypeBrowsingWeb and webpageURL contains ems_dl query parameter when sourceHandler is exist", ^{
                 NSUserActivity *userActivity = [NSUserActivity mock];
                 [[userActivity should] receive:@selector(activityType)

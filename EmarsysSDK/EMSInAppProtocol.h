@@ -7,6 +7,9 @@
 @protocol EMAInAppProtocol <NSObject>
 
 @property(nonatomic, weak) id <MEEventHandler> eventHandler;
-@property(nonatomic, assign) BOOL paused;
+
+- (void)pause;
+- (void)resume;
+- (BOOL)isPaused;
 
 @end

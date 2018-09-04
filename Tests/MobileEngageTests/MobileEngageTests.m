@@ -147,7 +147,7 @@ SPEC_BEGIN(MobileEngageTests)
             });
         });
 
-        describe(@"trackDeepLinkWith:sourceHandler:", ^{
+        describe(@"trackDeepLinkWithUserActivity:sourceHandler:", ^{
             it(@"should call internal implementation's method", ^{
                 NSUserActivity *userActivity = [NSUserActivity mock];
                 MESourceHandler sourceHandler = ^(NSString *source) {
