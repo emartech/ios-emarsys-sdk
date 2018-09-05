@@ -2,7 +2,7 @@
 #import "EMSSchemaContract.h"
 #import "Kiwi.h"
 #import "MEInboxV2.h"
-#import "MEConfigBuilder.h"
+#import "EMSConfigBuilder.h"
 #import "FakeInboxNotificationRestClient.h"
 #import "MEDefaultHeaders.h"
 #import "EMSRequestModelMatcher.h"
@@ -23,7 +23,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         __block NSMutableArray *notifications;
         __block NSMutableArray<MENotification *> *fakeNotifications;
 
-        MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setCredentialsWithApplicationCode:applicationCode
                                    applicationPassword:applicationPassword];
         }];

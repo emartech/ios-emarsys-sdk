@@ -5,18 +5,20 @@
 #import <Foundation/Foundation.h>
 #import "MEFlipperFeatures.h"
 
-@class MEConfigBuilder;
+@class EMSConfig;
 
 NS_ASSUME_NONNULL_BEGIN
-@interface MEConfig : NSObject
+
+@interface EMSConfigBuilder : NSObject
 
 @property(nonatomic, readonly) NSString *applicationCode;
 @property(nonatomic, readonly) NSString *applicationPassword;
 @property(nonatomic, readonly) NSArray<MEFlipperFeature> *experimentalFeatures;
 
-typedef void(^MEConfigBuilderBlock)(MEConfigBuilder *builder);
+- (EMSConfigBuilder *)setCredentialsWithApplicationCode:(NSString *)applicationCode
+                                    applicationPassword:(NSString *)applicationPassword;
 
-+ (MEConfig *)makeWithBuilder:(MEConfigBuilderBlock)builderBlock;
+- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<MEFlipperFeature> *)features;
 
 @end
 

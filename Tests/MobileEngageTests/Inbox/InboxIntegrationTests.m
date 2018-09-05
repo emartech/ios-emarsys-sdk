@@ -1,7 +1,7 @@
 #import "Kiwi.h"
 #import "MobileEngage.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "MENotificationInboxStatus.h"
 #import "EMSWaiter.h"
 
@@ -13,7 +13,7 @@ SPEC_BEGIN(InboxIntegrationTests)
         [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
                                                    error:nil];
 
-        MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
         }];

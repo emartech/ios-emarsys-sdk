@@ -15,8 +15,8 @@ Pod::Spec.new do |spec|
 	spec.public_header_files  = [
 		'MobileEngage/MobileEngage.h',
 		'MobileEngage/MobileEngageStatusDelegate.h',
-		'MobileEngage/MEConfigBuilder.h',
-	    'MobileEngage/MEConfig.h',
+		'MobileEngage/EMSConfigBuilder.h',
+	    'MobileEngage/EMSConfig.h',
 	   	'MobileEngage/Flipper/MEFlipperFeatures.h',
 	    'MobileEngage/Inbox/MEInboxProtocol.h',
 	    'MobileEngage/Inbox/MENotification.h',

@@ -87,7 +87,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             displayedRepository = [MEDisplayedIAMRepository nullMock];
             buttonClickRepository = [MEButtonClickRepository nullMock];
             requestModelRepository = [EMSRequestModelRepository mock];
-            requestContext = [[MERequestContext alloc] initWithConfig:[MEConfig mock]];
+            requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig mock]];
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:requestModelRepository
                                                                                          buttonClickRepository:buttonClickRepository
                                                                                         displayedIAMRepository:displayedRepository

@@ -6,7 +6,7 @@
 #import "MobileEngageVersion.h"
 #import "EMSRequestModelMatcher.h"
 #import "MERequestContext.h"
-#import "MEConfigBuilder.h"
+#import "EMSConfigBuilder.h"
 #import "MEExperimental+Test.h"
 #import "MENotification.h"
 #import "NSDate+EMSCore.h"
@@ -25,7 +25,7 @@ SPEC_BEGIN(MERequestFactoryTests)
         });
 
         RequestContextBlock requestContextBlock = ^MERequestContext *(NSDate *timeStamp) {
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -63,7 +63,7 @@ SPEC_BEGIN(MERequestFactoryTests)
 
         describe(@"createLoginOrLastMobileActivityRequestWithPushToken:requestContext:", ^{
 
-            __block MEConfig *config;
+            __block EMSConfig *config;
             __block NSString *applicationCode;
             __block NSString *password;
             __block NSMutableDictionary *apploginPayload;
@@ -72,7 +72,7 @@ SPEC_BEGIN(MERequestFactoryTests)
 
 
             beforeEach(^{
-                config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 }];
@@ -146,7 +146,7 @@ SPEC_BEGIN(MERequestFactoryTests)
             context(@"INAPP TURNED ON", ^{
 
                 beforeEach(^{
-                    config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                     }];

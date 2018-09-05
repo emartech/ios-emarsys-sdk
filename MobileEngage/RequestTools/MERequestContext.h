@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MEAppLoginParameters.h"
-#import "MEConfig.h"
+#import "EMSConfig.h"
 #import "EMSTimestampProvider.h"
 
 @class EMSUUIDProvider;
@@ -22,11 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSString *meId;
 @property(nonatomic, strong, nullable) NSString *meIdSignature;
 @property(nonatomic, strong, nullable) MEAppLoginParameters *appLoginParameters;
-@property(nonatomic, strong, nullable) MEConfig *config;
+@property(nonatomic, strong, nullable) EMSConfig *config;
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
 
-- (instancetype)initWithConfig:(MEConfig *)config;
+- (instancetype)initWithConfig:(EMSConfig *)config;
 
 - (void)reset;
 

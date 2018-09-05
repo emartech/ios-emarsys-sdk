@@ -6,7 +6,7 @@ SPEC_BEGIN(MERequestContextTests)
 
         describe(@"uuidProvider", ^{
             it(@"should be initialized after requestContext has been initialized", ^{
-                MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[MEConfig mock]];
+                MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig mock]];
                 [[requestContext.uuidProvider shouldNot] beNil];
             });
         });

@@ -4,7 +4,7 @@
 
 #import "MobileEngageInternal.h"
 #import "MobileEngageStatusDelegate.h"
-#import "MEConfig.h"
+#import "EMSConfig.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
 #import "MEDefaultHeaders.h"
@@ -26,14 +26,14 @@
 
 @interface MobileEngageInternal ()
 
-@property(nonatomic, strong) MEConfig *config;
+@property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) NSArray<AbstractResponseHandler *> *responseHandlers;
 
 @end
 
 @implementation MobileEngageInternal
 
-- (void) setupWithConfig:(nonnull MEConfig *)config
+- (void) setupWithConfig:(nonnull EMSConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
          shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
@@ -74,7 +74,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 
 
 - (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-                         config:(nonnull MEConfig *)config
+                         config:(nonnull EMSConfig *)config
                   launchOptions:(NSDictionary *)launchOptions
                  requestContext:(MERequestContext *)requestContext {
     _requestContext = requestContext;

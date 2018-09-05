@@ -4,12 +4,12 @@
 
 #import "EMSAuthentication.h"
 #import "MEDefaultHeaders.h"
-#import "MEConfig.h"
+#import "EMSConfig.h"
 #import "MobileEngageVersion.h"
 
 @implementation MEDefaultHeaders
 
-+ (NSDictionary *)additionalHeadersWithConfig:(MEConfig *)config {
++ (NSDictionary *)additionalHeadersWithConfig:(EMSConfig *)config {
     return @{@"Content-Type": @"application/json",
             @"X-MOBILEENGAGE-SDK-VERSION": MOBILEENGAGE_SDK_VERSION,
 #if DEBUG

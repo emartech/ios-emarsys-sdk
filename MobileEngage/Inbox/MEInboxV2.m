@@ -15,7 +15,7 @@
 @interface MEInboxV2 ()
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
-@property(nonatomic, strong) MEConfig *config;
+@property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) NSMutableArray *notifications;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *fetchRequestSuccessBlocks;
@@ -27,7 +27,7 @@
 
 @implementation MEInboxV2
 
-- (instancetype)initWithConfig:(MEConfig *)config
+- (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
                     restClient:(EMSRESTClient *)restClient
                  notifications:(NSMutableArray *)notifications

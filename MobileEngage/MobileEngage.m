@@ -3,7 +3,7 @@
 //
 
 #import "MobileEngage.h"
-#import "MEConfig.h"
+#import "EMSConfig.h"
 #import "MobileEngageInternal.h"
 #import "MEInboxNotificationProtocol.h"
 #import "EMSSQLiteHelper.h"
@@ -29,7 +29,7 @@ static EMSSQLiteHelper *_dbHelper;
 
 
 + (void)setupWithMobileEngageInternal:(MobileEngageInternal *)mobileEngageInternal
-                               config:(MEConfig *)config
+                               config:(EMSConfig *)config
                         launchOptions:(NSDictionary *)launchOptions {
     [MEExperimental enableFeatures:config.experimentalFeatures];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
@@ -80,7 +80,7 @@ static EMSSQLiteHelper *_dbHelper;
                                                                       inApp:_iam];
 }
 
-+ (void)setupWithConfig:(MEConfig *)config
++ (void)setupWithConfig:(EMSConfig *)config
           launchOptions:(NSDictionary *)launchOptions {
     [MobileEngage setupWithMobileEngageInternal:[MobileEngageInternal new]
                                          config:config

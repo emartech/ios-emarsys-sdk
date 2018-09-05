@@ -1,7 +1,7 @@
 #import "Kiwi.h"
 #import "MobileEngage.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "EMSDeviceInfo.h"
 #import "MEDefaultHeaders.h"
 #import "MEAppLoginParameters.h"
@@ -27,7 +27,7 @@ SPEC_BEGIN(MEInboxTests)
         NSNumber *contactFieldId = @3;
         NSString *contactFieldValue = @"valueOfContactField";
 
-        MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setCredentialsWithApplicationCode:applicationCode
                                    applicationPassword:applicationPassword];
         }];
@@ -498,7 +498,7 @@ SPEC_BEGIN(MEInboxTests)
             };
 
             it(@"should return with eventId, and finish with success for trackMessageOpenWithInboxMessage:", ^{
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 }];

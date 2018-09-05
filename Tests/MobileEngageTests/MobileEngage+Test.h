@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, strong) MEInApp *inApp;
 
 + (void)setupWithMobileEngageInternal:(MobileEngageInternal *)mobileEngageInternal
-                               config:(MEConfig *)config
+                               config:(EMSConfig *)config
                         launchOptions:(nullable NSDictionary *)launchOptions;
 
 @end

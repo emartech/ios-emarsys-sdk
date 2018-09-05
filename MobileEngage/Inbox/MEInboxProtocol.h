@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class MEConfig;
+@class EMSConfig;
 @class MENotificationInboxStatus;
 @class MENotification;
 

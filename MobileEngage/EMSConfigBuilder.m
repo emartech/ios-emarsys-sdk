@@ -2,18 +2,18 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "MEConfigBuilder.h"
+#import "EMSConfigBuilder.h"
 
-@implementation MEConfigBuilder
+@implementation EMSConfigBuilder
 
-- (MEConfigBuilder *)setCredentialsWithApplicationCode:(NSString *)applicationCode
+- (EMSConfigBuilder *)setCredentialsWithApplicationCode:(NSString *)applicationCode
                                    applicationPassword:(NSString *)applicationPassword {
     _applicationCode = applicationCode;
     _applicationPassword = applicationPassword;
     return self;
 }
 
-- (MEConfigBuilder *)setExperimentalFeatures:(NSArray<MEFlipperFeature> *)features {
+- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<MEFlipperFeature> *)features {
     _experimentalFeatures = features;
     return self;
 }

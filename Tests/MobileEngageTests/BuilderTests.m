@@ -1,6 +1,6 @@
 #import "Kiwi.h"
-#import "MEConfig.h"
-#import "MEConfigBuilder.h"
+#import "EMSConfig.h"
+#import "EMSConfigBuilder.h"
 
 SPEC_BEGIN(BuilderTest)
 
@@ -8,7 +8,7 @@ SPEC_BEGIN(BuilderTest)
         it(@"should set the given accepted experimental features in the config", ^{
             NSArray *features = @[INAPP_MESSAGING];
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
                 [builder setExperimentalFeatures:features];
             }];
@@ -20,7 +20,7 @@ SPEC_BEGIN(BuilderTest)
     describe(@"setCredentialsWithApplicationCode", ^{
 
         it(@"should create a config with applicationCode", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:@"pwd"];
             }];
 
@@ -28,7 +28,7 @@ SPEC_BEGIN(BuilderTest)
         });
 
         it(@"should create a config with applicationPassword", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:@"pwd"];
             }];
 
@@ -37,7 +37,7 @@ SPEC_BEGIN(BuilderTest)
 
         it(@"should throw exception when applicationCode is nil", ^{
             @try {
-                [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:nil applicationPassword:@"pwd"];
                 }];
                 fail(@"Expected Exception when applicationCode is nil!");
@@ -48,7 +48,7 @@ SPEC_BEGIN(BuilderTest)
 
         it(@"should throw exception when secret is nil", ^{
             @try {
-                [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:nil];
                 }];
                 fail(@"Expected Exception when applicationPassword is nil!");

@@ -5,7 +5,7 @@
 #import "NSError+EMSCore.h"
 #import "MEInbox.h"
 #import "MEDefaultHeaders.h"
-#import "MEConfig.h"
+#import "EMSConfig.h"
 #import "MEInboxParser.h"
 #import "MERequestContext.h"
 #import "MobileEngage+Private.h"
@@ -18,7 +18,7 @@
 @interface MEInbox ()
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
-@property(nonatomic, strong) MEConfig *config;
+@property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *notifications;
 
@@ -28,7 +28,7 @@
 
 #pragma mark - Init
 
-- (instancetype)initWithConfig:(MEConfig *)config
+- (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext {
     EMSRESTClient *restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
     return [self initWithRestClient:restClient
@@ -37,7 +37,7 @@
 }
 
 - (instancetype)initWithRestClient:(EMSRESTClient *)restClient
-                            config:(MEConfig *)config
+                            config:(EMSConfig *)config
                     requestContext:(MERequestContext *)requestContext {
     self = [super init];
     if (self) {

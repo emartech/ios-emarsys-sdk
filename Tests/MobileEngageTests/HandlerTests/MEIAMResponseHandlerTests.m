@@ -12,8 +12,8 @@
 #import "MobileEngage+Test.h"
 #import "MEDisplayedIAMRepository.h"
 #import "MobileEngage+Private.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "FakeDbHelper.h"
 
 SPEC_BEGIN(MEIAMResponseHandlerTests)
@@ -112,7 +112,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
             });
 
             it(@"should save the inapp display", ^{
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"appid"
                                            applicationPassword:@"pw"];
                 }];

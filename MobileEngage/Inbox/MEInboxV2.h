@@ -14,7 +14,7 @@
 @property(nonatomic, strong) NSDate *responseTimestamp;
 @property(nonatomic, strong) NSDate *purgeTimestamp;
 
-- (instancetype)initWithConfig:(MEConfig *)config
+- (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
                     restClient:(EMSRESTClient *)restClient
                  notifications:(NSMutableArray *)notifications

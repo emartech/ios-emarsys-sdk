@@ -7,7 +7,7 @@
 #import "MEUserNotificationCenterDelegate.h"
 #import "MEInApp.h"
 
-@class MEConfig;
+@class EMSConfig;
 @protocol MobileEngageStatusDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,7 +21,7 @@ typedef void(^MESourceHandler)(NSString *source);
 @property(class, nonatomic, readonly) MEInApp *inApp;
 @property(class, nonatomic, readonly) id<MEUserNotificationCenterDelegate> notificationCenterDelegate;
 
-+ (void)setupWithConfig:(MEConfig *)config
++ (void)setupWithConfig:(EMSConfig *)config
           launchOptions:(nullable NSDictionary *)launchOptions;
 
 + (void)setPushToken:(NSData *)deviceToken;

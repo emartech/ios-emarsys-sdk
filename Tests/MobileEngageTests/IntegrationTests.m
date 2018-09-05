@@ -1,8 +1,8 @@
 #import "Kiwi.h"
 #import "FakeStatusDelegate.h"
 #import "MobileEngage.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
 #import "MERequestContext.h"
@@ -34,7 +34,7 @@ SPEC_BEGIN(IntegrationTests)
 
     describe(@"Public interface methods", ^{
         it(@"should return with eventId, and finish with success for anonymousAppLogin", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -53,7 +53,7 @@ SPEC_BEGIN(IntegrationTests)
         });
 
         it(@"should return with eventId, and finish with success for appLogin", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -73,7 +73,7 @@ SPEC_BEGIN(IntegrationTests)
         });
 
         it(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -93,7 +93,7 @@ SPEC_BEGIN(IntegrationTests)
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -116,7 +116,7 @@ SPEC_BEGIN(IntegrationTests)
         });
 
         it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -145,7 +145,7 @@ SPEC_BEGIN(IntegrationTests)
         it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
             [MEExperimental reset];
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -167,7 +167,7 @@ SPEC_BEGIN(IntegrationTests)
         it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
             [MEExperimental reset];
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];
@@ -191,7 +191,7 @@ SPEC_BEGIN(IntegrationTests)
         });
 
         it(@"should return with eventId, and finish with success for appLogout", ^{
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
             }];

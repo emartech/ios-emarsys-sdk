@@ -4,10 +4,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class MEConfig;
+@class EMSConfig;
 
 @interface MEDefaultHeaders : NSObject
 
-+ (NSDictionary *)additionalHeadersWithConfig:(MEConfig *)config;
++ (NSDictionary *)additionalHeadersWithConfig:(EMSConfig *)config;
 
 @end

@@ -2,8 +2,8 @@
 #import "EMSRequestManager.h"
 #import "MobileEngageInternal.h"
 #import "MobileEngageInternal+Private.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "EMSRequestModelBuilder.h"
 #import "EMSRequestModelMatcher.h"
 #import "EMSShardRepository.h"
@@ -43,7 +43,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         beforeEach(^{
             [MEExperimental enableFeature:INAPP_MESSAGING];
             _mobileEngage = [MobileEngageInternal new];
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:kAppId
                                        applicationPassword:kAppSecret];
                 [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
@@ -82,7 +82,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                             withCountAtLeast:1
                                    arguments:additionalHeaders];
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:applicationCode
                                        applicationPassword:applicationPassword];
             }];
@@ -205,7 +205,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should throw an exception when there is no requestRepositoryFactory", ^{
                 @try {
-                    MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
                         [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
@@ -226,7 +226,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should call setupWithRequestManager:config:launchOptions: with MERequestRepositoryProxy when INAPP feature turned on", ^{
                 [MEExperimental enableFeature:INAPP_MESSAGING];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                 }];
@@ -246,7 +246,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should call setupWithRequestManager:config:launchOptions: with EMSRequestModelRepository when INAPP and INBOX is turned off", ^{
                 [MEExperimental reset];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                 }];
@@ -266,7 +266,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should call setupWithRequestManager:config:launchOptions: with MERequestRepositoryProxy when INBOX feature turned on", ^{
                 [MEExperimental enableFeature:USER_CENTRIC_INBOX];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                 }];
@@ -286,7 +286,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should call setupWithRequestManager:config:launchOptions: with MERequestRepositoryProxy when INAPP and INBOX feature turned on", ^{
                 [MEExperimental enableFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                 }];
@@ -400,7 +400,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             });
 
             it(@"appLogin should save the MEID returned in the response", ^{
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                 }];
@@ -499,7 +499,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -546,7 +546,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -602,7 +602,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -657,7 +657,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should not result in multiple applogin requests if the payload is the same, even if MobileEngage is re-initialized", ^{
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -879,7 +879,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         reportedError = error;
                     };
 
-                    MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
                     }];
@@ -919,7 +919,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         reportedError = error;
                     };
 
-                    MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
                     }];
@@ -1375,7 +1375,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             beforeEach(^{
                 _mobileEngage = [MobileEngageInternal new];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
@@ -1522,7 +1522,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             beforeEach(^{
                 _mobileEngage = [MobileEngageInternal new];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
@@ -1556,7 +1556,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -1582,7 +1582,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -1610,7 +1610,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             beforeEach(^{
                 _mobileEngage = [MobileEngageInternal new];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
@@ -1644,7 +1644,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -1670,7 +1670,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -1699,7 +1699,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 NSArray<MEFlipperFeature> *features = @[INAPP_MESSAGING];
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                     [builder setExperimentalFeatures:features];
@@ -1810,7 +1810,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"requestContext", ^{
             it(@"should not be nil after setup", ^{
                 _mobileEngage = [MobileEngageInternal new];
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];

@@ -7,7 +7,7 @@
 
 @implementation MERequestContext
 
-- (instancetype)initWithConfig:(MEConfig *)config {
+- (instancetype)initWithConfig:(EMSConfig *)config {
     if (self = [super init]) {
         _lastAppLoginPayload = [[[NSUserDefaults alloc] initWithSuiteName:kSuiteName] dictionaryForKey:kLastAppLoginPayload];
         _meId = [[[NSUserDefaults alloc] initWithSuiteName:kSuiteName] stringForKey:kMEID];

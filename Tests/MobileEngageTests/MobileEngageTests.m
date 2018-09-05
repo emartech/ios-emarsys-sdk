@@ -1,6 +1,6 @@
 #import "Kiwi.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "MobileEngage.h"
 #import "MobileEngage+Test.h"
 #import "MobileEngage+Private.h"
@@ -29,7 +29,7 @@ SPEC_BEGIN(MobileEngageTests)
             NSString *applicationCode = kAppId;
             NSString *applicationPassword = @"appSecret";
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:applicationCode
                                        applicationPassword:applicationPassword];
             }];
@@ -73,7 +73,7 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
 
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -98,7 +98,7 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
 
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -118,7 +118,7 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
 
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -134,7 +134,7 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
 
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -189,7 +189,7 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
 
-                MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                 }];
@@ -243,7 +243,7 @@ SPEC_BEGIN(MobileEngageTests)
                     NSString *applicationCode = kAppId;
                     NSString *applicationPassword = @"appSecret";
 
-                    MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:applicationCode
                                                applicationPassword:applicationPassword];
                     }];
@@ -257,7 +257,7 @@ SPEC_BEGIN(MobileEngageTests)
                     NSString *applicationCode = kAppId;
                     NSString *applicationPassword = @"appSecret";
 
-                    MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:applicationCode
                                                applicationPassword:applicationPassword];
                         [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];

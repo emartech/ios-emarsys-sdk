@@ -2,23 +2,23 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "MEConfig.h"
-#import "MEConfigBuilder.h"
+#import "EMSConfig.h"
+#import "EMSConfigBuilder.h"
 
-@implementation MEConfig
+@implementation EMSConfig
 
-+ (nonnull MEConfig *)makeWithBuilder:(MEConfigBuilderBlock)builderBlock {
++ (nonnull EMSConfig *)makeWithBuilder:(MEConfigBuilderBlock)builderBlock {
     NSParameterAssert(builderBlock);
-    MEConfigBuilder *builder = [MEConfigBuilder new];
+    EMSConfigBuilder *builder = [EMSConfigBuilder new];
     builderBlock(builder);
 
     NSParameterAssert(builder.applicationCode);
     NSParameterAssert(builder.applicationPassword);
 
-    return [[MEConfig alloc] initWithBuilder:builder];
+    return [[EMSConfig alloc] initWithBuilder:builder];
 }
 
-- (id)initWithBuilder:(MEConfigBuilder *)builder {
+- (id)initWithBuilder:(EMSConfigBuilder *)builder {
     if (self = [super init]) {
         _applicationCode = builder.applicationCode;
         _applicationPassword = builder.applicationPassword;

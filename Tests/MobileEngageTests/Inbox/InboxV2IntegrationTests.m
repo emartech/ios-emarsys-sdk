@@ -4,8 +4,8 @@
 
 #import "Kiwi.h"
 #import "MobileEngage.h"
-#import "MEConfigBuilder.h"
-#import "MEConfig.h"
+#import "EMSConfigBuilder.h"
+#import "EMSConfig.h"
 #import "MENotificationInboxStatus.h"
 #import "MEExperimental+Test.h"
 #import "FakeStatusDelegate.h"
@@ -32,7 +32,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
             [userDefaults removeObjectForKey:kLastAppLoginPayload];
             [userDefaults synchronize];
 
-            MEConfig *config = [MEConfig makeWithBuilder:^(MEConfigBuilder *builder) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];

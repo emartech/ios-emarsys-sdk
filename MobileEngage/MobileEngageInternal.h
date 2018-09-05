@@ -10,7 +10,7 @@
 #import "EMSRequestManager.h"
 
 @protocol MobileEngageStatusDelegate;
-@class MEConfig;
+@class EMSConfig;
 @class MENotificationCenterManager;
 @class MERequestContext;
 @class MEInApp;
@@ -38,7 +38,7 @@ typedef void (^MESourceHandler)(NSString *source);
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;
 
-- (void) setupWithConfig:(nonnull MEConfig *)config
+- (void) setupWithConfig:(nonnull EMSConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
          shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository

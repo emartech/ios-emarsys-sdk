@@ -10,7 +10,7 @@
 
 @interface MEInbox : NSObject <MEInboxNotificationProtocol>
 
-- (instancetype)initWithConfig:(MEConfig *)config
+- (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext;
 
 @end
