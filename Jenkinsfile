@@ -87,7 +87,7 @@ def killSimulators(simulators){
 	for (simulator in simulators) {
 			simulator.each { key, device ->
 				sh "xcrun simctl shutdown $device.udid || true"
-				sh "xcrun simctl erase $device.udid"
+				sh "xcrun simctl delete $device.udid"
 			}
 	}
 }
