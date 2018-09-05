@@ -7,7 +7,7 @@
 @implementation EMSConfigBuilder
 
 - (EMSConfigBuilder *)setCredentialsWithApplicationCode:(NSString *)applicationCode
-                                   applicationPassword:(NSString *)applicationPassword {
+                                    applicationPassword:(NSString *)applicationPassword {
     _applicationCode = applicationCode;
     _applicationPassword = applicationPassword;
     return self;
@@ -18,4 +18,13 @@
     return self;
 }
 
+- (EMSConfigBuilder *)setMerchantId:(NSString *)merchantId {
+    _merchantId = merchantId;
+    return self;
+}
+
+- (EMSConfigBuilder *)setContactFieldId:(NSNumber *)contactFieldId {
+    _contactFieldId = contactFieldId;
+    return self;
+}
 @end

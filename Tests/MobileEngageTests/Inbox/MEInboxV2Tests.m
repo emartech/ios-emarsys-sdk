@@ -26,6 +26,8 @@ SPEC_BEGIN(MEInboxV2Tests)
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setCredentialsWithApplicationCode:applicationCode
                                    applicationPassword:applicationPassword];
+            [builder setMerchantId:@"dummyMerchantId"];
+            [builder setContactFieldId:@3];
         }];
 
         id (^inboxWithParameters)(EMSRESTClient *restClient, BOOL withMeId) = ^id(EMSRESTClient *restClient, BOOL withMeId) {

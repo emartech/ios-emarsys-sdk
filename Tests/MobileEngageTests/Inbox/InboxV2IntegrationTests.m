@@ -36,6 +36,8 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
             [MobileEngage setupWithConfig:config
                             launchOptions:[NSDictionary new]];

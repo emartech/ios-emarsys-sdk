@@ -115,6 +115,8 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"appid"
                                            applicationPassword:@"pw"];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [MobileEngage setupWithConfig:config launchOptions:[NSDictionary new]];

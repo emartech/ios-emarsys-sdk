@@ -14,6 +14,8 @@
 
     NSParameterAssert(builder.applicationCode);
     NSParameterAssert(builder.applicationPassword);
+    NSParameterAssert(builder.merchantId);
+    NSParameterAssert(builder.contactFieldId);
 
     return [[EMSConfig alloc] initWithBuilder:builder];
 }
@@ -23,6 +25,8 @@
         _applicationCode = builder.applicationCode;
         _applicationPassword = builder.applicationPassword;
         _experimentalFeatures = builder.experimentalFeatures;
+        _merchantId = builder.merchantId;
+        _contactFieldId = builder.contactFieldId;
     }
 
     return self;

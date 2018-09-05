@@ -11,204 +11,179 @@
 
 SPEC_BEGIN(IntegrationTests)
 
-    FakeStatusDelegate *(^createStatusDelegate)() = ^FakeStatusDelegate *() {
-        FakeStatusDelegate *statusDelegate = [FakeStatusDelegate new];
-        statusDelegate.printErrors = YES;
-        return statusDelegate;
-    };
+        __block EMSConfig *config;
 
-    beforeEach(^{
-        [MEExperimental enableFeature:INAPP_MESSAGING];
-        [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                                   error:nil];
+        FakeStatusDelegate *(^createStatusDelegate)() = ^FakeStatusDelegate *() {
+            FakeStatusDelegate *statusDelegate = [FakeStatusDelegate new];
+            statusDelegate.printErrors = YES;
+            return statusDelegate;
+        };
 
-        NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
-        [userDefaults removeObjectForKey:kMEID];
-        [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-        [userDefaults removeObjectForKey:kLastAppLoginPayload];
-        [userDefaults synchronize];
+        beforeEach(^{
+            [MEExperimental enableFeature:INAPP_MESSAGING];
+            [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
+                                                       error:nil];
 
-        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-        [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
-    });
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+            [userDefaults removeObjectForKey:kMEID];
+            [userDefaults removeObjectForKey:kMEID_SIGNATURE];
+            [userDefaults removeObjectForKey:kLastAppLoginPayload];
+            [userDefaults synchronize];
 
-    describe(@"Public interface methods", ^{
-        it(@"should return with eventId, and finish with success for anonymousAppLogin", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+            userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
+            [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
+
+            config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            NSString *eventId = [MobileEngage appLogin];
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
         });
 
-        it(@"should return with eventId, and finish with success for appLogin", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
+        describe(@"Public interface methods", ^{
+            it(@"should return with eventId, and finish with success for anonymousAppLogin", ^{
+                [MobileEngage setupWithConfig:config
+                                launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
 
-            NSString *eventId = [MobileEngage appLoginWithContactFieldId:@3
-                                                       contactFieldValue:@"test@test.com"];
-            [statusDelegate waitForNextSuccess];
+                NSString *eventId = [MobileEngage appLogin];
+                [statusDelegate waitForNextSuccess];
 
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
+
+            it(@"should return with eventId, and finish with success for appLogin", ^{
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                NSString *eventId = [MobileEngage appLoginWithContactFieldId:@3
+                        contactFieldValue:@"test@test.com"];
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
+
+            it(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                NSString *eventId = [MobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}];
+
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
+
+            it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                [MobileEngage appLogin];
+                [statusDelegate waitForNextSuccess];
+
+                NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
+                        eventAttributes:nil];
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@2];
+            });
+
+            it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                [MobileEngage appLogin];
+                [statusDelegate waitForNextSuccess];
+
+                NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
+                        eventAttributes:@{
+                                @"animal": @"cat",
+                                @"drink": @"palinka",
+                                @"food": @"pizza"
+                        }];
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@2];
+            });
+
+            it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
+                [MEExperimental reset];
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
+                        eventAttributes:nil];
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
+
+            it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
+                [MEExperimental reset];
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
+                        eventAttributes:@{
+                                @"animal": @"cat",
+                                @"drink": @"palinka",
+                                @"food": @"pizza"
+                        }];
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
+
+            it(@"should return with eventId, and finish with success for appLogout", ^{
+                [MobileEngage setupWithConfig:config
+                        launchOptions:[NSDictionary new]];
+                FakeStatusDelegate *statusDelegate = createStatusDelegate();
+                [MobileEngage setStatusDelegate:statusDelegate];
+
+                NSString *eventId = [MobileEngage appLogout];
+
+                [statusDelegate waitForNextSuccess];
+
+                [[eventId shouldNot] beNil];
+                [[statusDelegate.errors should] equal:@[]];
+                [[@(statusDelegate.errorCount) should] equal:@0];
+                [[@(statusDelegate.successCount) should] equal:@1];
+            });
         });
-
-        it(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            NSString *eventId = [MobileEngage trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}];
-
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
-        });
-
-        it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            [MobileEngage appLogin];
-            [statusDelegate waitForNextSuccess];
-
-            NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
-                                               eventAttributes:nil];
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@2];
-        });
-
-        it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            [MobileEngage appLogin];
-            [statusDelegate waitForNextSuccess];
-
-            NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
-                                               eventAttributes:@{
-                                                       @"animal": @"cat",
-                                                       @"drink": @"palinka",
-                                                       @"food": @"pizza"
-                                               }];
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@2];
-        });
-
-        it(@"should return with eventId, and finish with success for trackCustomEvent without attributes", ^{
-            [MEExperimental reset];
-
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
-                                               eventAttributes:nil];
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
-        });
-
-        it(@"should return with eventId, and finish with success for trackCustomEvent with attributes", ^{
-            [MEExperimental reset];
-
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            NSString *eventId = [MobileEngage trackCustomEvent:@"eventName"
-                                               eventAttributes:@{
-                                                       @"animal": @"cat",
-                                                       @"drink": @"palinka",
-                                                       @"food": @"pizza"
-                                               }];
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
-        });
-
-        it(@"should return with eventId, and finish with success for appLogout", ^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            }];
-            [MobileEngage setupWithConfig:config
-                            launchOptions:[NSDictionary new]];
-            FakeStatusDelegate *statusDelegate = createStatusDelegate();
-            [MobileEngage setStatusDelegate:statusDelegate];
-
-            NSString *eventId = [MobileEngage appLogout];
-
-            [statusDelegate waitForNextSuccess];
-
-            [[eventId shouldNot] beNil];
-            [[statusDelegate.errors should] equal:@[]];
-            [[@(statusDelegate.errorCount) should] equal:@0];
-            [[@(statusDelegate.successCount) should] equal:@1];
-        });
-    });
 
 SPEC_END

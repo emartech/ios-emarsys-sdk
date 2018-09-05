@@ -32,6 +32,8 @@ SPEC_BEGIN(MobileEngageTests)
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:applicationCode
                                        applicationPassword:applicationPassword];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
 
             [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
@@ -76,6 +78,8 @@ SPEC_BEGIN(MobileEngageTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
@@ -101,6 +105,8 @@ SPEC_BEGIN(MobileEngageTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
@@ -121,6 +127,8 @@ SPEC_BEGIN(MobileEngageTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [MobileEngage setupWithMobileEngageInternal:mobileEngageInternalMock
@@ -137,6 +145,8 @@ SPEC_BEGIN(MobileEngageTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [MobileEngage setupWithMobileEngageInternal:[MobileEngageInternal nullMock]
@@ -192,6 +202,8 @@ SPEC_BEGIN(MobileEngageTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [MobileEngage setupWithConfig:config
                                 launchOptions:[NSDictionary new]];
@@ -246,6 +258,8 @@ SPEC_BEGIN(MobileEngageTests)
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:applicationCode
                                                applicationPassword:applicationPassword];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
                     [MobileEngage setupWithConfig:config
                                     launchOptions:[NSDictionary new]];
@@ -261,6 +275,8 @@ SPEC_BEGIN(MobileEngageTests)
                         [builder setCredentialsWithApplicationCode:applicationCode
                                                applicationPassword:applicationPassword];
                         [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
                     [MobileEngage setupWithConfig:config
                                     launchOptions:[NSDictionary new]];

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *applicationCode;
 @property(nonatomic, readonly) NSString *applicationPassword;
 @property(nonatomic, readonly) NSArray<MEFlipperFeature> *experimentalFeatures;
+@property(nonatomic, readonly) NSString *merchantId;
+@property(nonatomic, readonly) NSNumber *contactFieldId;
 
 typedef void(^MEConfigBuilderBlock)(EMSConfigBuilder *builder);
 

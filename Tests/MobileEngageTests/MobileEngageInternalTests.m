@@ -47,6 +47,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [builder setCredentialsWithApplicationCode:kAppId
                                        applicationPassword:kAppSecret];
                 [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
 
             [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
@@ -85,6 +87,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:applicationCode
                                        applicationPassword:applicationPassword];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
 
             requestContext = [[MERequestContext alloc] initWithConfig:config];
@@ -209,6 +213,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
                         [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
                     MobileEngageInternal *internal = [MobileEngageInternal new];
                     [internal setupWithConfig:config
@@ -229,6 +235,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
@@ -249,6 +257,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
@@ -269,6 +279,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
@@ -289,6 +301,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 KWCaptureSpy *spy = [internal captureArgument:@selector(setupWithRequestManager:config:launchOptions:requestContext:)
@@ -403,6 +417,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 MobileEngageInternal *internal = [MobileEngageInternal new];
                 [internal setupWithConfig:config
@@ -502,6 +518,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [_mobileEngage setupWithRequestManager:requestManager
@@ -549,6 +567,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [_mobileEngage setupWithRequestManager:requestManager
@@ -605,6 +625,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 [_mobileEngage setupWithRequestManager:requestManager
@@ -660,6 +682,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 FakeRequestManager *requestManager = [FakeRequestManager new];
@@ -882,6 +906,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
 
                     requestContext = [[MERequestContext alloc] initWithConfig:config];
@@ -922,6 +948,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:kAppId
                                                applicationPassword:kAppSecret];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
 
                     requestContext = [[MERequestContext alloc] initWithConfig:config];
@@ -1379,6 +1407,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]
@@ -1526,6 +1556,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]
@@ -1559,6 +1591,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
@@ -1585,6 +1619,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]
@@ -1614,6 +1650,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]
@@ -1647,6 +1685,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
@@ -1673,6 +1713,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
 
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
@@ -1703,6 +1745,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setCredentialsWithApplicationCode:applicationCode
                                            applicationPassword:applicationPassword];
                     [builder setExperimentalFeatures:features];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]
@@ -1814,6 +1858,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setCredentialsWithApplicationCode:kAppId
                                            applicationPassword:kAppSecret];
                     [builder setExperimentalFeatures:@[INAPP_MESSAGING]];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 [_mobileEngage setupWithConfig:config
                                  launchOptions:[NSDictionary new]

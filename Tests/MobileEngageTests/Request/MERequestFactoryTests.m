@@ -28,6 +28,8 @@ SPEC_BEGIN(MERequestFactoryTests)
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
             }];
             EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
             [timestampProvider stub:@selector(provideTimestamp) andReturn:timeStamp];
@@ -75,6 +77,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                    [builder setMerchantId:@"dummyMerchantId"];
+                    [builder setContactFieldId:@3];
                 }];
                 applicationCode = @"14C19-A121F";
                 password = @"PaNkfOD90AVpYimMBuZopCpm8OWCrREu";
@@ -149,6 +153,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                     config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setCredentialsWithApplicationCode:@"14C19-A121F"
                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                        [builder setMerchantId:@"dummyMerchantId"];
+                        [builder setContactFieldId:@3];
                     }];
                     [MEExperimental enableFeature:INAPP_MESSAGING];
                 });
