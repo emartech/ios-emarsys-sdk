@@ -53,7 +53,7 @@ def test(key, device, scheme) {
 			if(device.platform == 'iOS Simulator') {
         lock('iOS Simulator') {
 					sh "xcrun simctl boot $device.udid"
-					sh "sleep 20"
+					sh "sleep env.IOS_BOOT_TIME"
 					action()
 				}
     	} else {
