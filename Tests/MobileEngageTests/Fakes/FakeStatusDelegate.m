@@ -44,7 +44,7 @@
 
 - (void)waitForNextSuccess {
     _nextExpectation = [[XCTestExpectation alloc] initWithDescription:@"wait"];
-    [EMSWaiter waitForExpectations:@[_nextExpectation] timeout:30.0];
+    [EMSWaiter waitForExpectations:@[_nextExpectation] timeout:10.0];
 }
 
 @end
