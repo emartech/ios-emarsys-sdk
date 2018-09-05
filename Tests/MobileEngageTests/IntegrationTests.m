@@ -6,6 +6,7 @@
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
 #import "MERequestContext.h"
+
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
 SPEC_BEGIN(IntegrationTests)
@@ -44,6 +45,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
@@ -63,6 +65,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
@@ -82,6 +85,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
@@ -104,6 +108,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@2];
         });
@@ -130,6 +135,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@2];
         });
@@ -151,6 +157,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
@@ -176,6 +183,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
@@ -195,6 +203,7 @@ SPEC_BEGIN(IntegrationTests)
             [statusDelegate waitForNextSuccess];
 
             [[eventId shouldNot] beNil];
+            [[statusDelegate.errors should] equal:@[]];
             [[@(statusDelegate.errorCount) should] equal:@0];
             [[@(statusDelegate.successCount) should] equal:@1];
         });
