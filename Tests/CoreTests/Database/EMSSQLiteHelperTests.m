@@ -327,7 +327,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model mapper:mapper];
-                [dbHelper removefromTable:[mapper tableName]
+                [dbHelper removeFromTable:[mapper tableName]
                                     where:nil
                                 whereArgs:nil];
 
@@ -345,13 +345,15 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model2 mapper:mapper];
-                [dbHelper removefromTable:[mapper tableName]
+                [dbHelper removeFromTable:[mapper tableName]
                                     where:@"type=? AND ttl=?"
                                 whereArgs:@[@"type", @"200"]];
 
                 NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
 
                 [[result should] contain:model2];
+                [[result shouldNot] contain:model];
+                [[theValue([result count]) should] equal:theValue(1)];
             });
 
             it(@"should remove every rows that matches to the where parameters", ^{
@@ -364,7 +366,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
                 [dbHelper insertModel:model mapper:mapper];
                 [dbHelper insertModel:model2 mapper:mapper];
-                [dbHelper removefromTable:[mapper tableName]
+                [dbHelper removeFromTable:[mapper tableName]
                                     where:@"type=? AND ttl=?"
                                 whereArgs:@[@"type", @"300"]];
 

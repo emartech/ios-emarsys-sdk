@@ -124,7 +124,7 @@
     return NO;
 }
 
-- (BOOL)removefromTable:(NSString *)tableName
+- (BOOL)removeFromTable:(NSString *)tableName
                   where:(NSString *)where
               whereArgs:(NSArray<NSString *> *)whereArgs {
     NSString *sqlCommand;
@@ -133,12 +133,24 @@
     } else {
         sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, where];
     }
-    return [self execute:sqlCommand
-           withBindBlock:^(sqlite3_stmt *statement) {
-               for (int i = 0; i < whereArgs.count; ++i) {
-                   sqlite3_bind_text(statement, i + 1, [whereArgs[(NSUInteger) i] UTF8String], -1, SQLITE_TRANSIENT);
-               }
-           }];
+
+
+    [self runTriggerWithTableName:tableName
+                            event:[EMSDBTriggerEvent deleteEvent]
+                             type:[EMSDBTriggerType beforeType]];
+
+    BOOL result = [self execute:sqlCommand
+                  withBindBlock:^(sqlite3_stmt *statement) {
+                      for (int i = 0; i < whereArgs.count; ++i) {
+                          sqlite3_bind_text(statement, i + 1, [whereArgs[(NSUInteger) i] UTF8String], -1, SQLITE_TRANSIENT);
+                      }
+                  }];
+
+    [self runTriggerWithTableName:tableName
+                            event:[EMSDBTriggerEvent deleteEvent]
+                             type:[EMSDBTriggerType afterType]];
+
+    return result;
 }
 
 - (BOOL)insertModel:(id)model

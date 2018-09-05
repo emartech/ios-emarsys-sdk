@@ -43,7 +43,7 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
                     withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
                      forTriggerBlock:(EMSTriggerBlock)triggerBlock;
 
-- (BOOL)removefromTable:(NSString *)tableName
+- (BOOL)removeFromTable:(NSString *)tableName
                   where:(NSString *)where
               whereArgs:(NSArray<NSString *> *)whereArgs;
 

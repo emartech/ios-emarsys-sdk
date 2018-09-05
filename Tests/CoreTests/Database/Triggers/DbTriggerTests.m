@@ -227,5 +227,73 @@ SPEC_BEGIN(DBTriggerTests)
 
         });
 
+        describe(@"registerTriggerWithTableName:withTriggerType:withTriggerEvent:forTriggerBlock:", ^{
+
+            it(@"should run beforeDelete trigger when deleting something from the given table", ^{
+                [dbHelper open];
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                       withTriggerType:[EMSDBTriggerType beforeType]
+                                      withTriggerEvent:[EMSDBTriggerEvent deleteEvent]
+                                       forTriggerBlock:^{
+                                           [expectation fulfill];
+                                       }];
+
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper insertModel:model2 mapper:mapper];
+
+                [dbHelper removeFromTable:[mapper tableName]
+                                    where:@"type=? AND ttl=?"
+                                whereArgs:@[@"type", @"200"]];
+
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
+
+            });
+
+            it(@"should run beforeDelete and afterDelete trigger in the right sequence when deleting something from the given table", ^{
+                [dbHelper open];
+
+                XCTestExpectation *beforeDeleteExpectation = [[XCTestExpectation alloc] initWithDescription:@"beforeDeleteExpectation"];
+                XCTestExpectation *afterDeleteExpectation = [[XCTestExpectation alloc] initWithDescription:@"afterDeleteExpectation"];
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                       withTriggerType:[EMSDBTriggerType beforeType]
+                                      withTriggerEvent:[EMSDBTriggerEvent deleteEvent]
+                                       forTriggerBlock:^{
+                                           NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:[EMSShardMapper new]];
+                                           [[theValue([result count]) should] equal:theValue(2)];
+                                           [beforeDeleteExpectation fulfill];
+                                       }];
+
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                       withTriggerType:[EMSDBTriggerType afterType]
+                                      withTriggerEvent:[EMSDBTriggerEvent deleteEvent]
+                                       forTriggerBlock:^{
+                                           NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:[EMSShardMapper new]];
+                                           [[theValue([result count]) should] equal:theValue(1)];
+                                           [afterDeleteExpectation fulfill];
+                                       }];
+
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model mapper:mapper];
+                [dbHelper insertModel:model2 mapper:mapper];
+
+                [dbHelper removeFromTable:[mapper tableName]
+                                    where:@"type=? AND ttl=?"
+                                whereArgs:@[@"type", @"200"]];
+
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[beforeDeleteExpectation, afterDeleteExpectation] timeout:2 enforceOrder:YES];
+                [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
+            });
+        });
+
 
 SPEC_END
