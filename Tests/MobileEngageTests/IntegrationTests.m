@@ -28,6 +28,8 @@ SPEC_BEGIN(IntegrationTests)
         [userDefaults removeObjectForKey:kLastAppLoginPayload];
         [userDefaults synchronize];
 
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
+        [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
     });
 
     describe(@"Public interface methods", ^{
