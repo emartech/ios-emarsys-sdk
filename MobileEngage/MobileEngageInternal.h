@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MEAppLoginParameters.h"
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "MEInAppTrackingProtocol.h"
 #import "EMSResponseModel.h"
 #import "EMSRequestManager.h"
@@ -52,7 +52,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 
 - (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
 
-- (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage;
+- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage;
 
 - (NSString *)trackCustomEvent:(NSString *)eventName
                eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;

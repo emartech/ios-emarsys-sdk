@@ -6,7 +6,7 @@
 
 @class EMSConfig;
 @class MENotificationInboxStatus;
-@class MENotification;
+@class EMSNotification;
 
 typedef void (^MEInboxSuccessBlock)(void);
 typedef void (^MEInboxResultBlock)(MENotificationInboxStatus *inboxStatus);
@@ -22,7 +22,7 @@ typedef void (^MEInboxResultErrorBlock)(NSError *error);
 
 - (void)resetBadgeCount;
 
-- (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage;
+- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage;
 
 - (void)purgeNotificationCache;
 

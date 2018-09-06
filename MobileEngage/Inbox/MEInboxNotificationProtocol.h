@@ -7,6 +7,6 @@
 
 @protocol MEInboxNotificationProtocol <MEInboxProtocol>
 
-- (void)addNotification:(MENotification *)notification;
+- (void)addNotification:(EMSNotification *)notification;
 
 @end

@@ -109,12 +109,12 @@
     }
 }
 
-- (void)addNotification:(MENotification *)notification {
+- (void)addNotification:(EMSNotification *)notification {
     [self.notifications insertObject:notification
                              atIndex:0];
 }
 
-- (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage {
+- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
     return [MobileEngage trackMessageOpenWithInboxMessage:inboxMessage];
 }
 
@@ -151,8 +151,8 @@
 
 - (void)invalidateCachedNotifications:(MENotificationInboxStatus *)status {
     for (int i = (int) [self.notifications count] - 1; i >= 0; --i) {
-        MENotification *notification = self.notifications[(NSUInteger) i];
-        for (MENotification *currentNotification in status.notifications) {
+        EMSNotification *notification = self.notifications[(NSUInteger) i];
+        for (EMSNotification *currentNotification in status.notifications) {
             if ([currentNotification.id isEqual:notification.id]) {
                 [self.notifications removeObjectAtIndex:(NSUInteger) i];
                 break;

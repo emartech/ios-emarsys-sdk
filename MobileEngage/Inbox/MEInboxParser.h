@@ -4,15 +4,15 @@
 
 #import <Foundation/Foundation.h>
 
-@class MENotification;
+@class EMSNotification;
 @class MENotificationInboxStatus;
 
 @interface MEInboxParser : NSObject
 
 - (MENotificationInboxStatus *)parseNotificationInboxStatus:(NSDictionary *)notificationInboxStatus;
 
-- (NSArray<MENotification *> *)parseArrayOfNotifications:(NSArray *)array;
+- (NSArray<EMSNotification *> *)parseArrayOfNotifications:(NSArray *)array;
 
-- (MENotification *)parseNotification:(NSDictionary *)notification;
+- (EMSNotification *)parseNotification:(NSDictionary *)notification;
 
 @end

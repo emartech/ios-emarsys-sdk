@@ -3,11 +3,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MENotification.h"
+#import "EMSNotification.h"
 
 @interface MENotificationInboxStatus : NSObject
 
-@property(nonatomic, strong) NSArray<MENotification *> *notifications;
+@property(nonatomic, strong) NSArray<EMSNotification *> *notifications;
 @property(nonatomic, assign) NSUInteger badgeCount;
 
 @end

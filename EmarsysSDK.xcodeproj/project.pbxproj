@@ -24,7 +24,7 @@
 		165BF3852108955B00FA0F6A /* MEInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F9069ECB8AEDA323A69F /* MEInbox.m */; };
 		165BF3872108955B00FA0F6A /* MEInboxV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7826F782119F709A6FF /* MEInboxV2.m */; };
 		165BF3892108955B00FA0F6A /* MEInboxParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F0F6BC05B3F8B598D4F8 /* MEInboxParser.m */; };
-		165BF38B2108955B00FA0F6A /* MENotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FBE086CAA87558E80969 /* MENotification.m */; };
+		165BF38B2108955B00FA0F6A /* EMSNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FBE086CAA87558E80969 /* EMSNotification.m */; };
 		165BF38E2108955B00FA0F6A /* MENotificationInboxStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F54D7745C70E2B836E15 /* MENotificationInboxStatus.m */; };
 		165BF3912108955B00FA0F6A /* MEExperimental.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA930322496D43FD86E0 /* MEExperimental.m */; };
 		165BF3942108955B00FA0F6A /* MEButtonClick.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FBA47372BFA4A53F018F /* MEButtonClick.m */; };
@@ -287,7 +287,7 @@
 		168F4A6C2108AF0900D0623B /* MEInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F56339565C19104B8DD3 /* MEInbox.h */; };
 		168F4A6D2108AF0900D0623B /* MEInboxV2.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F78B55143ECFA9DE81C0 /* MEInboxV2.h */; };
 		168F4A6E2108AF0900D0623B /* MEInboxParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F1FC6B7AF242B4505127 /* MEInboxParser.h */; };
-		168F4A6F2108AF0900D0623B /* MENotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F1AF1ECFFFBB213774CC /* MENotification.h */; };
+		168F4A6F2108AF0900D0623B /* EMSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F1AF1ECFFFBB213774CC /* EMSNotification.h */; };
 		168F4A702108AF0900D0623B /* MEInboxProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FE7474BC271AE4923B4C /* MEInboxProtocol.h */; };
 		168F4A712108AF0900D0623B /* MENotificationInboxStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F083DBD140DB2A5350D0 /* MENotificationInboxStatus.h */; };
 		168F4A722108AF0900D0623B /* MEInboxNotificationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FAF1B20A628970CA0F46 /* MEInboxNotificationProtocol.h */; };
@@ -547,7 +547,7 @@
 		32C6F18D20251773F4772AC6 /* PredictInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredictInternal.h; sourceTree = "<group>"; };
 		32C6F18DF1126C2FE86EAB4A /* EMSShardQueryAllSpecification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSShardQueryAllSpecification.m; sourceTree = "<group>"; };
 		32C6F190532067AAA2686548 /* MEDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEDownloader.h; sourceTree = "<group>"; };
-		32C6F1AF1ECFFFBB213774CC /* MENotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MENotification.h; sourceTree = "<group>"; };
+		32C6F1AF1ECFFFBB213774CC /* EMSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSNotification.h; sourceTree = "<group>"; };
 		32C6F1B31A92E6047DC5C199 /* EMSCoreTopic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreTopic.h; sourceTree = "<group>"; };
 		32C6F1B766CA46B3840106DA /* EMSRequestModelMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestModelMapper.m; sourceTree = "<group>"; };
 		32C6F1C81AAE659C83D6B3E9 /* EMSRequestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestModel.m; sourceTree = "<group>"; };
@@ -700,7 +700,7 @@
 		32C6FBA47372BFA4A53F018F /* MEButtonClick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEButtonClick.m; sourceTree = "<group>"; };
 		32C6FBACFC9AC84705E361DF /* EMSConfigBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSConfigBuilder.h; sourceTree = "<group>"; };
 		32C6FBCE10B199EB61084486 /* EMSShard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSShard.h; sourceTree = "<group>"; };
-		32C6FBE086CAA87558E80969 /* MENotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotification.m; sourceTree = "<group>"; };
+		32C6FBE086CAA87558E80969 /* EMSNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSNotification.m; sourceTree = "<group>"; };
 		32C6FBE6E615E10C3E6F920E /* MEInApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEInApp.h; sourceTree = "<group>"; };
 		32C6FC0540BEE69AC1B57B96 /* MEUserNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEUserNotificationDelegate.h; sourceTree = "<group>"; };
 		32C6FC0E155016B12F07F1D6 /* MENotificationService+Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MENotificationService+Actions.h"; sourceTree = "<group>"; };
@@ -1438,8 +1438,8 @@
 				32C6F7826F782119F709A6FF /* MEInboxV2.m */,
 				32C6F1FC6B7AF242B4505127 /* MEInboxParser.h */,
 				32C6F0F6BC05B3F8B598D4F8 /* MEInboxParser.m */,
-				32C6F1AF1ECFFFBB213774CC /* MENotification.h */,
-				32C6FBE086CAA87558E80969 /* MENotification.m */,
+				32C6F1AF1ECFFFBB213774CC /* EMSNotification.h */,
+				32C6FBE086CAA87558E80969 /* EMSNotification.m */,
 				32C6FE7474BC271AE4923B4C /* MEInboxProtocol.h */,
 				32C6F083DBD140DB2A5350D0 /* MENotificationInboxStatus.h */,
 				32C6F54D7745C70E2B836E15 /* MENotificationInboxStatus.m */,
@@ -1917,7 +1917,7 @@
 				168F4A6D2108AF0900D0623B /* MEInboxV2.h in Headers */,
 				8A05D0B82139559D00252CE0 /* EMSInAppProtocol.h in Headers */,
 				168F4A6E2108AF0900D0623B /* MEInboxParser.h in Headers */,
-				168F4A6F2108AF0900D0623B /* MENotification.h in Headers */,
+				168F4A6F2108AF0900D0623B /* EMSNotification.h in Headers */,
 				168F4A702108AF0900D0623B /* MEInboxProtocol.h in Headers */,
 				168F4A712108AF0900D0623B /* MENotificationInboxStatus.h in Headers */,
 				168F4A722108AF0900D0623B /* MEInboxNotificationProtocol.h in Headers */,
@@ -2618,7 +2618,7 @@
 				165BF3852108955B00FA0F6A /* MEInbox.m in Sources */,
 				165BF3872108955B00FA0F6A /* MEInboxV2.m in Sources */,
 				165BF3892108955B00FA0F6A /* MEInboxParser.m in Sources */,
-				165BF38B2108955B00FA0F6A /* MENotification.m in Sources */,
+				165BF38B2108955B00FA0F6A /* EMSNotification.m in Sources */,
 				165BF38E2108955B00FA0F6A /* MENotificationInboxStatus.m in Sources */,
 				165BF3912108955B00FA0F6A /* MEExperimental.m in Sources */,
 				165BF3942108955B00FA0F6A /* MEButtonClick.m in Sources */,

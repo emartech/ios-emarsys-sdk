@@ -968,7 +968,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
                 it(@"must not return with nil", ^{
-                    MENotification *message = [MENotification new];
+                    EMSNotification *message = [EMSNotification new];
                     message.sid = @"sid";
                     message.id = @"messageId";
 
@@ -977,7 +977,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
                 it(@"should return with requestModel's non-nil requestId reported in the error when there is no messageId", ^{
-                    MENotification *message = [MENotification new];
+                    EMSNotification *message = [EMSNotification new];
                     message.sid = @"sid";
 
                     NSString *uuid = [_mobileEngage trackMessageOpenWithInboxMessage:message];
@@ -988,7 +988,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
                 it(@"should return with requestModel's non-nil requestId reported in the error when there is no sid", ^{
-                    MENotification *message = [MENotification new];
+                    EMSNotification *message = [EMSNotification new];
                     message.id = @"messageId";
 
                     NSString *uuid = [_mobileEngage trackMessageOpenWithInboxMessage:message];
@@ -999,7 +999,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
                 it(@"should return an error on errorhandler instead of submitting an invalid request without messageId", ^{
-                    MENotification *message = [MENotification new];
+                    EMSNotification *message = [EMSNotification new];
                     message.sid = @"testID";
                     message.title = @"title";
                     message.body = @"body";
@@ -1015,7 +1015,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
                 it(@"should return an error on errorhandler instead of submitting an invalid request without sid", ^{
-                    MENotification *message = [MENotification new];
+                    EMSNotification *message = [EMSNotification new];
                     message.id = @"testID";
                     message.title = @"title";
                     message.body = @"body";
@@ -1057,7 +1057,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.sid = @"testID";
                 [_mobileEngage trackMessageOpenWithInboxMessage:message];
 
@@ -1088,7 +1088,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.sid = @"valueOfSid";
                 [_mobileEngage trackMessageOpenWithInboxMessage:message];
 
@@ -1111,7 +1111,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.sid = @"valueOfSid";
                 [_mobileEngage trackMessageOpenWithInboxMessage:message];
 
@@ -1127,7 +1127,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.sid = @"valueOfSid";
                 NSString *requestID = [_mobileEngage trackMessageOpenWithInboxMessage:message];
 
@@ -1137,7 +1137,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.sid = @"testID";
                 [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];

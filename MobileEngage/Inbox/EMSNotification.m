@@ -2,13 +2,13 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "NSDictionary+MobileEngage.h"
 #import "MEExperimental.h"
 
-@implementation MENotification
+@implementation EMSNotification
 
-- (instancetype)initWithUserinfo:(NSDictionary *)dictionary {
+- (instancetype)initWithUserInfo:(NSDictionary *)dictionary {
     if (self = [super init]) {
 
         if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
@@ -64,7 +64,7 @@
     return [self isEqualToNotification:other];
 }
 
-- (BOOL)isEqualToNotification:(MENotification *)notification {
+- (BOOL)isEqualToNotification:(EMSNotification *)notification {
     if (self == notification)
         return YES;
     if (notification == nil)

@@ -3,7 +3,7 @@
 //
 
 #import "MEInboxParser.h"
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "MENotificationInboxStatus.h"
 
 @implementation MEInboxParser
@@ -17,16 +17,16 @@
     return result;
 }
 
-- (NSArray<MENotification *> *)parseArrayOfNotifications:(NSArray<NSDictionary *> *)array {
-    NSMutableArray<MENotification *> *results = [NSMutableArray new];
+- (NSArray<EMSNotification *> *)parseArrayOfNotifications:(NSArray<NSDictionary *> *)array {
+    NSMutableArray<EMSNotification *> *results = [NSMutableArray new];
     for (NSDictionary *notificationDict in array) {
         [results addObject:[self parseNotification:notificationDict]];
     }
     return [NSArray arrayWithArray:results];
 }
 
-- (MENotification *)parseNotification:(NSDictionary *)notification {
-    return [[MENotification alloc] initWithNotificationDictionary:notification];
+- (EMSNotification *)parseNotification:(NSDictionary *)notification {
+    return [[EMSNotification alloc] initWithNotificationDictionary:notification];
 }
 
 @end

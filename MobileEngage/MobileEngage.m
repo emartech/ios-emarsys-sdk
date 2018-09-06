@@ -114,14 +114,14 @@ static EMSSQLiteHelper *_dbHelper;
 + (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
     NSNumber *inbox = userInfo[@"inbox"];
     if (inbox && [inbox boolValue]) {
-        MENotification *notification = [[MENotification alloc] initWithUserinfo:userInfo];
+        EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo];
         [_inbox addNotification:notification];
 
     }
     return [_mobileEngageInternal trackMessageOpenWithUserInfo:userInfo];
 }
 
-+ (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage {
++ (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
     return [_mobileEngageInternal trackMessageOpenWithInboxMessage:inboxMessage];
 }
 

@@ -5,7 +5,7 @@
 #import "EMSSchemaContract.h"
 
 @class MERequestContext;
-@class MENotification;
+@class EMSNotification;
 @class EMSRequestModel;
 
 @interface MERequestFactory : NSObject
@@ -15,7 +15,7 @@
 
 + (EMSRequestModel *)createAppLogoutRequestWithRequestContext:(MERequestContext *)requestContext;
 
-+ (EMSRequestModel *)createTrackMessageOpenRequestWithNotification:(MENotification *)inboxMessage
++ (EMSRequestModel *)createTrackMessageOpenRequestWithNotification:(EMSNotification *)inboxMessage
                                                     requestContext:(MERequestContext *)requestContext;
 
 + (EMSRequestModel *)createTrackMessageOpenRequestWithMessageId:(NSString *)messageId

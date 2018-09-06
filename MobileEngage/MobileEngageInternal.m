@@ -208,7 +208,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     return requestModel.requestId;
 }
 
-- (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage {
+- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
     NSParameterAssert(inboxMessage);
     EMSRequestModel *requestModel;
     if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {

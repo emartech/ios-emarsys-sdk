@@ -21,7 +21,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         NSString *meId = @"ordinaryMeId";
         __block MERequestContext *requestContext;
         __block NSMutableArray *notifications;
-        __block NSMutableArray<MENotification *> *fakeNotifications;
+        __block NSMutableArray<EMSNotification *> *fakeNotifications;
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setCredentialsWithApplicationCode:applicationCode
@@ -78,9 +78,9 @@ SPEC_BEGIN(MEInboxV2Tests)
                 @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)},
             ]};
 
-            NSMutableArray<MENotification *> *nots = [NSMutableArray array];
+            NSMutableArray<EMSNotification *> *nots = [NSMutableArray array];
             for (NSDictionary *notificationDict in jsonResponse[@"notifications"]) {
-                [nots addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                [nots addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
             }
             fakeNotifications = nots;
         });
@@ -368,7 +368,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should call EMSRestClient's executeTaskWithRequestModel: and parse the notifications correctly", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                __block NSArray<MENotification *> *_notifications;
+                __block NSArray<EMSNotification *> *_notifications;
                 [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                     _notifications = inboxStatus.notifications;
                 }                             errorBlock:^(NSError *error) {
@@ -500,7 +500,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should increase the notifications with the notification", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                MENotification *notification = [MENotification new];
+                EMSNotification *notification = [EMSNotification new];
 
                 [[theValue([notifications count]) should] equal:theValue(0)];
                 [inbox addNotification:notification];
@@ -511,7 +511,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         describe(@"inbox.fetchNotificationsWithResultBlock include cached notifications", ^{
             it(@"should return with the added notification", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                MENotification *notification = [MENotification new];
+                EMSNotification *notification = [EMSNotification new];
                 [inbox addNotification:notification];
 
                 __block MENotificationInboxStatus *status;
@@ -525,7 +525,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should return with the added notification on top", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                MENotification *notification = [MENotification new];
+                EMSNotification *notification = [EMSNotification new];
                 notification.expirationTime = @12345678130;
                 [inbox addNotification:notification];
 
@@ -540,14 +540,14 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should not add the notification if there is a notification already in with the same ID", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                MENotification *notification = [MENotification new];
+                EMSNotification *notification = [EMSNotification new];
                 notification.title = @"dogsOrCats";
                 notification.id = @"id1";
                 [inbox addNotification:notification];
 
-                __block MENotification *returnedNotification;
+                __block EMSNotification *returnedNotification;
                 [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    for (MENotification *noti in inboxStatus.notifications) {
+                    for (EMSNotification *noti in inboxStatus.notifications) {
                         if ([noti.id isEqualToString:notification.id]) {
                             returnedNotification = noti;
                             break;
@@ -565,19 +565,19 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should remove notifications from cache when they are already present in the fetched list", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
 
-                MENotification *notification1 = [MENotification new];
+                EMSNotification *notification1 = [EMSNotification new];
                 notification1.title = @"helloSunshine";
                 notification1.id = @"id1";
                 [inbox addNotification:notification1];
 
-                MENotification *notification2 = [MENotification new];
+                EMSNotification *notification2 = [EMSNotification new];
                 notification2.title = @"happySkiing";
                 notification2.id = @"id0";
                 [inbox addNotification:notification2];
 
-                __block MENotification *returnedNotification;
+                __block EMSNotification *returnedNotification;
                 [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    for (MENotification *noti in inboxStatus.notifications) {
+                    for (EMSNotification *noti in inboxStatus.notifications) {
                         if ([noti.id isEqualToString:notification1.id]) {
                             returnedNotification = noti;
                             break;
@@ -595,7 +595,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should be idempotent", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                MENotification *notification = [MENotification new];
+                EMSNotification *notification = [EMSNotification new];
                 [inbox addNotification:notification];
 
                 __block MENotificationInboxStatus *status1;
@@ -799,13 +799,13 @@ SPEC_BEGIN(MEInboxV2Tests)
                     @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
-                NSMutableArray<MENotification *> *expectedNotifications1 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[0]) {
-                    [expectedNotifications1 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications1 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                NSMutableArray<MENotification *> *expectedNotifications2 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications2 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[1]) {
-                    [expectedNotifications2 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications2 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
 
                 FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithSuccessResults:results];
@@ -858,13 +858,13 @@ SPEC_BEGIN(MEInboxV2Tests)
                     @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
-                NSMutableArray<MENotification *> *expectedNotifications1 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[0]) {
-                    [expectedNotifications1 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications1 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                NSMutableArray<MENotification *> *expectedNotifications2 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications2 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[1]) {
-                    [expectedNotifications2 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications2 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
 
                 FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithSuccessResults:results];
@@ -914,13 +914,13 @@ SPEC_BEGIN(MEInboxV2Tests)
                     @{@"id": @"id9", @"title": @"title9", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
-                NSMutableArray<MENotification *> *expectedNotifications1 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[0]) {
-                    [expectedNotifications1 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications1 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                NSMutableArray<MENotification *> *expectedNotifications2 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications2 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[1]) {
-                    [expectedNotifications2 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications2 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
 
                 FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithSuccessResults:results];
@@ -979,13 +979,13 @@ SPEC_BEGIN(MEInboxV2Tests)
                     @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
-                NSMutableArray<MENotification *> *expectedNotifications1 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[0]) {
-                    [expectedNotifications1 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications1 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                NSMutableArray<MENotification *> *expectedNotifications2 = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications2 = [NSMutableArray array];
                 for (NSDictionary *notificationDict in results[1]) {
-                    [expectedNotifications2 addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications2 addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
 
                 FakeInboxNotificationRestClient *fakeRestClient = [[FakeInboxNotificationRestClient alloc] initWithSuccessResults:results];

@@ -234,7 +234,7 @@ SPEC_BEGIN(MobileEngageTests)
         describe(@"trackMessageOpenWithInboxMessage:", ^{
             it(@"should call internal implementation's method", ^{
                 [[mobileEngageInternal() should] receive:@selector(trackMessageOpenWithInboxMessage:)];
-                MENotification *message = [MENotification new];
+                EMSNotification *message = [EMSNotification new];
                 message.id = @"testID";
                 [MobileEngage trackMessageOpenWithInboxMessage:message];
             });

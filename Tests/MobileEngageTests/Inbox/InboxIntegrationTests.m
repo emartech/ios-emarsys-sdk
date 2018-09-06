@@ -63,10 +63,10 @@ SPEC_BEGIN(InboxIntegrationTests)
             };
             [MobileEngage trackMessageOpenWithUserInfo:userInfo];
 
-            __block MENotification *returnedNotification;
+            __block EMSNotification *returnedNotification;
             XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
             [MobileEngage.inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        for (MENotification *noti in inboxStatus.notifications) {
+                        for (EMSNotification *noti in inboxStatus.notifications) {
                             if ([noti.id isEqualToString:notificationId]) {
                                 returnedNotification = noti;
                                 break;
@@ -108,10 +108,10 @@ SPEC_BEGIN(InboxIntegrationTests)
             };
             [MobileEngage trackMessageOpenWithUserInfo:userInfo];
 
-            __block MENotification *returnedNotification;
+            __block EMSNotification *returnedNotification;
             XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
             [MobileEngage.inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        for (MENotification *noti in inboxStatus.notifications) {
+                        for (EMSNotification *noti in inboxStatus.notifications) {
                             if ([noti.id isEqualToString:notificationId]) {
                                 returnedNotification = noti;
                                 break;
@@ -156,7 +156,7 @@ SPEC_BEGIN(InboxIntegrationTests)
             XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"wait"];
             [MobileEngage.inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
                         resultInboxStatus = inboxStatus;
-                        for (MENotification *noti in inboxStatus.notifications) {
+                        for (EMSNotification *noti in inboxStatus.notifications) {
                             if ([noti.id isEqualToString:notificationId]) {
                                 fail(@"fail");
                             }

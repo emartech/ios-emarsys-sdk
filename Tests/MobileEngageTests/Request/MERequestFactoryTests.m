@@ -8,7 +8,7 @@
 #import "MERequestContext.h"
 #import "EMSConfigBuilder.h"
 #import "MEExperimental+Test.h"
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "NSDate+EMSCore.h"
 
 typedef MERequestContext *(^RequestContextBlock)(NSDate *timeStamp);
@@ -215,10 +215,10 @@ SPEC_BEGIN(MERequestFactoryTests)
 
         describe(@"createTrackMessageOpenRequestWithNotification:requestContext:", ^{
 
-            typedef MENotification *(^NotificationBlock)(void);
+            typedef EMSNotification *(^NotificationBlock)(void);
 
-            NotificationBlock notificationBlock = ^MENotification * {
-                MENotification *notification = [MENotification new];
+            NotificationBlock notificationBlock = ^EMSNotification * {
+                EMSNotification *notification = [EMSNotification new];
                 notification.id = @"notificationId";
                 notification.sid = @"notificationSid";
                 notification.title = @"notificationTitle";
@@ -240,7 +240,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 });
 
                 it(@"should create v2 request when USER_CENTRIC_INBOX feature is turned off", ^{
-                    MENotification *notification = notificationBlock();
+                    EMSNotification *notification = notificationBlock();
                     MERequestContext *requestContext = requestContextBlock([NSDate date]);
 
                     EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:notification
@@ -267,7 +267,7 @@ SPEC_BEGIN(MERequestFactoryTests)
 
 
                 it(@"should create v3 request when USER_CENTRIC_INBOX feature is turned on", ^{
-                    MENotification *notification = notificationBlock();
+                    EMSNotification *notification = notificationBlock();
                     NSDate *timeStamp = [NSDate date];
                     MERequestContext *requestContext = requestContextBlock([NSDate date]);
 

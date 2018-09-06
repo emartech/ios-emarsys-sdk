@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface MENotification : NSObject
+@interface EMSNotification : NSObject
 
 @property(nonatomic, strong) NSString *id;
 @property(nonatomic, strong) NSString *sid;
@@ -16,12 +16,12 @@
 @property(nonatomic, strong) NSNumber *expirationTime;
 @property(nonatomic, strong) NSNumber *receivedAtTimestamp;
 
-- (instancetype)initWithUserinfo:(NSDictionary *)dictionary;
+- (instancetype)initWithUserInfo:(NSDictionary *)dictionary;
 - (instancetype)initWithNotificationDictionary:(NSDictionary *)dictionary;
 
 - (BOOL)isEqual:(id)other;
 
-- (BOOL)isEqualToNotification:(MENotification *)notification;
+- (BOOL)isEqualToNotification:(EMSNotification *)notification;
 
 - (NSUInteger)hash;
 

@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MobileEngage (Private)
 
-+ (NSString *)trackMessageOpenWithInboxMessage:(MENotification *)inboxMessage;
++ (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage;
 + (EMSSQLiteHelper *)dbHelper;
 + (void)setDbHelper:(EMSSQLiteHelper *)dbHelper;
 

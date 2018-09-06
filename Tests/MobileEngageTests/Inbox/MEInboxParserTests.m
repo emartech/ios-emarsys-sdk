@@ -1,6 +1,6 @@
 #import "Kiwi.h"
 #import "MEInboxParser.h"
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "MENotificationInboxStatus.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
@@ -23,9 +23,9 @@ SPEC_BEGIN(MEInboxParserTests)
                         ],
                         @"badge_count": @3
                 };
-                NSMutableArray<MENotification *> *expectedNotifications = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications = [NSMutableArray array];
                 for (NSDictionary *notificationDict in notificationInboxStatus[@"notifications"]) {
-                    [expectedNotifications addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
                 MENotificationInboxStatus *result = [parser parseNotificationInboxStatus:notificationInboxStatus];
 
@@ -37,7 +37,7 @@ SPEC_BEGIN(MEInboxParserTests)
         describe(@"InboxParser.parseArrayOfNotifications:", ^{
             it(@"should not return nil", ^{
                 MEInboxParser *parser = [MEInboxParser new];
-                NSArray<MENotification *> *result = [parser parseArrayOfNotifications:@[]];
+                NSArray<EMSNotification *> *result = [parser parseArrayOfNotifications:@[]];
                 [[theValue(result) shouldNot] beNil];
             });
 
@@ -50,11 +50,11 @@ SPEC_BEGIN(MEInboxParserTests)
                         ],
                         @"badge_count": @3
                 };
-                NSMutableArray<MENotification *> *expectedNotifications = [NSMutableArray array];
+                NSMutableArray<EMSNotification *> *expectedNotifications = [NSMutableArray array];
                 for (NSDictionary *notificationDict in notificationInboxStatus[@"notifications"]) {
-                    [expectedNotifications addObject:[[MENotification alloc] initWithNotificationDictionary:notificationDict]];
+                    [expectedNotifications addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                NSArray<MENotification *> *result = [parser parseArrayOfNotifications:notificationInboxStatus[@"notifications"]];
+                NSArray<EMSNotification *> *result = [parser parseArrayOfNotifications:notificationInboxStatus[@"notifications"]];
 
                 [[result should] equal:expectedNotifications];
             });
@@ -72,7 +72,7 @@ SPEC_BEGIN(MEInboxParserTests)
 
                 it(@"should not return nil", ^{
                     MEInboxParser *parser = [MEInboxParser new];
-                    MENotification *result = [parser parseNotification:@{}];
+                    EMSNotification *result = [parser parseNotification:@{}];
                     [[theValue(result) shouldNot] beNil];
                 });
 
@@ -96,7 +96,7 @@ SPEC_BEGIN(MEInboxParserTests)
                             @"rootKey": @"rootValue"
                     };
 
-                    MENotification *notification = [[MENotification alloc] initWithUserinfo:userInfo];
+                    EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo];
                     [[notification.id should] equal:@"userInfoMessageId"];
                     [[notification.sid should] equal:@"userInfoSid"];
                     [[notification.title should] equal:@"title"];
@@ -106,14 +106,14 @@ SPEC_BEGIN(MEInboxParserTests)
             context(@"USER_CENTRIC_INBOX turned off", ^{
                 it(@"should not return nil", ^{
                     MEInboxParser *parser = [MEInboxParser new];
-                    MENotification *result = [parser parseNotification:@{}];
+                    EMSNotification *result = [parser parseNotification:@{}];
                     [[theValue(result) shouldNot] beNil];
                 });
 
                 it(@"should create the correct notification", ^{
                     MEInboxParser *parser = [MEInboxParser new];
                     NSDictionary *notificationDict = @{@"id": @"id7", @"sid": @"sid1", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)};
-                    MENotification *notification = [parser parseNotification:notificationDict];
+                    EMSNotification *notification = [parser parseNotification:notificationDict];
                     [[notification.id should] equal:@"id7"];
                     [[notification.sid should] equal:@"sid1"];
                     [[notification.title should] equal:@"title7"];
@@ -126,7 +126,7 @@ SPEC_BEGIN(MEInboxParserTests)
                 it(@"should create the correct notification with body as well", ^{
                     MEInboxParser *parser = [MEInboxParser new];
                     NSDictionary *notificationDict = @{@"id": @"id7", @"sid": @"sid1", @"title": @"title7", @"body": @"body7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)};
-                    MENotification *notification = [parser parseNotification:notificationDict];
+                    EMSNotification *notification = [parser parseNotification:notificationDict];
                     [[notification.id should] equal:@"id7"];
                     [[notification.sid should] equal:@"sid1"];
                     [[notification.title should] equal:@"title7"];

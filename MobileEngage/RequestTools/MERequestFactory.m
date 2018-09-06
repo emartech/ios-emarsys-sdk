@@ -5,7 +5,7 @@
 #import "MERequestContext.h"
 #import "MobileEngageVersion.h"
 #import "NSData+MobileEngine.h"
-#import "MENotification.h"
+#import "EMSNotification.h"
 #import "MEExperimental.h"
 #import "EMSRequestModel.h"
 #import "EMSRequestModelBuilder.h"
@@ -76,7 +76,7 @@
     return requestModel;
 }
 
-+ (EMSRequestModel *)createTrackMessageOpenRequestWithNotification:(MENotification *)inboxMessage
++ (EMSRequestModel *)createTrackMessageOpenRequestWithNotification:(EMSNotification *)inboxMessage
                                                     requestContext:(MERequestContext *)requestContext {
     EMSRequestModel *requestModel;
     if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
