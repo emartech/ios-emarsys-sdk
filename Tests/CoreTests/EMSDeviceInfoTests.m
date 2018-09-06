@@ -117,7 +117,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 [[mockUserDefaults should] receive:@selector(objectForKey:)
                                          andReturn:nil];
                 [[mockUserDefaults should] receive:@selector(setObject:forKey:)
-                                     withArguments:idfv, @"kEMSHardwareIdKey"];
+                                     withArguments:idfv, @"kHardwareIdKey"];
                 [[mockUserDefaults should] receive:@selector(synchronize)];
 
                 id identifierManagerMock = createIdentifierManagerMock();
@@ -134,7 +134,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 [[mockUserDefaults should] receive:@selector(objectForKey:)
                                          andReturn:nil];
                 [[mockUserDefaults should] receive:@selector(setObject:forKey:)
-                                     withArguments:[uuid UUIDString], @"kEMSHardwareIdKey"];
+                                     withArguments:[uuid UUIDString], @"kHardwareIdKey"];
                 [[mockUserDefaults should] receive:@selector(synchronize)];
 
                 id identifierManagerMock = createIdentifierManagerMock();
