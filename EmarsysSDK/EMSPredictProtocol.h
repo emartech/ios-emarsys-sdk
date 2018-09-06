@@ -6,11 +6,15 @@
 
 @protocol EMSPredictProtocol <NSObject>
 
-+ (void)trackCartWithCartItems:(NSArray<id<EMSCartItemProtocol>> *)cartItems;
-+ (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
++ (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
+
 + (void)trackPurchaseWithOrderId:(NSString *)orderId
-                           items:(NSArray<id<EMSCartItemProtocol>> *)cartItems;
-+ (void)trackSearchWithSearchterm:(NSString *)searchterm;
+                           items:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
+
++ (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
+
 + (void)trackItemWithItemId:(NSString *)itemId;
+
++ (void)trackSearchWithSearchterm:(NSString *)searchterm;
 
 @end
