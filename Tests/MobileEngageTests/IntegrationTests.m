@@ -24,14 +24,14 @@ SPEC_BEGIN(IntegrationTests)
             [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
                                                        error:nil];
 
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
             [userDefaults removeObjectForKey:kMEID];
             [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-            [userDefaults removeObjectForKey:kLastAppLoginPayload];
+            [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
             [userDefaults synchronize];
 
             userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-            [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
+            [userDefaults setObject:@"IntegrationTests" forKey:@"kEMSHardwareIdKey"];
 
             config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setCredentialsWithApplicationCode:@"14C19-A121F"

@@ -9,8 +9,8 @@
 
 @class EMSUUIDProvider;
 
-#define kSuiteName @"com.emarsys.mobileengage"
-#define kLastAppLoginPayload @"kLastAppLoginPayload"
+#define kEMSSuiteName @"com.emarsys.mobileengage"
+#define kEMSLastAppLoginPayload @"kLastAppLoginPayload"
 #define kMEID @"kMEID"
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 

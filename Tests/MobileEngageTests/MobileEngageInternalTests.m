@@ -53,10 +53,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
                                                        error:nil];
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
             [userDefaults setObject:nil forKey:kMEID];
             [userDefaults setObject:nil forKey:kMEID_SIGNATURE];
-            [userDefaults setObject:nil forKey:kLastAppLoginPayload];
+            [userDefaults setObject:nil forKey:kEMSLastAppLoginPayload];
             [userDefaults synchronize];
 
             requestContext = [[MERequestContext alloc] initWithConfig:config];
@@ -1577,7 +1577,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage.requestContext setMeId:meID];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 NSString *returnedValue = [userDefaults stringForKey:kMEID];
 
                 [[returnedValue should] equal:meID];
@@ -1595,7 +1595,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setContactFieldId:@3];
                 }];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 [userDefaults setObject:meID
                                  forKey:kMEID];
                 [userDefaults synchronize];
@@ -1630,7 +1630,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                  logRepository:nil
                                 requestContext:requestContext];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 [userDefaults setObject:meID
                                  forKey:kMEID];
                 [userDefaults synchronize];
@@ -1671,7 +1671,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage.requestContext setMeIdSignature:meIDSignature];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 NSString *returnedValue = [userDefaults stringForKey:kMEID_SIGNATURE];
 
                 [[returnedValue should] equal:meIDSignature];
@@ -1689,7 +1689,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setContactFieldId:@3];
                 }];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 [userDefaults setObject:meIDSignature
                                  forKey:kMEID_SIGNATURE];
                 [userDefaults synchronize];
@@ -1717,7 +1717,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [builder setContactFieldId:@3];
                 }];
 
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 [userDefaults setObject:meIdSignature
                                  forKey:kMEID_SIGNATURE];
                 [userDefaults synchronize];

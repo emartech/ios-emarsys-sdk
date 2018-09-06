@@ -26,10 +26,10 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                                                        error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:ME_DB_PATH
                                                        error:nil];
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
             [userDefaults removeObjectForKey:kMEID];
             [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-            [userDefaults removeObjectForKey:kLastAppLoginPayload];
+            [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
             [userDefaults synchronize];
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {

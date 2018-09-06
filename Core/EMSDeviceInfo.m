@@ -9,8 +9,8 @@
 
 @implementation EMSDeviceInfo
 
-#define kHardwareIdKey @"kHardwareIdKey"
-#define kSuiteName @"com.emarsys.core"
+#define kEMSHardwareIdKey @"kHardwareIdKey"
+#define kEMSSuiteName @"com.emarsys.core"
 
 + (NSString *)timeZone {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -52,12 +52,12 @@
 }
 
 + (NSString *)hardwareId {
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
-    NSString *hardwareId = [userDefaults objectForKey:kHardwareIdKey];
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    NSString *hardwareId = [userDefaults objectForKey:kEMSHardwareIdKey];
 
     if (!hardwareId) {
         hardwareId = [self getNewHardwareId];
-        [userDefaults setObject:hardwareId forKey:kHardwareIdKey];
+        [userDefaults setObject:hardwareId forKey:kEMSHardwareIdKey];
         [userDefaults synchronize];
     }
 

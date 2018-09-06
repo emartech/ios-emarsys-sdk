@@ -9,9 +9,9 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config {
     if (self = [super init]) {
-        _lastAppLoginPayload = [[[NSUserDefaults alloc] initWithSuiteName:kSuiteName] dictionaryForKey:kLastAppLoginPayload];
-        _meId = [[[NSUserDefaults alloc] initWithSuiteName:kSuiteName] stringForKey:kMEID];
-        _meIdSignature = [[[NSUserDefaults alloc] initWithSuiteName:kSuiteName] stringForKey:kMEID_SIGNATURE];
+        _lastAppLoginPayload = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] dictionaryForKey:kEMSLastAppLoginPayload];
+        _meId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID];
+        _meIdSignature = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID_SIGNATURE];
         _config = config;
         _timestampProvider = [EMSTimestampProvider new];
         _uuidProvider = [EMSUUIDProvider new];
@@ -21,15 +21,15 @@
 
 - (void)setLastAppLoginPayload:(NSDictionary *)lastAppLoginPayload {
     _lastAppLoginPayload = lastAppLoginPayload;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:lastAppLoginPayload
-                     forKey:kLastAppLoginPayload];
+                     forKey:kEMSLastAppLoginPayload];
     [userDefaults synchronize];
 }
 
 - (void)setMeId:(NSString *)meId {
     _meId = meId;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:meId
                      forKey:kMEID];
     [userDefaults synchronize];
@@ -37,7 +37,7 @@
 
 - (void)setMeIdSignature:(NSString *)meIdSignature {
     _meIdSignature = meIdSignature;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kSuiteName];
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:meIdSignature
                      forKey:kMEID_SIGNATURE];
     [userDefaults synchronize];
