@@ -113,8 +113,8 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
 
             it(@"should save the inapp display", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"appid"
-                                           applicationPassword:@"pw"];
+                    [builder setMobileEngageApplicationCode:@"appid"
+                                        applicationPassword:@"pw"];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];

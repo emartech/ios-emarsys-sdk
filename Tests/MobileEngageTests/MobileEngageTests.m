@@ -30,8 +30,8 @@ SPEC_BEGIN(MobileEngageTests)
             NSString *applicationPassword = @"appSecret";
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:applicationCode
-                                       applicationPassword:applicationPassword];
+                [builder setMobileEngageApplicationCode:applicationCode
+                                    applicationPassword:applicationPassword];
                 [builder setMerchantId:@"dummyMerchantId"];
                 [builder setContactFieldId:@3];
             }];
@@ -76,8 +76,8 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationPassword = @"appSecret";
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:applicationCode
-                                           applicationPassword:applicationPassword];
+                    [builder setMobileEngageApplicationCode:applicationCode
+                                        applicationPassword:applicationPassword];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
@@ -103,8 +103,8 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationPassword = @"appSecret";
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:applicationCode
-                                           applicationPassword:applicationPassword];
+                    [builder setMobileEngageApplicationCode:applicationCode
+                                        applicationPassword:applicationPassword];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
@@ -125,8 +125,8 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationPassword = @"appSecret";
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:applicationCode
-                                           applicationPassword:applicationPassword];
+                    [builder setMobileEngageApplicationCode:applicationCode
+                                        applicationPassword:applicationPassword];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
@@ -143,8 +143,8 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationPassword = @"appSecret";
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:applicationCode
-                                           applicationPassword:applicationPassword];
+                    [builder setMobileEngageApplicationCode:applicationCode
+                                        applicationPassword:applicationPassword];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
@@ -200,8 +200,8 @@ SPEC_BEGIN(MobileEngageTests)
                 NSString *applicationPassword = @"appSecret";
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:applicationCode
-                                           applicationPassword:applicationPassword];
+                    [builder setMobileEngageApplicationCode:applicationCode
+                                        applicationPassword:applicationPassword];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
@@ -256,8 +256,8 @@ SPEC_BEGIN(MobileEngageTests)
                     NSString *applicationPassword = @"appSecret";
 
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:applicationCode
-                                               applicationPassword:applicationPassword];
+                        [builder setMobileEngageApplicationCode:applicationCode
+                                            applicationPassword:applicationPassword];
                         [builder setMerchantId:@"dummyMerchantId"];
                         [builder setContactFieldId:@3];
                     }];
@@ -272,8 +272,8 @@ SPEC_BEGIN(MobileEngageTests)
                     NSString *applicationPassword = @"appSecret";
 
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:applicationCode
-                                               applicationPassword:applicationPassword];
+                        [builder setMobileEngageApplicationCode:applicationCode
+                                            applicationPassword:applicationPassword];
                         [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
                         [builder setMerchantId:@"dummyMerchantId"];
                         [builder setContactFieldId:@3];

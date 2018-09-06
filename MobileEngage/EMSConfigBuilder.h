@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
 
-- (EMSConfigBuilder *)setCredentialsWithApplicationCode:(NSString *)applicationCode
-                                    applicationPassword:(NSString *)applicationPassword;
+- (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode
+                                 applicationPassword:(NSString *)applicationPassword;
 
 - (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<MEFlipperFeature> *)features;
 

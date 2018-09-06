@@ -33,8 +33,8 @@ SPEC_BEGIN(InboxV2IntegrationTests)
             [userDefaults synchronize];
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
                 [builder setMerchantId:@"dummyMerchantId"];
                 [builder setContactFieldId:@3];

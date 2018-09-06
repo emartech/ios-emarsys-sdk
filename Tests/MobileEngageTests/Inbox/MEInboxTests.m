@@ -9,11 +9,9 @@
 #import "MEInbox+Private.h"
 #import "EMSRequestModelBuilder.h"
 #import "EMSRequestModelMatcher.h"
-#import "MEInboxNotificationProtocol.h"
 #import "FakeStatusDelegate.h"
 #import "EMSAuthentication.h"
 #import "MEExperimental+Test.h"
-#import "MERequestContext.h"
 #import "EMSUUIDProvider.h"
 
 static NSString *const kAppId = @"kAppId";
@@ -28,8 +26,8 @@ SPEC_BEGIN(MEInboxTests)
         NSString *contactFieldValue = @"valueOfContactField";
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setCredentialsWithApplicationCode:applicationCode
-                                   applicationPassword:applicationPassword];
+            [builder setMobileEngageApplicationCode:applicationCode
+                                applicationPassword:applicationPassword];
             [builder setMerchantId:@"dummyMerchantId"];
             [builder setContactFieldId:@3];
         }];
@@ -501,8 +499,8 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should return with eventId, and finish with success for trackMessageOpenWithInboxMessage:", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                           applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                    [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];

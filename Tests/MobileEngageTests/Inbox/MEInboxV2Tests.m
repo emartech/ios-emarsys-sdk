@@ -24,8 +24,8 @@ SPEC_BEGIN(MEInboxV2Tests)
         __block NSMutableArray<EMSNotification *> *fakeNotifications;
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setCredentialsWithApplicationCode:applicationCode
-                                   applicationPassword:applicationPassword];
+            [builder setMobileEngageApplicationCode:applicationCode
+                                applicationPassword:applicationPassword];
             [builder setMerchantId:@"dummyMerchantId"];
             [builder setContactFieldId:@3];
         }];

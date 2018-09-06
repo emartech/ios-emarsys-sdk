@@ -9,7 +9,7 @@ SPEC_BEGIN(BuilderTest)
                 NSArray *features = @[INAPP_MESSAGING];
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
                     [builder setExperimentalFeatures:features];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
@@ -24,7 +24,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should create a config with applicationCode", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:@"pwd"];
+                    [builder setMobileEngageApplicationCode:@"test1" applicationPassword:@"pwd"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
 
@@ -35,7 +35,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should create a config with applicationPassword", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:@"pwd"];
+                    [builder setMobileEngageApplicationCode:@"test1" applicationPassword:@"pwd"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
 
@@ -47,7 +47,7 @@ SPEC_BEGIN(BuilderTest)
             it(@"should throw exception when applicationCode is nil", ^{
                 @try {
                     [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:nil applicationPassword:@"pwd"];
+                        [builder setMobileEngageApplicationCode:nil applicationPassword:@"pwd"];
                         [builder setMerchantId:@"merchantId"];
                         [builder setContactFieldId:@"contactFieldId"];
 
@@ -61,7 +61,7 @@ SPEC_BEGIN(BuilderTest)
             it(@"should throw exception when secret is nil", ^{
                 @try {
                     [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:@"test1" applicationPassword:nil];
+                        [builder setMobileEngageApplicationCode:@"test1" applicationPassword:nil];
                         [builder setMerchantId:@"merchantId"];
                         [builder setContactFieldId:@"contactFieldId"];
 
@@ -78,7 +78,7 @@ SPEC_BEGIN(BuilderTest)
             it(@"should throw exception when merchantId is nil", ^{
                 @try {
                     [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
+                        [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
                         [builder setMerchantId:nil];
                         [builder setContactFieldId:@"contactFieldId"];
                     }];
@@ -90,7 +90,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should set merchantId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
                 }];
@@ -103,7 +103,7 @@ SPEC_BEGIN(BuilderTest)
             it(@"should throw exception when contactFieldId is nil", ^{
                 @try {
                     [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
+                        [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
                         [builder setMerchantId:@"merchantId"];
                         [builder setContactFieldId:nil];
                     }];
@@ -115,7 +115,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should set contactFieldId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setCredentialsWithApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
                 }];

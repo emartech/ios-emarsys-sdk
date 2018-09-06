@@ -34,8 +34,8 @@ SPEC_BEGIN(IntegrationTests)
             [userDefaults setObject:@"IntegrationTests" forKey:@"kEMSHardwareIdKey"];
 
             config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setCredentialsWithApplicationCode:@"14C19-A121F"
-                                       applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
                 [builder setMerchantId:@"dummyMerchantId"];
                 [builder setContactFieldId:@3];
             }];
