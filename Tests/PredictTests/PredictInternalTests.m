@@ -4,10 +4,12 @@
 
 #import "Kiwi.h"
 #import "PredictInternal.h"
+#import "PRERequestContext.h"
 
-SPEC_BEGIN(PredictTests)
+SPEC_BEGIN(PredictInternalTests)
 
         describe(@"setCustomerWithId:", ^{
+
             it(@"should throw exception when customerId is nil", ^{
                 @try {
                     [[PredictInternal new] setCustomerWithId:nil];
@@ -17,9 +19,20 @@ SPEC_BEGIN(PredictTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
+            it(@"should set the customerId in RequestContext", ^{
+                PRERequestContext *requestContextMock = [PRERequestContext mock];
+                NSString *const customerId = @"customerID";
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContextMock];
+
+                [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
+                [internal setCustomerWithId:customerId];
+            });
+
         });
 
         describe(@"trackCategoryViewWithCategoryPath:", ^{
+
             it(@"should throw exception when categoryPath is nil", ^{
                 @try {
                     [[PredictInternal new] trackCategoryViewWithCategoryPath:nil];
@@ -29,5 +42,6 @@ SPEC_BEGIN(PredictTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
         });
 SPEC_END

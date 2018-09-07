@@ -441,8 +441,8 @@
 		8AFCA41D21393CF30052FEFA /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		8AFCA44721393CF60052FEFA /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8AFCA44821393CF60052FEFA /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
-		8AFCA45221393D640052FEFA /* PredictTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictTests.m */; };
-		8AFCA45321393D640052FEFA /* PredictTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictTests.m */; };
+		8AFCA45221393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
+		8AFCA45321393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
 		8AFCA45421393D640052FEFA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AFCA45121393D640052FEFA /* Info.plist */; };
 		8AFCA45921393D710052FEFA /* EmarsysSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */; };
 		8AFCA45A21393D710052FEFA /* EmarsysSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */; };
@@ -897,7 +897,7 @@
 		8AEBEC5F210866C200FC6E83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AFCA42221393CF30052FEFA /* PredictTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PredictTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AFCA44D21393CF60052FEFA /* EmarsysSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmarsysSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8AFCA45021393D640052FEFA /* PredictTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PredictTests.m; sourceTree = "<group>"; };
+		8AFCA45021393D640052FEFA /* PredictInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PredictInternalTests.m; sourceTree = "<group>"; };
 		8AFCA45121393D640052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysSDKTests.m; sourceTree = "<group>"; };
 		8AFCA45821393D700052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1870,7 +1870,7 @@
 		8AFCA44F21393D640052FEFA /* PredictTests */ = {
 			isa = PBXGroup;
 			children = (
-				8AFCA45021393D640052FEFA /* PredictTests.m */,
+				8AFCA45021393D640052FEFA /* PredictInternalTests.m */,
 				8AFCA45121393D640052FEFA /* Info.plist */,
 				37460FC10842C0A13863CF72 /* PRERequestContextTests.m */,
 			);
@@ -2546,7 +2546,7 @@
 				166B3F542119A840006CD35C /* MEInboxTests.m in Sources */,
 				166B3F552119A840006CD35C /* NSDictionary+MobileEngageTests.m in Sources */,
 				166B3F562119A840006CD35C /* MEIAMButtonClickedTests.m in Sources */,
-				8AFCA45221393D640052FEFA /* PredictTests.m in Sources */,
+				8AFCA45221393D640052FEFA /* PredictInternalTests.m in Sources */,
 				166B3F572119A840006CD35C /* MEIAMCloseTests.m in Sources */,
 				166B3F582119A840006CD35C /* MEIAMOpenExternalLinkTests.m in Sources */,
 				166B3F592119A840006CD35C /* MEIAMRequestPushPermissionTests.m in Sources */,
@@ -2711,7 +2711,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AFCA45321393D640052FEFA /* PredictTests.m in Sources */,
+				8AFCA45321393D640052FEFA /* PredictInternalTests.m in Sources */,
 				3746040B57B6915407E90A2F /* PRERequestContextTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
