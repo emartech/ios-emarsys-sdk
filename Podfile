@@ -18,6 +18,6 @@ target "MobileEngageTests" do
   pod 'Kiwi'
 end
 
-target "PredictInternalTests" do
+target "PredictTests" do
   pod 'Kiwi'
 end
