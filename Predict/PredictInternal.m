@@ -27,7 +27,10 @@
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSParameterAssert(categoryPath);
+}
 
+- (void)trackItemViewWithItemId:(NSString *)itemId {
+    NSParameterAssert(itemId);
 }
 
 @end

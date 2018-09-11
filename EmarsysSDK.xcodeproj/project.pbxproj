@@ -444,8 +444,8 @@
 		8AFCA45221393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
 		8AFCA45321393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
 		8AFCA45421393D640052FEFA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AFCA45121393D640052FEFA /* Info.plist */; };
-		8AFCA45921393D710052FEFA /* EmarsysSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */; };
-		8AFCA45A21393D710052FEFA /* EmarsysSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */; };
+		8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
+		8AFCA45A21393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
 		8AFCA45B21393D710052FEFA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AFCA45821393D700052FEFA /* Info.plist */; };
 		A540979D9B7A98E1927F6F19 /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C9FCBA8774705E2E20C872B /* libPods-PredictTests.a */; };
 		C039EA44CD36B1714A872A33 /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00D4C385392E628EBC91EAFE /* libPods-CoreTests.a */; };
@@ -899,7 +899,7 @@
 		8AFCA44D21393CF60052FEFA /* EmarsysSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmarsysSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AFCA45021393D640052FEFA /* PredictInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PredictInternalTests.m; sourceTree = "<group>"; };
 		8AFCA45121393D640052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysSDKTests.m; sourceTree = "<group>"; };
+		8AFCA45721393D700052FEFA /* EmarsysTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysTests.m; sourceTree = "<group>"; };
 		8AFCA45821393D700052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A540EE2EA225CB7E3EBE6F90 /* Pods-MobileEngageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AADB1BF78A921678A4144E49 /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1880,7 +1880,7 @@
 		8AFCA45621393D700052FEFA /* EmarsysSDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				8AFCA45721393D700052FEFA /* EmarsysSDKTests.m */,
+				8AFCA45721393D700052FEFA /* EmarsysTests.m */,
 				8AFCA45821393D700052FEFA /* Info.plist */,
 			);
 			path = EmarsysSDKTests;
@@ -2518,7 +2518,7 @@
 				166B3F792119A84C006CD35C /* TestUtils.m in Sources */,
 				166B3F7D2119A84C006CD35C /* NSData+MobileEngageTest.m in Sources */,
 				166B3F3B2119A840006CD35C /* ResponseModelTests.m in Sources */,
-				8AFCA45921393D710052FEFA /* EmarsysSDKTests.m in Sources */,
+				8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */,
 				166B3F3C2119A840006CD35C /* EMSRequestModelRepositoryTests.m in Sources */,
 				166B3F3D2119A840006CD35C /* EMSShardRepositoryTests.m in Sources */,
 				166B3F3E2119A840006CD35C /* EMSDefaultWorkerTests.m in Sources */,
@@ -2720,7 +2720,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AFCA45A21393D710052FEFA /* EmarsysSDKTests.m in Sources */,
+				8AFCA45A21393D710052FEFA /* EmarsysTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

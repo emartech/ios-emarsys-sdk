@@ -13,7 +13,7 @@
 
 + (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
 
-+ (void)trackItemWithItemId:(NSString *)itemId;
++ (void)trackItemViewWithItemId:(NSString *)itemId;
 
 + (void)trackSearchWithSearchterm:(NSString *)searchterm;
 

@@ -13,5 +13,6 @@
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
 
+- (void)trackItemViewWithItemId:(NSString *)itemId;
 
 @end
