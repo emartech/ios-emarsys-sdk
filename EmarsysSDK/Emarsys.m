@@ -8,29 +8,49 @@
 #import "MERequestModelRepositoryFactory.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
+#import "MELogRepository.h"
+#import "EMSShardRepository.h"
+#import "MESchemaDelegate.h"
+#import "MEExperimental.h"
 
 @implementation Emarsys
 
 static PredictInternal *_predict;
 static MobileEngageInternal *_mobileEngage;
+static EMSSQLiteHelper *_dbHelper;
+#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
 
-    _predict = [[PredictInternal alloc] initWithRequestContext:nil];
+    _predict = [[PredictInternal alloc] initWithRequestContext:nil requestManager:nil];
     _mobileEngage = [MobileEngageInternal new];
 
+    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
+                                               schemaDelegate:[MESchemaDelegate new]];
+    [_dbHelper open];
+
     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config];
+
     MEInApp *_iam = [MEInApp new];
+    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:_iam
+                                                                                                        requestContext:requestContext];
+
+    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
+    const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
+    MELogRepository *logRepository = [MELogRepository new];
+    EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:_dbHelper];
 
 
-    [_mobileEngage setupWithConfig:config
-                     launchOptions:nil
-          requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:_iam
-                                                                           requestContext:requestContext]
-                   shardRepository:nil
-                     logRepository:nil
-                    requestContext:nil];
+    EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+            }
+                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                 }
+                                                          requestRepository:requestRepository
+                                                            shardRepository:shardRepository
+                                                              logRepository:logRepository];
+    [_mobileEngage setupWithRequestManager:manager
+                            requestContext:requestContext];
 }
 
 

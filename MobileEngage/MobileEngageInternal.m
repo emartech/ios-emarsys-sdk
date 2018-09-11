@@ -72,6 +72,14 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
                    requestContext:requestContext];
 }
 
+- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
+                 requestContext:(MERequestContext *)requestContext {
+    [self setupWithRequestManager:requestManager
+                           config:requestContext.config
+                    launchOptions:nil
+                   requestContext:requestContext];
+}
+
 
 - (void)setupWithRequestManager:(EMSRequestManager *)requestManager
                          config:(nonnull EMSConfig *)config
@@ -105,7 +113,6 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
         }
     }                           forNotification:UIApplicationDidBecomeActiveNotification];
 }
-
 
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity

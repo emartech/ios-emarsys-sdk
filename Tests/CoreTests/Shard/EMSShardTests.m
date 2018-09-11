@@ -4,6 +4,9 @@
 
 #import "Kiwi.h"
 #import "EMSShard.h"
+#import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
+#import "EMSShardBuilder.h"
 
 SPEC_BEGIN(EMSShardTests)
 
@@ -44,6 +47,52 @@ SPEC_BEGIN(EMSShardTests)
                 }
             });
 
+        });
+
+        describe(@"makeWithBuilder:timestampProvider:uuidProvider:", ^{
+            it(@"should initialize shard correctly", ^{
+                NSDate *expectedDate = [NSDate date];
+                NSUUID *expectedUUID = [NSUUID UUID];
+
+                NSString *shardType = @"shardType";
+                NSTimeInterval timeInterval = 42.0;
+
+                NSString *payloadKey = @"payloadKey";
+                NSDictionary *payloadValue = @{
+                        @"key": @{
+                                @"key1": @1132,
+                                @"key2": @[
+                                        @{
+                                                @"subkey1": @"subitem1"
+                                        },
+                                        @{
+                                                @"subkey1": @1234.0
+                                        }
+                                ],
+                        }
+                };
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:expectedDate];
+                [[uuidProvider should] receive:@selector(provideUUID) andReturn:expectedUUID];
+
+
+                EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                            [builder setTTL:timeInterval];
+                            [builder setType:shardType];
+                            [builder payloadEntryWithKey:payloadKey
+                                                   value:payloadValue];
+                        }
+                                          timestampProvider:timestampProvider
+                                               uuidProvider:uuidProvider];
+
+                [[shard.shardId should] equal:[expectedUUID UUIDString]];
+                [[shard.timestamp should] equal:expectedDate];
+                [[shard.type should] equal:shardType];
+                [[theValue(shard.ttl) should] equal:theValue(timeInterval)];
+                [[shard.data should] equal:@{payloadKey: payloadValue}];
+            });
         });
 
 SPEC_END

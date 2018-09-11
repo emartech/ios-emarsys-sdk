@@ -39,6 +39,9 @@ typedef void (^MESourceHandler)(NSString *source);
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;
 
+- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
+                 requestContext:(MERequestContext *)requestContext;
+
 - (void) setupWithConfig:(nonnull EMSConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory

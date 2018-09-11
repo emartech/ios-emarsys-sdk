@@ -5,6 +5,7 @@
 #import "Kiwi.h"
 #import "PredictInternal.h"
 #import "PRERequestContext.h"
+#import "EMSRequestManager.h"
 
 SPEC_BEGIN(PredictInternalTests)
 
@@ -22,8 +23,10 @@ SPEC_BEGIN(PredictInternalTests)
 
             it(@"should set the customerId in RequestContext", ^{
                 PRERequestContext *requestContextMock = [PRERequestContext mock];
+                EMSRequestManager *requestManagerMock = [EMSRequestManager mock];
                 NSString *const customerId = @"customerID";
-                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContextMock];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContextMock
+                                                                             requestManager:requestManagerMock];
 
                 [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
                 [internal setCustomerWithId:customerId];
@@ -55,6 +58,16 @@ SPEC_BEGIN(PredictInternalTests)
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: itemId"];
                     [[theValue(exception) shouldNot] beNil];
                 }
+            });
+            it(@"should submit shard to requestManager", ^{
+                PRERequestContext *requestContextMock = [PRERequestContext mock];
+                EMSRequestManager *requestManagerMock = [EMSRequestManager mock];
+                NSString *const customerId = @"customerID";
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContextMock
+                                                                             requestManager:requestManagerMock];
+
+                [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
+                [internal setCustomerWithId:customerId];
             });
 
         });

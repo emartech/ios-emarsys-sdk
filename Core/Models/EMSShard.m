@@ -3,6 +3,9 @@
 //
 
 #import "EMSShard.h"
+#import "EMSShardBuilder.h"
+#import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
 
 
 @implementation EMSShard
@@ -22,6 +25,28 @@
         _timestamp = timestamp;
         _ttl = ttl;
         _data = data;
+    }
+    return self;
+}
+
++ (instancetype)makeWithBuilder:(EMSShardBuilderBlock)builderBlock
+              timestampProvider:(EMSTimestampProvider *)timestampProvider
+                   uuidProvider:(EMSUUIDProvider *)uuidProvider {
+    NSParameterAssert(timestampProvider);
+    NSParameterAssert(uuidProvider);
+    NSParameterAssert(builderBlock);
+    EMSShardBuilder *builder = [[EMSShardBuilder alloc] initWithTimestampProvider:timestampProvider
+                                                                                   uuidProvider:uuidProvider];
+    builderBlock(builder);
+    return [[self alloc] initWithBuilder:builder];
+}
+- (instancetype)initWithBuilder:(EMSShardBuilder *)builder {
+    if (self = [super init]) {
+        _timestamp = builder.timestamp;
+        _ttl = builder.ttl;
+        _type = builder.type;
+        _data = builder.data;
+        _shardId = builder.shardId;
     }
     return self;
 }

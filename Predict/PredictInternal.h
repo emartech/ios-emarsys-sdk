@@ -5,10 +5,11 @@
 #import "EMSPredictProtocol.h"
 
 @class PRERequestContext;
+@class EMSRequestManager;
 
 @interface PredictInternal : NSObject <EMSPredictProtocol>
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext;
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext requestManager:(EMSRequestManager *)requestManager;
 
 - (void)setCustomerWithId:(NSString *)customerId;
 

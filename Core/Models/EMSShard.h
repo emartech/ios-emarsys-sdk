@@ -4,6 +4,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class EMSShardBuilder;
+@class EMSTimestampProvider;
+@class EMSUUIDProvider;
+
 
 @interface EMSShard : NSObject
 
@@ -13,9 +17,15 @@
 @property(nonatomic, readonly) NSDate *timestamp;
 @property(nonatomic, readonly) NSTimeInterval ttl;
 
+typedef void(^EMSShardBuilderBlock)(EMSShardBuilder *builder);
+
 - (instancetype)initWithShardId:(NSString *)shardId
                            type:(NSString *)type
                            data:(NSDictionary<NSString *, id> *)data
                       timestamp:(NSDate *)timestamp
                             ttl:(NSTimeInterval)ttl;
+
++ (instancetype)makeWithBuilder:(EMSShardBuilderBlock)builderBlock
+              timestampProvider:(EMSTimestampProvider *)timestampProvider
+                   uuidProvider:(EMSUUIDProvider *)uuidProvider;
 @end

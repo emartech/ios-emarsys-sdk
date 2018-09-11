@@ -3,19 +3,22 @@
 //
 #import "PredictInternal.h"
 #import "PRERequestContext.h"
+#import "EMSRequestManager.h"
 
 @interface PredictInternal ()
 
 @property(nonatomic, strong) PRERequestContext *requestContext;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
 
 @end
 
 @implementation PredictInternal
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext requestManager:(EMSRequestManager *)requestManager {
     self = [super init];
     if (self) {
         _requestContext = requestContext;
+        _requestManager = requestManager;
     }
     return self;
 }
