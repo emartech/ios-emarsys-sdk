@@ -2,10 +2,11 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+#import "EMSPredictProtocol.h"
 
 @class PRERequestContext;
 
-@interface PredictInternal : NSObject
+@interface PredictInternal : NSObject <EMSPredictProtocol>
 
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext;
 

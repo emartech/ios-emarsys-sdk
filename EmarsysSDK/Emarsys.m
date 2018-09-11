@@ -5,16 +5,32 @@
 #import "Emarsys.h"
 #import "PredictInternal.h"
 #import "MobileEngageInternal.h"
+#import "MERequestModelRepositoryFactory.h"
+#import "MERequestContext.h"
+#import "MEInApp.h"
 
 @implementation Emarsys
 
-static PredictInternal *_predictInternal;
-static MobileEngageInternal *_mobileEngageInternal;
+static PredictInternal *_predict;
+static MobileEngageInternal *_mobileEngage;
 
 + (void)setupWithConfig:(EMSConfig *)config {
-    _predictInternal = [[PredictInternal alloc] initWithRequestContext:nil];
-    _mobileEngageInternal = [MobileEngageInternal new];
-    [_mobileEngageInternal setupWithConfig:config launchOptions:nil requestRepositoryFactory:nil shardRepository:nil logRepository:nil requestContext:nil];
+    NSParameterAssert(config);
+
+    _predict = [[PredictInternal alloc] initWithRequestContext:nil];
+    _mobileEngage = [MobileEngageInternal new];
+
+    MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config];
+    MEInApp *_iam = [MEInApp new];
+
+
+    [_mobileEngage setupWithConfig:config
+                     launchOptions:nil
+          requestRepositoryFactory:[[MERequestModelRepositoryFactory alloc] initWithInApp:_iam
+                                                                           requestContext:requestContext]
+                   shardRepository:nil
+                     logRepository:nil
+                    requestContext:nil];
 }
 
 
@@ -25,12 +41,25 @@ static MobileEngageInternal *_mobileEngageInternal;
 
 + (void)setCustomerWithId:(NSString *)customerId {
     NSParameterAssert(customerId);
-    [_predictInternal setCustomerWithId:customerId];
+    [_predict setCustomerWithId:customerId];
+    [_mobileEngage appLoginWithContactFieldId:@3
+                            contactFieldValue:customerId];
 }
 
++ (void)setPredict:(PredictInternal *)predictInternal {
+    _predict = predictInternal;
+}
 
-+ (void)setPredictInternal:(PredictInternal *)predictInternal {
-    _predictInternal = predictInternal;
++ (id <EMSPredictProtocol>)predict {
+    return _predict;
+}
+
++ (id <EMSPushNotificationProtocol>)push {
+    return _mobileEngage;
+}
+
++ (void)setMobileEngage:(MobileEngageInternal *)mobileEngage {
+    _mobileEngage = mobileEngage;
 }
 
 @end
