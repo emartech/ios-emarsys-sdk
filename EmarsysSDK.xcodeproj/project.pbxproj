@@ -1059,6 +1059,13 @@
 			path = Predict;
 			sourceTree = "<group>";
 		};
+		32C6F183F9D74CF8D9EAEE50 /* Mappers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Mappers;
+			sourceTree = "<group>";
+		};
 		32C6F1BF9F3237294A5FD79E /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -1431,6 +1438,7 @@
 				32C6FB14FB4A6541BF316131 /* EMSRequestManager.m */,
 				32C6FEC543E56FD3C19D9A26 /* Schedulers */,
 				32C6FD19D29E7E0603DB30D8 /* EMSTrigger.h */,
+				32C6F183F9D74CF8D9EAEE50 /* Mappers */,
 			);
 			path = Core;
 			sourceTree = "<group>";

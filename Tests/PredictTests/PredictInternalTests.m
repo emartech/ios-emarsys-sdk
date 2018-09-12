@@ -6,6 +6,9 @@
 #import "PredictInternal.h"
 #import "PRERequestContext.h"
 #import "EMSRequestManager.h"
+#import "EMSShard.h"
+#import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
 
 SPEC_BEGIN(PredictInternalTests)
 
@@ -59,15 +62,38 @@ SPEC_BEGIN(PredictInternalTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
-            it(@"should submit shard to requestManager", ^{
-                PRERequestContext *requestContextMock = [PRERequestContext mock];
-                EMSRequestManager *requestManagerMock = [EMSRequestManager mock];
-                NSString *const customerId = @"customerID";
-                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContextMock
-                                                                             requestManager:requestManagerMock];
 
-                [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
-                [internal setCustomerWithId:customerId];
+            it(@"should submit shard to requestManager", ^{
+                NSString *itemId = @"idOfTheItem";
+                NSDate *timestamp = [NSDate date];
+                NSUUID *uuid = [NSUUID UUID];
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUID)
+                                     andReturn:uuid
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                        [builder setType:@"predict_item_view"];
+                        [builder payloadEntryWithKey:@"v"
+                                               value:[NSString stringWithFormat:@"i:%@", itemId]];
+                    }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal trackItemViewWithItemId:itemId];
             });
 
         });

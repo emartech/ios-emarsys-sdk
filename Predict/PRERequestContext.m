@@ -3,16 +3,20 @@
 //
 
 #import "PRERequestContext.h"
-#import "EMSConfig.h"
-
+#import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
 
 @implementation PRERequestContext
-- (instancetype)initWithConfig:(EMSConfig *)config {
-    self = [super init];
-    if (self) {
-        self.customerId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName] objectForKey:kEMSCustomerId];
-    }
 
+- (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
+                             uuidProvider:(EMSUUIDProvider *)uuidProvider {
+    NSParameterAssert(timestampProvider);
+    NSParameterAssert(uuidProvider);
+    if (self = [super init]) {
+        _customerId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName] objectForKey:kEMSCustomerId];
+        _timestampProvider = timestampProvider;
+        _uuidProvider = uuidProvider;
+    }
     return self;
 }
 
@@ -23,6 +27,5 @@
                      forKey:kEMSCustomerId];
     [userDefaults synchronize];
 }
-
 
 @end

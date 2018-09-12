@@ -3,10 +3,8 @@
 //
 
 #import "EMSShard.h"
-#import "EMSShardBuilder.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-
 
 @implementation EMSShard
 

@@ -3,8 +3,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "EMSShardBuilder.h"
 
-@class EMSShardBuilder;
 @class EMSTimestampProvider;
 @class EMSUUIDProvider;
 

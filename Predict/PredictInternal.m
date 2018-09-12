@@ -4,6 +4,7 @@
 #import "PredictInternal.h"
 #import "PRERequestContext.h"
 #import "EMSRequestManager.h"
+#import "EMSShard.h"
 
 @interface PredictInternal ()
 
@@ -14,7 +15,8 @@
 
 @implementation PredictInternal
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext requestManager:(EMSRequestManager *)requestManager {
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
+                        requestManager:(EMSRequestManager *)requestManager {
     self = [super init];
     if (self) {
         _requestContext = requestContext;
@@ -34,6 +36,14 @@
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
     NSParameterAssert(itemId);
+    EMSShard * shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder){
+        [builder setType:@"predict_item_view"];
+        [builder payloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
+    }
+                               timestampProvider:[self.requestContext timestampProvider]
+                                    uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
 }
 
 @end

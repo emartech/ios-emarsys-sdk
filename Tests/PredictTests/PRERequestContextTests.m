@@ -4,14 +4,50 @@
 
 #import "Kiwi.h"
 #import "PRERequestContext.h"
+#import "EMSUUIDProvider.h"
+#import "EMSTimestampProvider.h"
 
 SPEC_BEGIN(PRERequestContextTests)
+
+        __block EMSTimestampProvider *timestampProvider;
+        __block EMSUUIDProvider *uuidProvider;
+
+        beforeEach(^{
+            timestampProvider = [EMSTimestampProvider new];
+            uuidProvider = [EMSUUIDProvider new];
+        });
+
+        describe(@"initWithTimestampProvider:uuidProvider:", ^{
+            it(@"should throw exception when timestampProvider is nil", ^{
+                @try {
+                    [[PRERequestContext alloc] initWithTimestampProvider:nil
+                                                            uuidProvider:uuidProvider];
+                    fail(@"Expected Exception when timestampProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when uuidProvider is nil", ^{
+                @try {
+                    [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                            uuidProvider:nil];
+                    fail(@"Expected Exception when uuidProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: uuidProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
 
         describe(@"setCustomerId:", ^{
             it(@"should persist the parameter", ^{
                 NSString *const customerId = @"testId";
-                [[[PRERequestContext alloc] initWithConfig:nil] setCustomerId:customerId];
-                [[[[[PRERequestContext alloc] initWithConfig:nil] customerId] should] equal:customerId];
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider] setCustomerId:customerId];
+                [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                           uuidProvider:uuidProvider] customerId] should] equal:customerId];
             });
         });
 
