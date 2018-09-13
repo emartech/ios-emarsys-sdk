@@ -5,4 +5,9 @@
 #import "EMSSQLSpecificationProtocol.h"
 
 @interface EMSShardQueryAllSpecification : NSObject <EMSSQLSpecificationProtocol>
+- (BOOL)isEqual:(id)other;
+
+- (BOOL)isEqualToSpecification:(EMSShardQueryAllSpecification *)specification;
+
+- (NSUInteger)hash;
 @end

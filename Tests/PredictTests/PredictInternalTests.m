@@ -91,7 +91,7 @@ SPEC_BEGIN(PredictInternalTests)
 
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                                             uuidProvider:uuidProvider
-                                                                                              merchantId:nil];
+                                                                                              merchantId:@"merchantId"];
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
                 [internal trackItemViewWithItemId:itemId];

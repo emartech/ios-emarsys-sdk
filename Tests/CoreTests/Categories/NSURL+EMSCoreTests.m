@@ -65,9 +65,9 @@ SPEC_BEGIN(NSURLEMSCoreTests)
                 NSURL *result = [NSURL urlWithBaseUrl:@"http://myurl.com"
                                       queryParameters:@{
                                           @"1": @"a",
-                                          @"<>,": @"\"`;/?:^%#@&=$+{}<>,|"
+                                          @"<>,": @"\"`;/?:^%#@&=$+{}<>,| "
                                       }];
-                [[result.absoluteString should] equal:@"http://myurl.com?1=a&%3C%3E%2C=%22%60%3B%2F%3F%3A%5E%25%23%40%26%3D%24%2B%7B%7D%3C%3E%2C%7C"];
+                [[result.absoluteString should] equal:@"http://myurl.com?1=a&%3C%3E%2C=%22%60%3B%2F%3F%3A%5E%25%23%40%26%3D%24%2B%7B%7D%3C%3E%2C%7C%20"];
             });
 
         });

@@ -32,4 +32,28 @@
 - (void)bindStatement:(sqlite3_stmt *)statement {
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![[other class] isEqual:[self class]])
+        return NO;
+
+    return [self isEqualToSpecification:other];
+}
+
+- (BOOL)isEqualToSpecification:(EMSShardDeleteByIdsSpecification *)specification {
+    if (self == specification)
+        return YES;
+    if (specification == nil)
+        return NO;
+    if (self.shardIds != specification.shardIds && ![self.shardIds isEqualToArray:specification.shardIds])
+        return NO;
+    return YES;
+}
+
+- (NSUInteger)hash {
+    return [self.shardIds hash];
+}
+
+
 @end

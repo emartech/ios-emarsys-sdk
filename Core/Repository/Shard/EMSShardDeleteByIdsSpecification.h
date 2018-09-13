@@ -10,4 +10,10 @@
 
 - (instancetype)initWithShards:(NSArray<EMSShard *> *)shards;
 
+- (BOOL)isEqual:(id)other;
+
+- (BOOL)isEqualToSpecification:(EMSShardDeleteByIdsSpecification *)specification;
+
+- (NSUInteger)hash;
+
 @end
