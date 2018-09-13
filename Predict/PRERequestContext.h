@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class EMSConfig;
 @class EMSTimestampProvider;
 @class EMSUUIDProvider;
 
@@ -14,11 +13,13 @@
 @interface PRERequestContext : NSObject
 
 @property(nonatomic, strong) NSString *customerId;
+@property(nonatomic, strong) NSString *merchantId;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
-                             uuidProvider:(EMSUUIDProvider *)uuidProvider;
+                             uuidProvider:(EMSUUIDProvider *)uuidProvider
+                               merchantId:(NSString *)merchantId;
 
 
 @end

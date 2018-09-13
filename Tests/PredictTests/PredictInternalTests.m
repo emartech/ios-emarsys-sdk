@@ -90,7 +90,8 @@ SPEC_BEGIN(PredictInternalTests)
                                    withArguments:expectedShard];
 
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
-                                                                                            uuidProvider:uuidProvider];
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:nil];
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
                 [internal trackItemViewWithItemId:itemId];

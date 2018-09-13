@@ -6,6 +6,7 @@
 #import "EMSRequestModelBuilder.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSShardRepositoryProtocol.h"
 
 
 @implementation EMSRequestModel

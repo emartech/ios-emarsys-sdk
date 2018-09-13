@@ -9,13 +9,16 @@
 @implementation PRERequestContext
 
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
-                             uuidProvider:(EMSUUIDProvider *)uuidProvider {
+                             uuidProvider:(EMSUUIDProvider *)uuidProvider
+                               merchantId:(NSString *)merchantId {
     NSParameterAssert(timestampProvider);
     NSParameterAssert(uuidProvider);
+    NSParameterAssert(merchantId);
     if (self = [super init]) {
         _customerId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName] objectForKey:kEMSCustomerId];
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
+        _merchantId = merchantId;
     }
     return self;
 }
