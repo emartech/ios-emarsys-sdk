@@ -8,7 +8,6 @@
 #import "MEInAppTrackingProtocol.h"
 #import "EMSResponseModel.h"
 #import "EMSRequestManager.h"
-#import "EMSPushNotificationProtocol.h"
 
 @protocol MobileEngageStatusDelegate;
 @class EMSConfig;
@@ -25,7 +24,7 @@ typedef void (^MEErrorBlock)(NSString *requestId, NSError *error);
 typedef void (^MESourceHandler)(NSString *source);
 
 
-@interface MobileEngageInternal : NSObject <MEInAppTrackingProtocol, EMSPushNotificationProtocol>
+@interface MobileEngageInternal : NSObject <MEInAppTrackingProtocol>
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MESuccessBlock successBlock;
