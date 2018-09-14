@@ -92,7 +92,7 @@ SPEC_BEGIN(EMSPredictShardAfterInsertTriggerTests)
                                                                                                                       mapper:predictMapper
                                                                                                                   repository:shardRepository];
 
-                [[helper should] receive:@selector(registerTriggerWithTableName:withTriggerType:withTriggerEvent:forTriggerBlock:)
+                [[helper should] receive:@selector(registerTriggerWithTableName:triggerType:triggerEvent:triggerBlock:)
                            withArguments:@"shard",
                                          [EMSDBTriggerType afterType],
                                          [EMSDBTriggerEvent insertEvent], kw_any()];
@@ -100,13 +100,18 @@ SPEC_BEGIN(EMSPredictShardAfterInsertTriggerTests)
                 [trigger register];
             });
 
-            it(@"should handle trigger well", ^{
+        });
+
+        describe(@"trigger action", ^{
+
+
+            it(@"should query the shard and send it as a requestModel", ^{
                 EMSPredictShardAfterInsertTrigger *trigger = [[EMSPredictShardAfterInsertTrigger alloc] initWithSqliteHelper:sqliteHelper
                                                                                                               requestManager:requestManager
                                                                                                                       mapper:predictMapper
                                                                                                                   repository:shardRepository];
 
-                KWCaptureSpy *triggerSpy = [sqliteHelper captureArgument:@selector(registerTriggerWithTableName:withTriggerType:withTriggerEvent:forTriggerBlock:)
+                KWCaptureSpy *triggerSpy = [sqliteHelper captureArgument:@selector(registerTriggerWithTableName:triggerType:triggerEvent:triggerBlock:)
                                                                  atIndex:3];
 
                 [trigger register];
@@ -143,7 +148,7 @@ SPEC_BEGIN(EMSPredictShardAfterInsertTriggerTests)
                                                                                                                       mapper:predictMapper
                                                                                                                   repository:shardRepository];
 
-                KWCaptureSpy *triggerSpy = [sqliteHelper captureArgument:@selector(registerTriggerWithTableName:withTriggerType:withTriggerEvent:forTriggerBlock:)
+                KWCaptureSpy *triggerSpy = [sqliteHelper captureArgument:@selector(registerTriggerWithTableName:triggerType:triggerEvent:triggerBlock:)
                                                                  atIndex:3];
 
                 [trigger register];

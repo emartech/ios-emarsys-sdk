@@ -32,16 +32,16 @@
 - (void)register {
     __weak typeof(self) weakSelf = self;
     [self.sqliteHelper registerTriggerWithTableName:SHARD_TABLE_NAME
-                                    withTriggerType:EMSDBTriggerType.afterType
-                                   withTriggerEvent:EMSDBTriggerEvent.insertEvent
-                                    forTriggerBlock:^{
-                                        NSArray<EMSShard *> *shards = [weakSelf.shardRepository query:[EMSShardQueryAllSpecification new]];
-                                        if ([shards count] > 0) {
-                                            EMSRequestModel *requestModel = [weakSelf.predictMapper requestFromShards:shards];
-                                            [weakSelf.requestManager submitRequestModel:requestModel];
-                                            [weakSelf.shardRepository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[shards.firstObject]]];
-                                        }
-                                    }];
+                                        triggerType:EMSDBTriggerType.afterType
+                                       triggerEvent:EMSDBTriggerEvent.insertEvent
+                                       triggerBlock:^{
+                                           NSArray<EMSShard *> *shards = [weakSelf.shardRepository query:[EMSShardQueryAllSpecification new]];
+                                           if ([shards count] > 0) {
+                                               EMSRequestModel *requestModel = [weakSelf.predictMapper requestFromShards:shards];
+                                               [weakSelf.requestManager submitRequestModel:requestModel];
+                                               [weakSelf.shardRepository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[shards.firstObject]]];
+                                           }
+                                       }];
 }
 
 

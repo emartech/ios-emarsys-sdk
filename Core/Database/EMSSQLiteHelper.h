@@ -39,9 +39,9 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 - (void)close;
 
 - (void)registerTriggerWithTableName:(NSString *)tableName
-                     withTriggerType:(EMSDBTriggerType *)triggerType
-                    withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
-                     forTriggerBlock:(EMSTriggerBlock)triggerBlock;
+                         triggerType:(EMSDBTriggerType *)triggerType
+                        triggerEvent:(EMSDBTriggerEvent *)triggerEvent
+                        triggerBlock:(EMSTriggerBlock)triggerBlock;
 
 - (BOOL)removeFromTable:(NSString *)tableName
                   where:(NSString *)where

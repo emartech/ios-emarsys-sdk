@@ -86,9 +86,9 @@
 }
 
 - (void)registerTriggerWithTableName:(NSString *)tableName
-                     withTriggerType:(EMSDBTriggerType *)triggerType
-                    withTriggerEvent:(EMSDBTriggerEvent *)triggerEvent
-                     forTriggerBlock:(EMSTriggerBlock)triggerBlock {
+                         triggerType:(EMSDBTriggerType *)triggerType
+                        triggerEvent:(EMSDBTriggerEvent *)triggerEvent
+                        triggerBlock:(EMSTriggerBlock)triggerBlock {
 
     EMSDBTriggerKey *triggerKey = [[EMSDBTriggerKey alloc] initWithTableName:tableName
                                                                    withEvent:triggerEvent
