@@ -1,7 +1,6 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import <AVFoundation/AVFoundation.h>
 #import "EMSPredictMapper.h"
 #import "EMSUUIDProvider.h"
 #import "EMSTimestampProvider.h"
