@@ -12,6 +12,11 @@
 #import "EMSShardRepository.h"
 #import "MESchemaDelegate.h"
 #import "MEExperimental.h"
+#import "EMSSchemaContract.h"
+#import "EMSPredictAggregateShardsTrigger.h"
+#import "EMSPredictMapper.h"
+#import "PRERequestContext.h"
+#import "EMSUUIDProvider.h"
 
 @implementation Emarsys
 
@@ -42,6 +47,8 @@ static EMSSQLiteHelper *_dbHelper;
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:_dbHelper];
 
 
+    EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
+
     EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
             }
                                                                  errorBlock:^(NSString *requestId, NSError *error) {
@@ -49,6 +56,16 @@ static EMSSQLiteHelper *_dbHelper;
                                                           requestRepository:requestRepository
                                                             shardRepository:shardRepository
                                                               logRepository:logRepository];
+
+    PRERequestContext *predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
+                                                                                       uuidProvider:[EMSUUIDProvider new]
+                                                                                         merchantId:@"merchantId"];
+    [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
+                                triggerType:EMSDBTriggerType.afterType
+                               triggerEvent:EMSDBTriggerEvent.insertEvent
+                               triggerBlock:[trigger createTriggerBlockWithRequestManager:manager
+                                                                                   mapper:[[EMSPredictMapper alloc] initWithRequestContext:predictRequestContext]
+                                                                               repository:shardRepository]];
     [_mobileEngage setupWithRequestManager:manager
                             requestContext:requestContext];
 }
@@ -80,6 +97,10 @@ static EMSSQLiteHelper *_dbHelper;
 
 + (void)setMobileEngage:(MobileEngageInternal *)mobileEngage {
     _mobileEngage = mobileEngage;
+}
+
++ (EMSSQLiteHelper *)sqliteHelper {
+    return _dbHelper;
 }
 
 @end

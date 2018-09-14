@@ -7,6 +7,9 @@
 #import "Emarsys.h"
 #import "PredictInternal.h"
 #import "MobileEngageInternal.h"
+#import "Emarsys+Tests.h"
+#import "EMSSQLiteHelper.h"
+#import "EMSDBTriggerKey.h"
 
 @interface Emarsys ()
 + (void)setPredict:(PredictInternal *)predictInternal;
@@ -27,6 +30,15 @@ SPEC_BEGIN(EmarsysTests)
 
             it(@"should set push", ^{
                 [[(NSObject *) [Emarsys push] shouldNot] beNil];
+            });
+
+            it(@"register Predict trigger", ^{
+                NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
+
+                NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                                                         withEvent:[EMSDBTriggerEvent insertEvent]
+                                                                                          withType:[EMSDBTriggerType afterType]]];
+                [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
             });
 
             it(@"should throw an exception when there is no config set", ^{
@@ -63,6 +75,6 @@ SPEC_BEGIN(EmarsysTests)
                 [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:@3, customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
-
         });
+
 SPEC_END

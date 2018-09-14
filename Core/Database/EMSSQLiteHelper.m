@@ -223,4 +223,8 @@
     }
 }
 
+- (NSDictionary *)registeredTriggers {
+    return [NSDictionary dictionaryWithDictionary:self.triggers];
+}
+
 @end

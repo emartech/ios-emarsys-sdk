@@ -9,6 +9,7 @@
 #import "EMSRequestModelMapper.h"
 #import "EMSShard.h"
 #import "EMSShardMapper.h"
+#import "EMSDBTriggerKey.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 #define TEST_SHARD_SELECT_ALL @"SELECT * FROM shard ORDER BY ROWID ASC;"
@@ -293,5 +294,50 @@ SPEC_BEGIN(DBTriggerTests)
             });
         });
 
+        describe(@"registeredTriggers", ^{
+            it(@"should run return the registered triggers", ^{
+
+
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                           triggerType:[EMSDBTriggerType afterType]
+                                          triggerEvent:[EMSDBTriggerEvent insertEvent]
+                                          triggerBlock:^{
+                                          }];
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                           triggerType:[EMSDBTriggerType beforeType]
+                                          triggerEvent:[EMSDBTriggerEvent insertEvent]
+                                          triggerBlock:^{
+                                          }];
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                           triggerType:[EMSDBTriggerType afterType]
+                                          triggerEvent:[EMSDBTriggerEvent deleteEvent]
+                                          triggerBlock:^{
+                                          }];
+                [dbHelper registerTriggerWithTableName:@"shard"
+                                           triggerType:[EMSDBTriggerType beforeType]
+                                          triggerEvent:[EMSDBTriggerEvent deleteEvent]
+                                          triggerBlock:^{
+                                          }];
+
+                NSArray *afterInsertTriggers = dbHelper.registeredTriggers[
+                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                         withEvent:[EMSDBTriggerEvent insertEvent]
+                                                          withType:[EMSDBTriggerType afterType]]];
+
+                NSArray *beforeInsertTriggers = dbHelper.registeredTriggers[
+                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                         withEvent:[EMSDBTriggerEvent insertEvent]
+                                                          withType:[EMSDBTriggerType beforeType]]];
+
+                NSArray *beforeDeleteTriggers = dbHelper.registeredTriggers[
+                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                         withEvent:[EMSDBTriggerEvent deleteEvent]
+                                                          withType:[EMSDBTriggerType beforeType]]];
+
+                [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
+                [[theValue([beforeInsertTriggers count]) should] equal:theValue(1)];
+                [[theValue([beforeDeleteTriggers count]) should] equal:theValue(1)];
+            });
+        });
 
 SPEC_END
