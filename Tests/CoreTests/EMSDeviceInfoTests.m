@@ -27,7 +27,10 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             });
 
             it(@"should return with the current timeZone", ^{
-                NSString *expected = [[NSTimeZone localTimeZone] isDaylightSavingTime] ? @"+0200" : @"+0100";
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                formatter.timeZone = [NSTimeZone localTimeZone];
+                formatter.dateFormat = @"xxxx";
+                NSString *expected = [formatter stringFromDate:[NSDate date]];
 
                 NSString *timeZone = [EMSDeviceInfo timeZone];
                 [[timeZone should] equal:expected];
