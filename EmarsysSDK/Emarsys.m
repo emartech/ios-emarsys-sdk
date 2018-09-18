@@ -61,7 +61,7 @@ static EMSConfig *_config;
 
     PRERequestContext *predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                                        uuidProvider:[EMSUUIDProvider new]
-                                                                                         merchantId:@"merchantId"];
+                                                                                         merchantId:config.merchantId];
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent

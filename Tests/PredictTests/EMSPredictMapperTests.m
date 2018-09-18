@@ -20,6 +20,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
         NSDate *timestamp = [NSDate date];
         NSUUID *uuid = [NSUUID UUID];
         NSString *merchantId = @"merchantId";
+        NSString *customerId = @"3";
 
         beforeEach(^{
             timestampProvider = [EMSTimestampProvider mock];
@@ -31,6 +32,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
             requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
                                                                        merchantId:merchantId];
+            [requestContext setCustomerId:customerId];
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
         });
 
@@ -109,7 +111,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
 
                 [[requestModel.timestamp should] equal:timestamp];
                 [[requestModel.requestId should] equal:[uuid UUIDString]];
-                [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
+                [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
             });
 
             it(@"should return with correct requestModel when the shard list contain only one shard", ^{
@@ -122,7 +124,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
-                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue"]
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
                                                                                            headers:nil

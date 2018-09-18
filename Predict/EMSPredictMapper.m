@@ -26,16 +26,19 @@
     NSParameterAssert([shards count] > 0);
 
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            NSMutableDictionary<NSString *, NSString *> *queryParameters = [@{@"cp": @"1"} mutableCopy];
-            EMSShard *shard = shards.firstObject;
-            [queryParameters addEntriesFromDictionary:shard.data];
-            [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@",
-                                                                              self.requestContext.merchantId]
-                                   queryParameters:queryParameters] absoluteString]];
-            [builder setExpiry:[[NSDate dateWithTimeInterval:shard.ttl
-                                                   sinceDate:shard.timestamp] timeIntervalSinceDate:[self.requestContext.timestampProvider provideTimestamp]]];
-            [builder setMethod:HTTPMethodGET];
-        }
+                NSMutableDictionary<NSString *, NSString *> *queryParameters = [@{
+                        @"cp": @"1",
+                        @"ci": self.requestContext.customerId
+                } mutableCopy];
+                EMSShard *shard = shards.firstObject;
+                [queryParameters addEntriesFromDictionary:shard.data];
+                [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@",
+                                                                                  self.requestContext.merchantId]
+                                       queryParameters:queryParameters] absoluteString]];
+                [builder setExpiry:[[NSDate dateWithTimeInterval:shard.ttl
+                                                       sinceDate:shard.timestamp] timeIntervalSinceDate:[self.requestContext.timestampProvider provideTimestamp]]];
+                [builder setMethod:HTTPMethodGET];
+            }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
     return requestModel;
