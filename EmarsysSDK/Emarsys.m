@@ -23,6 +23,7 @@
 static PredictInternal *_predict;
 static MobileEngageInternal *_mobileEngage;
 static EMSSQLiteHelper *_dbHelper;
+static EMSConfig *_config;
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
 + (void)setupWithConfig:(EMSConfig *)config {
@@ -30,6 +31,7 @@ static EMSSQLiteHelper *_dbHelper;
 
     _predict = [[PredictInternal alloc] initWithRequestContext:nil requestManager:nil];
     _mobileEngage = [MobileEngageInternal new];
+    _config = config;
 
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[MESchemaDelegate new]];
@@ -79,7 +81,7 @@ static EMSSQLiteHelper *_dbHelper;
 + (void)setCustomerWithId:(NSString *)customerId {
     NSParameterAssert(customerId);
     [_predict setCustomerWithId:customerId];
-    [_mobileEngage appLoginWithContactFieldId:@3
+    [_mobileEngage appLoginWithContactFieldId:_config.contactFieldId
                             contactFieldValue:customerId];
 }
 

@@ -20,7 +20,7 @@
 SPEC_BEGIN(EmarsysTests)
 
         beforeEach(^{
-            [Emarsys setupWithConfig:[EMSConfig mock]];
+            [Emarsys setupWithConfig:[EMSConfig nullMock]];
         });
 
         describe(@"setupWithConfig:", ^{
@@ -72,7 +72,26 @@ SPEC_BEGIN(EmarsysTests)
                 [Emarsys setPredict:predict];
                 [Emarsys setMobileEngage:engage];
 
-                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:@3, customerId];
+                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:kw_any(), customerId];
+                [Emarsys setCustomerWithId:customerId];
+            });
+
+            it(@"should delegate call to MobileEngage with correct customerId", ^{
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                    [builder setContactFieldId:@32];
+                    [builder setMobileEngageApplicationCode:@"applicationCode"
+                                        applicationPassword:@"applicationPassword"];
+                    [builder setMerchantId:@"merchantId"];
+                }];
+                PredictInternal *const predict = [PredictInternal nullMock];
+                MobileEngageInternal *const engage = [MobileEngageInternal mock];
+                [Emarsys setupWithConfig:config];
+
+                NSString *const customerId = @"customerId";
+                [Emarsys setPredict:predict];
+                [Emarsys setMobileEngage:engage];
+
+                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:@32, customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
         });

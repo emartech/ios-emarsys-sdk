@@ -4,8 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MEFlipperFeatures.h"
-
-@class EMSConfigBuilder;
+#import "EMSConfigBuilder.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
