@@ -20,7 +20,9 @@
 SPEC_BEGIN(EmarsysTests)
 
         beforeEach(^{
-            [Emarsys setupWithConfig:[EMSConfig nullMock]];
+            EMSConfig *configMock = [EMSConfig nullMock];
+            [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
+            [Emarsys setupWithConfig:configMock];
         });
 
         describe(@"setupWithConfig:", ^{
