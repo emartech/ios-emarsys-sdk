@@ -114,7 +114,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
             });
 
-            it(@"should return with correct requestModel when the shard list contain only one shard", ^{
+            it(@"should return with correct requestModel when the shard list contain only one shard and there is no visitorId", ^{
                 EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
                                                                type:@"shardType"
                                                                data:@{@"dataKey": @"dataValue"}
@@ -130,10 +130,36 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                            headers:nil
                                                                                             extras:nil];
 
+                requestContext.visitorId = nil;
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel should] equal:expectedRequestModel];
             });
+
+            it(@"should return with correct requestModel when the shard list contain only one shard and there is a visitorId", ^{
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
+                                                               type:@"shardType"
+                                                               data:@{@"dataKey": @"dataValue"}
+                                                          timestamp:timestamp
+                                                                ttl:42.0];
+                NSArray<EMSShard *> *shards = @[shard];
+                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
+                                                                                         timestamp:timestamp
+                                                                                            expiry:42.0
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue&vi=visitorId"]
+                                                                                            method:@"GET"
+                                                                                           payload:nil
+                                                                                           headers:nil
+                                                                                            extras:nil];
+
+                requestContext.visitorId = @"visitorId";
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+                EMSRequestModel *requestModel = [mapper requestFromShards:shards];
+
+                [[requestModel should] equal:expectedRequestModel];
+            });
+
         });
 
 

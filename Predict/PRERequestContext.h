@@ -13,6 +13,7 @@
 @interface PRERequestContext : NSObject
 
 @property(nonatomic, strong) NSString *customerId;
+@property(nonatomic, strong) NSString *visitorId;
 @property(nonatomic, strong) NSString *merchantId;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
