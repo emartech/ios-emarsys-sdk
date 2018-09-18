@@ -147,13 +147,37 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
-                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue&vi=visitorId"]
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?vi=visitorId&cp=1&ci=3&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
                                                                                            headers:nil
                                                                                             extras:nil];
 
                 requestContext.visitorId = @"visitorId";
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+                EMSRequestModel *requestModel = [mapper requestFromShards:shards];
+
+                [[requestModel should] equal:expectedRequestModel];
+            });
+
+            it(@"should return with correct requestModel when there is no customerId", ^{
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
+                                                               type:@"shardType"
+                                                               data:@{@"dataKey": @"dataValue"}
+                                                          timestamp:timestamp
+                                                                ttl:42.0];
+                NSArray<EMSShard *> *shards = @[shard];
+                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
+                                                                                         timestamp:timestamp
+                                                                                            expiry:42.0
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue"]
+                                                                                            method:@"GET"
+                                                                                           payload:nil
+                                                                                           headers:nil
+                                                                                            extras:nil];
+
+                requestContext.visitorId = nil;
+                requestContext.customerId = nil;
                 mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 

@@ -27,10 +27,9 @@
 
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 EMSShard *shard = shards.firstObject;
-                NSMutableDictionary<NSString *, NSString *> *queryParameters = [@{
-                        @"cp": @"1",
-                        @"ci": self.requestContext.customerId
-                } mutableCopy];
+                NSMutableDictionary<NSString *, NSString *> *queryParameters = [NSMutableDictionary new];
+                queryParameters[@"cp"] = @"1";
+                queryParameters[@"ci"] = self.requestContext.customerId;
                 queryParameters[@"vi"] = self.requestContext.visitorId;
                 [queryParameters addEntriesFromDictionary:shard.data];
                 [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@",
