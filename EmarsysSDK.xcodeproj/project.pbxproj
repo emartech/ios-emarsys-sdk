@@ -43,7 +43,6 @@
 		165BF3B12108955B00FA0F6A /* MERequestRepositoryProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FAF53A1D57B621078413 /* MERequestRepositoryProxy.m */; };
 		165BF3B32108955B00FA0F6A /* MERequestModelRepositoryFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FD0E624E501C31B88FDA /* MERequestModelRepositoryFactory.m */; };
 		165BF3B52108955B00FA0F6A /* MERequestModelSelectEventsSpecification.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F4A12D7F0799688601B4 /* MERequestModelSelectEventsSpecification.m */; };
-		165BF3B62108955B00FA0F6A /* Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F4C158140F3BE4FCB189 /* Info.plist */; };
 		165BF3B82108955B00FA0F6A /* EMSConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F5C3CD1E98CDFB68CC96 /* EMSConfig.m */; };
 		165BF3BA2108955B00FA0F6A /* MEDefaultHeaders.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F091733E25BCC1929085 /* MEDefaultHeaders.m */; };
 		165BF3BC2108955B00FA0F6A /* MERequestContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F430E9A36DCB65831710 /* MERequestContext.m */; };
@@ -458,10 +457,8 @@
 		8AFCA44821393CF60052FEFA /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		8AFCA45221393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
 		8AFCA45321393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
-		8AFCA45421393D640052FEFA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AFCA45121393D640052FEFA /* Info.plist */; };
 		8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
 		8AFCA45A21393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
-		8AFCA45B21393D710052FEFA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AFCA45821393D700052FEFA /* Info.plist */; };
 		A540979D9B7A98E1927F6F19 /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C9FCBA8774705E2E20C872B /* libPods-PredictTests.a */; };
 		C039EA44CD36B1714A872A33 /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00D4C385392E628EBC91EAFE /* libPods-CoreTests.a */; };
 		C0FEA8B9B728D95C9F26EB5C /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
@@ -2314,8 +2311,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AFCA45B21393D710052FEFA /* Info.plist in Resources */,
-				8AFCA45421393D640052FEFA /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2695,7 +2690,6 @@
 				165BF3B12108955B00FA0F6A /* MERequestRepositoryProxy.m in Sources */,
 				165BF3B32108955B00FA0F6A /* MERequestModelRepositoryFactory.m in Sources */,
 				165BF3B52108955B00FA0F6A /* MERequestModelSelectEventsSpecification.m in Sources */,
-				165BF3B62108955B00FA0F6A /* Info.plist in Sources */,
 				165BF3B82108955B00FA0F6A /* EMSConfig.m in Sources */,
 				165BF3BA2108955B00FA0F6A /* MEDefaultHeaders.m in Sources */,
 				165BF3BC2108955B00FA0F6A /* MERequestContext.m in Sources */,
