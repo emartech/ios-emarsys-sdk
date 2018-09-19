@@ -35,7 +35,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
         });
 
         EMSShard *(^createShardWithType)(NSString *type) = ^EMSShard *(NSString *type) {
-            return [[EMSShard alloc] initWithShardId:[[[EMSUUIDProvider new] provideUUID] UUIDString]
+            return [[EMSShard alloc] initWithShardId:[[EMSUUIDProvider new] provideUUIDString]
                                                 type:type
                                                 data:@{@"key1": @"value1",
                                                     @"key2": @{@"innerKey1": @"innerValue1"}}

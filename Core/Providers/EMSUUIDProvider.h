@@ -5,8 +5,6 @@
 
 @interface EMSUUIDProvider : NSObject
 
-- (NSUUID *)provideUUID;
-
 - (NSString *)provideUUIDString;
 
 @end

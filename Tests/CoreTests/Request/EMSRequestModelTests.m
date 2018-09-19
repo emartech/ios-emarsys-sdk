@@ -49,15 +49,15 @@ SPEC_BEGIN(EMSRequestModelTests)
             });
 
             it(@"should use uuidProvider", ^{
-                NSUUID *expectedUUID = [NSUUID UUID];
+                NSString *requestId = @"requestId";
                 EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
-                [[uuidProvider should] receive:@selector(provideUUID)
-                                     andReturn:expectedUUID];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:requestId];
                 EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"http://www.google.com"];
                     }                                          timestampProvider:[EMSTimestampProvider new]
                                                                     uuidProvider:uuidProvider];
-                [[[requestModel requestId] should] equal:[expectedUUID UUIDString]];
+                [[[requestModel requestId] should] equal:requestId];
             });
 
             it(@"should create a model with requestId and timestamp", ^{
