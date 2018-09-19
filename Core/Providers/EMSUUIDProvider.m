@@ -9,4 +9,8 @@
     return [NSUUID UUID];
 }
 
+- (NSString *)provideUUIDString {
+    return [[self provideUUID] UUIDString];
+}
+
 @end

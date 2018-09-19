@@ -7,8 +7,8 @@
 
 - (NSString *)itemId;
 
-- (int)price;
+- (double)price;
 
-- (int)quantity;
+- (double)quantity;
 
 @end

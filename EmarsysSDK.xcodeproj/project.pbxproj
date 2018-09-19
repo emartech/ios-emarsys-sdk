@@ -418,16 +418,22 @@
 		32C6FE184C83AE1AFDFFA8CA /* EMSShardMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F3F4143DBE454574BFAF /* EMSShardMapper.h */; };
 		32C6FF0EA149B0E275A42176 /* EMSCartItemProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F77C13BF8ED771231AF2 /* EMSCartItemProtocol.h */; };
 		32C6FFE21977FBC6EFBCD654 /* EMSShardQueryByTypeSpecification.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FE7AD99CA75EE62F9D1E /* EMSShardQueryByTypeSpecification.h */; };
+		3746000E40A047D8B7681173 /* EMSCartItemUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 374601E457B6AC7D5DEE0654 /* EMSCartItemUtils.m */; };
 		374600671E31A55443A1B01F /* PRERequestContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460F8B23448C7C85F01760 /* PRERequestContext.m */; };
+		37460119562E0F0EFBF69E8D /* EMSCartItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 374602EDCC473DE2E173ECAA /* EMSCartItem.h */; };
 		37460179C009AF4FDD0681B7 /* EMSDBTriggerKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 3746029F21386B9F1AED359E /* EMSDBTriggerKey.m */; };
 		3746036063D9763B0F621F19 /* EMSSchemaContract.h in Headers */ = {isa = PBXBuildFile; fileRef = 3746001BAA2BBE1B6527CA8C /* EMSSchemaContract.h */; };
 		3746040B57B6915407E90A2F /* PRERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC10842C0A13863CF72 /* PRERequestContextTests.m */; };
 		3746042B82C310D66CF23411 /* PRERequestContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 37460D13BDBB522DA07D396E /* PRERequestContext.h */; };
 		374604CC7D72FDBD82B844A7 /* DbTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460BEBB1F7EDC9835C24EA /* DbTriggerTests.m */; };
+		37460586780BAC1A2D4DAB20 /* EMSCartItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460017493F1F314F05F7A0 /* EMSCartItem.m */; };
 		3746062ADCC9A9B8AF340747 /* EMSDBTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 37460BC10BEC21F4F54EFF82 /* EMSDBTrigger.h */; };
 		374606DA3D4C665F9AB8302B /* EMSDBTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460699896239BE47F5A49C /* EMSDBTrigger.m */; };
+		37460781D3470FDF21CEF9DA /* EMSCartItemUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460DEC7D73A5D91BD4630D /* EMSCartItemUtilsTests.m */; };
+		37460A430474DAD7B7B07F38 /* EMSCartItemUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 37460687F1782F9BAB20D2C6 /* EMSCartItemUtils.h */; };
 		37460C36AD95BD0AE3242E1B /* EMSInboxProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 37460AD04D321819EB6AE681 /* EMSInboxProtocol.h */; };
 		37460C432CC6FDF76A0CC0C1 /* DbTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460BEBB1F7EDC9835C24EA /* DbTriggerTests.m */; };
+		37460C601B1894A1121EFE72 /* EMSCartItemUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460DEC7D73A5D91BD4630D /* EMSCartItemUtilsTests.m */; };
 		37460E35FA1576163BF8CBA4 /* EMSDBTriggerKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 37460DCDEB1911960FB0A859 /* EMSDBTriggerKey.h */; };
 		37460FE8E5129D15F541D35F /* PRERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC10842C0A13863CF72 /* PRERequestContextTests.m */; };
 		8655C21DE44632CC837DCDF1 /* EMSShardBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655C71E748F3E33EBC48008 /* EMSShardBuilder.m */; };
@@ -777,10 +783,14 @@
 		32C6FFE6D39053168DFCD5ED /* EMSModelMapperProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSModelMapperProtocol.h; sourceTree = "<group>"; };
 		32C6FFE6FB7194B0162340B5 /* EMSReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSReachability.h; sourceTree = "<group>"; };
 		32C6FFF0E2B7A8264D185A21 /* EMSShardQueryByTypeSpecification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSShardQueryByTypeSpecification.m; sourceTree = "<group>"; };
+		37460017493F1F314F05F7A0 /* EMSCartItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCartItem.m; sourceTree = "<group>"; };
 		3746001BAA2BBE1B6527CA8C /* EMSSchemaContract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSSchemaContract.h; sourceTree = "<group>"; };
+		374601E457B6AC7D5DEE0654 /* EMSCartItemUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCartItemUtils.m; sourceTree = "<group>"; };
 		3746029F21386B9F1AED359E /* EMSDBTriggerKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDBTriggerKey.m; sourceTree = "<group>"; };
+		374602EDCC473DE2E173ECAA /* EMSCartItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCartItem.h; sourceTree = "<group>"; };
 		3746044C8EBC88A514308371 /* EMSWaiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSWaiter.h; sourceTree = "<group>"; };
 		374604BA7F9A098F99FC39B7 /* FakeTimeStampProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeTimeStampProvider.h; sourceTree = "<group>"; };
+		37460687F1782F9BAB20D2C6 /* EMSCartItemUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCartItemUtils.h; sourceTree = "<group>"; };
 		37460699896239BE47F5A49C /* EMSDBTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDBTrigger.m; sourceTree = "<group>"; };
 		3746077137AD733D32B2229D /* Emarsys+Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Emarsys+Tests.h"; sourceTree = "<group>"; };
 		374609973B222C522AC186B1 /* FakeTimeStampProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeTimeStampProvider.m; sourceTree = "<group>"; };
@@ -790,6 +800,7 @@
 		37460D13BDBB522DA07D396E /* PRERequestContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PRERequestContext.h; sourceTree = "<group>"; };
 		37460D89D66C18EBF3590970 /* EMSWaiter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSWaiter.m; sourceTree = "<group>"; };
 		37460DCDEB1911960FB0A859 /* EMSDBTriggerKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDBTriggerKey.h; sourceTree = "<group>"; };
+		37460DEC7D73A5D91BD4630D /* EMSCartItemUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCartItemUtilsTests.m; sourceTree = "<group>"; };
 		37460F8B23448C7C85F01760 /* PRERequestContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PRERequestContext.m; sourceTree = "<group>"; };
 		37460FC10842C0A13863CF72 /* PRERequestContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PRERequestContextTests.m; sourceTree = "<group>"; };
 		37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EMSShardTests.m; path = Shard/EMSShardTests.m; sourceTree = "<group>"; };
@@ -1080,6 +1091,10 @@
 				32C6FE3FE7427EE69C3E34B0 /* EMSPredictMapper.h */,
 				32C6FB428A49C05F0EF5FDB8 /* EMSPredictAggregateShardsTrigger.m */,
 				32C6F480B21CEEE07714DCA8 /* EMSPredictAggregateShardsTrigger.h */,
+				37460017493F1F314F05F7A0 /* EMSCartItem.m */,
+				374602EDCC473DE2E173ECAA /* EMSCartItem.h */,
+				374601E457B6AC7D5DEE0654 /* EMSCartItemUtils.m */,
+				37460687F1782F9BAB20D2C6 /* EMSCartItemUtils.h */,
 			);
 			path = Predict;
 			sourceTree = "<group>";
@@ -1918,6 +1933,7 @@
 				37460FC10842C0A13863CF72 /* PRERequestContextTests.m */,
 				32C6F7F84FA87276905E5DAC /* EMSPredictMapperTests.m */,
 				32C6F512786D58F5359A14DD /* EMSPredictAggregateShardsTriggerTests.m */,
+				37460DEC7D73A5D91BD4630D /* EMSCartItemUtilsTests.m */,
 			);
 			path = PredictTests;
 			sourceTree = "<group>";
@@ -2083,6 +2099,8 @@
 				32C6F3EBAF89C7585EB9D8A9 /* EMSPredictMapper.h in Headers */,
 				32C6FBB763EE6D1B25DC8CCD /* NSURL+EMSCore.h in Headers */,
 				32C6F976DF84D44BC71B01D1 /* EMSPredictAggregateShardsTrigger.h in Headers */,
+				37460119562E0F0EFBF69E8D /* EMSCartItem.h in Headers */,
+				37460A430474DAD7B7B07F38 /* EMSCartItemUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2637,6 +2655,7 @@
 				32C6F41C31B351C9BC4BDAD8 /* EMSPredictMapperTests.m in Sources */,
 				32C6FCAAC079AA616B480DDE /* NSURL+EMSCoreTests.m in Sources */,
 				32C6F398804ECF9F42182677 /* EMSPredictAggregateShardsTriggerTests.m in Sources */,
+				37460781D3470FDF21CEF9DA /* EMSCartItemUtilsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2760,6 +2779,8 @@
 				32C6FADB6049310136A709E3 /* EMSPredictMapper.m in Sources */,
 				32C6F178F87D019C4FA33BED /* NSURL+EMSCore.m in Sources */,
 				32C6F8E7A0551A5ABCC9F4F5 /* EMSPredictAggregateShardsTrigger.m in Sources */,
+				37460586780BAC1A2D4DAB20 /* EMSCartItem.m in Sources */,
+				3746000E40A047D8B7681173 /* EMSCartItemUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2771,6 +2792,7 @@
 				3746040B57B6915407E90A2F /* PRERequestContextTests.m in Sources */,
 				32C6F83174C95B401D781E65 /* EMSPredictMapperTests.m in Sources */,
 				32C6F15ACCF429CFEE991E1D /* EMSPredictAggregateShardsTriggerTests.m in Sources */,
+				37460C601B1894A1121EFE72 /* EMSCartItemUtilsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3041,7 +3063,7 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
-				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../Pods\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../Pods\"/** \"${PROJECT_DIR}/../Pods\"/**";
 			};
 			name = Debug;
 		};
@@ -3061,7 +3083,7 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
-				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../Pods\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../Pods\"/** \"${PROJECT_DIR}/../Pods\"/**";
 			};
 			name = Release;
 		};

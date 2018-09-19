@@ -7,4 +7,6 @@
 
 - (NSUUID *)provideUUID;
 
+- (NSString *)provideUUIDString;
+
 @end

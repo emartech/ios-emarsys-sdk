@@ -12,7 +12,7 @@
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
                              uuidProvider:(EMSUUIDProvider *)uuidProvider {
     if (self = [super init]) {
-        _shardId = [[uuidProvider provideUUID] UUIDString];
+        _shardId = [uuidProvider provideUUIDString];
         _timestamp = [timestampProvider provideTimestamp];
         _ttl = DEFAULT_SHARD_TTL;
         _data = [NSMutableDictionary<NSString *, id> new];
