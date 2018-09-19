@@ -56,7 +56,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response] completionHandler:^{}];
 
@@ -96,7 +96,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response]
@@ -120,7 +120,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response]
@@ -141,7 +141,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response]
@@ -165,7 +165,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate dateWithTimeIntervalSince1970:100]];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -213,7 +213,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate dateWithTimeIntervalSince1970:100]];
 
                 XCTestExpectation *expForRendering = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];

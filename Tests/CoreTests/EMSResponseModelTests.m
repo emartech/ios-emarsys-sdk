@@ -5,13 +5,17 @@
 #import "Kiwi.h"
 #import "EMSResponseModel.h"
 #import "EMSTimestampProvider.h"
+#import "EMSRequestModelBuilder.h"
+#import "EMSUUIDProvider.h"
 
 SPEC_BEGIN(EMSResponseModelTests)
 
         __block EMSTimestampProvider *timestampProvider;
+        __block EMSUUIDProvider *uuidProvider;
 
         beforeEach(^{
             timestampProvider = [EMSTimestampProvider new];
+            uuidProvider = [EMSUUIDProvider new];
         });
 
         describe(@"ResponseModel init", ^{
@@ -29,7 +33,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 NSData *data = [dataString dataUsingEncoding:NSUTF8StringEncoding];
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:response
                                                                                                data:data
-                                                                                       requestModel:[EMSRequestModel mock]
+                                                                                       requestModel:[EMSRequestModel nullMock]
                                                                                           timestamp:[timestampProvider provideTimestamp]];
                 NSString *responseDataString = [[NSString alloc] initWithData:responseModel.body
                                                                      encoding:NSUTF8StringEncoding];
@@ -44,7 +48,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{@"h1": @"hv1"}
                                                                                   body:responseBody
-                                                                          requestModel:[EMSRequestModel mock]
+                                                                          requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
                 [[theValue(model.statusCode) should] equal:theValue(402)];
@@ -77,12 +81,47 @@ SPEC_BEGIN(EMSResponseModelTests)
                                                                          HTTPVersion:@"1.1"
                                                                         headerFields:@{}];
                 NSData *data = [@"dataString" dataUsingEncoding:NSUTF8StringEncoding];
-                EMSRequestModel *expectedModel = [EMSRequestModel mock];
+                EMSRequestModel *expectedModel = [EMSRequestModel nullMock];
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:response
                                                                                                data:data
                                                                                        requestModel:expectedModel
                                                                                           timestamp:[timestampProvider provideTimestamp]];
                 [[responseModel.requestModel should] equal:expectedModel];
+            });
+
+            it(@"should initialize cookies when present", ^{
+                NSString *const cookiesString = @"cdv=6EABCEF289FF5E44;Path=/;Expires=Thu, 19-Sep-2019 18:39:42 GMT, s=340830C6DC60E76D, xp=ERyKp0JzMpzkCQ1YDyEcTirU-1_JmYJ0idhLv23ebPQHuvQANK5aTUfzOBKf89-h;Path=/;Expires=Thu, 19-Sep-2019 18:39:42 GMT";
+                NSDictionary<NSString *, NSString *> *headers = @{
+                    @"key": @"value",
+                    @"key2": @"value2",
+                    @"Set-Cookie": cookiesString
+                };
+                NSString *url = @"https://host.com/url";
+                NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:url]
+                                                                          statusCode:200
+                                                                         HTTPVersion:@"1.1"
+                                                                        headerFields:headers];
+                NSData *data = [@"dataString" dataUsingEncoding:NSUTF8StringEncoding];
+                EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:url];
+                    }
+                                                               timestampProvider:timestampProvider
+                                                                    uuidProvider:uuidProvider];
+                EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:response
+                                                                                               data:data
+                                                                                       requestModel:requestModel
+                                                                                          timestamp:[timestampProvider provideTimestamp]];
+
+                NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers
+                                                                                                  forURL:requestModel.url];
+                NSDictionary *expectedCookies = @{
+                    @"cdv": cookies[0],
+                    @"s": cookies[1],
+                    @"xp": cookies[2]
+                };
+                NSDictionary *resultCookies = responseModel.cookies;
+
+                [[resultCookies should] equal:expectedCookies];
             });
 
         });
@@ -95,7 +134,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:responseBody
-                                                                          requestModel:[EMSRequestModel mock]
+                                                                          requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
                 [[model.parsedBody should] equal:dict];
@@ -105,7 +144,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:nil
-                                                                          requestModel:[EMSRequestModel mock]
+                                                                          requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
                 [[model.parsedBody should] beNil];
@@ -115,7 +154,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:[@"Created" dataUsingEncoding:NSUTF8StringEncoding]
-                                                                          requestModel:[EMSRequestModel mock]
+                                                                          requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
                 [[model.parsedBody should] beNil];
@@ -127,7 +166,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:responseBody
-                                                                          requestModel:[EMSRequestModel mock]
+                                                                          requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
                 id parsedBody1 = model.parsedBody;

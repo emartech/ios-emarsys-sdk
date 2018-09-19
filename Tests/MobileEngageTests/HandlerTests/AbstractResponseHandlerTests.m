@@ -23,7 +23,7 @@ SPEC_BEGIN(AbstractResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:[NSData mock]
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 [fakeResponseHandler processResponse:response];
@@ -38,7 +38,7 @@ SPEC_BEGIN(AbstractResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:[NSData mock]
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 [fakeResponseHandler processResponse:response];
 

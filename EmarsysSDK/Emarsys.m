@@ -17,6 +17,7 @@
 #import "EMSPredictMapper.h"
 #import "PRERequestContext.h"
 #import "EMSUUIDProvider.h"
+#import "EMSSqliteQueueSchemaHandler.h"
 
 @implementation Emarsys
 
@@ -29,12 +30,12 @@ static EMSConfig *_config;
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
 
-    _predict = [[PredictInternal alloc] initWithRequestContext:nil requestManager:nil];
+
     _mobileEngage = [MobileEngageInternal new];
     _config = config;
 
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
-                                               schemaDelegate:[MESchemaDelegate new]];
+                                               schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
     [_dbHelper open];
 
     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config];
@@ -52,7 +53,7 @@ static EMSConfig *_config;
     EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
 
     EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-            }
+        }
                                                                  errorBlock:^(NSString *requestId, NSError *error) {
                                                                  }
                                                           requestRepository:requestRepository
@@ -62,6 +63,8 @@ static EMSConfig *_config;
     PRERequestContext *predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                                        uuidProvider:[EMSUUIDProvider new]
                                                                                          merchantId:config.merchantId];
+    _predict = [[PredictInternal alloc] initWithRequestContext:predictRequestContext
+                                                requestManager:manager];
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent

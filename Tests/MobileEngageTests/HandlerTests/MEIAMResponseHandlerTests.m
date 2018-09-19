@@ -31,7 +31,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
@@ -44,7 +44,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
@@ -57,7 +57,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
@@ -69,7 +69,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:nil
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
@@ -82,7 +82,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
@@ -100,7 +100,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 id iamMock = [MEInApp mock];
@@ -129,7 +129,7 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 [[MEIAMResponseHandler new] handleResponse:response];

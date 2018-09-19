@@ -29,7 +29,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MEIdResponseHandler *handler = [MEIdResponseHandler new];
 
@@ -43,7 +43,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MEIdResponseHandler *handler = [MEIdResponseHandler new];
 
@@ -57,7 +57,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MEIdResponseHandler *handler = [MEIdResponseHandler new];
 
@@ -81,7 +81,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MERequestContext *requestContext = [MERequestContext mock];
                 [[requestContext should] receive:@selector(setMeId:) withArguments:[meId stringValue]];
@@ -100,7 +100,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MERequestContext *requestContext = [MERequestContext mock];
                 [[requestContext should] receive:@selector(setMeId:) withArguments:meId];

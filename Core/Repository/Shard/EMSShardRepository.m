@@ -29,7 +29,6 @@
 - (void)add:(EMSShard *)item {
     NSParameterAssert(item);
     [self.dbHelper insertModel:item
-                     withQuery:SQL_SHARD_INSERT
                         mapper:self.mapper];
 }
 

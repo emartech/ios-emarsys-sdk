@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, assign) NSInteger statusCode;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> *headers;
+@property(nonatomic, readonly) NSDictionary<NSString *, NSHTTPCookie *> *cookies;
 @property(nonatomic, readonly) EMSRequestModel *requestModel;
 @property(nonatomic, readonly) NSData *body;
 @property(nonatomic, readonly) NSDate *timestamp;

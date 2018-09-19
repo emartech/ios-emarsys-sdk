@@ -150,7 +150,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMCleanupResponseHandler *handler = [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:repository
@@ -179,7 +179,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
-                                                                             requestModel:[EMSRequestModel mock]
+                                                                             requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
                 MEIAMCleanupResponseHandler *handler = [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:nil
