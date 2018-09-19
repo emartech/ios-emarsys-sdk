@@ -6,7 +6,6 @@
 #import "EMSShard.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-#import "EMSShardBuilder.h"
 
 SPEC_BEGIN(EMSShardTests)
 
@@ -52,9 +51,9 @@ SPEC_BEGIN(EMSShardTests)
         describe(@"makeWithBuilder:timestampProvider:uuidProvider:", ^{
             it(@"should initialize shard correctly", ^{
                 NSDate *expectedDate = [NSDate date];
-                NSUUID *expectedUUID = [NSUUID UUID];
 
                 NSString *shardType = @"shardType";
+                NSString *shardId = @"shardId";
                 NSTimeInterval timeInterval = 42.0;
 
                 NSString *payloadKey = @"payloadKey";
@@ -75,7 +74,7 @@ SPEC_BEGIN(EMSShardTests)
                 EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
                 EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
                 [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:expectedDate];
-                [[uuidProvider should] receive:@selector(provideUUID) andReturn:expectedUUID];
+                [[uuidProvider should] receive:@selector(provideUUIDString) andReturn:shardId];
 
 
                 EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
@@ -87,7 +86,7 @@ SPEC_BEGIN(EMSShardTests)
                                           timestampProvider:timestampProvider
                                                uuidProvider:uuidProvider];
 
-                [[shard.shardId should] equal:[expectedUUID UUIDString]];
+                [[shard.shardId should] equal:shardId];
                 [[shard.timestamp should] equal:expectedDate];
                 [[shard.type should] equal:shardType];
                 [[theValue(shard.ttl) should] equal:theValue(timeInterval)];

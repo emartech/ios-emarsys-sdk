@@ -12,7 +12,7 @@
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
                              uuidProvider:(EMSUUIDProvider *)uuidProvider {
     if (self = [super init]) {
-        _requestId = [[uuidProvider provideUUID] UUIDString];
+        _requestId = [uuidProvider provideUUIDString];
         _timestamp = [timestampProvider provideTimestamp];
         _requestMethod = @"POST";
         _expiry = DEFAULT_REQUESTMODEL_EXPIRY;

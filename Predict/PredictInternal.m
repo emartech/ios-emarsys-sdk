@@ -5,6 +5,7 @@
 #import "PRERequestContext.h"
 #import "EMSRequestManager.h"
 #import "EMSShard.h"
+#import "EMSCartItemUtils.h"
 
 @interface PredictInternal ()
 
@@ -36,14 +37,27 @@
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
     NSParameterAssert(itemId);
-    EMSShard * shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder){
-        [builder setType:@"predict_item_view"];
-        [builder payloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
-    }
-                               timestampProvider:[self.requestContext timestampProvider]
-                                    uuidProvider:[self.requestContext uuidProvider]];
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_item_view"];
+                [builder payloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
+            }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
 
     [self.requestManager submitShard:shard];
+}
+
+- (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
+    NSParameterAssert(cartItems);
+
+    [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_cart"];
+                [builder payloadEntryWithKey:@"cv" value:@"1"];
+                [builder payloadEntryWithKey:@"ca" value:[EMSCartItemUtils queryParamFromCartItems:cartItems]];
+            }
+                                             timestampProvider:self.requestContext.timestampProvider
+                                                  uuidProvider:self.requestContext.uuidProvider]];
+
 }
 
 @end

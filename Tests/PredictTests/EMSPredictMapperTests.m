@@ -18,7 +18,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
         __block PRERequestContext *requestContext;
 
         NSDate *timestamp = [NSDate date];
-        NSUUID *uuid = [NSUUID UUID];
+        NSString *uuidString = @"uuidString";
         NSString *merchantId = @"merchantId";
         NSString *customerId = @"3";
 
@@ -27,8 +27,8 @@ SPEC_BEGIN(EMSPredictMapperTests)
             uuidProvider = [EMSUUIDProvider mock];
             [timestampProvider stub:@selector(provideTimestamp)
                           andReturn:timestamp];
-            [uuidProvider stub:@selector(provideUUID)
-                     andReturn:uuid];
+            [uuidProvider stub:@selector(provideUUIDString)
+                     andReturn:uuidString];
             requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
                                                                        merchantId:merchantId];
@@ -95,7 +95,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel.timestamp should] equal:timestamp];
-                [[requestModel.requestId should] equal:[uuid UUIDString]];
+                [[requestModel.requestId should] equal:uuidString];
                 [[requestModel.url.absoluteString should] startWithString:@"https://recommender.scarabresearch.com/merchants/merchantId"];
             });
 
@@ -110,7 +110,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel.timestamp should] equal:timestamp];
-                [[requestModel.requestId should] equal:[uuid UUIDString]];
+                [[requestModel.requestId should] equal:uuidString];
                 [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
             });
 
@@ -121,7 +121,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                           timestamp:timestamp
                                                                 ttl:42.0];
                 NSArray<EMSShard *> *shards = @[shard];
-                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
+                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:uuidString
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue"]
@@ -144,7 +144,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                           timestamp:timestamp
                                                                 ttl:42.0];
                 NSArray<EMSShard *> *shards = @[shard];
-                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
+                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:uuidString
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?vi=visitorId&cp=1&ci=3&dataKey=dataValue"]
@@ -167,7 +167,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                           timestamp:timestamp
                                                                 ttl:42.0];
                 NSArray<EMSShard *> *shards = @[shard];
-                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:[uuid UUIDString]
+                EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:uuidString
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue"]

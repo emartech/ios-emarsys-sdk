@@ -17,4 +17,6 @@
 
 - (void)trackItemViewWithItemId:(NSString *)itemId;
 
+- (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
+
 @end

@@ -3,14 +3,14 @@
 
 SPEC_BEGIN(EMSUUIDProviderTests)
 
-        describe(@"provideUUID", ^{
+        describe(@"provideUUIDString", ^{
 
             it(@"should not return with nil", ^{
-                [[[[EMSUUIDProvider new] provideUUID] shouldNot] beNil];
+                [[[[EMSUUIDProvider new] provideUUIDString] shouldNot] beNil];
             });
 
             it(@"should return with UUID", ^{
-                [[[[EMSUUIDProvider new] provideUUID] should] beKindOfClass:[NSUUID class]];
+                [[[[EMSUUIDProvider new] provideUUIDString] should] beKindOfClass:[NSString class]];
             });
 
         });

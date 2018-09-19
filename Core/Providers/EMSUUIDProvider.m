@@ -5,8 +5,8 @@
 
 @implementation EMSUUIDProvider
 
-- (NSUUID *)provideUUID {
-    return [NSUUID UUID];
+- (NSString *)provideUUIDString {
+    return [[NSUUID UUID] UUIDString];
 }
 
 @end
