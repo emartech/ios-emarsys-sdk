@@ -10,15 +10,15 @@
 #import "EMSShardRepository.h"
 #import "EMSSQLiteHelper.h"
 #import "MERequestModelRepositoryFactory.h"
-#import "EMSSQLiteHelper.h"
 #import "EMSSqliteQueueSchemaHandler.h"
 #import "PredictInternal.h"
 #import "EMSPredictAggregateShardsTrigger.h"
 #import "PRERequestContext.h"
-#import "PredictInternal.h"
 #import "EMSUUIDProvider.h"
 #import "EMSSchemaContract.h"
 #import "EMSPredictMapper.h"
+#import "EMSAbstractResponseHandler.h"
+#import "EMSVisitorIdResponseHandler.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -28,9 +28,13 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
+
 - (void)initializeInstances;
+
+- (void)handleResponse:(EMSResponseModel *)responseModel;
 
 @end
 
@@ -59,8 +63,11 @@
 
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
     const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
-    _requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
 
+
+    __weak typeof(self) weakSelf = self;
+    _requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+            [weakSelf handleResponse:response];
         }
                                                       errorBlock:^(NSString *requestId, NSError *error) {
                                                       }
@@ -71,7 +78,7 @@
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                      uuidProvider:[EMSUUIDProvider new]
                                                                        merchantId:config.merchantId];
-
+    _responseHandlers = @[[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
 
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
@@ -91,5 +98,10 @@
                                                           requestContext:self.requestContext];
 }
 
+- (void)handleResponse:(EMSResponseModel *)responseModel {
+    for (EMSAbstractResponseHandler *handler in self.responseHandlers) {
+        [handler processResponse:responseModel];
+    }
+}
 
 @end
