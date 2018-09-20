@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) EMSConfig *config;
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong, nullable) NSNumber *contactFieldId;
 
 - (instancetype)initWithConfig:(EMSConfig *)config;
 

@@ -105,8 +105,7 @@ static EMSSQLiteHelper *_dbHelper;
 
 + (NSString *)appLoginWithContactFieldId:(NSNumber *)contactFieldId
                        contactFieldValue:(NSString *)contactFieldValue {
-    return [_mobileEngageInternal appLoginWithContactFieldId:contactFieldId
-                                           contactFieldValue:contactFieldValue];
+    return [_mobileEngageInternal appLoginWithContactFieldValue:contactFieldValue];
 }
 
 + (NSString *)appLogout {

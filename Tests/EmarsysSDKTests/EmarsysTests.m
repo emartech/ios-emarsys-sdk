@@ -85,7 +85,7 @@ SPEC_BEGIN(EmarsysTests)
                                   andReturn:predict];
                 [Emarsys setDependencyContainer:container];
 
-                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
+                [[engage should] receive:@selector(appLoginWithContactFieldValue:)
                            withArguments:kw_any(),
                                          customerId];
                 [Emarsys setCustomerWithId:customerId];
@@ -110,9 +110,8 @@ SPEC_BEGIN(EmarsysTests)
                                   andReturn:predict];
                 [Emarsys setDependencyContainer:container];
 
-                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
-                           withArguments:@32,
-                                         customerId];
+                [[engage should] receive:@selector(appLoginWithContactFieldValue:)
+                           withArguments: customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
         });

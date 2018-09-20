@@ -26,8 +26,7 @@ static EMSDependencyContainer *_dependencyContainer;
 + (void)setCustomerWithId:(NSString *)customerId {
     NSParameterAssert(customerId);
     [_dependencyContainer.predict setCustomerWithId:customerId];
-    [_dependencyContainer.mobileEngage appLoginWithContactFieldId:_config.contactFieldId
-                                                contactFieldValue:customerId];
+    [_dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId];
 }
 
 + (id <EMSPredictProtocol>)predict {

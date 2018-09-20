@@ -53,8 +53,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 
 - (NSString *)appLogin;
 
-- (NSString *)appLoginWithContactFieldId:(nullable NSNumber *)contactFieldId
-                       contactFieldValue:(nullable NSString *)contactFieldValue;
+- (NSString *)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
 
 - (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
 

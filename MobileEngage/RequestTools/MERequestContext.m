@@ -15,6 +15,7 @@
         _config = config;
         _timestampProvider = [EMSTimestampProvider new];
         _uuidProvider = [EMSUUIDProvider new];
+        _contactFieldId = config.contactFieldId;
     }
     return self;
 }

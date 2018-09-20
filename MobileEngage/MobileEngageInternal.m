@@ -186,19 +186,16 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     _pushToken = pushToken;
 
     if (self.requestContext.appLoginParameters != nil) {
-        [self appLoginWithContactFieldId:self.requestContext.appLoginParameters.contactFieldId
-                       contactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
+        [self appLoginWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
     }
 }
 
 - (NSString *)appLogin {
-    return [self appLoginWithContactFieldId:nil
-                          contactFieldValue:nil];
+    return [self appLoginWithContactFieldValue:nil];
 }
 
-- (NSString *)appLoginWithContactFieldId:(NSNumber *)contactFieldId
-                       contactFieldValue:(NSString *)contactFieldValue {
-    self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:contactFieldId
+- (NSString *)appLoginWithContactFieldValue:(NSString *)contactFieldValue {
+    self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
                                                                               contactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken

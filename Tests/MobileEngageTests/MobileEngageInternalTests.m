@@ -304,7 +304,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
         describe(@"setPushToken:", ^{
             it(@"should call appLogin with lastAppLogin parameters", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
+                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldValue:)
                                       withCount:1
                                       arguments:nil, nil, nil];
 
@@ -315,9 +315,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should call appLogin with lastAppLogin parameters when there are previous values", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
+                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldValue:)
                                       withCount:1
-                                      arguments:@12, @"23", nil];
+                                      arguments:@"23", nil];
 
                 _mobileEngage.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:@12
                                                                                                    contactFieldValue:@"23"];
@@ -328,13 +328,13 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [[requestManagerMock() should] receive:@selector(submitRequestModel:)];
                 [_mobileEngage appLogin];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
-                [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] beNil];
+                [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] equal:@3];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldValue should] beNil];
             });
 
             it(@"appLogin should save last AppLogin parameters", ^{
                 [[requestManagerMock() should] receive:@selector(submitRequestModel:)];
-                [_mobileEngage appLoginWithContactFieldId:@3 contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] equal:@3];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldValue should] equal:@"test@test.com"];
@@ -342,7 +342,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
             it(@"should not call appLogin with setPushToken when there was no previous appLogin call", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage shouldNot] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)];
+                [[_mobileEngage shouldNot] receive:@selector(appLoginWithContactFieldValue:)];
                 [_mobileEngage setPushToken:deviceToken];
             });
         });
@@ -434,14 +434,13 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
         });
 
-        describe(@"appLoginWithContactFieldId:contactFieldValue:", ^{
+        describe(@"appLoginWithContactFieldValue:", ^{
             it(@"must not return with nil", ^{
                 id requestManager = requestManagerMock();
                 [[requestManager should] receive:@selector(submitRequestModel:)
                                    withArguments:kw_any(), kw_any(), kw_any()];
 
-                NSString *uuid = [_mobileEngage appLoginWithContactFieldId:@3
-                                                         contactFieldValue:@"test@test.com"];
+                NSString *uuid = [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
                 [[uuid shouldNot] beNil];
             });
 
@@ -451,8 +450,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                NSString *uuid = [_mobileEngage appLoginWithContactFieldId:@3
-                                                         contactFieldValue:@"test@test.com"];
+                NSString *uuid = [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
                 EMSRequestModel *actualModel = spy.argument;
                 [[uuid should] equal:actualModel.requestId];
             });
@@ -478,8 +476,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:)
                                                             atIndex:0];
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
             });
@@ -521,10 +518,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"contact_field_value": @"test@test.com"
                 });
 
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
@@ -549,7 +544,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"timezone": [EMSDeviceInfo timeZone],
                         @"device_model": [EMSDeviceInfo deviceModel],
                         @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @4,
+                        @"contact_field_id": @3,
                         @"contact_field_value": @"nottest@test.com",
                         @"push_token": @NO,
                         @"application_version": @"1.0",
@@ -573,10 +568,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldId:@4
-                                        contactFieldValue:@"nottest@test.com"];
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"nottest@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
@@ -617,7 +610,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         @"timezone": [EMSDeviceInfo timeZone],
                         @"device_model": [EMSDeviceInfo deviceModel],
                         @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @4,
+                        @"contact_field_id": @3,
                         @"contact_field_value": @"nottest@test.com",
                         @"push_token": @NO,
                         @"application_version": @"1.0",
@@ -625,10 +618,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
-                [_mobileEngage appLoginWithContactFieldId:@4
-                                        contactFieldValue:@"nottest@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"nottest@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
@@ -669,8 +660,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
 
                 _mobileEngage = [MobileEngageInternal new];
                 [_mobileEngage setupWithRequestManager:requestManager
@@ -678,8 +668,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                          launchOptions:[NSDictionary new]
                                         requestContext:[[MERequestContext alloc] initWithConfig:config]];
 
-                [_mobileEngage appLoginWithContactFieldId:@3
-                                        contactFieldValue:@"test@test.com"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];

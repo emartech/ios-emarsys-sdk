@@ -187,9 +187,9 @@ SPEC_BEGIN(MobileEngageTests)
             });
         });
 
-        describe(@"appLoginWithContactFieldId:contactFieldValue:", ^{
+        describe(@"appLoginWithContactFieldValue:", ^{
             it(@"should call internal implementation's method", ^{
-                [[mobileEngageInternal() should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)];
+                [[mobileEngageInternal() should] receive:@selector(appLoginWithContactFieldValue:)];
 
                 [MobileEngage appLoginWithContactFieldId:@3
                                        contactFieldValue:@"test@test.com"];
@@ -207,10 +207,10 @@ SPEC_BEGIN(MobileEngageTests)
                 }];
                 [MobileEngage setupWithConfig:config
                                 launchOptions:[NSDictionary new]];
-                [MobileEngage appLoginWithContactFieldId:@5
+                [MobileEngage appLoginWithContactFieldId:@3
                                        contactFieldValue:@"three"];
 
-                [[((MEInbox*)MobileEngage.inbox).requestContext.appLoginParameters.contactFieldId should] equal:@5];
+                [[((MEInbox*)MobileEngage.inbox).requestContext.appLoginParameters.contactFieldId should] equal:@3];
                 [[((MEInbox*)MobileEngage.inbox).requestContext.appLoginParameters.contactFieldValue should] equal:@"three"];
             });
         });
