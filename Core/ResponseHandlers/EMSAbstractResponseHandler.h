@@ -6,7 +6,7 @@
 #import "EMSResponseModel.h"
 
 
-@interface AbstractResponseHandler : NSObject
+@interface EMSAbstractResponseHandler : NSObject
 
 - (void)processResponse:(EMSResponseModel *)response;
 

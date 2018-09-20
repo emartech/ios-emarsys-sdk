@@ -3,9 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 #import "MobileEngageInternal.h"
 
 @interface MobileEngageInternal (Test)
-@property(nonatomic, strong) NSArray<AbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @end

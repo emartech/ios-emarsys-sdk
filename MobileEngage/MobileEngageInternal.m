@@ -8,7 +8,7 @@
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
 #import "MEDefaultHeaders.h"
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 #import "MEIdResponseHandler.h"
 #import "MEIAMResponseHandler.h"
 #import "MEExperimental.h"
@@ -27,7 +27,7 @@
 @interface MobileEngageInternal ()
 
 @property(nonatomic, strong) EMSConfig *config;
-@property(nonatomic, strong) NSArray<AbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 
 @end
 
@@ -166,7 +166,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 }
 
 - (void)handleResponse:(EMSResponseModel *)model {
-    for (AbstractResponseHandler *handler in _responseHandlers) {
+    for (EMSAbstractResponseHandler *handler in _responseHandlers) {
         [handler processResponse:model];
     }
 }

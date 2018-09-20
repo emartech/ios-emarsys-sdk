@@ -3,8 +3,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 
 
-@interface MEIAMResponseHandler : AbstractResponseHandler 
+@interface MEIAMResponseHandler : EMSAbstractResponseHandler 
 @end

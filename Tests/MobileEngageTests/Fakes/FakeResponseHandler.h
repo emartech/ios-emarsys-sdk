@@ -3,9 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 
-@interface FakeResponseHandler : AbstractResponseHandler
+@interface FakeResponseHandler : EMSAbstractResponseHandler
 
 @property (nonatomic, assign) BOOL shouldHandle;
 @property (nonatomic, strong) EMSResponseModel *handledResponseModel;

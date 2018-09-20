@@ -53,6 +53,7 @@ static EMSConfig *_config;
     EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
 
     EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+
         }
                                                                  errorBlock:^(NSString *requestId, NSError *error) {
                                                                  }

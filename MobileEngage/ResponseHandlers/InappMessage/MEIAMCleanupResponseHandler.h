@@ -3,11 +3,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 #import "MEButtonClickRepository.h"
 #import "MEDisplayedIAMRepository.h"
 
-@interface MEIAMCleanupResponseHandler : AbstractResponseHandler
+@interface MEIAMCleanupResponseHandler : EMSAbstractResponseHandler
 
 - (instancetype)initWithButtonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                          displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository;

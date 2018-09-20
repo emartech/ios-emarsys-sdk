@@ -141,7 +141,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     requestManagerMock();
 
                     BOOL registered = NO;
-                    for (AbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registered = YES;
                         }
@@ -155,7 +155,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     requestManagerMock();
 
                     BOOL registered = NO;
-                    for (AbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registered = YES;
                         }
@@ -170,7 +170,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     requestManagerMock();
 
                     NSUInteger registerCount = 0;
-                    for (AbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registerCount++;
                         }
@@ -184,7 +184,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     requestManagerMock();
 
                     BOOL registered = NO;
-                    for (AbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
                             registered = YES;
                         }
@@ -198,7 +198,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     requestManagerMock();
 
                     BOOL registered = NO;
-                    for (AbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
                             registered = YES;
                         }

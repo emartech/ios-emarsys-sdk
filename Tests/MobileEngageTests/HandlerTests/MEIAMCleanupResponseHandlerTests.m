@@ -6,7 +6,7 @@
 #import "EMSRequestModelBuilder.h"
 #import "Kiwi.h"
 #import "MEIAMCleanupResponseHandler.h"
-#import "AbstractResponseHandler+Private.h"
+#import "EMSAbstractResponseHandler+Private.h"
 #import "MEButtonClickFilterNoneSpecification.h"
 #import "MESchemaDelegate.h"
 #import "MEDisplayedIAMFilterNoneSpecification.h"

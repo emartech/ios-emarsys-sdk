@@ -3,11 +3,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 
 
 @class MERequestContext;
-@interface MEIdResponseHandler : AbstractResponseHandler
+@interface MEIdResponseHandler : EMSAbstractResponseHandler
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext;
 

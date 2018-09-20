@@ -4,7 +4,7 @@
 
 #import "Kiwi.h"
 #import "MEIDResponseHandler.h"
-#import "AbstractResponseHandler+Private.h"
+#import "EMSAbstractResponseHandler+Private.h"
 #import "MobileEngageInternal.h"
 #import "MERequestContext.h"
 #import "MEExperimental.h"

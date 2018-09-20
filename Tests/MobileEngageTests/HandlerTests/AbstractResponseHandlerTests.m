@@ -14,7 +14,7 @@ SPEC_BEGIN(AbstractResponseHandlerTests)
             timestampProvider = [EMSTimestampProvider new];
         });
 
-        describe(@"AbstractResponseHandler", ^{
+        describe(@"EMSAbstractResponseHandler", ^{
 
             it(@"should call handleResponse: when shouldHandleResponse: returns true", ^{
                 FakeResponseHandler *fakeResponseHandler = [FakeResponseHandler new];

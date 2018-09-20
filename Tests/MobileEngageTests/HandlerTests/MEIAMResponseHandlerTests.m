@@ -6,7 +6,7 @@
 #import "Kiwi.h"
 #import "MEIDResponseHandler.h"
 #import "MEIAMResponseHandler.h"
-#import "AbstractResponseHandler+Private.h"
+#import "EMSAbstractResponseHandler+Private.h"
 #import "MEInApp.h"
 #import "MEInApp+Private.h"
 #import "MobileEngage+Test.h"

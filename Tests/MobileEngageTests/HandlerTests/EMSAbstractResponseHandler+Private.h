@@ -3,9 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 
-@interface AbstractResponseHandler (Private)
+@interface EMSAbstractResponseHandler (Private)
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response;
 - (void)handleResponse:(EMSResponseModel *)response;

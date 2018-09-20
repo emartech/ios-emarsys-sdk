@@ -2,9 +2,9 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "AbstractResponseHandler.h"
+#import "EMSAbstractResponseHandler.h"
 
-@implementation AbstractResponseHandler
+@implementation EMSAbstractResponseHandler
 
 - (void)processResponse:(EMSResponseModel *)response {
     if([self shouldHandleResponse:response]){
