@@ -35,6 +35,9 @@ typedef void (^MESourceHandler)(NSString *source);
 @property(nonatomic, strong, nullable) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 
+- (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
+                        requestContext:(MERequestContext *)requestContext;
+
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;
 

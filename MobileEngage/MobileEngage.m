@@ -16,6 +16,8 @@
 #import "MEInbox.h"
 #import "EMSShardRepository.h"
 #import "MEUserNotificationDelegate.h"
+#import "MERequestContext.h"
+#import "EMSRequestManager.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 

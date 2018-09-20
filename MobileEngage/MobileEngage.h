@@ -9,6 +9,8 @@
 
 @class EMSConfig;
 @protocol MobileEngageStatusDelegate;
+@class MERequestContext;
+@class EMSRequestManager;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -33,6 +33,17 @@
 
 @implementation MobileEngageInternal
 
+- (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
+                        requestContext:(MERequestContext *)requestContext {
+    if (self = [super init]) {
+        [self setupWithRequestManager:requestManager
+                               config:requestContext.config
+                        launchOptions:nil
+                       requestContext:requestContext];
+    }
+    return self;
+}
+
 - (void) setupWithConfig:(nonnull EMSConfig *)config
            launchOptions:(NSDictionary *)launchOptions
 requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
@@ -96,9 +107,9 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     }
     if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
         [responseHandlers addObjectsFromArray:@[
-                [MEIAMResponseHandler new],
-                [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                              displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
+            [MEIAMResponseHandler new],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
+                                                          displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
         ];
     }
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
@@ -158,8 +169,8 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
     [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
                                                                                   eventAttributes:@{
-                                                                                          @"message_id": campaignId,
-                                                                                          @"button_id": buttonId
+                                                                                      @"message_id": campaignId,
+                                                                                      @"button_id": buttonId
                                                                                   }
                                                                                              type:@"internal"
                                                                                    requestContext:self.requestContext]];

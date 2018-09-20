@@ -10,11 +10,12 @@
 #import "Emarsys+Tests.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSDBTriggerKey.h"
+#import "EMSDependencyContainer.h"
 
 @interface Emarsys ()
-+ (void)setPredict:(PredictInternal *)predictInternal;
 
-+ (void)setMobileEngage:(MobileEngageInternal *)mobileEngage;
++ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
+
 @end
 
 SPEC_BEGIN(EmarsysTests)
@@ -60,10 +61,16 @@ SPEC_BEGIN(EmarsysTests)
                 PredictInternal *const predict = [PredictInternal mock];
                 MobileEngageInternal *const engage = [MobileEngageInternal nullMock];
                 NSString *const customerId = @"customerId";
-                [Emarsys setPredict:predict];
-                [Emarsys setMobileEngage:engage];
 
-                [[predict should] receive:@selector(setCustomerWithId:) withArguments:customerId];
+                EMSDependencyContainer *container = [EMSDependencyContainer mock];
+                [[container should] receive:@selector(mobileEngage)
+                                  andReturn:engage];
+                [[container should] receive:@selector(predict)
+                                  andReturn:predict];
+                [Emarsys setDependencyContainer:container];
+
+                [[predict should] receive:@selector(setCustomerWithId:)
+                            withArguments:customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
 
@@ -71,10 +78,16 @@ SPEC_BEGIN(EmarsysTests)
                 PredictInternal *const predict = [PredictInternal nullMock];
                 MobileEngageInternal *const engage = [MobileEngageInternal mock];
                 NSString *const customerId = @"customerId";
-                [Emarsys setPredict:predict];
-                [Emarsys setMobileEngage:engage];
+                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
+                [[container should] receive:@selector(mobileEngage)
+                                  andReturn:engage];
+                [[container should] receive:@selector(predict)
+                                  andReturn:predict];
+                [Emarsys setDependencyContainer:container];
 
-                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:kw_any(), customerId];
+                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
+                           withArguments:kw_any(),
+                                         customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
 
@@ -90,10 +103,16 @@ SPEC_BEGIN(EmarsysTests)
                 [Emarsys setupWithConfig:config];
 
                 NSString *const customerId = @"customerId";
-                [Emarsys setPredict:predict];
-                [Emarsys setMobileEngage:engage];
+                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
+                [[container should] receive:@selector(mobileEngage)
+                                  andReturn:engage];
+                [[container should] receive:@selector(predict)
+                                  andReturn:predict];
+                [Emarsys setDependencyContainer:container];
 
-                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:) withArguments:@32, customerId];
+                [[engage should] receive:@selector(appLoginWithContactFieldId:contactFieldValue:)
+                           withArguments:@32,
+                                         customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
         });
