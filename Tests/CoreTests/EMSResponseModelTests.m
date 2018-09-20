@@ -123,6 +123,41 @@ SPEC_BEGIN(EMSResponseModelTests)
 
                 [[resultCookies should] equal:expectedCookies];
             });
+            
+            it(@"should initialize cookies with lowerCased key when present", ^{
+                NSString *const cookiesString = @"CDV=6EABCEF289FF5E44;Path=/;Expires=Thu, 19-Sep-2019 18:39:42 GMT, s=340830C6DC60E76D, xP=ERyKp0JzMpzkCQ1YDyEcTirU-1_JmYJ0idhLv23ebPQHuvQANK5aTUfzOBKf89-h;Path=/;Expires=Thu, 19-Sep-2019 18:39:42 GMT";
+                NSDictionary<NSString *, NSString *> *headers = @{
+                    @"key": @"value",
+                    @"key2": @"value2",
+                    @"Set-Cookie": cookiesString
+                };
+                NSString *url = @"https://host.com/url";
+                NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:url]
+                                                                          statusCode:200
+                                                                         HTTPVersion:@"1.1"
+                                                                        headerFields:headers];
+                NSData *data = [@"dataString" dataUsingEncoding:NSUTF8StringEncoding];
+                EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:url];
+                    }
+                                                               timestampProvider:timestampProvider
+                                                                    uuidProvider:uuidProvider];
+                EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:response
+                                                                                               data:data
+                                                                                       requestModel:requestModel
+                                                                                          timestamp:[timestampProvider provideTimestamp]];
+
+                NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers
+                                                                                                  forURL:requestModel.url];
+                NSDictionary *expectedCookies = @{
+                    @"cdv": cookies[0],
+                    @"s": cookies[1],
+                    @"xp": cookies[2]
+                };
+                NSDictionary *resultCookies = responseModel.cookies;
+
+                [[resultCookies should] equal:expectedCookies];
+            });
 
         });
 

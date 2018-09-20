@@ -23,6 +23,13 @@ SPEC_BEGIN(EMSPredictMapperTests)
         NSString *customerId = @"3";
 
         beforeEach(^{
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+            [userDefaults setObject:nil
+                             forKey:kEMSCustomerId];
+            [userDefaults setObject:nil
+                             forKey:kEMSVisitorId];
+            [userDefaults synchronize];
+
             timestampProvider = [EMSTimestampProvider mock];
             uuidProvider = [EMSUUIDProvider mock];
             [timestampProvider stub:@selector(provideTimestamp)

@@ -17,6 +17,15 @@ SPEC_BEGIN(PRERequestContextTests)
             uuidProvider = [EMSUUIDProvider new];
         });
 
+        afterEach(^{
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+            [userDefaults setObject:nil
+                             forKey:kEMSCustomerId];
+            [userDefaults setObject:nil
+                             forKey:kEMSVisitorId];
+            [userDefaults synchronize];
+        });
+
         describe(@"initWithTimestampProvider:uuidProvider:merchantId:", ^{
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
@@ -63,6 +72,18 @@ SPEC_BEGIN(PRERequestContextTests)
                 [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                            uuidProvider:uuidProvider
                                                              merchantId:@"merchantId"] customerId] should] equal:customerId];
+            });
+        });
+
+        describe(@"setVisitorId:", ^{
+            it(@"should persist the parameter", ^{
+                NSString *const visitorId = @"visitorId";
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider
+                                                           merchantId:@"merchantId"] setVisitorId:visitorId];
+                [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                           uuidProvider:uuidProvider
+                                                             merchantId:@"merchantId"] visitorId] should] equal:visitorId];
             });
         });
 

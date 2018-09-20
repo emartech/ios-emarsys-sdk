@@ -9,6 +9,7 @@
 
 #define kEMSPredictSuiteName @"com.emarsys.predict"
 #define kEMSCustomerId @"customerId"
+#define kEMSVisitorId @"visitorId"
 
 @interface PRERequestContext : NSObject
 

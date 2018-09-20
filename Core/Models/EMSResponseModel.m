@@ -43,7 +43,7 @@
                                                                               forURL:requestModel.url];
     NSMutableDictionary *mutableCookies = [NSMutableDictionary dictionary];
     for (NSHTTPCookie *httpCookie in cookies) {
-        mutableCookies[httpCookie.name] = httpCookie;
+        mutableCookies[[httpCookie.name lowercaseString]] = httpCookie;
     }
     return [NSDictionary dictionaryWithDictionary:mutableCookies];
 }
