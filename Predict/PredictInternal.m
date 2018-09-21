@@ -31,6 +31,11 @@
     [self.requestContext setCustomerId:customerId];
 }
 
+- (void)clearCustomer {
+    [self.requestContext setCustomerId:nil];
+    [self.requestContext setVisitorId:nil];
+}
+
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSParameterAssert(categoryPath);
 }

@@ -78,10 +78,10 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                            [builder setType:@"predict_item_view"];
-                            [builder payloadEntryWithKey:@"v"
-                                                   value:[NSString stringWithFormat:@"i:%@", itemId]];
-                        }
+                        [builder setType:@"predict_item_view"];
+                        [builder payloadEntryWithKey:@"v"
+                                               value:[NSString stringWithFormat:@"i:%@", itemId]];
+                    }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -125,18 +125,39 @@ SPEC_BEGIN(PredictInternalTests)
                 [[requestContext should] receive:@selector(timestampProvider) andReturn:timestampProvider];
                 [[requestContext should] receive:@selector(uuidProvider) andReturn:shardIdProvider];
 
-                EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId type:@"predict_cart" data:@{@"cv": @"1", @"ca": @"i:itemId1,p:200.0,q:100.0|i:itemId2,p:201.0,q:101.0"} timestamp:timestamp ttl:FLT_MAX];
+                EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
+                                                                       type:@"predict_cart"
+                                                                       data:@{@"cv": @"1", @"ca": @"i:itemId1,p:200.0,q:100.0|i:itemId2,p:201.0,q:101.0"}
+                                                                  timestamp:timestamp
+                                                                        ttl:FLT_MAX];
 
                 EMSRequestManager *const requestManager = [EMSRequestManager mock];
                 [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
-                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
 
 
                 [internal trackCartWithCartItems:@[
-                        [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                        [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
+                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
                 ]];
             });
 
+        });
+
+        describe(@"clearCustomer", ^{
+            it(@"should setCustomerId and visitorId to nil on requestContext", ^{
+                PRERequestContext *const requestContext = [PRERequestContext mock];
+                [[requestContext should] receive:@selector(setCustomerId:)
+                                   withArguments:nil];
+                [[requestContext should] receive:@selector(setVisitorId:)
+                                   withArguments:nil];
+
+                EMSRequestManager *const requestManager = [EMSRequestManager nullMock];
+
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal clearCustomer];
+            });
         });
 SPEC_END

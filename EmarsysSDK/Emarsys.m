@@ -29,6 +29,16 @@ static EMSDependencyContainer *_dependencyContainer;
     [_dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId];
 }
 
++ (void)clearCustomer {
+    [Emarsys clearCustomerWithCompletionBlock:nil];
+}
+
++ (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    [_dependencyContainer.mobileEngage appLogout];
+    [_dependencyContainer.predict clearCustomer];
+}
+
+
 + (id <EMSPredictProtocol>)predict {
     return _dependencyContainer.predict;
 }

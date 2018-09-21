@@ -116,4 +116,46 @@ SPEC_BEGIN(EmarsysTests)
             });
         });
 
+        describe(@"clearCustomer", ^{
+            it(@"should delegate call to MobileEngage", ^{
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                    [builder setContactFieldId:@32];
+                    [builder setMobileEngageApplicationCode:@"applicationCode"
+                                        applicationPassword:@"applicationPassword"];
+                    [builder setMerchantId:@"merchantId"];
+                }];
+                MobileEngageInternal *const engage = [MobileEngageInternal mock];
+                [Emarsys setupWithConfig:config];
+
+                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
+                [[container should] receive:@selector(mobileEngage)
+                                  andReturn:engage];
+                [Emarsys setDependencyContainer:container];
+
+                [[engage should] receive:@selector(appLogout)];
+
+                [Emarsys clearCustomer];
+            });
+
+            it(@"should delegate call to Predict", ^{
+                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                    [builder setContactFieldId:@32];
+                    [builder setMobileEngageApplicationCode:@"applicationCode"
+                                        applicationPassword:@"applicationPassword"];
+                    [builder setMerchantId:@"merchantId"];
+                }];
+                PredictInternal *const predict = [PredictInternal mock];
+                [Emarsys setupWithConfig:config];
+
+                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
+                [[container should] receive:@selector(predict)
+                                  andReturn:predict];
+                [Emarsys setDependencyContainer:container];
+
+                [[predict should] receive:@selector(clearCustomer)];
+
+                [Emarsys clearCustomer];
+            });
+        });
+
 SPEC_END
