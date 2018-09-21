@@ -15,8 +15,9 @@
     NSParameterAssert(uuidProvider);
     NSParameterAssert(merchantId);
     if (self = [super init]) {
-        _customerId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName] objectForKey:kEMSCustomerId];
-        _visitorId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName] objectForKey:kEMSVisitorId];
+        NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+        _customerId = [defaults objectForKey:kEMSCustomerId];
+        _visitorId = [defaults objectForKey:kEMSVisitorId];
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _merchantId = merchantId;
