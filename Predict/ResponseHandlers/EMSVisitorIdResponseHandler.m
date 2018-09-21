@@ -2,6 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSVisitorIdResponseHandler.h"
+#import "PredictInternal.h"
 
 #define COOKIE_KEY_CDV @"cdv"
 
@@ -16,7 +17,7 @@
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
-    return response.cookies[COOKIE_KEY_CDV] != nil;
+    return [response.requestModel.url.absoluteString hasPrefix:PREDICT_BASE_URL] && response.cookies[COOKIE_KEY_CDV] != nil;
 }
 
 - (void)handleResponse:(EMSResponseModel *)response {

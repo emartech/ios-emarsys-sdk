@@ -3,6 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "EMSRequestModelBuilder.h"
 
 @class EMSRequestModelBuilder;
 @class EMSTimestampProvider;
