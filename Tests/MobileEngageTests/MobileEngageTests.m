@@ -3,13 +3,12 @@
 #import "EMSConfig.h"
 #import "MobileEngage.h"
 #import "MobileEngage+Test.h"
-#import "MobileEngage+Private.h"
 #import "MobileEngageInternal+Private.h"
 #import "MEInApp+Private.h"
 #import "MEExperimental+Test.h"
 #import "MEInbox.h"
 #import "MEInboxV2.h"
-#import "MEInbox+Private.h"
+#import "Emarsys.h"
 
 
 static NSString *const kAppId = @"kAppId";
@@ -17,7 +16,7 @@ static NSString *const kAppId = @"kAppId";
 SPEC_BEGIN(MobileEngageTests)
 
         beforeEach(^{
-           [MEExperimental reset];
+            [MEExperimental reset];
         });
 
         id (^mobileEngageInternal)(void) = ^id() {
@@ -54,10 +53,10 @@ SPEC_BEGIN(MobileEngageTests)
 
             it(@"should create one inbox instance", ^{
                 mobileEngageInternal();
-                id<MEInboxProtocol> inbox1 = MobileEngage.inbox;
-                id<MEInboxProtocol> inbox2 = MobileEngage.inbox;
+                id <EMSInboxProtocol> inbox1 = Emarsys.inbox;
+                id <EMSInboxProtocol> inbox2 = Emarsys.inbox;
 
-                [[(NSObject *)inbox1 should] equal:inbox2];
+                [[(NSObject *) inbox1 should] equal:inbox2];
             });
 
             it(@"should create inApp instance", ^{
@@ -69,8 +68,10 @@ SPEC_BEGIN(MobileEngageTests)
             it(@"should create MENotificationCenterManager instance", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal mock];
                 [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
-                [[mobileEngageInternalMock should] receive:@selector(setNotificationCenterManager:) withArguments:kw_any()];
-                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setNotificationCenterManager:) atIndex:0];
+                [[mobileEngageInternalMock should] receive:@selector(setNotificationCenterManager:)
+                                             withArguments:kw_any()];
+                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setNotificationCenterManager:)
+                                                                      atIndex:0];
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
@@ -97,7 +98,8 @@ SPEC_BEGIN(MobileEngageTests)
             it(@"should call internal's setup with non-null logRepository", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal nullMock];
                 [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
-                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:) atIndex:4];
+                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)
+                                                                      atIndex:4];
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
@@ -119,7 +121,8 @@ SPEC_BEGIN(MobileEngageTests)
             it(@"should set logRepository on MEInApp instance", ^{
                 id mobileEngageInternalMock = [MobileEngageInternal nullMock];
                 [[mobileEngageInternalMock should] receive:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)];
-                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:) atIndex:4];
+                KWCaptureSpy *spy = [mobileEngageInternalMock captureArgument:@selector(setupWithConfig:launchOptions:requestRepositoryFactory:shardRepository:logRepository:requestContext:)
+                                                                      atIndex:4];
 
                 NSString *applicationCode = kAppId;
                 NSString *applicationPassword = @"appSecret";
@@ -188,12 +191,6 @@ SPEC_BEGIN(MobileEngageTests)
         });
 
         describe(@"appLoginWithContactFieldValue:", ^{
-            it(@"should call internal implementation's method", ^{
-                [[mobileEngageInternal() should] receive:@selector(appLoginWithContactFieldValue:)];
-
-                [MobileEngage appLoginWithContactFieldId:@3
-                                       contactFieldValue:@"test@test.com"];
-            });
 
             it(@"should set the contactFieldId and contactFieldValue in inbox", ^{
                 NSString *applicationCode = kAppId;
@@ -205,13 +202,11 @@ SPEC_BEGIN(MobileEngageTests)
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }];
-                [MobileEngage setupWithConfig:config
-                                launchOptions:[NSDictionary new]];
-                [MobileEngage appLoginWithContactFieldId:@3
-                                       contactFieldValue:@"three"];
+                [Emarsys setupWithConfig:config];
+                [Emarsys setCustomerWithId:@"three"];
 
-                [[((MEInbox*)MobileEngage.inbox).requestContext.appLoginParameters.contactFieldId should] equal:@3];
-                [[((MEInbox*)MobileEngage.inbox).requestContext.appLoginParameters.contactFieldValue should] equal:@"three"];
+                [[((MEInbox *) Emarsys.inbox).requestContext.appLoginParameters.contactFieldId should] equal:@3];
+                [[((MEInbox *) Emarsys.inbox).requestContext.appLoginParameters.contactFieldValue should] equal:@"three"];
             });
         });
 
@@ -222,23 +217,14 @@ SPEC_BEGIN(MobileEngageTests)
                 [MobileEngage appLogout];
             });
         });
-
-        describe(@"trackMessageOpenWithUserInfo:", ^{
-            it(@"should call internal implementation's method", ^{
-                [[mobileEngageInternal() should] receive:@selector(trackMessageOpenWithUserInfo:)];
-
-                [MobileEngage trackMessageOpenWithUserInfo:@{}];
-            });
-        });
-
-        describe(@"trackMessageOpenWithInboxMessage:", ^{
-            it(@"should call internal implementation's method", ^{
-                [[mobileEngageInternal() should] receive:@selector(trackMessageOpenWithInboxMessage:)];
-                EMSNotification *message = [EMSNotification new];
-                message.id = @"testID";
-                [MobileEngage trackMessageOpenWithInboxMessage:message];
-            });
-        });
+//todo dont forget me here
+//        describe(@"trackMessageOpenWithUserInfoWithReturn:", ^{
+//            it(@"should call internal implementation's method", ^{
+//                [[mobileEngageInternal() should] receive:@selector(trackMessageOpenWithUserInfoWithReturn:)];
+//
+//                [MobileEngage trackMessageOpenWithUserInfo:@{}];
+//            });
+//        });
 
         describe(@"trackCustomEvent:eventAttributes:", ^{
             it(@"should call internal implementation's method", ^{
@@ -251,6 +237,11 @@ SPEC_BEGIN(MobileEngageTests)
 
         describe(@"experimentalFeatures", ^{
             context(@"Inbox", ^{
+
+                beforeEach(^{
+                    [MEExperimental reset];
+                });
+
                 it(@"should use inbox v1 when USER_CENTRIC_INBOX flipper is turned off", ^{
                     NSString *applicationCode = kAppId;
                     NSString *applicationPassword = @"appSecret";
@@ -261,10 +252,9 @@ SPEC_BEGIN(MobileEngageTests)
                         [builder setMerchantId:@"dummyMerchantId"];
                         [builder setContactFieldId:@3];
                     }];
-                    [MobileEngage setupWithConfig:config
-                                    launchOptions:[NSDictionary new]];
+                    [Emarsys setupWithConfig:config];
 
-                    [[theValue([MobileEngage.inbox isKindOfClass:[MEInbox class]]) should] beYes];
+                    [[theValue([Emarsys.inbox isKindOfClass:[MEInbox class]]) should] beYes];
                 });
 
                 it(@"should use inbox V2 when USER_CENTRIC_INBOX flipper is turned on", ^{
@@ -278,10 +268,9 @@ SPEC_BEGIN(MobileEngageTests)
                         [builder setMerchantId:@"dummyMerchantId"];
                         [builder setContactFieldId:@3];
                     }];
-                    [MobileEngage setupWithConfig:config
-                                    launchOptions:[NSDictionary new]];
+                    [Emarsys setupWithConfig:config];
 
-                    [[theValue([MobileEngage.inbox isKindOfClass:[MEInboxV2 class]]) should] beYes];
+                    [[theValue([Emarsys.inbox isKindOfClass:[MEInboxV2 class]]) should] beYes];
                 });
             });
         });

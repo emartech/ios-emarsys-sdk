@@ -11,13 +11,9 @@
 #import "MENotificationCenterManager.h"
 #import "MEInApp+Private.h"
 #import "MERequestModelRepositoryFactory.h"
-#import "MEExperimental.h"
 #import "MEInboxV2.h"
-#import "MEInbox.h"
 #import "EMSShardRepository.h"
 #import "MEUserNotificationDelegate.h"
-#import "MERequestContext.h"
-#import "EMSRequestManager.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -33,7 +29,7 @@ static EMSSQLiteHelper *_dbHelper;
 + (void)setupWithMobileEngageInternal:(MobileEngageInternal *)mobileEngageInternal
                                config:(EMSConfig *)config
                         launchOptions:(NSDictionary *)launchOptions {
-    [MEExperimental enableFeatures:config.experimentalFeatures];
+
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[MESchemaDelegate new]];
     [_dbHelper open];
@@ -47,16 +43,7 @@ static EMSSQLiteHelper *_dbHelper;
     _mobileEngageInternal = mobileEngageInternal;
 
     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config];
-    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        _inbox = [[MEInboxV2 alloc] initWithConfig:config
-                                    requestContext:requestContext
-                                        restClient:[EMSRESTClient clientWithSession:[NSURLSession sharedSession]]
-                                     notifications:[NSMutableArray new]
-                                 timestampProvider:[EMSTimestampProvider new]];
-    } else {
-        _inbox = [[MEInbox alloc] initWithConfig:config
-                                  requestContext:requestContext];
-    }
+
 
     MELogRepository *logRepository = [MELogRepository new];
 
@@ -119,11 +106,8 @@ static EMSSQLiteHelper *_dbHelper;
         [_inbox addNotification:notification];
 
     }
-    return [_mobileEngageInternal trackMessageOpenWithUserInfo:userInfo];
-}
-
-+ (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
-    return [_mobileEngageInternal trackMessageOpenWithInboxMessage:inboxMessage];
+    [_mobileEngageInternal trackMessageOpenWithUserInfo:userInfo];
+    return nil;
 }
 
 + (NSString *)trackCustomEvent:(NSString *)eventName

@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #import "EMSNotification.h"
 
-@interface MENotificationInboxStatus : NSObject
+@interface EMSNotificationInboxStatus : NSObject
 
 @property(nonatomic, strong) NSArray<EMSNotification *> *notifications;
 @property(nonatomic, assign) NSUInteger badgeCount;

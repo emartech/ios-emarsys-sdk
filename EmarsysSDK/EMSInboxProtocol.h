@@ -4,9 +4,8 @@
 
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
-
-@class EMSNotification;
-@class EMSNotificationInboxStatus;
+#import "EMSNotification.h"
+#import "EMSNotificationInboxStatus.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,10 +19,10 @@ typedef void (^EMSFetchNotificationResultBlock)(EMSNotificationInboxStatus* _Nul
 
 - (void)resetBadgeCountWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
-- (NSString *)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification;
+- (void)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification;
 
-- (NSString *)trackMessageOpenWith:(EMSNotification *)inboxMessage
-                   completionBlock:(EMSCompletionBlock)completionBlock;
+- (void)trackMessageOpenWith:(EMSNotification *)inboxMessage
+             completionBlock:(EMSCompletionBlock)completionBlock;
 
 - (void)purgeNotificationCache;
 

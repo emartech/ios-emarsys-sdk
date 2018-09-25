@@ -212,7 +212,7 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     return requestModel.requestId;
 }
 
-- (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
+- (NSString *)trackMessageOpenWithUserInfoWithReturn:(NSDictionary *)userInfo {
     NSString *messageId = [userInfo messageId];
     EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
                                                                                   requestContext:self.requestContext];
@@ -225,28 +225,24 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     return requestModel.requestId;
 }
 
-- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
-    NSParameterAssert(inboxMessage);
-    EMSRequestModel *requestModel;
-    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxMessage
-                                                                        requestContext:self.requestContext];
-        if (!inboxMessage.id) {
-            self.errorBlock(requestModel.requestId, [NSError errorWithCode:1
-                                                      localizedDescription:@"Missing messageId"]);
-        } else if (!inboxMessage.sid) {
-            self.errorBlock(requestModel.requestId, [NSError errorWithCode:1
-                                                      localizedDescription:@"Missing sid"]);
-        } else {
-            [self.requestManager submitRequestModel:requestModel];
-        }
-    } else {
-        requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxMessage
-                                                                        requestContext:self.requestContext];
-        [self.requestManager submitRequestModel:requestModel];
-    }
-    return [requestModel requestId];
+- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
+    [self trackMessageOpenWith:userInfo
+               completionBlock:nil];
 }
+
+- (void)trackMessageOpenWith:(NSDictionary *)userInfo
+             completionBlock:(EMSCompletionBlock)completionBlock {
+    NSString *messageId = [userInfo messageId];
+    if (messageId) {
+        EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
+                                                                                      requestContext:self.requestContext];
+        [self.requestManager submitRequestModel:requestModel];
+    } else {
+        completionBlock([NSError errorWithCode:1
+                          localizedDescription:@"Missing messageId"]);
+    }
+}
+
 
 - (NSString *)trackCustomEvent:(nonnull NSString *)eventName
                eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {

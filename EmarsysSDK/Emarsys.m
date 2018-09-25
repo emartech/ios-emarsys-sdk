@@ -38,13 +38,20 @@ static EMSDependencyContainer *_dependencyContainer;
     [_dependencyContainer.predict clearCustomer];
 }
 
++ (id <EMSPushNotificationProtocol>)push {
+    return _dependencyContainer.mobileEngage;
+}
+
++ (id <EMSInboxProtocol>)inbox {
+    return _dependencyContainer.inbox;
+}
+
++ (id <EMSInAppProtocol>)inApp {
+    return _dependencyContainer.iam;
+}
 
 + (id <EMSPredictProtocol>)predict {
     return _dependencyContainer.predict;
-}
-
-+ (id <EMSPushNotificationProtocol>)push {
-    return _dependencyContainer.mobileEngage;
 }
 
 + (EMSSQLiteHelper *)sqliteHelper {

@@ -10,7 +10,6 @@
 #import "MEExperimental+Test.h"
 #import "MEInAppMessage.h"
 #import "EMSWaiter.h"
-#import <XCTest/XCTWaiter.h>
 
 SPEC_BEGIN(MEUserNotificationDelegateTests)
         if (@available(iOS 10.0, *)) {
@@ -319,7 +318,8 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                         @"u": @{
                             @"sid": @"123456789"
                         }}};
-                    [[mobileEngage should] receive:@selector(trackMessageOpenWithUserInfo:) withArguments:userInfo];
+                    [[mobileEngage should] receive:@selector(trackMessageOpenWithUserInfo:)
+                                     withArguments:userInfo];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [notificationDelegate userNotificationCenter:nil

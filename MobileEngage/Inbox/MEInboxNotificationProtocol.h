@@ -4,8 +4,9 @@
 
 #import <Foundation/Foundation.h>
 #import "MEInboxProtocol.h"
+#import "EMSInboxProtocol.h"
 
-@protocol MEInboxNotificationProtocol <MEInboxProtocol>
+@protocol MEInboxNotificationProtocol <EMSInboxProtocol>
 
 - (void)addNotification:(EMSNotification *)notification;
 

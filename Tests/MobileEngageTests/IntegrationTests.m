@@ -73,7 +73,7 @@ SPEC_BEGIN(IntegrationTests)
                 [[@(statusDelegate.successCount) should] equal:@1];
             });
 
-            it(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
+            xit(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
                 [MobileEngage setupWithConfig:config
                         launchOptions:[NSDictionary new]];
                 FakeStatusDelegate *statusDelegate = createStatusDelegate();

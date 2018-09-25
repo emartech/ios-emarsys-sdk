@@ -2,15 +2,16 @@
 #import "EMSSchemaContract.h"
 #import "Kiwi.h"
 #import "MEInboxV2.h"
-#import "EMSConfigBuilder.h"
 #import "FakeInboxNotificationRestClient.h"
 #import "MEDefaultHeaders.h"
 #import "EMSRequestModelMatcher.h"
-#import "MENotificationInboxStatus.h"
 #import "FakeTimeStampProvider.h"
 #import "EMSWaiter.h"
+#import "MEExperimental.h"
+#import "MEExperimental+Test.h"
 
 static NSString *const kAppId = @"kAppId";
+static NSString *const kAppSecret = @"kAppSecret";
 
 SPEC_BEGIN(MEInboxV2Tests)
 
@@ -22,6 +23,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         __block MERequestContext *requestContext;
         __block NSMutableArray *notifications;
         __block NSMutableArray<EMSNotification *> *fakeNotifications;
+        __block EMSRequestManager *requestManager;
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:applicationCode
@@ -38,11 +40,13 @@ SPEC_BEGIN(MEInboxV2Tests)
             } else {
                 requestContext.meId = nil;
             }
+            requestManager = [EMSRequestManager mock];
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                       restClient:restClient
                                                    notifications:notifications
-                                               timestampProvider:[EMSTimestampProvider new]];
+                                               timestampProvider:[EMSTimestampProvider new]
+                                                  requestManager:requestManager];
             return inbox;
         };
 
@@ -50,11 +54,13 @@ SPEC_BEGIN(MEInboxV2Tests)
             notifications = [NSMutableArray array];
             requestContext = [[MERequestContext alloc] initWithConfig:config];
             requestContext.meId = meId;
+            requestManager = [EMSRequestManager mock];
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                       restClient:restClient
                                                    notifications:notifications
-                                               timestampProvider:timestampProvider];
+                                               timestampProvider:timestampProvider
+                                                  requestManager:requestManager];
             return inbox;
         };
 
@@ -86,7 +92,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         });
 
 
-        describe(@"initWithConfig:requestContext:restClient:notifications:timestampProvider:", ^{
+        describe(@"initWithConfig:requestContext:restClient:notifications:timestampProvider:requestManager:", ^{
 
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
@@ -94,7 +100,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                                        requestContext:requestContext
                                            restClient:[EMSRESTClient mock]
                                         notifications:notifications
-                                    timestampProvider:nil];
+                                    timestampProvider:nil
+                                       requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when timestampProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
@@ -109,7 +116,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                                        requestContext:requestContext
                                            restClient:[EMSRESTClient mock]
                                         notifications:nil
-                                    timestampProvider:[EMSTimestampProvider new]];
+                                    timestampProvider:[EMSTimestampProvider new]
+                                       requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when notifications is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notifications"];
@@ -123,7 +131,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                                        requestContext:requestContext
                                            restClient:[EMSRESTClient mock]
                                         notifications:[NSMutableArray new]
-                                    timestampProvider:[EMSTimestampProvider new]];
+                                    timestampProvider:[EMSTimestampProvider new]
+                                       requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when config is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
@@ -137,7 +146,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                                        requestContext:nil
                                            restClient:[EMSRESTClient mock]
                                         notifications:[NSMutableArray new]
-                                    timestampProvider:[EMSTimestampProvider new]];
+                                    timestampProvider:[EMSTimestampProvider new]
+                                       requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -148,13 +158,29 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should throw exception when restClient is nil", ^{
                 @try {
                     [[MEInboxV2 alloc] initWithConfig:config
-                                       requestContext:requestContext
+                                       requestContext:[MERequestContext mock]
                                            restClient:nil
                                         notifications:[NSMutableArray new]
-                                    timestampProvider:[EMSTimestampProvider new]];
+                                    timestampProvider:[EMSTimestampProvider new]
+                                       requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when restClient is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: restClient"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when requestManager is nil", ^{
+                @try {
+                    [[MEInboxV2 alloc] initWithConfig:config
+                                       requestContext:[MERequestContext mock]
+                                           restClient:[EMSRESTClient mock]
+                                        notifications:[NSMutableArray new]
+                                    timestampProvider:[EMSTimestampProvider new]
+                                       requestManager:nil];
+                    fail(@"Expected Exception when requestManager is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -172,23 +198,23 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                    __block MENotificationInboxStatus *firstInboxStatus;
-                    __block MENotificationInboxStatus *secondInboxStatus;
+                    __block EMSNotificationInboxStatus *firstInboxStatus;
+                    __block EMSNotificationInboxStatus *secondInboxStatus;
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        firstInboxStatus = inboxStatus;
-                        [exp1 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            firstInboxStatus = inboxStatus;
+                            [exp1 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        secondInboxStatus = inboxStatus;
-                        [exp2 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            secondInboxStatus = inboxStatus;
+                            [exp2 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                     [[theValue([fakeRestClient.submittedRequests count]) shouldEventually] equal:theValue(1)];
@@ -203,19 +229,21 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                    __block MENotificationInboxStatus *firstInboxStatus;
-                    __block MENotificationInboxStatus *secondInboxStatus;
+                    __block EMSNotificationInboxStatus *firstInboxStatus;
+                    __block EMSNotificationInboxStatus *secondInboxStatus;
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        firstInboxStatus = inboxStatus;
-                        [exp1 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            firstInboxStatus = inboxStatus;
+                            [exp1 fulfill];
+                        }
                     }];
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        secondInboxStatus = inboxStatus;
-                        [exp2 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            secondInboxStatus = inboxStatus;
+                            [exp2 fulfill];
+                        }
                     }];
 
                     [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
@@ -235,24 +263,25 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                    __block MENotificationInboxStatus *firstInboxStatus;
-                    __block MENotificationInboxStatus *secondInboxStatus;
+                    __block EMSNotificationInboxStatus *firstInboxStatus;
+                    __block EMSNotificationInboxStatus *secondInboxStatus;
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        firstInboxStatus = inboxStatus;
-                        [exp1 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            firstInboxStatus = inboxStatus;
+                            [exp1 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp1] timeout:30];
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        secondInboxStatus = inboxStatus;
-                        [exp2 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            secondInboxStatus = inboxStatus;
+                            [exp2 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp2] timeout:30];
+
                     [[theValue([fakeRestClient.submittedRequests count]) shouldEventually] equal:theValue(2)];
                     [[firstInboxStatus.notifications should] equal:fakeNotifications];
                     [[secondInboxStatus.notifications should] equal:fakeNotifications];
@@ -272,25 +301,26 @@ SPEC_BEGIN(MEInboxV2Tests)
                     XCTestExpectation *exp3 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult3"];
 
                     __block int successCount = 0;
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        successCount++;
-                        [exp1 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            successCount++;
+                            [exp1 fulfill];
+                        }
                     }];
-
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        successCount++;
-                        [exp2 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            successCount++;
+                            [exp2 fulfill];
+                        }
                     }];
                     [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        successCount++;
-                        [exp3 fulfill];
-                    }                             errorBlock:^(NSError *error) {
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            successCount++;
+                            [exp3 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp3] timeout:30];
 
                     [[theValue(successCount) should] equal:theValue(3)];
@@ -310,26 +340,29 @@ SPEC_BEGIN(MEInboxV2Tests)
                     XCTestExpectation *exp3 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult3"];
 
                     __block int errorCount = 0;
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    }                             errorBlock:^(NSError *error) {
-                        errorCount++;
-                        [exp1 fulfill];
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                        } else {
+                            errorCount++;
+                            [exp1 fulfill];
+                        }
                     }];
-
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    }                             errorBlock:^(NSError *error) {
-                        errorCount++;
-                        [exp2 fulfill];
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                        } else {
+                            errorCount++;
+                            [exp2 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp1, exp2] timeout:30];
 
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    }                             errorBlock:^(NSError *error) {
-                        errorCount++;
-                        [exp3 fulfill];
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                        } else {
+                            errorCount++;
+                            [exp3 fulfill];
+                        }
                     }];
-
                     [EMSWaiter waitForExpectations:@[exp3] timeout:30];
 
                     [[theValue(errorCount) should] equal:theValue(3)];
@@ -342,26 +375,28 @@ SPEC_BEGIN(MEInboxV2Tests)
         describe(@"inbox.fetchNotificationsWithResultBlock", ^{
 
             it(@"should not return nil in resultBlock", ^{
-                __block MENotificationInboxStatus *result;
+                __block EMSNotificationInboxStatus *result;
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    result = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
-
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        result = inboxStatus;
+                    } else {
+                    }
                 }];
+
                 [[expectFutureValue(result) shouldNotEventually] beNil];
             });
 
             it(@"should run asyncronously", ^{
-                __block MENotificationInboxStatus *result;
+                __block EMSNotificationInboxStatus *result;
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    result = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
-
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        result = inboxStatus;
+                    } else {
+                    }
                 }];
+
                 [[result should] beNil];
                 [[expectFutureValue(result) shouldNotEventually] beNil];
             });
@@ -369,10 +404,12 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should call EMSRestClient's executeTaskWithRequestModel: and parse the notifications correctly", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
                 __block NSArray<EMSNotification *> *_notifications;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    _notifications = inboxStatus.notifications;
-                }                             errorBlock:^(NSError *error) {
-                    fail(@"errorblock invoked");
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        _notifications = inboxStatus.notifications;
+                    } else {
+                        fail(@"errorblock invoked");
+                    }
                 }];
 
                 [[expectFutureValue(_notifications) shouldEventually] equal:fakeNotifications];
@@ -384,9 +421,8 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 KWCaptureSpy *requestModelSpy = [client captureArgument:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
                                                                 atIndex:0];
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    }
-                                              errorBlock:nil];
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                }];
 
                 EMSRequestModel *capturedRequestModel = requestModelSpy.argument;
 
@@ -399,9 +435,7 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should throw an exception, when resultBlock is nil", ^{
                 MEInboxV2 *inbox = inboxWithParameters([EMSRESTClient mock], NO);
                 @try {
-                    [inbox fetchNotificationsWithResultBlock:nil
-                                                  errorBlock:^(NSError *error) {
-                                                  }];
+                    [inbox fetchNotificationsWithResultBlock:nil];
                     fail(@"Assertion doesn't called!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -411,34 +445,39 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should invoke resultBlock on main thread", ^{
                 __block NSNumber *onMainThread = @NO;
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    if ([NSThread isMainThread]) {
-                        onMainThread = @YES;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        if ([NSThread isMainThread]) {
+                            onMainThread = @YES;
+                        }
+                    } else {
                     }
-                }                             errorBlock:nil];
+                }];
                 [[expectFutureValue(onMainThread) shouldEventually] equal:@YES];
             });
 
             it(@"should invoke errorBlock when meId is not available", ^{
                 MEInboxV2 *inbox = inboxWithParameters([EMSRESTClient mock], NO);
                 __block NSError *receivedError;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
                         fail(@"resultBlock invoked");
+                    } else {
+                        receivedError = error;
                     }
-                                              errorBlock:^(NSError *error) {
-                                                  receivedError = error;
-                                              }];
+                }];
                 [[expectFutureValue(receivedError) shouldNotEventually] beNil];
             });
 
 
             it(@"should not invoke errorBlock when there is no errorBlock without meId", ^{
                 MEInboxV2 *inbox = inboxWithParameters([EMSRESTClient mock], NO);
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
                         fail(@"resultBlock invoked");
+                    } else {
                     }
-                                              errorBlock:nil];
+                }];
             });
 
             it(@"should invoke errorBlock when there is an error with meId", ^{
@@ -446,32 +485,37 @@ SPEC_BEGIN(MEInboxV2Tests)
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
 
                 __block NSError *receivedError;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
                         fail(@"resultBlock invoked");
+                    } else {
+                        receivedError = error;
                     }
-                                              errorBlock:^(NSError *error) {
-                                                  receivedError = error;
-                                              }];
+                }];
                 [[expectFutureValue(receivedError) shouldNotEventually] beNil];
             });
 
             it(@"should not invoke errorBlock when there is no errorBlock with meId", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
                         fail(@"resultBlock invoked");
+                    } else {
                     }
-                                              errorBlock:nil];
+                }];
             });
 
             it(@"should invoke errorBlock on main thread when there is error with meId", ^{
                 __block NSNumber *onMainThread = @NO;
 
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    fail(@"resultBlock invoked");
-                }                             errorBlock:^(NSError *error) {
-                    if ([NSThread isMainThread]) {
-                        onMainThread = @YES;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        fail(@"resultBlock invoked");
+                    } else {
+                        if ([NSThread isMainThread]) {
+                            onMainThread = @YES;
+                        }
                     }
                 }];
                 [[expectFutureValue(onMainThread) shouldEventually] equal:@YES];
@@ -482,11 +526,13 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     MEInboxV2 *inbox = inboxWithParameters([EMSRESTClient mock], NO);
-                    [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                        fail(@"resultBlock invoked");
-                    }                             errorBlock:^(NSError *error) {
-                        if ([NSThread isMainThread]) {
-                            onMainThread = @YES;
+                    [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                        if (inboxStatus) {
+                            fail(@"resultBlock invoked");
+                        } else {
+                            if ([NSThread isMainThread]) {
+                                onMainThread = @YES;
+                            }
                         }
                     }];
                 });
@@ -514,10 +560,12 @@ SPEC_BEGIN(MEInboxV2Tests)
                 EMSNotification *notification = [EMSNotification new];
                 [inbox addNotification:notification];
 
-                __block MENotificationInboxStatus *status;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    status = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *status;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        status = inboxStatus;
+                    } else {
+                    }
                 }];
 
                 [[expectFutureValue(theValue([status.notifications containsObject:notification])) shouldEventually] beYes];
@@ -529,10 +577,12 @@ SPEC_BEGIN(MEInboxV2Tests)
                 notification.expirationTime = @12345678130;
                 [inbox addNotification:notification];
 
-                __block MENotificationInboxStatus *status;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    status = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *status;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        status = inboxStatus;
+                    } else {
+                    }
                 }];
 
                 [[expectFutureValue([status.notifications firstObject]) shouldEventually] equal:notification];
@@ -546,15 +596,17 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox addNotification:notification];
 
                 __block EMSNotification *returnedNotification;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    for (EMSNotification *noti in inboxStatus.notifications) {
-                        if ([noti.id isEqualToString:notification.id]) {
-                            returnedNotification = noti;
-                            break;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        for (EMSNotification *noti in inboxStatus.notifications) {
+                            if ([noti.id isEqualToString:notification.id]) {
+                                returnedNotification = noti;
+                                break;
+                            }
                         }
+                    } else {
+                        fail(@"error block invoked");
                     }
-                }                             errorBlock:^(NSError *error) {
-                    fail(@"error block invoked");
                 }];
 
                 [[expectFutureValue(returnedNotification.id) shouldEventually] equal:@"id1"];
@@ -576,19 +628,20 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox addNotification:notification2];
 
                 __block EMSNotification *returnedNotification;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    for (EMSNotification *noti in inboxStatus.notifications) {
-                        if ([noti.id isEqualToString:notification1.id]) {
-                            returnedNotification = noti;
-                            break;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        for (EMSNotification *noti in inboxStatus.notifications) {
+                            if ([noti.id isEqualToString:notification1.id]) {
+                                returnedNotification = noti;
+                                break;
+                            }
                         }
+                    } else {
+                        fail(@"error block invoked");
                     }
-                }                             errorBlock:^(NSError *error) {
-                    fail(@"error block invoked");
                 }];
 
                 [[expectFutureValue(returnedNotification.id) shouldEventually] equal:@"id1"];
-
                 [[expectFutureValue(theValue([notifications count])) shouldEventually] equal:@1];
                 [[expectFutureValue(notifications[0]) shouldEventually] equal:notification2];
             });
@@ -598,16 +651,19 @@ SPEC_BEGIN(MEInboxV2Tests)
                 EMSNotification *notification = [EMSNotification new];
                 [inbox addNotification:notification];
 
-                __block MENotificationInboxStatus *status1;
-                __block MENotificationInboxStatus *status2;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    status1 = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *status1;
+                __block EMSNotificationInboxStatus *status2;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        status1 = inboxStatus;
+                    } else {
+                    }
                 }];
-
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    status2 = inboxStatus;
-                }                             errorBlock:^(NSError *error) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        status2 = inboxStatus;
+                    } else {
+                    }
                 }];
 
                 [[expectFutureValue(@([status1.notifications count])) shouldEventually] equal:theValue(8)];
@@ -625,8 +681,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 MEInboxV2 *inbox = inboxWithParameters(restClientMock, YES);
 
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should not invoke restClient when meId is not available", ^{
@@ -635,8 +690,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 MEInboxV2 *inbox = inboxWithParameters(restClientMock, NO);
 
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should invoke restClient with the correct requestModel", ^{
@@ -655,8 +709,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                                                                         atIndex:0];
                 MEInboxV2 *inbox = inboxWithParameters(restClientMock, YES);
 
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
 
                 EMSRequestModel *capturedModel = requestModelSpy.argument;
                 [[capturedModel should] beSimilarWithRequest:expectedRequestModel];
@@ -666,19 +719,20 @@ SPEC_BEGIN(MEInboxV2Tests)
                 __block BOOL successBlockInvoked = NO;
 
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         successBlockInvoked = YES;
+                    } else {
+                        fail(@"errorBlock invoked");
                     }
-                                            errorBlock:^(NSError *error) {
-                                                fail(@"errorBlock invoked");
-                                            }];
+                }];
+
                 [[expectFutureValue(theValue(successBlockInvoked)) shouldEventually] beYes];
             });
 
             it(@"should not invoke successBlock when there is no successBlock", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should invoke errorBlock when failure with meId", ^{
@@ -686,13 +740,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
 
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         fail(@"successBlock invoked");
+                    } else {
+                        _error = error;
+                        [exp fulfill];
                     }
-                                            errorBlock:^(NSError *error) {
-                                                _error = error;
-                                                [exp fulfill];
-                                            }];
+                }];
                 [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[_error shouldNot] beNil];
@@ -700,21 +755,21 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should not invoke errorBlock when there is no errorBlock with meId", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should invoke errorBlock when failure without meId", ^{
                 __block NSError *_error;
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], NO);
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         fail(@"successBlock invoked");
+                    } else {
+                        _error = error;
+                        [exp fulfill];
                     }
-                                            errorBlock:^(NSError *error) {
-                                                _error = error;
-                                                [exp fulfill];
-                                            }];
+                }];
                 [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[_error shouldNot] beNil];
             });
@@ -722,8 +777,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should not invoke errorBlock when there is no errorBlock without meId", ^{
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], NO);
-                [inbox resetBadgeCountWithSuccessBlock:nil
-                                            errorBlock:nil];
+                [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
 
@@ -731,14 +785,15 @@ SPEC_BEGIN(MEInboxV2Tests)
                 __block BOOL onMainThread = NO;
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
 
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         if ([NSThread isMainThread]) {
                             onMainThread = YES;
                         }
+                    } else {
+                        fail(@"errorBlock invoked");
                     }
-                                            errorBlock:^(NSError *error) {
-                                                fail(@"errorBlock invoked");
-                                            }];
+                }];
                 [[expectFutureValue(theValue(onMainThread)) shouldEventually] beYes];
             });
 
@@ -746,14 +801,15 @@ SPEC_BEGIN(MEInboxV2Tests)
                 __block BOOL onMainThread = NO;
                 MEInboxV2 *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
 
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         fail(@"successBlock invoked");
+                    } else {
+                        if ([NSThread isMainThread]) {
+                            onMainThread = YES;
+                        }
                     }
-                                            errorBlock:^(NSError *error) {
-                                                if ([NSThread isMainThread]) {
-                                                    onMainThread = YES;
-                                                }
-                                            }];
+                }];
                 [[expectFutureValue(theValue(onMainThread)) shouldEventually] beYes];
             });
 
@@ -761,24 +817,25 @@ SPEC_BEGIN(MEInboxV2Tests)
                 __block BOOL onMainThread = NO;
                 MEInboxV2 *inbox = inboxWithParameters([EMSRESTClient mock], NO);
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [inbox resetBadgeCountWithSuccessBlock:^{
+                    [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                        if (!error) {
                             fail(@"successBlock invoked");
+                        } else {
+                            if ([NSThread isMainThread]) {
+                                onMainThread = YES;
+                            }
                         }
-                                                errorBlock:^(NSError *error) {
-                                                    if ([NSThread isMainThread]) {
-                                                        onMainThread = YES;
-                                                    }
-                                                }];
+                    }];
                 });
                 [[expectFutureValue(theValue(onMainThread)) shouldEventually] beYes];
             });
         });
 
         describe(@"inbox.resetBadgeCount", ^{
-            it(@"should call resetBadgeCountWithSuccessBlock:errorBlock:", ^{
+            it(@"should call resetBadgeCountWithCompletionBlock:", ^{
                 MEInboxV2 *inbox = [MEInboxV2 new];
                 __block NSNumber *resetCalled;
-                [inbox stub:@selector(resetBadgeCountWithSuccessBlock:errorBlock:) withBlock:^id(NSArray *params) {
+                [inbox stub:@selector(resetBadgeCountWithCompletionBlock:) withBlock:^id(NSArray *params) {
                     resetCalled = @YES;
                     return nil;
                 }];
@@ -813,11 +870,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, [EMSTimestampProvider new]);
 
                 XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block MENotificationInboxStatus *firstInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    firstInboxStatus = inboxStatus;
-                    [exp1 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *firstInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        firstInboxStatus = inboxStatus;
+                        [exp1 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp1] timeout:30];
@@ -825,18 +885,23 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [[firstInboxStatus.notifications should] equal:expectedNotifications1];
 
                 XCTestExpectation *expectationForReset = [[XCTestExpectation alloc] initWithDescription:@"waitForReset"];
-                [inbox resetBadgeCountWithSuccessBlock:^{
+                [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
+                    if (!error) {
                         [expectationForReset fulfill];
+                    } else {
                     }
-                                            errorBlock:nil];
+                }];
                 [EMSWaiter waitForExpectations:@[expectationForReset] timeout:30];
 
                 XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                __block MENotificationInboxStatus *secondInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    secondInboxStatus = inboxStatus;
-                    [exp2 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *secondInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        secondInboxStatus = inboxStatus;
+                        [exp2 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp2] timeout:30];
@@ -873,13 +938,16 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                __block MENotificationInboxStatus *firstInboxStatus;
-                __block MENotificationInboxStatus *secondInboxStatus;
+                __block EMSNotificationInboxStatus *firstInboxStatus;
+                __block EMSNotificationInboxStatus *secondInboxStatus;
 
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    firstInboxStatus = inboxStatus;
-                    [exp1 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        firstInboxStatus = inboxStatus;
+                        [exp1 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp1] timeout:30];
@@ -888,10 +956,13 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 [inbox purgeNotificationCache];
 
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    secondInboxStatus = inboxStatus;
-                    [exp2 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        secondInboxStatus = inboxStatus;
+                        [exp2 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp2] timeout:30];
@@ -928,11 +999,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRestClient, [EMSTimestampProvider new]);
 
                 XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block MENotificationInboxStatus *firstInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    firstInboxStatus = inboxStatus;
-                    [exp1 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *firstInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        firstInboxStatus = inboxStatus;
+                        [exp1 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp1] timeout:30];
@@ -942,11 +1016,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox purgeNotificationCache];
 
                 XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                __block MENotificationInboxStatus *secondInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    secondInboxStatus = inboxStatus;
-                    [exp2 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *secondInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        secondInboxStatus = inboxStatus;
+                        [exp2 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp2] timeout:30];
@@ -956,11 +1033,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox purgeNotificationCache];
 
                 XCTestExpectation *exp3 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult3"];
-                __block MENotificationInboxStatus *thirdInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    thirdInboxStatus = inboxStatus;
-                    [exp3 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *thirdInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        thirdInboxStatus = inboxStatus;
+                        [exp3 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp3] timeout:30];
@@ -1002,11 +1082,14 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox purgeNotificationCache];
 
                 XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block MENotificationInboxStatus *firstInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    firstInboxStatus = inboxStatus;
-                    [exp1 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *firstInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        firstInboxStatus = inboxStatus;
+                        [exp1 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp1] timeout:30];
@@ -1016,16 +1099,91 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [inbox purgeNotificationCache];
 
                 XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
-                __block MENotificationInboxStatus *secondInboxStatus;
-                [inbox fetchNotificationsWithResultBlock:^(MENotificationInboxStatus *inboxStatus) {
-                    secondInboxStatus = inboxStatus;
-                    [exp2 fulfill];
-                }                             errorBlock:^(NSError *error) {
+                __block EMSNotificationInboxStatus *secondInboxStatus;
+                [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
+                    if (inboxStatus) {
+                        secondInboxStatus = inboxStatus;
+                        [exp2 fulfill];
+                    } else {
+
+                    }
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp2] timeout:30];
 
                 [[secondInboxStatus.notifications should] equal:expectedNotifications2];
+            });
+        });
+
+        context(@"user centric inbox", ^{
+
+            __block MEInboxV2 *inbox;
+            __block EMSRESTClient *restClient;
+            __block EMSRequestManager *requestManager;
+
+            beforeEach(^{
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:config];
+                restClient = [EMSRESTClient mock];
+                requestManager = [EMSRequestManager mock];
+
+                inbox = [[MEInboxV2 alloc] initWithConfig:config
+                                           requestContext:context
+                                               restClient:restClient
+                                            notifications:[@[] mutableCopy]
+                                        timestampProvider:[EMSTimestampProvider new]
+                                           requestManager:requestManager];
+            });
+
+            afterEach(^{
+                [MEExperimental reset];
+            });
+
+            it(@"should return an error on completionHandler instead of submitting an invalid request without messageId", ^{
+                EMSNotification *message = [EMSNotification new];
+                message.sid = @"testID";
+                message.title = @"title";
+                message.body = @"body";
+                message.customData = @{};
+                message.rootParams = @{};
+                message.expirationTime = @100;
+                message.receivedAtTimestamp = @50;
+
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:)];
+
+                __block NSError *reportedError;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+                [inbox trackMessageOpenWith:message
+                            completionBlock:^(NSError *error) {
+                                reportedError = error;
+                                [expectation fulfill];
+                            }];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+
+                [[reportedError.localizedDescription should] equal:@"Missing messageId"];
+            });
+
+            it(@"should return an error on completionHandler instead of submitting an invalid request without sid", ^{
+                EMSNotification *message = [EMSNotification new];
+                message.id = @"testID";
+                message.title = @"title";
+                message.body = @"body";
+                message.customData = @{};
+                message.rootParams = @{};
+                message.expirationTime = @100;
+                message.receivedAtTimestamp = @50;
+
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:)];
+
+                __block NSError *reportedError;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+                [inbox trackMessageOpenWith:message
+                            completionBlock:^(NSError *error) {
+                                reportedError = error;
+                                [expectation fulfill];
+                            }];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+
+                [[reportedError.localizedDescription should] equal:@"Missing sid"];
             });
         });
 

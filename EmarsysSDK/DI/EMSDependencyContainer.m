@@ -19,6 +19,8 @@
 #import "EMSPredictMapper.h"
 #import "EMSAbstractResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
+#import "MEInboxV2.h"
+#import "MEInbox.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -29,6 +31,7 @@
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) EMSRESTClient *restClient;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -49,6 +52,7 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
+    [MEExperimental enableFeatures:config.experimentalFeatures];
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
 
     _iam = [MEInApp new];
@@ -87,8 +91,20 @@
                                triggerBlock:[trigger createTriggerBlockWithRequestManager:self.requestManager
                                                                                    mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
                                                                                repository:shardRepository]];
-
-
+    _restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
+    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
+        _inbox = [[MEInboxV2 alloc] initWithConfig:config
+                                    requestContext:self.requestContext
+                                        restClient:self.restClient
+                                     notifications:[NSMutableArray new]
+                                 timestampProvider:[EMSTimestampProvider new]
+                                    requestManager:self.requestManager];
+    } else {
+        _inbox = [[MEInbox alloc] initWithConfig:config
+                                  requestContext:self.requestContext
+                                      restClient:self.restClient
+                                  requestManager:self.requestManager];
+    }
 }
 
 - (void)initializeInstances {

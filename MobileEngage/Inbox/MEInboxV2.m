@@ -4,22 +4,21 @@
 
 #import "EMSAuthentication.h"
 #import "MEInboxV2.h"
-#import "EMSSchemaContract.h"
 #import "MEInboxParser.h"
 #import "EMSResponseModel.h"
 #import "MEDefaultHeaders.h"
 #import "MobileEngage+Private.h"
 #import "NSError+EMSCore.h"
-#import "MENotificationInboxStatus.h"
+#import "MERequestFactory.h"
 
 @interface MEInboxV2 ()
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) NSMutableArray *notifications;
 @property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) NSMutableArray *fetchRequestSuccessBlocks;
-@property(nonatomic, strong) NSMutableArray *fetchRequestErrorBlocks;
+@property(nonatomic, strong) NSMutableArray *resultBlocks;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, assign) BOOL fetchRequestInProgress;
 
@@ -31,36 +30,34 @@
                 requestContext:(MERequestContext *)requestContext
                     restClient:(EMSRESTClient *)restClient
                  notifications:(NSMutableArray *)notifications
-             timestampProvider:(EMSTimestampProvider *)timestampProvider {
-    self = [super init];
-    if (self) {
+             timestampProvider:(EMSTimestampProvider *)timestampProvider
+                requestManager:(EMSRequestManager *)requestManager {
+    if (self = [super init]) {
         NSParameterAssert(timestampProvider);
         NSParameterAssert(notifications);
         NSParameterAssert(config);
         NSParameterAssert(restClient);
         NSParameterAssert(requestContext);
+        NSParameterAssert(requestManager);
         _restClient = restClient;
         _config = config;
         _notifications = notifications;
         _requestContext = requestContext;
         _timestampProvider = timestampProvider;
-        _fetchRequestSuccessBlocks = [NSMutableArray new];
-        _fetchRequestErrorBlocks = [NSMutableArray new];
+        _resultBlocks = [NSMutableArray new];
+        _requestManager = requestManager;
     }
     return self;
 }
 
 
-- (void)fetchNotificationsWithResultBlock:(MEInboxResultBlock)resultBlock
-                               errorBlock:(MEInboxResultErrorBlock)errorBlock {
+- (void)fetchNotificationsWithResultBlock:(EMSFetchNotificationResultBlock)resultBlock {
     NSParameterAssert(resultBlock);
-
     if (self.lastNotificationStatus && [[self.timestampProvider provideTimestamp] timeIntervalSinceDate:self.responseTimestamp] < 60) {
-        resultBlock([self mergedStatusWithStatus:self.lastNotificationStatus]);
+        resultBlock([self mergedStatusWithStatus:self.lastNotificationStatus], nil);
         return;
     } else if (self.fetchRequestInProgress) {
-        [self.fetchRequestSuccessBlocks addObject:[resultBlock copy]];
-        [self.fetchRequestErrorBlocks addObject:[errorBlock copy]];
+        [self.resultBlocks addObject:[resultBlock copy]];
         return;
     }
 
@@ -80,37 +77,44 @@
                                         NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:response.body
                                                                                                 options:0
                                                                                                   error:nil];
-                                        MENotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
+                                        EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
                                         weakSelf.lastNotificationStatus = status;
                                         weakSelf.responseTimestamp = [weakSelf.timestampProvider provideTimestamp];
                                         weakSelf.fetchRequestInProgress = NO;
 
                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                            MENotificationInboxStatus *inboxStatus = [weakSelf mergedStatusWithStatus:status];
-                                            resultBlock(inboxStatus);
+                                            EMSNotificationInboxStatus *inboxStatus = [weakSelf mergedStatusWithStatus:status];
+                                            resultBlock(inboxStatus, nil);
 
-                                            for (MEInboxResultBlock successBlock in weakSelf.fetchRequestSuccessBlocks) {
+                                            for (MEInboxResultBlock successBlock in weakSelf.resultBlocks) {
                                                 successBlock(inboxStatus);
                                             }
-                                            [weakSelf.fetchRequestSuccessBlocks removeAllObjects];
+                                            [weakSelf.resultBlocks removeAllObjects];
                                         });
                                     }
                                       errorBlock:^(NSString *requestId, NSError *error) {
-                                          [weakSelf respondWithError:errorBlock error:error];
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              resultBlock(nil, error);
+                                          });
                                           weakSelf.fetchRequestInProgress = NO;
 
-                                          for (MEInboxResultErrorBlock errorsBlock in weakSelf.fetchRequestErrorBlocks) {
-                                              [weakSelf respondWithError:errorsBlock error:error];
+                                          for (EMSFetchNotificationResultBlock errorsBlock in weakSelf.resultBlocks) {
+                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                  errorsBlock(nil, error);
+                                              });
                                           }
-                                          [weakSelf.fetchRequestErrorBlocks removeAllObjects];
+                                          [weakSelf.resultBlocks removeAllObjects];
                                       }];
     } else {
-        [self handleNoMeIdWithErrorBlock:errorBlock];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (resultBlock) {
+                resultBlock(nil, [NSError errorWithCode:42 localizedDescription:@"MeId is not available."]);
+            }
+        });
     }
 }
 
-- (void)resetBadgeCountWithSuccessBlock:(MEInboxSuccessBlock)successBlock
-                             errorBlock:(MEInboxResultErrorBlock)errorBlock {
+- (void)resetBadgeCountWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     if (self.requestContext.meId) {
         __weak typeof(self) weakSelf = self;
         EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -125,30 +129,60 @@
                                     successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                         weakSelf.lastNotificationStatus.badgeCount = 0;
                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                            if (successBlock) {
-                                                successBlock();
+                                            if (completionBlock) {
+                                                completionBlock(nil);
                                             }
                                         });
                                     }
                                       errorBlock:^(NSString *requestId, NSError *error) {
-                                          [weakSelf respondWithError:errorBlock error:error];
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              if (completionBlock) {
+                                                  completionBlock(error);
+                                              }
+                                          });
                                       }];
     } else {
-        [self handleNoMeIdWithErrorBlock:errorBlock];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completionBlock) {
+                completionBlock([NSError errorWithCode:42 localizedDescription:@"MeId is not available."]);
+            }
+        });
     }
 }
 
+- (void)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification {
+    [self trackMessageOpenWith:inboxNotification
+               completionBlock:nil];
+}
+
+- (void)trackMessageOpenWith:(EMSNotification *)inboxMessage
+             completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(inboxMessage);
+    EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxMessage
+                                                                                     requestContext:self.requestContext];
+    if (!inboxMessage.id) {
+        completionBlock([NSError errorWithCode:1
+                          localizedDescription:@"Missing messageId"]);
+    } else if (!inboxMessage.sid) {
+        completionBlock([NSError errorWithCode:1
+                          localizedDescription:@"Missing sid"]);
+    } else {
+        [self.requestManager submitRequestModel:requestModel];
+    }
+}
+
+
+- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
+    return [MobileEngage trackMessageOpenWithInboxMessage:inboxMessage];
+}
+
 - (void)resetBadgeCount {
-    [self resetBadgeCountWithSuccessBlock:nil errorBlock:nil];
+    [self resetBadgeCountWithCompletionBlock:nil];
 }
 
 - (void)addNotification:(EMSNotification *)notification {
     [self.notifications insertObject:notification
                              atIndex:0];
-}
-
-- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
-    return [MobileEngage trackMessageOpenWithInboxMessage:inboxMessage];
 }
 
 - (void)purgeNotificationCache {
@@ -169,7 +203,7 @@
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 
-- (MENotificationInboxStatus *)mergedStatusWithStatus:(MENotificationInboxStatus *)status {
+- (EMSNotificationInboxStatus *)mergedStatusWithStatus:(EMSNotificationInboxStatus *)status {
     [self invalidateCachedNotifications:status];
 
     NSMutableArray *statusNotifications = [NSMutableArray new];
@@ -179,7 +213,7 @@
     return status;
 }
 
-- (void)invalidateCachedNotifications:(MENotificationInboxStatus *)status {
+- (void)invalidateCachedNotifications:(EMSNotificationInboxStatus *)status {
     for (int i = (int) [self.notifications count] - 1; i >= 0; --i) {
         EMSNotification *notification = self.notifications[(NSUInteger) i];
         for (EMSNotification *currentNotification in status.notifications) {
@@ -189,22 +223,6 @@
             }
         }
     }
-}
-
-- (void)respondWithError:(MEInboxResultErrorBlock)errorBlock error:(NSError *)error {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (errorBlock) {
-            errorBlock(error);
-        }
-    });
-}
-
-- (void)handleNoMeIdWithErrorBlock:(MEInboxResultErrorBlock)errorBlock {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (errorBlock) {
-            errorBlock([NSError errorWithCode:42 localizedDescription:@"MeId is not available."]);
-        }
-    });
 }
 
 @end

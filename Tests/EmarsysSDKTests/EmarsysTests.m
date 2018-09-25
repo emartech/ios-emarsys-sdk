@@ -7,7 +7,6 @@
 #import "Emarsys.h"
 #import "PredictInternal.h"
 #import "MobileEngageInternal.h"
-#import "Emarsys+Tests.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSDBTriggerKey.h"
 #import "EMSDependencyContainer.h"
@@ -15,15 +14,35 @@
 @interface Emarsys ()
 
 + (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
++ (EMSSQLiteHelper *)sqliteHelper;
 
 @end
 
 SPEC_BEGIN(EmarsysTests)
 
+        __block PredictInternal *predict;
+        __block MobileEngageInternal *engage;
+        __block EMSDependencyContainer *container;
+        NSString *const customerId = @"customerId";
+
         beforeEach(^{
-            EMSConfig *configMock = [EMSConfig nullMock];
-            [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
-            [Emarsys setupWithConfig:configMock];
+            predict = [PredictInternal nullMock];
+            engage = [MobileEngageInternal nullMock];
+            container = [EMSDependencyContainer nullMock];
+
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                [builder setMobileEngageApplicationCode:@"applicationCode"
+                                    applicationPassword:@"applicationPassword"];
+                [builder setContactFieldId:@32];
+                [builder setMerchantId:@"merchantId"];
+            }];
+            [Emarsys setupWithConfig:config];
+
+            [container stub:@selector(mobileEngage)
+                  andReturn:engage];
+            [container stub:@selector(predict)
+                  andReturn:predict];
+            [Emarsys setDependencyContainer:container];
         });
 
         describe(@"setupWithConfig:", ^{
@@ -36,6 +55,10 @@ SPEC_BEGIN(EmarsysTests)
             });
 
             it(@"register Predict trigger", ^{
+                EMSConfig *configMock = [EMSConfig nullMock];
+                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
+                [Emarsys setupWithConfig:configMock];
+
                 NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
                 NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
@@ -58,103 +81,69 @@ SPEC_BEGIN(EmarsysTests)
 
         describe(@"setCustomerWithCustomerId:resultBlock:", ^{
             it(@"should delegate the call to predictInternal", ^{
-                PredictInternal *const predict = [PredictInternal mock];
-                MobileEngageInternal *const engage = [MobileEngageInternal nullMock];
-                NSString *const customerId = @"customerId";
-
-                EMSDependencyContainer *container = [EMSDependencyContainer mock];
-                [[container should] receive:@selector(mobileEngage)
-                                  andReturn:engage];
-                [[container should] receive:@selector(predict)
-                                  andReturn:predict];
-                [Emarsys setDependencyContainer:container];
-
                 [[predict should] receive:@selector(setCustomerWithId:)
                             withArguments:customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
 
             it(@"should delegate the call to mobileEngageInternal", ^{
-                PredictInternal *const predict = [PredictInternal nullMock];
-                MobileEngageInternal *const engage = [MobileEngageInternal mock];
-                NSString *const customerId = @"customerId";
-                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
-                [[container should] receive:@selector(mobileEngage)
-                                  andReturn:engage];
-                [[container should] receive:@selector(predict)
-                                  andReturn:predict];
-                [Emarsys setDependencyContainer:container];
-
                 [[engage should] receive:@selector(appLoginWithContactFieldValue:)
-                           withArguments:kw_any(),
-                                         customerId];
+                           withArguments:kw_any(), customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
 
             it(@"should delegate call to MobileEngage with correct customerId", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setContactFieldId:@32];
-                    [builder setMobileEngageApplicationCode:@"applicationCode"
-                                        applicationPassword:@"applicationPassword"];
-                    [builder setMerchantId:@"merchantId"];
-                }];
-                PredictInternal *const predict = [PredictInternal nullMock];
-                MobileEngageInternal *const engage = [MobileEngageInternal mock];
-                [Emarsys setupWithConfig:config];
-
-                NSString *const customerId = @"customerId";
-                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
-                [[container should] receive:@selector(mobileEngage)
-                                  andReturn:engage];
-                [[container should] receive:@selector(predict)
-                                  andReturn:predict];
-                [Emarsys setDependencyContainer:container];
-
                 [[engage should] receive:@selector(appLoginWithContactFieldValue:)
-                           withArguments: customerId];
+                           withArguments:customerId];
                 [Emarsys setCustomerWithId:customerId];
             });
         });
 
         describe(@"clearCustomer", ^{
             it(@"should delegate call to MobileEngage", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setContactFieldId:@32];
-                    [builder setMobileEngageApplicationCode:@"applicationCode"
-                                        applicationPassword:@"applicationPassword"];
-                    [builder setMerchantId:@"merchantId"];
-                }];
-                MobileEngageInternal *const engage = [MobileEngageInternal mock];
-                [Emarsys setupWithConfig:config];
-
-                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
-                [[container should] receive:@selector(mobileEngage)
-                                  andReturn:engage];
-                [Emarsys setDependencyContainer:container];
-
                 [[engage should] receive:@selector(appLogout)];
 
                 [Emarsys clearCustomer];
             });
 
             it(@"should delegate call to Predict", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setContactFieldId:@32];
-                    [builder setMobileEngageApplicationCode:@"applicationCode"
-                                        applicationPassword:@"applicationPassword"];
-                    [builder setMerchantId:@"merchantId"];
-                }];
-                PredictInternal *const predict = [PredictInternal mock];
-                [Emarsys setupWithConfig:config];
-
-                EMSDependencyContainer *container = [EMSDependencyContainer nullMock];
-                [[container should] receive:@selector(predict)
-                                  andReturn:predict];
-                [Emarsys setDependencyContainer:container];
-
                 [[predict should] receive:@selector(clearCustomer)];
 
                 [Emarsys clearCustomer];
+            });
+        });
+
+        context(@"production setup", ^{
+
+            beforeEach(^{
+                EMSConfig *configMock = [EMSConfig nullMock];
+                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
+                [Emarsys setupWithConfig:configMock];
+            });
+
+            describe(@"push", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.push) shouldNot] beNil];
+                });
+            });
+
+            describe(@"inbox", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.inbox) shouldNot] beNil];
+                });
+            });
+
+            describe(@"inApp", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.inApp) shouldNot] beNil];
+                });
+            });
+
+
+            describe(@"predict", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.predict) shouldNot] beNil];
+                });
             });
         });
 

@@ -5,15 +5,15 @@
 #import "NSError+EMSCore.h"
 #import "MEInbox.h"
 #import "MEDefaultHeaders.h"
-#import "EMSConfig.h"
 #import "MEInboxParser.h"
-#import "MERequestContext.h"
 #import "MobileEngage+Private.h"
 #import "EMSRequestModelBuilder.h"
 #import "EMSResponseModel.h"
 #import "EMSDeviceInfo.h"
 #import "EMSRESTClient.h"
 #import "EMSAuthentication.h"
+#import "MERequestFactory.h"
+#import "EMSRequestManager.h"
 
 @interface MEInbox ()
 
@@ -21,6 +21,7 @@
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *notifications;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
 
 @end
 
@@ -29,30 +30,23 @@
 #pragma mark - Init
 
 - (instancetype)initWithConfig:(EMSConfig *)config
-                requestContext:(MERequestContext *)requestContext {
-    EMSRESTClient *restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
-    return [self initWithRestClient:restClient
-                             config:config
-                     requestContext:requestContext];
-}
-
-- (instancetype)initWithRestClient:(EMSRESTClient *)restClient
-                            config:(EMSConfig *)config
-                    requestContext:(MERequestContext *)requestContext {
+                requestContext:(MERequestContext *)requestContext
+                    restClient:(EMSRESTClient *)restClient
+                requestManager:(EMSRequestManager *)requestManager {
     self = [super init];
     if (self) {
         _restClient = restClient;
         _config = config;
         _notifications = [NSMutableArray new];
         _requestContext = requestContext;
+        _requestManager = requestManager;
     }
     return self;
 }
 
 #pragma mark - Public methods
 
-- (void)fetchNotificationsWithResultBlock:(MEInboxResultBlock)resultBlock
-                               errorBlock:(MEInboxResultErrorBlock)errorBlock {
+- (void)fetchNotificationsWithResultBlock:(EMSFetchNotificationResultBlock)resultBlock {
     NSParameterAssert(resultBlock);
     if ([self hasLoginParameters]) {
         __weak typeof(self) weakSelf = self;
@@ -64,27 +58,40 @@
                                                        uuidProvider:self.requestContext.uuidProvider];
         [_restClient executeTaskWithRequestModel:request
                                     successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                        NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:nil];
-                                        MENotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
-                                        MENotificationInboxStatus *mergedStatus = [weakSelf mergedStatusWithStatus:status];
+                                        NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:response.body
+                                                                                                options:0
+                                                                                                  error:nil];
+                                        EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
+                                        EMSNotificationInboxStatus *mergedStatus = [weakSelf mergedStatusWithStatus:status];
                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                            resultBlock(mergedStatus);
+                                            if (resultBlock) {
+                                                resultBlock(mergedStatus, nil);
+                                            }
                                         });
                                     }
                                       errorBlock:^(NSString *requestId, NSError *error) {
-                                          [weakSelf respondWithError:errorBlock error:error];
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              if (resultBlock) {
+                                                  resultBlock(nil, error);
+                                              }
+                                          });
                                       }];
     } else {
-        [self handleNoLoginParameters:errorBlock];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (resultBlock) {
+                resultBlock(nil, [NSError errorWithCode:42
+                                   localizedDescription:@"Login parameters are not available."]);
+            }
+        });
     }
 }
 
+
 - (void)resetBadgeCount {
-    [self resetBadgeCountWithSuccessBlock:nil errorBlock:nil];
+    [self resetBadgeCountWithCompletionBlock:nil];
 }
 
-- (void)resetBadgeCountWithSuccessBlock:(MEInboxSuccessBlock)successBlock
-                             errorBlock:(MEInboxResultErrorBlock)errorBlock {
+- (void)resetBadgeCountWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     if ([self hasLoginParameters]) {
         EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:@"https://me-inbox.eservice.emarsys.net/api/reset-badge-count"];
@@ -96,18 +103,43 @@
         [_restClient executeTaskWithRequestModel:model
                                     successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                            if (successBlock) {
-                                                successBlock();
+                                            if (completionBlock) {
+                                                completionBlock(nil);
                                             }
                                         });
                                     }
                                       errorBlock:^(NSString *requestId, NSError *error) {
-                                          [self respondWithError:errorBlock error:error];
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              if (completionBlock) {
+                                                  completionBlock(error);
+                                              }
+                                          });
                                       }];
     } else {
-        [self handleNoLoginParameters:errorBlock];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completionBlock) {
+                completionBlock([NSError errorWithCode:42
+                                  localizedDescription:@"Login parameters are not available."]);
+            }
+        });
     }
 }
+
+- (void)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification {
+    [self trackMessageOpenWith:inboxNotification
+               completionBlock:nil];
+}
+
+- (void)trackMessageOpenWith:(EMSNotification *)inboxNotification
+             completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(inboxNotification);
+    EMSRequestModel *requestModel;
+
+    requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxNotification
+                                                                    requestContext:self.requestContext];
+    [self.requestManager submitRequestModel:requestModel];;
+}
+
 
 - (void)addNotification:(EMSNotification *)notification {
     [self.notifications insertObject:notification
@@ -129,27 +161,28 @@
     NSMutableDictionary *mutableFetchingHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
     mutableFetchingHeaders[@"x-ems-me-hardware-id"] = [EMSDeviceInfo hardwareId];
     mutableFetchingHeaders[@"x-ems-me-application-code"] = self.config.applicationCode;
-    mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@", self.requestContext.appLoginParameters.contactFieldId];
+    mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@",
+                                                                                      self.requestContext.appLoginParameters.contactFieldId];
     mutableFetchingHeaders[@"x-ems-me-contact-field-value"] = self.requestContext.appLoginParameters.contactFieldValue;
     mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode
                                                                                      password:self.config.applicationPassword];
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 
-- (MENotificationInboxStatus *)mergedStatusWithStatus:(MENotificationInboxStatus *)status {
+- (EMSNotificationInboxStatus *)mergedStatusWithStatus:(EMSNotificationInboxStatus *)status {
     [self invalidateCachedNotifications:status];
 
     NSMutableArray *notifications = [NSMutableArray new];
     [notifications addObjectsFromArray:self.notifications];
     [notifications addObjectsFromArray:status.notifications];
 
-    MENotificationInboxStatus *result = [MENotificationInboxStatus new];
+    EMSNotificationInboxStatus *result = [EMSNotificationInboxStatus new];
     result.badgeCount = status.badgeCount;
     result.notifications = [NSArray arrayWithArray:notifications];
     return result;
 }
 
-- (void)invalidateCachedNotifications:(MENotificationInboxStatus *)status {
+- (void)invalidateCachedNotifications:(EMSNotificationInboxStatus *)status {
     for (int i = (int) [self.notifications count] - 1; i >= 0; --i) {
         EMSNotification *notification = self.notifications[(NSUInteger) i];
         for (EMSNotification *currentNotification in status.notifications) {

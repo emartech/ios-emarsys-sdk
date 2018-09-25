@@ -4,12 +4,12 @@
 
 #import "MEInboxParser.h"
 #import "EMSNotification.h"
-#import "MENotificationInboxStatus.h"
+#import "EMSNotificationInboxStatus.h"
 
 @implementation MEInboxParser
 
-- (MENotificationInboxStatus *)parseNotificationInboxStatus:(NSDictionary *)notificationInboxStatus {
-    MENotificationInboxStatus *result = [MENotificationInboxStatus new];
+- (EMSNotificationInboxStatus *)parseNotificationInboxStatus:(NSDictionary *)notificationInboxStatus {
+    EMSNotificationInboxStatus *result = [EMSNotificationInboxStatus new];
     NSArray<NSDictionary *> *notificationDicts = notificationInboxStatus[@"notifications"];
     NSUInteger badgeCount = [notificationInboxStatus[@"badge_count"] unsignedIntegerValue];
     [result setNotifications:[self parseArrayOfNotifications:notificationDicts]];

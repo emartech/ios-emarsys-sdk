@@ -1,7 +1,7 @@
 #import "Kiwi.h"
 #import "MEInboxParser.h"
 #import "EMSNotification.h"
-#import "MENotificationInboxStatus.h"
+#import "EMSNotificationInboxStatus.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
 
@@ -10,7 +10,7 @@ SPEC_BEGIN(MEInboxParserTests)
         describe(@"InboxParser.parseNotificationInboxStatus:", ^{
             it(@"should not return nil", ^{
                 MEInboxParser *parser = [MEInboxParser new];
-                MENotificationInboxStatus *result = [parser parseNotificationInboxStatus:@{}];
+                EMSNotificationInboxStatus *result = [parser parseNotificationInboxStatus:@{}];
                 [[theValue(result) shouldNot] beNil];
             });
 
@@ -27,7 +27,7 @@ SPEC_BEGIN(MEInboxParserTests)
                 for (NSDictionary *notificationDict in notificationInboxStatus[@"notifications"]) {
                     [expectedNotifications addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
                 }
-                MENotificationInboxStatus *result = [parser parseNotificationInboxStatus:notificationInboxStatus];
+                EMSNotificationInboxStatus *result = [parser parseNotificationInboxStatus:notificationInboxStatus];
 
                 [[result.notifications should] equal:expectedNotifications];
                 [[theValue(result.badgeCount) should] equal:theValue(3)];

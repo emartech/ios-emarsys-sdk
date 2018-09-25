@@ -5,11 +5,11 @@
 #import <Foundation/Foundation.h>
 
 @class EMSConfig;
-@class MENotificationInboxStatus;
+@class EMSNotificationInboxStatus;
 @class EMSNotification;
 
 typedef void (^MEInboxSuccessBlock)(void);
-typedef void (^MEInboxResultBlock)(MENotificationInboxStatus *inboxStatus);
+typedef void (^MEInboxResultBlock)(EMSNotificationInboxStatus *inboxStatus);
 typedef void (^MEInboxResultErrorBlock)(NSError *error);
 
 @protocol MEInboxProtocol <NSObject>
