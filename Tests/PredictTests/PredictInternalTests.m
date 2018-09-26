@@ -50,6 +50,41 @@ SPEC_BEGIN(PredictInternalTests)
                 }
             });
 
+            it(@"should submit a shard to requestManager", ^{
+                NSString *itemId = @"idOfTheItem";
+                NSDate *timestamp = [NSDate date];
+
+                NSString *categoryPath = @"categoryPath";
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:itemId
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                            [builder setType:@"predict_item_category"];
+                            [builder payloadEntryWithKey:@"vc"
+                                                   value:categoryPath];
+                        }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal trackCategoryViewWithCategoryPath:categoryPath];
+            });
+
         });
 
         describe(@"trackItemViewWithItemId:", ^{
@@ -78,10 +113,10 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_view"];
-                        [builder payloadEntryWithKey:@"v"
-                                               value:[NSString stringWithFormat:@"i:%@", itemId]];
-                    }
+                            [builder setType:@"predict_item_view"];
+                            [builder payloadEntryWithKey:@"v"
+                                                   value:[NSString stringWithFormat:@"i:%@", itemId]];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -138,8 +173,8 @@ SPEC_BEGIN(PredictInternalTests)
 
 
                 [internal trackCartWithCartItems:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
                 ]];
             });
 

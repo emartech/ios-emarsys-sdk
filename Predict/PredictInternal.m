@@ -38,6 +38,15 @@
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSParameterAssert(categoryPath);
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_item_category"];
+                [builder payloadEntryWithKey:@"vc"
+                                       value:categoryPath];
+            }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
 }
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
