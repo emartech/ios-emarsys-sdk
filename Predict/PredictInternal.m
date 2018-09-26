@@ -39,7 +39,7 @@
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSParameterAssert(categoryPath);
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_item_category"];
+                [builder setType:@"predict_item_category_view"];
                 [builder payloadEntryWithKey:@"vc"
                                        value:categoryPath];
             }
@@ -72,6 +72,19 @@
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
 
+}
+
+- (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
+    NSParameterAssert(searchTerm);
+
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_search_term"];
+                [builder payloadEntryWithKey:@"q" value:searchTerm];
+            }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
 }
 
 @end

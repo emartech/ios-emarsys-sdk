@@ -66,7 +66,7 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                            [builder setType:@"predict_item_category"];
+                            [builder setType:@"predict_item_category_view"];
                             [builder payloadEntryWithKey:@"vc"
                                                    value:categoryPath];
                         }
@@ -176,6 +176,53 @@ SPEC_BEGIN(PredictInternalTests)
                         [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
                         [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
                 ]];
+            });
+
+        });
+
+        describe(@"trackSearchWithSearchTerm:", ^{
+
+            it(@"should throw exception when searchTerm is nil", ^{
+                @try {
+                    [[PredictInternal new] trackSearchWithSearchTerm:nil];
+                    fail(@"Expected Exception when cartItems is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: searchTerm"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should submit shard to requestManager", ^{
+                NSString *searchTerm = @"searchTerm";
+                NSDate *timestamp = [NSDate date];
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:searchTerm
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                            [builder setType:@"predict_search_term"];
+                            [builder payloadEntryWithKey:@"q"
+                                                   value:searchTerm];
+                        }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal trackSearchWithSearchTerm:searchTerm];
             });
 
         });
