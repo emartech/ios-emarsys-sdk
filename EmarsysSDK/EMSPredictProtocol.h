@@ -9,7 +9,7 @@
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
 
 - (void)trackPurchaseWithOrderId:(NSString *)orderId
-                           items:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
+                           items:(NSArray<id <EMSCartItemProtocol>> *)items;
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
 

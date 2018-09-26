@@ -71,7 +71,6 @@
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
-
 }
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
@@ -86,5 +85,22 @@
 
     [self.requestManager submitShard:shard];
 }
+
+- (void)trackPurchaseWithOrderId:(NSString *)orderId
+                           items:(NSArray<id <EMSCartItemProtocol>> *)items {
+    NSParameterAssert(orderId);
+    NSParameterAssert(items);
+
+    [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_purchase"];
+                [builder payloadEntryWithKey:@"co"
+                                       value:[EMSCartItemUtils queryParamFromCartItems:items]];
+                [builder payloadEntryWithKey:@"oi"
+                                       value:orderId];
+            }
+                                             timestampProvider:self.requestContext.timestampProvider
+                                                  uuidProvider:self.requestContext.uuidProvider]];
+}
+
 
 @end

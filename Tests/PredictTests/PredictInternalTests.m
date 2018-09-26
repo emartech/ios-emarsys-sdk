@@ -227,6 +227,63 @@ SPEC_BEGIN(PredictInternalTests)
 
         });
 
+        describe(@"trackPurchaseWithOrderId:items:", ^{
+
+            it(@"should throw exception when orderId is nil", ^{
+                @try {
+                    [[PredictInternal new] trackPurchaseWithOrderId:nil items:@[]];
+                    fail(@"Expected Exception when orderId is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: orderId"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when items is nil", ^{
+                @try {
+                    [[PredictInternal new] trackPurchaseWithOrderId:@"orderId" items:nil];
+                    fail(@"Expected Exception when items is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: items"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should submit the correct shard for purchase", ^{
+                NSDate *timestamp = [NSDate date];
+                NSString *const shardId = @"shardId";
+                NSString *const orderId = @"orderId";
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:timestamp];
+
+                EMSUUIDProvider *shardIdProvider = [EMSUUIDProvider mock];
+                [[shardIdProvider should] receive:@selector(provideUUIDString) andReturn:shardId];
+
+                PRERequestContext *const requestContext = [PRERequestContext mock];
+                [[requestContext should] receive:@selector(timestampProvider) andReturn:timestampProvider];
+                [[requestContext should] receive:@selector(uuidProvider) andReturn:shardIdProvider];
+
+                EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
+                                                                       type:@"predict_purchase"
+                                                                       data:@{@"oi": orderId, @"co": @"i:itemId1,p:200.0,q:100.0|i:itemId2,p:201.0,q:101.0"}
+                                                                  timestamp:timestamp
+                                                                        ttl:FLT_MAX];
+
+                EMSRequestManager *const requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
+                PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+
+
+                [internal trackPurchaseWithOrderId:orderId items:@[
+                        [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                ]];
+            });
+
+        });
+
         describe(@"clearCustomer", ^{
             it(@"should setCustomerId and visitorId to nil on requestContext", ^{
                 PRERequestContext *const requestContext = [PRERequestContext mock];
