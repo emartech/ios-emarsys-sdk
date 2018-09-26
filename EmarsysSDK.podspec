@@ -8,22 +8,13 @@ Pod::Spec.new do |spec|
 	spec.platform             = :ios, '9.0'
 	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
+         'Core/**/*.{h,m}',
 	     'MobileEngage/**/*.{h,m}',
-	     'Core/**/*.{h,m}'
+         'Predict/**/*.{h,m}',
+         'EmarsysSDK/**/*.{h,m}'
 	]
 	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/*'
 	spec.public_header_files  = [
-		'MobileEngage/MobileEngage.h',
-		'MobileEngage/MobileEngageStatusDelegate.h',
-		'MobileEngage/EMSConfigBuilder.h',
-	    'MobileEngage/EMSConfig.h',
-	   	'MobileEngage/Flipper/MEFlipperFeatures.h',
-	    'MobileEngage/Inbox/MEInboxProtocol.h',
-	    'MobileEngage/Inbox/EMSNotification.h',
-	    'MobileEngage/Inbox/MENotificationInboxStatus.h',
-        'MobileEngage/IAM/MEInApp.h',
-        'MobileEngage/IAM/MEEventHandler.h',
-        'MobileEngage/RichNotification/MEUserNotificationCenterDelegate.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
