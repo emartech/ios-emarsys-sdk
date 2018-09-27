@@ -6,7 +6,6 @@ def printBuildToolVersions(){
 	def podVersion = (sh (returnStdout: true, script: 'pod --version')).trim()
 	echo "CocoaPod version: $podVersion"
   sh "echo `xcodebuild -version`"
-  echo (((sh (returnStdout: true, script: 'fastlane --version')) =~ /fastlane \d+\.\d+\.\d+/)[0])
 }
 
 def doParallel(devices, Closure action) {
