@@ -21,6 +21,7 @@
             EMSCompletionBlock completionBlock = weakSelf.completionBlocks[requestId];
             if (completionBlock) {
                 completionBlock(nil);
+                weakSelf.completionBlocks[requestId] = nil;
             }
         };
 
@@ -29,6 +30,7 @@
             EMSCompletionBlock completionBlock = weakSelf.completionBlocks[requestId];
             if (completionBlock) {
                 completionBlock(error);
+                weakSelf.completionBlocks[requestId] = nil;
             }
         };
     }

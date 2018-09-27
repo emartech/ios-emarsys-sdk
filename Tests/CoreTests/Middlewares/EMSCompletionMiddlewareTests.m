@@ -229,6 +229,48 @@ SPEC_BEGIN(EMSCompletionMiddlewareTests)
                 [[returnedError3 should] equal:expectedError3];
                 [[returnedError4 should] beNil];
             });
+
+            it(@"should not invoke registered completionBlock for requestId if it was already called in error", ^{
+                EMSRequestModel *requestModel1 = createRequestModel(@"requestModelId1");
+
+                XCTestExpectation *completionBlockCall = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                [completionBlockCall setExpectedFulfillmentCount:2];
+                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        }
+                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                                 }];
+
+                [middleware registerCompletionBlock:^(NSError *error) {
+                            [completionBlockCall fulfill];
+                        }
+                                    forRequestModel:requestModel1];
+
+                middleware.errorBlock(@"requestModelId1", [NSError mock]);
+                middleware.successBlock(@"requestModelId1", [EMSResponseModel mock]);
+                [[theValue([XCTWaiter waitForExpectations:@[completionBlockCall]
+                                                  timeout:1.0]) should] equal:theValue(XCTWaiterResultTimedOut)];
+            });
+
+            it(@"should not invoke registered completionBlock for requestId if it was already called in success", ^{
+                EMSRequestModel *requestModel1 = createRequestModel(@"requestModelId1");
+
+                XCTestExpectation *completionBlockCall = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                [completionBlockCall setExpectedFulfillmentCount:2];
+                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        }
+                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                                 }];
+
+                [middleware registerCompletionBlock:^(NSError *error) {
+                            [completionBlockCall fulfill];
+                        }
+                                    forRequestModel:requestModel1];
+
+                middleware.successBlock(@"requestModelId1", [EMSResponseModel mock]);
+                middleware.errorBlock(@"requestModelId1", [NSError mock]);
+                [[theValue([XCTWaiter waitForExpectations:@[completionBlockCall]
+                                                  timeout:1.0]) should] equal:theValue(XCTWaiterResultTimedOut)];
+            });
         });
 
 SPEC_END
