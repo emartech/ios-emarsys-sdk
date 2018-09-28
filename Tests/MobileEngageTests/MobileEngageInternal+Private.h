@@ -9,11 +9,6 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface MobileEngageInternal (Private)
 
-- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-                         config:(nonnull EMSConfig *)config
-                  launchOptions:(NSDictionary *)launchOptions
-                 requestContext:(MERequestContext *)requestContext;
-
 @end
 
 NS_ASSUME_NONNULL_END

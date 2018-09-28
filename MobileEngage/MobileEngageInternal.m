@@ -3,7 +3,6 @@
 //
 
 #import "MobileEngageInternal.h"
-#import "MobileEngageStatusDelegate.h"
 #import "EMSConfig.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
@@ -20,8 +19,6 @@
 #import "MENotificationCenterManager.h"
 #import "MERequestContext.h"
 #import "MERequestFactory.h"
-#import "MERequestModelRepositoryFactory.h"
-#import "MELogRepository.h"
 #import <UIKit/UIKit.h>
 
 @interface MobileEngageInternal ()
@@ -34,71 +31,75 @@
 @implementation MobileEngageInternal
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
-                        requestContext:(MERequestContext *)requestContext {
+                        requestContext:(MERequestContext *)requestContext
+             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager {
     if (self = [super init]) {
         [self setupWithRequestManager:requestManager
                                config:requestContext.config
                         launchOptions:nil
-                       requestContext:requestContext];
+                       requestContext:requestContext
+            notificationCenterManager:notificationCenterManager];
     }
     return self;
 }
 
-- (void) setupWithConfig:(nonnull EMSConfig *)config
-           launchOptions:(NSDictionary *)launchOptions
-requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
-         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-           logRepository:(MELogRepository *)logRepository
-          requestContext:(MERequestContext *)requestContext {
-    NSParameterAssert(requestRepositoryFactory);
-    __weak typeof(self) weakSelf = self;
-    _successBlock = ^(NSString *requestId, EMSResponseModel *responseModel) {
-        [weakSelf handleResponse:responseModel];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageLogReceivedWithEventId:log:)]) {
-                [weakSelf.statusDelegate mobileEngageLogReceivedWithEventId:requestId
-                                                                        log:@"Success"];
-            }
-        });
-    };
-    _errorBlock = ^(NSString *requestId, NSError *error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageErrorHappenedWithEventId:error:)]) {
-                [weakSelf.statusDelegate mobileEngageErrorHappenedWithEventId:requestId
-                                                                        error:error];
-            }
-        });
-    };
-
-    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
-    const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
-    EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:self.successBlock
-                                                                 errorBlock:self.errorBlock
-                                                          requestRepository:requestRepository
-                                                            shardRepository:shardRepository
-                                                              logRepository:logRepository];
-    [self setupWithRequestManager:manager
-                           config:config
-                    launchOptions:launchOptions
-                   requestContext:requestContext];
-}
-
-- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-                 requestContext:(MERequestContext *)requestContext {
-    [self setupWithRequestManager:requestManager
-                           config:requestContext.config
-                    launchOptions:nil
-                   requestContext:requestContext];
-}
+//- (void) setupWithConfig:(nonnull EMSConfig *)config
+//           launchOptions:(NSDictionary *)launchOptions
+//requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
+//         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
+//           logRepository:(MELogRepository *)logRepository
+//          requestContext:(MERequestContext *)requestContext {
+//    NSParameterAssert(requestRepositoryFactory);
+//    __weak typeof(self) weakSelf = self;
+//    _successBlock = ^(NSString *requestId, EMSResponseModel *responseModel) {
+//        [weakSelf handleResponse:responseModel];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageLogReceivedWithEventId:log:)]) {
+//                [weakSelf.statusDelegate mobileEngageLogReceivedWithEventId:requestId
+//                                                                        log:@"Success"];
+//            }
+//        });
+//    };
+//    _errorBlock = ^(NSString *requestId, NSError *error) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageErrorHappenedWithEventId:error:)]) {
+//                [weakSelf.statusDelegate mobileEngageErrorHappenedWithEventId:requestId
+//                                                                        error:error];
+//            }
+//        });
+//    };
+//
+//    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
+//    const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
+//    EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:self.successBlock
+//                                                                 errorBlock:self.errorBlock
+//                                                          requestRepository:requestRepository
+//                                                            shardRepository:shardRepository
+//                                                              logRepository:logRepository];
+//    [self setupWithRequestManager:manager
+//                           config:config
+//                    launchOptions:launchOptions
+//                   requestContext:requestContext];
+//}
+//
+//- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
+//                 requestContext:(MERequestContext *)requestContext {
+//    [self setupWithRequestManager:requestManager
+//                           config:requestContext.config
+//                    launchOptions:nil
+//                   requestContext:requestContext];
+//}
 
 
 - (void)setupWithRequestManager:(EMSRequestManager *)requestManager
                          config:(nonnull EMSConfig *)config
                   launchOptions:(NSDictionary *)launchOptions
-                 requestContext:(MERequestContext *)requestContext {
+                 requestContext:(MERequestContext *)requestContext
+      notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager {
     _requestContext = requestContext;
     _requestManager = requestManager;
     _config = config;
+    _notificationCenterManager = notificationCenterManager;
     [requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.config]];
 
     NSMutableArray *responseHandlers = [NSMutableArray array];
@@ -107,9 +108,9 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
     }
     if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
         [responseHandlers addObjectsFromArray:@[
-            [MEIAMResponseHandler new],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                          displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
+                [MEIAMResponseHandler new],
+                [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
+                                                              displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
         ];
     }
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
@@ -169,8 +170,8 @@ requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFac
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
     [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
                                                                                   eventAttributes:@{
-                                                                                      @"message_id": campaignId,
-                                                                                      @"button_id": buttonId
+                                                                                          @"message_id": campaignId,
+                                                                                          @"button_id": buttonId
                                                                                   }
                                                                                              type:@"internal"
                                                                                    requestContext:self.requestContext]];

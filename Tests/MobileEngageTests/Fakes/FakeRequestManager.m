@@ -24,7 +24,6 @@
 }
 
 - (instancetype)init {
-    self = [super init];
     if(self) {
         _submittedModels = [NSMutableArray new];
         _expectations = [NSMutableArray new];

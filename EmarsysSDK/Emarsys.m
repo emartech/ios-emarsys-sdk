@@ -38,6 +38,12 @@ static EMSDependencyContainer *_dependencyContainer;
     [_dependencyContainer.predict clearCustomer];
 }
 
++ (void)trackCustomEventWithName:(NSString *)eventName
+                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+                 completionBlock:(EMSCompletionBlock)completionBlock {
+
+}
+
 + (id <EMSPushNotificationProtocol>)push {
     return _dependencyContainer.mobileEngage;
 }
@@ -60,6 +66,10 @@ static EMSDependencyContainer *_dependencyContainer;
 
 + (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer {
     _dependencyContainer = dependencyContainer;
+}
+
++ (EMSDependencyContainer *)dependencyContainer {
+    return _dependencyContainer;
 }
 
 @end

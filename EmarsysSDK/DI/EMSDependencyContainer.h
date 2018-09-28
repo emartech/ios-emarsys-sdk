@@ -9,6 +9,7 @@
 @class PredictInternal;
 @class EMSSQLiteHelper;
 @protocol EMSInboxProtocol;
+@protocol EMSRequestModelRepositoryProtocol;
 
 @interface EMSDependencyContainer : NSObject
 
@@ -18,6 +19,7 @@
 @property(nonatomic, readonly) id<EMSInboxProtocol> inbox;
 @property(nonatomic, readonly) MEInApp *iam;
 @property(nonatomic, readonly) PredictInternal *predict;
+@property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> requestRepository;
 
 - (instancetype)initWithConfig:(EMSConfig *)config;
 

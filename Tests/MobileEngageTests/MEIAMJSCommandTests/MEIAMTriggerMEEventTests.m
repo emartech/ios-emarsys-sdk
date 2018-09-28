@@ -1,7 +1,7 @@
 #import "Kiwi.h"
 #import "MEIAMTriggerMEEvent.h"
-#import "MobileEngage.h"
 #import "EMSWaiter.h"
+#import "Emarsys.h"
 
 SPEC_BEGIN(MEIAMTriggerMEEventTests)
 
@@ -55,10 +55,8 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
             it(@"should call the trackCustomEvent method on the MobileEngage and return with the ME eventId in the resultBlock", ^{
                 MEIAMTriggerMEEvent *appEvent = [MEIAMTriggerMEEvent new];
 
-
-                [[MobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:)
-                                     andReturn:@"ValueOfTheMEEventId"
-                                 withArguments:@"nameOfTheEvent", kw_any()];
+                [[Emarsys should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
+                            withArguments:@"nameOfTheEvent", kw_any(), kw_any()];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 __block NSDictionary<NSString *, NSObject *> *returnedResult;
@@ -74,8 +72,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                 [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{
                         @"success": @YES,
-                        @"id": @"997",
-                        @"meEventId": @"ValueOfTheMEEventId"
+                        @"id": @"997"
                 }];
             });
 
@@ -87,9 +84,8 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                         }
                 };
 
-                [[MobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:)
-                                     andReturn:@"ValueOfTheMEEventId"
-                                 withArguments:@"nameOfTheEvent", payload];
+                [[Emarsys should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
+                            withArguments:@"nameOfTheEvent", payload, kw_any()];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 __block NSDictionary<NSString *, NSObject *> *returnedResult;
@@ -106,8 +102,7 @@ SPEC_BEGIN(MEIAMTriggerMEEventTests)
                 [EMSWaiter waitForExpectations:@[exp] timeout:30];
                 [[returnedResult should] equal:@{
                         @"success": @YES,
-                        @"id": @"997",
-                        @"meEventId": @"ValueOfTheMEEventId"
+                        @"id": @"997"
                 }];
             });
 

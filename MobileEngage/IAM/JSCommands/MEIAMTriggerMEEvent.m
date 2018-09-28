@@ -4,7 +4,7 @@
 #import "EMSDictionaryValidator.h"
 #import "MEIAMTriggerMEEvent.h"
 #import "MEIAMCommandResultUtils.h"
-#import "MobileEngage.h"
+#import "Emarsys.h"
 #import "NSDictionary+EMSCore.h"
 
 @implementation MEIAMTriggerMEEvent
@@ -26,11 +26,12 @@
     } else {
         NSString *name = message[@"name"];
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
+        [Emarsys trackCustomEventWithName:name
+                          eventAttributes:payload
+                          completionBlock:nil];
         resultBlock(@{
                 @"success": @YES,
-                @"id": eventId,
-                @"meEventId": [MobileEngage trackCustomEvent:name
-                                             eventAttributes:payload]
+                @"id": eventId
         });
     }
 }

@@ -21,17 +21,18 @@
 #import "EMSVisitorIdResponseHandler.h"
 #import "MEInboxV2.h"
 #import "MEInbox.h"
+#import "MENotificationCenterManager.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
 @interface EMSDependencyContainer ()
 
-@property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRESTClient *restClient;
+@property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -54,6 +55,7 @@
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
     [MEExperimental enableFeatures:config.experimentalFeatures];
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
+    _notificationCenterManager = [MENotificationCenterManager new];
 
     _iam = [MEInApp new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
@@ -66,7 +68,7 @@
                                                                                                         requestContext:self.requestContext];
 
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
-    const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
+    _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
 
 
     __weak typeof(self) weakSelf = self;
@@ -75,7 +77,7 @@
         }
                                                       errorBlock:^(NSString *requestId, NSError *error) {
                                                       }
-                                               requestRepository:requestRepository
+                                               requestRepository:self.requestRepository
                                                  shardRepository:shardRepository
                                                    logRepository:logRepository];
 
@@ -111,7 +113,8 @@
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];
     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
-                                                          requestContext:self.requestContext];
+                                                          requestContext:self.requestContext
+                                               notificationCenterManager:self.notificationCenterManager];
 }
 
 - (void)handleResponse:(EMSResponseModel *)responseModel {

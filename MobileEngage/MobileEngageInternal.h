@@ -37,20 +37,18 @@ typedef void (^MESourceHandler)(NSString *source);
 @property(nonatomic, strong) MERequestContext *requestContext;
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
-                        requestContext:(MERequestContext *)requestContext;
+                        requestContext:(MERequestContext *)requestContext
+             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager;
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;
 
-- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-                 requestContext:(MERequestContext *)requestContext;
-
-- (void) setupWithConfig:(nonnull EMSConfig *)config
-           launchOptions:(NSDictionary *)launchOptions
-requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
-         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-           logRepository:(MELogRepository *)logRepository
-          requestContext:(MERequestContext *)requestContext;
+//- (void) setupWithConfig:(nonnull EMSConfig *)config
+//           launchOptions:(NSDictionary *)launchOptions
+//requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
+//         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
+//           logRepository:(MELogRepository *)logRepository
+//          requestContext:(MERequestContext *)requestContext;
 
 - (NSString *)appLogin;
 

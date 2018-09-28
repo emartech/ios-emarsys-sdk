@@ -23,25 +23,25 @@ typedef void(^MESourceHandler)(NSString *source);
 @property(class, nonatomic, readonly) MEInApp *inApp;
 @property(class, nonatomic, readonly) id<MEUserNotificationCenterDelegate> notificationCenterDelegate;
 
-+ (void)setupWithConfig:(EMSConfig *)config
-          launchOptions:(nullable NSDictionary *)launchOptions;
-
-+ (void)setPushToken:(NSData *)deviceToken;
-
-+ (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler;
-
-+ (NSString *)appLogin;
-
-+ (NSString *)appLoginWithContactFieldId:(nullable NSNumber *)contactFieldId
-                       contactFieldValue:(nullable NSString *)contactFieldValue;
-
-+ (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
-
-+ (NSString *)trackCustomEvent:(NSString *)eventName
-               eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
-
-+ (NSString *)appLogout;
+//+ (void)setupWithConfig:(EMSConfig *)config
+//          launchOptions:(nullable NSDictionary *)launchOptions;
+//
+//+ (void)setPushToken:(NSData *)deviceToken;
+//
+//+ (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
+//            sourceHandler:(nullable MESourceHandler)sourceHandler;
+//
+//+ (NSString *)appLogin;
+//
+//+ (NSString *)appLoginWithContactFieldId:(nullable NSNumber *)contactFieldId
+//                       contactFieldValue:(nullable NSString *)contactFieldValue;
+//
+//+ (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
+//
+//+ (NSString *)trackCustomEvent:(NSString *)eventName
+//               eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
+//
+//+ (NSString *)appLogout;
 
 @end
 
