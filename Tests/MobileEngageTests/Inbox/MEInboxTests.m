@@ -530,10 +530,10 @@ SPEC_BEGIN(MEInboxTests)
                     @"source": @"inbox"
                 });
 
-                [[requestManagerMock should] receive:@selector(submitRequestModel:)
-                                       withArguments:kw_any()];
+                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                       withArguments:kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:)
+                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                                 atIndex:0];
                 EMSNotification *message = [EMSNotification new];
                 message.sid = @"testID";
@@ -555,10 +555,10 @@ SPEC_BEGIN(MEInboxTests)
 
                 [requestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:@3
                                                                                          contactFieldValue:@"contactFieldValue"]];
-                [[requestManagerMock should] receive:@selector(submitRequestModel:)
-                                       withArguments:kw_any()];
+                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                       withArguments:kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:)
+                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                                 atIndex:0];
                 EMSNotification *message = [EMSNotification new];
                 message.sid = @"valueOfSid";
@@ -576,10 +576,10 @@ SPEC_BEGIN(MEInboxTests)
                     @"source": @"inbox"
                 });
 
-                [[requestManagerMock should] receive:@selector(submitRequestModel:)
-                                       withArguments:kw_any()];
+                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                       withArguments:kw_any(), kw_any()];
 
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:)
+                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                                 atIndex:0];
                 EMSNotification *message = [EMSNotification new];
                 message.sid = @"valueOfSid";
@@ -593,7 +593,7 @@ SPEC_BEGIN(MEInboxTests)
                 EMSNotification *message = [EMSNotification new];
                 message.sid = @"testID";
 
-                [[requestManagerMock should] receive:@selector(submitRequestModel:)];
+                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)];
 
                 [inbox trackNotificationOpenWithNotification:message];
             });

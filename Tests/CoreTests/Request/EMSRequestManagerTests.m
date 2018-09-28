@@ -4,7 +4,6 @@
 
 #import "Kiwi.h"
 #import "EMSRequestManager.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteQueueSchemaHandler.h"
 #import "EMSSchemaContract.h"
@@ -16,6 +15,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSWaiter.h"
+#import "NSError+EMSCore.h"
 
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -69,9 +69,37 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
 
-                [core submitRequestModel:model];
+                [core submitRequestModel:model withCompletionBlock:nil];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
+            });
+
+            it(@"should do networking with the gained EMSRequestModel and return success in completion block", ^{
+                NSString *url = @"https://www.google.com";
+
+                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodGET];
+                }                                       timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
+
+                EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                            NSLog(@"ERROR: %@", error);
+                            fail([NSString stringWithFormat:@"errorBlock: %@", error]);
+                        }                                          requestRepository:requestModelRepository
+                                                                     shardRepository:[EMSShardRepository new]
+                                                                       logRepository:nil];
+
+
+                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                __block NSError *returnedError = [NSError errorWithCode:500 localizedDescription:@"completion block not called!"];
+                [core submitRequestModel:model withCompletionBlock:^(NSError *error) {
+                    returnedError = error;
+                    [exp fulfill];
+                }];
+
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [[returnedError should] beNil];
             });
 
             it(@"should do networking with the gained EMSRequestModel and return failure", ^{
@@ -93,15 +121,42 @@ SPEC_BEGIN(EMSRequestManagerTests)
                         }                                          requestRepository:requestModelRepository
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
-                [core submitRequestModel:model];
+                [core submitRequestModel:model withCompletionBlock:nil];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
                 [[checkableError shouldNotEventually] beNil];
             });
 
+            it(@"should do networking with the gained EMSRequestModel and return success in completion block", ^{
+                NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
+
+                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodGET];
+                }                                       timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
+
+                EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                            fail([NSString stringWithFormat:@"SuccessBlock: %@", response]);
+                        }                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                        }                                          requestRepository:requestModelRepository
+                                                                     shardRepository:[EMSShardRepository new]
+                                                                       logRepository:nil];
+
+
+                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                __block NSError *returnedError = nil;
+                [core submitRequestModel:model withCompletionBlock:^(NSError *error) {
+                    returnedError = error;
+                    [exp fulfill];
+                }];
+
+                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [[returnedError shouldNot] beNil];
+            });
+
             it(@"should throw an exception, when requestModel is nil", ^{
                 @try {
-                    [requestManager submitRequestModel:nil];
+                    [requestManager submitRequestModel:nil withCompletionBlock:nil];
                     fail(@"Expected exception when requestModel is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -176,7 +231,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                         [builder setUrl:@"https://ems-denna.herokuapp.com/echo"];
                         [builder setMethod:HTTPMethodGET];
                     }                                       timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
-                    [requestManager submitRequestModel:model];
+                    [requestManager submitRequestModel:model withCompletionBlock:nil];
                 }
 
                 EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];

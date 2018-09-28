@@ -92,7 +92,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
                 EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper should] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];
-                [[requestManager should] receive:@selector(submitRequestModel:) withArguments:requestModel];
+                [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withArguments:requestModel, kw_any()];
                 [[shardRepository should] receive:@selector(remove:) withArguments:deleteByIdsSpecification];
 
                 triggerBlock();
@@ -117,7 +117,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
                 EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper shouldNot] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];
-                [[requestManager shouldNot] receive:@selector(submitRequestModel:) withArguments:requestModel];
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:withCompletionBlock:) withArguments:requestModel, kw_any()];
                 [[shardRepository shouldNot] receive:@selector(remove:) withArguments:deleteByIdsSpecification];
 
                 triggerBlock();

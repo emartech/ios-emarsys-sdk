@@ -84,20 +84,20 @@ static EMSSQLiteHelper *_dbHelper;
                                       sourceHandler:sourceHandler];
 }
 
-+ (NSString *)appLogin {
-    return [_mobileEngageInternal appLogin];
++ (void)appLogin {
+    [_mobileEngageInternal appLogin];
 }
 
-+ (NSString *)appLoginWithContactFieldId:(NSNumber *)contactFieldId
++ (void)appLoginWithContactFieldId:(NSNumber *)contactFieldId
                        contactFieldValue:(NSString *)contactFieldValue {
-    return [_mobileEngageInternal appLoginWithContactFieldValue:contactFieldValue];
+    [_mobileEngageInternal appLoginWithContactFieldValue:contactFieldValue];
 }
 
-+ (NSString *)appLogout {
-    return [_mobileEngageInternal appLogout];
++ (void)appLogout {
+    [_mobileEngageInternal appLogout];
 }
 
-+ (NSString *)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
++ (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
     NSNumber *inbox = userInfo[@"inbox"];
     if (inbox && [inbox boolValue]) {
         EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo];
@@ -105,11 +105,10 @@ static EMSSQLiteHelper *_dbHelper;
 
     }
     [_mobileEngageInternal trackMessageOpenWithUserInfo:userInfo];
-    return nil;
 }
 
-+ (NSString *)trackCustomEvent:(NSString *)eventName
-               eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
++ (void)trackCustomEvent:(NSString *)eventName
+         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
     return [_mobileEngageInternal trackCustomEvent:eventName
                                    eventAttributes:eventAttributes];
 }

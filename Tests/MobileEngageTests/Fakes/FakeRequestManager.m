@@ -31,7 +31,7 @@
     return self;
 }
 
-- (void)submitRequestModel:(EMSRequestModel *)model {
+- (void)submitRequestModel:(EMSRequestModel *)model withCompletionBlock:(EMSCompletionBlock)completionBlock {
     [_submittedModels addObject:model];
     [_expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForResult"]];
 

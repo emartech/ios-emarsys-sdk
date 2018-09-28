@@ -21,7 +21,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^MESuccessBlock)(NSString *requestId, EMSResponseModel *);
+
 typedef void (^MEErrorBlock)(NSString *requestId, NSError *error);
+
 typedef void (^MESourceHandler)(NSString *source);
 
 
@@ -43,24 +45,24 @@ typedef void (^MESourceHandler)(NSString *source);
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;
 
-//- (void) setupWithConfig:(nonnull EMSConfig *)config
-//           launchOptions:(NSDictionary *)launchOptions
-//requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
-//         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-//           logRepository:(MELogRepository *)logRepository
-//          requestContext:(MERequestContext *)requestContext;
+- (void)appLogin;
 
-- (NSString *)appLogin;
+- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
 
-- (NSString *)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
 
-- (NSString *)trackCustomEvent:(NSString *)eventName
-               eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
+- (void)trackCustomEvent:(nonnull NSString *)eventName
+         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
+
+- (void)trackCustomEvent:(nonnull NSString *)eventName
+         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+         completionBlock:(EMSCompletionBlock)completionBlock;
 
 - (NSString *)trackInternalCustomEvent:(NSString *)eventName
-                       eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
+                       eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
+                       completionBlock:(nullable EMSCompletionBlock)completionBlock;
 
-- (NSString *)appLogout;
+
+- (void)appLogout;
 
 @end
 

@@ -99,9 +99,9 @@ SPEC_BEGIN(OfflineTests)
                         }                                          requestRepository:requestModelRepository
                                                                      shardRepository:shardRepository
                                                                        logRepository:nil];
-                [core submitRequestModel:model1];
-                [core submitRequestModel:model2];
-                [core submitRequestModel:model3];
+                [core submitRequestModel:model1 withCompletionBlock:nil];
+                [core submitRequestModel:model2 withCompletionBlock:nil];
+                [core submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(checkableRequestId3) shouldEventuallyBeforeTimingOutAfter(30)] equal:model3.requestId];
                 [[expectFutureValue(checkableRequestId2) shouldEventuallyBeforeTimingOutAfter(30)] equal:model2.requestId];
@@ -128,9 +128,9 @@ SPEC_BEGIN(OfflineTests)
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1];
-                [manager submitRequestModel:model2];
-                [manager submitRequestModel:model3];
+                [manager submitRequestModel:model1 withCompletionBlock:nil];
+                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                [manager submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventually] equal:@3];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@0];
@@ -158,9 +158,9 @@ SPEC_BEGIN(OfflineTests)
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1];
-                [manager submitRequestModel:model2];
-                [manager submitRequestModel:model3];
+                [manager submitRequestModel:model1 withCompletionBlock:nil];
+                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                [manager submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@3];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@2];
@@ -190,9 +190,9 @@ SPEC_BEGIN(OfflineTests)
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1];
-                [manager submitRequestModel:model2];
-                [manager submitRequestModel:model3];
+                [manager submitRequestModel:model1 withCompletionBlock:nil];
+                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                [manager submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];
@@ -222,9 +222,9 @@ SPEC_BEGIN(OfflineTests)
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1];
-                [manager submitRequestModel:model2];
-                [manager submitRequestModel:model3];
+                [manager submitRequestModel:model1 withCompletionBlock:nil];
+                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                [manager submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@3];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@2];
@@ -253,9 +253,9 @@ SPEC_BEGIN(OfflineTests)
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1];
-                [manager submitRequestModel:model2];
-                [manager submitRequestModel:model3];
+                [manager submitRequestModel:model1 withCompletionBlock:nil];
+                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                [manager submitRequestModel:model3 withCompletionBlock:nil];
 
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];

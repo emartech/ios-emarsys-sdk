@@ -137,7 +137,7 @@
 
     requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxNotification
                                                                     requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel];;
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];;
 }
 
 

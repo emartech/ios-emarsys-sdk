@@ -43,54 +43,6 @@
     return self;
 }
 
-//- (void) setupWithConfig:(nonnull EMSConfig *)config
-//           launchOptions:(NSDictionary *)launchOptions
-//requestRepositoryFactory:(MERequestModelRepositoryFactory *)requestRepositoryFactory
-//         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-//           logRepository:(MELogRepository *)logRepository
-//          requestContext:(MERequestContext *)requestContext {
-//    NSParameterAssert(requestRepositoryFactory);
-//    __weak typeof(self) weakSelf = self;
-//    _successBlock = ^(NSString *requestId, EMSResponseModel *responseModel) {
-//        [weakSelf handleResponse:responseModel];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageLogReceivedWithEventId:log:)]) {
-//                [weakSelf.statusDelegate mobileEngageLogReceivedWithEventId:requestId
-//                                                                        log:@"Success"];
-//            }
-//        });
-//    };
-//    _errorBlock = ^(NSString *requestId, NSError *error) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if ([weakSelf.statusDelegate respondsToSelector:@selector(mobileEngageErrorHappenedWithEventId:error:)]) {
-//                [weakSelf.statusDelegate mobileEngageErrorHappenedWithEventId:requestId
-//                                                                        error:error];
-//            }
-//        });
-//    };
-//
-//    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
-//    const id <EMSRequestModelRepositoryProtocol> requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
-//    EMSRequestManager *manager = [EMSRequestManager managerWithSuccessBlock:self.successBlock
-//                                                                 errorBlock:self.errorBlock
-//                                                          requestRepository:requestRepository
-//                                                            shardRepository:shardRepository
-//                                                              logRepository:logRepository];
-//    [self setupWithRequestManager:manager
-//                           config:config
-//                    launchOptions:launchOptions
-//                   requestContext:requestContext];
-//}
-//
-//- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-//                 requestContext:(MERequestContext *)requestContext {
-//    [self setupWithRequestManager:requestManager
-//                           config:requestContext.config
-//                    launchOptions:nil
-//                   requestContext:requestContext];
-//}
-
-
 - (void)setupWithRequestManager:(EMSRequestManager *)requestManager
                          config:(nonnull EMSConfig *)config
                   launchOptions:(NSDictionary *)launchOptions
@@ -121,14 +73,13 @@
             [weakSelf.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"app:start"
                                                                                               eventAttributes:nil
                                                                                                          type:@"internal"
-                                                                                               requestContext:weakSelf.requestContext]];
+                                                                                               requestContext:weakSelf.requestContext] withCompletionBlock:nil];
         }
     }                           forNotification:UIApplicationDidBecomeActiveNotification];
 }
 
-
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler {
+            sourceHandler:(nullable MESourceHandler)sourceHandler withCompletionBlock:(EMSCompletionBlock)completionBlock {
     BOOL result = NO;
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         NSString *const webPageURL = userActivity.webpageURL.absoluteString;
@@ -141,10 +92,15 @@
                 sourceHandler(webPageURL);
             }
             [self.requestManager submitRequestModel:[MERequestFactory createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
-                                                                                                requestContext:self.requestContext]];
+                                                                                                requestContext:self.requestContext] withCompletionBlock:completionBlock];
         }
     }
     return result;
+}
+
+- (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
+            sourceHandler:(nullable MESourceHandler)sourceHandler {
+    return [self trackDeepLinkWith:userActivity sourceHandler:sourceHandler withCompletionBlock:nil];
 }
 
 - (NSURLQueryItem *)extractQueryItemFromUrl:(NSString *const)webPageURL
@@ -164,7 +120,7 @@
     [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:viewed"
                                                                                   eventAttributes:@{@"message_id": campaignId}
                                                                                              type:@"internal"
-                                                                                   requestContext:self.requestContext]];
+                                                                                   requestContext:self.requestContext] withCompletionBlock:nil];
 }
 
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
@@ -174,7 +130,7 @@
                                                                                           @"button_id": buttonId
                                                                                   }
                                                                                              type:@"internal"
-                                                                                   requestContext:self.requestContext]];
+                                                                                   requestContext:self.requestContext] withCompletionBlock:nil];
 }
 
 - (void)handleResponse:(EMSResponseModel *)model {
@@ -191,53 +147,44 @@
     }
 }
 
-- (NSString *)appLogin {
+- (void)appLogin {
     return [self appLoginWithContactFieldValue:nil];
 }
 
-- (NSString *)appLoginWithContactFieldValue:(NSString *)contactFieldValue {
+- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue {
+    [self appLoginWithContactFieldValue:contactFieldValue withCompletionBlock:nil];
+}
+
+- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue withCompletionBlock:(EMSCompletionBlock)completionBlock {
     self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
                                                                               contactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
                                                                                            requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel];
-    return requestModel.requestId;
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
 }
 
+- (void)appLogout {
+    [self appLogoutWithCompletionBlock:nil];
+}
 
-- (NSString *)appLogout {
+- (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [MERequestFactory createAppLogoutRequestWithRequestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel];
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     [self.requestContext reset];
-    return requestModel.requestId;
-}
-
-- (NSString *)trackMessageOpenWithUserInfoWithReturn:(NSDictionary *)userInfo {
-    NSString *messageId = [userInfo messageId];
-    EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
-                                                                                  requestContext:self.requestContext];
-    if (messageId) {
-        [self.requestManager submitRequestModel:requestModel];
-    } else {
-        self.errorBlock(requestModel.requestId, [NSError errorWithCode:1
-                                                  localizedDescription:@"Missing messageId"]);
-    }
-    return requestModel.requestId;
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
-    [self trackMessageOpenWith:userInfo
-               completionBlock:nil];
+    [self trackMessageOpenWithUserInfo:userInfo completionBlock:nil];
 }
 
-- (void)trackMessageOpenWith:(NSDictionary *)userInfo
-             completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
+                     completionBlock:(EMSCompletionBlock)completionBlock {
     NSString *messageId = [userInfo messageId];
     if (messageId) {
         EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
                                                                                       requestContext:self.requestContext];
-        [self.requestManager submitRequestModel:requestModel];
+        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     } else {
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing messageId"]);
@@ -245,25 +192,31 @@
 }
 
 
-- (NSString *)trackCustomEvent:(nonnull NSString *)eventName
-               eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
+- (void)trackCustomEvent:(nonnull NSString *)eventName
+         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
+    [self trackCustomEvent:eventName eventAttributes:eventAttributes completionBlock:nil];
+}
+
+- (void)trackCustomEvent:(nonnull NSString *)eventName
+         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
     EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
                                                                                  eventAttributes:eventAttributes
                                                                                   requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel];
-    return requestModel.requestId;
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
 }
 
 - (NSString *)trackInternalCustomEvent:(NSString *)eventName
-                       eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes {
+                       eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
+                       completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
     EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
                                                                           eventAttributes:eventAttributes
                                                                                      type:@"internal"
                                                                            requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel];
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     return requestModel.requestId;
 }
 

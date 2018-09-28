@@ -4,7 +4,6 @@
 
 #import "Kiwi.h"
 #import "EMSRequestModel.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSRequestManager.h"
 #import "EMSResponseModel.h"
 #import "NSDictionary+EMSCore.h"
@@ -46,7 +45,7 @@ SPEC_BEGIN(DennaTest)
                     }                                          requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
                                                                  shardRepository:[EMSShardRepository new]
                                                                    logRepository:nil];
-            [core submitRequestModel:model];
+            [core submitRequestModel:model withCompletionBlock:nil];
 
             [[expectFutureValue(resultMethod) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:method];
             [[theValue(expectedSubsetOfResultHeaders) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:theValue(YES)];
@@ -83,7 +82,7 @@ SPEC_BEGIN(DennaTest)
                                                                      shardRepository:[EMSShardRepository new]
                                                                        logRepository:nil];
 
-                [core submitRequestModel:model];
+                [core submitRequestModel:model withCompletionBlock:nil];
                 [[expectFutureValue(checkableRequestId) shouldEventually] beNil];
             });
 

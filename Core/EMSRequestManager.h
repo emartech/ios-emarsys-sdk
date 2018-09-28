@@ -7,6 +7,7 @@
 #import "EMSRequestModelRepositoryProtocol.h"
 #import "EMSShardRepositoryProtocol.h"
 #import "EMSLogRepositoryProtocol.h"
+#import "EMSBlocks.h"
 
 @class EMSRequestModel;
 
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
                         shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
                           logRepository:(id <EMSLogRepositoryProtocol> _Nullable)logRepository;
 
-- (void)submitRequestModel:(EMSRequestModel *)model;
+- (void)submitRequestModel:(EMSRequestModel *)model withCompletionBlock:(EMSCompletionBlock)completionBlock;
 - (void)submitShard:(EMSShard *)shard;
 
 @end

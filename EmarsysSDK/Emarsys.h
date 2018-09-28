@@ -28,7 +28,7 @@ typedef void (^EMSSourceHandler)(NSString *source);
 
 + (void)clearCustomer;
 
-+ (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock;
++ (void)clearCustomer:(EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
                         sourceHandler:(EMSSourceHandler)sourceHandler;

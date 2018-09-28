@@ -167,7 +167,7 @@
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing sid"]);
     } else {
-        [self.requestManager submitRequestModel:requestModel];
+        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     }
 }
 

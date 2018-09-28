@@ -81,7 +81,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                         eventAttributes:@{
                                                 @"button_id": action[@"id"],
                                                 @"title": action[@"title"]
-                                        }];
+                                        } completionBlock:nil];
         }
         NSString *type = action[@"type"];
         if ([type isEqualToString:@"MEAppEvent"]) {
@@ -93,7 +93,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                     completionHandler:nil];
         } else if ([type isEqualToString:@"MECustomEvent"]) {
             [self.mobileEngage trackCustomEvent:action[@"name"]
-                                eventAttributes:action[@"payload"]];
+                                eventAttributes:action[@"payload"]
+                                completionBlock:nil];
         }
     }
     completionHandler();

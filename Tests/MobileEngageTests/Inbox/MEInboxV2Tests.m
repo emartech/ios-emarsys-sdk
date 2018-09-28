@@ -1148,7 +1148,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 message.expirationTime = @100;
                 message.receivedAtTimestamp = @50;
 
-                [[requestManager shouldNot] receive:@selector(submitRequestModel:)];
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:withCompletionBlock:)];
 
                 __block NSError *reportedError;
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
@@ -1172,7 +1172,7 @@ SPEC_BEGIN(MEInboxV2Tests)
                 message.expirationTime = @100;
                 message.receivedAtTimestamp = @50;
 
-                [[requestManager shouldNot] receive:@selector(submitRequestModel:)];
+                [[requestManager shouldNot] receive:@selector(submitRequestModel:withCompletionBlock:)];
 
                 __block NSError *reportedError;
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];

@@ -20,7 +20,7 @@
         NSArray<EMSShard *> *shards = [shardRepository query:[EMSShardQueryAllSpecification new]];
         if ([shards count] > 0) {
             EMSRequestModel *requestModel = [predictMapper requestFromShards:shards];
-            [requestManager submitRequestModel:requestModel];
+            [requestManager submitRequestModel:requestModel withCompletionBlock:nil];
             [shardRepository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[shards.firstObject]]];
         }
     };

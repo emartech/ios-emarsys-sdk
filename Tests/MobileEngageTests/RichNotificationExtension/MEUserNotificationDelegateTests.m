@@ -74,7 +74,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     id userNotificationCenterDelegate = [KWMock mockForProtocol:@protocol(UNUserNotificationCenterDelegate)];
                     UNUserNotificationCenter *mockCenter = [UNUserNotificationCenter mock];
                     UNNotification *mockNotification = [UNNotification mock];
-                    void (^ const completionHandler)(UNNotificationPresentationOptions)=^(UNNotificationPresentationOptions options) {
+                    void (^ const completionHandler)(UNNotificationPresentationOptions) =^(UNNotificationPresentationOptions options) {
                     };
 
                     [[userNotificationCenterDelegate should] receive:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:) withArguments:mockCenter, mockNotification, completionHandler];
@@ -111,7 +111,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     id userNotificationCenterDelegate = [KWMock mockForProtocol:@protocol(UNUserNotificationCenterDelegate)];
                     UNUserNotificationCenter *center = [UNUserNotificationCenter nullMock];
                     UNNotificationResponse *notificationResponse = [UNNotificationResponse nullMock];
-                    void (^ const completionHandler)(void)=^{
+                    void (^ const completionHandler)(void) =^{
                     };
 
                     [[userNotificationCenterDelegate should] receive:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:) withArguments:center, notificationResponse, completionHandler];
@@ -145,15 +145,15 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     userNotification.eventHandler = eventHandlerMock;
 
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"MEAppEvent",
-                                @"name": eventName,
-                                @"payload": payload
-                            }
-                        ]}};
+                            @"actions": @[
+                                    @{
+                                            @"id": @"uniqueId",
+                                            @"title": @"actionTitle",
+                                            @"type": @"MEAppEvent",
+                                            @"name": eventName,
+                                            @"payload": payload
+                                    }
+                            ]}};
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -172,15 +172,15 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     userNotification.eventHandler = eventHandlerMock;
 
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"someStuff",
-                                @"name": @"testEventName",
-                                @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
-                            }
-                        ]}};
+                            @"actions": @[
+                                    @{
+                                            @"id": @"uniqueId",
+                                            @"title": @"actionTitle",
+                                            @"type": @"someStuff",
+                                            @"name": @"testEventName",
+                                            @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
+                                    }
+                            ]}};
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -198,16 +198,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                     MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mobileEngage inApp:[MEInApp nullMock]];
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"MECustomEvent",
-                                @"name": eventName,
-                                @"payload": payload
-                            }
-                        ]}};
-                    [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:) withArguments:eventName, payload];
+                            @"actions": @[
+                                    @{
+                                            @"id": @"uniqueId",
+                                            @"title": @"actionTitle",
+                                            @"type": @"MECustomEvent",
+                                            @"name": eventName,
+                                            @"payload": payload
+                                    }
+                            ]}};
+                    [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:) withArguments:eventName, payload, kw_any()];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -227,18 +227,18 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                     MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mobileEngage inApp:[MEInApp nullMock]];
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"MECustomEvent",
-                                @"name": eventName,
-                                @"payload": payload
-                            }
-                        ]}};
+                            @"actions": @[
+                                    @{
+                                            @"id": @"uniqueId",
+                                            @"title": @"actionTitle",
+                                            @"type": @"MECustomEvent",
+                                            @"name": eventName,
+                                            @"payload": payload
+                                    }
+                            ]}};
                     [[mobileEngage should] receive:@selector(trackMessageOpenWithUserInfo:)];
-                    [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:)];
-                    [[mobileEngage shouldNot] receive:@selector(trackInternalCustomEvent:eventAttributes:) withArguments:eventName, payload];
+                    [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)];
+                    [[mobileEngage shouldNot] receive:@selector(trackInternalCustomEvent:eventAttributes:completionBlock:) withArguments:eventName, payload, kw_any()];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -255,17 +255,17 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
                     MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mobileEngage inApp:[MEInApp nullMock]];
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"key": @"value"
-                            }
-                        ]}};
-                    [[mobileEngage should] receive:@selector(trackInternalCustomEvent:eventAttributes:) withArguments:@"richNotification:actionClicked", @{
-                        @"button_id": @"uniqueId",
-                        @"title": @"actionTitle"
-                    }];
+                            @"actions": @[
+                                    @{
+                                            @"id": @"uniqueId",
+                                            @"title": @"actionTitle",
+                                            @"key": @"value"
+                                    }
+                            ]}};
+                    [[mobileEngage should] receive:@selector(trackInternalCustomEvent:eventAttributes:completionBlock:) withArguments:@"richNotification:actionClicked", @{
+                            @"button_id": @"uniqueId",
+                            @"title": @"actionTitle"
+                    }, kw_any()];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -284,21 +284,21 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                     NSString *eventName = @"eventName";
                     NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"OpenExternalUrl",
-                            @"url": @"https://www.emarsys.com"
-                        }, @{
-                            @"id": @"uniqueId2",
-                            @"title": @"actionTitle",
-                            @"type": @"MECustomEvent",
-                            @"name": eventName,
-                            @"payload": payload
-                        }
+                            @{
+                                    @"id": @"uniqueId",
+                                    @"title": @"actionTitle",
+                                    @"type": @"OpenExternalUrl",
+                                    @"url": @"https://www.emarsys.com"
+                            }, @{
+                                    @"id": @"uniqueId2",
+                                    @"title": @"actionTitle",
+                                    @"type": @"MECustomEvent",
+                                    @"name": eventName,
+                                    @"payload": payload
+                            }
                     ]}};
 
-                    [[mockMEInternal should] receive:@selector(trackCustomEvent:eventAttributes:) withArguments:eventName, payload];
+                    [[mockMEInternal should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:) withArguments:eventName, payload, kw_any()];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -315,9 +315,9 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                     MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mobileEngage inApp:[MEInApp nullMock]];
                     NSDictionary *userInfo = @{@"ems": @{
-                        @"u": @{
-                            @"sid": @"123456789"
-                        }}};
+                            @"u": @{
+                                    @"sid": @"123456789"
+                            }}};
                     [[mobileEngage should] receive:@selector(trackMessageOpenWithUserInfo:)
                                      withArguments:userInfo];
 
@@ -338,12 +338,12 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                         MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:application mobileEngageInternal:[MobileEngageInternal nullMock] inApp:[MEInApp nullMock]];
                         NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                            @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"OpenExternalUrl",
-                                @"url": @"https://www.emarsys.com"
-                            }
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"OpenExternalUrl",
+                                        @"url": @"https://www.emarsys.com"
+                                }
                         ]}};
 
                         XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -369,10 +369,10 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                      inApp:inApp];
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"inapp": @{
-                        @"campaign_id": @"42",
-                        @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
-                    }}};
+                        @"inapp": @{
+                                @"campaign_id": @"42",
+                                @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+                        }}};
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [notificationDelegate userNotificationCenter:nil
