@@ -1,126 +1,154 @@
 //
-// Copyright (c) 2018 Emarsys. All rights reserved.
+//  Copyright © 2018. Emarsys. All rights reserved.
 //
-#import "EMSDependencyContainer.h"
-#import "MobileEngageInternal.h"
-#import "MEExperimental.h"
-#import "MERequestContext.h"
-#import "MEInApp.h"
-#import "MELogRepository.h"
-#import "EMSShardRepository.h"
-#import "EMSSQLiteHelper.h"
-#import "MERequestModelRepositoryFactory.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+
+#import <XCTest/XCTest.h>
+#import "Kiwi.h"
+#import "Emarsys.h"
 #import "PredictInternal.h"
-#import "EMSPredictAggregateShardsTrigger.h"
-#import "PRERequestContext.h"
-#import "EMSUUIDProvider.h"
-#import "EMSSchemaContract.h"
-#import "EMSPredictMapper.h"
-#import "EMSAbstractResponseHandler.h"
-#import "EMSVisitorIdResponseHandler.h"
-#import "MEInboxV2.h"
-#import "MEInbox.h"
-#import "MENotificationCenterManager.h"
+#import "MobileEngageInternal.h"
+#import "EMSSQLiteHelper.h"
+#import "EMSDBTriggerKey.h"
+#import "EMSDependencyContainer.h"
 
-#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
+@interface Emarsys ()
 
-@interface EMSDependencyContainer ()
-
-@property(nonatomic, strong) EMSRequestManager *requestManager;
-@property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) PRERequestContext *predictRequestContext;
-@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
-@property(nonatomic, strong) EMSRESTClient *restClient;
-@property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
-
-- (void)initializeDependenciesWithConfig:(EMSConfig *)config;
-
-- (void)initializeInstances;
-
-- (void)handleResponse:(EMSResponseModel *)responseModel;
++ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
++ (EMSSQLiteHelper *)sqliteHelper;
 
 @end
 
-@implementation EMSDependencyContainer
+SPEC_BEGIN(EmarsysTests)
 
-- (instancetype)initWithConfig:(EMSConfig *)config {
-    if (self = [super init]) {
-        [self initializeDependenciesWithConfig:config];
-        [self initializeInstances];
-    }
-    return self;
-}
+        __block PredictInternal *predict;
+        __block MobileEngageInternal *engage;
+        __block EMSDependencyContainer *container;
+        NSString *const customerId = @"customerId";
 
-- (void)initializeDependenciesWithConfig:(EMSConfig *)config {
-    [MEExperimental enableFeatures:config.experimentalFeatures];
-    _requestContext = [[MERequestContext alloc] initWithConfig:config];
-    _notificationCenterManager = [MENotificationCenterManager new];
+        beforeEach(^{
+            predict = [PredictInternal nullMock];
+            engage = [MobileEngageInternal nullMock];
+            container = [EMSDependencyContainer nullMock];
 
-    _iam = [MEInApp new];
-    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
-                                               schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
-    [_dbHelper open];
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                [builder setMobileEngageApplicationCode:@"applicationCode"
+                                    applicationPassword:@"applicationPassword"];
+                [builder setContactFieldId:@32];
+                [builder setMerchantId:@"merchantId"];
+            }];
+            [Emarsys setupWithConfig:config];
 
-    MELogRepository *logRepository = [MELogRepository new];
-    EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
-    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
-                                                                                                        requestContext:self.requestContext];
+            [container stub:@selector(mobileEngage)
+                  andReturn:engage];
+            [container stub:@selector(predict)
+                  andReturn:predict];
+            [Emarsys setDependencyContainer:container];
+        });
 
-    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
-    _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
+        describe(@"setupWithConfig:", ^{
+            it(@"should set predict", ^{
+                [[(NSObject *) [Emarsys predict] shouldNot] beNil];
+            });
+
+            it(@"should set push", ^{
+                [[(NSObject *) [Emarsys push] shouldNot] beNil];
+            });
+
+            it(@"register Predict trigger", ^{
+                EMSConfig *configMock = [EMSConfig nullMock];
+                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
+                [Emarsys setupWithConfig:configMock];
+
+                NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
+
+                NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                                                         withEvent:[EMSDBTriggerEvent insertEvent]
+                                                                                          withType:[EMSDBTriggerType afterType]]];
+                [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
+            });
+
+            it(@"should throw an exception when there is no config set", ^{
+
+                @try {
+                    [Emarsys setupWithConfig:nil];
+                    fail(@"Expected Exception when config is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
+
+        describe(@"setCustomerWithCustomerId:resultBlock:", ^{
+            it(@"should delegate the call to predictInternal", ^{
+                [[predict should] receive:@selector(setCustomerWithId:)
+                            withArguments:customerId];
+                [Emarsys setCustomerWithId:customerId];
+            });
+
+            it(@"should delegate the call to mobileEngageInternal", ^{
+                [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
+                           withArguments:customerId, kw_any()];
+                [Emarsys setCustomerWithId:customerId];
+            });
+
+            it(@"should delegate the call to mobileEngageInternal with customerId and completionBlock", ^{
+                void (^ const completionBlock)(NSError *) = ^(NSError *error) {};
+
+                [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
+                           withArguments:customerId, completionBlock];
+
+                [Emarsys setCustomerWithId:customerId
+                           completionBlock:completionBlock];
+            });
+        });
+
+        describe(@"clearCustomer", ^{
+            it(@"should delegate call to MobileEngage", ^{
+                [[engage should] receive:@selector(appLogout)];
+
+                [Emarsys clearCustomer];
+            });
+
+            it(@"should delegate call to Predict", ^{
+                [[predict should] receive:@selector(clearCustomer)];
+
+                [Emarsys clearCustomer];
+            });
+        });
+
+        context(@"production setup", ^{
+
+            beforeEach(^{
+                EMSConfig *configMock = [EMSConfig nullMock];
+                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
+                [Emarsys setupWithConfig:configMock];
+            });
+
+            describe(@"push", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.push) shouldNot] beNil];
+                });
+            });
+
+            describe(@"inbox", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.inbox) shouldNot] beNil];
+                });
+            });
+
+            describe(@"inApp", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.inApp) shouldNot] beNil];
+                });
+            });
 
 
-    __weak typeof(self) weakSelf = self;
-    _requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-            [weakSelf handleResponse:response];
-        }
-                                                      errorBlock:^(NSString *requestId, NSError *error) {
-                                                      }
-                                               requestRepository:self.requestRepository
-                                                 shardRepository:shardRepository
-                                                   logRepository:logRepository];
+            describe(@"predict", ^{
+                it(@"should not be nil", ^{
+                    [[((NSObject *) Emarsys.predict) shouldNot] beNil];
+                });
+            });
+        });
 
-    _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
-                                                                     uuidProvider:[EMSUUIDProvider new]
-                                                                       merchantId:config.merchantId];
-    _responseHandlers = @[[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
-    EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
-
-    [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
-                                triggerType:EMSDBTriggerType.afterType
-                               triggerEvent:EMSDBTriggerEvent.insertEvent
-                               triggerBlock:[trigger createTriggerBlockWithRequestManager:self.requestManager
-                                                                                   mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
-                                                                               repository:shardRepository]];
-    _restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
-    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        _inbox = [[MEInboxV2 alloc] initWithConfig:config
-                                    requestContext:self.requestContext
-                                        restClient:self.restClient
-                                     notifications:[NSMutableArray new]
-                                 timestampProvider:[EMSTimestampProvider new]
-                                    requestManager:self.requestManager];
-    } else {
-        _inbox = [[MEInbox alloc] initWithConfig:config
-                                  requestContext:self.requestContext
-                                      restClient:self.restClient
-                                  requestManager:self.requestManager];
-    }
-}
-
-- (void)initializeInstances {
-    _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
-                                                requestManager:self.requestManager];
-    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
-                                                          requestContext:self.requestContext
-                                               notificationCenterManager:self.notificationCenterManager];
-}
-
-- (void)handleResponse:(EMSResponseModel *)responseModel {
-    for (EMSAbstractResponseHandler *handler in self.responseHandlers) {
-        [handler processResponse:responseModel];
-    }
-}
-
-@end
+SPEC_END

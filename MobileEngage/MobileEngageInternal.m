@@ -152,16 +152,19 @@
 }
 
 - (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue {
-    [self appLoginWithContactFieldValue:contactFieldValue withCompletionBlock:nil];
+    [self appLoginWithContactFieldValue:contactFieldValue
+                        completionBlock:nil];
 }
 
-- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue withCompletionBlock:(EMSCompletionBlock)completionBlock {
+- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue
+                      completionBlock:(EMSCompletionBlock)completionBlock {
     self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
                                                                               contactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
                                                                                            requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
 }
 
 - (void)appLogout {

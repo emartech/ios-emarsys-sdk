@@ -21,12 +21,15 @@ static EMSDependencyContainer *_dependencyContainer;
 
 + (void)setCustomerWithId:(NSString *)customerId
           completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(customerId);
+    [_dependencyContainer.predict setCustomerWithId:customerId];
+    [_dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId
+                                                     completionBlock:completionBlock];
 }
 
 + (void)setCustomerWithId:(NSString *)customerId {
-    NSParameterAssert(customerId);
-    [_dependencyContainer.predict setCustomerWithId:customerId];
-    [_dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId];
+    [Emarsys setCustomerWithId:customerId
+               completionBlock:nil];
 }
 
 + (void)clearCustomer {

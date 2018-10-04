@@ -49,6 +49,9 @@ typedef void (^MESourceHandler)(NSString *source);
 
 - (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
 
+- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue
+                      completionBlock:(EMSCompletionBlock)completionBlock;
+
 
 - (void)trackCustomEvent:(nonnull NSString *)eventName
          eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;

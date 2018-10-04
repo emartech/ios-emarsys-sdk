@@ -8,6 +8,8 @@
 #import "EMSShardRepositoryProtocol.h"
 #import "EMSLogRepositoryProtocol.h"
 #import "EMSBlocks.h"
+#import "EMSCompletionMiddleware.h"
+#import "EMSWorkerProtocol.h"
 
 @class EMSRequestModel;
 
@@ -19,13 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) id <EMSShardRepositoryProtocol> shardRepository;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> *additionalHeaders;
 
-+ (instancetype)managerWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
-                             errorBlock:(nullable CoreErrorBlock)errorBlock
-                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                        shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-                          logRepository:(id <EMSLogRepositoryProtocol> _Nullable)logRepository;
+- (instancetype)initWithCoreQueue:(NSOperationQueue *)coreQueue
+             completionMiddleware:(EMSCompletionMiddleware *)completionMiddleware
+                           worker:(id <EMSWorkerProtocol>)worker
+                requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+                  shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository;
 
-- (void)submitRequestModel:(EMSRequestModel *)model withCompletionBlock:(EMSCompletionBlock)completionBlock;
+- (void)submitRequestModel:(EMSRequestModel *)model
+       withCompletionBlock:(EMSCompletionBlock)completionBlock;
+
 - (void)submitShard:(EMSShard *)shard;
 
 @end

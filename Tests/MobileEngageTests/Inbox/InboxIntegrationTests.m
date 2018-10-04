@@ -20,7 +20,13 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [builder setContactFieldId:@3];
             }];
             [Emarsys setupWithConfig:config];
-            [Emarsys setCustomerWithId:@"test@test.com"];
+            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waiForResult"];
+            [Emarsys setCustomerWithId:@"test@test.com"
+                       completionBlock:^(NSError *error) {
+                           [expectation fulfill];
+                       }];
+            [EMSWaiter waitForExpectations:@[expectation]
+                                   timeout:5];
         });
 
         describe(@"Notification Inbox", ^{
@@ -42,7 +48,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[_inboxStatus shouldNotEventually] beNil];
             });
 
-            xit(@"fetchNotificationsWithResultBlock result should contain the gained notification", ^{
+            it(@"fetchNotificationsWithResultBlock result should contain the gained notification", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{

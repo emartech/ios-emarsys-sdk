@@ -22,6 +22,7 @@
 #import "MEInboxV2.h"
 #import "MEInbox.h"
 #import "MENotificationCenterManager.h"
+#import "EMSDefaultWorker.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -33,6 +34,7 @@
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -70,16 +72,26 @@
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
 
+    _operationQueue = [NSOperationQueue new];
+    _operationQueue.maxConcurrentOperationCount = 1;
+    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
 
     __weak typeof(self) weakSelf = self;
-    _requestManager = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+    EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
             [weakSelf handleResponse:response];
         }
-                                                      errorBlock:^(NSString *requestId, NSError *error) {
-                                                      }
-                                               requestRepository:self.requestRepository
-                                                 shardRepository:shardRepository
-                                                   logRepository:logRepository];
+                                                                                     errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                     }];
+    EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
+                                                              requestRepository:self.requestRepository
+                                                                  logRepository:logRepository
+                                                                   successBlock:middleware.successBlock
+                                                                     errorBlock:middleware.errorBlock];
+    _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.operationQueue
+                                              completionMiddleware:middleware
+                                                            worker:worker
+                                                 requestRepository:self.requestRepository
+                                                   shardRepository:shardRepository];
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                      uuidProvider:[EMSUUIDProvider new]

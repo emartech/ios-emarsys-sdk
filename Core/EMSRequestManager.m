@@ -3,12 +3,8 @@
 //
 
 #import "EMSRequestManager.h"
-#import "EMSResponseModel.h"
-#import "EMSWorkerProtocol.h"
-#import "EMSDefaultWorker.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
-#import "EMSCompletionMiddleware.h"
 
 typedef void (^RunnerBlock)(void);
 
@@ -26,55 +22,33 @@ typedef void (^RunnerBlock)(void);
 
 #pragma mark - Init
 
-+ (instancetype)managerWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
-                             errorBlock:(nullable CoreErrorBlock)errorBlock
-                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                        shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-                          logRepository:(id <EMSLogRepositoryProtocol>)logRepository {
-    return [[EMSRequestManager alloc] initWithSuccessBlock:successBlock
-                                                errorBlock:errorBlock
-                                         requestRepository:requestRepository
-                                           shardRepository:shardRepository
-                                             logRepository:logRepository];
-}
-
-- (instancetype)initWithSuccessBlock:(nullable CoreSuccessBlock)successBlock
-                          errorBlock:(nullable CoreErrorBlock)errorBlock
-                   requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                     shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
-                       logRepository:(id <EMSLogRepositoryProtocol>)logRepository {
+- (instancetype)initWithCoreQueue:(NSOperationQueue *)coreQueue
+             completionMiddleware:(EMSCompletionMiddleware *)completionMiddleware
+                           worker:(id <EMSWorkerProtocol>)worker
+                requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+                  shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository {
+    NSParameterAssert(coreQueue);
+    NSParameterAssert(completionMiddleware);
+    NSParameterAssert(worker);
+    NSParameterAssert(requestRepository);
+    NSParameterAssert(shardRepository);
     if (self = [super init]) {
-        _completionMiddleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock errorBlock:errorBlock];
-        _coreQueue = [NSOperationQueue new];
-        _coreQueue.maxConcurrentOperationCount = 1;
-        _coreQueue.qualityOfService = NSQualityOfServiceUtility;
-        _worker = [[EMSDefaultWorker alloc] initWithOperationQueue:_coreQueue
-                                                 requestRepository:requestRepository
-                                                     logRepository:logRepository
-                                                      successBlock:self.completionMiddleware.successBlock
-                                                        errorBlock:self.completionMiddleware.errorBlock];
+        _coreQueue = coreQueue;
+        _completionMiddleware = completionMiddleware;
+        _worker = worker;
         _requestModelRepository = requestRepository;
         _shardRepository = shardRepository;
     }
     return self;
 }
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
-                                worker:(id <EMSWorkerProtocol>)worker
-                     requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository {
-    if (self = [super init]) {
-        _coreQueue = operationQueue;
-        _requestModelRepository = repository;
-        _worker = worker;
-    }
-    return self;
-}
-
 #pragma mark - Public methods
 
-- (void)submitRequestModel:(EMSRequestModel *)model withCompletionBlock:(EMSCompletionBlock)completionBlock {
+- (void)submitRequestModel:(EMSRequestModel *)model
+       withCompletionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(model);
-    [self.completionMiddleware registerCompletionBlock:completionBlock forRequestModel:model];
+    [self.completionMiddleware registerCompletionBlock:completionBlock
+                                       forRequestModel:model];
     [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
                     message:[NSString stringWithFormat:@"Argument: %@", model]];
 
