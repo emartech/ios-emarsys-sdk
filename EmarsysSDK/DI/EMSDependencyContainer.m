@@ -106,11 +106,12 @@
                                                                                    mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
                                                                                repository:shardRepository]];
     _restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
+    _notificationCache = [[EMSNotificationCache alloc] init];
     if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
         _inbox = [[MEInboxV2 alloc] initWithConfig:config
                                     requestContext:self.requestContext
+                                 notificationCache:self.notificationCache
                                         restClient:self.restClient
-                                     notifications:[NSMutableArray new]
                                  timestampProvider:[EMSTimestampProvider new]
                                     requestManager:self.requestManager];
     } else {

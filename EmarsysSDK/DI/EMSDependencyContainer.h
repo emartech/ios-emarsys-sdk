@@ -8,6 +8,7 @@
 @class MEInApp;
 @class PredictInternal;
 @class EMSSQLiteHelper;
+@class EMSNotificationCache;
 @protocol EMSInboxProtocol;
 @protocol EMSRequestModelRepositoryProtocol;
 
@@ -20,6 +21,7 @@
 @property(nonatomic, readonly) MEInApp *iam;
 @property(nonatomic, readonly) PredictInternal *predict;
 @property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> requestRepository;
+@property(nonatomic, readonly) EMSNotificationCache *notificationCache;
 
 - (instancetype)initWithConfig:(EMSConfig *)config;
 

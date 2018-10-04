@@ -16,11 +16,11 @@
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSConfig *config;
-@property(nonatomic, strong) NSMutableArray *notifications;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *resultBlocks;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, assign) BOOL fetchRequestInProgress;
+@property(nonatomic, strong) EMSNotificationCache *notificationCache;
 
 @end
 
@@ -28,20 +28,20 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
+             notificationCache:(EMSNotificationCache *)notificationCache
                     restClient:(EMSRESTClient *)restClient
-                 notifications:(NSMutableArray *)notifications
              timestampProvider:(EMSTimestampProvider *)timestampProvider
                 requestManager:(EMSRequestManager *)requestManager {
     if (self = [super init]) {
         NSParameterAssert(timestampProvider);
-        NSParameterAssert(notifications);
+        NSParameterAssert(notificationCache);
         NSParameterAssert(config);
         NSParameterAssert(restClient);
         NSParameterAssert(requestContext);
         NSParameterAssert(requestManager);
         _restClient = restClient;
         _config = config;
-        _notifications = notifications;
+        _notificationCache = notificationCache;
         _requestContext = requestContext;
         _timestampProvider = timestampProvider;
         _resultBlocks = [NSMutableArray new];
@@ -54,7 +54,8 @@
 - (void)fetchNotificationsWithResultBlock:(EMSFetchNotificationResultBlock)resultBlock {
     NSParameterAssert(resultBlock);
     if (self.lastNotificationStatus && [[self.timestampProvider provideTimestamp] timeIntervalSinceDate:self.responseTimestamp] < 60) {
-        resultBlock([self mergedStatusWithStatus:self.lastNotificationStatus], nil);
+        self.lastNotificationStatus.notifications = [self.notificationCache mergeWithNotifications:self.lastNotificationStatus.notifications];
+        resultBlock(self.lastNotificationStatus, nil);
         return;
     } else if (self.fetchRequestInProgress) {
         [self.resultBlocks addObject:[resultBlock copy]];
@@ -83,11 +84,12 @@
                                         weakSelf.fetchRequestInProgress = NO;
 
                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                            EMSNotificationInboxStatus *inboxStatus = [weakSelf mergedStatusWithStatus:status];
+                                            status.notifications = [weakSelf.notificationCache mergeWithNotifications:status.notifications];
+                                            EMSNotificationInboxStatus *inboxStatus = status;
                                             resultBlock(inboxStatus, nil);
 
-                                            for (MEInboxResultBlock successBlock in weakSelf.resultBlocks) {
-                                                successBlock(inboxStatus);
+                                            for (EMSFetchNotificationResultBlock successBlock in weakSelf.resultBlocks) {
+                                                successBlock(inboxStatus, nil);
                                             }
                                             [weakSelf.resultBlocks removeAllObjects];
                                         });
@@ -180,11 +182,6 @@
     [self resetBadgeCountWithCompletionBlock:nil];
 }
 
-- (void)addNotification:(EMSNotification *)notification {
-    [self.notifications insertObject:notification
-                             atIndex:0];
-}
-
 - (void)purgeNotificationCache {
     if (!self.purgeTimestamp || [[self.timestampProvider provideTimestamp] timeIntervalSinceDate:self.purgeTimestamp] >= 60) {
         self.lastNotificationStatus = nil;
@@ -201,28 +198,6 @@
     mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode
                                                                                      password:self.config.applicationPassword];
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
-}
-
-- (EMSNotificationInboxStatus *)mergedStatusWithStatus:(EMSNotificationInboxStatus *)status {
-    [self invalidateCachedNotifications:status];
-
-    NSMutableArray *statusNotifications = [NSMutableArray new];
-    [statusNotifications addObjectsFromArray:self.notifications];
-    [statusNotifications addObjectsFromArray:status.notifications];
-    status.notifications = statusNotifications;
-    return status;
-}
-
-- (void)invalidateCachedNotifications:(EMSNotificationInboxStatus *)status {
-    for (int i = (int) [self.notifications count] - 1; i >= 0; --i) {
-        EMSNotification *notification = self.notifications[(NSUInteger) i];
-        for (EMSNotification *currentNotification in status.notifications) {
-            if ([currentNotification.id isEqual:notification.id]) {
-                [self.notifications removeObjectAtIndex:(NSUInteger) i];
-                break;
-            }
-        }
-    }
 }
 
 @end

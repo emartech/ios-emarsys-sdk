@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEInboxProtocol.h"
+//#import "MEInboxProtocol.h"
 #import "MEUserNotificationCenterDelegate.h"
 #import "MEInApp.h"
 
@@ -19,7 +19,7 @@ typedef void(^MESourceHandler)(NSString *source);
 @interface MobileEngage : NSObject
 
 @property(class, nonatomic, weak, nullable) id <MobileEngageStatusDelegate> statusDelegate;
-@property(class, nonatomic, readonly) id<MEInboxProtocol> inbox;
+//@property(class, nonatomic, readonly) id<MEInboxProtocol> inbox;
 @property(class, nonatomic, readonly) MEInApp *inApp;
 @property(class, nonatomic, readonly) id<MEUserNotificationCenterDelegate> notificationCenterDelegate;
 

@@ -5,11 +5,11 @@
 #import <Foundation/Foundation.h>
 #import "EMSRESTClient.h"
 #import "EMSRequestManager.h"
-#import "MEInboxProtocol.h"
-#import "MEInboxNotificationProtocol.h"
 #import "MERequestContext.h"
+#import "EMSInboxProtocol.h"
+#import "EMSNotificationCache.h"
 
-@interface MEInboxV2 : NSObject <MEInboxNotificationProtocol>
+@interface MEInboxV2 : NSObject <EMSInboxProtocol>
 
 @property(nonatomic, strong) EMSNotificationInboxStatus *lastNotificationStatus;
 @property(nonatomic, strong) NSDate *responseTimestamp;
@@ -17,8 +17,8 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
+             notificationCache:(EMSNotificationCache *)notificationCache
                     restClient:(EMSRESTClient *)restClient
-                 notifications:(NSMutableArray *)notifications
              timestampProvider:(EMSTimestampProvider *)timestampProvider
                 requestManager:(EMSRequestManager *)requestManager;
 

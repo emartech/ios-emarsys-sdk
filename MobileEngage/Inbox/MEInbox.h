@@ -4,14 +4,13 @@
 
 #import <Foundation/Foundation.h>
 #import "EMSNotificationInboxStatus.h"
-#import "MEInboxProtocol.h"
-#import "MEInboxNotificationProtocol.h"
 #import "MERequestContext.h"
+#import "EMSInboxProtocol.h"
 
 @class EMSRESTClient;
 @class EMSRequestManager;
 
-@interface MEInbox : NSObject <MEInboxNotificationProtocol>
+@interface MEInbox : NSObject <EMSInboxProtocol>
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext

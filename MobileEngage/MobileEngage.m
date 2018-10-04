@@ -121,9 +121,9 @@ static EMSSQLiteHelper *_dbHelper;
     return [_mobileEngageInternal statusDelegate];
 }
 
-+ (id <MEInboxProtocol>)inbox {
-    return _inbox;
-}
+//+ (id <MEInboxProtocol>)inbox {
+//    return _inbox;
+//}
 
 + (MEInApp *)inApp {
     return _iam;
