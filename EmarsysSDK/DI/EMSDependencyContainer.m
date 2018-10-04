@@ -23,6 +23,10 @@
 #import "MEInbox.h"
 #import "MENotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
+#import "MEIdResponseHandler.h"
+#import "MEIAMResponseHandler.h"
+#import "MEIAMCleanupResponseHandler.h"
+#import "MESchemaDelegate.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -96,7 +100,22 @@
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                      uuidProvider:[EMSUUIDProvider new]
                                                                        merchantId:config.merchantId];
-    _responseHandlers = @[[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
+    NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
+    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
+        [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    }
+    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
+        EMSSQLiteHelper *meDbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
+                                                                     schemaDelegate:[MESchemaDelegate new]];
+        [meDbHelper open];
+        [responseHandlers addObjectsFromArray:@[
+            [MEIAMResponseHandler new],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:meDbHelper]
+                                                          displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper]]]
+        ];
+    }
+    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
+    _responseHandlers = [NSArray arrayWithArray:responseHandlers];
     EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
 
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
@@ -128,7 +147,8 @@
                                                 requestManager:self.requestManager];
     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
                                                           requestContext:self.requestContext
-                                               notificationCenterManager:self.notificationCenterManager];
+                                               notificationCenterManager:self.notificationCenterManager
+                                                       notificationCache:self.notificationCache];
 }
 
 - (void)handleResponse:(EMSResponseModel *)responseModel {

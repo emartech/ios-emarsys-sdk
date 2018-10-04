@@ -92,7 +92,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[returnedNotification.id should] equal:notificationId];
             });
 
-            xit(@"fetchNotificationsWithResultBlock result should contain the gained notification with title and body", ^{
+            it(@"fetchNotificationsWithResultBlock result should contain the gained notification with title and body", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{

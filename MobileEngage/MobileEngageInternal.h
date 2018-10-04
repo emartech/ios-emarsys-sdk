@@ -17,6 +17,7 @@
 @class MEInApp;
 @class MERequestModelRepositoryFactory;
 @class MELogRepository;
+@class EMSNotificationCache;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,7 +41,8 @@ typedef void (^MESourceHandler)(NSString *source);
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
-             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager;
+             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
+                     notificationCache:(EMSNotificationCache *)notificationCache;
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(nullable MESourceHandler)sourceHandler;

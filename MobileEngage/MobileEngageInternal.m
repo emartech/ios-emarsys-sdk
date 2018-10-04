@@ -8,23 +8,18 @@
 #import "NSError+EMSCore.h"
 #import "MEDefaultHeaders.h"
 #import "EMSAbstractResponseHandler.h"
-#import "MEIdResponseHandler.h"
-#import "MEIAMResponseHandler.h"
-#import "MEExperimental.h"
-#import "MEButtonClickRepository.h"
 #import "MobileEngage.h"
-#import "MobileEngage+Private.h"
-#import "MEDisplayedIAMRepository.h"
-#import "MEIAMCleanupResponseHandler.h"
 #import "MENotificationCenterManager.h"
 #import "MERequestContext.h"
 #import "MERequestFactory.h"
+#import "EMSNotificationCache.h"
 #import <UIKit/UIKit.h>
 
 @interface MobileEngageInternal ()
 
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) EMSNotificationCache *notificationCache;
 
 @end
 
@@ -32,8 +27,10 @@
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
-             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager {
+             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
+                     notificationCache:(EMSNotificationCache *)notificationCache {
     if (self = [super init]) {
+        _notificationCache = notificationCache;
         [self setupWithRequestManager:requestManager
                                config:requestContext.config
                         launchOptions:nil
@@ -55,16 +52,7 @@
     [requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.config]];
 
     NSMutableArray *responseHandlers = [NSMutableArray array];
-    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:_requestContext]];
-    }
-    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
-        [responseHandlers addObjectsFromArray:@[
-                [MEIAMResponseHandler new],
-                [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                              displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]]]
-        ];
-    }
+
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
     __weak typeof(self) weakSelf = self;
@@ -178,11 +166,16 @@
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
-    [self trackMessageOpenWithUserInfo:userInfo completionBlock:nil];
+    [self trackMessageOpenWithUserInfo:userInfo
+                       completionBlock:nil];
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(EMSCompletionBlock)completionBlock {
+        NSNumber *inbox = userInfo[@"inbox"];
+    if (inbox && [inbox boolValue]) {
+        [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo]];
+    }
     NSString *messageId = [userInfo messageId];
     if (messageId) {
         EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
