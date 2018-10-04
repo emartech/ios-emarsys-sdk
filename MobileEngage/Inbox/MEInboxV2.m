@@ -32,20 +32,20 @@
                     restClient:(EMSRESTClient *)restClient
              timestampProvider:(EMSTimestampProvider *)timestampProvider
                 requestManager:(EMSRequestManager *)requestManager {
+    NSParameterAssert(config);
+    NSParameterAssert(requestContext);
+    NSParameterAssert(notificationCache);
+    NSParameterAssert(restClient);
+    NSParameterAssert(timestampProvider);
+    NSParameterAssert(requestManager);
     if (self = [super init]) {
-        NSParameterAssert(timestampProvider);
-        NSParameterAssert(notificationCache);
-        NSParameterAssert(config);
-        NSParameterAssert(restClient);
-        NSParameterAssert(requestContext);
-        NSParameterAssert(requestManager);
-        _restClient = restClient;
         _config = config;
-        _notificationCache = notificationCache;
         _requestContext = requestContext;
+        _notificationCache = notificationCache;
+        _restClient = restClient;
         _timestampProvider = timestampProvider;
-        _resultBlocks = [NSMutableArray new];
         _requestManager = requestManager;
+        _resultBlocks = [NSMutableArray new];
     }
     return self;
 }

@@ -95,8 +95,8 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
-                    [[MEInboxV2 alloc] initWithConfig:config
-                                       requestContext:requestContext
+                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
+                                       requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
                                            restClient:[EMSRESTClient mock]
                                     timestampProvider:nil
@@ -111,8 +111,8 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should throw exception when notificationCache is nil", ^{
                 @try {
-                    [[MEInboxV2 alloc] initWithConfig:config
-                                       requestContext:requestContext
+                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
+                                       requestContext:[MERequestContext mock]
                                     notificationCache:nil
                                            restClient:[EMSRESTClient mock]
                                     timestampProvider:[EMSTimestampProvider new]
@@ -127,7 +127,7 @@ SPEC_BEGIN(MEInboxV2Tests)
             it(@"should throw exception when config is nil", ^{
                 @try {
                     [[MEInboxV2 alloc] initWithConfig:nil
-                                       requestContext:requestContext
+                                       requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
                                            restClient:[EMSRESTClient mock]
                                     timestampProvider:[EMSTimestampProvider new]
@@ -141,7 +141,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should throw exception when requestContext is nil", ^{
                 @try {
-                    [[MEInboxV2 alloc] initWithConfig:config
+                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:nil
                                     notificationCache:[EMSNotificationCache mock]
                                            restClient:[EMSRESTClient mock]
@@ -156,7 +156,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should throw exception when restClient is nil", ^{
                 @try {
-                    [[MEInboxV2 alloc] initWithConfig:config
+                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
                                            restClient:nil
@@ -171,7 +171,7 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should throw exception when requestManager is nil", ^{
                 @try {
-                    [[MEInboxV2 alloc] initWithConfig:config
+                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
                                            restClient:[EMSRESTClient mock]

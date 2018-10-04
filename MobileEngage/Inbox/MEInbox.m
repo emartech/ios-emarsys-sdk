@@ -14,14 +14,15 @@
 #import "EMSAuthentication.h"
 #import "MERequestFactory.h"
 #import "EMSRequestManager.h"
+#import "EMSNotificationCache.h"
 
 @interface MEInbox ()
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) NSMutableArray *notifications;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSNotificationCache *notificationCache;
 
 @end
 
@@ -31,14 +32,19 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
+             notificationCache:(EMSNotificationCache *)notificationCache
                     restClient:(EMSRESTClient *)restClient
                 requestManager:(EMSRequestManager *)requestManager {
-    self = [super init];
-    if (self) {
-        _restClient = restClient;
+    NSParameterAssert(config);
+    NSParameterAssert(requestContext);
+    NSParameterAssert(notificationCache);
+    NSParameterAssert(restClient);
+    NSParameterAssert(requestManager);
+    if (self = [super init]) {
         _config = config;
-        _notifications = [NSMutableArray new];
         _requestContext = requestContext;
+        _notificationCache = notificationCache;
+        _restClient = restClient;
         _requestManager = requestManager;
     }
     return self;
@@ -62,10 +68,10 @@
                                                                                                 options:0
                                                                                                   error:nil];
                                         EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
-                                        EMSNotificationInboxStatus *mergedStatus = [weakSelf mergedStatusWithStatus:status];
+                                        status.notifications = [weakSelf.notificationCache mergeWithNotifications:status.notifications];
                                         dispatch_async(dispatch_get_main_queue(), ^{
                                             if (resultBlock) {
-                                                resultBlock(mergedStatus, nil);
+                                                resultBlock(status, nil);
                                             }
                                         });
                                     }
@@ -137,13 +143,8 @@
 
     requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxNotification
                                                                     requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];;
-}
-
-
-- (void)addNotification:(EMSNotification *)notification {
-    [self.notifications insertObject:notification
-                             atIndex:0];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];;
 }
 
 - (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
@@ -169,50 +170,8 @@
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 
-- (EMSNotificationInboxStatus *)mergedStatusWithStatus:(EMSNotificationInboxStatus *)status {
-    [self invalidateCachedNotifications:status];
-
-    NSMutableArray *notifications = [NSMutableArray new];
-    [notifications addObjectsFromArray:self.notifications];
-    [notifications addObjectsFromArray:status.notifications];
-
-    EMSNotificationInboxStatus *result = [EMSNotificationInboxStatus new];
-    result.badgeCount = status.badgeCount;
-    result.notifications = [NSArray arrayWithArray:notifications];
-    return result;
-}
-
-- (void)invalidateCachedNotifications:(EMSNotificationInboxStatus *)status {
-    for (int i = (int) [self.notifications count] - 1; i >= 0; --i) {
-        EMSNotification *notification = self.notifications[(NSUInteger) i];
-        for (EMSNotification *currentNotification in status.notifications) {
-            if ([currentNotification.id isEqual:notification.id]) {
-                [self.notifications removeObjectAtIndex:(NSUInteger) i];
-                break;
-            }
-        }
-    }
-}
-
 - (BOOL)hasLoginParameters {
     return self.requestContext.appLoginParameters && self.requestContext.appLoginParameters.contactFieldId && self.requestContext.appLoginParameters.contactFieldValue;
-}
-
-- (void)respondWithError:(MEInboxResultErrorBlock)errorBlock error:(NSError *)error {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (errorBlock) {
-            errorBlock(error);
-        }
-    });
-}
-
-- (void)handleNoLoginParameters:(MEInboxResultErrorBlock)errorBlock {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (errorBlock) {
-            errorBlock([NSError errorWithCode:42
-                         localizedDescription:@"Login parameters are not available."]);
-        }
-    });
 }
 
 @end

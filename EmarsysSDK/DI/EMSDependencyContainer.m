@@ -117,6 +117,7 @@
     } else {
         _inbox = [[MEInbox alloc] initWithConfig:config
                                   requestContext:self.requestContext
+                               notificationCache:self.notificationCache
                                       restClient:self.restClient
                                   requestManager:self.requestManager];
     }
