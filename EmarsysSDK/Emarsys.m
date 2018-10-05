@@ -37,15 +37,31 @@ static EMSDependencyContainer *_dependencyContainer;
 }
 
 + (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [_dependencyContainer.mobileEngage appLogout];
     [_dependencyContainer.predict clearCustomer];
+    [_dependencyContainer.mobileEngage appLogoutWithCompletionBlock:completionBlock];
+}
+
++ (void)trackCustomEventWithName:(NSString *)eventName
+                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
+    [Emarsys trackCustomEventWithName:eventName
+                      eventAttributes:eventAttributes
+                      completionBlock:nil];
 }
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(EMSCompletionBlock)completionBlock {
-
+    [_dependencyContainer.mobileEngage trackCustomEvent:eventName
+                                        eventAttributes:eventAttributes
+                                        completionBlock:completionBlock];
 }
+
++ (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
+                        sourceHandler:(EMSSourceHandler)sourceHandler {
+    return [_dependencyContainer.mobileEngage trackDeepLinkWith:userActivity
+                                                  sourceHandler:sourceHandler];
+}
+
 
 + (id <EMSPushNotificationProtocol>)push {
     return _dependencyContainer.mobileEngage;

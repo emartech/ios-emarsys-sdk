@@ -68,6 +68,7 @@ typedef void (^MESourceHandler)(NSString *source);
 
 
 - (void)appLogout;
+- (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 @end
 

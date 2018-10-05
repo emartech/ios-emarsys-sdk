@@ -42,36 +42,8 @@
 //        });
 //
 //        describe(@"Public interface methods", ^{
-//            xit(@"should return with eventId, and finish with success for anonymousAppLogin", ^{
-//                [MobileEngage setupWithConfig:config
-//                                launchOptions:[NSDictionary new]];
-//                FakeStatusDelegate *statusDelegate = createStatusDelegate();
-//                [MobileEngage setStatusDelegate:statusDelegate];
-//
-//                NSString *eventId = [MobileEngage appLogin];
-//                [statusDelegate waitForNextSuccess];
-//
-//                [[eventId shouldNot] beNil];
-//                [[statusDelegate.errors should] equal:@[]];
-//                [[@(statusDelegate.errorCount) should] equal:@0];
-//                [[@(statusDelegate.successCount) should] equal:@1];
-//            });
-//
-//            xit(@"should return with eventId, and finish with success for appLogin", ^{
-//                [MobileEngage setupWithConfig:config
-//                        launchOptions:[NSDictionary new]];
-//                FakeStatusDelegate *statusDelegate = createStatusDelegate();
-//                [MobileEngage setStatusDelegate:statusDelegate];
-//
-//                NSString *eventId = [MobileEngage appLoginWithContactFieldId:@3
-//                        contactFieldValue:@"test@test.com"];
-//                [statusDelegate waitForNextSuccess];
-//
-//                [[eventId shouldNot] beNil];
-//                [[statusDelegate.errors should] equal:@[]];
-//                [[@(statusDelegate.errorCount) should] equal:@0];
-//                [[@(statusDelegate.successCount) should] equal:@1];
-//            });
+
+
 //
 //            xit(@"should return with eventId, and finish with success for trackMessageOpen:", ^{
 //                [MobileEngage setupWithConfig:config

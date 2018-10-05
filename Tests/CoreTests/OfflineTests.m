@@ -74,53 +74,49 @@ SPEC_BEGIN(OfflineTests)
                                                            error:nil];
             });
 
-            xit(@"should receive 3 response, when 3 request has been sent", ^{
-//                EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-//                        [builder setUrl:@"https://www.google.com"];
-//                        [builder setMethod:HTTPMethodGET];
-//                    }
-//                                                         timestampProvider:[EMSTimestampProvider new]
-//                                                              uuidProvider:[EMSUUIDProvider new]];
-//                EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-//                        [builder setUrl:@"https://www.yahoo.com"];
-//                        [builder setMethod:HTTPMethodGET];
-//                    }
-//                                                         timestampProvider:[EMSTimestampProvider new]
-//                                                              uuidProvider:[EMSUUIDProvider new]];
-//                EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-//                        [builder setUrl:@"https://www.wolframalpha.com"];
-//                        [builder setMethod:HTTPMethodGET];
-//                    }
-//                                                         timestampProvider:[EMSTimestampProvider new]
-//                                                              uuidProvider:[EMSUUIDProvider new]];
-//
-//                __block NSString *checkableRequestId1;
-//                __block NSString *checkableRequestId2;
-//                __block NSString *checkableRequestId3;
-//
-//                EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-//                        if (!checkableRequestId1) {
-//                            checkableRequestId1 = requestId;
-//                        } else if (!checkableRequestId2) {
-//                            checkableRequestId2 = requestId;
-//                        } else {
-//                            checkableRequestId3 = requestId;
-//                        }
-//                    }
-//                                                                          errorBlock:^(NSString *requestId, NSError *error) {
-//                                                                              fail([NSString stringWithFormat:@"errorBlock: %@",
-//                                                                                                              error]);
-//                                                                          }
-//                                                                   requestRepository:requestModelRepository
-//                                                                     shardRepository:shardRepository
-//                                                                       logRepository:nil];
-//                [core submitRequestModel:model1 withCompletionBlock:nil];
-//                [core submitRequestModel:model2 withCompletionBlock:nil];
-//                [core submitRequestModel:model3 withCompletionBlock:nil];
-//
-//                [[expectFutureValue(checkableRequestId3) shouldEventuallyBeforeTimingOutAfter(30)] equal:model3.requestId];
-//                [[expectFutureValue(checkableRequestId2) shouldEventuallyBeforeTimingOutAfter(30)] equal:model2.requestId];
-//                [[expectFutureValue(checkableRequestId1) shouldEventuallyBeforeTimingOutAfter(30)] equal:model1.requestId];
+            it(@"should receive 3 response, when 3 request has been sent", ^{
+                EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:@"https://www.google.com"];
+                        [builder setMethod:HTTPMethodGET];
+                    }
+                                                         timestampProvider:[EMSTimestampProvider new]
+                                                              uuidProvider:[EMSUUIDProvider new]];
+                EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:@"https://www.yahoo.com"];
+                        [builder setMethod:HTTPMethodGET];
+                    }
+                                                         timestampProvider:[EMSTimestampProvider new]
+                                                              uuidProvider:[EMSUUIDProvider new]];
+                EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:@"https://www.wolframalpha.com"];
+                        [builder setMethod:HTTPMethodGET];
+                    }
+                                                         timestampProvider:[EMSTimestampProvider new]
+                                                              uuidProvider:[EMSUUIDProvider new]];
+
+                NSOperationQueue *operationQueue = testQueue();
+                FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+                                                                                      connectionResponses:@[@YES, @YES, @YES]];
+                FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
+                EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                [expectation setExpectedFulfillmentCount:3];
+                [manager submitRequestModel:model1
+                        withCompletionBlock:^(NSError *error) {
+                            [expectation fulfill];
+                        }];
+                [manager submitRequestModel:model2
+                        withCompletionBlock:^(NSError *error) {
+                            [expectation fulfill];
+                        }];
+                [manager submitRequestModel:model3
+                        withCompletionBlock:^(NSError *error) {
+                            [expectation fulfill];
+                        }];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                                timeout:20];
+                [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
             it(@"should receive 0 response, requestModelRepository count 3 when 3 request sent and there is no internet connection", ^{
@@ -234,7 +230,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
             });
 
-            xit(@"should not stop the requestModelRepository when response is 4xx", ^{
+            xit(@"should not stop the requestModelRepository when response is 4xx", ^{ //TODO: restclient callback order
                 EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"https://www.google.com"];
                         [builder setMethod:HTTPMethodGET];

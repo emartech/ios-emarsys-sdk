@@ -14,6 +14,7 @@
 @interface Emarsys ()
 
 + (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
+
 + (EMSSQLiteHelper *)sqliteHelper;
 
 @end
@@ -93,7 +94,8 @@ SPEC_BEGIN(EmarsysTests)
             });
 
             it(@"should delegate the call to mobileEngageInternal with customerId and completionBlock", ^{
-                void (^ const completionBlock)(NSError *) = ^(NSError *error) {};
+                void (^ const completionBlock)(NSError *) = ^(NSError *error) {
+                };
 
                 [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
                            withArguments:customerId, completionBlock];
@@ -105,7 +107,7 @@ SPEC_BEGIN(EmarsysTests)
 
         describe(@"clearCustomer", ^{
             it(@"should delegate call to MobileEngage", ^{
-                [[engage should] receive:@selector(appLogout)];
+                [[engage should] receive:@selector(appLogoutWithCompletionBlock:)];
 
                 [Emarsys clearCustomer];
             });
@@ -114,6 +116,50 @@ SPEC_BEGIN(EmarsysTests)
                 [[predict should] receive:@selector(clearCustomer)];
 
                 [Emarsys clearCustomer];
+            });
+        });
+
+        describe(@"trackDeepLinkWithUserActivity:sourceHandler:", ^{
+
+            it(@"should delegate call to MobileEngage", ^{
+                NSUserActivity *userActivity = [NSUserActivity mock];
+                EMSSourceHandler sourceHandler = ^(NSString *source) {
+                };
+
+                [[engage should] receive:@selector(trackDeepLinkWith:sourceHandler:)
+                           withArguments:userActivity, sourceHandler];
+
+                [Emarsys trackDeepLinkWithUserActivity:userActivity
+                                         sourceHandler:sourceHandler];
+            });
+        });
+
+
+        describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
+
+            it(@"should delegate call to MobileEngage", ^{
+                NSString *eventName = @"eventName";
+                NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
+
+                [[engage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                           withArguments:eventName, eventAttributes, kw_any()];
+
+                [Emarsys trackCustomEventWithName:eventName
+                                  eventAttributes:eventAttributes];
+            });
+
+            it(@"should delegate call to MobileEngage", ^{
+                NSString *eventName = @"eventName";
+                NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
+                EMSCompletionBlock completionBlock = ^(NSError *error) {
+                };
+
+                [[engage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                           withArguments:eventName, eventAttributes, completionBlock];
+
+                [Emarsys trackCustomEventWithName:eventName
+                                  eventAttributes:eventAttributes
+                                  completionBlock:completionBlock];
             });
         });
 

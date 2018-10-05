@@ -81,34 +81,45 @@ SPEC_BEGIN(DennaTest)
                 [[NSFileManager defaultManager] removeItemAtPath:DB_PATH error:nil];
             });
 
-            xit(@"should invoke errorBlock when calling error500 on Denna", ^{
-//                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-//                        [builder setUrl:error500];
-//                        [builder setMethod:HTTPMethodGET];
-//                    }
-//                                                        timestampProvider:[EMSTimestampProvider new]
-//                                                             uuidProvider:[EMSUUIDProvider new]];
-//
-//                __block NSString *checkableRequestId;
-//
-//                EMSRequestManager *core = [EMSRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-//                        NSLog(@"ERROR!");
-//                        fail(@"successBlock invoked :'(");
-//                    }
-//                                                                          errorBlock:^(NSString *requestId, NSError *error) {
-//                                                                              checkableRequestId = requestId;
-//                                                                              NSLog(@"ERROR!");
-//                                                                              fail(@"errorBlock invoked :'(");
-//                                                                          }
-//                                                                   requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
-//                                                                     shardRepository:[EMSShardRepository new]
-//                                                                       logRepository:nil];
-//
-//                [core submitRequestModel:model
-//                     withCompletionBlock:^(NSError *error) {
-//
-//                     }];
-//                [[expectFutureValue(checkableRequestId) shouldEventually] beNil];
+            it(@"should invoke errorBlock when calling error500 on Denna", ^{
+                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:error500];
+                        [builder setMethod:HTTPMethodGET];
+                    }
+                                                        timestampProvider:[EMSTimestampProvider new]
+                                                             uuidProvider:[EMSUUIDProvider new]];
+                NSOperationQueue *queue = [NSOperationQueue new];
+                queue.maxConcurrentOperationCount = 1;
+                queue.qualityOfService = NSQualityOfServiceUtility;
+
+                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        NSLog(@"ERROR!");
+                        fail(@"successBlock invoked :'(");
+                    }
+                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                                     NSLog(@"ERROR!");
+                                                                                                     fail(@"errorblock invoked");
+                                                                                                 }];
+                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]];
+                EMSShardRepository *shardRepository = [EMSShardRepository new];
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
+                                                                          requestRepository:requestRepository
+                                                                              logRepository:nil
+                                                                               successBlock:middleware.successBlock
+                                                                                 errorBlock:middleware.errorBlock];
+                EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
+                                                                  completionMiddleware:middleware
+                                                                                worker:worker
+                                                                     requestRepository:requestRepository
+                                                                       shardRepository:shardRepository];
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                [core submitRequestModel:model
+                     withCompletionBlock:^(NSError *error) {
+                         [expectation fulfill];
+                     }];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                                timeout:10];
+                [[theValue(result) should] equal:theValue(XCTWaiterResultTimedOut)];
             });
 
             it(@"should respond with the GET request's headers/body", ^{

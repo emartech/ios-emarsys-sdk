@@ -28,10 +28,13 @@ typedef void (^EMSSourceHandler)(NSString *source);
 
 + (void)clearCustomer;
 
-+ (void)clearCustomer:(EMSCompletionBlock)completionBlock;
++ (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
                         sourceHandler:(EMSSourceHandler)sourceHandler;
+
++ (void)trackCustomEventWithName:(NSString *)eventName
+                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes

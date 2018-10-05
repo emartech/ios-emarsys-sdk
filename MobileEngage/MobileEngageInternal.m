@@ -161,8 +161,9 @@
 
 - (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [MERequestFactory createAppLogoutRequestWithRequestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     [self.requestContext reset];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
