@@ -126,6 +126,25 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                 });
             });
 
+            describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
+                it(@"should invoke completion block when its done", ^{
+                    doLogin();
+
+                    __block NSError *returnedError = [NSError mock];
+                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"trackMessageOpen"];
+                    [Emarsys.push trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}
+                                               completionBlock:^(NSError *error) {
+                                                   returnedError = error;
+                                                   [expectation fulfill];
+                                               }];
+
+                    XCTWaiterResult trackMessageOpenResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                                    timeout:TIMEOUT];
+                    [[returnedError should] beNil];
+                    [[theValue(trackMessageOpenResult) should] equal:theValue(XCTWaiterResultCompleted)];
+                });
+            });
+
         });
 
         context(@"V2", ^{
@@ -178,6 +197,25 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                                                                                     timeout:TIMEOUT];
                     [[returnedErrorForTrackCustomEvent should] beNil];
                     [[theValue(trackCustomEventResult) should] equal:theValue(XCTWaiterResultCompleted)];
+                });
+            });
+
+            describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
+                it(@"should invoke completion block when its done", ^{
+                    doLogin();
+
+                    __block NSError *returnedError = [NSError mock];
+                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"trackMessageOpen"];
+                    [Emarsys.push trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}
+                                               completionBlock:^(NSError *error) {
+                                                   returnedError = error;
+                                                   [expectation fulfill];
+                                               }];
+
+                    XCTWaiterResult trackMessageOpenResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                                    timeout:TIMEOUT];
+                    [[returnedError should] beNil];
+                    [[theValue(trackMessageOpenResult) should] equal:theValue(XCTWaiterResultCompleted)];
                 });
             });
 

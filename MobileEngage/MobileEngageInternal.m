@@ -61,13 +61,15 @@
             [weakSelf.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"app:start"
                                                                                               eventAttributes:nil
                                                                                                          type:@"internal"
-                                                                                               requestContext:weakSelf.requestContext] withCompletionBlock:nil];
+                                                                                               requestContext:weakSelf.requestContext]
+                                    withCompletionBlock:nil];
         }
     }                           forNotification:UIApplicationDidBecomeActiveNotification];
 }
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler withCompletionBlock:(EMSCompletionBlock)completionBlock {
+            sourceHandler:(nullable MESourceHandler)sourceHandler
+      withCompletionBlock:(EMSCompletionBlock)completionBlock {
     BOOL result = NO;
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         NSString *const webPageURL = userActivity.webpageURL.absoluteString;
@@ -80,7 +82,8 @@
                 sourceHandler(webPageURL);
             }
             [self.requestManager submitRequestModel:[MERequestFactory createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
-                                                                                                requestContext:self.requestContext] withCompletionBlock:completionBlock];
+                                                                                                requestContext:self.requestContext]
+                                withCompletionBlock:completionBlock];
         }
     }
     return result;
@@ -108,17 +111,19 @@
     [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:viewed"
                                                                                   eventAttributes:@{@"message_id": campaignId}
                                                                                              type:@"internal"
-                                                                                   requestContext:self.requestContext] withCompletionBlock:nil];
+                                                                                   requestContext:self.requestContext]
+                        withCompletionBlock:nil];
 }
 
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
     [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
                                                                                   eventAttributes:@{
-                                                                                          @"message_id": campaignId,
-                                                                                          @"button_id": buttonId
+                                                                                      @"message_id": campaignId,
+                                                                                      @"button_id": buttonId
                                                                                   }
                                                                                              type:@"internal"
-                                                                                   requestContext:self.requestContext] withCompletionBlock:nil];
+                                                                                   requestContext:self.requestContext]
+                        withCompletionBlock:nil];
 }
 
 - (void)handleResponse:(EMSResponseModel *)model {
@@ -173,7 +178,7 @@
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(EMSCompletionBlock)completionBlock {
-        NSNumber *inbox = userInfo[@"inbox"];
+    NSNumber *inbox = userInfo[@"inbox"];
     if (inbox && [inbox boolValue]) {
         [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo]];
     }

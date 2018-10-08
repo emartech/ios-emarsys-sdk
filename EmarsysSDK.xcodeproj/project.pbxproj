@@ -115,7 +115,6 @@
 		166B3F4C2119A840006CD35C /* NSDictionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */; };
 		166B3F4D2119A840006CD35C /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
 		166B3F4E2119A840006CD35C /* EMSSQLiteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */; };
-		166B3F4F2119A840006CD35C /* IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BB21075B270030E659 /* IntegrationTests.m */; };
 		166B3F502119A840006CD35C /* InboxV2IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */; };
 		166B3F512119A840006CD35C /* MEInboxV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BE21075B270030E659 /* MEInboxV2Tests.m */; };
 		166B3F522119A840006CD35C /* MEInboxParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BF21075B270030E659 /* MEInboxParserTests.m */; };
@@ -154,7 +153,6 @@
 		166B3F732119A840006CD35C /* MEUserNotificationDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */; };
 		166B3F742119A840006CD35C /* MENotificationServiceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */; };
 		166B3F752119A840006CD35C /* MobileEngageInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */; };
-		166B3F762119A840006CD35C /* MobileEngageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0A21075B270030E659 /* MobileEngageTests.m */; };
 		166B3F772119A840006CD35C /* MEIAMViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */; };
 		166B3F782119A840006CD35C /* MENotificationCenterManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */; };
 		166B3F792119A84C006CD35C /* TestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99921075B270030E659 /* TestUtils.m */; };
@@ -204,7 +202,6 @@
 		166B40352119A8E5006CD35C /* EMSShardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */; };
 		166B40362119A8E5006CD35C /* EMSSQLiteHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCF0A5E8F8B314BA1036 /* EMSSQLiteHelperTests.m */; };
 		166B40392119A91F006CD35C /* NSData+MobileEngageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */; };
-		166B403A2119A91F006CD35C /* IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BB21075B270030E659 /* IntegrationTests.m */; };
 		166B403B2119A91F006CD35C /* InboxV2IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */; };
 		166B403C2119A91F006CD35C /* MEInboxV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BE21075B270030E659 /* MEInboxV2Tests.m */; };
 		166B403D2119A91F006CD35C /* MEInboxParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9BF21075B270030E659 /* MEInboxParserTests.m */; };
@@ -254,7 +251,6 @@
 		166B40792119A91F006CD35C /* MEUserNotificationDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */; };
 		166B407A2119A91F006CD35C /* MENotificationServiceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */; };
 		166B407B2119A91F006CD35C /* MobileEngageInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */; };
-		166B407C2119A91F006CD35C /* MobileEngageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0A21075B270030E659 /* MobileEngageTests.m */; };
 		166B407D2119A91F006CD35C /* MEIAMViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */; };
 		166B407E2119A91F006CD35C /* MENotificationCenterManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */; };
 		166B407F2119A9E6006CD35C /* TestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99921075B270030E659 /* TestUtils.m */; };
@@ -868,7 +864,6 @@
 		8AB2F9B621075B270030E659 /* NSDictionary+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+EMSCoreTests.m"; sourceTree = "<group>"; };
 		8AB2F9B921075B270030E659 /* MEExperimental+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MEExperimental+Test.h"; sourceTree = "<group>"; };
 		8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MobileEngageTest.m"; sourceTree = "<group>"; };
-		8AB2F9BB21075B270030E659 /* IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTests.m; sourceTree = "<group>"; };
 		8AB2F9BD21075B270030E659 /* InboxV2IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxV2IntegrationTests.m; sourceTree = "<group>"; };
 		8AB2F9BE21075B270030E659 /* MEInboxV2Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEInboxV2Tests.m; sourceTree = "<group>"; };
 		8AB2F9BF21075B270030E659 /* MEInboxParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEInboxParserTests.m; sourceTree = "<group>"; };
@@ -933,7 +928,6 @@
 		8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEUserNotificationDelegateTests.m; sourceTree = "<group>"; };
 		8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationServiceTests.m; sourceTree = "<group>"; };
 		8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileEngageInternalTests.m; sourceTree = "<group>"; };
-		8AB2FA0A21075B270030E659 /* MobileEngageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileEngageTests.m; sourceTree = "<group>"; };
 		8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMViewControllerTests.m; sourceTree = "<group>"; };
 		8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationCenterManagerTests.m; sourceTree = "<group>"; };
 		8ADAA671210773D500B3AC44 /* SdkHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SdkHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1796,7 +1790,6 @@
 			children = (
 				8AB2F9B921075B270030E659 /* MEExperimental+Test.h */,
 				8AB2F9BA21075B270030E659 /* NSData+MobileEngageTest.m */,
-				8AB2F9BB21075B270030E659 /* IntegrationTests.m */,
 				8AB2F9BC21075B270030E659 /* Inbox */,
 				8AB2F9C321075B270030E659 /* NSDictionary+MobileEngageTests.m */,
 				8AB2F9C421075B270030E659 /* MobileEngageInternal+Test.h */,
@@ -1814,7 +1807,6 @@
 				8AB2FA0321075B270030E659 /* BuilderTests.m */,
 				8AB2FA0421075B270030E659 /* RichNotificationExtension */,
 				8AB2FA0821075B270030E659 /* MobileEngageInternalTests.m */,
-				8AB2FA0A21075B270030E659 /* MobileEngageTests.m */,
 				8AB2FA0B21075B270030E659 /* MEIAMViewControllerTests.m */,
 				8AB2FA0C21075B270030E659 /* MENotificationCenterManagerTests.m */,
 			);
@@ -2527,7 +2519,6 @@
 				166B407F2119A9E6006CD35C /* TestUtils.m in Sources */,
 				166B40812119A9E6006CD35C /* EMSWaiter.m in Sources */,
 				166B40392119A91F006CD35C /* NSData+MobileEngageTest.m in Sources */,
-				166B403A2119A91F006CD35C /* IntegrationTests.m in Sources */,
 				166B403B2119A91F006CD35C /* InboxV2IntegrationTests.m in Sources */,
 				166B403C2119A91F006CD35C /* MEInboxV2Tests.m in Sources */,
 				166B403D2119A91F006CD35C /* MEInboxParserTests.m in Sources */,
@@ -2577,7 +2568,6 @@
 				166B40792119A91F006CD35C /* MEUserNotificationDelegateTests.m in Sources */,
 				166B407A2119A91F006CD35C /* MENotificationServiceTests.m in Sources */,
 				166B407B2119A91F006CD35C /* MobileEngageInternalTests.m in Sources */,
-				166B407C2119A91F006CD35C /* MobileEngageTests.m in Sources */,
 				166B407D2119A91F006CD35C /* MEIAMViewControllerTests.m in Sources */,
 				166B407E2119A91F006CD35C /* MENotificationCenterManagerTests.m in Sources */,
 				32C6F10965D759865B9D722B /* EMSNotificationCacheTests.m in Sources */,
@@ -2666,7 +2656,6 @@
 				166B3F4C2119A840006CD35C /* NSDictionary+EMSCoreTests.m in Sources */,
 				166B3F4D2119A840006CD35C /* EMSShardTests.m in Sources */,
 				166B3F4E2119A840006CD35C /* EMSSQLiteHelperTests.m in Sources */,
-				166B3F4F2119A840006CD35C /* IntegrationTests.m in Sources */,
 				166B3F502119A840006CD35C /* InboxV2IntegrationTests.m in Sources */,
 				166B3F512119A840006CD35C /* MEInboxV2Tests.m in Sources */,
 				166B3F522119A840006CD35C /* MEInboxParserTests.m in Sources */,
@@ -2706,7 +2695,6 @@
 				166B3F732119A840006CD35C /* MEUserNotificationDelegateTests.m in Sources */,
 				166B3F742119A840006CD35C /* MENotificationServiceTests.m in Sources */,
 				166B3F752119A840006CD35C /* MobileEngageInternalTests.m in Sources */,
-				166B3F762119A840006CD35C /* MobileEngageTests.m in Sources */,
 				166B3F772119A840006CD35C /* MEIAMViewControllerTests.m in Sources */,
 				166B3F782119A840006CD35C /* MENotificationCenterManagerTests.m in Sources */,
 				37460C432CC6FDF76A0CC0C1 /* DbTriggerTests.m in Sources */,

@@ -134,10 +134,9 @@ SPEC_BEGIN(EmarsysTests)
             });
         });
 
-
         describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
 
-            it(@"should delegate call to MobileEngage", ^{
+            it(@"should delegate call to MobileEngage with nil completionBlock", ^{
                 NSString *eventName = @"eventName";
                 NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
 
@@ -160,6 +159,29 @@ SPEC_BEGIN(EmarsysTests)
                 [Emarsys trackCustomEventWithName:eventName
                                   eventAttributes:eventAttributes
                                   completionBlock:completionBlock];
+            });
+        });
+
+        describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
+
+            NSDictionary *const userInfo = @{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"};
+
+            it(@"should delegate call to MobileEngage with nil completionBlock", ^{
+                [[engage should] receive:@selector(trackMessageOpenWithUserInfo:)
+                           withArguments:userInfo];
+
+                [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
+            });
+
+            it(@"should delegate call to MobileEngage", ^{
+                EMSCompletionBlock completionBlock = ^(NSError *error) {
+                };
+
+                [[engage should] receive:@selector(trackMessageOpenWithUserInfo:completionBlock:)
+                           withArguments:userInfo, completionBlock];
+
+                [Emarsys.push trackMessageOpenWithUserInfo:userInfo
+                                           completionBlock:completionBlock];
             });
         });
 
