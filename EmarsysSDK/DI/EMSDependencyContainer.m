@@ -38,7 +38,6 @@
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
-@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -79,6 +78,7 @@
     _operationQueue = [NSOperationQueue new];
     _operationQueue.maxConcurrentOperationCount = 1;
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
+    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [[NSUUID UUID] UUIDString]];
 
     __weak typeof(self) weakSelf = self;
     EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {

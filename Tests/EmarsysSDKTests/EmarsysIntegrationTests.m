@@ -11,6 +11,7 @@
 #import "MEExperimental+Test.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
+#define TIMEOUT 10
 
 @interface Emarsys ()
 
@@ -18,9 +19,22 @@
 
 + (EMSSQLiteHelper *)sqliteHelper;
 
++ (EMSDependencyContainer *)dependencyContainer;
+
 @end
 
 SPEC_BEGIN(EmarsysIntegrationTests)
+
+        void (^setUpEmarsys)(NSArray<MEFlipperFeature> *features) = ^(NSArray<const NSString *> *features) {
+            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMerchantId:@"dummyMerchantId"];
+                [builder setContactFieldId:@3];
+                [builder setExperimentalFeatures:features];
+            }];
+            [Emarsys setupWithConfig:config];
+        };
 
         beforeEach(^{
             [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
@@ -34,22 +48,15 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
             [userDefaults setObject:@"IntegrationTests" forKey:@"kEMSHardwareIdKey"];
+            [userDefaults synchronize];
         });
 
         afterEach(^{
             [MEExperimental reset];
+            [[Emarsys dependencyContainer].operationQueue waitUntilAllOperationsAreFinished];
+            [Emarsys setDependencyContainer:nil];
         });
 
-        void (^setUpEmarsys)(NSArray<MEFlipperFeature> *features) = ^(NSArray<const NSString *> *features) {
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                [builder setMerchantId:@"dummyMerchantId"];
-                [builder setContactFieldId:@3];
-                [builder setExperimentalFeatures:features];
-            }];
-            [Emarsys setupWithConfig:config];
-        };
 
         void (^doLogin)() = ^{
             __block NSError *returnedErrorForSetCustomer = [NSError mock];
@@ -62,7 +69,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                        }];
 
             XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
-                                                                       timeout:20];
+                                                                       timeout:TIMEOUT];
             [[returnedErrorForSetCustomer should] beNil];
             [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
         };
@@ -72,7 +79,6 @@ SPEC_BEGIN(EmarsysIntegrationTests)
             beforeEach(^{
                 setUpEmarsys(@[INAPP_MESSAGING, USER_CENTRIC_INBOX]);
             });
-
 
             describe(@"setCustomerWithId:completionBlock:", ^{
 
@@ -93,7 +99,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                     }];
 
                     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                    timeout:20];
+                                                                    timeout:TIMEOUT];
                     [[returnedError should] beNil];
                     [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
                 });
@@ -114,7 +120,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                                       }];
 
                     XCTWaiterResult trackCustomEventResult = [XCTWaiter waitForExpectations:@[trackCustomEventExpectation]
-                                                                                    timeout:20];
+                                                                                    timeout:TIMEOUT];
                     [[returnedErrorForTrackCustomEvent should] beNil];
                     [[theValue(trackCustomEventResult) should] equal:theValue(XCTWaiterResultCompleted)];
                 });
@@ -147,7 +153,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                     }];
 
                     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                    timeout:20];
+                                                                    timeout:TIMEOUT];
                     [[returnedError should] beNil];
                     [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
                 });
@@ -169,7 +175,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                                       }];
 
                     XCTWaiterResult trackCustomEventResult = [XCTWaiter waitForExpectations:@[trackCustomEventExpectation]
-                                                                                    timeout:20];
+                                                                                    timeout:TIMEOUT];
                     [[returnedErrorForTrackCustomEvent should] beNil];
                     [[theValue(trackCustomEventResult) should] equal:theValue(XCTWaiterResultCompleted)];
                 });

@@ -22,6 +22,7 @@
 @property(nonatomic, readonly) PredictInternal *predict;
 @property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, readonly) EMSNotificationCache *notificationCache;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 - (instancetype)initWithConfig:(EMSConfig *)config;
 
