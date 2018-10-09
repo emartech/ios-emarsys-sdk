@@ -6,11 +6,8 @@
 #import "Emarsys.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSDependencyContainer.h"
-#import "MEExperimental.h"
-#import "MERequestContext.h"
-#import "MEExperimental+Test.h"
+#import "EmarsysTestUtils.h"
 
-#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define TIMEOUT 10
 
 @interface Emarsys ()
@@ -25,38 +22,9 @@
 
 SPEC_BEGIN(EmarsysIntegrationTests)
 
-        void (^setUpEmarsys)(NSArray<MEFlipperFeature> *features) = ^(NSArray<const NSString *> *features) {
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                [builder setMerchantId:@"dummyMerchantId"];
-                [builder setContactFieldId:@3];
-                [builder setExperimentalFeatures:features];
-            }];
-            [Emarsys setupWithConfig:config];
-        };
-
-        beforeEach(^{
-            [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                                       error:nil];
-
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-            [userDefaults removeObjectForKey:kMEID];
-            [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-            [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
-            [userDefaults synchronize];
-
-            userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-            [userDefaults setObject:@"IntegrationTests" forKey:@"kEMSHardwareIdKey"];
-            [userDefaults synchronize];
-        });
-
         afterEach(^{
-            [MEExperimental reset];
-            [[Emarsys dependencyContainer].operationQueue waitUntilAllOperationsAreFinished];
-            [Emarsys setDependencyContainer:nil];
+            [EmarsysTestUtils tearDownEmarsys];
         });
-
 
         void (^doLogin)() = ^{
             __block NSError *returnedErrorForSetCustomer = [NSError mock];
@@ -77,7 +45,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
         context(@"V3", ^{
 
             beforeEach(^{
-                setUpEmarsys(@[INAPP_MESSAGING, USER_CENTRIC_INBOX]);
+                [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]];
             });
 
             describe(@"setCustomerWithId:completionBlock:", ^{
@@ -150,7 +118,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
         context(@"V2", ^{
 
             beforeEach(^{
-                setUpEmarsys(@[]);
+                [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
             });
 
             describe(@"setCustomerWithId:completionBlock:", ^{

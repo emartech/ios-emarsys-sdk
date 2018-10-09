@@ -11,6 +11,7 @@
 @class EMSNotificationCache;
 @protocol EMSInboxProtocol;
 @protocol EMSRequestModelRepositoryProtocol;
+@class EMSAbstractResponseHandler;
 
 @interface EMSDependencyContainer : NSObject
 
@@ -22,6 +23,7 @@
 @property(nonatomic, readonly) PredictInternal *predict;
 @property(nonatomic, readonly) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, readonly) EMSNotificationCache *notificationCache;
+@property(nonatomic, readonly) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 - (instancetype)initWithConfig:(EMSConfig *)config;

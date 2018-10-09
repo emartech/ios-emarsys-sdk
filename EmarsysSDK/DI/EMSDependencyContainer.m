@@ -35,7 +35,6 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
-@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 

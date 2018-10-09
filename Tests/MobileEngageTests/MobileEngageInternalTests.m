@@ -10,10 +10,7 @@
 #import "MERequestContext.h"
 #import "FakeRequestManager.h"
 #import "MEIdResponseHandler.h"
-#import "MEIAMResponseHandler.h"
-#import "MobileEngageInternal+Test.h"
 #import "MEExperimental.h"
-#import "MEIAMCleanupResponseHandler.h"
 #import "MENotificationCenterManager.h"
 #import "MEExperimental+Test.h"
 #import "NSDate+EMSCore.h"
@@ -122,79 +119,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [MEExperimental reset];
             });
 
-            context(@"ResponseHandlers", ^{
-
-                xit(@"should register MEIDResponseHandler if INAPP is turned on", ^{
-                    [MEExperimental enableFeature:INAPP_MESSAGING];
-                    requestManagerMock();
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-
-                xit(@"should register MEIDResponseHandler if USER_CENTRIC_INBOX is turned on", ^{
-                    [MEExperimental enableFeature:USER_CENTRIC_INBOX];
-                    requestManagerMock();
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-
-                xit(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX and INAPP is turned on", ^{
-                    [MEExperimental enableFeature:USER_CENTRIC_INBOX];
-                    [MEExperimental enableFeature:INAPP_MESSAGING];
-                    requestManagerMock();
-
-                    NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registerCount++;
-                        }
-                    }
-
-                    [[theValue(registerCount) should] equal:theValue(1)];
-                });
-
-                xit(@"should register MEIAMResponseHandler if INAPP is turned on", ^{
-                    [MEExperimental enableFeature:INAPP_MESSAGING];
-                    requestManagerMock();
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-
-                xit(@"should register MEIAMCleanupResponseHandler if INAPP is turned on", ^{
-                    [MEExperimental enableFeature:INAPP_MESSAGING];
-                    requestManagerMock();
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in _mobileEngage.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-            });
 
         });
 

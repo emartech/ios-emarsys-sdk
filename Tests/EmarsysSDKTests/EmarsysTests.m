@@ -10,14 +10,12 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSDBTriggerKey.h"
 #import "EMSDependencyContainer.h"
-
-@interface Emarsys ()
-
-+ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
-
-+ (EMSSQLiteHelper *)sqliteHelper;
-
-@end
+#import "EmarsysTestUtils.h"
+#import "EMSAbstractResponseHandler.h"
+#import "MEIdResponseHandler.h"
+#import "MEIAMResponseHandler.h"
+#import "MEIAMCleanupResponseHandler.h"
+#import "EMSVisitorIdResponseHandler.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -47,6 +45,7 @@ SPEC_BEGIN(EmarsysTests)
         });
 
         describe(@"setupWithConfig:", ^{
+
             it(@"should set predict", ^{
                 [[(NSObject *) [Emarsys predict] shouldNot] beNil];
             });
@@ -77,6 +76,130 @@ SPEC_BEGIN(EmarsysTests)
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
                     [[theValue(exception) shouldNot] beNil];
                 }
+            });
+
+            context(@"ResponseHandlers", ^{
+
+                afterEach(^{
+                    [EmarsysTestUtils tearDownEmarsys];
+                });
+
+                it(@"should register MEIDResponseHandler if INAPP is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+
+                    BOOL registered = NO;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
+                            registered = YES;
+                        }
+                    }
+
+                    [[theValue(registered) should] beYes];
+                });
+
+                it(@"should register MEIDResponseHandler if USER_CENTRIC_INBOX is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[USER_CENTRIC_INBOX]];
+
+                    BOOL registered = NO;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
+                            registered = YES;
+                        }
+                    }
+
+                    [[theValue(registered) should] beYes];
+                });
+
+                it(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX and INAPP is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]];
+
+                    NSUInteger registerCount = 0;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
+                            registerCount++;
+                        }
+                    }
+
+                    [[theValue(registerCount) should] equal:theValue(1)];
+                });
+
+                it(@"should register MEIAMResponseHandler if INAPP is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+
+                    BOOL registered = NO;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
+                            registered = YES;
+                        }
+                    }
+
+                    [[theValue(registered) should] beYes];
+                });
+
+                it(@"should register MEIAMCleanupResponseHandler if INAPP is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+
+                    BOOL registered = NO;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
+                            registered = YES;
+                        }
+                    }
+
+                    [[theValue(registered) should] beYes];
+                });
+
+                it(@"should not register MEIAMCleanupResponseHandler & MEIAMResponseHandler if INAPP is turned off", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
+
+                    NSUInteger registerCount = 0;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]] || [responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
+                            registerCount++;
+                        }
+                    }
+
+                    [[theValue(registerCount) should] equal:theValue(0)];
+                });
+
+                it(@"should register EMSVisitorIdResponseHandler if no features are turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
+
+                    NSUInteger registerCount = 0;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
+                            registerCount++;
+                        }
+                    }
+
+                    [[theValue(registerCount) should] equal:theValue(1)];
+                });
+
+                it(@"should register EMSVisitorIdResponseHandler if INAPP feature is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+
+                    NSUInteger registerCount = 0;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
+                            registerCount++;
+                        }
+                    }
+
+                    [[theValue(registerCount) should] equal:theValue(1)];
+                });
+
+                it(@"should register EMSVisitorIdResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
+                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[USER_CENTRIC_INBOX]];
+
+                    NSUInteger registerCount = 0;
+                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
+                            registerCount++;
+                        }
+                    }
+
+                    [[theValue(registerCount) should] equal:theValue(1)];
+                });
             });
         });
 
