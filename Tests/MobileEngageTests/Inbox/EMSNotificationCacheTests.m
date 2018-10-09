@@ -31,7 +31,7 @@ SPEC_BEGIN(EMSNotificationCacheTests)
         describe(@"init", ^{
 
             it(@"should create empty notifications array", ^{
-                [[[[[EMSNotificationCache alloc] init] notifications] shouldNot] beNil];
+                [[[[[EMSNotificationCache alloc] init] notifications] should] beEmpty];
             });
         });
 
@@ -64,13 +64,14 @@ SPEC_BEGIN(EMSNotificationCacheTests)
 
             it(@"should not cache notification when notification is nil", ^{
                 EMSNotificationCache *notificationCache = [[EMSNotificationCache alloc] init];
-                [notificationCache cache:[EMSNotification mock]];
 
-                [[theValue([notificationCache notifications].count) should] equal:@1];
+                [notificationCache cache:notification1];
+
+                [[[notificationCache notifications] should] equal:@[notification1]];
 
                 [notificationCache cache:nil];
 
-                [[theValue([notificationCache notifications].count) should] equal:@1];
+                [[[notificationCache notifications] should] equal:@[notification1]];
             });
 
             it(@"should cache notifications in correct order", ^{
