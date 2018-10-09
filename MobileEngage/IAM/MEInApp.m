@@ -27,6 +27,18 @@
 
 #pragma mark - Public methods
 
+- (void)pause {
+    [self setPaused:YES];
+}
+
+- (void)resume {
+    [self setPaused:NO];
+}
+
+- (BOOL)isPaused {
+    return [self paused];
+}
+
 - (void)showMessage:(MEInAppMessage *)message
   completionHandler:(MECompletionHandler)completionHandler {
     self.currentCampaignId = message.campaignId;

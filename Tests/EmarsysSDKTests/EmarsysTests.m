@@ -334,7 +334,6 @@ SPEC_BEGIN(EmarsysTests)
                 });
             });
 
-
             describe(@"predict", ^{
                 it(@"should not be nil", ^{
                     [[((NSObject *) Emarsys.predict) shouldNot] beNil];

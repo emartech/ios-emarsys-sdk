@@ -7,6 +7,7 @@
 #import "MobileEngageInternal.h"
 #import "MESchemaDelegate.h"
 #import "EMSDependencyContainer.h"
+#import "MEInApp.h"
 
 @implementation Emarsys
 

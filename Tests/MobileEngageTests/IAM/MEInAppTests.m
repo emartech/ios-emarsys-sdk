@@ -2,7 +2,6 @@
 #import "MEInApp.h"
 #import "MEInApp+Private.h"
 #import "FakeInAppHandler.h"
-#import "MEIAMProtocol.h"
 #import "EMSTimestampProvider.h"
 #import "FakeTimeStampProvider.h"
 #import "EMSWaiter.h"
