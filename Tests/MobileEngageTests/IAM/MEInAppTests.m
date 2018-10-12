@@ -57,7 +57,8 @@ SPEC_BEGIN(MEInAppTests)
                                                                                      body:body
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
-                [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response] completionHandler:^{}];
+                [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response] completionHandler:^{
+                }];
 
                 [XCTWaiter waitForExpectations:@[expectation] timeout:2];
 
@@ -87,7 +88,10 @@ SPEC_BEGIN(MEInAppTests)
                                     "  <body style=\"background: transparent;\">\n"
                                     "  </body>\n"
                                     "</html>";
-                [[inAppHandler shouldEventually] receive:@selector(handleEvent:payload:) withCountAtMost:1 arguments:expectedName, expectedPayload];
+                [[inAppHandler shouldEventually] receive:@selector(handleEvent:payload:)
+                                         withCountAtMost:1
+                                               arguments:expectedName,
+                                                         expectedPayload];
 
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": message}}
                                                                options:0
@@ -132,7 +136,8 @@ SPEC_BEGIN(MEInAppTests)
 
             it(@"should call trackInAppDisplay: on inAppTracker", ^{
                 id inAppTracker = [KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)];
-                [[inAppTracker shouldEventuallyBeforeTimingOutAfter(30)] receive:@selector(trackInAppDisplay:) withArguments:@"testIdForInAppTracker"];
+                [[inAppTracker shouldEventuallyBeforeTimingOutAfter(30)] receive:@selector(trackInAppDisplay:)
+                                                                   withArguments:@"testIdForInAppTracker"];
                 iam.inAppTracker = inAppTracker;
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"testIdForInAppTracker", @"html": @"<html></html>"}}
                                                                options:0
@@ -235,7 +240,8 @@ SPEC_BEGIN(MEInAppTests)
             it(@"should close the inapp message", ^{
                 UIViewController *rootViewControllerMock = [UIViewController nullMock];
                 [[rootViewControllerMock should] receive:@selector(dismissViewControllerAnimated:completion:)];
-                KWCaptureSpy *spy = [rootViewControllerMock captureArgument:@selector(dismissViewControllerAnimated:completion:) atIndex:1];
+                KWCaptureSpy *spy = [rootViewControllerMock captureArgument:@selector(dismissViewControllerAnimated:completion:)
+                                                                    atIndex:1];
 
                 UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
                 window.rootViewController = rootViewControllerMock;
@@ -249,6 +255,47 @@ SPEC_BEGIN(MEInAppTests)
                 [[iam.iamWindow should] beNil];
             });
 
+        });
+
+        describe(@"trackIAMDisplay", ^{
+
+            xit(@"should insert inApp display event in db", ^{
+//
+//
+//                [iam showMessage:
+//               completionHandler:nil];
+//
+//
+//                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+//                    [builder setMobileEngageApplicationCode:@"appid"
+//                                        applicationPassword:@"pw"];
+//                    [builder setMerchantId:@"dummyMerchantId"];
+//                    [builder setContactFieldId:@3];
+//                }];
+//
+//                [Emarsys setupWithConfig:config];
+//                FakeDbHelper *dbHelper = [FakeDbHelper new];
+//                [MobileEngage setDbHelper:dbHelper];
+//                MobileEngage.inApp.timestampProvider = timestampProvider;
+//
+//                NSString *html = @"<html><body style=\"background-color:red\"></body></html>";
+//                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"12345678", @"html": html}}
+//                                                               options:0
+//                                                                 error:nil];
+//                EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
+//                                                                                  headers:@{}
+//                                                                                     body:body
+//                                                                             requestModel:[EMSRequestModel nullMock]
+//                                                                                timestamp:[NSDate date]];
+//
+//
+//
+//
+//                [[MEIAMResponseHandler new] handleResponse:response];
+//
+//                [dbHelper waitForInsert];
+//                [[[(MEDisplayedIAM *) dbHelper.insertedModel campaignId] should] equal:@"12345678"];
+            });
         });
 
 SPEC_END

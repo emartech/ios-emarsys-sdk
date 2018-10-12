@@ -4,7 +4,7 @@
 SPEC_BEGIN(EMSInAppProtocolTests)
 
         beforeEach(^{
-            [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+            [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
         });
 
         afterEach(^{

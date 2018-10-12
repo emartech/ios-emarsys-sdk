@@ -8,17 +8,15 @@
 
 @interface Emarsys ()
 
-+ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
-
 + (EMSSQLiteHelper *)sqliteHelper;
-
-+ (EMSDependencyContainer *)dependencyContainer;
 
 @end
 
 @interface EmarsysTestUtils : NSObject
 
-+ (void)setUpEmarsysWithFeatures:(NSArray<MEFlipperFeature> *)features;
++ (void)setupEmarsysWithFeatures:(NSArray<MEFlipperFeature> *)features
+         withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer;
 + (void)tearDownEmarsys;
++ (void)waitForSetCustomer;
 
 @end

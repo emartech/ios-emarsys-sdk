@@ -5,6 +5,10 @@
 #import <Foundation/Foundation.h>
 #import "EMSAbstractResponseHandler.h"
 
+@class MEInApp;
 
-@interface MEIAMResponseHandler : EMSAbstractResponseHandler 
+@interface MEIAMResponseHandler : EMSAbstractResponseHandler
+
+- (instancetype)initWithInApp:(MEInApp *)inApp;
+
 @end

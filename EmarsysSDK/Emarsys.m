@@ -2,30 +2,36 @@
 //  Copyright © 2018. Emarsys. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "Emarsys.h"
 #import "PredictInternal.h"
 #import "MobileEngageInternal.h"
 #import "MESchemaDelegate.h"
 #import "EMSDependencyContainer.h"
 #import "MEInApp.h"
+#import "EMSDependencyInjection.h"
+#import "MEExperimental.h"
+#import "MERequestContext.h"
+#import "MENotificationCenterManager.h"
+#import "AppStartBlockProvider.h"
 
 @implementation Emarsys
 
-static EMSConfig *_config;
-static EMSDependencyContainer *_dependencyContainer;
-
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
-    _config = config;
-    _dependencyContainer = [[EMSDependencyContainer alloc] initWithConfig:config];
+
+    [MEExperimental enableFeatures:config.experimentalFeatures];
+    [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
+
+    [Emarsys registerAppStartBlock];
 }
 
 + (void)setCustomerWithId:(NSString *)customerId
           completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(customerId);
-    [_dependencyContainer.predict setCustomerWithId:customerId];
-    [_dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId
-                                                     completionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:customerId];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId
+                                                                           completionBlock:completionBlock];
 }
 
 + (void)setCustomerWithId:(NSString *)customerId {
@@ -38,8 +44,8 @@ static EMSDependencyContainer *_dependencyContainer;
 }
 
 + (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [_dependencyContainer.predict clearCustomer];
-    [_dependencyContainer.mobileEngage appLogoutWithCompletionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.predict clearCustomer];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage appLogoutWithCompletionBlock:completionBlock];
 }
 
 + (void)trackCustomEventWithName:(NSString *)eventName
@@ -52,44 +58,46 @@ static EMSDependencyContainer *_dependencyContainer;
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(EMSCompletionBlock)completionBlock {
-    [_dependencyContainer.mobileEngage trackCustomEvent:eventName
-                                        eventAttributes:eventAttributes
-                                        completionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage trackCustomEvent:eventName
+                                                              eventAttributes:eventAttributes
+                                                              completionBlock:completionBlock];
 }
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
                         sourceHandler:(EMSSourceHandler)sourceHandler {
-    return [_dependencyContainer.mobileEngage trackDeepLinkWith:userActivity
-                                                  sourceHandler:sourceHandler];
+    return [EMSDependencyInjection.dependencyContainer.mobileEngage trackDeepLinkWith:userActivity
+                                                                        sourceHandler:sourceHandler];
 }
 
++ (void)registerAppStartBlock {
+    MENotificationCenterManager *notificationCenterManager = EMSDependencyInjection.dependencyContainer.notificationCenterManager;
+    AppStartBlockProvider *appStartBlockProvider = EMSDependencyInjection.dependencyContainer.appStartBlockProvider;
+    EMSRequestManager *requestManager = EMSDependencyInjection.dependencyContainer.requestManager;
+    MERequestContext *requestContext = EMSDependencyInjection.dependencyContainer.requestContext;
+
+    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartBlockWithRequestManager:requestManager
+                                                                                             requestContext:requestContext]
+                               forNotification:UIApplicationDidBecomeActiveNotification];
+}
 
 + (id <EMSPushNotificationProtocol>)push {
-    return _dependencyContainer.mobileEngage;
+    return EMSDependencyInjection.dependencyContainer.mobileEngage;
 }
 
 + (id <EMSInboxProtocol>)inbox {
-    return _dependencyContainer.inbox;
+    return EMSDependencyInjection.dependencyContainer.inbox;
 }
 
 + (id <EMSInAppProtocol>)inApp {
-    return _dependencyContainer.iam;
+    return EMSDependencyInjection.dependencyContainer.iam;
 }
 
 + (id <EMSPredictProtocol>)predict {
-    return _dependencyContainer.predict;
+    return EMSDependencyInjection.dependencyContainer.predict;
 }
 
 + (EMSSQLiteHelper *)sqliteHelper {
-    return _dependencyContainer.dbHelper;
-}
-
-+ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer {
-    _dependencyContainer = dependencyContainer;
-}
-
-+ (EMSDependencyContainer *)dependencyContainer {
-    return _dependencyContainer;
+    return EMSDependencyInjection.dependencyContainer.dbHelper;
 }
 
 @end

@@ -6,8 +6,21 @@
 #import "MobileEngage.h"
 #import "MEInApp+Private.h"
 
+@interface MEIAMResponseHandler ()
+
+@property(nonatomic, strong) MEInApp *inApp;
+
+@end
 
 @implementation MEIAMResponseHandler
+
+- (instancetype)initWithInApp:(MEInApp *)inApp {
+    NSParameterAssert(inApp);
+    if (self = [super init]) {
+        _inApp = inApp;
+    }
+    return self;
+}
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     id message = response.parsedBody[@"message"];
@@ -15,8 +28,8 @@
 }
 
 - (void)handleResponse:(EMSResponseModel *)response {
-    [[MobileEngage inApp] showMessage:[[MEInAppMessage alloc] initWithResponse:response]
-                    completionHandler:nil];
+    [self.inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
+          completionHandler:nil];
 }
 
 @end

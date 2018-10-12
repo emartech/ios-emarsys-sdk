@@ -9,12 +9,11 @@
 #import "MobileEngageVersion.h"
 #import "MERequestContext.h"
 #import "FakeRequestManager.h"
-#import "MEIdResponseHandler.h"
 #import "MEExperimental.h"
-#import "MENotificationCenterManager.h"
 #import "MEExperimental+Test.h"
 #import "NSDate+EMSCore.h"
 #import "EMSWaiter.h"
+#import "EMSNotificationCache.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -25,13 +24,13 @@ static NSString *const kMEIdSignature = @"kMeIdSignature";
 
 SPEC_BEGIN(MobileEngageInternalTests)
 
-
         registerMatchers(@"EMS");
 
         __block MobileEngageInternal *_mobileEngage;
         __block MERequestContext *requestContext;
         __block EMSConfig *config;
         __block EMSConfig *configWithInapp;
+        __block EMSRequestManager *requestManager;
 
         beforeEach(^{
             [MEExperimental enableFeature:INAPP_MESSAGING];
@@ -57,55 +56,44 @@ SPEC_BEGIN(MobileEngageInternalTests)
             [userDefaults setObject:nil forKey:kEMSLastAppLoginPayload];
             [userDefaults synchronize];
 
+            requestManager = [EMSRequestManager nullMock];
             requestContext = [[MERequestContext alloc] initWithConfig:config];
-            _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
+            _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                   requestContext:requestContext
-                                                       notificationCenterManager:nil
-                                                               notificationCache:NULL];
+                                                               notificationCache:[EMSNotificationCache new]];
         });
 
         id (^requestManagerMock)(void) = ^id() {
             NSString *applicationCode = kAppId;
             NSString *applicationPassword = @"appSecret";
-            NSDictionary *additionalHeaders = @{
-                    @"Content-Type": @"application/json",
-                    @"X-MOBILEENGAGE-SDK-VERSION": MOBILEENGAGE_SDK_VERSION,
-                    @"X-MOBILEENGAGE-SDK-MODE": @"debug"
-            };
             id requestManager = [EMSRequestManager mock];
-
-            [[requestManager should] receive:@selector(setAdditionalHeaders:)
-                            withCountAtLeast:1
-                                   arguments:additionalHeaders];
-
             _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                   requestContext:requestContext
-                                                       notificationCenterManager:nil
-                                                               notificationCache:NULL];
+                                                               notificationCache:[EMSNotificationCache new]];
             return requestManager;
         };
 
         id (^requestModel)(NSString *url, NSDictionary *payload) = ^id(NSString *url, NSDictionary *payload) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setPayload:payload];
-                        [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:kAppId
-                                                                                                      password:kAppSecret]}];
-                    }
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodPOST];
+                    [builder setPayload:payload];
+                    [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:kAppId
+                                                                                                  password:kAppSecret]}];
+                }
                                   timestampProvider:requestContext.timestampProvider
                                        uuidProvider:requestContext.uuidProvider];
         };
 
         id (^requestModelV3)(NSString *url, NSDictionary *payload) = ^id(NSString *url, NSDictionary *payload) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setPayload:payload];
-                        [builder setHeaders:@{@"X-ME-ID": kMEID,
-                                @"X-ME-ID-SIGNATURE": kMEID_SIGNATURE,
-                                @"X-ME-APPLICATIONCODE": kAppId}];
-                    }
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodPOST];
+                    [builder setPayload:payload];
+                    [builder setHeaders:@{@"X-ME-ID": kMEID,
+                        @"X-ME-ID-SIGNATURE": kMEID_SIGNATURE,
+                        @"X-ME-APPLICATIONCODE": kAppId}];
+                }
                                   timestampProvider:requestContext.timestampProvider
                                        uuidProvider:requestContext.uuidProvider];
         };
@@ -174,16 +162,16 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should submit a corresponding RequestModel", ^{
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -199,13 +187,12 @@ SPEC_BEGIN(MobileEngageInternalTests)
             //Todo move to integration tests
             xit(@"appLogin should save the MEID returned in the response", ^{
                 FakeRequestManager *fakeRequestManager = [FakeRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        }
+                    }
                                                                                           errorBlock:^(NSString *requestId, NSError *error) {
                                                                                           }];
 
                 MobileEngageInternal *internal = [[MobileEngageInternal alloc] initWithRequestManager:fakeRequestManager
                                                                                        requestContext:requestContext
-                                                                            notificationCenterManager:nil
                                                                                     notificationCache:NULL];
 
 
@@ -215,8 +202,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                                                options:0
                                                                  error:nil];
                 EMSRequestModel *request = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:@"https://www.somethi.ng"];
-                        }
+                        [builder setUrl:@"https://www.somethi.ng"];
+                    }
                                                           timestampProvider:requestContext.timestampProvider
                                                                uuidProvider:requestContext.uuidProvider];
                 fakeRequestManager.responseModels = [@[[[EMSResponseModel alloc] initWithStatusCode:200
@@ -239,18 +226,18 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should submit a corresponding RequestModel", ^{
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -272,31 +259,30 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:[[MERequestContext alloc] initWithConfig:config]
-                                                           notificationCenterManager:nil
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
                 EMSRequestModel *secondModel = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/ems_lastMobileActivity"], @{
-                        @"application_id": kAppId,
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com"
+                    @"application_id": kAppId,
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com"
                 });
 
                 [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
@@ -313,39 +299,38 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:[[MERequestContext alloc] initWithConfig:config]
-                                                           notificationCenterManager:nil
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"nottest@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"nottest@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
                 EMSRequestModel *secondModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
@@ -363,39 +348,38 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:[[MERequestContext alloc] initWithConfig:config]
-                                                           notificationCenterManager:nil
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
                 EMSRequestModel *secondModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"nottest@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"nottest@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
@@ -413,31 +397,30 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:[[MERequestContext alloc] initWithConfig:config]
-                                                           notificationCenterManager:nil
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"language": [EMSDeviceInfo languageCode],
+                    @"timezone": [EMSDeviceInfo timeZone],
+                    @"device_model": [EMSDeviceInfo deviceModel],
+                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
                 });
 
 
                 EMSRequestModel *secondModel = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/ems_lastMobileActivity"], @{
-                        @"application_id": kAppId,
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com"
+                    @"application_id": kAppId,
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com"
                 });
 
 
@@ -446,7 +429,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 _mobileEngage = [MobileEngageInternal new];
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:[[MERequestContext alloc] initWithConfig:config]
-                                                           notificationCenterManager:nil
                                                                    notificationCache:NULL];
 
                 [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
@@ -461,8 +443,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should submit a corresponding RequestModel if there is no saved applogin parameters", ^{
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout", @{
-                        @"application_id": kAppId,
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"application_id": kAppId,
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -478,10 +460,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
             it(@"should submit a corresponding RequestModel if there is saved applogin parameters", ^{
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout", @{
-                        @"application_id": kAppId,
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com"
+                    @"application_id": kAppId,
+                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com"
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -550,9 +532,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     id requestManager = requestManagerMock();
 
                     EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"sid": @"123456789"
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"sid": @"123456789"
                     });
 
                     [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -575,11 +557,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                              andReturn:appLoginParameters];
 
                     EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"contact_field_id": @3,
-                            @"contact_field_value": @"test@test.com",
-                            @"sid": @"123456789"
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"contact_field_id": @3,
+                        @"contact_field_value": @"test@test.com",
+                        @"sid": @"123456789"
                     });
 
                     [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -652,17 +634,17 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSDictionary *eventAttributes = @{@"someKey": @"someValue"};
 
                     NSDictionary *payload = @{
-                            @"clicks": @[],
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"viewed_messages": @[],
-                            @"events": @[
-                                    @{
-                                            @"type": @"custom",
-                                            @"name": eventName,
-                                            @"attributes": eventAttributes,
-                                            @"timestamp": [timestamp stringValueInUTC]
-                                    }
-                            ]
+                        @"clicks": @[],
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"viewed_messages": @[],
+                        @"events": @[
+                            @{
+                                @"type": @"custom",
+                                @"name": eventName,
+                                @"attributes": eventAttributes,
+                                @"timestamp": [timestamp stringValueInUTC]
+                            }
+                        ]
                     };
 
                     EMSRequestModel *model = requestModelV3([NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events", kMEID], payload);
@@ -694,16 +676,16 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSString *eventName = @"testEventName";
 
                     NSDictionary *payload = @{
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"clicks": @[],
-                            @"viewed_messages": @[],
-                            @"events": @[
-                                    @{
-                                            @"type": @"custom",
-                                            @"name": eventName,
-                                            @"timestamp": [timeStamp stringValueInUTC]
-                                    }
-                            ]
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"clicks": @[],
+                        @"viewed_messages": @[],
+                        @"events": @[
+                            @{
+                                @"type": @"custom",
+                                @"name": eventName,
+                                @"timestamp": [timeStamp stringValueInUTC]
+                            }
+                        ]
                     };
 
                     EMSRequestModel *model = requestModelV3([NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events", kMEID], payload);
@@ -730,9 +712,9 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSDictionary *eventAttributes = @{@"someKey": @"someValue"};
 
                     NSDictionary *payload = @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"attributes": eventAttributes
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"attributes": eventAttributes
                     };
 
                     EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
@@ -764,11 +746,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSDictionary *eventAttributes = @{@"someKey": @"someValue"};
 
                     NSDictionary *payload = @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"attributes": eventAttributes,
-                            @"contact_field_id": @3,
-                            @"contact_field_value": @"test@test.com"
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"attributes": eventAttributes,
+                        @"contact_field_id": @3,
+                        @"contact_field_value": @"test@test.com"
                     };
 
                     EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
@@ -794,8 +776,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSString *eventName = @"testEventName";
 
                     NSDictionary *payload = @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
                     };
 
                     EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
@@ -827,10 +809,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSString *eventName = @"testEventName";
 
                     NSDictionary *payload = @{
-                            @"application_id": kAppId,
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
-                            @"contact_field_id": @3,
-                            @"contact_field_value": @"test@test.com"
+                        @"application_id": kAppId,
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"contact_field_id": @3,
+                        @"contact_field_value": @"test@test.com"
                     };
 
                     EMSRequestModel *model = requestModel([NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@",
@@ -847,111 +829,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [[model should] beSimilarWithRequest:actualModel];
                 });
 
-
-            });
-
-
-            describe(@"appStart", ^{
-
-                beforeEach(^{
-                    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
-                                                                          requestContext:requestContext
-                                                               notificationCenterManager:nil
-                                                                       notificationCache:NULL];
-                });
-
-                it(@"should register UIApplicationDidBecomeActiveNotification", ^{
-                    id notificationCenterManagerMock = [MENotificationCenterManager mock];
-                    [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                      withArguments:kw_any(),
-                                                                    UIApplicationDidBecomeActiveNotification];
-                    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
-                                                                          requestContext:requestContext
-                                                               notificationCenterManager:notificationCenterManagerMock
-                                                                       notificationCache:NULL];
-                });
-
-                it(@"should submit appstart event on UIApplicationDidBecomeActiveNotification", ^{
-                    id notificationCenterManagerMock = [MENotificationCenterManager mock];
-                    [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                      withArguments:kw_any(),
-                                                                    UIApplicationDidBecomeActiveNotification];
-                    KWCaptureSpy *spy = [notificationCenterManagerMock captureArgument:@selector(addHandlerBlock:forNotification:)
-                                                                               atIndex:0];
-                    EMSRequestManager *const requestManager = [EMSRequestManager nullMock];
-                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
-                                    withCountAtLeast:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
-                                                                      atIndex:0];
-                    [requestContext setMeId:@"testMeId"];
-                    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
-                                                                          requestContext:requestContext
-                                                               notificationCenterManager:notificationCenterManagerMock
-                                                                       notificationCache:NULL];
-
-                    MEHandlerBlock block = spy.argument;
-                    block();
-
-                    EMSRequestModel *result = submitSpy.argument;
-                    [[[result.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events"];
-                    [[result.payload[@"events"][0][@"type"] should] equal:@"internal"];
-                    [[result.payload[@"events"][0][@"name"] should] equal:@"app:start"];
-                });
-
-                it(@"should submit inapp:viewed event when trackInAppDisplay: called", ^{
-                    [_mobileEngage.requestContext setMeId:@"testMeId"];
-                    [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
-
-                    id requestManager = requestManagerMock();
-                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withCountAtLeast:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:) atIndex:0];
-
-                    [_mobileEngage trackInAppDisplay:@"testCampaignId"];
-
-                    EMSRequestModel *result = submitSpy.argument;
-                    [[[result.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events"];
-                    [[result.payload[@"events"][0][@"type"] should] equal:@"internal"];
-                    [[result.payload[@"events"][0][@"name"] should] equal:@"inapp:viewed"];
-                    [[result.payload[@"events"][0][@"attributes"][@"message_id"] should] equal:@"testCampaignId"];
-                });
-
-                it(@"should submit inapp:viewed event when trackInAppClick: called", ^{
-                    [_mobileEngage.requestContext setMeId:@"testMeId"];
-                    [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
-
-                    id requestManager = requestManagerMock();
-                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withCountAtLeast:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:) atIndex:0];
-
-                    [_mobileEngage trackInAppClick:@"testCampaignId" buttonId:@"123"];
-
-                    EMSRequestModel *result = submitSpy.argument;
-                    [[[result.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events"];
-                    [[result.payload[@"events"][0][@"type"] should] equal:@"internal"];
-                    [[result.payload[@"events"][0][@"name"] should] equal:@"inapp:click"];
-                    [[result.payload[@"events"][0][@"attributes"][@"message_id"] should] equal:@"testCampaignId"];
-                    [[result.payload[@"events"][0][@"attributes"][@"button_id"] should] equal:@"123"];
-                });
-
-                it(@"should not call submit on RequestManager when there is no meid (no login)", ^{
-                    id notificationCenterManagerMock = [MENotificationCenterManager mock];
-                    [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                      withArguments:kw_any(),
-                                                                    UIApplicationDidBecomeActiveNotification];
-                    KWCaptureSpy *spy = [notificationCenterManagerMock captureArgument:@selector(addHandlerBlock:forNotification:)
-                                                                               atIndex:0];
-                    EMSRequestManager *const requestManager = [EMSRequestManager nullMock];
-                    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
-                                                                          requestContext:requestContext
-                                                               notificationCenterManager:notificationCenterManagerMock
-                                                                       notificationCache:NULL];
-                    [_mobileEngage.requestContext setMeId:nil];
-
-
-                    [[requestManager shouldNot] receive:@selector(submitRequestModel:withCompletionBlock:)];
-                    MEHandlerBlock block = spy.argument;
-                    block();
-                });
 
             });
 
@@ -974,13 +851,15 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [_mobileEngage.requestContext setMeIdSignature:@"testMeIdSig"];
 
                     id requestManager = requestManagerMock();
-                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withCountAtLeast:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:) atIndex:0];
+                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                    withCountAtLeast:1];
+                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
+                                                                      atIndex:0];
 
                     [_mobileEngage trackInternalCustomEvent:@"richNotification:clicked"
                                             eventAttributes:@{
-                                                    @"button_id": @"ASDF-QWERT-ASDF-QWERT",
-                                                    @"title": @"TitleOfTheButton"
+                                                @"button_id": @"ASDF-QWERT-ASDF-QWERT",
+                                                @"title": @"TitleOfTheButton"
                                             }
                                             completionBlock:nil];
 
@@ -1006,7 +885,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     }];
                     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
                                                                           requestContext:requestContext
-                                                               notificationCenterManager:nil
                                                                        notificationCache:NULL];
 
                     _mobileEngage.requestContext.meId = kMEID;
@@ -1032,7 +910,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     NSString *applicationPassword = @"appSecret";
                     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
                                                                           requestContext:requestContext
-                                                               notificationCenterManager:nil
                                                                        notificationCache:NULL];
 
                     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
@@ -1053,7 +930,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     _mobileEngage = [MobileEngageInternal new];
                     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
                                                                           requestContext:requestContext
-                                                               notificationCenterManager:nil
                                                                        notificationCache:NULL];
 
                     _mobileEngage.requestContext.meId = kMEID;
@@ -1084,7 +960,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [userDefaults synchronize];
                     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
                                                                           requestContext:requestContext
-                                                               notificationCenterManager:nil
                                                                        notificationCache:NULL];
 
 
@@ -1150,7 +1025,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                          andReturn:[[NSURL alloc] initWithString:source]];
                     id requestManager = requestManagerMock();
                     [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withCount:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:) atIndex:0];
+                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
+                                                                      atIndex:0];
 
                     [_mobileEngage trackDeepLinkWith:userActivity
                                        sourceHandler:nil];
@@ -1170,7 +1046,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                          andReturn:[[NSURL alloc] initWithString:source]];
                     id requestManager = requestManagerMock();
                     [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withCount:1];
-                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:) atIndex:0];
+                    KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
+                                                                      atIndex:0];
 
                     [_mobileEngage trackDeepLinkWith:userActivity
                                        sourceHandler:nil];
@@ -1186,11 +1063,48 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 it(@"should not be nil after setup", ^{
                     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:[EMSRequestManager nullMock]
                                                                           requestContext:requestContext
-                                                               notificationCenterManager:nil
                                                                        notificationCache:NULL];
                     [[_mobileEngage.requestContext shouldNot] beNil];
                 });
             });
+        });
+
+        describe(@"trackInApp", ^{
+
+            it(@"should submit inapp:viewed event when trackInAppDisplay: called", ^{
+                [requestContext setMeId:@"testMeId"];
+                [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
+                                                                  atIndex:0];
+
+                [_mobileEngage trackInAppDisplay:@"testCampaignId"];
+
+                EMSRequestModel *result = submitSpy.argument;
+                [[[result.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events"];
+                [[result.payload[@"events"][0][@"type"] should] equal:@"internal"];
+                [[result.payload[@"events"][0][@"name"] should] equal:@"inapp:viewed"];
+                [[result.payload[@"events"][0][@"attributes"][@"message_id"] should] equal:@"testCampaignId"];
+            });
+
+            it(@"should submit inapp:viewed event when trackInAppClick: called", ^{
+                [requestContext setMeId:@"testMeId"];
+
+                [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                withCountAtLeast:1];
+                KWCaptureSpy *submitSpy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
+                                                                  atIndex:0];
+
+                [_mobileEngage trackInAppClick:@"testCampaignId" buttonId:@"123"];
+
+                EMSRequestModel *result = submitSpy.argument;
+                [[[result.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events"];
+                [[result.payload[@"events"][0][@"type"] should] equal:@"internal"];
+                [[result.payload[@"events"][0][@"name"] should] equal:@"inapp:click"];
+                [[result.payload[@"events"][0][@"attributes"][@"message_id"] should] equal:@"testCampaignId"];
+                [[result.payload[@"events"][0][@"attributes"][@"button_id"] should] equal:@"123"];
+            });
+
         });
 
 SPEC_END

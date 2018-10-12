@@ -10,12 +10,6 @@
 #import "MEInApp.h"
 #import "MEInApp+Private.h"
 #import "MobileEngage+Test.h"
-#import "MEDisplayedIAMRepository.h"
-#import "MobileEngage+Private.h"
-#import "EMSConfigBuilder.h"
-#import "EMSConfig.h"
-#import "FakeDbHelper.h"
-#import "Emarsys.h"
 
 SPEC_BEGIN(MEIAMResponseHandlerTests)
 
@@ -25,10 +19,24 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
             timestampProvider = [EMSTimestampProvider new];
         });
 
+        describe(@"initWithInApp:", ^{
+            it(@"should throw exception when inApp is nil", ^{
+                @try {
+                    [[MEIAMResponseHandler alloc] initWithInApp:nil];
+                    fail(@"Expected Exception when inApp is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
+
         describe(@"MEIAMResponseHandler.shouldHandleResponse", ^{
 
             it(@"should return YES when the response contains html message", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"html": @"<html><body style=\"background-color:red\"></body></html>"}} options:0 error:nil];
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"html": @"<html><body style=\"background-color:red\"></body></html>"}}
+                                                               options:0
+                                                                 error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
@@ -97,7 +105,9 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
 
             it(@"should call showMessage on MEInApp", ^{
                 NSString *html = @"<html><body style=\"background-color:red\"></body></html>";
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": html}} options:0 error:nil];
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": html}}
+                                                               options:0
+                                                                 error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
@@ -105,38 +115,12 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                                                                                 timestamp:[NSDate date]];
 
                 id iamMock = [MEInApp mock];
-                [[iamMock should] receive:@selector(showMessage:completionHandler:) withArguments:[[MEInAppMessage alloc] initWithResponse:response], kw_any()];
+                [[iamMock should] receive:@selector(showMessage:completionHandler:)
+                            withArguments:[[MEInAppMessage alloc] initWithResponse:response], kw_any()];
                 MobileEngage.inApp = iamMock;
 
-                MEIAMResponseHandler *handler = [MEIAMResponseHandler new];
+                MEIAMResponseHandler *handler = [[MEIAMResponseHandler alloc] initWithInApp:iamMock];
                 [handler handleResponse:response];
-            });
-
-            xit(@"should save the inapp display", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"appid"
-                                        applicationPassword:@"pw"];
-                    [builder setMerchantId:@"dummyMerchantId"];
-                    [builder setContactFieldId:@3];
-                }];
-
-                [Emarsys setupWithConfig:config];
-                FakeDbHelper *dbHelper = [FakeDbHelper new];
-                [MobileEngage setDbHelper:dbHelper];
-                MobileEngage.inApp.timestampProvider = timestampProvider;
-
-                NSString *html = @"<html><body style=\"background-color:red\"></body></html>";
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"12345678", @"html": html}} options:0 error:nil];
-                EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                  headers:@{}
-                                                                                     body:body
-                                                                             requestModel:[EMSRequestModel nullMock]
-                                                                                timestamp:[NSDate date]];
-
-                [[MEIAMResponseHandler new] handleResponse:response];
-
-                [dbHelper waitForInsert];
-                [[[(MEDisplayedIAM *) dbHelper.insertedModel campaignId] should] equal:@"12345678"];
             });
 
         });

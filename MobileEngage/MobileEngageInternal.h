@@ -41,7 +41,6 @@ typedef void (^MESourceHandler)(NSString *source);
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
-             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
                      notificationCache:(EMSNotificationCache *)notificationCache;
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity

@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
+#import <UIKit/UIKit.h>
 #import "EMSDependencyContainer.h"
 #import "MobileEngageInternal.h"
 #import "MEExperimental.h"
@@ -27,16 +28,28 @@
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "MESchemaDelegate.h"
+#import "MEDefaultHeaders.h"
+#import "AppStartBlockProvider.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
 @interface EMSDependencyContainer ()
 
-@property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
+@property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
+@property(nonatomic, strong) MobileEngageInternal *mobileEngage;
+@property(nonatomic, strong) id<EMSInboxProtocol> inbox;
+@property(nonatomic, strong) MEInApp *iam;
+@property(nonatomic, strong) PredictInternal *predict;
+@property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
+@property(nonatomic, strong) EMSNotificationCache *notificationCache;
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
+@property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -57,10 +70,9 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
-    [MEExperimental enableFeatures:config.experimentalFeatures];
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
     _notificationCenterManager = [MENotificationCenterManager new];
-
+    __weak typeof(self) weakSelf = self;
     _iam = [MEInApp new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
@@ -79,7 +91,6 @@
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [[NSUUID UUID] UUIDString]];
 
-    __weak typeof(self) weakSelf = self;
     EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
             [weakSelf handleResponse:response];
         }
@@ -95,6 +106,7 @@
                                                             worker:worker
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository];
+    [self.requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]];
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:[EMSTimestampProvider new]
                                                                      uuidProvider:[EMSUUIDProvider new]
@@ -108,7 +120,7 @@
                                                                      schemaDelegate:[MESchemaDelegate new]];
         [meDbHelper open];
         [responseHandlers addObjectsFromArray:@[
-            [MEIAMResponseHandler new],
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
             [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:meDbHelper]
                                                           displayIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper]]]
         ];
@@ -139,6 +151,8 @@
                                       restClient:self.restClient
                                   requestManager:self.requestManager];
     }
+
+    _appStartBlockProvider = [AppStartBlockProvider new];
 }
 
 - (void)initializeInstances {
@@ -146,7 +160,6 @@
                                                 requestManager:self.requestManager];
     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
                                                           requestContext:self.requestContext
-                                               notificationCenterManager:self.notificationCenterManager
                                                        notificationCache:self.notificationCache];
 }
 

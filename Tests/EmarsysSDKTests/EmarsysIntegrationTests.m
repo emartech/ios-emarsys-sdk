@@ -45,7 +45,8 @@ SPEC_BEGIN(EmarsysIntegrationTests)
         context(@"V3", ^{
 
             beforeEach(^{
-                [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]];
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]
+                                   withDependencyContainer:nil];
             });
 
             describe(@"setCustomerWithId:completionBlock:", ^{
@@ -118,7 +119,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
         context(@"V2", ^{
 
             beforeEach(^{
-                [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
             });
 
             describe(@"setCustomerWithId:completionBlock:", ^{

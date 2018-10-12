@@ -3,55 +3,22 @@
 //
 
 #import "Kiwi.h"
-#import "EMSConfigBuilder.h"
-#import "EMSConfig.h"
 #import "EMSNotificationInboxStatus.h"
 #import "MEExperimental+Test.h"
-#import "MERequestContext.h"
 #import "EMSWaiter.h"
 #import "Emarsys.h"
-
-#define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
-#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
-#define ME_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
+#import "EmarsysTestUtils.h"
 
 SPEC_BEGIN(InboxV2IntegrationTests)
 
 
         beforeEach(^{
-            [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                                       error:nil];
-            [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                       error:nil];
-            [[NSFileManager defaultManager] removeItemAtPath:ME_DB_PATH
-                                                       error:nil];
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-            [userDefaults removeObjectForKey:kMEID];
-            [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-            [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
-            [userDefaults synchronize];
-
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                [builder setExperimentalFeatures:@[USER_CENTRIC_INBOX]];
-                [builder setMerchantId:@"dummyMerchantId"];
-                [builder setContactFieldId:@3];
-            }];
-            [Emarsys setupWithConfig:config];
-
-            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-            [Emarsys setCustomerWithId:@"test@test.com"
-                       completionBlock:^(NSError *error) {
-                           [expectation fulfill];
-                       }];
-            [EMSWaiter waitForExpectations:@[expectation]
-                                   timeout:30];
+            [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX] withDependencyContainer:nil];
+            [EmarsysTestUtils waitForSetCustomer];
         });
 
         afterEach(^{
-            [Emarsys clearCustomer];
-            [MEExperimental reset];
+            [EmarsysTestUtils tearDownEmarsys];
         });
 
         describe(@"Notification Inbox", ^{

@@ -9,6 +9,7 @@
 #import "MEButtonClickRepository+Private.h"
 #import "MobileEngage+Private.h"
 #import "MEIAMTriggerMEEvent.h"
+#import "EMSDependencyContainerProtocol.h"
 
 MEIAMJSCommandFactory *_factory;
 

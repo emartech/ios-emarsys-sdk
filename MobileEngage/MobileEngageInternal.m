@@ -3,22 +3,15 @@
 //
 
 #import "MobileEngageInternal.h"
-#import "EMSConfig.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
-#import "MEDefaultHeaders.h"
-#import "EMSAbstractResponseHandler.h"
 #import "MobileEngage.h"
-#import "MENotificationCenterManager.h"
 #import "MERequestContext.h"
 #import "MERequestFactory.h"
 #import "EMSNotificationCache.h"
-#import <UIKit/UIKit.h>
 
 @interface MobileEngageInternal ()
 
-@property(nonatomic, strong) EMSConfig *config;
-@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 
 @end
@@ -27,44 +20,13 @@
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
-             notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
                      notificationCache:(EMSNotificationCache *)notificationCache {
     if (self = [super init]) {
         _notificationCache = notificationCache;
-        [self setupWithRequestManager:requestManager
-                               config:requestContext.config
-                        launchOptions:nil
-                       requestContext:requestContext
-            notificationCenterManager:notificationCenterManager];
+        _requestContext = requestContext;
+        _requestManager = requestManager;
     }
     return self;
-}
-
-- (void)setupWithRequestManager:(EMSRequestManager *)requestManager
-                         config:(nonnull EMSConfig *)config
-                  launchOptions:(NSDictionary *)launchOptions
-                 requestContext:(MERequestContext *)requestContext
-      notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager {
-    _requestContext = requestContext;
-    _requestManager = requestManager;
-    _config = config;
-    _notificationCenterManager = notificationCenterManager;
-    [requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.config]];
-
-    NSMutableArray *responseHandlers = [NSMutableArray array];
-
-    _responseHandlers = [NSArray arrayWithArray:responseHandlers];
-
-    __weak typeof(self) weakSelf = self;
-    [_notificationCenterManager addHandlerBlock:^{
-        if (self.requestContext.meId != nil) {
-            [weakSelf.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"app:start"
-                                                                                              eventAttributes:nil
-                                                                                                         type:@"internal"
-                                                                                               requestContext:weakSelf.requestContext]
-                                    withCompletionBlock:nil];
-        }
-    }                           forNotification:UIApplicationDidBecomeActiveNotification];
 }
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
@@ -124,12 +86,6 @@
                                                                                              type:@"internal"
                                                                                    requestContext:self.requestContext]
                         withCompletionBlock:nil];
-}
-
-- (void)handleResponse:(EMSResponseModel *)model {
-    for (EMSAbstractResponseHandler *handler in _responseHandlers) {
-        [handler processResponse:model];
-    }
 }
 
 - (void)setPushToken:(NSData *)pushToken {

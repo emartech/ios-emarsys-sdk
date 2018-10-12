@@ -1,32 +1,21 @@
 #import "Kiwi.h"
-#import "EMSConfigBuilder.h"
-#import "EMSConfig.h"
 #import "EMSNotificationInboxStatus.h"
 #import "EMSWaiter.h"
 #import "Emarsys.h"
+#import "EmarsysTestUtils.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
 SPEC_BEGIN(InboxIntegrationTests)
 
         beforeEach(^{
-            [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                                       error:nil];
+            [EmarsysTestUtils tearDownEmarsys];
+            [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+            [EmarsysTestUtils waitForSetCustomer];
+        });
 
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                [builder setMerchantId:@"dummyMerchantId"];
-                [builder setContactFieldId:@3];
-            }];
-            [Emarsys setupWithConfig:config];
-            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waiForResult"];
-            [Emarsys setCustomerWithId:@"test@test.com"
-                       completionBlock:^(NSError *error) {
-                           [expectation fulfill];
-                       }];
-            [EMSWaiter waitForExpectations:@[expectation]
-                                   timeout:5];
+        afterEach(^{
+            [EmarsysTestUtils tearDownEmarsys];
         });
 
         describe(@"Notification Inbox", ^{
@@ -133,7 +122,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                     }
                 }];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp] timeout:5];
 
                 [[returnedNotification shouldNot] beNil];
                 [[returnedNotification.id should] equal:notificationId];
@@ -141,7 +130,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[returnedNotification.body should] equal:@"body"];
             });
 
-            it(@"fetchNotificationsWithResultBlock result should not contain the gained notification", ^{
+            it(@"fetchNotificationsWithResultBlock result should not contain the gained notification if it's not inbox message", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @NO;
                 NSDictionary *userInfo = @{

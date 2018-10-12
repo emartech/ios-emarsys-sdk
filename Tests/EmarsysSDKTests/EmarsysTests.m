@@ -16,48 +16,75 @@
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
+#import "MobileEngageVersion.h"
+#import "EMSDependencyInjection.h"
+#import "MENotificationCenterManager.h"
+#import "FakeDependencyContainer.h"
+#import "AppStartBlockProvider.h"
+#import "MERequestContext.h"
 
 SPEC_BEGIN(EmarsysTests)
 
-        __block PredictInternal *predict;
         __block MobileEngageInternal *engage;
-        __block EMSDependencyContainer *container;
+        __block PredictInternal *predict;
+        __block MERequestContext *requestContext;
+        __block EMSRequestManager *requestManager;
+        __block MENotificationCenterManager *notificationCenterManagerMock;
+        __block AppStartBlockProvider *appStartBlockProvider;
+
+        __block EMSConfig *baseConfig;
+        __block id <EMSDependencyContainerProtocol> dependencyContainer;
+
         NSString *const customerId = @"customerId";
 
         beforeEach(^{
-            predict = [PredictInternal nullMock];
             engage = [MobileEngageInternal nullMock];
-            container = [EMSDependencyContainer nullMock];
+            predict = [PredictInternal nullMock];
+            requestContext = [MERequestContext nullMock];
+            [requestContext stub:@selector(meId) andReturn:@"fakeMeId"];
+            requestManager = [EMSRequestManager nullMock];
+            notificationCenterManagerMock = [MENotificationCenterManager nullMock];
+            appStartBlockProvider = [AppStartBlockProvider nullMock];
 
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"applicationCode"
-                                    applicationPassword:@"applicationPassword"];
-                [builder setContactFieldId:@32];
-                [builder setMerchantId:@"merchantId"];
-            }];
-            [Emarsys setupWithConfig:config];
+            dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil
+                                                                       mobileEngage:engage
+                                                                              inbox:nil
+                                                                                iam:nil
+                                                                            predict:predict
+                                                                     requestContext:requestContext
+                                                                  requestRepository:nil
+                                                                  notificationCache:nil
+                                                                   responseHandlers:nil
+                                                                     requestManager:requestManager
+                                                                     operationQueue:nil
+                                                          notificationCenterManager:notificationCenterManagerMock
+                                                              appStartBlockProvider:appStartBlockProvider];
 
-            [container stub:@selector(mobileEngage)
-                  andReturn:engage];
-            [container stub:@selector(predict)
-                  andReturn:predict];
-            [Emarsys setDependencyContainer:container];
+            [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                               withDependencyContainer:dependencyContainer];
+        });
+
+        afterEach(^{
+            [EmarsysTestUtils tearDownEmarsys];
         });
 
         describe(@"setupWithConfig:", ^{
 
             it(@"should set predict", ^{
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                   withDependencyContainer:nil];
                 [[(NSObject *) [Emarsys predict] shouldNot] beNil];
             });
 
             it(@"should set push", ^{
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                   withDependencyContainer:nil];
                 [[(NSObject *) [Emarsys push] shouldNot] beNil];
             });
 
             it(@"register Predict trigger", ^{
-                EMSConfig *configMock = [EMSConfig nullMock];
-                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
-                [Emarsys setupWithConfig:configMock];
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                   withDependencyContainer:nil];
 
                 NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
@@ -68,7 +95,6 @@ SPEC_BEGIN(EmarsysTests)
             });
 
             it(@"should throw an exception when there is no config set", ^{
-
                 @try {
                     [Emarsys setupWithConfig:nil];
                     fail(@"Expected Exception when config is nil!");
@@ -80,15 +106,11 @@ SPEC_BEGIN(EmarsysTests)
 
             context(@"ResponseHandlers", ^{
 
-                afterEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                });
-
                 it(@"should register MEIDResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
 
                     BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registered = YES;
                         }
@@ -98,10 +120,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register MEIDResponseHandler if USER_CENTRIC_INBOX is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[USER_CENTRIC_INBOX]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX] withDependencyContainer:nil];
 
                     BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registered = YES;
                         }
@@ -111,10 +133,11 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX and INAPP is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]
+                                       withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
                             registerCount++;
                         }
@@ -124,10 +147,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register MEIAMResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
 
                     BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
                             registered = YES;
                         }
@@ -137,10 +160,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register MEIAMCleanupResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
 
                     BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
                             registered = YES;
                         }
@@ -150,10 +173,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should not register MEIAMCleanupResponseHandler & MEIAMResponseHandler if INAPP is turned off", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]] || [responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
                             registerCount++;
                         }
@@ -163,10 +186,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register EMSVisitorIdResponseHandler if no features are turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
                             registerCount++;
                         }
@@ -176,10 +199,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register EMSVisitorIdResponseHandler if INAPP feature is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[INAPP_MESSAGING]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
                             registerCount++;
                         }
@@ -189,10 +212,10 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should register EMSVisitorIdResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
-                    [EmarsysTestUtils setUpEmarsysWithFeatures:@[USER_CENTRIC_INBOX]];
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX] withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in [Emarsys dependencyContainer].responseHandlers) {
+                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
                         if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
                             registerCount++;
                         }
@@ -200,6 +223,34 @@ SPEC_BEGIN(EmarsysTests)
 
                     [[theValue(registerCount) should] equal:theValue(1)];
                 });
+            });
+
+            it(@"should set additionalHeaders on requestManager", ^{
+                [EMSDependencyInjection tearDown];
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+
+                [[[EMSDependencyInjection.dependencyContainer.requestManager additionalHeaders] should] equal:@{
+                    @"Content-Type": @"application/json",
+                    @"X-MOBILEENGAGE-SDK-VERSION": MOBILEENGAGE_SDK_VERSION,
+                    @"X-MOBILEENGAGE-SDK-MODE": @"debug"
+                }];
+            });
+
+            context(@"appStart", ^{
+
+                it(@"should register UIApplicationDidBecomeActiveNotification", ^{
+                    void (^appStartBlock)() = ^{
+                    };
+                    [[appStartBlockProvider should] receive:@selector(createAppStartBlockWithRequestManager:requestContext:)
+                                                  andReturn:appStartBlock
+                                              withArguments:requestManager, requestContext];
+                    [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                                                      withArguments:appStartBlock, UIApplicationDidBecomeActiveNotification];
+
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                       withDependencyContainer:dependencyContainer];
+                });
+
             });
         });
 
@@ -311,9 +362,8 @@ SPEC_BEGIN(EmarsysTests)
         context(@"production setup", ^{
 
             beforeEach(^{
-                EMSConfig *configMock = [EMSConfig nullMock];
-                [[configMock should] receive:@selector(merchantId) andReturn:@"merchantId"];
-                [Emarsys setupWithConfig:configMock];
+                [EMSDependencyInjection tearDown];
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
             });
 
             describe(@"push", ^{
