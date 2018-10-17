@@ -184,41 +184,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [[model should] beSimilarWithRequest:actualModel];
             });
 
-            //Todo move to integration tests
-            xit(@"appLogin should save the MEID returned in the response", ^{
-                FakeRequestManager *fakeRequestManager = [FakeRequestManager managerWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    }
-                                                                                          errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                          }];
-
-                MobileEngageInternal *internal = [[MobileEngageInternal alloc] initWithRequestManager:fakeRequestManager
-                                                                                       requestContext:requestContext
-                                                                                    notificationCache:NULL];
-
-
-                NSNumber *meId = @123456789;
-                NSString *meIdSignature = @"signature";
-                NSData *data = [NSJSONSerialization dataWithJSONObject:@{@"api_me_id": meId, @"me_id_signature": meIdSignature}
-                                                               options:0
-                                                                 error:nil];
-                EMSRequestModel *request = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://www.somethi.ng"];
-                    }
-                                                          timestampProvider:requestContext.timestampProvider
-                                                               uuidProvider:requestContext.uuidProvider];
-                fakeRequestManager.responseModels = [@[[[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                            headers:@{}
-                                                                                               body:data
-                                                                                       requestModel:request
-                                                                                          timestamp:[NSDate date]]] mutableCopy];
-
-                [internal appLogin];
-
-                [fakeRequestManager waitForAllExpectations];
-
-                [[internal.requestContext.meId should] equal:[meId stringValue]];
-            });
-
         });
 
         describe(@"appLoginWithContactFieldValue:", ^{

@@ -20,7 +20,7 @@ typedef void(^MESourceHandler)(NSString *source);
 
 @property(class, nonatomic, weak, nullable) id <MobileEngageStatusDelegate> statusDelegate;
 //@property(class, nonatomic, readonly) id<MEInboxProtocol> inbox;
-@property(class, nonatomic, readonly) MEInApp *inApp;
+//@property(class, nonatomic, readonly) MEInApp *inApp;
 @property(class, nonatomic, readonly) id<MEUserNotificationCenterDelegate> notificationCenterDelegate;
 
 //+ (void)setupWithConfig:(EMSConfig *)config

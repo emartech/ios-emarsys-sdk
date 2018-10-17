@@ -4,7 +4,7 @@
 
 #import "MEIAMResponseHandler.h"
 #import "MobileEngage.h"
-#import "MEInApp+Private.h"
+
 
 @interface MEIAMResponseHandler ()
 

@@ -9,7 +9,8 @@
 #import <UserNotifications/UNNotificationRequest.h>
 #import "MEExperimental.h"
 #import "EMSDictionaryValidator.h"
-#import "MEInApp+Private.h"
+#import "MEInAppMessage.h"
+#import "MEInApp.h"
 
 @interface MEUserNotificationDelegate ()
 

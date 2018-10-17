@@ -8,7 +8,7 @@
 #import "MEIAMResponseHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
 #import "MEInApp.h"
-#import "MEInApp+Private.h"
+
 #import "MobileEngage+Test.h"
 
 SPEC_BEGIN(MEIAMResponseHandlerTests)

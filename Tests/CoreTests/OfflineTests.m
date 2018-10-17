@@ -230,7 +230,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
             });
 
-            xit(@"should not stop the requestModelRepository when response is 4xx", ^{ //TODO: restclient callback order
+            it(@"should not stop the requestModelRepository when response is 4xx", ^{
                 EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"https://www.google.com"];
                         [builder setMethod:HTTPMethodGET];
@@ -279,7 +279,12 @@ SPEC_BEGIN(OfflineTests)
                 [[watchdog.isConnectedCallCount should] equal:@3];
                 [[completionHandler.successCount should] equal:@2];
                 [[completionHandler.errorCount should] equal:@1];
+
+                //TODO: restclient callback order
+                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+
                 NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+
                 [[theValue([items count]) should] equal:theValue(0)];
             });
 

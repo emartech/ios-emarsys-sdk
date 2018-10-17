@@ -5,27 +5,53 @@
 #import "NSDate+EMSCore.h"
 #import "EMSTimestampProvider.h"
 #import "MEInApp.h"
-#import "MEInApp+Private.h"
 #import "MEIAMViewController.h"
-#import "MEJSBridge.h"
-#import "MEIAMJSCommandFactory.h"
-#import "MobileEngage+Private.h"
 #import "MEDisplayedIAMRepository.h"
+#import "EMSWindowProvider.h"
+#import "EMSIAMViewControllerProvider.h"
+#import "EMSMainWindowProvider.h"
+#import "MEIAMJSCommandFactory.h"
+#import "MEJSBridge.h"
 
 @interface MEInApp () <MEIAMProtocol>
 
 @property(nonatomic, weak) NSString *currentCampaignId;
+
 @property(nonatomic, strong) UIWindow *iamWindow;
-@property(nonatomic, weak, nullable) id <MEInAppTrackingProtocol> inAppTracker;
-@property(nonatomic, strong) MELogRepository *logRepository;
-@property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) NSDate *onScreenShowTimestamp;
+@property(nonatomic, strong) EMSWindowProvider *windowProvider;
+@property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
+@property(nonatomic, strong) MELogRepository *logRepository;
+@property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
+
+@property(nonatomic, assign) BOOL paused;
 
 @end
 
 @implementation MEInApp
 
 #pragma mark - Public methods
+
+- (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
+                    mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
+                     timestampProvider:(EMSTimestampProvider *)timestampProvider
+                         logRepository:(MELogRepository *)logRepository
+                displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository {
+    NSParameterAssert(windowProvider);
+    NSParameterAssert(mainWindowProvider);
+    NSParameterAssert(timestampProvider);
+    NSParameterAssert(logRepository);
+    NSParameterAssert(displayedIamRepository);
+    if (self = [super init]) {
+        _timestampProvider = timestampProvider;
+        _logRepository = logRepository;
+        _windowProvider = windowProvider;
+        _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self]]];
+        _displayedIamRepository = displayedIamRepository;
+    }
+    return self;
+}
+
 
 - (void)pause {
     [self setPaused:YES];
@@ -45,10 +71,8 @@
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.iamWindow) {
-            self.iamWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-            MEIAMJSCommandFactory *commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:self];
-            MEJSBridge *jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:commandFactory];
-            MEIAMViewController *meiamViewController = [[MEIAMViewController alloc] initWithJSBridge:jsBridge];
+            self.iamWindow = [self.windowProvider provideWindow];
+            MEIAMViewController *meiamViewController = [self.iamViewControllerProvider provideViewController];
             __weak typeof(self) weakSelf = self;
             [meiamViewController loadMessage:message.html
                            completionHandler:^{
@@ -73,26 +97,20 @@
 
 - (void)displayInAppViewController:(MEInAppMessage *)message
                     viewController:(MEIAMViewController *)meiamViewController {
-    UIViewController *rootViewController = [UIViewController new];
-    rootViewController.view.backgroundColor = [UIColor clearColor];
-    self.iamWindow.backgroundColor = [UIColor clearColor];
-    self.iamWindow.rootViewController = rootViewController;
-    self.iamWindow.windowLevel = UIWindowLevelAlert;
     [self.iamWindow makeKeyAndVisible];
 
     __weak typeof(self) weakSelf = self;
-    [rootViewController presentViewController:meiamViewController
-                                     animated:YES
-                                   completion:^{
-                                       weakSelf.onScreenShowTimestamp = [weakSelf.timestampProvider provideTimestamp];
-                                       [weakSelf trackIAMDisplay:message];
-                                   }];
+    [self.iamWindow.rootViewController presentViewController:meiamViewController
+                                                    animated:YES
+                                                  completion:^{
+                                                      weakSelf.onScreenShowTimestamp = [weakSelf.timestampProvider provideTimestamp];
+                                                      [weakSelf trackIAMDisplay:message];
+                                                  }];
 }
 
 - (void)trackIAMDisplay:(MEInAppMessage *)message {
-    MEDisplayedIAMRepository *repository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]];
-    [repository add:[[MEDisplayedIAM alloc] initWithCampaignId:message.campaignId timestamp:[NSDate new]]];
-
+    [self.displayedIamRepository add:[[MEDisplayedIAM alloc] initWithCampaignId:message.campaignId
+                                                                      timestamp:[self.timestampProvider provideTimestamp]]];
     [self.inAppTracker trackInAppDisplay:message.campaignId];
 }
 

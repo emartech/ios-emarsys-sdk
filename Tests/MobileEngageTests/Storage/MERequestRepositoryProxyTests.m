@@ -6,7 +6,6 @@
 #import "MEButtonClickRepository.h"
 #import "EMSRequestModelRepository.h"
 #import "MERequestRepositoryProxy.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSRequestModelSelectAllSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
@@ -20,7 +19,6 @@
 #import "MEInApp.h"
 #import "NSDate+EMSCore.h"
 #import "MERequestContext.h"
-#import "KWEqualMatcher.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -355,7 +353,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
 
                 MEInApp *meInApp = [MEInApp new];
-                [meInApp setPaused:YES];
+                [meInApp pause];
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], meInApp, requestContext);
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];

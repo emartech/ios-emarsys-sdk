@@ -6,7 +6,6 @@
 #import "MEButtonClickRepository.h"
 #import "MEDisplayedIAMRepository.h"
 #import "MERequestModelSelectEventsSpecification.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSCompositeRequestModel.h"
 #import "MERequestTools.h"
 #import "MEButtonClickFilterNoneSpecification.h"
@@ -76,8 +75,8 @@
             payload[@"hardware_id"] = [EMSDeviceInfo hardwareId];
             payload[@"viewed_messages"] = [self displayRepresentations];
             payload[@"clicks"] = [self clickRepresentations];
-            if (self.inApp.paused) {
-                payload[@"dnd"] = @(self.inApp.paused);
+            if ([self.inApp isPaused]) {
+                payload[@"dnd"] = @([self.inApp isPaused]);
             }
             payload[@"events"] = [self eventRepresentations:allCustomEvents];
 

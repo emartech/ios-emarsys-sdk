@@ -5,7 +5,6 @@
 #import "Kiwi.h"
 #import "MEIDResponseHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
-#import "MobileEngageInternal.h"
 #import "MERequestContext.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
@@ -72,7 +71,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                [MEExperimental reset];
             });
 
-            it(@"should call setMeId, setMeIdSignature on MobileEngageInternal when meId is a number", ^{
+            it(@"should call setMeId, setMeIdSignature on requestContext when meId is a number", ^{
                 NSNumber *meId = @123456789;
                 NSString *meIdSignature = @"meidsignature";
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"api_me_id": meId, @"me_id_signature": meIdSignature}
@@ -91,7 +90,7 @@ SPEC_BEGIN(MEIdResponseHandlerTests)
                 [handler handleResponse:response];
             });
 
-            it(@"should call setMeId, setMeIdSignature on MobileEngageInternal when meId is a string", ^{
+            it(@"should call setMeId, setMeIdSignature on requestContext when meId is a string", ^{
                 NSString *meId = @"me123456789";
                 NSString *meIdSignature = @"meidsignature";
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"api_me_id": meId, @"me_id_signature": meIdSignature}

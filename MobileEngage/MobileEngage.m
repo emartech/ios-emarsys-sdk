@@ -9,7 +9,7 @@
 #import "EMSSQLiteHelper.h"
 #import "MESchemaDelegate.h"
 #import "MENotificationCenterManager.h"
-#import "MEInApp+Private.h"
+
 #import "MEInboxV2.h"
 #import "MEUserNotificationDelegate.h"
 
@@ -46,7 +46,6 @@ static EMSSQLiteHelper *_dbHelper;
     MELogRepository *logRepository = [MELogRepository new];
 
     _iam = [MEInApp new];
-    _iam.logRepository = logRepository;
     _iam.timestampProvider = [EMSTimestampProvider new];
 
     _mobileEngageInternal.notificationCenterManager = [MENotificationCenterManager new];
@@ -60,7 +59,7 @@ static EMSSQLiteHelper *_dbHelper;
 //                             logRepository:logRepository
 //                            requestContext:requestContext];
 
-    _iam.inAppTracker = _mobileEngageInternal;
+//    _iam.inAppTracker = _mobileEngageInternal;
 
     _notification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                        mobileEngageInternal:_mobileEngageInternal
