@@ -8,15 +8,15 @@
 #import "MEIAMClose.h"
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMButtonClicked.h"
-#import "MobileEngage.h"
-#import "MobileEngage+Private.h"
 #import "MEIAMTriggerMEEvent.h"
 
 @implementation MEIAMJSCommandFactory
 
-- (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meiam {
+- (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meIam
+        buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
     if (self = [super init]) {
-        _meiam = meiam;
+        _meIam = meIam;
+        _buttonClickRepository = buttonClickRepository;
     }
     return self;
 }
@@ -28,13 +28,13 @@
     } else if ([name isEqualToString:MEIAMOpenExternalLink.commandName]) {
         command = [MEIAMOpenExternalLink new];
     } else if ([name isEqualToString:MEIAMClose.commandName]) {
-        command = [[MEIAMClose alloc] initWithMEIAM:self.meiam];
+        command = [[MEIAMClose alloc] initWithMEIAM:self.meIam];
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
-        command = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:[self.meiam eventHandler]];
+        command = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:[self.meIam eventHandler]];
     } else if ([name isEqualToString:MEIAMButtonClicked.commandName]) {
-        command = [[MEIAMButtonClicked alloc] initWithCampaignId:[self.meiam currentCampaignId]
-                                                      repository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                    inAppTracker:self.meiam.inAppTracker];
+        command = [[MEIAMButtonClicked alloc] initWithCampaignId:[self.meIam currentCampaignId]
+                                                      repository:self.buttonClickRepository
+                                                    inAppTracker:self.meIam.inAppTracker];
     } else if ([name isEqualToString:MEIAMTriggerMEEvent.commandName]) {
         command = [MEIAMTriggerMEEvent new];
     }

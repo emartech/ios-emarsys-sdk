@@ -6,7 +6,6 @@
 #import "MEEventHandler.h"
 #import "EMSInAppProtocol.h"
 #import "MEInApp.h"
-#import "MobileEngage.h"
 #import <UIKit/UIKit.h>
 #import "MEInAppMessage.h"
 #import "MEInAppTrackingProtocol.h"
@@ -20,6 +19,7 @@
 @class MEDisplayedIAMRepository;
 @class EMSMainWindowProvider;
 @class EMSViewControllerProvider;
+@class MEButtonClickRepository;
 
 typedef void (^MECompletionHandler)(void);
 
@@ -35,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          logRepository:(MELogRepository *)logRepository
-                displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository;
+                displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository;
 
 - (UIWindow *)iamWindow;
 

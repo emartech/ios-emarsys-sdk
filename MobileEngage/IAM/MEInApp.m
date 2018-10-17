@@ -12,6 +12,7 @@
 #import "EMSMainWindowProvider.h"
 #import "MEIAMJSCommandFactory.h"
 #import "MEJSBridge.h"
+#import "MEButtonClickRepository.h"
 
 @interface MEInApp () <MEIAMProtocol>
 
@@ -36,17 +37,20 @@
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          logRepository:(MELogRepository *)logRepository
-                displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository {
+                displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
     NSParameterAssert(windowProvider);
     NSParameterAssert(mainWindowProvider);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(logRepository);
     NSParameterAssert(displayedIamRepository);
+    NSParameterAssert(buttonClickRepository);
     if (self = [super init]) {
         _timestampProvider = timestampProvider;
         _logRepository = logRepository;
         _windowProvider = windowProvider;
-        _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self]]];
+        _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
+                                                                                                                                                                buttonClickRepository:buttonClickRepository]]];
         _displayedIamRepository = displayedIamRepository;
     }
     return self;

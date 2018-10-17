@@ -1,5 +1,4 @@
 #import "Kiwi.h"
-#import "MobileEngage.h"
 #import "MobileEngageInternal.h"
 #import <UserNotifications/UNNotification.h>
 #import <UserNotifications/UNNotificationResponse.h>
@@ -10,6 +9,7 @@
 #import "MEExperimental+Test.h"
 #import "MEInAppMessage.h"
 #import "EMSWaiter.h"
+#import "MEInApp.h"
 
 SPEC_BEGIN(MEUserNotificationDelegateTests)
         if (@available(iOS 10.0, *)) {
@@ -364,7 +364,6 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                 MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"42" html:@"<html/>"];
                 KWCaptureSpy *messageSpy = [inApp captureArgument:@selector(showMessage:completionHandler:) atIndex:0];
-//                [[inApp should] receive:@selector(showMessage:completionHandler:) withArguments:inAppMessage, nil];
                 MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                       mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                      inApp:inApp];

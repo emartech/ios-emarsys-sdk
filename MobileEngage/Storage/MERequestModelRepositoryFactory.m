@@ -8,19 +8,21 @@
 #import "MERequestRepositoryProxy.h"
 #import "MEDisplayedIAMRepository.h"
 #import "MEInApp.h"
-#import "MobileEngage.h"
-#import "MobileEngage+Private.h"
 #import "MERequestContext.h"
 
 @implementation MERequestModelRepositoryFactory
 
 - (instancetype)initWithInApp:(MEInApp *)inApp
-               requestContext:(MERequestContext *)requestContext {
+               requestContext:(MERequestContext *)requestContext
+        buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+       displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository {
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
     if (self = [super init]) {
         _inApp = inApp;
         _requestContext = requestContext;
+        _buttonClickRepository = buttonClickRepository;
+        _displayedIAMRepository = displayedIAMRepository;
     }
     return self;
 }
@@ -28,8 +30,8 @@
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing {
     if (batchProcessing) {
         return [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]]
-                                                          buttonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
-                                                         displayedIAMRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:[MobileEngage dbHelper]]
+                                                          buttonClickRepository:self.buttonClickRepository
+                                                         displayedIAMRepository:self.displayedIAMRepository
                                                                           inApp:self.inApp
                                                                  requestContext:self.requestContext];
     }

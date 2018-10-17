@@ -7,7 +7,6 @@
 #import "MEInboxParser.h"
 #import "EMSResponseModel.h"
 #import "MEDefaultHeaders.h"
-#import "MobileEngage+Private.h"
 #import "NSError+EMSCore.h"
 #import "MERequestFactory.h"
 
@@ -171,11 +170,6 @@
     } else {
         [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     }
-}
-
-
-- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
-    return [MobileEngage trackMessageOpenWithInboxMessage:inboxMessage];
 }
 
 - (void)resetBadgeCount {

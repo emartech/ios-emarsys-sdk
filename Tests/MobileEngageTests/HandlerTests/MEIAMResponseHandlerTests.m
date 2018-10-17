@@ -9,8 +9,6 @@
 #import "EMSAbstractResponseHandler+Private.h"
 #import "MEInApp.h"
 
-#import "MobileEngage+Test.h"
-
 SPEC_BEGIN(MEIAMResponseHandlerTests)
 
         __block EMSTimestampProvider *timestampProvider;
@@ -117,7 +115,6 @@ SPEC_BEGIN(MEIAMResponseHandlerTests)
                 id iamMock = [MEInApp mock];
                 [[iamMock should] receive:@selector(showMessage:completionHandler:)
                             withArguments:[[MEInAppMessage alloc] initWithResponse:response], kw_any()];
-                MobileEngage.inApp = iamMock;
 
                 MEIAMResponseHandler *handler = [[MEIAMResponseHandler alloc] initWithInApp:iamMock];
                 [handler handleResponse:response];

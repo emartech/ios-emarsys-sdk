@@ -6,7 +6,6 @@
 #import "MEInbox.h"
 #import "MEDefaultHeaders.h"
 #import "MEInboxParser.h"
-#import "MobileEngage+Private.h"
 #import "EMSRequestModelBuilder.h"
 #import "EMSResponseModel.h"
 #import "EMSDeviceInfo.h"
@@ -145,10 +144,6 @@
                                                                     requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];;
-}
-
-- (NSString *)trackMessageOpenWithInboxMessage:(EMSNotification *)inboxMessage {
-    return [MobileEngage trackMessageOpenWithInboxMessage:inboxMessage];
 }
 
 - (void)purgeNotificationCache {

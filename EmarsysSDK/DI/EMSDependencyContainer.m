@@ -78,18 +78,23 @@
     MELogRepository *logRepository = [MELogRepository new];
     EMSSQLiteHelper *meDbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                                  schemaDelegate:[MESchemaDelegate new]];
+    MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper];
+    MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:meDbHelper];
     _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
                                 mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
                                  timestampProvider:timestampProvider
                                      logRepository:logRepository
-                            displayedIamRepository:[[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper]];
+                            displayedIamRepository:displayedIAMRepository
+                             buttonClickRepository:buttonClickRepository];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
     [_dbHelper open];
 
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
     MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
-                                                                                                        requestContext:self.requestContext];
+                                                                                                        requestContext:self.requestContext
+                                                                                                 buttonClickRepository:buttonClickRepository
+                                                                                                displayedIAMRepository:displayedIAMRepository];
 
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
@@ -105,7 +110,7 @@
                                                                                      errorBlock:^(NSString *requestId, NSError *error) {
                                                                                      }];
 
-    MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper];
+
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
                                                               requestRepository:self.requestRepository
                                                                   logRepository:logRepository
@@ -129,7 +134,7 @@
         [meDbHelper open];
         [responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:[[MEButtonClickRepository alloc] initWithDbHelper:meDbHelper]
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
                                                           displayIamRepository:displayedIAMRepository]]
         ];
     }
