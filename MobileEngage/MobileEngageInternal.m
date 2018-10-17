@@ -5,7 +5,6 @@
 #import "MobileEngageInternal.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
-#import "MobileEngage.h"
 #import "MERequestContext.h"
 #import "MERequestFactory.h"
 #import "EMSNotificationCache.h"
