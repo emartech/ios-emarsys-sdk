@@ -3,8 +3,8 @@
 //
 
 #import "MEIAMResponseHandler.h"
-#import "MobileEngage.h"
-
+#import "MEInAppMessage.h"
+#import "MEInApp.h"
 
 @interface MEIAMResponseHandler ()
 

@@ -931,7 +931,6 @@
 		8AB2F9C121075B270030E659 /* MEInboxTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEInboxTests.m; sourceTree = "<group>"; };
 		8AB2F9C321075B270030E659 /* NSDictionary+MobileEngageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+MobileEngageTests.m"; sourceTree = "<group>"; };
 		8AB2F9C421075B270030E659 /* MobileEngageInternal+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MobileEngageInternal+Test.h"; sourceTree = "<group>"; };
-		8AB2F9C521075B270030E659 /* MobileEngage+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MobileEngage+Test.h"; sourceTree = "<group>"; };
 		8AB2F9C721075B270030E659 /* MEIAMButtonClickedTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMButtonClickedTests.m; sourceTree = "<group>"; };
 		8AB2F9C921075B270030E659 /* MEIAMDidAppear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMDidAppear.h; sourceTree = "<group>"; };
 		8AB2F9CA21075B270030E659 /* MEIAMDidAppear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMDidAppear.m; sourceTree = "<group>"; };
@@ -1924,7 +1923,6 @@
 				8AB2F9BC21075B270030E659 /* Inbox */,
 				8AB2F9C321075B270030E659 /* NSDictionary+MobileEngageTests.m */,
 				8AB2F9C421075B270030E659 /* MobileEngageInternal+Test.h */,
-				8AB2F9C521075B270030E659 /* MobileEngage+Test.h */,
 				8AB2F9C621075B270030E659 /* MEIAMJSCommandTests */,
 				8AB2F9D121075B270030E659 /* HandlerTests */,
 				8AB2F9D721075B270030E659 /* Fakes */,

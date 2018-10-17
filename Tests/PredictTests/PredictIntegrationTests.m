@@ -11,6 +11,9 @@
 #import "EMSCartItem.h"
 #import "EMSWaiter.h"
 
+#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
+#define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
+
 @interface PredictIntegrationDependencyContainer : EMSDependencyContainer
 @property(nonatomic, strong) XCTestExpectation *expectation;
 @property(nonatomic, strong) EMSResponseModel *lastResponseModel;
@@ -43,6 +46,13 @@ SPEC_BEGIN(PredictIntegrationTests)
         __block PredictIntegrationDependencyContainer *dependencyContainer;
 
         beforeEach(^{
+            [EmarsysTestUtils tearDownEmarsys];
+            [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
+                                                       error:nil];
+            [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
+                                                       error:nil];
+
+
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"
                                     applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
@@ -71,7 +81,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 ]];
 
                 [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:5];
+                                       timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
@@ -81,7 +91,8 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackPurchaseWithOrderId:items:", ^{
 
             it(@"should send request with orderId and items", ^{
-                NSString *expectedQueryParams = @"oi=orderId&co=i%3AitemId1%2Cp%3A200.0%2Cq%3A100.0%7Ci%3AitemId2%2Cp%3A201.0%2Cq%3A101.0";
+                NSString *expectedOrderIdQueryParams = @"oi=orderId";
+                NSString *expectedItemsQueryParams = @"co=i%3AitemId1%2Cp%3A200.0%2Cq%3A100.0%7Ci%3AitemId2%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[
@@ -94,10 +105,11 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                     ]];
 
                 [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:5];
+                                       timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedOrderIdQueryParams];
+                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedItemsQueryParams];
             });
         });
 
@@ -109,7 +121,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [Emarsys.predict trackCategoryViewWithCategoryPath:@"category/subcategory"];
 
                 [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:5];
+                                       timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
@@ -124,7 +136,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [Emarsys.predict trackItemViewWithItemId:@"itemid"];
 
                 [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:5];
+                                       timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
@@ -139,7 +151,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
 
                 [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:5];
+                                       timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
