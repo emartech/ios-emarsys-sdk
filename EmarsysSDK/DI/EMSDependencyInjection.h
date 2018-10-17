@@ -6,7 +6,7 @@
 
 @interface EMSDependencyInjection : NSObject
 
-@property(class, nonatomic, readonly) EMSDependencyContainer *dependencyContainer;
+@property(class, nonatomic, readonly) id <EMSDependencyContainerProtocol> dependencyContainer;
 
 + (void)setupWithDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer;
 

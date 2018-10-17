@@ -34,10 +34,11 @@
     NSParameterAssert(uuidProvider);
     NSParameterAssert(builderBlock);
     EMSShardBuilder *builder = [[EMSShardBuilder alloc] initWithTimestampProvider:timestampProvider
-                                                                                   uuidProvider:uuidProvider];
+                                                                     uuidProvider:uuidProvider];
     builderBlock(builder);
     return [[self alloc] initWithBuilder:builder];
 }
+
 - (instancetype)initWithBuilder:(EMSShardBuilder *)builder {
     if (self = [super init]) {
         _timestamp = builder.timestamp;

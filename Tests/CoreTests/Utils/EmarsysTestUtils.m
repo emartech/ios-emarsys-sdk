@@ -41,7 +41,7 @@
     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
         [builder setMobileEngageApplicationCode:@"14C19-A121F"
                             applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-        [builder setMerchantId:@"dummyMerchantId"];
+        [builder setMerchantId:@"1428C8EE286EC34B"];
         [builder setContactFieldId:@3];
         [builder setExperimentalFeatures:features];
     }];

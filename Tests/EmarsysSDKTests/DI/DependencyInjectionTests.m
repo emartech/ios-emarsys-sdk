@@ -25,7 +25,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
                 [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
 
-                [[EMSDependencyInjection.dependencyContainer should] equal:dependencyContainer];
+                [[(NSObject <EMSDependencyContainerProtocol> *) EMSDependencyInjection.dependencyContainer should] equal:dependencyContainer];
             });
 
             it(@"should not override previously set dependencyContainer", ^{
@@ -35,7 +35,7 @@ SPEC_BEGIN(DependencyInjectionTests)
                 [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer1];
                 [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer2];
 
-                [[EMSDependencyInjection.dependencyContainer should] equal:dependencyContainer1];
+                [[(NSObject <EMSDependencyContainerProtocol> *) EMSDependencyInjection.dependencyContainer should] equal:dependencyContainer1];
             });
         });
 
@@ -46,7 +46,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
                 [EMSDependencyInjection tearDown];
 
-                [[EMSDependencyInjection.dependencyContainer should] beNil];
+                [[(NSObject <EMSDependencyContainerProtocol> *) EMSDependencyInjection.dependencyContainer should] beNil];
             });
         });
 

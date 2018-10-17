@@ -71,7 +71,6 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
-    __weak typeof(self) weakSelf = self;
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
     _notificationCenterManager = [MENotificationCenterManager new];
@@ -104,11 +103,7 @@
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [[NSUUID UUID] UUIDString]];
 
-    EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-            [weakSelf handleResponse:response];
-        }
-                                                                                     errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                     }];
+    EMSCompletionMiddleware *middleware = [self createMiddleware];
 
 
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
@@ -174,6 +169,23 @@
                                                           requestContext:self.requestContext
                                                        notificationCache:self.notificationCache];
     [self.iam setInAppTracker:self.mobileEngage];
+}
+
+- (EMSCompletionMiddleware *)createMiddleware {
+    return [[EMSCompletionMiddleware alloc] initWithSuccessBlock:[self createSuccessBlock]
+                                                      errorBlock:[self createErrorBlock]];
+}
+
+- (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
+    __weak typeof(self) weakSelf = self;
+    return ^(NSString *requestId, EMSResponseModel *response) {
+        [weakSelf handleResponse:response];
+    };
+}
+
+- (void (^)(NSString *, NSError *))createErrorBlock {
+    return ^(NSString *requestId, NSError *error) {
+    };
 }
 
 - (void)handleResponse:(EMSResponseModel *)responseModel {
