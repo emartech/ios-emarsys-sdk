@@ -7,7 +7,7 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSRequestModelRepositoryProtocol.h"
 #import "EMSRequestModelRepository.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
 #import "EMSRequestModelSelectAllSpecification.h"
 #import "EMSRequestModelDeleteByIdsSpecification.h"
@@ -26,7 +26,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                    error:nil];
         helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
         [helper open];
         repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
     });

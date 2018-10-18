@@ -10,7 +10,7 @@
 #import "EMSShardRepository.h"
 #import "EMSSQLiteHelper.h"
 #import "MERequestModelRepositoryFactory.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "PredictInternal.h"
 #import "EMSPredictAggregateShardsTrigger.h"
 #import "PRERequestContext.h"
@@ -26,7 +26,6 @@
 #import "MEIdResponseHandler.h"
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
-#import "MESchemaDelegate.h"
 #import "MEDefaultHeaders.h"
 #import "AppStartBlockProvider.h"
 #import "EMSWindowProvider.h"
@@ -75,25 +74,20 @@
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
     _notificationCenterManager = [MENotificationCenterManager new];
     MELogRepository *logRepository = [MELogRepository new];
-    EMSSQLiteHelper *meDbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
-                                                                 schemaDelegate:[MESchemaDelegate new]];
-    MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:meDbHelper];
-    MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:meDbHelper];
+    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
+                                               schemaDelegate:[EMSSqliteSchemaHandler new]];
+    MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
+    MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
     _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
                                 mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
                                  timestampProvider:timestampProvider
                                      logRepository:logRepository
                             displayedIamRepository:displayedIAMRepository
                              buttonClickRepository:buttonClickRepository];
-    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
-                                               schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
     [_dbHelper open];
 
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
-    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
-                                                                                                        requestContext:self.requestContext
-                                                                                                 buttonClickRepository:buttonClickRepository
-                                                                                                displayedIAMRepository:displayedIAMRepository];
+    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam requestContext:self.requestContext dbHelper:self.dbHelper buttonClickRepository:buttonClickRepository displayedIAMRepository:displayedIAMRepository];
 
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
@@ -126,7 +120,7 @@
         [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
     }
     if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
-        [meDbHelper open];
+        [self.dbHelper open];
         [responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
             [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository

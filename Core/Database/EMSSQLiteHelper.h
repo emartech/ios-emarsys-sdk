@@ -28,8 +28,6 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 @property(nonatomic, strong) id <EMSSQLiteHelperSchemaHandler> schemaHandler;
 @property(nonatomic, readonly) NSDictionary *registeredTriggers;
 
-- (instancetype)initWithDefaultDatabase;
-
 - (instancetype)initWithDatabasePath:(NSString *)path
                       schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate;
 

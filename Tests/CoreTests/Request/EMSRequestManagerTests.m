@@ -5,7 +5,7 @@
 #import "Kiwi.h"
 #import "EMSRequestManager.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
@@ -121,8 +121,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
             __block EMSShardRepository *shardRepository;
 
             beforeEach(^{
-                helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
                 requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
@@ -134,7 +133,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
 
                 };
-                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]], shardRepository, nil);
+                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper], shardRepository, nil);
             });
 
             afterEach(^{
@@ -297,7 +296,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
 
                 EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                           schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                                           schemaDelegate:[EMSSqliteSchemaHandler new]];
                 EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper];
 
                 CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {

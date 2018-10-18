@@ -2,7 +2,7 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 #import "Kiwi.h"
-#import "MESchemaDelegate.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "MEButtonClickRepository.h"
 #import "MEButtonClickFilterNoneSpecification.h"
 #import "MEButtonClickFilterByCampaignIdSpecification.h"
@@ -18,7 +18,7 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                    schemaDelegate:[MESchemaDelegate new]];
+                                                    schemaDelegate:[EMSSqliteSchemaHandler new]];
             [helper open];
             repository = [[MEButtonClickRepository alloc] initWithDbHelper:helper];
         });

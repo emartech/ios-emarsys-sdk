@@ -2,6 +2,8 @@
 //  Copyright (c) 2017 Emarsys. All rights reserved.
 //
 #import "EMSRequestModelBuilder.h"
+#import "MEDisplayedIAMContract.h"
+#import "MEButtonClickContract.h"
 
 #define REQUEST_TABLE_NAME @"request"
 #define REQUEST_COLUMN_NAME_REQUEST_ID @"request_id"
@@ -34,10 +36,14 @@
 #define SQL_SHARD_DELETE_MULTIPLE_ITEM(ids) [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ IN (%@);", SHARD_TABLE_NAME, SHARD_COLUMN_NAME_SHARD_ID, ids]
 #define SQL_SHARD_COUNT [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@;", SHARD_TABLE_NAME]
 
-#define SCHEMA_UPGRADE_FROM_0_TO_1 @[@"CREATE TABLE IF NOT EXISTS request (request_id TEXT,method TEXT,url TEXT,headers BLOB,payload BLOB,timestamp REAL);"]
-#define SCHEMA_UPGRADE_FROM_1_TO_2 @[[NSString stringWithFormat:@"ALTER TABLE request ADD COLUMN expiry DOUBLE DEFAULT %f", DEFAULT_REQUESTMODEL_EXPIRY ]]
-#define SCHEMA_UPGRADE_FROM_2_TO_3 @[@"CREATE TABLE IF NOT EXISTS shard (shard_id TEXT,type TEXT,data BLOB,timestamp REAL,ttl REAL);",@"CREATE INDEX shard_id_index ON shard (shard_id);",@"CREATE INDEX shard_type_index ON shard (type);"]
+#define SCHEMA_UPGRADE_FROM_0_TO_1 @[[NSString stringWithFormat:\
+@"CREATE TABLE IF NOT EXISTS request (request_id TEXT,method TEXT,url TEXT,headers BLOB,payload BLOB,timestamp REAL, expiry DOUBLE DEFAULT %f);", DEFAULT_REQUESTMODEL_EXPIRY], \
+@"CREATE TABLE IF NOT EXISTS shard (shard_id TEXT,type TEXT,data BLOB,timestamp REAL,ttl REAL);",\
+@"CREATE INDEX shard_id_index ON shard (shard_id);",\
+@"CREATE INDEX shard_type_index ON shard (type);",\
+SQL_CREATE_TABLE_DISPLAYED_IAM,\
+SQL_CREATE_TABLE_BUTTON_CLICK]
 
 #define SCHEMA_UPGRADE_SET_VERSION(version) [NSString stringWithFormat:@"PRAGMA user_version=%d;", version]
 
-#define MIGRATION @[SCHEMA_UPGRADE_FROM_0_TO_1,SCHEMA_UPGRADE_FROM_1_TO_2,SCHEMA_UPGRADE_FROM_2_TO_3]
+#define MIGRATION @[SCHEMA_UPGRADE_FROM_0_TO_1]

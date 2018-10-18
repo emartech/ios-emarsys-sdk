@@ -4,7 +4,7 @@
 
 #import "Kiwi.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSRequestModelMapper.h"
 #import "EMSShard.h"
@@ -17,12 +17,12 @@
 SPEC_BEGIN(DBTriggerTests)
 
         __block EMSSQLiteHelper *dbHelper;
-        __block EMSSqliteQueueSchemaHandler *schemaHandler;
+        __block EMSSqliteSchemaHandler *schemaHandler;
 
         beforeEach(^{
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
-            schemaHandler = [[EMSSqliteQueueSchemaHandler alloc] init];
+            schemaHandler = [[EMSSqliteSchemaHandler alloc] init];
             dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                       schemaDelegate:schemaHandler];
         });
@@ -155,7 +155,7 @@ SPEC_BEGIN(DBTriggerTests)
             beforeEach(^{
                 [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                            error:nil];
-                schemaHandler = [[EMSSqliteQueueSchemaHandler alloc] init];
+                schemaHandler = [[EMSSqliteSchemaHandler alloc] init];
                 dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                           schemaDelegate:schemaHandler];
                 [dbHelper open];

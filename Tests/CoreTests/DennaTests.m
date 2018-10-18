@@ -13,6 +13,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDefaultWorker.h"
+#import "EMSSqliteSchemaHandler.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -50,7 +51,7 @@ SPEC_BEGIN(DennaTest)
                                                                                                  NSLog(@"ERROR!");
                                                                                                  fail(@"errorblock invoked");
                                                                                              }];
-            EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]];
+            EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]]];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
@@ -100,7 +101,7 @@ SPEC_BEGIN(DennaTest)
                                                                                                      NSLog(@"ERROR!");
                                                                                                      fail(@"errorblock invoked");
                                                                                                  }];
-                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDefaultDatabase]];
+                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]]];
                 EMSShardRepository *shardRepository = [EMSShardRepository new];
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository

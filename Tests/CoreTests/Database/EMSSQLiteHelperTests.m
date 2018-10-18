@@ -4,9 +4,8 @@
 
 #import "Kiwi.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModel.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSSchemaContract.h"
 #import "EMSRequestModelMapper.h"
 #import "EMSTimestampProvider.h"
@@ -122,12 +121,12 @@
 SPEC_BEGIN(EMSSQLiteHelperTests)
 
         __block EMSSQLiteHelper *dbHelper;
-        __block EMSSqliteQueueSchemaHandler *schemaHandler;
+        __block EMSSqliteSchemaHandler *schemaHandler;
 
         beforeEach(^{
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
-            schemaHandler = [[EMSSqliteQueueSchemaHandler alloc] init];
+            schemaHandler = [[EMSSqliteSchemaHandler alloc] init];
             dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                       schemaDelegate:schemaHandler];
         });
@@ -246,7 +245,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
             it(@"should return the latest version", ^{
                 [dbHelper open];
-                [[theValue([dbHelper version]) should] equal:@3];
+                [[theValue([dbHelper version]) should] equal:@1];
             });
 
             it(@"should assert when version called in case of the db is not opened", ^{
@@ -264,7 +263,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         describe(@"open", ^{
 
             it(@"should call onCreate when the database is opened the first time", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler mock];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler mock];
                 dbHelper.schemaHandler = schemaDelegate;
                 [[schemaDelegate should] receive:@selector(onCreateWithDbHelper:) withArguments:kw_any()];
 
@@ -274,7 +273,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             it(@"should call onUpgrade when the oldVersion and newVersion are different", ^{
                 runCommandOnTestDB(@"PRAGMA user_version=2;");
 
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler mock];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler mock];
                 dbHelper.schemaHandler = schemaDelegate;
                 [[schemaDelegate should] receive:@selector(schemaVersion) andReturn:theValue(100)];
                 [[schemaDelegate should] receive:@selector(onUpgradeWithDbHelper:oldVersion:newVersion:)
@@ -319,7 +318,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
         describe(@"remove:fromTable:where:whereArgs:", ^{
             it(@"should remove every rows when called with no where", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
@@ -336,7 +335,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             });
 
             it(@"should remove every rows that matches to the where parameters", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
@@ -357,7 +356,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             });
 
             it(@"should remove every rows that matches to the where parameters", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
@@ -380,7 +379,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
 
         describe(@"insertModel:withQuery:mapper:", ^{
             it(@"should insert the correct model in the database", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSRequestModel *model = requestModel(@"https://www.google.com", @{
@@ -402,7 +401,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         describe(@"insertModel:mapper:", ^{
             
             it(@"should insert the correct model in the database", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSRequestModel *model = requestModel(@"https://www.google.com", @{
@@ -420,7 +419,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             });
 
             it(@"should insert the correct model in the database", ^{
-                EMSSqliteQueueSchemaHandler *schemaDelegate = [EMSSqliteQueueSchemaHandler new];
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
@@ -439,7 +438,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         describe(@"schemaHandler onCreate", ^{
 
             it(@"should initialize the database with version three", ^{
-                initializeDbWithVersion(3);
+                initializeDbWithVersion(1);
 
                 NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = tableSchemes(@"request");
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = tableSchemes(@"shard");
@@ -459,7 +458,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 isEqualArrays(expectedRequestColumnInfos, currentRequestColumnInfos);
                 isEqualArrays(expectedShardColumnInfos, currentShardColumnInfos);
 
-                [[theValue([dbHelper version]) should] equal:@3];
+                [[theValue([dbHelper version]) should] equal:@1];
             });
 
         });
@@ -467,73 +466,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         describe(@"schema migration", ^{
 
             it(@"should update from 0 to 1 by adding Request table to database", ^{
-
-                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                           columnType:@"REAL"]
-                ];
-
-                sqlite3 *db;
-                sqlite3_open([TEST_DB_PATH UTF8String], &db);
-                dbHelper = [[EMSSQLiteHelper alloc] initWithSqlite3Db:db
-                                                       schemaDelegate:schemaHandler];
-                [schemaHandler onUpgradeWithDbHelper:dbHelper
-                                          oldVersion:0
-                                          newVersion:1];
-
-                NSArray<EMSTestColumnInfo *> *currentRequestColumnInfos = tableSchemes(@"request");
-
-                isEqualArrays(expectedColumnInfos, currentRequestColumnInfos);
-
-                [[theValue([dbHelper version]) should] equal:@1];
-            });
-
-            it(@"should update from 1 to 2 by adding expiry column to the schema", ^{
-                initializeDbWithVersion(1);
-
-                NSArray<EMSTestColumnInfo *> *expectedColumnInfos = @[
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                           columnType:@"REAL"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
-                                                           columnType:@"DOUBLE"
-                                                         defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
-                                                           primaryKey:false
-                                                              notNull:false]
-                ];
-
-                [schemaHandler onUpgradeWithDbHelper:dbHelper
-                                          oldVersion:1
-                                          newVersion:2];
-
-                NSArray<EMSTestColumnInfo *> *currentRequestColumnInfos = tableSchemes(@"request");
-
-                isEqualArrays(expectedColumnInfos, currentRequestColumnInfos);
-
-                [[theValue([dbHelper version]) should] equal:@2];
-            });
-
-            it(@"should update from 2 to 3 by adding Shard table to database", ^{
-                initializeDbWithVersion(2);
+                initializeDbWithVersion(0);
 
                 NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[
                         [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
@@ -554,7 +487,6 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                                                            primaryKey:false
                                                               notNull:false]
                 ];
-
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = @[
                         [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
                                                            columnType:@"TEXT"],
@@ -569,8 +501,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper
-                                          oldVersion:2
-                                          newVersion:3];
+                                          oldVersion:0
+                                          newVersion:1];
 
                 NSArray<EMSTestColumnInfo *> *currentRequestColumnInfos = tableSchemes(@"request");
                 NSArray<EMSTestColumnInfo *> *currentShardColumnInfos = tableSchemes(@"shard");
@@ -587,8 +519,9 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 [[indexedShardColumns should] contain:@"shard_id"];
                 [[indexedShardColumns should] contain:@"type"];
 
-                [[theValue([dbHelper version]) should] equal:@3];
+                [[theValue([dbHelper version]) should] equal:@1];
             });
+
         });
 
 SPEC_END

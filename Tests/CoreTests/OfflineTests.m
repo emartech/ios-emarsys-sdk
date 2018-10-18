@@ -5,7 +5,7 @@
 #import "Kiwi.h"
 #import "EMSRequestModelBuilder.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSWorkerProtocol.h"
 #import "EMSDefaultWorker.h"
@@ -60,7 +60,7 @@ SPEC_BEGIN(OfflineTests)
                 [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                            error:nil];
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                        schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
 

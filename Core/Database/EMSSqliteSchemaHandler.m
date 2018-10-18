@@ -2,12 +2,12 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
 
-@implementation EMSSqliteQueueSchemaHandler
+@implementation EMSSqliteSchemaHandler
 
 - (void)onCreateWithDbHelper:(EMSSQLiteHelper *)dbHelper {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
@@ -33,7 +33,7 @@
 }
 
 - (int)schemaVersion {
-    return 3;
+    return 1;
 }
 
 @end

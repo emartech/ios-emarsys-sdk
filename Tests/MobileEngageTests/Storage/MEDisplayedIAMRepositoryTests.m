@@ -5,7 +5,7 @@
 #import "MEDisplayedIAMRepository.h"
 #import "MEDisplayedIAMFilterNoneSpecification.h"
 #import "MEDisplayedIAMFilterByCampaignIdSpecification.h"
-#import "MESchemaDelegate.h"
+#import "EMSSqliteSchemaHandler.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -17,7 +17,7 @@ SPEC_BEGIN(MEDisplayedIAMRepositoryTests)
     beforeEach(^{
         [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                    error:nil];
-        helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[MESchemaDelegate new]];
+        helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]];
         [helper open];
         repository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:helper];
     });

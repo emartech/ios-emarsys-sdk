@@ -6,7 +6,7 @@
 #import "Emarsys.h"
 #import "PredictInternal.h"
 #import "MobileEngageInternal.h"
-#import "MESchemaDelegate.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "MEInApp.h"
 #import "EMSDependencyInjection.h"

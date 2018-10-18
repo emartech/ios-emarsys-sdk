@@ -6,10 +6,9 @@
 #import "EMSDefaultWorker.h"
 #import "EMSDefaultWorker+Private.h"
 #import "TestUtils.h"
-#import "EMSRequestModelBuilder.h"
 #import "FakeCompletionHandler.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModelRepository.h"
 #import "EMSRequestModelSelectAllSpecification.h"
 #import "FakeLogRepository.h"
@@ -33,7 +32,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
             beforeEach(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                        schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
             });
@@ -104,7 +103,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
             beforeEach(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                        schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
             });

@@ -8,8 +8,8 @@
 #import "EMSUUIDProvider.h"
 #import "EMSRequestModelRepository.h"
 #import "MERequestModelSelectEventsSpecification.h"
-#import "EMSSqliteQueueSchemaHandler.h"
 #import "NSDate+EMSCore.h"
+#import "EMSSqliteSchemaHandler.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -52,7 +52,7 @@ SPEC_BEGIN(RequestModelSpecificationTests)
             beforeEach(^{
                 [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH error:nil];
                 _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                           schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                           schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [_dbHelper open];
                 _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:_dbHelper];
             });

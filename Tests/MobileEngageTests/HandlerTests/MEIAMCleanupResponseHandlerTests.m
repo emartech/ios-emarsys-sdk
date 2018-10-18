@@ -8,7 +8,7 @@
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
 #import "MEButtonClickFilterNoneSpecification.h"
-#import "MESchemaDelegate.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "MEDisplayedIAMFilterNoneSpecification.h"
 #import "EMSUUIDProvider.h"
 
@@ -118,7 +118,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
             beforeEach(^{
                 [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH error:nil];
                 _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                           schemaDelegate:[MESchemaDelegate new]];
+                                                           schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [_dbHelper open];
             });
 

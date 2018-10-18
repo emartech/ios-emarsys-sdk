@@ -4,7 +4,7 @@
 
 #import "Kiwi.h"
 #import "EMSSQLiteHelper.h"
-#import "EMSSqliteQueueSchemaHandler.h"
+#import "EMSSqliteSchemaHandler.h"
 #import "EMSShardRepositoryProtocol.h"
 #import "EMSShardRepository.h"
 #import "EMSShard.h"
@@ -25,7 +25,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                    schemaDelegate:[EMSSqliteQueueSchemaHandler new]];
+                                                    schemaDelegate:[EMSSqliteSchemaHandler new]];
             [helper open];
             repository = [[EMSShardRepository alloc] initWithDbHelper:helper];
         });
