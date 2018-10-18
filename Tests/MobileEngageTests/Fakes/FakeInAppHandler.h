@@ -3,12 +3,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEEventHandler.h"
+#import "EMSEventHandler.h"
 
 typedef void (^MainThreadCheckerBlock)(BOOL mainThread);
 typedef void (^FakeInAppHandlerBlock)(NSString *eventName, NSDictionary<NSString *, NSObject *> *payload);
 
-@interface FakeInAppHandler : NSObject<MEEventHandler>
+@interface FakeInAppHandler : NSObject <EMSEventHandler>
 
 @property(nonatomic, strong) MainThreadCheckerBlock mainThreadCheckerBlock;
 @property(nonatomic, strong) FakeInAppHandlerBlock handlerBlock;

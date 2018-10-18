@@ -136,7 +136,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 });
 
                 it(@"should call MobileEngage.notification.eventHandler with the defined eventName and payload if the action is type of MEAppEvent", ^{
-                    id eventHandlerMock = [KWMock mockForProtocol:@protocol(MEEventHandler)];
+                    id eventHandlerMock = [KWMock mockForProtocol:@protocol(EMSEventHandler)];
                     NSString *eventName = @"testEventName";
                     NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                     [[eventHandlerMock should] receive:@selector(handleEvent:payload:) withArguments:eventName, payload];
@@ -165,7 +165,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 });
 
                 it(@"should not call MobileEngage.notification.eventHandler with the defined eventName and payload if the action is not MEAppEvent type", ^{
-                    id eventHandlerMock = [KWMock mockForProtocol:@protocol(MEEventHandler)];
+                    id eventHandlerMock = [KWMock mockForProtocol:@protocol(EMSEventHandler)];
                     [[eventHandlerMock shouldNot] receive:@selector(handleEvent:payload:)];
 
                     MEUserNotificationDelegate *userNotification = [MEUserNotificationDelegate new];

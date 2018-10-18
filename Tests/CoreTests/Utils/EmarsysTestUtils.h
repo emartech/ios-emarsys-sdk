@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "MEFlipperFeatures.h"
+#import "EMSFlipperFeatures.h"
 #import "EMSDependencyContainer.h"
 #import "Emarsys.h"
 

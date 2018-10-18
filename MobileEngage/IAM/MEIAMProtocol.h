@@ -8,11 +8,11 @@
 typedef void (^MECompletionHandler)(void);
 
 @class MEIAMViewController;
-@protocol MEEventHandler;
+@protocol EMSEventHandler;
 
 @protocol MEIAMProtocol <NSObject>
 
-- (id <MEEventHandler>)eventHandler;
+- (id <EMSEventHandler>)eventHandler;
 - (id <MEInAppTrackingProtocol>)inAppTracker;
 - (NSString *)currentCampaignId;
 - (void)closeInAppMessageWithCompletionBlock:(MECompletionHandler)completionHandler;

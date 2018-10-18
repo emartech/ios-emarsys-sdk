@@ -264,7 +264,7 @@
 		168F4A632108AF0900D0623B /* MEIAMRequestPushPermission.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F4A774E5F6DB31FA0E8E /* MEIAMRequestPushPermission.h */; };
 		168F4A642108AF0900D0623B /* MEJSBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FC45233FE4BEA41E0497 /* MEJSBridge.h */; };
 		168F4A652108AF0900D0623B /* MEIAMProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FAC2C5A749FD1A245F97 /* MEIAMProtocol.h */; };
-		168F4A662108AF0900D0623B /* MEEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F17C3E0F2DE45F4B2031 /* MEEventHandler.h */; };
+		168F4A662108AF0900D0623B /* EMSEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F17C3E0F2DE45F4B2031 /* EMSEventHandler.h */; };
 		168F4A672108AF0900D0623B /* MEInAppMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F512403FC605354B8D63 /* MEInAppMessage.h */; };
 		168F4A692108AF0900D0623B /* MEInAppTrackingProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F4D1A723824368273D6C /* MEInAppTrackingProtocol.h */; };
 		168F4A6A2108AF0900D0623B /* MEIAMMetricsLogHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F7B3E1F9535DC603F974 /* MEIAMMetricsLogHandler.h */; };
@@ -275,7 +275,7 @@
 		168F4A6F2108AF0900D0623B /* EMSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F1AF1ECFFFBB213774CC /* EMSNotification.h */; };
 		168F4A712108AF0900D0623B /* EMSNotificationInboxStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F083DBD140DB2A5350D0 /* EMSNotificationInboxStatus.h */; };
 		168F4A732108AF0900D0623B /* MEExperimental.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F03E138FA9F895A231AB /* MEExperimental.h */; };
-		168F4A742108AF0900D0623B /* MEFlipperFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FDCB3E34661E61CAFD71 /* MEFlipperFeatures.h */; };
+		168F4A742108AF0900D0623B /* EMSFlipperFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FDCB3E34661E61CAFD71 /* EMSFlipperFeatures.h */; };
 		168F4A752108AF0900D0623B /* MEButtonClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F9A5B7922DAB46EEF8CE /* MEButtonClick.h */; };
 		168F4A762108AF0900D0623B /* MEButtonClickMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F3E1733FDDFF4CB56C46 /* MEButtonClickMapper.h */; };
 		168F4A772108AF0900D0623B /* MEButtonClickContract.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F939B4C4D6FC0DC6F50B /* MEButtonClickContract.h */; };
@@ -609,7 +609,7 @@
 		32C6F15EBECEA8A7C1617BEC /* EMSRequestModelBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestModelBuilder.m; sourceTree = "<group>"; };
 		32C6F1620A102CD44EB414B3 /* EMSVisitorIdResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSVisitorIdResponseHandlerTests.m; sourceTree = "<group>"; };
 		32C6F16EC2DF2E5C83611D2A /* NSError+EMSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+EMSCore.h"; sourceTree = "<group>"; };
-		32C6F17C3E0F2DE45F4B2031 /* MEEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEEventHandler.h; sourceTree = "<group>"; };
+		32C6F17C3E0F2DE45F4B2031 /* EMSEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEventHandler.h; sourceTree = "<group>"; };
 		32C6F18D20251773F4772AC6 /* PredictInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredictInternal.h; sourceTree = "<group>"; };
 		32C6F18DF1126C2FE86EAB4A /* EMSShardQueryAllSpecification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSShardQueryAllSpecification.m; sourceTree = "<group>"; };
 		32C6F190532067AAA2686548 /* MEDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEDownloader.h; sourceTree = "<group>"; };
@@ -819,7 +819,7 @@
 		32C6FD742E39FB0B93C713CE /* EMSUUIDProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSUUIDProvider.h; sourceTree = "<group>"; };
 		32C6FD83345EE6DB27456ADA /* MEDisplayedIAM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEDisplayedIAM.h; sourceTree = "<group>"; };
 		32C6FD98A55E129F3932BD1A /* EMSRESTClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRESTClient.m; sourceTree = "<group>"; };
-		32C6FDCB3E34661E61CAFD71 /* MEFlipperFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEFlipperFeatures.h; sourceTree = "<group>"; };
+		32C6FDCB3E34661E61CAFD71 /* EMSFlipperFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSFlipperFeatures.h; sourceTree = "<group>"; };
 		32C6FDF3859668EA80DC8880 /* NSURL+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+EMSCoreTests.m"; sourceTree = "<group>"; };
 		32C6FE23AEAADAFDBA633ACC /* MEIdResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIdResponseHandler.h; sourceTree = "<group>"; };
 		32C6FE29AE6A04B39A427359 /* MEIAMCommandResultUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMCommandResultUtils.h; sourceTree = "<group>"; };
@@ -1493,7 +1493,7 @@
 			children = (
 				32C6F03E138FA9F895A231AB /* MEExperimental.h */,
 				32C6FA930322496D43FD86E0 /* MEExperimental.m */,
-				32C6FDCB3E34661E61CAFD71 /* MEFlipperFeatures.h */,
+				32C6FDCB3E34661E61CAFD71 /* EMSFlipperFeatures.h */,
 			);
 			path = Flipper;
 			sourceTree = "<group>";
@@ -1758,7 +1758,7 @@
 				32C6FC45233FE4BEA41E0497 /* MEJSBridge.h */,
 				32C6F54D997F9C339CABA41E /* MEJSBridge.m */,
 				32C6FAC2C5A749FD1A245F97 /* MEIAMProtocol.h */,
-				32C6F17C3E0F2DE45F4B2031 /* MEEventHandler.h */,
+				32C6F17C3E0F2DE45F4B2031 /* EMSEventHandler.h */,
 				32C6F512403FC605354B8D63 /* MEInAppMessage.h */,
 				32C6F37EFEFB6B4989FB4AA9 /* MEInAppMessage.m */,
 				32C6F4D1A723824368273D6C /* MEInAppTrackingProtocol.h */,
@@ -2146,7 +2146,7 @@
 				168F4A642108AF0900D0623B /* MEJSBridge.h in Headers */,
 				8A05D0BA2139559D00252CE0 /* EMSPredictProtocol.h in Headers */,
 				168F4A652108AF0900D0623B /* MEIAMProtocol.h in Headers */,
-				168F4A662108AF0900D0623B /* MEEventHandler.h in Headers */,
+				168F4A662108AF0900D0623B /* EMSEventHandler.h in Headers */,
 				168F4A672108AF0900D0623B /* MEInAppMessage.h in Headers */,
 				168F4A692108AF0900D0623B /* MEInAppTrackingProtocol.h in Headers */,
 				168F4A6A2108AF0900D0623B /* MEIAMMetricsLogHandler.h in Headers */,
@@ -2158,7 +2158,7 @@
 				168F4A6F2108AF0900D0623B /* EMSNotification.h in Headers */,
 				168F4A712108AF0900D0623B /* EMSNotificationInboxStatus.h in Headers */,
 				168F4A732108AF0900D0623B /* MEExperimental.h in Headers */,
-				168F4A742108AF0900D0623B /* MEFlipperFeatures.h in Headers */,
+				168F4A742108AF0900D0623B /* EMSFlipperFeatures.h in Headers */,
 				168F4A752108AF0900D0623B /* MEButtonClick.h in Headers */,
 				168F4A762108AF0900D0623B /* MEButtonClickMapper.h in Headers */,
 				168F4A772108AF0900D0623B /* MEButtonClickContract.h in Headers */,

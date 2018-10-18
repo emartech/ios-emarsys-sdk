@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEEventHandler.h"
+#import "EMSEventHandler.h"
 #import "EMSInAppProtocol.h"
 #import "MEInApp.h"
 #import <UIKit/UIKit.h>
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MEInApp : NSObject <EMSInAppProtocol, MEIAMProtocol>
 
-@property(nonatomic, weak, nullable) id <MEEventHandler> eventHandler;
+@property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, weak, nullable) id <MEInAppTrackingProtocol> inAppTracker;
 

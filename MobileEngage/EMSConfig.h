@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEFlipperFeatures.h"
+#import "EMSFlipperFeatures.h"
 #import "EMSConfigBuilder.h"
 
 NS_ASSUME_NONNULL_BEGIN

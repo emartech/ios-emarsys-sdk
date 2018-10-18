@@ -1,6 +1,6 @@
 #import "Kiwi.h"
 #import "MEIAMTriggerAppEvent.h"
-#import "MEEventHandler.h"
+#import "EMSEventHandler.h"
 #import "FakeInAppHandler.h"
 #import "EMSWaiter.h"
 

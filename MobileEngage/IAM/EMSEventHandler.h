@@ -6,7 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MEEventHandler <NSObject>
+@protocol EMSEventHandler <NSObject>
 
 - (void)handleEvent:(NSString *)eventName
             payload:(nullable NSDictionary<NSString *, NSObject *> *)payload;

@@ -15,6 +15,19 @@ Pod::Spec.new do |spec|
 	]
 	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/*'
 	spec.public_header_files  = [
+	'EmarsysSDK/Emarsys.h',
+	'EmarsysSDK/EMSInAppProtocol.h',
+	'EmarsysSDK/EMSInboxProtocol.h',
+	'EmarsysSDK/EMSPredictProtocol.h',
+	'EmarsysSDK/EMSPushNotificationProtocol.h',
+	'EmarsysSDK/EMSBlocks.h',
+	'Predict/EMSCartItemProtocol.h',
+	'MobileEngage/IAM/EMSEventHandler.h',
+	'MobileEngage/Inbox/EMSNotification.h',
+	'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
+	'MobileEngage/Flipper/EMSFlipperFeatures.h',
+	'MobileEngage/EMSConfig.h',
+	'MobileEngage/EMSConfigBuilder.h'
    	]
 	spec.libraries = 'z', 'c++'
 end

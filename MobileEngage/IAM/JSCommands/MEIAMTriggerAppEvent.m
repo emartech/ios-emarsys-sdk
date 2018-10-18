@@ -4,19 +4,19 @@
 
 #import "EMSDictionaryValidator.h"
 #import "MEIAMTriggerAppEvent.h"
-#import "MEEventHandler.h"
+#import "EMSEventHandler.h"
 #import "MEIAMCommandResultUtils.h"
 #import "NSDictionary+EMSCore.h"
 
 @interface MEIAMTriggerAppEvent()
 
-@property(nonatomic, weak, nullable) id <MEEventHandler> inAppMessageHandler;
+@property(nonatomic, weak, nullable) id <EMSEventHandler> inAppMessageHandler;
 
 @end
 
 @implementation MEIAMTriggerAppEvent
 
-- (instancetype)initWithInAppMessageHandler:(id <MEEventHandler>)inAppMessageHandler {
+- (instancetype)initWithInAppMessageHandler:(id <EMSEventHandler>)inAppMessageHandler {
     if (self = [super init]) {
         _inAppMessageHandler = inAppMessageHandler;
     }
