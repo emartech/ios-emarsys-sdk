@@ -17,7 +17,7 @@
 
 @implementation EmarsysTestUtils
 
-+ (void)setupEmarsysWithFeatures:(NSArray<MEFlipperFeature> *)features
++ (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer {
     [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
                                                error:nil];

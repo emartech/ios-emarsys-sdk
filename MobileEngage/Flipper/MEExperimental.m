@@ -8,19 +8,19 @@
 @implementation MEExperimental
 static NSMutableSet * _enabledFeatures;
 
-+ (BOOL)isFeatureEnabled:(MEFlipperFeature)feature {
++ (BOOL)isFeatureEnabled:(EMSFlipperFeature)feature {
     return [_enabledFeatures containsObject:feature];
 }
 
-+ (void)enableFeature:(MEFlipperFeature)feature {
++ (void)enableFeature:(EMSFlipperFeature)feature {
     if(_enabledFeatures == nil) {
         _enabledFeatures = [NSMutableSet new];
     }
     [_enabledFeatures addObject:feature];
 }
 
-+ (void)enableFeatures:(NSArray<MEFlipperFeature> *)features {
-    for (MEFlipperFeature feature in features) {
++ (void)enableFeatures:(NSArray<EMSFlipperFeature> *)features {
+    for (EMSFlipperFeature feature in features) {
         [MEExperimental enableFeature:feature];
     }
 }

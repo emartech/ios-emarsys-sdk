@@ -14,7 +14,7 @@
 
 @interface EmarsysTestUtils : NSObject
 
-+ (void)setupEmarsysWithFeatures:(NSArray<MEFlipperFeature> *)features
++ (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer;
 + (void)tearDownEmarsys;
 + (void)waitForSetCustomer;

@@ -35,9 +35,9 @@ SPEC_BEGIN(FlipperTest)
 
     describe(@"enableFeatures", ^{
        it(@"should enable all the given features", ^{
-           NSArray<MEFlipperFeature> *features = @[INAPP_MESSAGING];
+           NSArray<EMSFlipperFeature> *features = @[INAPP_MESSAGING];
            [MEExperimental enableFeatures:features];
-           for (MEFlipperFeature feature in features) {
+           for (EMSFlipperFeature feature in features) {
                 [[theValue([MEExperimental isFeatureEnabled:feature]) should] beYes];
            }
        });
