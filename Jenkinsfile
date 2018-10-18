@@ -51,7 +51,7 @@ node('master') {
                 sh "cd $buildVariant/ios-emarsys-sdk && pod lib lint EmarsysNotificationService.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
             }
             stage('Test EmarsysSDK') {
-            	sh "cd $derivedDataPath/Build/Products ; zip -r Tests.zip Debug-iphoneos Tests_iphoneos11.4-arm64.xctestrun"
+            	sh "cd $derivedDataPath/Build/Products ; zip -r Tests.zip Debug-iphoneos Tests_iphoneos12.0-arm64e.xctestrun"
     					sh "gcloud alpha firebase test ios run --test $derivedDataPath/Build/Products/Tests.zip --device model=iphonex,version=11.2,locale=en_GB --device model=iphone6s,version=10.3,locale=en_GB --device model=iphone6splus,version=9.1,locale=en_GB --device model=ipadmini4,version=11.2,locale=en_GB --quiet --project ems-mobile-sdk"
             }
             stage('Deploy to private pod repo') {
