@@ -26,6 +26,7 @@ Pod::Spec.new do |spec|
 	'MobileEngage/Inbox/EMSNotification.h',
 	'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
 	'MobileEngage/Flipper/EMSFlipperFeatures.h',
+	'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h',
 	'MobileEngage/EMSConfig.h',
 	'MobileEngage/EMSConfigBuilder.h'
    	]

@@ -1,9 +1,2 @@
-#import <EmarsysSDK/MobileEngage.h>
-#import <EmarsysSDK/MobileEngageStatusDelegate.h>
-#import <EmarsysSDK/MEConfigBuilder.h>
-#import <EmarsysSDK/MEConfig.h>
-#import <EmarsysSDK/MEInboxProtocol.h>
-#import <EmarsysSDK/MENotificationInboxStatus.h>
-#import <EmarsysSDK/MENotification.h>
-#import <EmarsysSDK/MEInApp.h>
-#import <EmarsysSDK/MEEventHandler.h>
+#import <EmarsysSDK/Emarsys.h>
+

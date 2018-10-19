@@ -14,6 +14,7 @@
 #import "MERequestContext.h"
 #import "MENotificationCenterManager.h"
 #import "AppStartBlockProvider.h"
+#import "MEUserNotificationDelegate.h"
 
 @implementation Emarsys
 
@@ -95,6 +96,11 @@
 + (id <EMSPredictProtocol>)predict {
     return EMSDependencyInjection.dependencyContainer.predict;
 }
+
++ (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
+    return EMSDependencyInjection.dependencyContainer.notificationCenterDelegate;
+}
+
 
 + (EMSSQLiteHelper *)sqliteHelper {
     return EMSDependencyInjection.dependencyContainer.dbHelper;

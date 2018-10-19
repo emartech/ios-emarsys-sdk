@@ -12,7 +12,7 @@ class MESInboxViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var notificationTableView: UITableView!
 
     //MARK: Variables
-    var notifications: [MENotification] = []
+    var notifications: [EMSNotification] = []
 
     //MARK: ViewController
     override func viewDidLoad() {
@@ -27,29 +27,32 @@ class MESInboxViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        MobileEngage.inbox.resetBadgeCount(successBlock: {
-            self.tabBarItem.badgeValue = nil
-        }) { error in
-            print(error as Any)
+        Emarsys.inbox.resetBadgeCount { error in
+            if let error = error {
+                print(error as Any)
+            } else {
+                self.tabBarItem.badgeValue = nil
+            }
         }
     }
 
     //MARK: Public methods
     @objc public func refresh(refreshControl: UIRefreshControl?) {
-        MobileEngage.inbox.fetchNotifications(resultBlock: { [unowned self] notificationInboxStatus in
-            guard let inboxStatus = notificationInboxStatus else { return }
-            self.notifications = inboxStatus.notifications
-            self.notificationTableView?.reloadData()
-            
-            self.tabBarItem.badgeValue = inboxStatus.badgeCount != 0 ? "\(inboxStatus.badgeCount)" : nil
-            refreshControl?.endRefreshing()
-        }) { [unowned self] error in
-            print(error as Any)
-            let alert = UIAlertController(title: "Error", message: "Please login before fetching inbox", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { action in
+        Emarsys.inbox.fetchNotifications { [unowned self] status, error in
+            if let error = error {
+                print(error as Any)
+                let alert = UIAlertController(title: "Error", message: "Please login before fetching inbox", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { action in
+                    refreshControl?.endRefreshing()
+                }))
+                self.present(alert, animated: true, completion: nil)
+            } else if let status = status {
+                self.notifications = status.notifications
+                self.notificationTableView?.reloadData()
+
+                self.tabBarItem.badgeValue = status.badgeCount != 0 ? "\(status.badgeCount)" : nil
                 refreshControl?.endRefreshing()
-            }))
-            self.present(alert, animated: true, completion: nil)
+            }
         }
     }
 

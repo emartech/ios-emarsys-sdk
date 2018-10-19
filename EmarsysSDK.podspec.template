@@ -23,7 +23,7 @@ Pod::Spec.new do |spec|
 	    'MobileEngage/Inbox/MENotificationInboxStatus.h',
         'MobileEngage/IAM/MEInApp.h',
         'MobileEngage/IAM/EMSEventHandler.h',
-        'MobileEngage/RichNotification/MEUserNotificationCenterDelegate.h'
+        'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h'
    	]
 	spec.libraries = 'z', 'c++'
 end

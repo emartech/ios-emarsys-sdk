@@ -9,6 +9,7 @@
 #import "EMSInboxProtocol.h"
 #import "EMSInAppProtocol.h"
 #import "EMSPredictProtocol.h"
+#import "EMSUserNotificationCenterDelegate.h"
 
 @interface Emarsys : NSObject
 
@@ -18,6 +19,7 @@ typedef void (^EMSSourceHandler)(NSString *source);
 @property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
 @property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
+@property(class, nonatomic, readonly) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 
 + (void)setupWithConfig:(EMSConfig *)config;
 

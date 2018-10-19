@@ -3,12 +3,12 @@
 //
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-#import "MEUserNotificationCenterDelegate.h"
+#import "EMSUserNotificationCenterDelegate.h"
 #import "MEIAMProtocol.h"
 
 @class MobileEngageInternal;
 
-@interface MEUserNotificationDelegate: NSObject <MEUserNotificationCenterDelegate>
+@interface MEUserNotificationDelegate : NSObject <EMSUserNotificationCenterDelegate>
 
 - (instancetype)initWithApplication:(UIApplication *)application
                mobileEngageInternal:(MobileEngageInternal *)mobileEngage

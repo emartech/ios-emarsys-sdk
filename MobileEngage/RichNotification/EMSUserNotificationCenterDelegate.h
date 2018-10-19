@@ -4,7 +4,7 @@
 #import <UserNotifications/UNUserNotificationCenter.h>
 #import "EMSEventHandler.h"
 
-@protocol MEUserNotificationCenterDelegate <UNUserNotificationCenterDelegate>
+@protocol EMSUserNotificationCenterDelegate <UNUserNotificationCenterDelegate>
 
 @property(nonatomic, weak) id <UNUserNotificationCenterDelegate> delegate NS_AVAILABLE_IOS(10.0);
 @property(nonatomic, weak) id <EMSEventHandler> eventHandler;

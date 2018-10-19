@@ -15,6 +15,7 @@
 @class MENotificationCenterManager;
 @class MERequestContext;
 @class AppStartBlockProvider;
+@class MEUserNotificationDelegate;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -27,6 +28,8 @@
 - (MEInApp *)iam;
 
 - (PredictInternal *)predict;
+
+- (MEUserNotificationDelegate *)notificationCenterDelegate;
 
 - (id <EMSRequestModelRepositoryProtocol>)requestRepository;
 

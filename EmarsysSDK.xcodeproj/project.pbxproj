@@ -303,7 +303,7 @@
 		168F4A8F2108AF0900D0623B /* MEIAMCleanupResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F8BB0A555130A824882B /* MEIAMCleanupResponseHandler.h */; };
 		168F4A902108AF0900D0623B /* MEIdResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FE23AEAADAFDBA633ACC /* MEIdResponseHandler.h */; };
 		168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FC0540BEE69AC1B57B96 /* MEUserNotificationDelegate.h */; };
-		168F4A932108AF0900D0623B /* MEUserNotificationCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F293AE63FD25E7440DAF /* MEUserNotificationCenterDelegate.h */; };
+		168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F293AE63FD25E7440DAF /* EMSUserNotificationCenterDelegate.h */; };
 		168F4A942108AF0900D0623B /* EMSConfigBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FBACFC9AC84705E361DF /* EMSConfigBuilder.h */; };
 		168F4A952108AF0900D0623B /* MEOsVersionUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F437B3453E225E470A9C /* MEOsVersionUtils.h */; };
 		168F4A962108AF0900D0623B /* MobileEngageVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F9AD1B9D0D6BF05904AB /* MobileEngageVersion.h */; };
@@ -630,7 +630,7 @@
 		32C6F26E90CC4A958208ABA9 /* EMSDefaultWorker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDefaultWorker.m; sourceTree = "<group>"; };
 		32C6F26EBDAF2F464C718C1E /* MEIAMRequestPushPermission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMRequestPushPermission.m; sourceTree = "<group>"; };
 		32C6F2805F0359F07DE108C5 /* MERequestMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MERequestMatcher.h; sourceTree = "<group>"; };
-		32C6F293AE63FD25E7440DAF /* MEUserNotificationCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEUserNotificationCenterDelegate.h; sourceTree = "<group>"; };
+		32C6F293AE63FD25E7440DAF /* EMSUserNotificationCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSUserNotificationCenterDelegate.h; sourceTree = "<group>"; };
 		32C6F2ADFCD590B379C56ACA /* EMSReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSReachability.m; sourceTree = "<group>"; };
 		32C6F2CD8EC4C95A37BA1C4A /* FakeDependencyContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeDependencyContainer.m; sourceTree = "<group>"; };
 		32C6F2E223241C1A5493875D /* EMSLockableProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLockableProtocol.h; sourceTree = "<group>"; };
@@ -1669,7 +1669,7 @@
 			children = (
 				32C6FC0540BEE69AC1B57B96 /* MEUserNotificationDelegate.h */,
 				32C6FF5DC8ABA5AE9EC21AEF /* MEUserNotificationDelegate.m */,
-				32C6F293AE63FD25E7440DAF /* MEUserNotificationCenterDelegate.h */,
+				32C6F293AE63FD25E7440DAF /* EMSUserNotificationCenterDelegate.h */,
 			);
 			path = RichNotification;
 			sourceTree = "<group>";
@@ -2186,7 +2186,7 @@
 				168F4A8F2108AF0900D0623B /* MEIAMCleanupResponseHandler.h in Headers */,
 				168F4A902108AF0900D0623B /* MEIdResponseHandler.h in Headers */,
 				168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */,
-				168F4A932108AF0900D0623B /* MEUserNotificationCenterDelegate.h in Headers */,
+				168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */,
 				168F4A942108AF0900D0623B /* EMSConfigBuilder.h in Headers */,
 				168F4A952108AF0900D0623B /* MEOsVersionUtils.h in Headers */,
 				168F4A962108AF0900D0623B /* MobileEngageVersion.h in Headers */,

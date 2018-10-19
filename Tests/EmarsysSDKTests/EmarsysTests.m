@@ -82,6 +82,12 @@ SPEC_BEGIN(EmarsysTests)
                 [[(NSObject *) [Emarsys push] shouldNot] beNil];
             });
 
+            it(@"should set notificationCenterDelegate", ^{
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                   withDependencyContainer:nil];
+                [[(NSObject *) [Emarsys notificationCenterDelegate] shouldNot] beNil];
+            });
+
             it(@"register Predict trigger", ^{
                 [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                    withDependencyContainer:nil];
@@ -245,7 +251,8 @@ SPEC_BEGIN(EmarsysTests)
                                                   andReturn:appStartBlock
                                               withArguments:requestManager, requestContext];
                     [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                      withArguments:appStartBlock, UIApplicationDidBecomeActiveNotification];
+                                                      withArguments:appStartBlock,
+                                                                    UIApplicationDidBecomeActiveNotification];
 
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:dependencyContainer];

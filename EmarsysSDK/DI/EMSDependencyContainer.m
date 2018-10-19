@@ -31,6 +31,7 @@
 #import "EMSWindowProvider.h"
 #import "EMSMainWindowProvider.h"
 #import "EMSViewControllerProvider.h"
+#import "MEUserNotificationDelegate.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -51,10 +52,9 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
+@property(nonatomic, strong) MEUserNotificationDelegate *notificationCenterDelegate;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
-
-- (void)initializeInstances;
 
 - (void)handleResponse:(EMSResponseModel *)responseModel;
 
@@ -162,6 +162,11 @@
     _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
                                                           requestContext:self.requestContext
                                                        notificationCache:self.notificationCache];
+
+    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
+                                                                     mobileEngageInternal:self.mobileEngage
+                                                                                    inApp:self.iam];
+
     [self.iam setInAppTracker:self.mobileEngage];
 }
 

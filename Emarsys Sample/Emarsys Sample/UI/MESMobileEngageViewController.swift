@@ -5,8 +5,7 @@
 import UIKit
 import EmarsysSDK
 
-class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegate {
-
+class MESMobileEngageViewController: UIViewController {
 
 //MARK: Outlets
     @IBOutlet weak var contactFieldIdTextField: UITextField!
@@ -19,14 +18,25 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
     @IBOutlet weak var tvInfos: UITextView!
 
 //MARK: Variables
-    var triggeredEvents: [String] = []
     var pushToken: String?
+
+    func responseHandler() -> EMSCompletionBlock {
+        return { error in
+            if let error = error {
+                self.tvInfos.text.append("💔 \(error)")
+            } else {
+                self.tvInfos.text.append("💚 OK")
+            }
+        }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         NotificationCenter.default.addObserver(forName: NotificationNames.pushTokenArrived.asNotificationName(), object: nil, queue: OperationQueue.main) { [unowned self] (notification: Notification) in
             if let data = notification.userInfo?["push_token"] as? Data {
-                self.pushToken = data.map { String(format: "%02.2hhx", $0) }.joined()
+                self.pushToken = data.map {
+                    String(format: "%02.2hhx", $0)
+                }.joined()
             }
         }
     }
@@ -36,15 +46,13 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
         super.viewDidLoad()
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped))
         self.view.addGestureRecognizer(tapGestureRecognizer)
-        MobileEngage.statusDelegate = self
 
         registerForKeyboardNotifications()
     }
 
 //MARK: Actions
     @IBAction func anonymLoginButtonClicked(_ sender: Any) {
-        let eventId = MobileEngage.appLogin()
-        triggeredEvents.append(eventId)
+//TODO:        MobileEngage.anonymapplogin
         self.tvInfos.text = "Anonymus login: "
     }
 
@@ -55,8 +63,8 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
             showAlert(with: "Wrong parameter")
             return
         }
-        let eventId = MobileEngage.appLogin(withContactFieldId: id as NSNumber, contactFieldValue: valueText)
-        triggeredEvents.append(eventId)
+        Emarsys.setCustomerWithId(valueText, completionBlock: responseHandler())
+
         self.tvInfos.text = "Login: "
 
         let inboxViewController = self.tabBarController?.viewControllers?[1] as! MESInboxViewController
@@ -68,8 +76,7 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
             showAlert(with: "Missing sid")
             return
         }
-        let eventId = MobileEngage.trackMessageOpen(userInfo: ["u": "{\"sid\":\"\(sid)\"}"])
-        triggeredEvents.append(eventId)
+        Emarsys.push.trackMessageOpen(userInfo: ["u": "{\"sid\":\"\(sid)\"}"], completionBlock: responseHandler())
         self.tvInfos.text = "Message open: "
     }
 
@@ -89,19 +96,21 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
                 }
             }
         }
-        let eventId = MobileEngage.trackCustomEvent(eventName, eventAttributes: eventAttributes)
-        triggeredEvents.append(eventId)
+        Emarsys.trackCustomEvent(withName: eventName, eventAttributes: eventAttributes, completionBlock: responseHandler())
         self.tvInfos.text = "Track custom event: "
     }
 
     @IBAction func logoutButtonClicked(_ sender: Any) {
-        let eventId = MobileEngage.appLogout()
-        triggeredEvents.append(eventId)
+        Emarsys.clearCustomer(completionBlock: responseHandler())
         self.tvInfos.text = "App logout: "
     }
 
     @IBAction func togglePausedValue(_ sender: UISwitch) {
-        MobileEngage.inApp.paused = sender.isOn
+        if sender.isOn {
+            Emarsys.inApp.pause()
+        } else {
+            Emarsys.inApp.resume()
+        }
     }
 
     @objc func backgroundTapped() {
@@ -118,23 +127,6 @@ class MESMobileEngageViewController: UIViewController, MobileEngageStatusDelegat
 
         showAlert(with: message)
         UIPasteboard.general.string = message
-    }
-
-//MARK: MobileEngageStatusDelegate
-    func mobileEngageLogReceived(withEventId eventId: String, log: String) {
-        if (triggeredEvents.contains(eventId)) {
-            self.tvInfos.text.append("💚 OK")
-            self.triggeredEvents.remove(eventId)
-        }
-        print(eventId, log)
-    }
-
-    func mobileEngageErrorHappened(withEventId eventId: String, error: Error) {
-        if (triggeredEvents.contains(eventId)) {
-            self.tvInfos.text.append("💔 \(error)")
-            self.triggeredEvents.remove(eventId)
-        }
-        print(eventId, error)
     }
 
 }

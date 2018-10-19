@@ -5,11 +5,13 @@ source 'https://github.com/CocoaPods/Specs.git'
 source 'git@github.com:emartech/pod-private.git'
 
 target "Emarsys Sample" do
-    pod 'EmarsysSDK'
+  pod 'EmarsysSDK', :path => '../'
+  # pod 'EmarsysSDK'
 end
 
 target "EMSNotificationService" do
-    pod 'EmarsysNotificationService'
+  pod 'EmarsysNotificationService', :path => '../'
+  # pod 'EmarsysNotificationService'
 end
 
 target "Emarsys SampleUITests" do
