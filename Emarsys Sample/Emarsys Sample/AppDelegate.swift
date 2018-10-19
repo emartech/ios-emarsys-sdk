@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
 
         let config = EMSConfig.make { builder in
             builder.setExperimentalFeatures([INAPP_MESSAGING, USER_CENTRIC_INBOX]);
+            builder.setMerchantId("1428C8EE286EC34B")
+            builder.setContactFieldId(3)
             if let applicationCode = ProcessInfo.processInfo.environment["applicationCode"] as? String,
                let applicationPassword = ProcessInfo.processInfo.environment["applicationPassword"] as? String {
                 builder.setMobileEngageApplicationCode(applicationCode, applicationPassword: applicationPassword)
@@ -38,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
                 print(granted, error ?? "no error")
                 if (granted) {
-// TODO:                    UNUserNotificationCenter.current().delegate = MobileEngage.notificationCenterDelegate
+                    UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
                 }
             }
         } else {
