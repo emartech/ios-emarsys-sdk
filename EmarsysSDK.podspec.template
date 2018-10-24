@@ -8,22 +8,27 @@ Pod::Spec.new do |spec|
 	spec.platform             = :ios, '9.0'
 	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', <COMMIT_REF> }
 	spec.source_files         = [
-    	     'MobileEngage/**/*.{h,m}',
-    	     'Core/**/*.{h,m}'
-    	]
+       'Core/**/*.{h,m}',
+	     'MobileEngage/**/*.{h,m}',
+       'Predict/**/*.{h,m}',
+       'EmarsysSDK/**/*.{h,m}'
+	]
 	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/*'
 	spec.public_header_files  = [
-		'MobileEngage/MobileEngage.h',
-		'MobileEngage/MobileEngageStatusDelegate.h',
-		'MobileEngage/EMSConfigBuilder.h',
-	    'MobileEngage/EMSConfig.h',
-	   	'MobileEngage/Flipper/MEFlipperFeatures.h',
-	    'MobileEngage/Inbox/MEInboxProtocol.h',
-	    'MobileEngage/Inbox/EMSNotification.h',
-	    'MobileEngage/Inbox/MENotificationInboxStatus.h',
-        'MobileEngage/IAM/MEInApp.h',
-        'MobileEngage/IAM/EMSEventHandler.h',
-        'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h'
+			'EmarsysSDK/Emarsys.h',
+			'EmarsysSDK/EMSInAppProtocol.h',
+			'EmarsysSDK/EMSInboxProtocol.h',
+			'EmarsysSDK/EMSPredictProtocol.h',
+			'EmarsysSDK/EMSPushNotificationProtocol.h',
+			'EmarsysSDK/EMSBlocks.h',
+			'Predict/EMSCartItemProtocol.h',
+			'MobileEngage/IAM/EMSEventHandler.h',
+			'MobileEngage/Inbox/EMSNotification.h',
+			'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
+			'MobileEngage/Flipper/EMSFlipperFeatures.h',
+			'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h',
+			'MobileEngage/EMSConfig.h',
+			'MobileEngage/EMSConfigBuilder.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
