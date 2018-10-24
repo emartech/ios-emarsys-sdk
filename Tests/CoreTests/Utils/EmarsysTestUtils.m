@@ -30,7 +30,7 @@
     [userDefaults synchronize];
 
     userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-    [userDefaults setObject:@"IntegrationTests" forKey:@"kEMSHardwareIdKey"];
+    [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
     [userDefaults synchronize];
 
     [EMSDependencyInjection tearDown];
