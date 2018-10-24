@@ -116,6 +116,10 @@ SPEC_BEGIN(OfflineTests)
                         }];
                 XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                                 timeout:20];
+
+                //TODO: restclient callback order
+                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
