@@ -42,7 +42,7 @@ node('master') {
     				    }
             }
             stage('Build') {
-    					sh "cd $buildVariant/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme Tests -derivedDataPath $derivedDataPath -sdk iphoneos build-for-testing"
+    					sh "cd $buildVariant/ios-emarsys-sdk && xcodebuild -workspace ./EmarsysSDK.xcworkspace -scheme Tests -derivedDataPath $derivedDataPath -sdk iphoneos -allowProvisioningUpdates build-for-testing"
             }
             stage('Pod lint') {
             	sh "cd $buildVariant/ios-emarsys-sdk && pod lib lint EmarsysSDK.podspec --allow-warnings --sources=git@github.com:emartech/pod-private.git,master"
