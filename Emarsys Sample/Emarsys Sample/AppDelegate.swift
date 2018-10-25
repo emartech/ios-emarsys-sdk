@@ -20,16 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
             builder.setExperimentalFeatures([INAPP_MESSAGING, USER_CENTRIC_INBOX]);
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
-            if let applicationCode = ProcessInfo.processInfo.environment["applicationCode"] as? String,
-               let applicationPassword = ProcessInfo.processInfo.environment["applicationPassword"] as? String {
-                builder.setMobileEngageApplicationCode(applicationCode, applicationPassword: applicationPassword)
-            } else {
-#if DEBUG
-                builder.setMobileEngageApplicationCode("14C19-A121F", applicationPassword: "PaNkfOD90AVpYimMBuZopCpm8OWCrREu")
-#else
-                builder.setMobileEngageApplicationCode("EMS5D-F1638", applicationPassword: "U1T/s8JG6QcRKGckFbuz/yVekNappWAl")
-#endif
-            }
+            builder.setMobileEngageApplicationCode("EMSA1-927A9", applicationPassword: "kQ8qXPzCuzzXZ9jTnuRT09zcv6aKsYf0")
         }
         Emarsys.setup(with: config)
         Emarsys.inApp.eventHandler = self
