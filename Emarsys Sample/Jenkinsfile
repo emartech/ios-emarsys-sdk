@@ -19,7 +19,8 @@ node('master') {
       stage('Build as Enterprise Distribution Package') {
         sh "mkdir artifacts"
         sh "cd ios-emarsys-sample/Emarsys\\ Sample/ && fastlane gym --scheme Emarsys\\ Sample --export_method enterprise -o ../../artifacts/ --verbose --export_xcargs \"-allowProvisioningUpdates\""
-        sh "cd ../../artifacts/ && mv Emarsys\ Sample.ipa emarsys-sample.ipa"
+        sh "cd ../../artifacts/"
+        sh "mv \"Emarsys Sample.ipa\" emarsys-sample.ipa"
         archiveArtifacts "artifacts/*"
       }
       stage('Deploy IPA to Amazon S3') {
