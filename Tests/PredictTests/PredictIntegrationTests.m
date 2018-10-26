@@ -15,29 +15,49 @@
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
 @interface PredictIntegrationDependencyContainer : EMSDependencyContainer
-@property(nonatomic, strong) XCTestExpectation *expectation;
+
+@property(nonatomic, strong) NSMutableArray *expectations;
 @property(nonatomic, strong) EMSResponseModel *lastResponseModel;
 
-- (instancetype)initWithConfig:(EMSConfig *)config expectation:(XCTestExpectation *)expectation;
+- (instancetype)initWithConfig:(EMSConfig *)config
+                  expectations:(NSArray<XCTestExpectation *> *)expectations;
+
+- (instancetype)initWithConfig:(EMSConfig *)config
+                   expectation:(XCTestExpectation *)expectation;
 @end
 
 @implementation PredictIntegrationDependencyContainer
-- (instancetype)initWithConfig:(EMSConfig *)config expectation:(XCTestExpectation *)expectation {
+
+- (instancetype)initWithConfig:(EMSConfig *)config
+                  expectations:(NSArray<XCTestExpectation *> *)expectations {
     self = [super initWithConfig:config];
     if (self) {
-        _expectation = expectation;
+        _expectations = expectations.mutableCopy;
     }
-
     return self;
+}
+
+- (instancetype)initWithConfig:(EMSConfig *)config
+                   expectation:(XCTestExpectation *)expectation {
+    return [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
+                                                            expectations:@[expectation]];
 }
 
 - (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
     return ^(NSString *requestId, EMSResponseModel *response) {
         [super createSuccessBlock](requestId, response);
         _lastResponseModel = response;
-        [_expectation fulfill];
+        XCTestExpectation *expectation = [self popExpectation];
+        [expectation fulfill];
     };
 }
+
+- (XCTestExpectation *)popExpectation {
+    XCTestExpectation *expectation = self.expectations.firstObject;
+    [self.expectations removeObject:expectation];
+    return expectation;
+}
+
 @end
 
 SPEC_BEGIN(PredictIntegrationTests)
@@ -155,6 +175,47 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+            });
+        });
+
+        describe(@"visitorId", ^{
+
+            it(@"should simulate login flow", ^{
+                XCTestExpectation *expectation1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
+                XCTestExpectation *expectation2 = [[XCTestExpectation alloc] initWithDescription:@"waitForClearCustomer"];
+                XCTestExpectation *expectation3 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetCustomer"];
+                XCTestExpectation *expectation4 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
+                [dependencyContainer setExpectations:[@[expectation1, expectation2, expectation3, expectation4] mutableCopy]];
+
+                NSString *expectedQueryParams = @"q=searchTerm";
+                NSString *visitorId;
+                NSString *visitorId2;
+
+                [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
+                [EMSWaiter waitForExpectations:@[expectation1]
+                                       timeout:10];
+
+                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+                visitorId = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+                [[visitorId shouldNot] beNil];
+
+                [Emarsys clearCustomer];
+                [EMSWaiter waitForExpectations:@[expectation2]
+                                       timeout:10];
+
+                [Emarsys setCustomerWithId:@"test@test.com"];
+                [EMSWaiter waitForExpectations:@[expectation3]
+                                       timeout:10];
+
+                [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
+                [EMSWaiter waitForExpectations:@[expectation4]
+                                       timeout:10];
+
+                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+                visitorId2 = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+                [[visitorId2 shouldNot] beNil];
             });
         });
 
