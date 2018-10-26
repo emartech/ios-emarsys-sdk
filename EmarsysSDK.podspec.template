@@ -22,6 +22,7 @@ Pod::Spec.new do |spec|
 			'EmarsysSDK/EMSPushNotificationProtocol.h',
 			'EmarsysSDK/EMSBlocks.h',
 			'Predict/EMSCartItemProtocol.h',
+            'Predict/EMSCartItem.h',
 			'MobileEngage/IAM/EMSEventHandler.h',
 			'MobileEngage/Inbox/EMSNotification.h',
 			'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
