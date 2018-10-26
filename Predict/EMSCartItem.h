@@ -3,8 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "EMSCartItemProtocol.h"
 
-@interface EMSCartItem : NSObject
+@interface EMSCartItem : NSObject <EMSCartItemProtocol>
 
 @property(nonatomic, strong) NSString *itemId;
 @property(nonatomic, assign) double price;

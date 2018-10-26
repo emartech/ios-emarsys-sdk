@@ -8,6 +8,7 @@
 @implementation EMSCartItem {
 
 }
+
 - (instancetype)initWithItemId:(NSString *)itemId price:(double)price quantity:(double)quantity {
     self = [super init];
     if (self) {
@@ -22,5 +23,6 @@
 + (instancetype)itemWithItemId:(NSString *)itemId price:(double)price quantity:(double)quantity {
     return [[self alloc] initWithItemId:itemId price:price quantity:quantity];
 }
+
 
 @end
