@@ -72,6 +72,11 @@ SPEC_BEGIN(PredictIntegrationTests)
             [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
                                                        error:nil];
 
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.predict"];
+            [userDefaults removeObjectForKey:@"customerId"];
+            [userDefaults removeObjectForKey:@"visitorId"];
+            [userDefaults synchronize];
+
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"
