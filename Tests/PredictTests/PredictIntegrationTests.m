@@ -93,11 +93,11 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackCartWithCartItems:", ^{
 
             it(@"should send request with cartItems", ^{
-                NSString *expectedQueryParams = @"ca=i%3AitemId1%2Cp%3A200.0%2Cq%3A100.0%7Ci%3AitemId2%2Cp%3A201.0%2Cq%3A101.0";
+                NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackCartWithCartItems:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
                 ]];
 
                 [EMSWaiter waitForExpectations:@[expectation]
@@ -112,16 +112,16 @@ SPEC_BEGIN(PredictIntegrationTests)
 
             it(@"should send request with orderId and items", ^{
                 NSString *expectedOrderIdQueryParams = @"oi=orderId";
-                NSString *expectedItemsQueryParams = @"co=i%3AitemId1%2Cp%3A200.0%2Cq%3A100.0%7Ci%3AitemId2%2Cp%3A201.0%2Cq%3A101.0";
+                NSString *expectedItemsQueryParams = @"co=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[
-                                                        [EMSCartItem itemWithItemId:@"itemId1"
-                                                                              price:200.0
-                                                                           quantity:100.0],
-                                                        [EMSCartItem itemWithItemId:@"itemId2"
-                                                                              price:201.0
-                                                                           quantity:101.0]
+                                                            [EMSCartItem itemWithItemId:@"2508"
+                                                                                  price:200.0
+                                                                               quantity:100.0],
+                                                            [EMSCartItem itemWithItemId:@"2073"
+                                                                                  price:201.0
+                                                                               quantity:101.0]
                                                     ]];
 
                 [EMSWaiter waitForExpectations:@[expectation]
@@ -136,9 +136,9 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackCategoryViewWithCategoryPath:", ^{
 
             it(@"should send request with category path", ^{
-                NSString *expectedQueryParams = @"vc=category%2Fsubcategory";
+                NSString *expectedQueryParams = @"vc=DESIGNS%3ELiving%20Room";
 
-                [Emarsys.predict trackCategoryViewWithCategoryPath:@"category/subcategory"];
+                [Emarsys.predict trackCategoryViewWithCategoryPath:@"DESIGNS>Living Room"];
 
                 [EMSWaiter waitForExpectations:@[expectation]
                                        timeout:10];
@@ -151,9 +151,9 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackItemViewWithItemId:", ^{
 
             it(@"should send request with item id", ^{
-                NSString *expectedQueryParams = @"v=i%3Aitemid";
+                NSString *expectedQueryParams = @"v=i%3A2508";
 
-                [Emarsys.predict trackItemViewWithItemId:@"itemid"];
+                [Emarsys.predict trackItemViewWithItemId:@"2508"];
 
                 [EMSWaiter waitForExpectations:@[expectation]
                                        timeout:10];
