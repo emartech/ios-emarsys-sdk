@@ -8,7 +8,6 @@ import EmarsysSDK
 class MESMobileEngageViewController: UIViewController {
 
 //MARK: Outlets
-    @IBOutlet weak var contactFieldIdTextField: UITextField!
     @IBOutlet weak var contactFieldValueTextField: UITextField!
     @IBOutlet weak var sidTextField: UITextField!
     @IBOutlet weak var customEventNameTextField: UITextField!
@@ -20,12 +19,16 @@ class MESMobileEngageViewController: UIViewController {
 //MARK: Variables
     var pushToken: String?
 
-    func responseHandler() -> EMSCompletionBlock {
+    func createResponseHandler() -> EMSCompletionBlock {
         return { error in
             if let error = error {
-                self.tvInfos.text.append("💔 \(error)")
+                OperationQueue.main.addOperation({
+                    self.tvInfos.text.append("💔 \(error)")
+                });
             } else {
-                self.tvInfos.text.append("💚 OK")
+                OperationQueue.main.addOperation({
+                    self.tvInfos.text.append("💚 OK")
+                });
             }
         }
     }
@@ -57,18 +60,16 @@ class MESMobileEngageViewController: UIViewController {
     }
 
     @IBAction func loginButtonClicked(_ sender: Any) {
-        guard let idText = self.contactFieldIdTextField.text,
-              let valueText = self.contactFieldValueTextField.text,
-              let id = Int(idText) else {
+        guard let valueText = self.contactFieldValueTextField.text else {
             showAlert(with: "Wrong parameter")
             return
         }
-        Emarsys.setCustomerWithId(valueText, completionBlock: responseHandler())
-
+        Emarsys.setCustomerWithId(valueText) { (error) in
+            self.createResponseHandler()(error)
+            let inboxViewController = self.tabBarController?.viewControllers?[1] as! MESInboxViewController
+            inboxViewController.refresh(refreshControl: nil)
+        }
         self.tvInfos.text = "Login: "
-
-        let inboxViewController = self.tabBarController?.viewControllers?[1] as! MESInboxViewController
-        inboxViewController.refresh(refreshControl: nil)
     }
 
     @IBAction func trackMessageButtonClicked(_ sender: Any) {
@@ -76,7 +77,7 @@ class MESMobileEngageViewController: UIViewController {
             showAlert(with: "Missing sid")
             return
         }
-        Emarsys.push.trackMessageOpen(userInfo: ["u": "{\"sid\":\"\(sid)\"}"], completionBlock: responseHandler())
+        Emarsys.push.trackMessageOpen(userInfo: ["u": "{\"sid\":\"\(sid)\"}"], completionBlock: createResponseHandler())
         self.tvInfos.text = "Message open: "
     }
 
@@ -96,12 +97,12 @@ class MESMobileEngageViewController: UIViewController {
                 }
             }
         }
-        Emarsys.trackCustomEvent(withName: eventName, eventAttributes: eventAttributes, completionBlock: responseHandler())
+        Emarsys.trackCustomEvent(withName: eventName, eventAttributes: eventAttributes, completionBlock: createResponseHandler())
         self.tvInfos.text = "Track custom event: "
     }
 
     @IBAction func logoutButtonClicked(_ sender: Any) {
-        Emarsys.clearCustomer(completionBlock: responseHandler())
+        Emarsys.clearCustomer(completionBlock: createResponseHandler())
         self.tvInfos.text = "App logout: "
     }
 

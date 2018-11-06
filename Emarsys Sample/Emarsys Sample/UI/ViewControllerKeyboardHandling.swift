@@ -33,7 +33,7 @@ extension MESMobileEngageViewController {
     }
     
     func firstResponder() -> UIView? {
-        let responders: [UIView] = [contactFieldIdTextField, contactFieldValueTextField, sidTextField, customEventNameTextField, customEventAttributesTextView]
+        let responders: [UIView] = [contactFieldValueTextField, sidTextField, customEventNameTextField, customEventAttributesTextView]
         
         return responders.first { (responder:UIView) -> Bool in
             return responder.isFirstResponder
