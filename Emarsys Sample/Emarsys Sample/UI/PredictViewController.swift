@@ -20,6 +20,9 @@ class PredictViewController: UIViewController {
     //MARK: ViewController
     override func viewDidLoad() {
         super.viewDidLoad()
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped))
+        self.view.addGestureRecognizer(tapGestureRecognizer)
+        
         cartItems.append(generateCartItem())
         cartItems.append(generateCartItem())
         tvCartItems.text = cartItems.description
@@ -69,5 +72,9 @@ class PredictViewController: UIViewController {
         let price = Double.random(in: 1..<100)
         let quantity = Double.random(in: 1..<10)
         return EMSCartItem(itemId: itemId, price: price, quantity: quantity)
+    }
+
+    @objc func backgroundTapped() {
+        self.view.endEditing(true)
     }
 }
