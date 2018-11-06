@@ -16,6 +16,17 @@ SPEC_BEGIN(EMSCompletionMiddlewareTests)
         afterAll(^{
         });
 
+        EMSRequestModel *(^createRequestModel)(NSString *requestModelId) = ^EMSRequestModel *(NSString *requestModelId) {
+            return [[EMSRequestModel alloc] initWithRequestId:requestModelId
+                                                    timestamp:[NSDate date]
+                                                       expiry:1.0
+                                                          url:[NSURL URLWithString:@"https://www.emarsys.com"]
+                                                       method:@"GET"
+                                                      payload:nil
+                                                      headers:nil
+                                                       extras:nil];
+        };
+
         describe(@"initWithSuccessBlock:errorBlock:", ^{
 
             it(@"should throw exception when successBlock is nil", ^{
@@ -84,6 +95,48 @@ SPEC_BEGIN(EMSCompletionMiddlewareTests)
                 [[returnedResponseModel should] equal:expectedResponseModel];
             });
 
+            it(@"should invoke successBlock on main thread", ^{
+                __block NSOperationQueue *queue;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        }
+                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                                 }];
+                [middleware registerCompletionBlock:^(NSError *error) {
+                    [expectation fulfill];
+                    queue = [NSOperationQueue currentQueue];
+                }                   forRequestModel:createRequestModel(@"requestId")];
+                [[[NSOperationQueue alloc] init] addOperationWithBlock:^{
+                    middleware.successBlock(@"requestId", [EMSResponseModel mock]);
+                }];
+
+                [EMSWaiter waitForExpectations:@[expectation]
+                                       timeout:5.0];
+                [[queue should] equal:[NSOperationQueue mainQueue]];
+            });
+
+
+            it(@"should invoke errorBlock on main thread", ^{
+                __block NSOperationQueue *queue;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                        }
+                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                                 }];
+                [middleware registerCompletionBlock:^(NSError *error) {
+                    [expectation fulfill];
+                    queue = [NSOperationQueue currentQueue];
+                }                   forRequestModel:createRequestModel(@"requestId")];
+
+                [[[NSOperationQueue alloc] init] addOperationWithBlock:^{
+                    middleware.errorBlock(@"requestId", [NSError errorWithCode:42 localizedDescription:@"test error"]);
+                }];
+
+                [EMSWaiter waitForExpectations:@[expectation]
+                                       timeout:5.0];
+                [[queue should] equal:[NSOperationQueue mainQueue]];
+            });
+
             it(@"should invoke errorBlock when calling injected errorBlock", ^{
                 NSString *expectedRequestId = @"requestId";
                 NSError *expectedError = [NSError errorWithCode:42 localizedDescription:@"test error"];
@@ -110,17 +163,6 @@ SPEC_BEGIN(EMSCompletionMiddlewareTests)
         });
 
         describe(@"registerCompletionBlock:forRequestModel:", ^{
-
-            EMSRequestModel *(^createRequestModel)(NSString *requestModelId) = ^EMSRequestModel *(NSString *requestModelId) {
-                return [[EMSRequestModel alloc] initWithRequestId:requestModelId
-                                                        timestamp:[NSDate date]
-                                                           expiry:1.0
-                                                              url:[NSURL URLWithString:@"https://www.emarsys.com"]
-                                                           method:@"GET"
-                                                          payload:nil
-                                                          headers:nil
-                                                           extras:nil];;
-            };
 
             it(@"should invoke registered completionBlock when successBlock called with the registered requestModel id", ^{
                 __block NSError *returnedError = [NSError mock];

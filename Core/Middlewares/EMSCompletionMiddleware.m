@@ -18,19 +18,27 @@
         __weak typeof(self) weakSelf = self;
         _successBlock = ^(NSString *requestId, EMSResponseModel *response) {
             successBlock(requestId, response);
+
             EMSCompletionBlock completionBlock = weakSelf.completionBlocks[requestId];
+            weakSelf.completionBlocks[requestId] = nil;
+
             if (completionBlock) {
-                completionBlock(nil);
-                weakSelf.completionBlocks[requestId] = nil;
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionBlock(nil);
+                }];
             }
         };
 
         _errorBlock = ^(NSString *requestId, NSError *error) {
             errorBlock(requestId, error);
+
             EMSCompletionBlock completionBlock = weakSelf.completionBlocks[requestId];
+            weakSelf.completionBlocks[requestId] = nil;
+
             if (completionBlock) {
-                completionBlock(error);
-                weakSelf.completionBlocks[requestId] = nil;
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionBlock(error);
+                }];
             }
         };
     }
