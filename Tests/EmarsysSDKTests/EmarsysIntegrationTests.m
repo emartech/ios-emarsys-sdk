@@ -45,7 +45,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
         context(@"V3", ^{
 
             beforeEach(^{
-                [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]
+                [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX, MESSAGE_OPEN_ON_V3]
                                    withDependencyContainer:nil];
             });
 
@@ -150,8 +150,6 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
                 it(@"should invoke completion block when its done", ^{
-                    doLogin();
-
                     __block NSError *returnedErrorForTrackCustomEvent = [NSError mock];
 
                     XCTestExpectation *trackCustomEventExpectation = [[XCTestExpectation alloc] initWithDescription:@"trackCustomEvent"];
