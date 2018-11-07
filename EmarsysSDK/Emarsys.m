@@ -27,6 +27,14 @@
     [Emarsys registerAppStartBlock];
 }
 
++ (void)setAnonymousCustomer {
+    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:nil];
+}
+
++ (void)setAnonymousCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:completionBlock];
+}
+
 + (void)setCustomerWithId:(NSString *)customerId
           completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(customerId);

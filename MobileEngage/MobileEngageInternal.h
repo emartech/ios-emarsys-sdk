@@ -48,6 +48,8 @@ typedef void (^MESourceHandler)(NSString *source);
 
 - (void)appLogin;
 
+- (void)appLoginWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+
 - (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
 
 - (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue

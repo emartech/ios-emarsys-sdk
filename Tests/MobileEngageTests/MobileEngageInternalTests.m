@@ -178,7 +178,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
-                [_mobileEngage appLogin];
+                [_mobileEngage appLoginWithCompletionBlock:nil];
 
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];

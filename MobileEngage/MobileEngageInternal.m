@@ -95,6 +95,11 @@
     }
 }
 
+- (void)appLoginWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    [self appLoginWithContactFieldValue:nil
+                        completionBlock:completionBlock];
+}
+
 - (void)appLogin {
     return [self appLoginWithContactFieldValue:nil];
 }

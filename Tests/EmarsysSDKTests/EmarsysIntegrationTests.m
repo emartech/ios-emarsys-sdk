@@ -49,6 +49,26 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                                    withDependencyContainer:nil];
             });
 
+            describe(@"setAnonymousCustomerWithCompletionBlock:", ^{
+
+                it(@"should invoke completion block when its done", ^{
+                    __block NSError *returnedError = [NSError mock];
+
+                    XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
+                    [Emarsys setAnonymousCustomerWithCompletionBlock:^(NSError *error) {
+                        returnedError = error;
+                        [setCustomerExpectation fulfill];
+                    }];
+
+                    XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
+                                                                               timeout:TIMEOUT];
+                    [[returnedError should] beNil];
+                    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
+
+                });
+
+            });
+
             describe(@"setCustomerWithId:completionBlock:", ^{
 
                 it(@"should invoke completion block when its done", ^{
@@ -120,6 +140,27 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             beforeEach(^{
                 [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+            });
+
+
+            describe(@"setAnonymousCustomerWithCompletionBlock:", ^{
+
+                it(@"should invoke completion block when its done", ^{
+                    __block NSError *returnedError = [NSError mock];
+
+                    XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
+                    [Emarsys setAnonymousCustomerWithCompletionBlock:^(NSError *error) {
+                        returnedError = error;
+                        [setCustomerExpectation fulfill];
+                    }];
+
+                    XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
+                                                                               timeout:TIMEOUT];
+                    [[returnedError should] beNil];
+                    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
+
+                });
+
             });
 
             describe(@"setCustomerWithId:completionBlock:", ^{

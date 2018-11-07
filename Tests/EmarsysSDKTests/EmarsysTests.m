@@ -261,6 +261,23 @@ SPEC_BEGIN(EmarsysTests)
             });
         });
 
+        describe(@"setAnonymousCustomerWithCompletionBlock:", ^{
+            it(@"should delegate the call to mobileEngageInternal", ^{
+                [[engage should] receive:@selector(appLoginWithCompletionBlock:)
+                           withArguments:nil];
+                [Emarsys setAnonymousCustomer];
+            });
+
+            it(@"should delegate the call to mobileEngageInternal", ^{
+                EMSCompletionBlock completionBlock = ^(NSError *error) {
+                };
+
+                [[engage should] receive:@selector(appLoginWithCompletionBlock:)
+                           withArguments:completionBlock];
+                [Emarsys setAnonymousCustomerWithCompletionBlock:completionBlock];
+            });
+        });
+
         describe(@"setCustomerWithCustomerId:resultBlock:", ^{
             it(@"should delegate the call to predictInternal", ^{
                 [[predict should] receive:@selector(setCustomerWithId:)

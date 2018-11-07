@@ -23,6 +23,10 @@ typedef void (^EMSSourceHandler)(NSString *source);
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
++ (void)setAnonymousCustomer;
+
++ (void)setAnonymousCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+
 + (void)setCustomerWithId:(NSString *)customerId;
 
 + (void)setCustomerWithId:(NSString *)customerId
