@@ -41,6 +41,7 @@
         } else {
             NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
             [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+            [sessionConfiguration setHTTPCookieStorage:nil];
             NSOperationQueue *operationQueue = [NSOperationQueue new];
             [operationQueue setMaxConcurrentOperationCount:1];
             _session = [NSURLSession sessionWithConfiguration:sessionConfiguration
