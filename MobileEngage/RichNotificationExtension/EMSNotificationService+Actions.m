@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "MENotificationService.h"
-#import "MENotificationService+Actions.h"
+#import "EMSNotificationService.h"
+#import "EMSNotificationService+Actions.h"
 #import "EMSDictionaryValidator.h"
 
-@implementation MENotificationService (Actions)
+@implementation EMSNotificationService (Actions)
 
 - (void)createCategoryForContent:(UNMutableNotificationContent *)content
                completionHandler:(ActionsCompletionHandler)completionHandler {

@@ -1,13 +1,12 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "MENotificationService.h"
-#import "MENotificationService+Attachment.h"
-#import "MEDownloader.h"
+#import "EMSNotificationService.h"
+#import "EMSNotificationService+Attachment.h"
 
 #define IMAGE_URL @"image_url"
 
-@implementation MENotificationService (Attachment)
+@implementation EMSNotificationService (Attachment)
 
 - (void)createAttachmentForContent:(UNNotificationContent *)content
                     withDownloader:(MEDownloader *)downloader

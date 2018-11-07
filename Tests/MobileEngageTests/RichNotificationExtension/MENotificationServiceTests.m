@@ -3,13 +3,13 @@
 //
 
 #import "Kiwi.h"
-#import "MENotificationService.h"
-#import "MENotificationService+Attachment.h"
-#import "MENotificationService+Actions.h"
-#import "MENotificationService+PushToInApp.h"
+#import "EMSNotificationService.h"
+#import "EMSNotificationService+Attachment.h"
+#import "EMSNotificationService+Actions.h"
+#import "EMSNotificationService+PushToInApp.h"
 #import "EMSWaiter.h"
 
-SPEC_BEGIN(MENotificationServiceTests)
+SPEC_BEGIN(EMSNotificationServiceTests)
 
         if (@available(iOS 10.0, *)) {
 
@@ -21,7 +21,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     downloader = [MEDownloader new];
                 });
 
-                void (^waitUntilNextResult)(MENotificationService *service, UNMutableNotificationContent *content) = ^(MENotificationService *service, UNMutableNotificationContent *content) {
+                void (^waitUntilNextResult)(EMSNotificationService *service, UNMutableNotificationContent *content) = ^(EMSNotificationService *service, UNMutableNotificationContent *content) {
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     [service createAttachmentForContent:content
                                          withDownloader:downloader
@@ -36,7 +36,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{};
 
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
                     __block NSArray<UNNotificationAttachment *> *result = [NSArray array];
 
@@ -57,7 +57,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{};
 
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
                     [service createAttachmentForContent:content
                                          withDownloader:downloader
@@ -70,7 +70,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"image_url": @"https://ems-denna.herokuapp.com/images/Emarsys.png"};
 
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
                     __block NSArray<UNNotificationAttachment *> *result = [NSArray array];
 
@@ -92,7 +92,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"image_url": @"https://ems-denna.herokuapp.com/images/Emarsys.png"};
 
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
                     [service createAttachmentForContent:content
                                          withDownloader:downloader
@@ -103,9 +103,9 @@ SPEC_BEGIN(MENotificationServiceTests)
 
                 it(@"should throw exception when downloader is nil", ^{
                     @try {
-                        [[[MENotificationService alloc] init] createAttachmentForContent:[UNMutableNotificationContent mock]
-                                                                          withDownloader:nil
-                                                                       completionHandler:^(NSArray<UNNotificationAttachment *> *attachments) {
+                        [[[EMSNotificationService alloc] init] createAttachmentForContent:[UNMutableNotificationContent mock]
+                                                                           withDownloader:nil
+                                                                        completionHandler:^(NSArray<UNNotificationAttachment *> *attachments) {
                                                                        }];
                         fail(@"Expected exception when downloader is nil");
                     } @catch (NSException *exception) {
@@ -116,7 +116,7 @@ SPEC_BEGIN(MENotificationServiceTests)
 
             describe(@"createCategoryForContent:completionHandler:", ^{
 
-                UNNotificationCategory *(^waitUntilNextResult)(MENotificationService *service, UNMutableNotificationContent *content) = (UNNotificationCategory *(^)(MENotificationService *, UNMutableNotificationContent *)) (UNNotificationCategory *) ^(MENotificationService *service, UNMutableNotificationContent *content) {
+                UNNotificationCategory *(^waitUntilNextResult)(EMSNotificationService *service, UNMutableNotificationContent *content) = (UNNotificationCategory *(^)(EMSNotificationService *, UNMutableNotificationContent *)) (UNNotificationCategory *) ^(EMSNotificationService *service, UNMutableNotificationContent *content) {
                     __block UNNotificationCategory *result = [UNNotificationCategory new];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -132,7 +132,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 };
 
                 it(@"should return with nil when there is no actions in the content", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{}};
 
@@ -142,7 +142,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash when there is no actions in the content and completionHandler is nil", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{}};
 
@@ -153,7 +153,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with category that contains MEAppEvent, when the content contains MEAppEvent action", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -174,7 +174,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash when category that contains MEAppEvent, when the content contains MEAppEvent action but completionHandler is nil", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -194,7 +194,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with nil when the content contains MEAppEvent action type but there are missing parameters", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -212,7 +212,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash when when the content contains MEAppEvent action type but there are missing parameters and completionHandler is nil", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -231,7 +231,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with category that contains OpenExternalUrl, when the content contains OpenExternalUrl action", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -252,7 +252,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with nil when the content contains OpenExternalUrl action type but there are missing parameters", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -270,7 +270,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with category that contains MECustomEvent, when the content contains MECustomEvent action", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -291,7 +291,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return with nil when the content contains OpenExternalUrl action type but there are missing parameters", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"actions": @[
@@ -317,7 +317,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                     downloader = [MEDownloader new];
                 });
 
-                NSDictionary *(^waitUntilNextResult)(MENotificationService *service, UNMutableNotificationContent *content) = (NSDictionary *(^)(MENotificationService *, UNMutableNotificationContent *)) (UNNotificationCategory *) ^(MENotificationService *service, UNMutableNotificationContent *content) {
+                NSDictionary *(^waitUntilNextResult)(EMSNotificationService *service, UNMutableNotificationContent *content) = (NSDictionary *(^)(EMSNotificationService *, UNMutableNotificationContent *)) (UNNotificationCategory *) ^(EMSNotificationService *service, UNMutableNotificationContent *content) {
                     __block NSDictionary *result = [NSDictionary dictionary];
 
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -334,7 +334,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 };
 
                 it(@"should return nil when content doesnt contain inApp", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{}};
 
@@ -344,7 +344,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return nil when content contains inApp but inapp is not dictionary", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @""
@@ -356,7 +356,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return nil when content contains inApp but campaign_id is missing", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -370,7 +370,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return nil when content contains inApp but url is missing", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -384,7 +384,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash when content doesnt contains inapp or contains inapp but invalid", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{}};
 
@@ -396,7 +396,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return nil when content contains inapp and the url is emptyString", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -411,7 +411,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash, when content contains inapp and the url is emptyString and completionHandler is nil", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -428,7 +428,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should return userInfo extended with inAppData when everything is correct", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -443,7 +443,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 });
 
                 it(@"should not crash when everything is correct but completionHandler is nil", ^{
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
                     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                     content.userInfo = @{@"ems": @{
                         @"inapp": @{
@@ -461,9 +461,9 @@ SPEC_BEGIN(MENotificationServiceTests)
 
                 it(@"should throw exception when downloader is nil", ^{
                     @try {
-                        [[[MENotificationService alloc] init] createUserInfoWithInAppForContent:[UNMutableNotificationContent mock]
-                                                                                 withDownloader:nil
-                                                                              completionHandler:^(NSDictionary *userInfo) {
+                        [[[EMSNotificationService alloc] init] createUserInfoWithInAppForContent:[UNMutableNotificationContent mock]
+                                                                                  withDownloader:nil
+                                                                               completionHandler:^(NSDictionary *userInfo) {
                                                                               }];
                         fail(@"Expected exception when downloader is nil");
                     } @catch (NSException *exception) {
@@ -485,7 +485,7 @@ SPEC_BEGIN(MENotificationServiceTests)
                 };
 
                 UNNotificationContent *(^waitForResult)(UNNotificationRequest *request) = ^UNNotificationContent *(UNNotificationRequest *request) {
-                    MENotificationService *service = [[MENotificationService alloc] init];
+                    EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
                     __block UNNotificationContent *result;
                     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];

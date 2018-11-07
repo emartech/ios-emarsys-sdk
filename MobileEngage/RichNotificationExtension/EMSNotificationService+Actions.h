@@ -2,11 +2,11 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "MENotificationService.h"
+#import "EMSNotificationService.h"
 
 typedef void(^ActionsCompletionHandler)(UNNotificationCategory *category);
 
-@interface MENotificationService (Actions)
+@interface EMSNotificationService (Actions)
 
 - (void)createCategoryForContent:(UNMutableNotificationContent *)content
                completionHandler:(ActionsCompletionHandler)completionHandler;

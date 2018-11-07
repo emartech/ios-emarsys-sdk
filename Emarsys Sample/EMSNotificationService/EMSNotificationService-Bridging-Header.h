@@ -1,1 +1,1 @@
-//#import <MobileEngageRichExtension/MENotificationService.h>
+#import <EmarsysNotificationService/EMSNotificationService.h>

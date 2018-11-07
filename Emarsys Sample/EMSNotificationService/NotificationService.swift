@@ -4,5 +4,5 @@
 
 import UserNotifications
 
-class NotificationService: UNNotificationServiceExtension {
+class NotificationService: EMSNotificationService {
 }

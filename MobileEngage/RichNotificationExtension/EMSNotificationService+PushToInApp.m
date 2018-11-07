@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "MENotificationService.h"
-#import "MENotificationService+PushToInApp.h"
+#import "EMSNotificationService.h"
+#import "EMSNotificationService+PushToInApp.h"
 #import "EMSDictionaryValidator.h"
 
-@implementation MENotificationService (PushToInApp)
+@implementation EMSNotificationService (PushToInApp)
 
 - (void)createUserInfoWithInAppForContent:(UNMutableNotificationContent *)content
                            withDownloader:(MEDownloader *)downloader

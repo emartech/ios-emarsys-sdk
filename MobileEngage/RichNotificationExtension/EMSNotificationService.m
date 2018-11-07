@@ -2,21 +2,21 @@
 //  Copyright © 2017. Emarsys. All rights reserved.
 //
 
-#import "MENotificationService.h"
-#import "MENotificationService+Actions.h"
-#import "MENotificationService+PushToInApp.h"
-#import "MENotificationService+Attachment.h"
+#import "EMSNotificationService.h"
+#import "EMSNotificationService+Actions.h"
+#import "EMSNotificationService+PushToInApp.h"
+#import "EMSNotificationService+Attachment.h"
 
 typedef void(^ContentHandler)(UNNotificationContent *contentToDeliver);
 
-@interface MENotificationService () <NSURLSessionDelegate>
+@interface EMSNotificationService () <NSURLSessionDelegate>
 
 @property(nonatomic, strong) ContentHandler contentHandler;
 @property(nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
 
 @end
 
-@implementation MENotificationService
+@implementation EMSNotificationService
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request
                    withContentHandler:(void (^)(UNNotificationContent *_Nonnull))contentHandler {

@@ -4,6 +4,6 @@
 
 #import <UserNotifications/UserNotifications.h>
 
-@interface MENotificationService : UNNotificationServiceExtension
+@interface EMSNotificationService : UNNotificationServiceExtension
 
 @end

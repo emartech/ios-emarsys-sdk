@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
         'Core/Validators/EMSDictionaryValidator*.{h,m}'
     ]
 	spec.public_header_files  = [
-        'MobileEngage/RichNotificationExtension/MENotificationService.h'
+        'MobileEngage/RichNotificationExtension/EMSNotificationService.h'
 	]
 	spec.libraries = 'z', 'c++'
 end
