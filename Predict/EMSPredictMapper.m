@@ -9,6 +9,7 @@
 #import "NSURL+EMSCore.h"
 #import "EMSShard.h"
 #import "PredictInternal.h"
+#import "EMSDeviceInfo.h"
 
 @implementation EMSPredictMapper
 
@@ -26,19 +27,20 @@
     NSParameterAssert([shards count] > 0);
 
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            EMSShard *shard = shards.firstObject;
-            NSMutableDictionary<NSString *, NSString *> *queryParameters = [NSMutableDictionary new];
-            queryParameters[@"cp"] = @"1";
-            queryParameters[@"ci"] = self.requestContext.customerId;
-            queryParameters[@"vi"] = self.requestContext.visitorId;
-            [queryParameters addEntriesFromDictionary:shard.data];
-            [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"%@/merchants/%@", PREDICT_BASE_URL,
-                                                                              self.requestContext.merchantId]
-                                   queryParameters:queryParameters] absoluteString]];
-            [builder setExpiry:[[NSDate dateWithTimeInterval:shard.ttl
-                                                   sinceDate:shard.timestamp] timeIntervalSinceDate:[self.requestContext.timestampProvider provideTimestamp]]];
-            [builder setMethod:HTTPMethodGET];
-        }
+                EMSShard *shard = shards.firstObject;
+                NSMutableDictionary<NSString *, NSString *> *queryParameters = [NSMutableDictionary new];
+                queryParameters[@"cp"] = @"1";
+                queryParameters[@"ci"] = self.requestContext.customerId;
+                queryParameters[@"vi"] = self.requestContext.visitorId;
+                [queryParameters addEntriesFromDictionary:shard.data];
+                [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"%@/merchants/%@", PREDICT_BASE_URL,
+                                                                                  self.requestContext.merchantId]
+                                       queryParameters:queryParameters] absoluteString]];
+                [builder setExpiry:[[NSDate dateWithTimeInterval:shard.ttl
+                                                       sinceDate:shard.timestamp] timeIntervalSinceDate:[self.requestContext.timestampProvider provideTimestamp]]];
+                [builder setMethod:HTTPMethodGET];
+                [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@", [EMSDeviceInfo osVersion], [EMSDeviceInfo systemName]]}];
+            }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
     return requestModel;

@@ -9,6 +9,9 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "PRERequestContext.h"
+#import "EMSDeviceInfo.h"
+
+#define USER_AGENT [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@", [EMSDeviceInfo osVersion], [EMSDeviceInfo systemName]]
 
 SPEC_BEGIN(EMSPredictMapperTests)
 
@@ -91,6 +94,20 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 [[requestModel shouldNot] beNil];
             });
 
+            it(@"should return with a RequestModel with User-Agent set", ^{
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
+                                                               type:@"shardType"
+                                                               data:@{@"dataKey": @"dataValue"}
+                                                          timestamp:[NSDate date]
+                                                                ttl:42.0];
+                NSArray<EMSShard *> *shards = @[shard];
+
+                EMSRequestModel *requestModel = [mapper requestFromShards:shards];
+
+
+                [[requestModel.headers[@"User-Agent"] should] equal:USER_AGENT];
+            });
+
             it(@"should use injected timestampProvider and uuidProvider to create a requestModel", ^{
                 EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
                                                                type:@"shardType"
@@ -134,7 +151,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
-                                                                                           headers:nil
+                                                                                           headers:@{@"User-Agent": USER_AGENT}
                                                                                             extras:nil];
 
                 requestContext.visitorId = nil;
@@ -157,7 +174,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?vi=visitorId&cp=1&ci=3&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
-                                                                                           headers:nil
+                                                                                           headers:@{@"User-Agent": USER_AGENT}
                                                                                             extras:nil];
 
                 requestContext.visitorId = @"visitorId";
@@ -180,7 +197,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                                url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
-                                                                                           headers:nil
+                                                                                           headers:@{@"User-Agent": USER_AGENT}
                                                                                             extras:nil];
 
                 requestContext.visitorId = nil;
