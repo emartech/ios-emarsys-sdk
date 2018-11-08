@@ -6,7 +6,7 @@
 #import "EMSRequestModelMatcher.h"
 #import "EMSAuthentication.h"
 #import "EMSDeviceInfo.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "MERequestContext.h"
 #import "FakeRequestManager.h"
 #import "MEExperimental.h"
@@ -171,7 +171,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"os_version": [EMSDeviceInfo osVersion],
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -202,7 +202,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -239,7 +239,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
@@ -279,7 +279,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"nottest@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
@@ -295,7 +295,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
@@ -328,7 +328,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
@@ -344,7 +344,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"nottest@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
@@ -377,7 +377,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
                     @"application_version": @"1.0",
-                    @"ems_sdk": MOBILEENGAGE_SDK_VERSION
+                        @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 

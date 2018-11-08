@@ -3,10 +3,9 @@
 #import "Kiwi.h"
 #import "MERequestFactory.h"
 #import "EMSRequestModel.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "EMSRequestModelMatcher.h"
 #import "MERequestContext.h"
-#import "EMSConfigBuilder.h"
 #import "MEExperimental+Test.h"
 #import "EMSNotification.h"
 #import "NSDate+EMSCore.h"
@@ -46,7 +45,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 MERequestContext *requestContext = requestContextBlock([NSDate date]);
 
                 NSString *const value = @"dl_value";
-                NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", MOBILEENGAGE_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
+                NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
                 EMSRequestModel *expected = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setMethod:HTTPMethodPOST];
                         [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];
@@ -91,7 +90,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 apploginPayload[@"timezone"] = [EMSDeviceInfo timeZone];
                 apploginPayload[@"device_model"] = [EMSDeviceInfo deviceModel];
                 apploginPayload[@"os_version"] = [EMSDeviceInfo osVersion];
-                apploginPayload[@"ems_sdk"] = MOBILEENGAGE_SDK_VERSION;
+                apploginPayload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
                 apploginPayload[@"application_id"] = applicationCode;
                 apploginPayload[@"hardware_id"] = [EMSDeviceInfo hardwareId];
                 apploginPayload[@"contact_field_id"] = contactFieldId;

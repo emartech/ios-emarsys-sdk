@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
 	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', <COMMIT_REF> }
 	spec.source_files         = [
        'Core/**/*.{h,m}',
-	     'MobileEngage/**/*.{h,m}',
+	   'MobileEngage/**/*.{h,m}',
        'Predict/**/*.{h,m}',
        'EmarsysSDK/**/*.{h,m}'
 	]

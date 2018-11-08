@@ -5,13 +5,13 @@
 #import "EMSAuthentication.h"
 #import "MEDefaultHeaders.h"
 #import "EMSConfig.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 
 @implementation MEDefaultHeaders
 
 + (NSDictionary *)additionalHeadersWithConfig:(EMSConfig *)config {
     return @{@"Content-Type": @"application/json",
-            @"X-MOBILEENGAGE-SDK-VERSION": MOBILEENGAGE_SDK_VERSION,
+            @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
 #if DEBUG
             @"X-MOBILEENGAGE-SDK-MODE": @"debug"
 #else

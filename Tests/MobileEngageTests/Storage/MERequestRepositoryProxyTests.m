@@ -15,7 +15,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "MEInApp.h"
 #import "NSDate+EMSCore.h"
 #import "MERequestContext.h"
@@ -286,7 +286,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
                             @"language": [EMSDeviceInfo languageCode],
-                            @"ems_sdk": MOBILEENGAGE_SDK_VERSION,
+                                @"ems_sdk": EMARSYS_SDK_VERSION,
                             @"application_version": [EMSDeviceInfo applicationVersion]
                         }];
                     }
@@ -321,7 +321,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
                             @"language": [EMSDeviceInfo languageCode],
-                            @"ems_sdk": MOBILEENGAGE_SDK_VERSION,
+                                @"ems_sdk": EMARSYS_SDK_VERSION,
                             @"application_version": [EMSDeviceInfo applicationVersion]
                         }];
                     }
