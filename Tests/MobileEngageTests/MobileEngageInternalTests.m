@@ -472,27 +472,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [MEExperimental reset];
                 });
 
-//                it(@"must not return with nil", ^{
-//                    id requestManager = requestManagerMock();
-//                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
-//                                       withArguments:kw_any(), kw_any(), kw_any()];
-//                    NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfoWithReturn:@{@"u": @"{\"sid\":\"123456789\"}"}];
-//                    [[uuid shouldNot] beNil];
-//                });
-//
-//                it(@"should return with requestModel's requestId", ^{
-//                    id requestManager = requestManagerMock();
-//                    [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
-//                                       withArguments:kw_any(), kw_any(), kw_any()];
-//                    KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
-//                                                                atIndex:0];
-//                    NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfoWithReturn:@{@"u": @"{\"sid\":\"123456789\"}"}];
-//
-//                    EMSRequestModel *actualModel = spy.argument;
-//                    [[uuid should] equal:actualModel.requestId];
-//                });
-
-
                 it(@"should submit a corresponding RequestModel when there is no contact_field_id and contact_field_value", ^{
                     id requestManager = requestManagerMock();
 
@@ -540,35 +519,6 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     [[model should] beSimilarWithRequest:actualModel];
                 });
 
-//                it(@"should return with requestModel's non-nil requestId reported in the error when there is no sid", ^{
-//                    FakeRequestManager *requestManager = [FakeRequestManager managerWithSuccessBlock:nil
-//                                                                                          errorBlock:nil];
-//                    _mobileEngage = [MobileEngageInternal new];
-//
-//                    __block NSError *reportedError;
-//                    __block NSString *requestIdForReportedError;
-//
-//                    _mobileEngage.errorBlock = ^(NSString *requestId, NSError *error) {
-//                        requestIdForReportedError = requestId;
-//                        reportedError = error;
-//                    };
-//
-//                    requestContext = [[MERequestContext alloc] initWithConfig:config];
-//                    requestContext.timestampProvider = [EMSTimestampProvider new];
-//                    requestContext.meId = @"meId";
-//                    requestContext.meIdSignature = @"meIdSignature";
-//
-//                    [_mobileEngage setupWithRequestManager:requestManager
-//                                                    config:config
-//                                             launchOptions:[NSDictionary new]
-//                                            requestContext:requestContext];
-//
-//                    NSString *uuid = [_mobileEngage trackMessageOpenWithUserInfo:@{@"u": @{}}];
-//
-//                    EMSRequestModel *actualModel = [requestManager.submittedModels firstObject];
-//                    [[uuid shouldNot] beNil];
-//                    [[uuid should] equal:requestIdForReportedError];
-//                });
             });
 
             describe(@"trackCustomEvent:eventAttributes:", ^{
