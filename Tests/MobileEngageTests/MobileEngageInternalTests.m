@@ -545,6 +545,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                     eventAttributes:nil
                                     completionBlock:^(NSError *error) {
                                         returnedError = error;
+                                        [expectation fulfill];
                                     }];
                     [EMSWaiter waitForExpectations:@[expectation]
                                            timeout:2];
@@ -791,6 +792,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                             eventAttributes:nil
                                             completionBlock:^(NSError *error) {
                                                 returnedError = error;
+                                                [expectation fulfill];
                                             }];
 
                     [EMSWaiter waitForExpectations:@[expectation]
