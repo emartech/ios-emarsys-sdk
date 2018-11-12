@@ -164,16 +164,29 @@
          completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
-    EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
-                                                                                 eventAttributes:eventAttributes
-                                                                                  requestContext:self.requestContext];
-    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
+    if ([eventName containsString:@" "]) {
+        completionBlock([NSError errorWithCode:1422
+                          localizedDescription:@"EventName must not contain space character"]);
+    } else {
+        EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
+                                                                                     eventAttributes:eventAttributes
+                                                                                      requestContext:self.requestContext];
+        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
+
+    }
 }
 
 - (NSString *)trackInternalCustomEvent:(NSString *)eventName
                        eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                        completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
+
+    if ([eventName containsString:@" "]) {
+        completionBlock([NSError errorWithCode:1422
+                          localizedDescription:@"EventName must not contain space character"]);
+        return nil;
+    }
+
     EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
                                                                           eventAttributes:eventAttributes
                                                                                      type:@"internal"

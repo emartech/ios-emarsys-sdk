@@ -14,6 +14,7 @@
 #import "NSDate+EMSCore.h"
 #import "EMSWaiter.h"
 #import "EMSNotificationCache.h"
+#import "NSError+EMSCore.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -533,6 +534,24 @@ SPEC_BEGIN(MobileEngageInternalTests)
                     }
                 });
 
+                it(@"should return with error when eventName contains space character", ^{
+                    NSError *expectedError = [NSError errorWithCode:1422
+                                               localizedDescription:@"EventName must not contain space character"];
+                    __block NSError *returnedError;
+
+                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];
+
+                    [_mobileEngage trackCustomEvent:@"this custom event name contains at least one space character"
+                                    eventAttributes:nil
+                                    completionBlock:^(NSError *error) {
+                                        returnedError = error;
+                                    }];
+                    [EMSWaiter waitForExpectations:@[expectation]
+                                           timeout:2];
+                    [[returnedError shouldNot] beNil];
+                    [[returnedError should] equal:expectedError];
+                });
+
                 it(@"should submit a corresponding RequestModel, when eventAttributes are set", ^{
                     id requestManager = requestManagerMock();
 
@@ -759,6 +778,25 @@ SPEC_BEGIN(MobileEngageInternalTests)
                         [[exception.reason should] equal:@"Invalid parameter not satisfying: eventName"];
                         [[theValue(exception) shouldNot] beNil];
                     }
+                });
+
+                it(@"should return with error when eventName contains space character", ^{
+                    NSError *expectedError = [NSError errorWithCode:1422
+                                               localizedDescription:@"EventName must not contain space character"];
+                    __block NSError *returnedError;
+
+                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];
+
+                    [_mobileEngage trackInternalCustomEvent:@"this custom event name contains at least one space character"
+                                            eventAttributes:nil
+                                            completionBlock:^(NSError *error) {
+                                                returnedError = error;
+                                            }];
+
+                    [EMSWaiter waitForExpectations:@[expectation]
+                                           timeout:2];
+                    [[returnedError shouldNot] beNil];
+                    [[returnedError should] equal:expectedError];
                 });
 
                 it(@"should submit requestModel with defined name and eventAttributes where type is 'internal'", ^{
