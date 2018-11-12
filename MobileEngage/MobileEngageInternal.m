@@ -165,8 +165,7 @@
     NSParameterAssert(eventName);
 
     if ([eventName containsString:@" "]) {
-        completionBlock([NSError errorWithCode:1422
-                          localizedDescription:@"EventName must not contain space character"]);
+        [self respondSpaceErrorWithCompletionBlock:completionBlock];
     } else {
         EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
                                                                                      eventAttributes:eventAttributes
@@ -182,8 +181,7 @@
     NSParameterAssert(eventName);
 
     if ([eventName containsString:@" "]) {
-        completionBlock([NSError errorWithCode:1422
-                          localizedDescription:@"EventName must not contain space character"]);
+        [self respondSpaceErrorWithCompletionBlock:completionBlock];
         return nil;
     }
 
@@ -195,5 +193,11 @@
     return requestModel.requestId;
 }
 
+- (void)respondSpaceErrorWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        completionBlock([NSError errorWithCode:1422
+                          localizedDescription:@"EventName must not contain space character"]);
+    });
+}
 
 @end
