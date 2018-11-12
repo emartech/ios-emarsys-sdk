@@ -3,14 +3,12 @@
 //
 #import "MERequestFactory.h"
 #import "MERequestContext.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "NSData+MobileEngine.h"
 #import "EMSNotification.h"
 #import "MEExperimental.h"
 #import "EMSRequestModel.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSDeviceInfo.h"
-#import "EMSTimestampProvider.h"
 #import "NSDate+EMSCore.h"
 #import "EMSAuthentication.h"
 
@@ -53,7 +51,7 @@
                   payload[@"timezone"] = [EMSDeviceInfo timeZone];
                   payload[@"device_model"] = [EMSDeviceInfo deviceModel];
                   payload[@"os_version"] = [EMSDeviceInfo osVersion];
-                  payload[@"ems_sdk"] = MOBILEENGAGE_SDK_VERSION;
+                  payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
 
                   NSString *appVersion = [EMSDeviceInfo applicationVersion];
                   if (appVersion) {
@@ -197,7 +195,7 @@
 }
 
 + (EMSRequestModel *)createTrackDeepLinkRequestWithTrackingId:(NSString *)trackingId requestContext:(MERequestContext *)requestContext {
-    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", MOBILEENGAGE_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
+    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
             [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];

@@ -38,17 +38,21 @@
 
 + (NSString *)deviceType {
     NSDictionary *idiomDict = @{
-        @(UIUserInterfaceIdiomUnspecified): @"UnspecifiediOS",
-        @(UIUserInterfaceIdiomPhone): @"iPhone",
-        @(UIUserInterfaceIdiomPad): @"iPad",
-        @(UIUserInterfaceIdiomTV): @"AppleTV",
-        @(UIUserInterfaceIdiomCarPlay): @"iPhone"
+            @(UIUserInterfaceIdiomUnspecified): @"UnspecifiediOS",
+            @(UIUserInterfaceIdiomPhone): @"iPhone",
+            @(UIUserInterfaceIdiomPad): @"iPad",
+            @(UIUserInterfaceIdiomTV): @"AppleTV",
+            @(UIUserInterfaceIdiomCarPlay): @"iPhone"
     };
     return idiomDict[@([UIDevice.currentDevice userInterfaceIdiom])];
 }
 
 + (NSString *)osVersion {
     return [UIDevice currentDevice].systemVersion;
+}
+
++ (NSString *)systemName {
+    return [UIDevice currentDevice].systemName;
 }
 
 + (NSString *)hardwareId {
@@ -67,7 +71,7 @@
 + (NSString *)getNewHardwareId {
     if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier]
-            UUIDString];
+                UUIDString];
     }
     return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 }

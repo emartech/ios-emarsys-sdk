@@ -11,7 +11,7 @@
 #import "MEButtonClickFilterNoneSpecification.h"
 #import "MEDisplayedIAMFilterNoneSpecification.h"
 #import "EMSDeviceInfo.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "MEInApp.h"
 #import "MERequestContext.h"
 
@@ -81,7 +81,7 @@
             payload[@"events"] = [self eventRepresentations:allCustomEvents];
 
             payload[@"language"] = [EMSDeviceInfo languageCode];
-            payload[@"ems_sdk"] = MOBILEENGAGE_SDK_VERSION;
+                payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
 
             NSString *appVersion = [EMSDeviceInfo applicationVersion];
             if (appVersion) {

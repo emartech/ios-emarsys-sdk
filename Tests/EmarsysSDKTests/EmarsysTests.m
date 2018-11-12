@@ -16,7 +16,7 @@
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
-#import "MobileEngageVersion.h"
+#import "EmarsysSDKVersion.h"
 #import "EMSDependencyInjection.h"
 #import "MENotificationCenterManager.h"
 #import "FakeDependencyContainer.h"
@@ -237,7 +237,7 @@ SPEC_BEGIN(EmarsysTests)
 
                 [[[EMSDependencyInjection.dependencyContainer.requestManager additionalHeaders] should] equal:@{
                     @"Content-Type": @"application/json",
-                    @"X-MOBILEENGAGE-SDK-VERSION": MOBILEENGAGE_SDK_VERSION,
+                        @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
                     @"X-MOBILEENGAGE-SDK-MODE": @"debug"
                 }];
             });

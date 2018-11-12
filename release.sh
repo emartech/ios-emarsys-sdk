@@ -26,7 +26,7 @@ function release {
   PODSPEC="${PODSPEC/<COMMIT_REF>/:tag => spec.version}"
   printf "$PODSPEC" > EmarsysSDK.podspec
 
-  git add MobileEngage/MobileEngageVersion.h
+  git add EmarsysSDK/EmarsysSDKVersion.h
   git add EmarsysSDK.podspec
   git commit -m "chore(release): version set to $VERSION_NUMBER"
   git tag -a "$VERSION_NUMBER" -m "$VERSION_NUMBER"
@@ -35,7 +35,7 @@ function release {
   git push origin $VERSION_NUMBER
 
   pod spec lint --allow-warnings
-  pod trunk push MobileEngageSDK.podspec --allow-warnings
+  pod trunk push EmarsysSDK.podspec --allow-warnings
 
   printf "[$VERSION_NUMBER] released, go eat some cookies."
 }
