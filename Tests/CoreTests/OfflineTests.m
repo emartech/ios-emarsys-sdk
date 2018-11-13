@@ -14,8 +14,6 @@
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
 #import "EMSRequestModelSelectAllSpecification.h"
-#import "EMSRESTClient.h"
-#import "EMSDefaultWorker+Private.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSCompletionMiddleware.h"
@@ -38,7 +36,9 @@ SPEC_BEGIN(OfflineTests)
                                                                           connectionWatchdog:watchdog
                                                                                   restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
                                                                                                                         errorBlock:middleware.errorBlock
-                                                                                                                     logRepository:nil]];
+                                                                                                                     logRepository:nil]
+                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                  }];
             return [[EMSRequestManager alloc] initWithCoreQueue:operationQueue
                                            completionMiddleware:middleware
                                                          worker:worker

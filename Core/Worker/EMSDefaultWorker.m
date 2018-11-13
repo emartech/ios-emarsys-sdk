@@ -3,7 +3,6 @@
 //
 
 #import "EMSDefaultWorker.h"
-#import "EMSRESTClient.h"
 #import "NSError+EMSCore.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
 #import "EMSRequestModelDeleteByIdsSpecification.h"
@@ -30,34 +29,22 @@
 #pragma mark - Init
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
-                     requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                         logRepository:(id <EMSLogRepositoryProtocol>)logRepository
-                          successBlock:(CoreSuccessBlock)successBlock
-                            errorBlock:(CoreErrorBlock)errorBlock {
-    NSParameterAssert(successBlock);
-    NSParameterAssert(errorBlock);
-    _errorBlock = errorBlock;
-    return [self initWithOperationQueue:operationQueue
-                      requestRepository:requestRepository
-                     connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:operationQueue]
-                             restClient:[EMSRESTClient clientWithSuccessBlock:successBlock
-                                                                   errorBlock:errorBlock
-                                                                logRepository:logRepository]];
-}
-
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository
                     connectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog
-                            restClient:(EMSRESTClient *)client {
+                            restClient:(EMSRESTClient *)client
+                            errorBlock:(CoreErrorBlock)errorBlock {
     if (self = [super init]) {
+        NSParameterAssert(operationQueue);
         NSParameterAssert(repository);
         NSParameterAssert(connectionWatchdog);
         NSParameterAssert(client);
+        NSParameterAssert(errorBlock);
         _coreQueue = operationQueue;
+        _repository = repository;
         _connectionWatchdog = connectionWatchdog;
         [_connectionWatchdog setConnectionChangeListener:self];
-        _repository = repository;
         _client = client;
+        _errorBlock = errorBlock;
     }
     return self;
 }

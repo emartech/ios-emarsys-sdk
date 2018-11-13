@@ -33,9 +33,11 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                                              errorBlock:errorBlock];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
-                                                                          logRepository:logRepository
-                                                                           successBlock:middleware.successBlock
-                                                                             errorBlock:middleware.errorBlock];
+                                                                     connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                             restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                                                                   errorBlock:middleware.errorBlock
+                                                                                                                logRepository:logRepository]
+                                                                             errorBlock:errorBlock];
             return [[EMSRequestManager alloc] initWithCoreQueue:queue
                                            completionMiddleware:middleware
                                                          worker:worker
@@ -121,7 +123,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
             __block EMSShardRepository *shardRepository;
 
             beforeEach(^{
-                EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]];
+                EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
                 requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];

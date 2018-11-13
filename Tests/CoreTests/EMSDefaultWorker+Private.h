@@ -11,7 +11,8 @@
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository
                     connectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog
-                            restClient:(EMSRESTClient *)client;
+                            restClient:(EMSRESTClient *)client
+                            errorBlock:(CoreErrorBlock)errorBlock;
 
 - (void)setConnectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog;
 

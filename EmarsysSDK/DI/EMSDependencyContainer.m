@@ -87,7 +87,11 @@
     [_dbHelper open];
 
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
-    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam requestContext:self.requestContext dbHelper:self.dbHelper buttonClickRepository:buttonClickRepository displayedIAMRepository:displayedIAMRepository];
+    MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
+                                                                                                        requestContext:self.requestContext
+                                                                                                              dbHelper:self.dbHelper
+                                                                                                 buttonClickRepository:buttonClickRepository
+                                                                                                displayedIAMRepository:displayedIAMRepository];
 
     const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
@@ -98,12 +102,15 @@
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [[NSUUID UUID] UUIDString]];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
+    _restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                             errorBlock:middleware.errorBlock
+                                          logRepository:logRepository];
 
-
+    EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
                                                               requestRepository:self.requestRepository
-                                                                  logRepository:logRepository
-                                                                   successBlock:middleware.successBlock
+                                                             connectionWatchdog:watchdog
+                                                                     restClient:self.restClient
                                                                      errorBlock:middleware.errorBlock];
     _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.operationQueue
                                               completionMiddleware:middleware
@@ -137,7 +144,6 @@
                                triggerBlock:[trigger createTriggerBlockWithRequestManager:self.requestManager
                                                                                    mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
                                                                                repository:shardRepository]];
-    _restClient = [EMSRESTClient clientWithSession:[NSURLSession sharedSession]];
     _notificationCache = [[EMSNotificationCache alloc] init];
     if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
         _inbox = [[MEInboxV2 alloc] initWithConfig:config

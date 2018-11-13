@@ -14,6 +14,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSDefaultWorker.h"
 #import "EMSSqliteSchemaHandler.h"
+#import "MELogRepository.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -51,12 +52,15 @@ SPEC_BEGIN(DennaTest)
                                                                                                  NSLog(@"ERROR!");
                                                                                                  fail(@"errorblock invoked");
                                                                                              }];
-            EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]]];
+            EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                                                                                                              schemaDelegate:[EMSSqliteSchemaHandler new]]];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
-                                                                          logRepository:nil
-                                                                           successBlock:middleware.successBlock
+                                                                     connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                             restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                                                                   errorBlock:middleware.errorBlock
+                                                                                                                logRepository:[MELogRepository new]]
                                                                              errorBlock:middleware.errorBlock];
             EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                               completionMiddleware:middleware
@@ -101,12 +105,15 @@ SPEC_BEGIN(DennaTest)
                                                                                                      NSLog(@"ERROR!");
                                                                                                      fail(@"errorblock invoked");
                                                                                                  }];
-                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH schemaDelegate:[EMSSqliteSchemaHandler new]]];
+                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]];
                 EMSShardRepository *shardRepository = [EMSShardRepository new];
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository
-                                                                              logRepository:nil
-                                                                               successBlock:middleware.successBlock
+                                                                         connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                                 restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                                                                       errorBlock:middleware.errorBlock
+                                                                                                                    logRepository:[MELogRepository new]]
                                                                                  errorBlock:middleware.errorBlock];
                 EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                                   completionMiddleware:middleware
