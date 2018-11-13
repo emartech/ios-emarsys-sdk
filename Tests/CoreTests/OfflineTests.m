@@ -31,17 +31,18 @@ SPEC_BEGIN(OfflineTests)
         id (^requestManager)(NSOperationQueue *operationQueue, id <EMSRequestModelRepositoryProtocol> repository, EMSConnectionWatchdog *watchdog, CoreSuccessBlock successBlock, CoreErrorBlock errorBlock) = ^id(NSOperationQueue *operationQueue, id <EMSRequestModelRepositoryProtocol> repository, EMSConnectionWatchdog *watchdog, CoreSuccessBlock successBlock, CoreErrorBlock errorBlock) {
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
+            EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                   errorBlock:middleware.errorBlock
+                                                                logRepository:nil];
             id <EMSWorkerProtocol> worker = [[EMSDefaultWorker alloc] initWithOperationQueue:operationQueue
                                                                            requestRepository:repository
                                                                           connectionWatchdog:watchdog
-                                                                                  restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                                                                        errorBlock:middleware.errorBlock
-                                                                                                                     logRepository:nil]
+                                                                                  restClient:restClient
                                                                                   errorBlock:^(NSString *requestId, NSError *error) {
                                                                                   }];
             return [[EMSRequestManager alloc] initWithCoreQueue:operationQueue
                                            completionMiddleware:middleware
-                                                     restClient:NULL
+                                                     restClient:restClient
                                                          worker:worker
                                               requestRepository:repository
                                                 shardRepository:[EMSShardRepository new]];

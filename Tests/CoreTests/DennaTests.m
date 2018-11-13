@@ -55,16 +55,17 @@ SPEC_BEGIN(DennaTest)
             EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                               schemaDelegate:[EMSSqliteSchemaHandler new]]];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
+            EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                   errorBlock:middleware.errorBlock
+                                                                logRepository:[MELogRepository new]];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
                                                                      connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
-                                                                             restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                                                                   errorBlock:middleware.errorBlock
-                                                                                                                logRepository:[MELogRepository new]]
+                                                                             restClient:restClient
                                                                              errorBlock:middleware.errorBlock];
             EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                               completionMiddleware:middleware
-                                                                        restClient:NULL
+                                                                        restClient:restClient
                                                                             worker:worker
                                                                  requestRepository:requestRepository
                                                                    shardRepository:shardRepository];
@@ -109,16 +110,17 @@ SPEC_BEGIN(DennaTest)
                 EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                                   schemaDelegate:[EMSSqliteSchemaHandler new]]];
                 EMSShardRepository *shardRepository = [EMSShardRepository new];
+                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
+                                                                       errorBlock:middleware.errorBlock
+                                                                    logRepository:[MELogRepository new]];
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository
                                                                          connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
-                                                                                 restClient:[EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                                                                       errorBlock:middleware.errorBlock
-                                                                                                                    logRepository:[MELogRepository new]]
+                                                                                 restClient:restClient
                                                                                  errorBlock:middleware.errorBlock];
                 EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                                   completionMiddleware:middleware
-                                                                            restClient:NULL
+                                                                            restClient:restClient
                                                                                 worker:worker
                                                                      requestRepository:requestRepository
                                                                        shardRepository:shardRepository];
