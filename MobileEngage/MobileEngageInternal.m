@@ -164,15 +164,10 @@
          completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
-    if ([eventName containsString:@" "]) {
-        [self respondSpaceErrorWithCompletionBlock:completionBlock];
-    } else {
-        EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
-                                                                                     eventAttributes:eventAttributes
-                                                                                      requestContext:self.requestContext];
-        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
-
-    }
+    EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
+                                                                                 eventAttributes:eventAttributes
+                                                                                  requestContext:self.requestContext];
+    [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
 }
 
 - (NSString *)trackInternalCustomEvent:(NSString *)eventName
@@ -180,24 +175,12 @@
                        completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
-    if ([eventName containsString:@" "]) {
-        [self respondSpaceErrorWithCompletionBlock:completionBlock];
-        return nil;
-    }
-
     EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
                                                                           eventAttributes:eventAttributes
                                                                                      type:@"internal"
                                                                            requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     return requestModel.requestId;
-}
-
-- (void)respondSpaceErrorWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        completionBlock([NSError errorWithCode:1422
-                          localizedDescription:@"EventName must not contain space character"]);
-    });
 }
 
 @end
