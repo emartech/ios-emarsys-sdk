@@ -41,6 +41,7 @@ SPEC_BEGIN(OfflineTests)
                                                                                   }];
             return [[EMSRequestManager alloc] initWithCoreQueue:operationQueue
                                            completionMiddleware:middleware
+                                                     restClient:NULL
                                                          worker:worker
                                               requestRepository:repository
                                                 shardRepository:[EMSShardRepository new]];

@@ -10,6 +10,7 @@
 #import "EMSBlocks.h"
 #import "EMSCompletionMiddleware.h"
 #import "EMSWorkerProtocol.h"
+#import "EMSRESTClient.h"
 
 @class EMSRequestModel;
 
@@ -23,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithCoreQueue:(NSOperationQueue *)coreQueue
              completionMiddleware:(EMSCompletionMiddleware *)completionMiddleware
+                       restClient:(EMSRESTClient *)restClient
                            worker:(id <EMSWorkerProtocol>)worker
                 requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
                   shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository;
@@ -31,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
        withCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 - (void)submitShard:(EMSShard *)shard;
+
+- (void)submitRequestModelNow:(EMSRequestModel *)model
+          withCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 @end
 

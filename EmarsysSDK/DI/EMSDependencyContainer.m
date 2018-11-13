@@ -114,6 +114,7 @@
                                                                      errorBlock:middleware.errorBlock];
     _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.operationQueue
                                               completionMiddleware:middleware
+                                                        restClient:self.restClient
                                                             worker:worker
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository];

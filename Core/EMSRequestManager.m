@@ -13,6 +13,7 @@ typedef void (^RunnerBlock)(void);
 @property(nonatomic, strong) id <EMSWorkerProtocol> worker;
 @property(nonatomic, strong) NSOperationQueue *coreQueue;
 @property(nonatomic, strong) EMSCompletionMiddleware *completionMiddleware;
+@property(nonatomic, strong) EMSRESTClient *restClient;
 
 - (void)runInCoreQueueWithBlock:(RunnerBlock)runnerBlock;
 
@@ -24,17 +25,20 @@ typedef void (^RunnerBlock)(void);
 
 - (instancetype)initWithCoreQueue:(NSOperationQueue *)coreQueue
              completionMiddleware:(EMSCompletionMiddleware *)completionMiddleware
+                       restClient:(EMSRESTClient *)restClient
                            worker:(id <EMSWorkerProtocol>)worker
                 requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
                   shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository {
     NSParameterAssert(coreQueue);
     NSParameterAssert(completionMiddleware);
+    NSParameterAssert(restClient);
     NSParameterAssert(worker);
     NSParameterAssert(requestRepository);
     NSParameterAssert(shardRepository);
     if (self = [super init]) {
         _coreQueue = coreQueue;
         _completionMiddleware = completionMiddleware;
+        _restClient = restClient;
         _worker = worker;
         _requestModelRepository = requestRepository;
         _shardRepository = shardRepository;
@@ -85,6 +89,16 @@ typedef void (^RunnerBlock)(void);
     [self runInCoreQueueWithBlock:^{
         [[self shardRepository] add:shard];
     }];
+}
+
+- (void)submitRequestModelNow:(EMSRequestModel *)model
+          withCompletionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(model);
+    [self.completionMiddleware registerCompletionBlock:completionBlock
+                                       forRequestModel:model];
+    [self.restClient executeTaskWithRequestModel:model
+                                    successBlock:self.completionMiddleware.successBlock
+                                      errorBlock:self.completionMiddleware.errorBlock];
 }
 
 - (void)setAdditionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders {

@@ -64,6 +64,7 @@ SPEC_BEGIN(DennaTest)
                                                                              errorBlock:middleware.errorBlock];
             EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                               completionMiddleware:middleware
+                                                                        restClient:NULL
                                                                             worker:worker
                                                                  requestRepository:requestRepository
                                                                    shardRepository:shardRepository];
@@ -117,6 +118,7 @@ SPEC_BEGIN(DennaTest)
                                                                                  errorBlock:middleware.errorBlock];
                 EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                                   completionMiddleware:middleware
+                                                                            restClient:NULL
                                                                                 worker:worker
                                                                      requestRepository:requestRepository
                                                                        shardRepository:shardRepository];
