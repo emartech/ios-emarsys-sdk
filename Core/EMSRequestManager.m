@@ -92,13 +92,14 @@ typedef void (^RunnerBlock)(void);
 }
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model
-          withCompletionBlock:(EMSCompletionBlock)completionBlock {
+                 successBlock:(CoreSuccessBlock)successBlock
+                   errorBlock:(CoreErrorBlock)errorBlock {
     NSParameterAssert(model);
-    [self.completionMiddleware registerCompletionBlock:completionBlock
-                                       forRequestModel:model];
+    NSParameterAssert(successBlock);
+    NSParameterAssert(errorBlock);
     [self.restClient executeTaskWithRequestModel:model
-                                    successBlock:self.completionMiddleware.successBlock
-                                      errorBlock:self.completionMiddleware.errorBlock];
+                                    successBlock:successBlock
+                                      errorBlock:errorBlock];
 }
 
 - (void)setAdditionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders {

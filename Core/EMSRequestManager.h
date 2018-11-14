@@ -35,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)submitShard:(EMSShard *)shard;
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model
-          withCompletionBlock:(EMSCompletionBlock)completionBlock;
+                 successBlock:(CoreSuccessBlock)successBlock
+                   errorBlock:(CoreErrorBlock)errorBlock;
 
 @end
 

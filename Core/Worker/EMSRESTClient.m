@@ -54,7 +54,7 @@
 
 + (EMSRESTClient *)clientWithSession:(NSURLSession *)session {
     return [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-            }
+        }
                                       errorBlock:^(NSString *requestId, NSError *error) {
                                       }
                                          session:session
@@ -91,23 +91,23 @@
                     message:[NSString stringWithFormat:@"RequestModel: %@", requestModel]];
     __weak typeof(self) weakSelf = self;
     NSURLSessionDataTask *task =
-            [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
-                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                NSHTTPURLResponse *httpUrlResponse = (NSHTTPURLResponse *) response;
-                                NSInteger statusCode = httpUrlResponse.statusCode;
-                                const BOOL hasError = error || statusCode < 200 || statusCode > 299;
-                                if (errorBlock && hasError) {
-                                    errorBlock(requestModel.requestId,
-                                            error ? error : [weakSelf    errorWithData:data
-                                                                         statusCode:statusCode]);
-                                }
-                                if (successBlock && !hasError) {
-                                    successBlock(requestModel.requestId, [[EMSResponseModel alloc] initWithHttpUrlResponse:httpUrlResponse
-                                                                                                                      data:data
-                                                                                                              requestModel:requestModel
-                                                                                                                 timestamp:[self.timestampProvider provideTimestamp]]);
-                                }
-                            }];
+        [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
+                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                            NSHTTPURLResponse *httpUrlResponse = (NSHTTPURLResponse *) response;
+                            NSInteger statusCode = httpUrlResponse.statusCode;
+                            const BOOL hasError = error || statusCode < 200 || statusCode > 299;
+                            if (errorBlock && hasError) {
+                                errorBlock(requestModel.requestId,
+                                    error ? error : [weakSelf    errorWithData:data
+                                                                 statusCode:statusCode]);
+                            }
+                            if (successBlock && !hasError) {
+                                successBlock(requestModel.requestId, [[EMSResponseModel alloc] initWithHttpUrlResponse:httpUrlResponse
+                                                                                                                  data:data
+                                                                                                          requestModel:requestModel
+                                                                                                             timestamp:[self.timestampProvider provideTimestamp]]);
+                            }
+                        }];
     [task resume];
 }
 
@@ -120,17 +120,17 @@
     NSDate *networkingStartTime = [self.timestampProvider provideTimestamp];
     NSOperationQueue *currentQueue = [NSOperationQueue currentQueue];
     NSURLSessionDataTask *task =
-            [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
-                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                [currentQueue addOperationWithBlock:^{
-                                    [weakSelf handleResponse:requestModel
-                                                        data:data
-                                                    response:response
-                                         networkingStartTime:networkingStartTime
-                                                       error:error
-                                                  onComplete:onComplete];
-                                }];
+        [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
+                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                            [currentQueue addOperationWithBlock:^{
+                                [weakSelf handleResponse:requestModel
+                                                    data:data
+                                                response:response
+                                     networkingStartTime:networkingStartTime
+                                                   error:error
+                                              onComplete:onComplete];
                             }];
+                        }];
     [task resume];
 }
 
@@ -224,7 +224,7 @@
 - (NSError *)errorWithData:(NSData *)data
                 statusCode:(NSInteger)statusCode {
     NSString *description =
-            data ? [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] : @"Unknown error";
+        data ? [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] : @"Unknown error";
     return [NSError errorWithCode:@(statusCode).intValue
              localizedDescription:description];
 }
@@ -233,15 +233,15 @@
               responseModel:(EMSResponseModel *)responseModel
         networkingStartTime:(NSDate *)networkingStartTime {
     [self.logRepository add:@{
-            @"request_id": requestModel.requestId,
-            @"url": requestModel.url.absoluteString,
-            @"in_database": [networkingStartTime numberValueInMillisFromDate:requestModel.timestamp]
+        @"request_id": requestModel.requestId,
+        @"url": requestModel.url.absoluteString,
+        @"in_database": [networkingStartTime numberValueInMillisFromDate:requestModel.timestamp]
     }];
 
     [self.logRepository add:@{
-            @"request_id": requestModel.requestId,
-            @"url": requestModel.url.absoluteString,
-            @"networking_time": [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime]
+        @"request_id": requestModel.requestId,
+        @"url": requestModel.url.absoluteString,
+        @"networking_time": [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime]
     }];
 }
 
