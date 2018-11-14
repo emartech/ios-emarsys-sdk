@@ -18,7 +18,6 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                    restClient:(EMSRESTClient *)restClient
              timestampProvider:(EMSTimestampProvider *)timestampProvider
                 requestManager:(EMSRequestManager *)requestManager;
 

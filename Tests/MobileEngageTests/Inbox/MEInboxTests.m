@@ -4,14 +4,13 @@
 #import "EMSDeviceInfo.h"
 #import "MEDefaultHeaders.h"
 #import "MEAppLoginParameters.h"
-#import "FakeInboxNotificationRestClient.h"
+#import "FakeInboxNotificationRequestManager.h"
 #import "MEInbox.h"
 #import "EMSRequestModelMatcher.h"
 #import "FakeStatusDelegate.h"
 #import "EMSAuthentication.h"
 #import "MEExperimental+Test.h"
 #import "EMSUUIDProvider.h"
-#import "EMSRequestManager.h"
 #import "EMSNotificationCache.h"
 #import "EMSWaiter.h"
 #import "Emarsys.h"
@@ -36,7 +35,7 @@ SPEC_BEGIN(MEInboxTests)
 
         __block EMSNotificationCache *notificationCache;
 
-        id (^inboxWithParameters)(EMSRESTClient *restClient, BOOL withApploginParameters) = ^id(EMSRESTClient *restClient, BOOL withApploginParameters) {
+        id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withApploginParameters) = ^id(EMSRequestManager *requestManager, BOOL withApploginParameters) {
             notificationCache = [EMSNotificationCache new];
             MERequestContext *context = [[MERequestContext alloc] initWithConfig:config];
             if (withApploginParameters) {
@@ -47,17 +46,14 @@ SPEC_BEGIN(MEInboxTests)
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
                                               requestContext:context
                                            notificationCache:notificationCache
-                                                  restClient:restClient
-                                              requestManager:[EMSRequestManager mock]];
+                                              requestManager:requestManager];
             return inbox;
         };
 
         __block MERequestContext *requestContext;
-        __block EMSRESTClient *restClientMock;
         __block EMSRequestManager *requestManagerMock;
 
         MEInbox *(^createInbox)(void) = ^id() {
-            restClientMock = [EMSRESTClient nullMock];
             requestManagerMock = [EMSRequestManager nullMock];
             requestContext = [[MERequestContext alloc] initWithConfig:config];
             notificationCache = [EMSNotificationCache new];
@@ -65,7 +61,6 @@ SPEC_BEGIN(MEInboxTests)
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
                                               requestContext:requestContext
                                            notificationCache:notificationCache
-                                                  restClient:restClientMock
                                               requestManager:requestManagerMock];
             return inbox;
         };
@@ -86,14 +81,13 @@ SPEC_BEGIN(MEInboxTests)
             [MEExperimental reset];
         });
 
-        describe(@"initWithConfig:requestContext:notificationCache:restClient:requestManager:", ^{
+        describe(@"initWithConfig:requestContext:notificationCache:requestManager:", ^{
 
             it(@"should throw exception when config is nil", ^{
                 @try {
                     [[MEInbox alloc] initWithConfig:nil
                                      requestContext:[MERequestContext mock]
                                   notificationCache:[EMSNotificationCache mock]
-                                         restClient:[EMSRESTClient mock]
                                      requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when config is nil!");
                 } @catch (NSException *exception) {
@@ -107,7 +101,6 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:nil
                                   notificationCache:[EMSNotificationCache mock]
-                                         restClient:[EMSRESTClient mock]
                                      requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
@@ -121,25 +114,10 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:[MERequestContext mock]
                                   notificationCache:nil
-                                         restClient:[EMSRESTClient mock]
                                      requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCache"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw exception when restClient is nil", ^{
-                @try {
-                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
-                                     requestContext:[MERequestContext mock]
-                                  notificationCache:[EMSNotificationCache mock]
-                                         restClient:nil
-                                     requestManager:[EMSRequestManager mock]];
-                    fail(@"Expected Exception when restClient is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: restClient"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -149,7 +127,6 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:[MERequestContext mock]
                                   notificationCache:[EMSNotificationCache mock]
-                                         restClient:[EMSRESTClient mock]
                                      requestManager:nil];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
@@ -164,7 +141,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should not return nil in resultBlock", ^{
                 __block EMSNotificationInboxStatus *result;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
 
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                     result = inboxStatus;
@@ -175,7 +152,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should run asyncronously", ^{
                 __block EMSNotificationInboxStatus *result;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
 
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                     result = inboxStatus;
@@ -186,8 +163,8 @@ SPEC_BEGIN(MEInboxTests)
                 [[expectFutureValue(result) shouldNotEventually] beNil];
             });
 
-            it(@"should call EMSRestClient's executeTaskWithRequestModel: and parse the notifications correctly", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+            it(@"should call EMSRequestManager's submitRequestModelNow: and parse the notifications correctly", ^{
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 __block NSArray<EMSNotification *> *_notifications;
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                     if (!error) {
@@ -215,11 +192,11 @@ SPEC_BEGIN(MEInboxTests)
                 [[expectFutureValue(_notifications) shouldEventually] equal:notifications];
             });
 
-            it(@"should call EMSRestClient's executeTaskWithRequestModel: with correct RequestModel", ^{
-                EMSRESTClient *client = [EMSRESTClient mock];
-                MEInbox *inbox = inboxWithParameters(client, YES);
+            it(@"should call EMSRequestManager's submitRequestModelNow: with correct RequestModel", ^{
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                MEInbox *inbox = inboxWithParameters(requestManager, YES);
 
-                KWCaptureSpy *requestModelSpy = [client captureArgument:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
+                KWCaptureSpy *requestModelSpy = [requestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
                                                                 atIndex:0];
 
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
@@ -233,7 +210,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should throw an exception, when resultBlock is nil", ^{
-                MEInbox *inbox = inboxWithParameters([EMSRESTClient mock], NO);
+                MEInbox *inbox = inboxWithParameters([EMSRequestManager mock], NO);
                 @try {
                     [inbox fetchNotificationsWithResultBlock:nil];
                     fail(@"Assertion doesn't called!");
@@ -244,7 +221,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should invoke resultBlock on main thread", ^{
                 __block NSNumber *onMainThread = @NO;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
 
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                     if ([NSThread isMainThread]) {
@@ -256,7 +233,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should invoke errorBlock when applogin parameters are not available", ^{
-                MEInbox *inbox = inboxWithParameters([EMSRESTClient mock], NO);
+                MEInbox *inbox = inboxWithParameters([EMSRequestManager mock], NO);
                 __block NSError *receivedError;
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                     if (error) {
@@ -271,26 +248,26 @@ SPEC_BEGIN(MEInboxTests)
 
         describe(@"inbox.resetBadgeCountWithSuccessBlock:errorBlock:", ^{
 
-            it(@"should invoke restClient when appLoginParameters are set", ^{
-                restClientMock = [EMSRESTClient mock];
-                [[restClientMock should] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)];
+            it(@"should invoke requestManager when appLoginParameters are set", ^{
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)];
 
-                MEInbox *inbox = inboxWithParameters(restClientMock, YES);
-
-                [inbox resetBadgeCountWithCompletionBlock:nil];
-            });
-
-            it(@"should not invoke restClient when appLoginParameters are not available", ^{
-                restClientMock = [EMSRESTClient mock];
-                [[restClientMock shouldNot] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)];
-
-                MEInbox *inbox = inboxWithParameters(restClientMock, NO);
+                MEInbox *inbox = inboxWithParameters(requestManager, YES);
 
                 [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
-            it(@"should invoke restClient with the correct requestModel", ^{
-                restClientMock = [EMSRESTClient mock];
+            it(@"should not invoke requestManager when appLoginParameters are not available", ^{
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager shouldNot] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)];
+
+                MEInbox *inbox = inboxWithParameters(requestManager, NO);
+
+                [inbox resetBadgeCountWithCompletionBlock:nil];
+            });
+
+            it(@"should invoke requestManager with the correct requestModel", ^{
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
                 EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setMethod:HTTPMethodPOST];
                         [builder setUrl:@"https://me-inbox.eservice.emarsys.net/api/reset-badge-count"];
@@ -299,10 +276,10 @@ SPEC_BEGIN(MEInboxTests)
                                                                        timestampProvider:[EMSTimestampProvider new]
                                                                             uuidProvider:[EMSUUIDProvider new]];
 
-                [[restClientMock should] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)];
-                KWCaptureSpy *requestModelSpy = [restClientMock captureArgument:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
+                [[requestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)];
+                KWCaptureSpy *requestModelSpy = [requestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
                                                                         atIndex:0];
-                MEInbox *inbox = inboxWithParameters(restClientMock, YES);
+                MEInbox *inbox = inboxWithParameters(requestManager, YES);
 
                 [inbox resetBadgeCountWithCompletionBlock:nil];
 
@@ -313,7 +290,7 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should invoke successBlock when success", ^{
                 __block BOOL successBlockInvoked = NO;
 
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
                         successBlockInvoked = YES;
@@ -327,7 +304,7 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should invoke errorBlock when failure with apploginParameters", ^{
                 __block NSError *_error;
 
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], YES);
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
                         fail(@"successblock invoked");
@@ -341,7 +318,7 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should invoke errorBlock when failure without apploginParameters", ^{
                 __block NSError *_error;
 
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], NO);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], NO);
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
                         fail(@"successblock invoked");
@@ -353,23 +330,23 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should not invoke successBlock when there is no successBlock", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should not invoke errorBlock when there is no errorBlock with apploginParameters", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], YES);
                 [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should not invoke errorBlock when there is no errorBlock without apploginParameters", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], NO);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], NO);
                 [inbox resetBadgeCountWithCompletionBlock:nil];
             });
 
             it(@"should invoke successBlock on main thread", ^{
                 __block BOOL onMainThread = NO;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
 
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
@@ -385,7 +362,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should invoke errorBlock on main thread", ^{
                 __block BOOL onMainThread = NO;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], YES);
 
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
@@ -401,7 +378,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should invoke errorBlock on main thread when apploginParameters are not set", ^{
                 __block BOOL onMainThread = NO;
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeFailure], NO);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeFailure], NO);
 
                 [inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
                     if (!error) {
@@ -433,7 +410,7 @@ SPEC_BEGIN(MEInboxTests)
 
         describe(@"inbox.fetchNotificationsWithResultBlock include cached notifications", ^{
             it(@"should return with the added notification", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 EMSNotification *notification = [EMSNotification new];
                 [notificationCache cache:notification];
 
@@ -451,7 +428,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should be idempotent", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 EMSNotification *notification = [EMSNotification new];
                 [notificationCache cache:notification];
 
@@ -476,7 +453,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should return with the added notification in good order", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 EMSNotification *notification = [EMSNotification new];
                 notification.expirationTime = @12345678130;
                 [notificationCache cache:notification];
@@ -494,7 +471,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should not add the notification if there is a notification already in with the same ID", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
                 EMSNotification *notification = [EMSNotification new];
                 notification.title = @"asdfghjk";
                 notification.id = @"id1";
@@ -519,7 +496,7 @@ SPEC_BEGIN(MEInboxTests)
             });
 
             it(@"should remove notifications from cache when they are already present in the fetched list", ^{
-                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRestClient alloc] initWithResultType:ResultTypeSuccess], YES);
+                MEInbox *inbox = inboxWithParameters([[FakeInboxNotificationRequestManager alloc] initWithResultType:ResultTypeSuccess], YES);
 
                 EMSNotification *notification1 = [EMSNotification new];
                 notification1.title = @"asdfghjk";

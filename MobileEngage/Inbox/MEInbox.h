@@ -16,7 +16,6 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                    restClient:(EMSRESTClient *)restClient
                 requestManager:(EMSRequestManager *)requestManager;
 
 @end

@@ -3,19 +3,19 @@
 //
 
 #import "EMSTimestampProvider.h"
-#import "FakeInboxNotificationRestClient.h"
+#import "FakeInboxNotificationRequestManager.h"
 #import "EMSResponseModel.h"
 #import "NSError+EMSCore.h"
 
-@interface FakeInboxNotificationRestClient ()
+@interface FakeInboxNotificationRequestManager ()
 
 @property(nonatomic, assign) ResultType resultType;
-@property(nonatomic, strong) NSArray<NSArray<NSDictionary *> *> * results;
+@property(nonatomic, strong) NSArray<NSArray<NSDictionary *> *> *results;
 @property(nonatomic, assign) NSUInteger requestIndex;
 
 @end
 
-@implementation FakeInboxNotificationRestClient
+@implementation FakeInboxNotificationRequestManager
 
 - (instancetype)initWithResultType:(ResultType)resultType {
     if (self = [super init]) {
@@ -35,18 +35,18 @@
 }
 
 
-- (void)executeTaskWithRequestModel:(EMSRequestModel *)requestModel
-                       successBlock:(CoreSuccessBlock)successBlock
-                         errorBlock:(CoreErrorBlock)errorBlock {
+- (void)submitRequestModelNow:(EMSRequestModel *)requestModel
+                 successBlock:(CoreSuccessBlock)successBlock
+                   errorBlock:(CoreErrorBlock)errorBlock {
     [self.submittedRequests addObject:requestModel];
 
     NSDictionary *jsonResponse;
 
-    if(self.results){
+    if (self.results) {
         jsonResponse = @{@"notifications": self.results[self.requestIndex],
             @"badge_count": @3
         };
-        if(self.requestIndex < self.results.count-1) {
+        if (self.requestIndex < self.results.count - 1) {
             self.requestIndex++;
         }
 

@@ -150,14 +150,12 @@
         _inbox = [[MEInboxV2 alloc] initWithConfig:config
                                     requestContext:self.requestContext
                                  notificationCache:self.notificationCache
-                                        restClient:self.restClient
                                  timestampProvider:timestampProvider
                                     requestManager:self.requestManager];
     } else {
         _inbox = [[MEInbox alloc] initWithConfig:config
                                   requestContext:self.requestContext
                                notificationCache:self.notificationCache
-                                      restClient:self.restClient
                                   requestManager:self.requestManager];
     }
 

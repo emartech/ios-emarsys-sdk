@@ -163,7 +163,7 @@
 		166B3F972119A86E006CD35C /* FakeInAppHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */; };
 		166B3F982119A86E006CD35C /* FakeRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DF21075B270030E659 /* FakeRequestManager.m */; };
 		166B3F992119A86E006CD35C /* FakeStatusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E021075B270030E659 /* FakeStatusDelegate.m */; };
-		166B3F9A2119A86E006CD35C /* FakeInboxNotificationRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRestClient.m */; };
+		166B3F9A2119A86E006CD35C /* FakeInboxNotificationRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */; };
 		166B3F9B2119A86E006CD35C /* FakeDbHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E221075B270030E659 /* FakeDbHelper.m */; };
 		166B3F9D2119A86E006CD35C /* FakeJSBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E421075B270030E659 /* FakeJSBridge.m */; };
 		166B3F9F2119A86E006CD35C /* FakeRequestRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E721075B270030E659 /* FakeRequestRepository.m */; };
@@ -219,7 +219,7 @@
 		166B40572119A91F006CD35C /* FakeInAppHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */; };
 		166B40582119A91F006CD35C /* FakeRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DF21075B270030E659 /* FakeRequestManager.m */; };
 		166B40592119A91F006CD35C /* FakeStatusDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E021075B270030E659 /* FakeStatusDelegate.m */; };
-		166B405A2119A91F006CD35C /* FakeInboxNotificationRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRestClient.m */; };
+		166B405A2119A91F006CD35C /* FakeInboxNotificationRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */; };
 		166B405B2119A91F006CD35C /* FakeDbHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E221075B270030E659 /* FakeDbHelper.m */; };
 		166B405D2119A91F006CD35C /* FakeJSBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E421075B270030E659 /* FakeJSBridge.m */; };
 		166B405F2119A91F006CD35C /* FakeRequestRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E721075B270030E659 /* FakeRequestRepository.m */; };
@@ -949,7 +949,7 @@
 		8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeInAppHandler.m; sourceTree = "<group>"; };
 		8AB2F9DF21075B270030E659 /* FakeRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeRequestManager.m; sourceTree = "<group>"; };
 		8AB2F9E021075B270030E659 /* FakeStatusDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeStatusDelegate.m; sourceTree = "<group>"; };
-		8AB2F9E121075B270030E659 /* FakeInboxNotificationRestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeInboxNotificationRestClient.m; sourceTree = "<group>"; };
+		8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeInboxNotificationRequestManager.m; sourceTree = "<group>"; };
 		8AB2F9E221075B270030E659 /* FakeDbHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeDbHelper.m; sourceTree = "<group>"; };
 		8AB2F9E321075B270030E659 /* FakeResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeResponseHandler.h; sourceTree = "<group>"; };
 		8AB2F9E421075B270030E659 /* FakeJSBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeJSBridge.m; sourceTree = "<group>"; };
@@ -957,7 +957,7 @@
 		8AB2F9E721075B270030E659 /* FakeRequestRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeRequestRepository.m; sourceTree = "<group>"; };
 		8AB2F9E821075B270030E659 /* FakeSpecification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeSpecification.m; sourceTree = "<group>"; };
 		8AB2F9E921075B270030E659 /* FakeStatusDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeStatusDelegate.h; sourceTree = "<group>"; };
-		8AB2F9EA21075B270030E659 /* FakeInboxNotificationRestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeInboxNotificationRestClient.h; sourceTree = "<group>"; };
+		8AB2F9EA21075B270030E659 /* FakeInboxNotificationRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeInboxNotificationRequestManager.h; sourceTree = "<group>"; };
 		8AB2F9EB21075B270030E659 /* FakeRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeRequestManager.h; sourceTree = "<group>"; };
 		8AB2F9EE21075B270030E659 /* EMSRequestToolsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestToolsTests.m; sourceTree = "<group>"; };
 		8AB2F9EF21075B270030E659 /* RequestModelSpecificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RequestModelSpecificationTests.m; sourceTree = "<group>"; };
@@ -1993,7 +1993,7 @@
 				8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */,
 				8AB2F9DF21075B270030E659 /* FakeRequestManager.m */,
 				8AB2F9E021075B270030E659 /* FakeStatusDelegate.m */,
-				8AB2F9E121075B270030E659 /* FakeInboxNotificationRestClient.m */,
+				8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */,
 				8AB2F9E221075B270030E659 /* FakeDbHelper.m */,
 				8AB2F9E321075B270030E659 /* FakeResponseHandler.h */,
 				8AB2F9E421075B270030E659 /* FakeJSBridge.m */,
@@ -2001,7 +2001,7 @@
 				8AB2F9E721075B270030E659 /* FakeRequestRepository.m */,
 				8AB2F9E821075B270030E659 /* FakeSpecification.m */,
 				8AB2F9E921075B270030E659 /* FakeStatusDelegate.h */,
-				8AB2F9EA21075B270030E659 /* FakeInboxNotificationRestClient.h */,
+				8AB2F9EA21075B270030E659 /* FakeInboxNotificationRequestManager.h */,
 				8AB2F9EB21075B270030E659 /* FakeRequestManager.h */,
 				32C6F5949624C8A51B6A7A56 /* FakeInAppTracker.m */,
 				32C6FAC35370984F8E193A52 /* FakeInAppTracker.h */,
@@ -2672,7 +2672,7 @@
 				166B40572119A91F006CD35C /* FakeInAppHandler.m in Sources */,
 				166B40582119A91F006CD35C /* FakeRequestManager.m in Sources */,
 				166B40592119A91F006CD35C /* FakeStatusDelegate.m in Sources */,
-				166B405A2119A91F006CD35C /* FakeInboxNotificationRestClient.m in Sources */,
+				166B405A2119A91F006CD35C /* FakeInboxNotificationRequestManager.m in Sources */,
 				166B405B2119A91F006CD35C /* FakeDbHelper.m in Sources */,
 				166B405D2119A91F006CD35C /* FakeJSBridge.m in Sources */,
 				166B405F2119A91F006CD35C /* FakeRequestRepository.m in Sources */,
@@ -2760,7 +2760,7 @@
 				166B3F972119A86E006CD35C /* FakeInAppHandler.m in Sources */,
 				166B3F982119A86E006CD35C /* FakeRequestManager.m in Sources */,
 				166B3F992119A86E006CD35C /* FakeStatusDelegate.m in Sources */,
-				166B3F9A2119A86E006CD35C /* FakeInboxNotificationRestClient.m in Sources */,
+				166B3F9A2119A86E006CD35C /* FakeInboxNotificationRequestManager.m in Sources */,
 				166B3F9B2119A86E006CD35C /* FakeDbHelper.m in Sources */,
 				166B3F9D2119A86E006CD35C /* FakeJSBridge.m in Sources */,
 				166B3F9F2119A86E006CD35C /* FakeRequestRepository.m in Sources */,

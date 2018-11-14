@@ -17,7 +17,6 @@
 
 @interface MEInbox ()
 
-@property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
@@ -32,18 +31,15 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                    restClient:(EMSRESTClient *)restClient
                 requestManager:(EMSRequestManager *)requestManager {
     NSParameterAssert(config);
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
-    NSParameterAssert(restClient);
     NSParameterAssert(requestManager);
     if (self = [super init]) {
         _config = config;
         _requestContext = requestContext;
         _notificationCache = notificationCache;
-        _restClient = restClient;
         _requestManager = requestManager;
     }
     return self;
@@ -61,26 +57,26 @@
             }
                                                   timestampProvider:self.requestContext.timestampProvider
                                                        uuidProvider:self.requestContext.uuidProvider];
-        [_restClient executeTaskWithRequestModel:request
-                                    successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                        NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:response.body
-                                                                                                options:0
-                                                                                                  error:nil];
-                                        EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
-                                        status.notifications = [weakSelf.notificationCache mergeWithNotifications:status.notifications];
-                                        dispatch_async(dispatch_get_main_queue(), ^{
-                                            if (resultBlock) {
-                                                resultBlock(status, nil);
-                                            }
-                                        });
-                                    }
-                                      errorBlock:^(NSString *requestId, NSError *error) {
+        [self.requestManager submitRequestModelNow:request
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                          NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:response.body
+                                                                                                  options:0
+                                                                                                    error:nil];
+                                          EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
+                                          status.notifications = [weakSelf.notificationCache mergeWithNotifications:status.notifications];
                                           dispatch_async(dispatch_get_main_queue(), ^{
                                               if (resultBlock) {
-                                                  resultBlock(nil, error);
+                                                  resultBlock(status, nil);
                                               }
                                           });
-                                      }];
+                                      }
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                if (resultBlock) {
+                                                    resultBlock(nil, error);
+                                                }
+                                            });
+                                        }];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (resultBlock) {
@@ -105,21 +101,21 @@
             }
                                                 timestampProvider:self.requestContext.timestampProvider
                                                      uuidProvider:self.requestContext.uuidProvider];
-        [_restClient executeTaskWithRequestModel:model
-                                    successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                        dispatch_async(dispatch_get_main_queue(), ^{
-                                            if (completionBlock) {
-                                                completionBlock(nil);
-                                            }
-                                        });
-                                    }
-                                      errorBlock:^(NSString *requestId, NSError *error) {
+        [self.requestManager submitRequestModelNow:model
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                           dispatch_async(dispatch_get_main_queue(), ^{
                                               if (completionBlock) {
-                                                  completionBlock(error);
+                                                  completionBlock(nil);
                                               }
                                           });
-                                      }];
+                                      }
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                if (completionBlock) {
+                                                    completionBlock(error);
+                                                }
+                                            });
+                                        }];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completionBlock) {

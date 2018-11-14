@@ -3,14 +3,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSRESTClient.h"
+#import "EMSRequestManager.h"
 
 typedef enum {
     ResultTypeSuccess,
     ResultTypeFailure
 } ResultType;
 
-@interface FakeInboxNotificationRestClient : EMSRESTClient
+@interface FakeInboxNotificationRequestManager : EMSRequestManager
 
 @property (nonatomic, strong) NSMutableArray *submittedRequests;
 
