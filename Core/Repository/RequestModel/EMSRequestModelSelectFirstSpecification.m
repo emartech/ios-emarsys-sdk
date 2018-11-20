@@ -10,7 +10,12 @@
     return SQL_REQUEST_SELECTFIRST;
 }
 
-- (void)bindStatement:(sqlite3_stmt *)statement {
+- (NSString *)orderBy {
+    return @"ROWID ASC";
+}
+
+- (NSString *)limit {
+    return @"1";
 }
 
 @end

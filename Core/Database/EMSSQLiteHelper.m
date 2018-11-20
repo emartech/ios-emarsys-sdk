@@ -5,8 +5,7 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSModelMapperProtocol.h"
 #import "EMSDBTriggerKey.h"
-
-#define DEFAULT_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"ems-db.sqlite"]
+#import "EMSSQLStatementFactory.h"
 
 @interface EMSSQLiteHelper ()
 
@@ -145,6 +144,35 @@
                              type:[EMSDBTriggerType afterType]];
 
     return result;
+}
+
+- (NSArray *)queryWithTable:(NSString *)tableName
+                  selection:(NSString *)selection
+              selectionArgs:(NSArray<NSString *> *)selectionArgs
+                    orderBy:(NSString *)orderBy
+                      limit:(NSString *)limit
+                     mapper:(id <EMSModelMapperProtocol>)mapper {
+    NSParameterAssert(tableName);
+    NSParameterAssert(mapper);
+    NSString *sql = [EMSSQLStatementFactory createQueryStatementWithTableName:tableName
+                                                                    selection:selection
+                                                                      orderBy:orderBy
+                                                                        limit:limit];
+    NSMutableArray *models = [NSMutableArray new];
+    sqlite3_stmt *statement;
+    if (sqlite3_prepare_v2(_db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
+        if (selectionArgs && selectionArgs.count > 0) {
+            for (int i = 0; i < selectionArgs.count; ++i) {
+                sqlite3_bind_text(statement, i + 1, [selectionArgs[(NSUInteger) i] UTF8String], -1, SQLITE_TRANSIENT);
+            }
+        }
+        while (sqlite3_step(statement) == SQLITE_ROW) {
+            [models addObject:[mapper modelFromStatement:statement]];
+        }
+        sqlite3_finalize(statement);
+    }
+
+    return [NSArray arrayWithArray:models];
 }
 
 - (BOOL)insertModel:(id)model

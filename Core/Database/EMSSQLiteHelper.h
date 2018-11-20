@@ -46,6 +46,13 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
                   where:(NSString *)where
               whereArgs:(NSArray<NSString *> *)whereArgs;
 
+- (NSArray *)queryWithTable:(NSString *)tableName
+                  selection:(NSString *)selection
+              selectionArgs:(NSArray<NSString *> *)selectionArgs
+                    orderBy:(NSString *)orderBy
+                      limit:(NSString *)limit
+                     mapper:(id <EMSModelMapperProtocol>)mapper;
+
 - (BOOL)insertModel:(id)model
           withQuery:(NSString *)insertSQL
              mapper:(id <EMSModelMapperProtocol>)mapper;

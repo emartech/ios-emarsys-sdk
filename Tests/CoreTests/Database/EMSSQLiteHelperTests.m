@@ -13,6 +13,8 @@
 #import "EMSSQLiteHelper+Test.h"
 #import "EMSShard.h"
 #import "EMSShardMapper.h"
+#import "EMSShardQueryAllSpecification.h"
+#import "EMSRequestModelSelectFirstSpecification.h"
 
 @interface EMSTestColumnInfo : NSObject
 
@@ -321,7 +323,11 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 [dbHelper insertModel:model mapper:mapper];
@@ -338,8 +344,16 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
-                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id"
+                                                                type:@"type2"
+                                                                data:@{}
+                                                           timestamp:[NSDate date]
+                                                                 ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 [dbHelper insertModel:model mapper:mapper];
@@ -359,8 +373,16 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
-                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id"
+                                                                type:@"type2"
+                                                                data:@{}
+                                                           timestamp:[NSDate date]
+                                                                 ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 [dbHelper insertModel:model mapper:mapper];
@@ -369,12 +391,141 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                                     where:@"type=? AND ttl=?"
                                 whereArgs:@[@"type", @"300"]];
 
-                NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:mapper];
+                NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                  mapper:mapper];
 
                 [[result should] contain:model2];
                 [[result should] contain:model];
                 [[theValue([result count]) should] equal:theValue(2)];
             });
+        });
+
+        describe(@"queryWithTable:selection:selectionArgs:orderBy:limit:mapper:", ^{
+            it(@"tableName should not be nil", ^{
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                @try {
+                    [dbHelper queryWithTable:nil
+                                   selection:@"selection"
+                               selectionArgs:@[@"args"]
+                                     orderBy:@"order by"
+                                       limit:@"1"
+                                      mapper:mapper];
+
+                    fail(@"Expected exception when tableName is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: tableName"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"mapper should not be nil", ^{
+
+                @try {
+                    [dbHelper queryWithTable:@"tableName"
+                                   selection:@"selection"
+                               selectionArgs:nil
+                                     orderBy:nil
+                                       limit:nil
+                                      mapper:nil];
+
+                    fail(@"Expected exception when mapper is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: mapper"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should query all item", ^{
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                NSArray *expectedResult = @[model, model];
+
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model
+                               mapper:mapper];
+                [dbHelper insertModel:model
+                               mapper:mapper];
+
+                NSArray *result = [dbHelper queryWithTable:mapper.tableName
+                                                 selection:nil
+                                             selectionArgs:nil
+                                                   orderBy:nil
+                                                     limit:nil
+                                                    mapper:mapper];
+                [[result should] equal:expectedResult];
+            });
+
+            it(@"should query the expected type", ^{
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id2"
+                                                                type:@"shard"
+                                                                data:@{}
+                                                           timestamp:[NSDate date]
+                                                                 ttl:200.];
+                NSArray *expectedResult = @[model2];
+
+                EMSShardMapper *mapper = [EMSShardMapper new];
+
+                [dbHelper insertModel:model
+                               mapper:mapper];
+                [dbHelper insertModel:model2
+                               mapper:mapper];
+
+                NSArray *result = [dbHelper queryWithTable:mapper.tableName
+                                                 selection:@"type LIKE ?"
+                                             selectionArgs:@[@"shard"]
+                                                   orderBy:nil
+                                                     limit:nil
+                                                    mapper:mapper];
+                [[result should] equal:expectedResult];
+            });
+            it(@"should query the expected count", ^{
+                EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
+                [dbHelper setSchemaHandler:schemaDelegate];
+                [dbHelper open];
+
+                EMSRequestModel *model = requestModel(@"https://www.google.com", @{
+                    @"key": @"value"
+                });
+                EMSRequestModel *model2 = requestModel(@"https://www.google.com", @{
+                    @"key": @"value"
+                });
+
+                NSArray *expectedResult = @[model];
+
+                EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
+
+                [dbHelper insertModel:model
+                               mapper:mapper];
+                [dbHelper insertModel:model2
+                               mapper:mapper];
+
+                EMSRequestModelSelectFirstSpecification *queryByType = [[EMSRequestModelSelectFirstSpecification alloc] init];
+
+                NSArray *result = [dbHelper queryWithTable:mapper.tableName
+                                                 selection:nil
+                                             selectionArgs:nil
+                                                   orderBy:@"ROWID ASC"
+                                                     limit:@"1"
+                                                    mapper:mapper];
+                [[result should] equal:expectedResult];
+            });
+
         });
 
         describe(@"insertModel:withQuery:mapper:", ^{
@@ -383,7 +534,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSRequestModel *model = requestModel(@"https://www.google.com", @{
-                        @"key": @"value"
+                    @"key": @"value"
                 });
                 EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
 
@@ -399,13 +550,13 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
         });
 
         describe(@"insertModel:mapper:", ^{
-            
+
             it(@"should insert the correct model in the database", ^{
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
                 EMSRequestModel *model = requestModel(@"https://www.google.com", @{
-                        @"key": @"value"
+                    @"key": @"value"
                 });
                 EMSRequestModelMapper *mapper = [EMSRequestModelMapper new];
 
@@ -422,7 +573,11 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler new];
                 [dbHelper setSchemaHandler:schemaDelegate];
                 [dbHelper open];
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 BOOL returnedValue = [dbHelper insertModel:model
@@ -469,35 +624,35 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 initializeDbWithVersion(0);
 
                 NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                           columnType:@"REAL"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
-                                                           columnType:@"DOUBLE"
-                                                         defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
-                                                           primaryKey:false
-                                                              notNull:false]
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id"
+                                                       columnType:@"TEXT"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"method"
+                                                       columnType:@"TEXT"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"url"
+                                                       columnType:@"TEXT"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"headers"
+                                                       columnType:@"BLOB"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"payload"
+                                                       columnType:@"BLOB"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                       columnType:@"REAL"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"expiry"
+                                                       columnType:@"DOUBLE"
+                                                     defaultValue:[NSString stringWithFormat:@"%f", DEFAULT_REQUESTMODEL_EXPIRY]
+                                                       primaryKey:false
+                                                          notNull:false]
                 ];
                 NSArray<EMSTestColumnInfo *> *expectedShardColumnInfos = @[
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"type"
-                                                           columnType:@"TEXT"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"data"
-                                                           columnType:@"BLOB"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
-                                                           columnType:@"REAL"],
-                        [[EMSTestColumnInfo alloc] initWithColumnName:@"ttl"
-                                                           columnType:@"REAL"]
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"shard_id"
+                                                       columnType:@"TEXT"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"type"
+                                                       columnType:@"TEXT"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"data"
+                                                       columnType:@"BLOB"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"timestamp"
+                                                       columnType:@"REAL"],
+                    [[EMSTestColumnInfo alloc] initWithColumnName:@"ttl"
+                                                       columnType:@"REAL"]
                 ];
 
                 [schemaHandler onUpgradeWithDbHelper:dbHelper

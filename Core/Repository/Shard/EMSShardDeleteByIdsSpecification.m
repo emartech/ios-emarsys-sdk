@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "EMSShardDeleteByIdsSpecification.h"
 #import "EMSSchemaContract.h"
 #import "EMSShard.h"
+#import "EMSShardDeleteByIdsSpecification.h"
 
-@interface EMSShardDeleteByIdsSpecification()
+@interface EMSShardDeleteByIdsSpecification ()
 
 @property(nonatomic, strong) NSMutableArray<NSString *> *shardIds;
 
@@ -53,6 +53,15 @@
 
 - (NSUInteger)hash {
     return [self.shardIds hash];
+}
+
+- (NSString *)selection {
+    return [NSString stringWithFormat:@"%@%@", SHARD_COLUMN_NAME_SHARD_ID,
+                                      [self generateInStatementWithArgs:[self selectionArgs]]];
+}
+
+- (NSArray<NSString *> *)selectionArgs {
+    return [NSArray arrayWithArray:self.shardIds];
 }
 
 

@@ -5,8 +5,9 @@
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
 #import "EMSRequestModel.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface EMSRequestModelDeleteByIdsSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface EMSRequestModelDeleteByIdsSpecification : EMSCommonSQLSpecification
 
 @property(nonatomic, readonly) EMSRequestModel *requestModel;
 

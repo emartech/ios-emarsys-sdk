@@ -3,8 +3,9 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface EMSShardQueryAllSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface EMSShardQueryAllSpecification : EMSCommonSQLSpecification
 - (BOOL)isEqual:(id)other;
 
 - (BOOL)isEqualToSpecification:(EMSShardQueryAllSpecification *)specification;

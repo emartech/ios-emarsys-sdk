@@ -11,4 +11,13 @@
 
 - (void)bindStatement:(sqlite3_stmt *)statement;
 
+
+- (NSString *)selection;
+
+- (NSArray<NSString *> *)selectionArgs;
+
+- (NSString *)orderBy;
+
+- (NSString *)limit;
+
 @end
