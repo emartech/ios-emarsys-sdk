@@ -190,7 +190,6 @@
                                                 <rect key="frame" x="110.5" y="459" width="99" height="30"/>
                                                 <state key="normal" title="trackPurchase"/>
                                                 <connections>
-                                                    <action selector="trackCartItemButtonClicked:" destination="ZXG-vM-0qI" eventType="touchUpInside" id="edV-bE-9mn"/>
                                                     <action selector="trackPurchaseButtonClicked:" destination="ZXG-vM-0qI" eventType="touchUpInside" id="mFV-Xo-1D2"/>
                                                 </connections>
                                             </button>
