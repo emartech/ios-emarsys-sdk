@@ -7,9 +7,8 @@
 #import "Kiwi.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
-#import "MEButtonClickFilterNoneSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSSqliteSchemaHandler.h"
-#import "MEDisplayedIAMFilterNoneSpecification.h"
 #import "EMSUUIDProvider.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMIAMCleanup.db"]
@@ -157,7 +156,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                                                                                                      displayIamRepository:nil];
                 [handler handleResponse:response];
 
-                NSArray<MEButtonClick *> *clicks = [repository query:[MEButtonClickFilterNoneSpecification new]];
+                NSArray<MEButtonClick *> *clicks = [repository query:[EMSFilterByNothingSpecification new]];
 
                 [[theValue([clicks count]) should] equal:theValue(2)];
                 [[[clicks[0] campaignId] should] equal:@"id1"];
@@ -186,7 +185,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                                                                                                      displayIamRepository:repository];
                 [handler handleResponse:response];
 
-                NSArray<MEDisplayedIAM *> *displays = [repository query:[MEDisplayedIAMFilterNoneSpecification new]];
+                NSArray<MEDisplayedIAM *> *displays = [repository query:[EMSFilterByNothingSpecification new]];
 
                 [[theValue([displays count]) should] equal:theValue(2)];
                 [[[displays[0] campaignId] should] equal:@"id1a"];

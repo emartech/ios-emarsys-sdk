@@ -5,8 +5,8 @@
 #import "EMSRequestManager.h"
 #import "EMSPredictMapper.h"
 #import "EMSShardRepository.h"
-#import "EMSShardQueryAllSpecification.h"
 #import "EMSShardDeleteByIdsSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 
 @implementation EMSPredictAggregateShardsTrigger
 
@@ -17,7 +17,7 @@
     NSParameterAssert(predictMapper);
     NSParameterAssert(shardRepository);
     return ^{
-        NSArray<EMSShard *> *shards = [shardRepository query:[EMSShardQueryAllSpecification new]];
+        NSArray<EMSShard *> *shards = [shardRepository query:[EMSFilterByNothingSpecification new]];
         if ([shards count] > 0) {
             EMSRequestModel *requestModel = [predictMapper requestFromShards:shards];
             [requestManager submitRequestModel:requestModel withCompletionBlock:nil];

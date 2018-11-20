@@ -4,7 +4,7 @@
 #import "Kiwi.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "MEButtonClickRepository.h"
-#import "MEButtonClickFilterNoneSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "MEButtonClickFilterByCampaignIdSpecification.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
@@ -36,7 +36,7 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
                                                                              timestamp:[NSDate date]];
                 [repository add:buttonClick];
 
-                NSArray<MEButtonClick *> *items = [repository query:[MEButtonClickFilterNoneSpecification new]];
+                NSArray<MEButtonClick *> *items = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([items count]) should] equal:theValue(1)];
                 [[[items lastObject] should] equal:buttonClick];
             });
@@ -54,7 +54,7 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
 
                 [repository remove:[[MEButtonClickFilterByCampaignIdSpecification alloc] initWithCampaignId:@"kamp2"]];
 
-                NSArray<MEButtonClick *> *items = [repository query:[MEButtonClickFilterNoneSpecification new]];
+                NSArray<MEButtonClick *> *items = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([items count]) should] equal:theValue(1)];
                 [[[items lastObject] should] equal:buttonClickFirst];
             });

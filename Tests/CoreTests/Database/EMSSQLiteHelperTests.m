@@ -13,7 +13,6 @@
 #import "EMSSQLiteHelper+Test.h"
 #import "EMSShard.h"
 #import "EMSShardMapper.h"
-#import "EMSShardQueryAllSpecification.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
 
 @interface EMSTestColumnInfo : NSObject

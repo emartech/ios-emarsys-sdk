@@ -9,8 +9,8 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSShardRepository.h"
 #import "EMSShard.h"
-#import "EMSShardQueryAllSpecification.h"
 #import "EMSShardDeleteByIdsSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 
 SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
 
@@ -88,7 +88,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
                                                                                     extras:nil];
 
                 NSArray *const shards = @[shard];
-                EMSShardQueryAllSpecification *specification = [EMSShardQueryAllSpecification new];
+                EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
                 EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper should] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];
@@ -113,7 +113,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
                                                                                     extras:nil];
 
                 NSArray *const shards = @[];
-                EMSShardQueryAllSpecification *specification = [EMSShardQueryAllSpecification new];
+                EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
                 EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper shouldNot] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];

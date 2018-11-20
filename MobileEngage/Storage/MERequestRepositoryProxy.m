@@ -8,8 +8,7 @@
 #import "MERequestModelSelectEventsSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "MERequestTools.h"
-#import "MEButtonClickFilterNoneSpecification.h"
-#import "MEDisplayedIAMFilterNoneSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSDeviceInfo.h"
 #import "EmarsysSDKVersion.h"
 #import "MEInApp.h"
@@ -104,7 +103,7 @@
 }
 
 - (NSArray *)clickRepresentations {
-    NSArray<MEButtonClick *> *buttonModels = [self.clickRepository query:[MEButtonClickFilterNoneSpecification new]];
+    NSArray<MEButtonClick *> *buttonModels = [self.clickRepository query:[EMSFilterByNothingSpecification new]];
     NSMutableArray *clicks = [NSMutableArray new];
     for (MEButtonClick *click in buttonModels) {
         [clicks addObject:[click dictionaryRepresentation]];
@@ -113,7 +112,7 @@
 }
 
 - (NSArray *)displayRepresentations {
-    NSArray<MEDisplayedIAM *> *displayModels = [self.displayedIAMRepository query:[MEDisplayedIAMFilterNoneSpecification new]];
+    NSArray<MEDisplayedIAM *> *displayModels = [self.displayedIAMRepository query:[EMSFilterByNothingSpecification new]];
     NSMutableArray *viewedMessages = [NSMutableArray new];
     for (MEDisplayedIAM *display in displayModels) {
         [viewedMessages addObject:[display dictionaryRepresentation]];

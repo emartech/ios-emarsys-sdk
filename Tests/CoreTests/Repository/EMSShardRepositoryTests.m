@@ -10,7 +10,7 @@
 #import "EMSShard.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-#import "EMSShardQueryAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSShardDeleteByIdsSpecification.h"
 #import "EMSShardQueryByTypeSpecification.h"
 
@@ -49,7 +49,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
 
         describe(@"query", ^{
             it(@"should return empty array when the table is empty", ^{
-                NSArray<EMSShard *> *result = [repository query:[EMSShardQueryAllSpecification new]];
+                NSArray<EMSShard *> *result = [repository query:[EMSFilterByNothingSpecification new]];
                 [[result should] beEmpty];
             });
         });
@@ -67,7 +67,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
             it(@"should insert the shard into the requestModelRepository", ^{
                 EMSShard *expectedModel = createShard();
                 [repository add:expectedModel];
-                NSArray<EMSShard *> *result = [repository query:[EMSShardQueryAllSpecification new]];
+                NSArray<EMSShard *> *result = [repository query:[EMSFilterByNothingSpecification new]];
                 [[result.firstObject should] equal:expectedModel];
             });
         });
@@ -77,7 +77,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                 EMSShard *expectedModel = createShard();
                 [repository add:expectedModel];
                 [repository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[expectedModel]]];
-                NSArray<EMSShard *> *result = [repository query:[EMSShardQueryAllSpecification new]];
+                NSArray<EMSShard *> *result = [repository query:[EMSFilterByNothingSpecification new]];
                 [[result should] beEmpty];
             });
         });
@@ -110,7 +110,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
 
                 [repository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[secondModel, thirdModel]]];
 
-                NSArray *results = [repository query:[EMSShardQueryAllSpecification new]];
+                NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([results count]) should] equal:theValue(2)];
                 [[results[0] should] equal:firstModel];
                 [[results[1] should] equal:fourthModel];
@@ -129,7 +129,7 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                 [repository add:thirdModel];
                 [repository add:fourthModel];
 
-                NSArray<EMSShard *> *results = [repository query:[EMSShardQueryAllSpecification new]];
+                NSArray<EMSShard *> *results = [repository query:[EMSFilterByNothingSpecification new]];
 
                 [[theValue([results count]) should] equal:theValue(4)];
                 [[results[0] should] equal:firstModel];

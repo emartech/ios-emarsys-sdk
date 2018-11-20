@@ -1,9 +1,9 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "EMSShardQueryAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 
-@implementation EMSShardQueryAllSpecification
+@implementation EMSFilterByNothingSpecification
 
 - (BOOL)isEqual:(id)other {
     if (other == self)
@@ -14,7 +14,7 @@
     return [self isEqualToSpecification:other];
 }
 
-- (BOOL)isEqualToSpecification:(EMSShardQueryAllSpecification *)specification {
+- (BOOL)isEqualToSpecification:(EMSFilterByNothingSpecification *)specification {
     if (self == specification)
         return YES;
     if (specification == nil)

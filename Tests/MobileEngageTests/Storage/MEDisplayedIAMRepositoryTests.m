@@ -3,7 +3,7 @@
 //
 #import "Kiwi.h"
 #import "MEDisplayedIAMRepository.h"
-#import "MEDisplayedIAMFilterNoneSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "MEDisplayedIAMFilterByCampaignIdSpecification.h"
 #import "EMSSqliteSchemaHandler.h"
 
@@ -32,7 +32,7 @@ SPEC_BEGIN(MEDisplayedIAMRepositoryTests)
 
             [repository add:displayedIAM];
 
-            NSArray<MEDisplayedIAM *> *items = [repository query:[MEDisplayedIAMFilterNoneSpecification new]];
+            NSArray<MEDisplayedIAM *> *items = [repository query:[EMSFilterByNothingSpecification new]];
             [[theValue([items count]) should] equal:theValue(1)];
             [[[items lastObject] should] equal:displayedIAM];
         });
@@ -46,7 +46,7 @@ SPEC_BEGIN(MEDisplayedIAMRepositoryTests)
 
             [repository remove:[[MEDisplayedIAMFilterByCampaignIdSpecification alloc] initWithCampaignId:@"98765432"]];
 
-            NSArray<MEDisplayedIAM *> *items = [repository query:[MEDisplayedIAMFilterNoneSpecification new]];
+            NSArray<MEDisplayedIAM *> *items = [repository query:[EMSFilterByNothingSpecification new]];
             [[theValue([items count]) should] equal:theValue(1)];
             [[[items lastObject] should] equal:displayedIAMFirst];
         });
