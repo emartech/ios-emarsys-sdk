@@ -5,14 +5,6 @@
 
 @implementation EMSCommonSQLSpecification
 
-- (NSString *)sql {
-    return nil;
-}
-
-- (void)bindStatement:(sqlite3_stmt *)statement {
-
-}
-
 - (NSString *)selection {
     return nil;
 }

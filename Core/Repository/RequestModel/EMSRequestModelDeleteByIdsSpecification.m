@@ -15,15 +15,6 @@
     return self;
 }
 
-- (NSString *)sql {
-    NSString *ids = [NSString stringWithFormat:@"'%@'", [self idListAsString]];
-    return SQL_REQUEST_DELETE_MULTIPLE_ITEM(ids);
-}
-
-- (void)bindStatement:(sqlite3_stmt *)statement {
-
-}
-
 - (NSString *)selection {
     return [NSString stringWithFormat:@"%@%@;", REQUEST_COLUMN_NAME_REQUEST_ID,
                                       [self generateInStatementWithArgs:[self selectionArgs]]];

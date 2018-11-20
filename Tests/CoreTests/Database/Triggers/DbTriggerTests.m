@@ -247,8 +247,8 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper insertModel:model2 mapper:mapper];
 
                 [dbHelper removeFromTable:[mapper tableName]
-                                    where:@"type=? AND ttl=?"
-                                whereArgs:@[@"type", @"200"]];
+                                selection:@"type=? AND ttl=?"
+                            selectionArgs:@[@"type", @"200"]];
 
                 XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
@@ -286,8 +286,8 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper insertModel:model2 mapper:mapper];
 
                 [dbHelper removeFromTable:[mapper tableName]
-                                    where:@"type=? AND ttl=?"
-                                whereArgs:@[@"type", @"200"]];
+                                selection:@"type=? AND ttl=?"
+                            selectionArgs:@[@"type", @"200"]];
 
                 XCTWaiterResult result = [XCTWaiter waitForExpectations:@[beforeDeleteExpectation, afterDeleteExpectation] timeout:2 enforceOrder:YES];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];

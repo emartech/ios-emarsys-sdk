@@ -14,7 +14,7 @@
 }
 
 - (NSArray<EMSRequestModel *> *)query:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    return self.queryResponseMapping[[sqlSpecification sql]];
+    return self.queryResponseMapping[NSStringFromClass([((NSObject *) sqlSpecification) class])];
 }
 
 @end

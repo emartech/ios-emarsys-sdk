@@ -7,11 +7,6 @@
 
 @protocol EMSSQLSpecificationProtocol
 
-- (NSString *)sql;
-
-- (void)bindStatement:(sqlite3_stmt *)statement;
-
-
 - (NSString *)selection;
 
 - (NSArray<NSString *> *)selectionArgs;

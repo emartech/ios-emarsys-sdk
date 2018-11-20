@@ -3,7 +3,8 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface MEButtonClickFilterNoneSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface MEButtonClickFilterNoneSpecification : EMSCommonSQLSpecification
 
 @end

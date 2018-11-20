@@ -3,8 +3,9 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface MEButtonClickFilterByCampaignIdSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface MEButtonClickFilterByCampaignIdSpecification : EMSCommonSQLSpecification
 
 @property (nonatomic, readonly) NSString *campaignId;
 

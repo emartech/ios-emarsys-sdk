@@ -68,9 +68,10 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             EMSRequestModelSelectAllSpecification *selectAllRequestsSpecification = [EMSRequestModelSelectAllSpecification new];
 
             FakeRequestRepository *fakeRequestRepository = [FakeRequestRepository new];
-            fakeRequestRepository.queryResponseMapping = @{[selectFirstSpecification sql]: nextRequest,
-                [selectAllCustomEventSpecification sql]: allCustomEvents,
-                [selectAllRequestsSpecification sql]: AllRequests};
+            fakeRequestRepository.queryResponseMapping = @{
+                NSStringFromClass([selectFirstSpecification class]): nextRequest,
+                NSStringFromClass([selectAllCustomEventSpecification class]): allCustomEvents,
+                NSStringFromClass([selectAllRequestsSpecification class]): AllRequests};
 
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:fakeRequestRepository
                                                                                          buttonClickRepository:buttonClickRepository
@@ -286,7 +287,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
                             @"language": [EMSDeviceInfo languageCode],
-                                @"ems_sdk": EMARSYS_SDK_VERSION,
+                            @"ems_sdk": EMARSYS_SDK_VERSION,
                             @"application_version": [EMSDeviceInfo applicationVersion]
                         }];
                     }
@@ -321,7 +322,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
                             @"language": [EMSDeviceInfo languageCode],
-                                @"ems_sdk": EMARSYS_SDK_VERSION,
+                            @"ems_sdk": EMARSYS_SDK_VERSION,
                             @"application_version": [EMSDeviceInfo applicationVersion]
                         }];
                     }

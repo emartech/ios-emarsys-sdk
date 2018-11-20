@@ -23,15 +23,6 @@
     return self;
 }
 
-
-- (NSString *)sql {
-    NSString *ids = [NSString stringWithFormat:@"'%@'", [self.shardIds componentsJoinedByString:@"', '"]];
-    return SQL_SHARD_DELETE_MULTIPLE_ITEM(ids);
-}
-
-- (void)bindStatement:(sqlite3_stmt *)statement {
-}
-
 - (BOOL)isEqual:(id)other {
     if (other == self)
         return YES;

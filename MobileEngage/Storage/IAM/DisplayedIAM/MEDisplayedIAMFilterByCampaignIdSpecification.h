@@ -4,8 +4,9 @@
 
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface MEDisplayedIAMFilterByCampaignIdSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface MEDisplayedIAMFilterByCampaignIdSpecification : EMSCommonSQLSpecification
 
 @property (nonatomic, readonly) NSString *campaignId;
 

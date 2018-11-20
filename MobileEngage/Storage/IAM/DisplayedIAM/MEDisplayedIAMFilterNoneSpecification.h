@@ -4,7 +4,8 @@
 
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface MEDisplayedIAMFilterNoneSpecification : NSObject <EMSSQLSpecificationProtocol>
+@interface MEDisplayedIAMFilterNoneSpecification : EMSCommonSQLSpecification
 
 @end

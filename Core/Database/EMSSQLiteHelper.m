@@ -118,8 +118,8 @@
 }
 
 - (BOOL)removeFromTable:(NSString *)tableName
-                  where:(NSString *)where
-              whereArgs:(NSArray<NSString *> *)whereArgs {
+              selection:(NSString *)where
+          selectionArgs:(NSArray<NSString *> *)whereArgs {
     NSString *sqlCommand;
     if (where == nil || [where isEqualToString:@""]) {
         sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@", tableName];

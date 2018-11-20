@@ -8,8 +8,8 @@
 
 @interface MEDisplayedIAMRepository ()
 
-@property (nonatomic, strong) MEDisplayedIAMMapper *mapper;
-@property (nonatomic, strong) EMSSQLiteHelper *sqliteHelper;
+@property(nonatomic, strong) MEDisplayedIAMMapper *mapper;
+@property(nonatomic, strong) EMSSQLiteHelper *sqliteHelper;
 @end
 
 @implementation MEDisplayedIAMRepository
@@ -28,13 +28,18 @@
 }
 
 - (void)remove:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    [self.sqliteHelper execute:SQL_REQUEST_DELETE_ITEM(sqlSpecification.sql) withBindBlock:^(sqlite3_stmt *statement) {
-        [sqlSpecification bindStatement:statement];
-    }];
+    [self.sqliteHelper removeFromTable:self.mapper.tableName
+                             selection:sqlSpecification.selection
+                         selectionArgs:sqlSpecification.selectionArgs];
 }
 
 - (NSArray <MEDisplayedIAM *> *)query:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    return [self.sqliteHelper executeQuery:SQL_SELECT(sqlSpecification.sql) mapper:self.mapper];
+    return [self.sqliteHelper queryWithTable:self.mapper.tableName
+                                   selection:sqlSpecification.selection
+                               selectionArgs:sqlSpecification.selectionArgs
+                                     orderBy:sqlSpecification.orderBy
+                                       limit:sqlSpecification.limit
+                                      mapper:self.mapper];
 }
 
 @end

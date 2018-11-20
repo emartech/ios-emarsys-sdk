@@ -48,12 +48,18 @@
 }
 
 - (void)remove:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    [self.dbHelper executeCommand:sqlSpecification.sql];
+    [self.dbHelper removeFromTable:self.mapper.tableName
+                         selection:sqlSpecification.selection
+                     selectionArgs:sqlSpecification.selectionArgs];
 }
 
 - (NSArray<EMSRequestModel *> *)query:(id <EMSSQLSpecificationProtocol>)sqlSpecification {
-    NSArray *result = [self.dbHelper executeQuery:sqlSpecification.sql
-                                           mapper:self.mapper];
+    NSArray *result = [self.dbHelper queryWithTable:self.mapper.tableName
+                                          selection:sqlSpecification.selection
+                                      selectionArgs:sqlSpecification.selectionArgs
+                                            orderBy:sqlSpecification.orderBy
+                                              limit:sqlSpecification.limit
+                                             mapper:self.mapper];
     if (!result) {
         result = @[];
     }

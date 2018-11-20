@@ -3,6 +3,7 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSSQLSpecificationProtocol.h"
+#import "EMSCommonSQLSpecification.h"
 
-@interface MERequestModelSelectEventsSpecification : NSObject<EMSSQLSpecificationProtocol>
+@interface MERequestModelSelectEventsSpecification : EMSCommonSQLSpecification
 @end

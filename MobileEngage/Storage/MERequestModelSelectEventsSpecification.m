@@ -6,12 +6,13 @@
 
 @implementation MERequestModelSelectEventsSpecification
 
-
-- (NSString *)sql {
-    return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ LIKE '%%/v3/devices/_%%/events';", REQUEST_TABLE_NAME, REQUEST_COLUMN_NAME_URL];
+- (NSString *)selection {
+    return [NSString stringWithFormat:@"%@ LIKE ?", REQUEST_COLUMN_NAME_URL];
 }
 
-- (void)bindStatement:(sqlite3_stmt *)statement {
+- (NSArray<NSString *> *)selectionArgs {
+    return @[@"%%/v3/devices/_%%/events"];
 }
+
 
 @end
