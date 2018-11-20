@@ -6,7 +6,7 @@
 #import "MEButtonClickRepository.h"
 #import "EMSRequestModelRepository.h"
 #import "MERequestRepositoryProxy.h"
-#import "EMSRequestModelSelectAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
 #import "FakeRequestRepository.h"
@@ -65,7 +65,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         id (^createFakeRequestRepository)(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) = ^id(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) {
             EMSRequestModelSelectFirstSpecification *selectFirstSpecification = [EMSRequestModelSelectFirstSpecification new];
             MERequestModelSelectEventsSpecification *selectAllCustomEventSpecification = [MERequestModelSelectEventsSpecification new];
-            EMSRequestModelSelectAllSpecification *selectAllRequestsSpecification = [EMSRequestModelSelectAllSpecification new];
+            EMSFilterByNothingSpecification *selectAllRequestsSpecification = [EMSFilterByNothingSpecification new];
 
             FakeRequestRepository *fakeRequestRepository = [FakeRequestRepository new];
             fakeRequestRepository.queryResponseMapping = @{
@@ -198,7 +198,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
 
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"clicks"] should] equal:@[
                     @{@"message_id": [clicks[0] campaignId], @"button_id": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
                     @{@"message_id": [clicks[1] campaignId], @"button_id": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
@@ -217,7 +217,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
 
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"viewed_messages"] should] equal:@[
                     @{@"message_id": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
                     @{@"message_id": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
@@ -244,7 +244,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             });
 
             it(@"should query normal RequestModels from RequestRepository", ^{
-                EMSRequestModelSelectAllSpecification *specification = [EMSRequestModelSelectAllSpecification new];
+                EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
 
                 NSArray *const requests = @[[EMSRequestModel nullMock], [EMSRequestModel nullMock], [EMSRequestModel nullMock]];
                 [[requestModelRepository should] receive:@selector(query:)
@@ -256,7 +256,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             });
 
             it(@"should return empty array if no elements were found", ^{
-                EMSRequestModelSelectAllSpecification *specification = [EMSRequestModelSelectAllSpecification new];
+                EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
 
                 NSArray *const requests = @[];
                 [[requestModelRepository should] receive:@selector(query:)
@@ -333,7 +333,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3], @[model1, modelCustomEvent1, modelCustomEvent2, model2, modelCustomEvent3], [MEInApp new], requestContext);
 
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([result count]) should] equal:theValue(3)];
                 [[result[0] should] beSimilarWithRequest:model1];
                 [[result[1] should] beSimilarWithRequest:compositeModel];
@@ -357,7 +357,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 [meInApp pause];
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], meInApp, requestContext);
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"dnd"] should] equal:@(YES)];
             });
 
@@ -367,7 +367,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 MEInApp *meInApp = [MEInApp new];
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], meInApp, requestContext);
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([[[result[0] payload] allKeys] containsObject:@"dnd"]) should] beNo];
             });
 

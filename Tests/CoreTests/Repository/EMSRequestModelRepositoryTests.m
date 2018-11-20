@@ -9,7 +9,7 @@
 #import "EMSRequestModelRepository.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
-#import "EMSRequestModelSelectAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSRequestModelDeleteByIdsSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSTimestampProvider.h"
@@ -107,7 +107,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         });
     });
 
-    describe(@"EMSRequestModelSelectAllSpecification", ^{
+        describe(@"EMSFilterByNothingSpecification", ^{
 
         it(@"should return all of the models", ^{
             EMSRequestModel *firstModel = requestModelWithTTL(@"https://url2.com", 58);
@@ -118,7 +118,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             [repository add:secondModel];
             [repository add:thirdModel];
 
-            NSArray *results = [repository query:[EMSRequestModelSelectAllSpecification new]];
+            NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
 
             [[theValue([results count]) should] equal:theValue(3)];
         });
@@ -138,7 +138,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
 
             [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:secondModel]];
 
-            NSArray *results = [repository query:[EMSRequestModelSelectAllSpecification new]];
+            NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
             [[results[0] should] equal:firstModel];
             [[results[1] should] equal:thirdModel];
         });
@@ -159,7 +159,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
 
             [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:compositeRequestModel]];
 
-            NSArray *results = [repository query:[EMSRequestModelSelectAllSpecification new]];
+            NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
             [[theValue([results count]) should] equal:theValue(2)];
             [[results[0] should] equal:secondModel];
             [[results[1] should] equal:fourthModel];

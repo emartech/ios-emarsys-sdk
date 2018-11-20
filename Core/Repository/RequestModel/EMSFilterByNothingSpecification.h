@@ -5,6 +5,6 @@
 #import "EMSSQLSpecificationProtocol.h"
 #import "EMSCommonSQLSpecification.h"
 
-@interface EMSRequestModelSelectAllSpecification : EMSCommonSQLSpecification
+@interface EMSFilterByNothingSpecification : EMSCommonSQLSpecification
 
 @end

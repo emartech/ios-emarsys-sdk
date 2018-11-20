@@ -13,7 +13,7 @@
 #import "FakeConnectionWatchdog.h"
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
-#import "EMSRequestModelSelectAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSCompletionMiddleware.h"
@@ -158,7 +158,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventually] equal:@3];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@0];
                 [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(3)];
             });
 
@@ -195,7 +195,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@2];
                 [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
 
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(1)];
             });
 
@@ -232,7 +232,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];
                 [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
             });
 
@@ -289,7 +289,7 @@ SPEC_BEGIN(OfflineTests)
                 //TODO: restclient callback order
                 [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
 
                 [[theValue([items count]) should] equal:theValue(0)];
             });
@@ -327,7 +327,7 @@ SPEC_BEGIN(OfflineTests)
                 [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];
                 [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
             });
         });

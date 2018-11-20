@@ -10,7 +10,7 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModelRepository.h"
-#import "EMSRequestModelSelectAllSpecification.h"
+#import "EMSFilterByNothingSpecification.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 
@@ -340,7 +340,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 EMSRequestModel *model = requestSpy.argument;
                 [[model.requestId should] equal:expectedModel.requestId];
 
-                NSArray<EMSRequestModel *> *items = [repository query:[EMSRequestModelSelectAllSpecification new]];
+                NSArray<EMSRequestModel *> *items = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([items count]) should] equal:theValue(1)];
 
                 EMSRequestModel *poppedModel = [items firstObject];
