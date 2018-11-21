@@ -11,8 +11,9 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSFilterByNothingSpecification.h"
-#import "EMSShardDeleteByIdsSpecification.h"
-#import "EMSShardQueryByTypeSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
+#import "EMSFilterByTypeSpecification.h"
+#import "EMSSchemaContract.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -76,7 +77,8 @@ SPEC_BEGIN(EMSShardRepositoryTests)
             it(@"should delete the model from the table", ^{
                 EMSShard *expectedModel = createShard();
                 [repository add:expectedModel];
-                [repository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[expectedModel]]];
+                EMSFilterByValuesSpecification *deleteByIdsSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[expectedModel.shardId]                                                                                                                           column:SHARD_COLUMN_NAME_SHARD_ID];
+                [repository remove:deleteByIdsSpecification];
                 NSArray<EMSShard *> *result = [repository query:[EMSFilterByNothingSpecification new]];
                 [[result should] beEmpty];
             });
@@ -108,7 +110,8 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                 [repository add:thirdModel];
                 [repository add:fourthModel];
 
-                [repository remove:[[EMSShardDeleteByIdsSpecification alloc] initWithShards:@[secondModel, thirdModel]]];
+                EMSFilterByValuesSpecification *deleteByIdsSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[secondModel.shardId, thirdModel.shardId]                                                                                                                           column:SHARD_COLUMN_NAME_SHARD_ID];
+                [repository remove:deleteByIdsSpecification];
 
                 NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([results count]) should] equal:theValue(2)];
@@ -152,8 +155,9 @@ SPEC_BEGIN(EMSShardRepositoryTests)
                 [repository add:thirdModel];
                 [repository add:fourthModel];
 
-                NSArray *results = [repository query:[[EMSShardQueryByTypeSpecification alloc] initWithType:@"shardType1"]];
-
+                EMSFilterByTypeSpecification *filterByTypeSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"shardType1"
+                                                                                                                     column:SHARD_COLUMN_NAME_TYPE];
+                NSArray *results = [repository query:filterByTypeSpecification];
                 [[theValue([results count]) should] equal:theValue(2)];
                 [[results[0] should] equal:firstModel];
                 [[results[1] should] equal:fourthModel];

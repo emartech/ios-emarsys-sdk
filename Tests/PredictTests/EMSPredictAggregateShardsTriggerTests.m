@@ -9,8 +9,9 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSShardRepository.h"
 #import "EMSShard.h"
-#import "EMSShardDeleteByIdsSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
 #import "EMSFilterByNothingSpecification.h"
+#import "EMSSchemaContract.h"
 
 SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
 
@@ -89,7 +90,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
 
                 NSArray *const shards = @[shard];
                 EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
-                EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
+                EMSFilterByValuesSpecification *deleteByIdsSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[shard.shardId]                                                                                                                           column:SHARD_COLUMN_NAME_SHARD_ID];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper should] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:) withArguments:requestModel, kw_any()];
@@ -114,7 +115,7 @@ SPEC_BEGIN(EMSPredictAggregateShardsTriggerTests)
 
                 NSArray *const shards = @[];
                 EMSFilterByNothingSpecification *specification = [EMSFilterByNothingSpecification new];
-                EMSShardDeleteByIdsSpecification *deleteByIdsSpecification = [[EMSShardDeleteByIdsSpecification alloc] initWithShards:shards];
+                EMSFilterByValuesSpecification *deleteByIdsSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:shards                                                                                                                           column:SHARD_COLUMN_NAME_SHARD_ID];
                 [[shardRepository should] receive:@selector(query:) andReturn:shards withArguments:specification];
                 [[predictMapper shouldNot] receive:@selector(requestFromShards:) andReturn:requestModel withArguments:shards];
                 [[requestManager shouldNot] receive:@selector(submitRequestModel:withCompletionBlock:) withArguments:requestModel, kw_any()];

@@ -33,4 +33,32 @@
     return [self values];
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![[other class] isEqual:[self class]])
+        return NO;
+
+    return [self isEqualToSpecification:other];
+}
+
+- (BOOL)isEqualToSpecification:(EMSFilterByValuesSpecification *)specification {
+    if (self == specification)
+        return YES;
+    if (specification == nil)
+        return NO;
+    if (self.values != specification.values && ![self.values isEqualToArray:specification.values])
+        return NO;
+    if (self.column != specification.column && ![self.column isEqualToString:specification.column])
+        return NO;
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash = [self.values hash];
+    hash = hash * 31u + [self.column hash];
+    return hash;
+}
+
+
 @end
