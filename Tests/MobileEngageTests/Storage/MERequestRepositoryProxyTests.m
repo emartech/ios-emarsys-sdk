@@ -10,7 +10,8 @@
 #import "EMSCompositeRequestModel.h"
 #import "EMSQueryOldestRowSpecification.h"
 #import "FakeRequestRepository.h"
-#import "MERequestModelSelectEventsSpecification.h"
+#import "EMSFilterByTypeSpecification.h"
+#import "EMSSchemaContract.h"
 #import "EMSRequestModelMatcher.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
@@ -64,13 +65,15 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
         id (^createFakeRequestRepository)(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) = ^id(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) {
             EMSQueryOldestRowSpecification *selectFirstSpecification = [EMSQueryOldestRowSpecification new];
-            MERequestModelSelectEventsSpecification *selectAllCustomEventSpecification = [MERequestModelSelectEventsSpecification new];
+            EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+                                                                                                                       column:REQUEST_COLUMN_NAME_URL];
+            
             EMSFilterByNothingSpecification *selectAllRequestsSpecification = [EMSFilterByNothingSpecification new];
 
             FakeRequestRepository *fakeRequestRepository = [FakeRequestRepository new];
             fakeRequestRepository.queryResponseMapping = @{
                 NSStringFromClass([selectFirstSpecification class]): nextRequest,
-                NSStringFromClass([selectAllCustomEventSpecification class]): allCustomEvents,
+                NSStringFromClass([filterCustomEventsSpecification class]): allCustomEvents,
                 NSStringFromClass([selectAllRequestsSpecification class]): AllRequests};
 
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:fakeRequestRepository

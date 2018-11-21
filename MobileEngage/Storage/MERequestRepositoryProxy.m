@@ -5,7 +5,7 @@
 #import "MERequestRepositoryProxy.h"
 #import "MEButtonClickRepository.h"
 #import "MEDisplayedIAMRepository.h"
-#import "MERequestModelSelectEventsSpecification.h"
+#import "EMSFilterByTypeSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "MERequestTools.h"
 #import "EMSFilterByNothingSpecification.h"
@@ -13,6 +13,7 @@
 #import "EmarsysSDKVersion.h"
 #import "MEInApp.h"
 #import "MERequestContext.h"
+#import "EMSSchemaContract.h"
 
 @implementation MERequestRepositoryProxy
 
@@ -64,7 +65,9 @@
 }
 
 - (EMSRequestModel *)createCompositeRequestModel:(EMSRequestModel *)requestModel {
-    NSArray *allCustomEvents = [self.requestModelRepository query:[MERequestModelSelectEventsSpecification new]];
+    EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+                                                                                                               column:REQUEST_COLUMN_NAME_URL];
+    NSArray *allCustomEvents = [self.requestModelRepository query:filterCustomEventsSpecification];
 
     EMSCompositeRequestModel *composite = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setHeaders:requestModel.headers];

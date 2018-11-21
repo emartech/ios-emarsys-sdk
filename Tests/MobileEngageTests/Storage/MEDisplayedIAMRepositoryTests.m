@@ -4,8 +4,9 @@
 #import "Kiwi.h"
 #import "MEDisplayedIAMRepository.h"
 #import "EMSFilterByNothingSpecification.h"
-#import "MEDisplayedIAMFilterByCampaignIdSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
 #import "EMSSqliteSchemaHandler.h"
+#import "EMSSchemaContract.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -44,7 +45,9 @@ SPEC_BEGIN(MEDisplayedIAMRepositoryTests)
             [repository add:displayedIAMFirst];
             [repository add:displayedIAMSecond];
 
-            [repository remove:[[MEDisplayedIAMFilterByCampaignIdSpecification alloc] initWithCampaignId:@"98765432"]];
+            EMSFilterByValuesSpecification *filterByIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[@"98765432"]
+                                                                                                                      column:COLUMN_NAME_CAMPAIGN_ID];
+            [repository remove:filterByIdSpecification];
 
             NSArray<MEDisplayedIAM *> *items = [repository query:[EMSFilterByNothingSpecification new]];
             [[theValue([items count]) should] equal:theValue(1)];

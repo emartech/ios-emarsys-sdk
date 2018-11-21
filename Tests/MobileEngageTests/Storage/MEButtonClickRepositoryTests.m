@@ -5,7 +5,8 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "MEButtonClickRepository.h"
 #import "EMSFilterByNothingSpecification.h"
-#import "MEButtonClickFilterByCampaignIdSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
+#import "EMSSchemaContract.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -52,7 +53,8 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
                 [repository add:buttonClickFirst];
                 [repository add:buttonClickSecond];
 
-                [repository remove:[[MEButtonClickFilterByCampaignIdSpecification alloc] initWithCampaignId:@"kamp2"]];
+                EMSFilterByValuesSpecification *filterByIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[@"kamp2"] column:COLUMN_NAME_CAMPAIGN_ID];
+                [repository remove:filterByIdSpecification];
 
                 NSArray<MEButtonClick *> *items = [repository query:[EMSFilterByNothingSpecification new]];
                 [[theValue([items count]) should] equal:theValue(1)];

@@ -3,8 +3,8 @@
 //
 
 #import "MEIAMCleanupResponseHandler.h"
-#import "MEButtonClickFilterByCampaignIdSpecification.h"
-#import "MEDisplayedIAMFilterByCampaignIdSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
+#import "EMSSchemaContract.h"
 #import "MERequestMatcher.h"
 
 @interface MEIAMCleanupResponseHandler()
@@ -37,8 +37,10 @@
 
 - (void)handleResponse:(EMSResponseModel *)response {
     for (NSString *campaignId in response.parsedBody[@"old_messages"]) {
-        [self.buttonClickRepository remove:[[MEButtonClickFilterByCampaignIdSpecification alloc] initWithCampaignId:campaignId]];
-        [self.displayedIAMRepository remove:[[MEDisplayedIAMFilterByCampaignIdSpecification alloc] initWithCampaignId:campaignId]];
+        EMSFilterByValuesSpecification *filterByCampaignIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[campaignId]
+                                                                                                                          column:COLUMN_NAME_CAMPAIGN_ID];
+        [self.buttonClickRepository remove:filterByCampaignIdSpecification];
+        [self.displayedIAMRepository remove:filterByCampaignIdSpecification];
     }
 }
 

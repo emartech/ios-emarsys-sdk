@@ -7,9 +7,10 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSRequestModelRepository.h"
-#import "MERequestModelSelectEventsSpecification.h"
+#import "EMSFilterByTypeSpecification.h"
 #import "NSDate+EMSCore.h"
 #import "EMSSqliteSchemaHandler.h"
+#import "EMSSchemaContract.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -72,7 +73,10 @@ SPEC_BEGIN(RequestModelSpecificationTests)
                 [_repository add:item3];
                 [_repository add:item4];
 
-                [[[_repository query:[MERequestModelSelectEventsSpecification new]] should] equal:events];
+                EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+                                                                                                                           column:REQUEST_COLUMN_NAME_URL];
+
+                [[[_repository query:filterCustomEventsSpecification] should] equal:events];
             });
 
             it(@"should not return none custom event requests", ^{
@@ -88,7 +92,9 @@ SPEC_BEGIN(RequestModelSpecificationTests)
                 [_repository add:item3];
                 [_repository add:item4];
 
-                [[[_repository query:[MERequestModelSelectEventsSpecification new]] should] equal:events];
+                EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+                                                                                                                           column:REQUEST_COLUMN_NAME_URL];
+                [[[_repository query:filterCustomEventsSpecification] should] equal:events];
 
             });
 
