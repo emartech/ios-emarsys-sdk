@@ -474,6 +474,8 @@
 		8A102D712112F3B50046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8A102E402112F7F90046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
+		8A51A2CB21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
+		8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A56D64021A5590500E7CF62 /* EMSFilterByValuesSpecification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */; };
 		8A56D64121A5590500E7CF62 /* EMSFilterByValuesSpecification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A56D63F21A5590500E7CF62 /* EMSFilterByValuesSpecification.m */; };
 		8A56D64621A561B700E7CF62 /* EMSRequestModel+RequestIds.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A56D64421A561B700E7CF62 /* EMSRequestModel+RequestIds.h */; };
@@ -868,6 +870,7 @@
 		8A05D0B22139559D00252CE0 /* Emarsys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Emarsys.m; sourceTree = "<group>"; };
 		8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileEngageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSQueryOldestRowSpecificationTests.m; sourceTree = "<group>"; };
 		8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSFilterByValuesSpecification.h; sourceTree = "<group>"; };
 		8A56D63F21A5590500E7CF62 /* EMSFilterByValuesSpecification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecification.m; sourceTree = "<group>"; };
 		8A56D64421A561B700E7CF62 /* EMSRequestModel+RequestIds.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EMSRequestModel+RequestIds.h"; sourceTree = "<group>"; };
@@ -1831,6 +1834,7 @@
 			children = (
 				8AB2F99321075B270030E659 /* EMSRequestModelRepositoryTests.m */,
 				32C6F3CA2497F122191C9888 /* EMSShardRepositoryTests.m */,
+				8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2718,6 +2722,7 @@
 				166B40272119A8E4006CD35C /* EMSDeviceInfoTests.m in Sources */,
 				166B40282119A8E5006CD35C /* FakeCompletionHandler.m in Sources */,
 				166B40292119A8E5006CD35C /* FakeLogRepository.m in Sources */,
+				8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */,
 				166B402A2119A8E5006CD35C /* FakeConnectionWatchdog.m in Sources */,
 				166B402B2119A8E5006CD35C /* FakeConnectionChangeListener.m in Sources */,
 				166B40312119A8E5006CD35C /* FakeTimeStampProvider.m in Sources */,
@@ -2750,6 +2755,7 @@
 				166B3F9D2119A86E006CD35C /* FakeJSBridge.m in Sources */,
 				166B3F9F2119A86E006CD35C /* FakeRequestRepository.m in Sources */,
 				166B3FA02119A86E006CD35C /* FakeSpecification.m in Sources */,
+				8A51A2CB21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */,
 				166B3FA52119A86E006CD35C /* EMSRequestModelMatcher.m in Sources */,
 				166B3F802119A862006CD35C /* EMSWaiter.m in Sources */,
 				166B3F842119A862006CD35C /* FakeCompletionHandler.m in Sources */,
