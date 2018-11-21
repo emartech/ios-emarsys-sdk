@@ -10,10 +10,12 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
 #import "EMSFilterByNothingSpecification.h"
-#import "EMSRequestModelDeleteByIdsSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSSchemaContract.h"
+#import "EMSRequestModel+RequestIds.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -81,7 +83,8 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         it(@"should delete the model from the table", ^{
             EMSRequestModel *expectedModel = requestModel(@"https://url1.com", @{@"key1": @"value1"});
             [repository add:expectedModel];
-            [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:expectedModel]];
+            [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[expectedModel.requestId]
+                                                                               column:REQUEST_COLUMN_NAME_REQUEST_ID]];
             NSArray<EMSRequestModel *> *result = [repository query:[EMSRequestModelSelectFirstSpecification new]];
             [[result should] beEmpty];
         });
@@ -98,9 +101,11 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             [repository add:secondModel];
 
             EMSRequestModel *result1 = [repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject;
-            [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:firstModel]];
+            [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[firstModel.requestId]
+                                                                               column:REQUEST_COLUMN_NAME_REQUEST_ID]];
             EMSRequestModel *result2 = [repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject;
-            [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:secondModel]];
+            [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[secondModel.requestId]
+                                                                               column:REQUEST_COLUMN_NAME_REQUEST_ID]];
 
             [[result1 should] equal:firstModel];
             [[result2 should] equal:secondModel];
@@ -136,7 +141,8 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             [repository add:secondModel];
             [repository add:thirdModel];
 
-            [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:secondModel]];
+            [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[secondModel.requestId]
+                                                                               column:REQUEST_COLUMN_NAME_REQUEST_ID]];
 
             NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
             [[results[0] should] equal:firstModel];
@@ -157,7 +163,8 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             EMSCompositeRequestModel *compositeRequestModel = [EMSCompositeRequestModel new];
             compositeRequestModel.originalRequests = @[firstModel, thirdModel];
 
-            [repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:compositeRequestModel]];
+            [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:compositeRequestModel.requestIds
+                                                                               column:REQUEST_COLUMN_NAME_REQUEST_ID]];
 
             NSArray *results = [repository query:[EMSFilterByNothingSpecification new]];
             [[theValue([results count]) should] equal:theValue(2)];

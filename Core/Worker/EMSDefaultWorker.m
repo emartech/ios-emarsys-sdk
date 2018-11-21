@@ -5,9 +5,11 @@
 #import "EMSDefaultWorker.h"
 #import "NSError+EMSCore.h"
 #import "EMSRequestModelSelectFirstSpecification.h"
-#import "EMSRequestModelDeleteByIdsSpecification.h"
+#import "EMSFilterByValuesSpecification.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
+#import "EMSRequestModel+RequestIds.h"
+#import "EMSSchemaContract.h"
 
 @interface EMSDefaultWorker ()
 
@@ -67,7 +69,8 @@
                                                                      onComplete:^(BOOL shouldContinue) {
                                                                          [weakSelf unlock];
                                                                          if (shouldContinue) {
-                                                                             [weakSelf.repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:model]];
+                                                                             [weakSelf.repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:model.requestIds
+                                                                                                                                                         column:REQUEST_COLUMN_NAME_REQUEST_ID]];
                                                                              [weakSelf.coreQueue addOperationWithBlock:^{
                                                                                  [weakSelf run];
                                                                              }];
@@ -114,7 +117,8 @@
 - (EMSRequestModel *)nextNonExpiredModel {
     EMSRequestModel *model;
     while ((model = [self.repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject) && [self isExpired:model]) {
-        [self.repository remove:[[EMSRequestModelDeleteByIdsSpecification alloc] initWithRequestModel:model]];
+        [self.repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:model.requestIds
+                                                                                column:REQUEST_COLUMN_NAME_REQUEST_ID]];
         self.errorBlock(model.requestId, [NSError errorWithCode:408
                                                       localizedDescription:@"Request expired"]);
     }
