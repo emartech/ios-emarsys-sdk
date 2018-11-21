@@ -4,7 +4,7 @@
 
 #import "EMSDefaultWorker.h"
 #import "NSError+EMSCore.h"
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSQueryOldestRowSpecification.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
@@ -116,7 +116,7 @@
 
 - (EMSRequestModel *)nextNonExpiredModel {
     EMSRequestModel *model;
-    while ((model = [self.repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject) && [self isExpired:model]) {
+    while ((model = [self.repository query:[EMSQueryOldestRowSpecification new]].firstObject) && [self isExpired:model]) {
         [self.repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:model.requestIds
                                                                                 column:REQUEST_COLUMN_NAME_REQUEST_ID]];
         self.errorBlock(model.requestId, [NSError errorWithCode:408

@@ -8,7 +8,7 @@
 #import "MERequestRepositoryProxy.h"
 #import "EMSFilterByNothingSpecification.h"
 #import "EMSCompositeRequestModel.h"
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSQueryOldestRowSpecification.h"
 #import "FakeRequestRepository.h"
 #import "MERequestModelSelectEventsSpecification.h"
 #import "EMSRequestModelMatcher.h"
@@ -63,7 +63,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         };
 
         id (^createFakeRequestRepository)(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) = ^id(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) {
-            EMSRequestModelSelectFirstSpecification *selectFirstSpecification = [EMSRequestModelSelectFirstSpecification new];
+            EMSQueryOldestRowSpecification *selectFirstSpecification = [EMSQueryOldestRowSpecification new];
             MERequestModelSelectEventsSpecification *selectAllCustomEventSpecification = [MERequestModelSelectEventsSpecification new];
             EMSFilterByNothingSpecification *selectAllRequestsSpecification = [EMSFilterByNothingSpecification new];
 
@@ -297,7 +297,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3], @[modelCustomEvent1, model1, modelCustomEvent2, model2, modelCustomEvent3], [MEInApp new], requestContext);
 
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSRequestModelSelectFirstSpecification new]];
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSQueryOldestRowSpecification new]];
                 [[theValue([result count]) should] equal:theValue(1)];
                 [[[result firstObject] should] beSimilarWithRequest:compositeModel];
             });

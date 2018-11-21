@@ -1,9 +1,9 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSQueryOldestRowSpecification.h"
 
-@implementation EMSRequestModelSelectFirstSpecification
+@implementation EMSQueryOldestRowSpecification
 
 - (NSString *)orderBy {
     return @"ROWID ASC";

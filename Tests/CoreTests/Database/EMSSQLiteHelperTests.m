@@ -13,7 +13,7 @@
 #import "EMSSQLiteHelper+Test.h"
 #import "EMSShard.h"
 #import "EMSShardMapper.h"
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSQueryOldestRowSpecification.h"
 
 @interface EMSTestColumnInfo : NSObject
 
@@ -514,7 +514,7 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
                 [dbHelper insertModel:model2
                                mapper:mapper];
 
-                EMSRequestModelSelectFirstSpecification *queryByType = [[EMSRequestModelSelectFirstSpecification alloc] init];
+                EMSQueryOldestRowSpecification *queryByType = [[EMSQueryOldestRowSpecification alloc] init];
 
                 NSArray *result = [dbHelper queryWithTable:mapper.tableName
                                                  selection:nil

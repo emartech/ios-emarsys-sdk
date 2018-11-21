@@ -8,7 +8,7 @@
 #import "EMSRequestModelRepositoryProtocol.h"
 #import "EMSRequestModelRepository.h"
 #import "EMSSqliteSchemaHandler.h"
-#import "EMSRequestModelSelectFirstSpecification.h"
+#import "EMSQueryOldestRowSpecification.h"
 #import "EMSFilterByNothingSpecification.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSCompositeRequestModel.h"
@@ -56,7 +56,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
 
     describe(@"query", ^{
         it(@"should return empty array when the table is isEmpty", ^{
-            NSArray<EMSRequestModel *> *result = [repository query:[EMSRequestModelSelectFirstSpecification new]];
+            NSArray<EMSRequestModel *> *result = [repository query:[EMSQueryOldestRowSpecification new]];
             [[result should] beEmpty];
         });
     });
@@ -74,7 +74,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         it(@"should insert the requestModel to the requestModelRepository", ^{
             EMSRequestModel *expectedModel = requestModel(@"https://url1.com", @{@"key1": @"value1"});
             [repository add:expectedModel];
-            NSArray<EMSRequestModel *> *result = [repository query:[EMSRequestModelSelectFirstSpecification new]];
+            NSArray<EMSRequestModel *> *result = [repository query:[EMSQueryOldestRowSpecification new]];
             [[result.firstObject should] equal:expectedModel];
         });
     });
@@ -85,7 +85,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             [repository add:expectedModel];
             [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[expectedModel.requestId]
                                                                                column:REQUEST_COLUMN_NAME_REQUEST_ID]];
-            NSArray<EMSRequestModel *> *result = [repository query:[EMSRequestModelSelectFirstSpecification new]];
+            NSArray<EMSRequestModel *> *result = [repository query:[EMSQueryOldestRowSpecification new]];
             [[result should] beEmpty];
         });
     });
@@ -100,10 +100,10 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             [repository add:firstModel];
             [repository add:secondModel];
 
-            EMSRequestModel *result1 = [repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject;
+            EMSRequestModel *result1 = [repository query:[EMSQueryOldestRowSpecification new]].firstObject;
             [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[firstModel.requestId]
                                                                                column:REQUEST_COLUMN_NAME_REQUEST_ID]];
-            EMSRequestModel *result2 = [repository query:[EMSRequestModelSelectFirstSpecification new]].firstObject;
+            EMSRequestModel *result2 = [repository query:[EMSQueryOldestRowSpecification new]].firstObject;
             [repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[secondModel.requestId]
                                                                                column:REQUEST_COLUMN_NAME_REQUEST_ID]];
 
