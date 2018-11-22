@@ -478,6 +478,8 @@
 		8A3B594621A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
 		8A3B594821A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */; };
 		8A3B594921A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */; };
+		8A3B594B21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594A21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m */; };
+		8A3B594C21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594A21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m */; };
 		8A51A2CB21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A56D64021A5590500E7CF62 /* EMSFilterByValuesSpecification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */; };
@@ -876,6 +878,7 @@
 		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByNothingSpecificationTests.m; sourceTree = "<group>"; };
 		8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecificationTests.m; sourceTree = "<group>"; };
+		8A3B594A21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByTypeSpecificationTests.m; sourceTree = "<group>"; };
 		8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSQueryOldestRowSpecificationTests.m; sourceTree = "<group>"; };
 		8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSFilterByValuesSpecification.h; sourceTree = "<group>"; };
 		8A56D63F21A5590500E7CF62 /* EMSFilterByValuesSpecification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecification.m; sourceTree = "<group>"; };
@@ -1843,6 +1846,7 @@
 				8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */,
 				8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */,
 				8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */,
+				8A3B594A21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2713,6 +2717,7 @@
 			files = (
 				166B40132119A8E4006CD35C /* EMSResponseModelTests.m in Sources */,
 				166B40142119A8E4006CD35C /* EMSRequestModelRepositoryTests.m in Sources */,
+				8A3B594C21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m in Sources */,
 				166B40152119A8E4006CD35C /* EMSShardRepositoryTests.m in Sources */,
 				166B40162119A8E4006CD35C /* EMSDefaultWorkerTests.m in Sources */,
 				166B40172119A8E4006CD35C /* EMSTimestampProviderTests.m in Sources */,
@@ -2770,6 +2775,7 @@
 				166B3FA52119A86E006CD35C /* EMSRequestModelMatcher.m in Sources */,
 				166B3F802119A862006CD35C /* EMSWaiter.m in Sources */,
 				166B3F842119A862006CD35C /* FakeCompletionHandler.m in Sources */,
+				8A3B594B21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m in Sources */,
 				166B3F852119A862006CD35C /* FakeLogRepository.m in Sources */,
 				166B3F862119A862006CD35C /* FakeConnectionWatchdog.m in Sources */,
 				166B3F872119A862006CD35C /* FakeConnectionChangeListener.m in Sources */,
