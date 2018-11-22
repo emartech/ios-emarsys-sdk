@@ -474,6 +474,8 @@
 		8A102D712112F3B50046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8A102E402112F7F90046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
+		8A3B594521A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
+		8A3B594621A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
 		8A51A2CB21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A56D64021A5590500E7CF62 /* EMSFilterByValuesSpecification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */; };
@@ -870,6 +872,7 @@
 		8A05D0B22139559D00252CE0 /* Emarsys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Emarsys.m; sourceTree = "<group>"; };
 		8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileEngageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByNothingSpecificationTests.m; sourceTree = "<group>"; };
 		8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSQueryOldestRowSpecificationTests.m; sourceTree = "<group>"; };
 		8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSFilterByValuesSpecification.h; sourceTree = "<group>"; };
 		8A56D63F21A5590500E7CF62 /* EMSFilterByValuesSpecification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecification.m; sourceTree = "<group>"; };
@@ -1835,6 +1838,7 @@
 				8AB2F99321075B270030E659 /* EMSRequestModelRepositoryTests.m */,
 				32C6F3CA2497F122191C9888 /* EMSShardRepositoryTests.m */,
 				8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */,
+				8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2733,6 +2737,7 @@
 				166B40362119A8E5006CD35C /* EMSSQLiteHelperTests.m in Sources */,
 				8A602296219C6EF4000080FC /* EMSSQLStatementFactoryTests.m in Sources */,
 				374604CC7D72FDBD82B844A7 /* DbTriggerTests.m in Sources */,
+				8A3B594621A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */,
 				32C6FD21766277D456729E2D /* EMSSchedulerTests.m in Sources */,
 				32C6F537A92F6E9B6414E843 /* NSURL+EMSCoreTests.m in Sources */,
 				37460F34043A699280509CD5 /* EMSCompletionMiddlewareTests.m in Sources */,
@@ -2830,6 +2835,7 @@
 				37460FE8E5129D15F541D35F /* PRERequestContextTests.m in Sources */,
 				32C6F41C31B351C9BC4BDAD8 /* EMSPredictMapperTests.m in Sources */,
 				32C6FCAAC079AA616B480DDE /* NSURL+EMSCoreTests.m in Sources */,
+				8A3B594521A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */,
 				32C6F398804ECF9F42182677 /* EMSPredictAggregateShardsTriggerTests.m in Sources */,
 				37460781D3470FDF21CEF9DA /* EMSCartItemUtilsTests.m in Sources */,
 				32C6FCF47B5D6CF5F00F2BA1 /* EMSVisitorIdResponseHandlerTests.m in Sources */,
