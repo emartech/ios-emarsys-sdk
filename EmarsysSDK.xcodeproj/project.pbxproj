@@ -476,6 +476,8 @@
 		8A102E402112F7F90046BAFB /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		8A3B594521A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
 		8A3B594621A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
+		8A3B594821A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */; };
+		8A3B594921A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */; };
 		8A51A2CB21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */; };
 		8A56D64021A5590500E7CF62 /* EMSFilterByValuesSpecification.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */; };
@@ -873,6 +875,7 @@
 		8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileEngageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByNothingSpecificationTests.m; sourceTree = "<group>"; };
+		8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecificationTests.m; sourceTree = "<group>"; };
 		8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSQueryOldestRowSpecificationTests.m; sourceTree = "<group>"; };
 		8A56D63E21A5590500E7CF62 /* EMSFilterByValuesSpecification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSFilterByValuesSpecification.h; sourceTree = "<group>"; };
 		8A56D63F21A5590500E7CF62 /* EMSFilterByValuesSpecification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecification.m; sourceTree = "<group>"; };
@@ -1839,6 +1842,7 @@
 				32C6F3CA2497F122191C9888 /* EMSShardRepositoryTests.m */,
 				8A51A2CA21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m */,
 				8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */,
+				8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2729,6 +2733,7 @@
 				8A51A2CC21A5A48D00BB11A0 /* EMSQueryOldestRowSpecificationTests.m in Sources */,
 				166B402A2119A8E5006CD35C /* FakeConnectionWatchdog.m in Sources */,
 				166B402B2119A8E5006CD35C /* FakeConnectionChangeListener.m in Sources */,
+				8A3B594921A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */,
 				166B40312119A8E5006CD35C /* FakeTimeStampProvider.m in Sources */,
 				166B40322119A8E5006CD35C /* NSURLRequest+CoreTests.m in Sources */,
 				166B40332119A8E5006CD35C /* NSDate+EMSCoreTests.m in Sources */,
@@ -2752,6 +2757,7 @@
 			files = (
 				166B3F902119A86E006CD35C /* MEIAMDidAppear.m in Sources */,
 				166B3F942119A86E006CD35C /* FakeResponseHandler.m in Sources */,
+				8A3B594821A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */,
 				166B3F972119A86E006CD35C /* FakeInAppHandler.m in Sources */,
 				166B3F982119A86E006CD35C /* FakeRequestManager.m in Sources */,
 				166B3F992119A86E006CD35C /* FakeStatusDelegate.m in Sources */,
