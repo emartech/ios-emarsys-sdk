@@ -144,6 +144,12 @@
     NSInteger statusCode = httpUrlResponse.statusCode;
     const BOOL hasError = error || statusCode < 200 || statusCode > 299;
     const BOOL nonRetriableRequest = [self isStatusCodeNonRetriable:statusCode] || [self isErrorNonRetriable:error];
+
+    if (onComplete) {
+        const BOOL shouldContinue = !hasError || nonRetriableRequest;
+        onComplete(shouldContinue);
+    }
+
     if (self.errorBlock && nonRetriableRequest) {
         [self executeErrorBlockWithModel:requestModel
                             responseData:data
@@ -155,10 +161,6 @@
                               responseData:data
                                   response:httpUrlResponse
                        networkingStartTime:networkingStartTime];
-    }
-    if (onComplete) {
-        const BOOL shouldContinue = !hasError || nonRetriableRequest;
-        onComplete(shouldContinue);
     }
 }
 

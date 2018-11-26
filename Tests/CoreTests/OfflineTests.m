@@ -282,15 +282,11 @@ SPEC_BEGIN(OfflineTests)
                 [EMSWaiter waitForExpectations:@[expectation]
                                        timeout:300];
 
-                [[watchdog.isConnectedCallCount should] equal:@3];
+                [[watchdog.isConnectedCallCount should] equal:@4];
                 [[completionHandler.successCount should] equal:@2];
                 [[completionHandler.errorCount should] equal:@1];
 
-                //TODO: restclient callback order
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-
                 NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-
                 [[theValue([items count]) should] equal:theValue(0)];
             });
 
