@@ -144,9 +144,15 @@
     }
     NSString *messageId = [userInfo messageId];
     if (messageId) {
-        EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:messageId
-                                                                                      requestContext:self.requestContext];
-        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
+        EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:@"push:click"
+                                                                              eventAttributes:@{
+                                                                                  @"origin": @"main",
+                                                                                  @"sid": messageId
+                                                                              }
+                                                                                         type:@"internal"
+                                                                               requestContext:self.requestContext];
+        [self.requestManager submitRequestModel:requestModel
+                            withCompletionBlock:completionBlock];
     } else {
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing messageId"]);

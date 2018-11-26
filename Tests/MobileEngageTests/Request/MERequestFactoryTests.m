@@ -103,16 +103,6 @@ SPEC_BEGIN(MERequestFactoryTests)
                 apploginPayload[@"push_token"] = @NO;
             });
 
-
-            beforeEach(^{
-                config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                    [builder setMerchantId:@"dummyMerchantId"];
-                    [builder setContactFieldId:@3];
-                }];
-            });
-
             it(@"should result in applogin request if there was previous applogin with same payload and there is no meid", ^{
                 MERequestContext *requestContext = requestContextBlock([NSDate date]);
                 requestContext.config = config;

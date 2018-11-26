@@ -10,6 +10,7 @@
 #import "EMSDictionaryValidator.h"
 #import "MEInAppMessage.h"
 #import "MEInApp.h"
+#import "NSDictionary+MobileEngage.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -73,13 +74,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         }
     }
 
-    [self.mobileEngage trackMessageOpenWithUserInfo:userInfo];
     NSDictionary *action = [self actionFromResponse:response];
     if (action) {
-        [self.mobileEngage trackInternalCustomEvent:@"richNotification:actionClicked"
+        [self.mobileEngage trackInternalCustomEvent:@"push:click"
                                     eventAttributes:@{
+                                        @"origin": @"button",
                                         @"button_id": action[@"id"],
-                                        @"title": action[@"title"]
+                                        @"sid": [userInfo messageId]
                                     } completionBlock:nil];
         NSString *type = action[@"type"];
         if ([type isEqualToString:@"MEAppEvent"]) {
@@ -94,6 +95,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                 eventAttributes:action[@"payload"]
                                 completionBlock:nil];
         }
+    } else {
+        [self.mobileEngage trackMessageOpenWithUserInfo:userInfo];
     }
     completionHandler();
 }
