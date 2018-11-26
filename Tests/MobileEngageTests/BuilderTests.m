@@ -1,12 +1,11 @@
 #import "Kiwi.h"
 #import "EMSConfig.h"
-#import "EMSConfigBuilder.h"
 
 SPEC_BEGIN(BuilderTest)
 
         describe(@"setExperimentalFeatures", ^{
             it(@"should set the given accepted experimental features in the config", ^{
-                NSArray *features = @[INAPP_MESSAGING];
+                NSArray *features = @[];
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];

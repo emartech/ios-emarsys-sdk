@@ -112,8 +112,8 @@ SPEC_BEGIN(EmarsysTests)
 
             context(@"ResponseHandlers", ^{
 
-                it(@"should register MEIDResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
+                it(@"should register MEIDResponseHandler", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     BOOL registered = NO;
                     for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -138,8 +138,8 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registered) should] beYes];
                 });
 
-                it(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX and INAPP is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING, USER_CENTRIC_INBOX]
+                it(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
                                        withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
@@ -152,8 +152,8 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registerCount) should] equal:theValue(1)];
                 });
 
-                it(@"should register MEIAMResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
+                it(@"should register MEIAMResponseHandler", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     BOOL registered = NO;
                     for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -165,8 +165,8 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registered) should] beYes];
                 });
 
-                it(@"should register MEIAMCleanupResponseHandler if INAPP is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
+                it(@"should register MEIAMCleanupResponseHandler", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     BOOL registered = NO;
                     for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -176,19 +176,6 @@ SPEC_BEGIN(EmarsysTests)
                     }
 
                     [[theValue(registered) should] beYes];
-                });
-
-                it(@"should not register MEIAMCleanupResponseHandler & MEIAMResponseHandler if INAPP is turned off", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
-
-                    NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]] || [responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
-                            registerCount++;
-                        }
-                    }
-
-                    [[theValue(registerCount) should] equal:theValue(0)];
                 });
 
                 it(@"should register EMSVisitorIdResponseHandler if no features are turned on", ^{
@@ -204,8 +191,8 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registerCount) should] equal:theValue(1)];
                 });
 
-                it(@"should register EMSVisitorIdResponseHandler if INAPP feature is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[INAPP_MESSAGING] withDependencyContainer:nil];
+                it(@"should register EMSVisitorIdResponseHandler", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
                     NSUInteger registerCount = 0;
                     for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {

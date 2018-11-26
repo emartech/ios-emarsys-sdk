@@ -20,17 +20,10 @@
                                                               requestContext:requestContext];
     if ([self shouldSendLastMobileActivityWithRequestContext:requestContext
                                       currentAppLoginPayload:requestModel.payload]) {
-        if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
-            requestModel = [MERequestFactory createCustomEventModelWithEventName:@"last_mobile_activity"
-                                                                 eventAttributes:nil
-                                                                            type:@"internal"
-                                                                  requestContext:requestContext];
-        } else {
-            requestModel = [self requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/ems_lastMobileActivity"
-                                              method:HTTPMethodPOST
-                              additionalPayloadBlock:nil
-                                      requestContext:requestContext];
-        }
+        requestModel = [MERequestFactory createCustomEventModelWithEventName:@"last_mobile_activity"
+                                                             eventAttributes:nil
+                                                                        type:@"internal"
+                                                              requestContext:requestContext];
     } else {
         requestContext.lastAppLoginPayload = requestModel.payload;
     }
@@ -38,8 +31,7 @@
 }
 
 + (BOOL)shouldSendLastMobileActivityWithRequestContext:(MERequestContext *)requestContext currentAppLoginPayload:(NSDictionary *)currentAppLoginPayload {
-    return (![MEExperimental isFeatureEnabled:INAPP_MESSAGING] && [requestContext.lastAppLoginPayload isEqual:currentAppLoginPayload]) ||
-        ([MEExperimental isFeatureEnabled:INAPP_MESSAGING] && [requestContext.lastAppLoginPayload isEqual:currentAppLoginPayload] && requestContext.meId);
+    return ([requestContext.lastAppLoginPayload isEqual:currentAppLoginPayload] && requestContext.meId);
 }
 
 + (EMSRequestModel *)createAppLoginRequestWithPushToken:(NSData *)pushToken requestContext:(MERequestContext *)requestContext {
@@ -107,52 +99,25 @@
 + (EMSRequestModel *)createTrackMessageOpenRequestWithMessageId:(NSString *)messageId
                                                  requestContext:(MERequestContext *)requestContext {
     EMSRequestModel *requestModel;
-    if ([MEExperimental isFeatureEnabled:MESSAGE_OPEN_ON_V3]) {
-        NSMutableDictionary *attributes = [NSMutableDictionary new];
-        if (messageId) {
-            attributes[@"sid"] = messageId;
-        }
-
-        requestModel = [MERequestFactory createCustomEventModelWithEventName:@"inbox:open"
-                                                             eventAttributes:attributes
-                                                                        type:@"internal"
-                                                              requestContext:requestContext];
-    } else {
-        if (messageId) {
-            requestModel = [MERequestFactory requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
-                                                          method:HTTPMethodPOST
-                                          additionalPayloadBlock:^(NSMutableDictionary *payload) {
-                                              payload[@"sid"] = messageId;
-                                          }
-                                                  requestContext:requestContext];
-        } else {
-            requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                    [builder setUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"];
-                }
-                                          timestampProvider:requestContext.timestampProvider
-                                               uuidProvider:requestContext.uuidProvider];
-        }
+    NSMutableDictionary *attributes = [NSMutableDictionary new];
+    if (messageId) {
+        attributes[@"sid"] = messageId;
     }
 
+    requestModel = [MERequestFactory createCustomEventModelWithEventName:@"inbox:open"
+                                                         eventAttributes:attributes
+                                                                    type:@"internal"
+                                                          requestContext:requestContext];
     return requestModel;
 }
 
 + (EMSRequestModel *)createTrackCustomEventRequestWithEventName:(NSString *)eventName
                                                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                                                  requestContext:(MERequestContext *)requestContext {
-    EMSRequestModel *requestModel;
-    if (![MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
-        requestModel = [MERequestFactory requestModelWithUrl:[NSString stringWithFormat:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/%@", eventName]
-                                                      method:HTTPMethodPOST
-                                      additionalPayloadBlock:^(NSMutableDictionary *payload) {
-                                          payload[@"attributes"] = eventAttributes;
-                                      } requestContext:requestContext];
-    } else {
-        requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
-                                                             eventAttributes:eventAttributes
-                                                                        type:@"custom"
-                                                              requestContext:requestContext];
-    }
+    EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
+                                                                          eventAttributes:eventAttributes
+                                                                                     type:@"custom"
+                                                                           requestContext:requestContext];
     return requestModel;
 }
 

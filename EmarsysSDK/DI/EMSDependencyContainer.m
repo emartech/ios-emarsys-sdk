@@ -93,7 +93,7 @@
                                                                                                  buttonClickRepository:buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository];
 
-    const BOOL shouldBatch = [MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX];
+    const BOOL shouldBatch = YES;
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
 
     _operationQueue = [NSOperationQueue new];
@@ -124,17 +124,13 @@
                                                                      uuidProvider:[EMSUUIDProvider new]
                                                                        merchantId:config.merchantId];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
-    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING] || [MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
-    }
-    if ([MEExperimental isFeatureEnabled:INAPP_MESSAGING]) {
-        [self.dbHelper open];
-        [responseHandlers addObjectsFromArray:@[
-            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository]]
-        ];
-    }
+    [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    [self.dbHelper open];
+    [responseHandlers addObjectsFromArray:@[
+        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                      displayIamRepository:displayedIAMRepository]]
+    ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
     EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
