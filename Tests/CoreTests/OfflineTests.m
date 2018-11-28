@@ -55,6 +55,17 @@ SPEC_BEGIN(OfflineTests)
             return queue;
         };
 
+        void (^assertForItemsCountInDb)(int expectedItemsCount, NSOperationQueue *operationQueue, EMSRequestModelRepository *requestModelRepository) = ^(int expectedItemsCount, NSOperationQueue *operationQueue, EMSRequestModelRepository *requestModelRepository) {
+            __block NSArray<EMSRequestModel *> *items = nil;
+            XCTestExpectation *itemsExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForQueryResult"];
+            [operationQueue addOperationWithBlock:^{
+                items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
+                [itemsExpectation fulfill];
+            }];
+            [EMSWaiter waitForExpectations:@[itemsExpectation]];
+
+            [[theValue([items count]) should] equal:theValue(expectedItemsCount)];
+        };
 
         describe(@"EMSRequestManager", ^{
 
@@ -98,7 +109,8 @@ SPEC_BEGIN(OfflineTests)
 
                 NSOperationQueue *operationQueue = testQueue();
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@YES, @YES, @YES]];
+                                                                                      connectionResponses:@[@YES, @YES, @YES]
+                                                                                              expectation:nil];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
@@ -116,13 +128,8 @@ SPEC_BEGIN(OfflineTests)
                         withCompletionBlock:^(NSError *error) {
                             [expectation fulfill];
                         }];
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                timeout:20];
 
-                //TODO: restclient callback order
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-
-                [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
+                [EMSWaiter waitForExpectations:@[expectation]];
             });
 
             it(@"should receive 0 response, requestModelRepository count 3 when 3 request sent and there is no internet connection", ^{
@@ -146,20 +153,29 @@ SPEC_BEGIN(OfflineTests)
                                                               uuidProvider:[EMSUUIDProvider new]];
 
                 NSOperationQueue *operationQueue = testQueue();
+
+                XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
+                [watchdogExpectation setExpectedFulfillmentCount:3];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@NO, @NO, @NO]];
+                                                                                      connectionResponses:@[@NO, @NO, @NO]
+                                                                                              expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1 withCompletionBlock:nil];
-                [manager submitRequestModel:model2 withCompletionBlock:nil];
-                [manager submitRequestModel:model3 withCompletionBlock:nil];
+                [manager submitRequestModel:model1
+                        withCompletionBlock:nil];
+                [manager submitRequestModel:model2
+                        withCompletionBlock:nil];
+                [manager submitRequestModel:model3
+                        withCompletionBlock:nil];
 
-                [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventually] equal:@3];
-                [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@0];
-                [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(3)];
+                [EMSWaiter waitForExpectations:@[watchdogExpectation]];
+
+                [[watchdog.isConnectedCallCount should] equal:@3];
+                [[completionHandler.successCount should] equal:@0];
+                [[completionHandler.errorCount should] equal:@0];
+
+                assertForItemsCountInDb(3, operationQueue, requestModelRepository);
             });
 
             it(@"should receive 2 response, requestModelRepository count 1 when 3 request sent and connections:YES, YES, NO", ^{
@@ -182,24 +198,37 @@ SPEC_BEGIN(OfflineTests)
                                                          timestampProvider:[EMSTimestampProvider new]
                                                               uuidProvider:[EMSUUIDProvider new]];
                 NSOperationQueue *operationQueue = testQueue();
+
+                XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
+                [watchdogExpectation setExpectedFulfillmentCount:3];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@YES, @YES, @NO]];
+                                                                                      connectionResponses:@[@YES, @YES, @NO]
+                                                                                              expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1 withCompletionBlock:nil];
-                [manager submitRequestModel:model2 withCompletionBlock:nil];
+                XCTestExpectation *completionBlockExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlocks"];
+                [completionBlockExpectation setExpectedFulfillmentCount:2];
+                [manager submitRequestModel:model1
+                        withCompletionBlock:^(NSError *error) {
+                            [completionBlockExpectation fulfill];
+                        }];
+                [manager submitRequestModel:model2
+                        withCompletionBlock:^(NSError *error) {
+                            [completionBlockExpectation fulfill];
+                        }];
                 [manager submitRequestModel:model3 withCompletionBlock:nil];
 
-                [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@3];
-                [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@2];
-                [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
+                [EMSWaiter waitForExpectations:@[watchdogExpectation, completionBlockExpectation]];
 
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(1)];
+                [[watchdog.isConnectedCallCount should] equal:@3];
+                [[completionHandler.successCount should] equal:@2];
+                [[completionHandler.errorCount should] equal:@0];
+
+                assertForItemsCountInDb(1, operationQueue, requestModelRepository);
             });
 
-            it(@"should stop the requestModelRepository when response is 500", ^{
+            it(@"should stop the worker when response is 500", ^{
                 EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"https://www.google.com"];
                         [builder setMethod:HTTPMethodGET];
@@ -220,23 +249,36 @@ SPEC_BEGIN(OfflineTests)
                                                               uuidProvider:[EMSUUIDProvider new]];
 
                 NSOperationQueue *operationQueue = testQueue();
+
+                XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
+                [watchdogExpectation setExpectedFulfillmentCount:2];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@YES, @YES, @YES]];
+                                                                                      connectionResponses:@[@YES, @YES, @YES]
+                                                                                              expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1 withCompletionBlock:nil];
-                [manager submitRequestModel:model2 withCompletionBlock:nil];
-                [manager submitRequestModel:model3 withCompletionBlock:nil];
+                XCTestExpectation *completionBlockExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlocks"];
+                [completionBlockExpectation setExpectedFulfillmentCount:1];
+                [manager submitRequestModel:model1
+                        withCompletionBlock:^(NSError *error) {
+                            [completionBlockExpectation fulfill];
+                        }];
+                [manager submitRequestModel:model2
+                        withCompletionBlock:nil];
+                [manager submitRequestModel:model3
+                        withCompletionBlock:nil];
 
-                [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
-                [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];
-                [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
+                [EMSWaiter waitForExpectations:@[watchdogExpectation, completionBlockExpectation]];
+
+                [[watchdog.isConnectedCallCount should] equal:@2];
+                [[completionHandler.successCount should] equal:@1];
+                [[completionHandler.errorCount should] equal:@0];
+
+                assertForItemsCountInDb(2, operationQueue, requestModelRepository);
             });
 
-            it(@"should not stop the requestModelRepository when response is 4xx", ^{
+            it(@"should not stop the worker when response is 4xx", ^{
                 EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"https://www.google.com"];
                         [builder setMethod:HTTPMethodGET];
@@ -258,39 +300,38 @@ SPEC_BEGIN(OfflineTests)
 
                 NSOperationQueue *operationQueue = testQueue();
                 operationQueue.maxConcurrentOperationCount = 1;
+                XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
+                [watchdogExpectation setExpectedFulfillmentCount:4];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@YES, @YES, @YES]];
+                                                                                      connectionResponses:@[@YES, @YES, @YES]
+                                                                                              expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResults"];
-                expectation.expectedFulfillmentCount = 3;
+                XCTestExpectation *completionBlockExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlocks"];
+                completionBlockExpectation.expectedFulfillmentCount = 2;
 
                 [manager submitRequestModel:model1
                         withCompletionBlock:^(NSError *error) {
-                            [expectation fulfill];
+                            [completionBlockExpectation fulfill];
                         }];
                 [manager submitRequestModel:model2
-                        withCompletionBlock:^(NSError *error) {
-                            [expectation fulfill];
-                        }];
+                        withCompletionBlock:nil];
                 [manager submitRequestModel:model3
                         withCompletionBlock:^(NSError *error) {
-                            [expectation fulfill];
+                            [completionBlockExpectation fulfill];
                         }];
 
-                [EMSWaiter waitForExpectations:@[expectation]
-                                       timeout:300];
+                [EMSWaiter waitForExpectations:@[watchdogExpectation, completionBlockExpectation]];
 
                 [[watchdog.isConnectedCallCount should] equal:@4];
                 [[completionHandler.successCount should] equal:@2];
                 [[completionHandler.errorCount should] equal:@1];
 
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[theValue([items count]) should] equal:theValue(0)];
+                assertForItemsCountInDb(0, operationQueue, requestModelRepository);
             });
 
-            it(@"should stop the requestModelRepository when response is 408", ^{
+            it(@"should stop the worker when response is 408", ^{
                 EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:@"https://www.google.com"];
                         [builder setMethod:HTTPMethodGET];
@@ -311,20 +352,33 @@ SPEC_BEGIN(OfflineTests)
                                                               uuidProvider:[EMSUUIDProvider new]];
 
                 NSOperationQueue *operationQueue = testQueue();
+                XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
+                [watchdogExpectation setExpectedFulfillmentCount:2];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
-                                                                                      connectionResponses:@[@YES, @YES, @YES]];
+                                                                                      connectionResponses:@[@YES, @YES, @YES]
+                                                                                              expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
 
-                [manager submitRequestModel:model1 withCompletionBlock:nil];
-                [manager submitRequestModel:model2 withCompletionBlock:nil];
-                [manager submitRequestModel:model3 withCompletionBlock:nil];
+                XCTestExpectation *completionBlockExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlocks"];
+                completionBlockExpectation.expectedFulfillmentCount = 1;
 
-                [[expectFutureValue(watchdog.isConnectedCallCount) shouldEventuallyBeforeTimingOutAfter(10)] equal:@2];
-                [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:@1];
-                [[expectFutureValue(completionHandler.errorCount) shouldEventually] equal:@0];
-                NSArray<EMSRequestModel *> *items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[expectFutureValue(theValue([items count])) shouldEventually] equal:theValue(2)];
+                [manager submitRequestModel:model1
+                        withCompletionBlock:^(NSError *error) {
+                            [completionBlockExpectation fulfill];
+                        }];
+                [manager submitRequestModel:model2
+                        withCompletionBlock:nil];
+                [manager submitRequestModel:model3
+                        withCompletionBlock:nil];
+
+                [EMSWaiter waitForExpectations:@[watchdogExpectation, completionBlockExpectation]];
+
+                [[watchdog.isConnectedCallCount should] equal:@2];
+                [[completionHandler.successCount should] equal:@1];
+                [[completionHandler.errorCount should] equal:@0];
+
+                assertForItemsCountInDb(2, operationQueue, requestModelRepository);
             });
         });
 

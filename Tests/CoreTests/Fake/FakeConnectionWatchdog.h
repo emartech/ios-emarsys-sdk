@@ -3,6 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <XCTest/XCTestExpectation.h>
 #import "EMSConnectionWatchdog.h"
 
 @interface FakeConnectionWatchdog : EMSConnectionWatchdog
@@ -10,6 +11,7 @@
 @property(nonatomic, strong) NSNumber *isConnectedCallCount;
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
-                   connectionResponses:(NSArray *)connectionResponses;
+                   connectionResponses:(NSArray *)connectionResponses
+                           expectation:(XCTestExpectation *)expectation;
 
 @end

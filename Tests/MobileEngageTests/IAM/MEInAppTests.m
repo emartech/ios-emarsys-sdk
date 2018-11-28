@@ -13,7 +13,6 @@
 #import "EMSViewControllerProvider.h"
 
 SPEC_BEGIN(MEInAppTests)
-        __block MEInApp *iam;
 
         __block MEInApp *inApp;
         __block FakeInAppTracker *inAppTracker;
@@ -28,11 +27,9 @@ SPEC_BEGIN(MEInAppTests)
         __block MEDisplayedIAMRepository *displayedIAMRepository;
 
         beforeEach(^{
-            iam = [[MEInApp alloc] init];
             NSDate *renderEndTime = [NSDate dateWithTimeIntervalSince1970:103];
             EMSTimestampProvider *mockTimeStampProvider = [EMSTimestampProvider mock];
             [mockTimeStampProvider stub:@selector(provideTimestamp) andReturn:renderEndTime];
-
 
             displayExpectation = [[XCTestExpectation alloc] initWithDescription:@"displayExpectation"];
             clickExpectation = [[XCTestExpectation alloc] initWithDescription:@"clickExpectation"];
@@ -330,33 +327,7 @@ SPEC_BEGIN(MEInAppTests)
             });
 
             it(@"should not try to display inapp in case if there is already one being displayed", ^{
-                NSString *expectedName = @"nameOfTheEvent";
-                NSDictionary <NSString *, NSObject *> *expectedPayload = @{
-                    @"payloadKey1": @{
-                        @"payloadKey2": @"payloadValue"
-                    }
-                };
-
-                FakeInAppHandler *inAppHandler = [FakeInAppHandler mock];
-                [iam setEventHandler:inAppHandler];
-                NSString *message = @"<!DOCTYPE html>\n"
-                                    "<html lang=\"en\">\n"
-                                    "  <head>\n"
-                                    "    <script>\n"
-                                    "      window.onload = function() {\n"
-                                    "        window.webkit.messageHandlers.triggerAppEvent.postMessage({id: '1', name: 'nameOfTheEvent', payload:{payloadKey1:{payloadKey2: 'payloadValue'}}});\n"
-                                    "      };\n"
-                                    "    </script>\n"
-                                    "  </head>\n"
-                                    "  <body style=\"background: transparent;\">\n"
-                                    "  </body>\n"
-                                    "</html>";
-                [[inAppHandler shouldEventually] receive:@selector(handleEvent:payload:)
-                                         withCountAtMost:1
-                                               arguments:expectedName,
-                                                         expectedPayload];
-
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": message}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -364,15 +335,19 @@ SPEC_BEGIN(MEInAppTests)
                                                                                      body:body
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response]
-               completionHandler:^{
-                   [iam showMessage:[[MEInAppMessage alloc] initWithResponse:response]
-                  completionHandler:^{
-                      [exp fulfill];
-                  }];
-               }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:3];
+                XCTestExpectation *fulfilledExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForFulfill"];
+                XCTestExpectation *timeoutExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForTimeout"];
+                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
+                 completionHandler:^{
+                     [fulfilledExpectation fulfill];
+                     [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
+                      completionHandler:^{
+                          [timeoutExpectation fulfill];
+                      }];
+                 }];
+                [EMSWaiter waitForExpectations:@[fulfilledExpectation]];
+                [EMSWaiter waitForTimeout:@[timeoutExpectation]
+                                  timeout:5];
             });
 
         });
@@ -419,13 +394,13 @@ SPEC_BEGIN(MEInAppTests)
                 UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
                 window.rootViewController = rootViewControllerMock;
 
-                iam.iamWindow = window;
+                inApp.iamWindow = window;
 
-                [((id <MEIAMProtocol>) iam) closeInAppMessageWithCompletionBlock:nil];
+                [((id <MEIAMProtocol>) inApp) closeInAppMessageWithCompletionBlock:nil];
 
                 void (^completionBlock)(void) = spy.argument;
                 completionBlock();
-                [[iam.iamWindow should] beNil];
+                [[inApp.iamWindow should] beNil];
             });
 
         });

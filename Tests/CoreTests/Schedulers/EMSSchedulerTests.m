@@ -344,8 +344,8 @@ SPEC_BEGIN(EMSSchedulerTests)
                                          [exp fulfill];
                                      }];
 
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:5.0];
+                [EMSWaiter waitForTimeout:@[exp]
+                                  timeout:5.0];
 
                 [[theValue(triggerCount) should] equal:theValue(4)];
             });
@@ -393,8 +393,8 @@ SPEC_BEGIN(EMSSchedulerTests)
                                          [exp fulfill];
                                      }];
 
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:5.0];
+                [EMSWaiter waitForTimeout:@[exp]
+                                  timeout:5.0];
 
                 [[theValue(triggerCount) should] equal:theValue(2)];
             });

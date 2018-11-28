@@ -8,6 +8,9 @@
 
 @interface EMSWaiter : NSObject
 
++ (void)waitForExpectations:(NSArray<XCTestExpectation *> *)expectations;
 + (void)waitForExpectations:(NSArray<XCTestExpectation *> *)expectations timeout:(NSTimeInterval)seconds;
+
++ (void)waitForTimeout:(NSArray<XCTestExpectation *> *)expectations timeout:(NSTimeInterval)seconds;
 
 @end
