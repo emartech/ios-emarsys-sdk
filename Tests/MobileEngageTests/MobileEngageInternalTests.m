@@ -215,6 +215,41 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
         describe(@"multiple applogin calls", ^{
 
+            it(@"should not result in multiple applogin requests even if the payload is the same", ^{
+                FakeRequestManager *requestManager = [FakeRequestManager new];
+                NSString *applicationCode = kAppId;
+                NSString *applicationPassword = @"appSecret";
+
+                _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
+                                                                      requestContext:requestContext
+                                                                   notificationCache:NULL];
+                [MEExperimental reset];
+
+                EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
+                        @"application_id": kAppId,
+                        @"platform": @"ios",
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"language": [EMSDeviceInfo languageCode],
+                        @"timezone": [EMSDeviceInfo timeZone],
+                        @"device_model": [EMSDeviceInfo deviceModel],
+                        @"os_version": [EMSDeviceInfo osVersion],
+                        @"contact_field_id": @3,
+                        @"contact_field_value": @"test@test.com",
+                        @"push_token": @NO,
+                        @"application_version": @"1.0",
+                        @"ems_sdk": EMARSYS_SDK_VERSION
+                });
+
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [requestContext setMeId:@"meId"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+
+                [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
+                NSDictionary *event = [[requestManager.submittedModels[1] payload][@"events"] firstObject];
+                [[event[@"type"] should] equal:@"internal"];
+                [[event[@"name"] should] equal:@"last_mobile_activity"];
+            });
+
             it(@"should result in multiple applogin requests if the payload is not the same", ^{
                 FakeRequestManager *requestManager = [FakeRequestManager new];
                 NSString *applicationCode = kAppId;
@@ -311,6 +346,48 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
+            });
+
+            it(@"should not result in multiple applogin requests if the payload is the same, even if MobileEngage is re-initialized", ^{
+                NSString *applicationCode = kAppId;
+                NSString *applicationPassword = @"appSecret";
+
+                FakeRequestManager *requestManager = [FakeRequestManager new];
+                _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
+                                                                      requestContext:requestContext
+                                                                   notificationCache:NULL];
+                [MEExperimental reset];
+
+                EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
+                        @"application_id": kAppId,
+                        @"platform": @"ios",
+                        @"hardware_id": [EMSDeviceInfo hardwareId],
+                        @"language": [EMSDeviceInfo languageCode],
+                        @"timezone": [EMSDeviceInfo timeZone],
+                        @"device_model": [EMSDeviceInfo deviceModel],
+                        @"os_version": [EMSDeviceInfo osVersion],
+                        @"contact_field_id": @3,
+                        @"contact_field_value": @"test@test.com",
+                        @"push_token": @NO,
+                        @"application_version": @"1.0",
+                        @"ems_sdk": EMARSYS_SDK_VERSION
+                });
+
+
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+
+                _mobileEngage = [MobileEngageInternal new];
+                _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
+                                                                      requestContext:requestContext
+                                                                   notificationCache:NULL];
+                [requestContext setMeId:@"meId"];
+                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+
+                [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
+
+                NSDictionary *event = [[requestManager.submittedModels[1] payload][@"events"] firstObject];
+                [[event[@"type"] should] equal:@"internal"];
+                [[event[@"name"] should] equal:@"last_mobile_activity"];
             });
 
         });

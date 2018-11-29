@@ -5,17 +5,16 @@ SPEC_BEGIN(BuilderTest)
 
         describe(@"setExperimentalFeatures", ^{
             it(@"should set the given accepted experimental features in the config", ^{
-                NSArray *features = @[];
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
-                    [builder setExperimentalFeatures:features];
+                    [builder setExperimentalFeatures:@[]];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
 
                 }];
 
-                [[config.experimentalFeatures should] equal:features];
+                [[config.experimentalFeatures should] equal:@[]];
             });
         });
 

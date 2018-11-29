@@ -93,8 +93,7 @@
                                                                                                  buttonClickRepository:buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository];
 
-    const BOOL shouldBatch = YES;
-    _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:shouldBatch];
+    _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
 
     _operationQueue = [NSOperationQueue new];
     _operationQueue.maxConcurrentOperationCount = 1;
