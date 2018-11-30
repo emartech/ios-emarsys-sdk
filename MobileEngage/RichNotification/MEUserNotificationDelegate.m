@@ -75,13 +75,17 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     }
 
     NSDictionary *action = [self actionFromResponse:response];
-    if (action) {
+    if (action && action[@"id"]) {
         [self.mobileEngage trackInternalCustomEvent:@"push:click"
                                     eventAttributes:@{
                                         @"origin": @"button",
                                         @"button_id": action[@"id"],
                                         @"sid": [userInfo messageId]
                                     } completionBlock:nil];
+    } else {
+        [self.mobileEngage trackMessageOpenWithUserInfo:userInfo];
+    }
+    if (action) {
         NSString *type = action[@"type"];
         if ([type isEqualToString:@"MEAppEvent"]) {
             [self.eventHandler handleEvent:action[@"name"]
@@ -95,15 +99,17 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                 eventAttributes:action[@"payload"]
                                 completionBlock:nil];
         }
-    } else {
-        [self.mobileEngage trackMessageOpenWithUserInfo:userInfo];
     }
     completionHandler();
 }
 
 - (NSDictionary *)actionFromResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0) {
+    NSDictionary *ems = response.notification.request.content.userInfo[@"ems"];
     NSDictionary *action;
-    for (NSDictionary *actionDict in response.notification.request.content.userInfo[@"ems"][@"actions"]) {
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        action = ems[@"default_action"];
+    }
+    for (NSDictionary *actionDict in ems[@"actions"]) {
         if ([response.actionIdentifier isEqualToString:actionDict[@"id"]]) {
             action = actionDict;
             break;
