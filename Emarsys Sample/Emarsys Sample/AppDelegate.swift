@@ -20,23 +20,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
             builder.setExperimentalFeatures([INAPP_MESSAGING, USER_CENTRIC_INBOX]);
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
-            builder.setMobileEngageApplicationCode("EMS5D-F1638", applicationPassword: "U1T/s8JG6QcRKGckFbuz/yVekNappWAl")
+            builder.setMobileEngageApplicationCode("14C19-A121F", applicationPassword: "PaNkfOD90AVpYimMBuZopCpm8OWCrREu")
         }
         Emarsys.setup(with: config)
         Emarsys.inApp.eventHandler = self
 
         application.registerForRemoteNotifications()
 
-        if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-                print(granted, error ?? "no error")
-                if (granted) {
-                    UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
-                }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            print(granted, error ?? "no error")
+            if (granted) {
+                UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
             }
-        } else {
-            application.registerUserNotificationSettings(UIUserNotificationSettings.init(types: [.alert, .badge, .sound], categories: nil))
         }
+
         return true
     }
 

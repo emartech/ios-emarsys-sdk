@@ -292,7 +292,6 @@
 		168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FC0540BEE69AC1B57B96 /* MEUserNotificationDelegate.h */; };
 		168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F293AE63FD25E7440DAF /* EMSUserNotificationCenterDelegate.h */; };
 		168F4A942108AF0900D0623B /* EMSConfigBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FBACFC9AC84705E361DF /* EMSConfigBuilder.h */; };
-		168F4A952108AF0900D0623B /* MEOsVersionUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F437B3453E225E470A9C /* MEOsVersionUtils.h */; };
 		168F4A972108AF0900D0623B /* NSData+MobileEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F337273FE75F74039200 /* NSData+MobileEngine.h */; };
 		168F4A982108AF0900D0623B /* MEAppLoginParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F77ECC29D6E79C3B2673 /* MEAppLoginParameters.h */; };
 		168F4A9A2108AF0900D0623B /* MobileEngageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FB2A54BC6177E5F09C4C /* MobileEngageInternal.h */; };
@@ -662,7 +661,6 @@
 		32C6F42EA6405ACB90450653 /* MEIAMJSCommandFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMJSCommandFactory.h; sourceTree = "<group>"; };
 		32C6F430173D7DC497C070C9 /* EMSRequestModelBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRequestModelBuilder.h; sourceTree = "<group>"; };
 		32C6F430E9A36DCB65831710 /* MERequestContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MERequestContext.m; sourceTree = "<group>"; };
-		32C6F437B3453E225E470A9C /* MEOsVersionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEOsVersionUtils.h; sourceTree = "<group>"; };
 		32C6F4533752F64AED27ADA1 /* private-NSRelease.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "private-NSRelease.sh"; sourceTree = "<group>"; };
 		32C6F45B5044A6E1F6CACB53 /* MEIAMViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMViewControllerTests.m; sourceTree = "<group>"; };
 		32C6F4604AB09449A184CED2 /* EMSRequestModelRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRequestModelRepository.h; sourceTree = "<group>"; };
@@ -1364,7 +1362,6 @@
 				32C6FCB5D08781A58C4E3C3E /* RichNotification */,
 				32C6FBACFC9AC84705E361DF /* EMSConfigBuilder.h */,
 				32C6F547B897657078BA092E /* EMSConfigBuilder.m */,
-				32C6F437B3453E225E470A9C /* MEOsVersionUtils.h */,
 				32C6F337273FE75F74039200 /* NSData+MobileEngine.h */,
 				32C6FFE46EF60F1D1A93B8EA /* NSData+MobileEngine.m */,
 				32C6F77ECC29D6E79C3B2673 /* MEAppLoginParameters.h */,
@@ -2187,7 +2184,6 @@
 				168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */,
 				168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */,
 				168F4A942108AF0900D0623B /* EMSConfigBuilder.h in Headers */,
-				168F4A952108AF0900D0623B /* MEOsVersionUtils.h in Headers */,
 				168F4A972108AF0900D0623B /* NSData+MobileEngine.h in Headers */,
 				168F4A982108AF0900D0623B /* MEAppLoginParameters.h in Headers */,
 				168F4A9A2108AF0900D0623B /* MobileEngageInternal.h in Headers */,
@@ -3128,7 +3124,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -3187,7 +3183,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3318,7 +3314,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				INFOPLIST_FILE = SdkHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3334,7 +3330,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				INFOPLIST_FILE = SdkHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3358,7 +3354,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = EmarsysSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3385,7 +3381,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = EmarsysSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

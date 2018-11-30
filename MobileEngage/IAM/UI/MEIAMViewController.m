@@ -47,7 +47,7 @@
             [weakSelf addFullscreenView:weakSelf.webView];
         }
         [weakSelf.webView loadHTMLString:message
-                             baseURL:nil];
+                                 baseURL:nil];
     });
 }
 
@@ -80,16 +80,14 @@ didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     [webView.scrollView setBounces:NO];
     [webView.scrollView setBouncesZoom:NO];
 
-    if (@available(iOS 11.0, *)) {
-        webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    }
+    webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     return webView;
 }
 
 - (void)addFullscreenView:(UIView *)view {
     [self.view addSubview:view];
     [view setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
+
     NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:view
                                                            attribute:NSLayoutAttributeTop
                                                            relatedBy:NSLayoutRelationEqual
@@ -97,16 +95,16 @@ didFinishNavigation:(null_unspecified WKNavigation *)navigation {
                                                            attribute:NSLayoutAttributeTop
                                                           multiplier:1
                                                             constant:0];
-    
+
     NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:view
-                                                           attribute:NSLayoutAttributeLeft
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:self.view
-                                                           attribute:NSLayoutAttributeLeft
-                                                          multiplier:1
-                                                            constant:0];
-    
-    
+                                                            attribute:NSLayoutAttributeLeft
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:self.view
+                                                            attribute:NSLayoutAttributeLeft
+                                                           multiplier:1
+                                                             constant:0];
+
+
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view
                                                                        attribute:NSLayoutAttributeWidth
                                                                        relatedBy:NSLayoutRelationEqual

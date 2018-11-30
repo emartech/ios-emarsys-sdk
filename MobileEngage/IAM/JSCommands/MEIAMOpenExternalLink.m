@@ -5,7 +5,6 @@
 #import "MEIAMOpenExternalLink.h"
 #import <UIKit/UIKit.h>
 #import "EMSDictionaryValidator.h"
-#import "MEOsVersionUtils.h"
 #import "MEIAMCommandResultUtils.h"
 
 #define kExternalLink @"url"
@@ -30,20 +29,12 @@
     } else {
         NSURL *url = [NSURL URLWithString:message[kExternalLink]];
         if ([application canOpenURL:url]) {
-            if(@available(iOS 10.0, *)){
-                [application openURL:url
-                             options:@{}
-                   completionHandler:^(BOOL success) {
-                       resultBlock([self createResultWithJSCommandId:eventId
-                                                             success:success]);
-                   }];
-            } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                resultBlock([self createResultWithJSCommandId:eventId
-                                                      success:[application openURL:url]]);
-#pragma clang diagnostic pop
-            }
+            [application openURL:url
+                         options:@{}
+               completionHandler:^(BOOL success) {
+                   resultBlock([self createResultWithJSCommandId:eventId
+                                                         success:success]);
+               }];
         } else {
             resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
                                                           errorMessage:@"Can't open url!"]);
