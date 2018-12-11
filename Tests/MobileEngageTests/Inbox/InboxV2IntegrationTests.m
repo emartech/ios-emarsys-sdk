@@ -65,30 +65,22 @@ SPEC_BEGIN(InboxV2IntegrationTests)
             });
 
             it(@"trackMessageOpenWithInboxMessage", ^{
-                __block EMSNotificationInboxStatus *_inboxStatus;
-                __block NSError *_error;
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-
-                [Emarsys.inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
-                    if (error) {
-                        _error = error;
-                        fail(@"Unexpected error");
-                    } else {
-                        _inboxStatus = inboxStatus;
-                        [exp fulfill];
-                    }
-                }];
-
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:30];
-
-                [[theValue([_inboxStatus.notifications count]) should] beGreaterThan:theValue(0)];
+                NSArray<NSDictionary *> *notificationResponses = @[
+                    @{@"sid": @"sid1", @"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                    @{@"sid": @"sid2", @"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                    @{@"sid": @"sid3", @"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                ];
+                NSMutableArray<EMSNotification *> *notifications = [NSMutableArray array];
+                for (NSDictionary *notificationDict in notificationResponses) {
+                    [notifications addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
+                }
+                EMSNotificationInboxStatus *inboxStatus = [[EMSNotificationInboxStatus alloc] init];
+                inboxStatus.notifications = notifications;
 
                 __block NSError *returnedError = [NSError mock];
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [Emarsys.inbox trackMessageOpenWith:_inboxStatus.notifications.firstObject
+                [Emarsys.inbox trackMessageOpenWith:inboxStatus.notifications.firstObject
                                     completionBlock:^(NSError *error) {
                                         returnedError = error;
                                         [expectation fulfill];
@@ -96,7 +88,6 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                 [EMSWaiter waitForExpectations:@[expectation]
                                        timeout:30];
 
-                [[_error should] beNil];
                 [[returnedError should] beNil];
             });
 

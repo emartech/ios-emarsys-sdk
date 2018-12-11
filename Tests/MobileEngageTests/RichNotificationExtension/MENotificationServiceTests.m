@@ -67,7 +67,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
 
             it(@"should return with array of attachments when content contains image url", ^{
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-                content.userInfo = @{@"image_url": @"https://ems-denna.herokuapp.com/images/Emarsys.png"};
+                content.userInfo = @{@"image_url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"};
 
                 EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
@@ -89,7 +89,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
 
             it(@"should not crash when content contains image url and completionHandler is nil", ^{
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-                content.userInfo = @{@"image_url": @"https://ems-denna.herokuapp.com/images/Emarsys.png"};
+                content.userInfo = @{@"image_url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"};
 
                 EMSNotificationService *service = [[EMSNotificationService alloc] init];
 
@@ -431,7 +431,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                 content.userInfo = @{@"ems": @{
                         @"inapp": @{
-                                @"url": @"https://ems-denna.herokuapp.com/images/Emarsys.png",
+                        @"url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png",
                                 @"campaign_id": @"campaign_id"
                         }
                 }};
@@ -446,7 +446,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
                 content.userInfo = @{@"ems": @{
                         @"inapp": @{
-                                @"url": @"https://ems-denna.herokuapp.com/images/Emarsys.png",
+                        @"url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png",
                                 @"campaign_id": @"campaign_id"
                         }
                 }};
@@ -519,7 +519,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
             it(@"should contains inAppData in userInfo when userInfo contains correct pushToInapp data", ^{
                 UNNotificationRequest *request = requestWithUserInfo(@{@"ems": @{
                         @"inapp": @{
-                                @"url": @"https://ems-denna.herokuapp.com/images/Emarsys.png",
+                        @"url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png",
                                 @"campaign_id": @"campaign_id"
                         }
                 }});
@@ -530,7 +530,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
             });
 
             it(@"should contains attachment in content when userInfo contains correct image_url", ^{
-                UNNotificationRequest *request = requestWithUserInfo(@{@"image_url": @"https://ems-denna.herokuapp.com/images/Emarsys.png"});
+                UNNotificationRequest *request = requestWithUserInfo(@{@"image_url": @"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"});
 
                 UNNotificationContent *result = waitForResult(request);
 

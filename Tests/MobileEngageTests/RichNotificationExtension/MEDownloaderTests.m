@@ -89,7 +89,7 @@ SPEC_BEGIN(MEDownloaderTests)
                 __block NSURL *result;
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://ems-denna.herokuapp.com/images/Emarsys.png"]
+                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"]
                                  completionHandler:^(NSURL *destinationUrl, NSError *error) {
                                      result = destinationUrl;
                                      [exp fulfill];
@@ -102,10 +102,10 @@ SPEC_BEGIN(MEDownloaderTests)
             });
 
             it(@"should not crash when download successfully finished and completionHandler doesn't exist", ^{
-                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://ems-denna.herokuapp.com/images/Emarsys.png"]
+                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"]
                                  completionHandler:nil];
 
-                waitUntilNextFinishedDownload(@"https://ems-denna.herokuapp.com/images/Emarsys.png");
+                waitUntilNextFinishedDownload(@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png");
             });
         });
 
