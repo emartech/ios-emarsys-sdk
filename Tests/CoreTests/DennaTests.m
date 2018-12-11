@@ -22,7 +22,7 @@
 
 SPEC_BEGIN(DennaTest)
 
-        NSString *error500 = DennaUrl(@"/error500");
+        NSString *error500 = DennaUrl(@"/customResponseCode/500");
         NSString *echo = DennaUrl(@"/echo");
         NSDictionary *inputHeaders = @{@"Header1": @"value1", @"Header2": @"value2"};
         NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
