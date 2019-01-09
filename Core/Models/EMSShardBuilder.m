@@ -1,5 +1,4 @@
 //
-// Created by mhunyady on 2018. 09. 11..
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 
@@ -30,9 +29,15 @@
     return self;
 }
 
-- (EMSShardBuilder *)payloadEntryWithKey:(NSString *)key value:(id)value {
+- (EMSShardBuilder *)addPayloadEntryWithKey:(NSString *)key value:(id)value {
     _data[key] = value;
     return self;
 }
+
+- (EMSShardBuilder *)addPayloadEntries:(NSDictionary<NSString *, id> *)entries {
+    [_data addEntriesFromDictionary:entries];
+    return self;
+}
+
 
 @end

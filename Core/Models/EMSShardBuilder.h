@@ -1,5 +1,4 @@
 //
-// Created by mhunyady on 2018. 09. 11..
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 
@@ -24,6 +23,9 @@
 
 - (EMSShardBuilder *)setTTL:(NSTimeInterval)ttl;
 
-- (EMSShardBuilder *)payloadEntryWithKey:(NSString *)key
-                                   value:(id)value;
+- (EMSShardBuilder *)addPayloadEntryWithKey:(NSString *)key
+                                      value:(id)value;
+
+- (EMSShardBuilder *)addPayloadEntries:(NSDictionary<NSString *, id> *)entries;
+
 @end

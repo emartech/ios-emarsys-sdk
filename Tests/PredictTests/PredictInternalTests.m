@@ -67,8 +67,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:@"predict_item_category_view"];
-                        [builder payloadEntryWithKey:@"vc"
-                                               value:categoryPath];
+                        [builder addPayloadEntryWithKey:@"vc"
+                                                  value:categoryPath];
                     }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
@@ -114,8 +114,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:@"predict_item_view"];
-                        [builder payloadEntryWithKey:@"v"
-                                               value:[NSString stringWithFormat:@"i:%@", itemId]];
+                        [builder addPayloadEntryWithKey:@"v"
+                                                  value:[NSString stringWithFormat:@"i:%@", itemId]];
                     }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
@@ -207,8 +207,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:@"predict_search_term"];
-                        [builder payloadEntryWithKey:@"q"
-                                               value:searchTerm];
+                        [builder addPayloadEntryWithKey:@"q"
+                                                  value:searchTerm];
                     }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
