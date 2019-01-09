@@ -80,8 +80,8 @@ SPEC_BEGIN(EMSShardTests)
                 EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                             [builder setTTL:timeInterval];
                             [builder setType:shardType];
-                            [builder payloadEntryWithKey:payloadKey
-                                                   value:payloadValue];
+                        [builder addPayloadEntryWithKey:payloadKey
+                                                  value:payloadValue];
                         }
                                           timestampProvider:timestampProvider
                                                uuidProvider:uuidProvider];

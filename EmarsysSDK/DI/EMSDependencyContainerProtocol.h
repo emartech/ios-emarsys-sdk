@@ -16,6 +16,7 @@
 @class MERequestContext;
 @class AppStartBlockProvider;
 @class MEUserNotificationDelegate;
+@class EMSLogger;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -46,5 +47,7 @@
 - (MERequestContext *)requestContext;
 
 - (AppStartBlockProvider *)appStartBlockProvider;
+
+- (EMSLogger *)logger;
 
 @end

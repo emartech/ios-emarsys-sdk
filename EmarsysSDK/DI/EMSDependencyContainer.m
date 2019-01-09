@@ -32,6 +32,7 @@
 #import "EMSMainWindowProvider.h"
 #import "EMSViewControllerProvider.h"
 #import "MEUserNotificationDelegate.h"
+#import "EMSLogger.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -53,6 +54,7 @@
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) MEUserNotificationDelegate *notificationCenterDelegate;
+@property(nonatomic, strong) EMSLogger *logger;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -70,6 +72,8 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
+    _logger = [EMSLogger new];
+
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
     _notificationCenterManager = [MENotificationCenterManager new];
