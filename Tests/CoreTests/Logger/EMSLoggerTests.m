@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import "Kiwi.h"
 #import "EMSLogger.h"
-#import "EMSInDatabaseTime.h"
 #import "EMSShard.h"
 #import "FakeShardRepository.h"
 #import "EMSWaiter.h"
