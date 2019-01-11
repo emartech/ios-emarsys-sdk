@@ -3,21 +3,26 @@ platform :ios, '9.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
 target "Tests" do
-  pod 'Kiwi'
+  pod 'Kiwi', '3.0.0'
+  pod 'OCMock', '3.4.2'
 end
 
 target "EmarsysSDKTests" do
-  pod 'Kiwi'
+  pod 'Kiwi', '3.0.0'
+  pod 'OCMock', '3.4.2'
 end
 
 target "CoreTests" do
-  pod 'Kiwi'
+  pod 'Kiwi', '3.0.0'
+  pod 'OCMock', '3.4.2'
 end
 
 target "MobileEngageTests" do
-  pod 'Kiwi'
+  pod 'Kiwi', '3.0.0'
+  pod 'OCMock', '3.4.2'
 end
 
 target "PredictTests" do
-  pod 'Kiwi'
+  pod 'Kiwi', '3.0.0'
+  pod 'OCMock', '3.4.2'
 end
