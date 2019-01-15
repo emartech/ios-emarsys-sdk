@@ -52,7 +52,7 @@ node('master') {
             }
             stage('Test EmarsysSDK') {
             	sh "cd $derivedDataPath/Build/Products ; zip -r Tests.zip Debug-iphoneos Tests_iphoneos12.0-arm64e.xctestrun"
-    					sh "gcloud alpha firebase test ios run --test $derivedDataPath/Build/Products/Tests.zip --device model=iphonex,version=12.0,locale=en_GB --device model=iphone6,version=11.4,locale=en_GB --device model=ipadmini4,version=11.2,locale=en_GB --quiet --project ems-mobile-sdk"
+    					sh "gcloud alpha firebase test ios run --test $derivedDataPath/Build/Products/Tests.zip --device model=iphonex,version=12.0,locale=en_GB --device model=iphone6s,version=11.4,locale=en_GB --device model=ipadmini4,version=12.0,locale=en_GB --quiet --project ems-mobile-sdk"
             }
             stage('Deploy to private pod repo') {
                 sh "cd $buildVariant/ios-emarsys-sdk && ./private-release.sh ${env.BUILD_NUMBER}.0.0"
