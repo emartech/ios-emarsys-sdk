@@ -220,7 +220,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 it(@"should create v3 request when USER_CENTRIC_INBOX feature is turned on", ^{
                     EMSNotification *notification = notificationBlock();
                     NSDate *timeStamp = [NSDate date];
-                    MERequestContext *requestContext = requestContextBlock([NSDate date]);
+                    MERequestContext *requestContext = requestContextBlock(timeStamp);
 
                     EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:notification
                                                                                                      requestContext:requestContext];
