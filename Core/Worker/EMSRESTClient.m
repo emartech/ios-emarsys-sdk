@@ -11,6 +11,8 @@
 #import "NSDate+EMSCore.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
+#import "EMSMacros.h"
+#import "EMSInDatabaseTime.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -234,11 +236,7 @@
 - (void)logWithRequestModel:(EMSRequestModel *)requestModel
               responseModel:(EMSResponseModel *)responseModel
         networkingStartTime:(NSDate *)networkingStartTime {
-    [self.logRepository add:@{
-        @"request_id": requestModel.requestId,
-        @"url": requestModel.url.absoluteString,
-        @"in_database": [networkingStartTime numberValueInMillisFromDate:requestModel.timestamp]
-    }];
+    EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel endDate:networkingStartTime]);
 
     [self.logRepository add:@{
         @"request_id": requestModel.requestId,
