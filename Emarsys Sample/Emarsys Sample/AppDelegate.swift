@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
 
 
         let config = EMSConfig.make { builder in
-            builder.setExperimentalFeatures([INAPP_MESSAGING, USER_CENTRIC_INBOX]);
+            builder.setExperimentalFeatures([USER_CENTRIC_INBOX]);
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
             builder.setMobileEngageApplicationCode("14C19-A121F", applicationPassword: "PaNkfOD90AVpYimMBuZopCpm8OWCrREu")
