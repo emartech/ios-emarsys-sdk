@@ -77,9 +77,9 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
-    _logger = [EMSLogger new];
-
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
+    EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+
     _requestContext = [[MERequestContext alloc] initWithConfig:config];
     _notificationCenterManager = [MENotificationCenterManager new];
     MELogRepository *logRepository = [MELogRepository new];
@@ -107,7 +107,12 @@
     _operationQueue = [NSOperationQueue new];
     _operationQueue.maxConcurrentOperationCount = 1;
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
-    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [[NSUUID UUID] UUIDString]];
+    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
+
+    _logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
+                                          opertaionQueue:self.operationQueue
+                                       timestampProvider:timestampProvider
+                                            uuidProvider:uuidProvider];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
     _restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
@@ -129,7 +134,7 @@
     [self.requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]];
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
-                                                                     uuidProvider:[EMSUUIDProvider new]
+                                                                     uuidProvider:uuidProvider
                                                                        merchantId:config.merchantId];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
