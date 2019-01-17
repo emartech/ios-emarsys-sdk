@@ -10,6 +10,7 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 @class EMSSQLiteHelper;
 @protocol EMSModelMapperProtocol;
+@protocol EMSDBTriggerProtocol;
 
 @protocol EMSSQLiteHelperSchemaHandler
 
@@ -40,7 +41,7 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 - (void)registerTriggerWithTableName:(NSString *)tableName
                          triggerType:(EMSDBTriggerType *)triggerType
                         triggerEvent:(EMSDBTriggerEvent *)triggerEvent
-                        triggerBlock:(EMSTriggerBlock)triggerBlock;
+                             trigger:(id <EMSDBTriggerProtocol>)trigger;
 
 - (BOOL)removeFromTable:(NSString *)tableName
               selection:(NSString *)where

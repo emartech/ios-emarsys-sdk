@@ -38,12 +38,3 @@
 - (NSString *)description;
 
 @end
-
-@interface EMSDBTriggerAction : NSObject
-@property (nonatomic, readonly) EMSTriggerBlock triggerBlock;
-
-- (instancetype)initWithTriggerActionBlock:(EMSTriggerBlock)triggerActionBlock;
-
-- (void)run;
-
-@end

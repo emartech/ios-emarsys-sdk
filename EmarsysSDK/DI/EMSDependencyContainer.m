@@ -12,7 +12,6 @@
 #import "MERequestModelRepositoryFactory.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "PredictInternal.h"
-#import "EMSPredictAggregateShardsTrigger.h"
 #import "PRERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSSchemaContract.h"
@@ -33,6 +32,10 @@
 #import "EMSViewControllerProvider.h"
 #import "MEUserNotificationDelegate.h"
 #import "EMSLogger.h"
+#import "EMSBatchingShardTrigger.h"
+#import "EMSListChunker.h"
+#import "EMSCountPredicate.h"
+#import "EMSFilterByTypeSpecification.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -55,6 +58,8 @@
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) MEUserNotificationDelegate *notificationCenterDelegate;
 @property(nonatomic, strong) EMSLogger *logger;
+@property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
+@property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -136,14 +141,31 @@
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
-    EMSPredictAggregateShardsTrigger *trigger = [EMSPredictAggregateShardsTrigger new];
 
+    _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
+                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%"
+                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
+                                                                   mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
+                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:1]
+                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
+                                                           requestManager:self.requestManager];
+    _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
+                                                           specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%"
+                                                                                                                    column:SHARD_COLUMN_NAME_TYPE]
+                                                                  mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
+                                                                 chunker:[[EMSListChunker alloc] initWithChunkSize:10]
+                                                               predicate:[[EMSCountPredicate alloc] initWithThreshold:10]
+                                                          requestManager:self.requestManager];
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent
-                               triggerBlock:[trigger createTriggerBlockWithRequestManager:self.requestManager
-                                                                                   mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
-                                                                               repository:shardRepository]];
+                                    trigger:self.predictTrigger];
+    [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
+                                triggerType:EMSDBTriggerType.afterType
+                               triggerEvent:EMSDBTriggerEvent.insertEvent
+                                    trigger:self.loggerTrigger];
+
+
     _notificationCache = [[EMSNotificationCache alloc] init];
     if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
         _inbox = [[MEInboxV2 alloc] initWithConfig:config

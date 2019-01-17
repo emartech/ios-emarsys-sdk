@@ -3,8 +3,8 @@
 //
 #import <Foundation/Foundation.h>
 
-@protocol EMSPredicateProtocol <NSObject>
+@interface EMSPredicate<__covariant T> : NSObject
 
-- (BOOL)evaluate:(id)value;
+- (BOOL)evaluate:(T)value;
 
 @end

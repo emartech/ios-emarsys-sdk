@@ -88,16 +88,17 @@ SPEC_BEGIN(EmarsysTests)
                 [[(NSObject *) [Emarsys notificationCenterDelegate] shouldNot] beNil];
             });
 
-            it(@"register Predict trigger", ^{
+            it(@"register triggers", ^{
                 [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                    withDependencyContainer:nil];
-
                 NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
                 NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
                                                                                          withEvent:[EMSDBTriggerEvent insertEvent]
                                                                                           withType:[EMSDBTriggerType afterType]]];
-                [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
+                [[theValue([afterInsertTriggers count]) should] equal:theValue(2)];
+                [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.loggerTrigger];
+                [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.predictTrigger];
             });
 
             it(@"should throw an exception when there is no config set", ^{
@@ -224,7 +225,7 @@ SPEC_BEGIN(EmarsysTests)
 
                 [[[EMSDependencyInjection.dependencyContainer.requestManager additionalHeaders] should] equal:@{
                     @"Content-Type": @"application/json",
-                        @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
+                    @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
                     @"X-MOBILEENGAGE-SDK-MODE": @"debug"
                 }];
             });

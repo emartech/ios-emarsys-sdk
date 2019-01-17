@@ -10,6 +10,7 @@
 #import "EMSShard.h"
 #import "EMSShardMapper.h"
 #import "EMSDBTriggerKey.h"
+#import "FakeDBTrigger.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 #define TEST_SHARD_SELECT_ALL @"SELECT * FROM shard ORDER BY ROWID ASC;"
@@ -18,6 +19,8 @@ SPEC_BEGIN(DBTriggerTests)
 
         __block EMSSQLiteHelper *dbHelper;
         __block EMSSqliteSchemaHandler *schemaHandler;
+        __block XCTestExpectation *defaultExpectation;
+        __block id <EMSDBTriggerProtocol> dbTrigger;
 
         beforeEach(^{
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
@@ -25,6 +28,9 @@ SPEC_BEGIN(DBTriggerTests)
             schemaHandler = [[EMSSqliteSchemaHandler alloc] init];
             dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                       schemaDelegate:schemaHandler];
+
+            defaultExpectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+            dbTrigger = [[FakeDBTrigger alloc] initWithExpectation:defaultExpectation];
         });
 
         afterEach(^{
@@ -42,29 +48,34 @@ SPEC_BEGIN(DBTriggerTests)
         };
 
 
-        describe(@"registerTriggerWithTableName:triggerType:triggerEvent:triggerBlock:", ^{
+        describe(@"registerTriggerWithTableName:triggerType:triggerEvent:trigger:", ^{
 
             it(@"should run afterInsert trigger when inserting something in the given table", ^{
                 [dbHelper open];
-                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:30];
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:30];
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation fulfill];
-                                          }];
+                                               trigger:dbTrigger];
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
             it(@"should run all afterInsert trigger when inserting something in the given table", ^{
                 [dbHelper open];
-                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:30];
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:30];
 
                 XCTestExpectation *expectation1 = [[XCTestExpectation alloc] initWithDescription:@"expectation1"];
                 XCTestExpectation *expectation2 = [[XCTestExpectation alloc] initWithDescription:@"expectation2"];
@@ -73,83 +84,86 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation1 fulfill];
-                                          }];
+                                               trigger:[[FakeDBTrigger alloc] initWithExpectation:expectation1]];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation2 fulfill];
-                                          }];
+                                               trigger:[[FakeDBTrigger alloc] initWithExpectation:expectation2]];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation3 fulfill];
-                                          }];
+                                               trigger:[[FakeDBTrigger alloc] initWithExpectation:expectation3]];
 
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation1, expectation2, expectation3] timeout:2 enforceOrder:YES];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation1, expectation2, expectation3]
+                                                                timeout:2
+                                                           enforceOrder:YES];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
             it(@"should run afterInsert trigger after inserting something in the given table", ^{
                 [dbHelper open];
-                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:30];
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:30];
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation fulfill];
-                                              NSArray *shards = [dbHelper executeQuery:TEST_SHARD_SELECT_ALL
-                                                                                mapper:[EMSShardMapper new]];
-                                              EMSShard *expectedShard = [shards lastObject];
-                                              [[shard should] equal:expectedShard];
-                                              [[theValue([shards count]) should] equal:theValue(1)];
-                                          }];
+                                               trigger:dbTrigger];
 
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
+
+                NSArray *shards = [dbHelper executeQuery:TEST_SHARD_SELECT_ALL
+                                                  mapper:[EMSShardMapper new]];
+                EMSShard *expectedShard = [shards lastObject];
+                [[shard should] equal:expectedShard];
+                [[theValue([shards count]) should] equal:theValue(1)];
             });
 
             it(@"should run beforeInsert trigger when inserting something in the given table", ^{
                 [dbHelper open];
-                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:30];
+                EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:30];
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType beforeType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                              [expectation fulfill];
-                                          }];
+                                               trigger:dbTrigger];
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
         });
 
         describe(@"Database trigger tests", ^{
-            const EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:30];
+            const EMSShard *shard = [[EMSShard alloc] initWithShardId:@"id"
+                                                                 type:@"type"
+                                                                 data:@{}
+                                                            timestamp:[NSDate date]
+                                                                  ttl:30];
 
             __block EMSDBTriggerType *type;
             __block EMSDBTriggerEvent *event;
             __block NSNumber *expectedItemCount;
             __block XCTestExpectation *expectation;
+            __block NSArray *testDataSet;
 
-            __block void (^setupBlock)();
-            __block EMSTriggerBlock triggerBlock;
+            __block id <EMSDBTriggerProtocol> trigger;
             __block void (^actionBlock)();
 
             beforeEach(^{
@@ -160,62 +174,55 @@ SPEC_BEGIN(DBTriggerTests)
                                                           schemaDelegate:schemaHandler];
                 [dbHelper open];
                 expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+
+                testDataSet = @[
+                    @[
+                        [EMSDBTriggerType beforeType],
+                        [EMSDBTriggerEvent insertEvent],
+                        [[FakeDBTrigger alloc] initWithExpectation:expectation
+                                                     triggerAction:^{
+                                                         NSArray *shards = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                                                           mapper:[EMSShardMapper new]];
+                                                         [[theValue([shards count]) should] beZero];
+                                                     }],
+                        ^{
+                            [dbHelper insertModel:shard
+                                           mapper:[EMSShardMapper new]];
+                        }
+                    ],
+                    @[
+                        [EMSDBTriggerType afterType],
+                        [EMSDBTriggerEvent insertEvent],
+                        [[FakeDBTrigger alloc] initWithExpectation:expectation
+                                                     triggerAction:^{
+                                                         NSArray *shards = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                                                           mapper:[EMSShardMapper new]];
+                                                         [[theValue([shards count]) should] equal:theValue(1)];
+                                                     }],
+                        ^{
+                            [dbHelper insertModel:shard
+                                           mapper:[EMSShardMapper new]];
+                        }
+                    ]
+
+                ];
             });
 
             afterEach(^{
                 [dbHelper close];
             });
 
-            __block NSArray *testDataSet = @[
-                    @[
-                            [EMSDBTriggerType beforeType],
-                            [EMSDBTriggerEvent insertEvent],
-                            ^{
-                            },
-                            ^{
-                                [expectation fulfill];
-                                NSArray *shards = [dbHelper executeQuery:SQL_SHARD_SELECTALL
-                                                                  mapper:[EMSShardMapper new]];
-                                [[theValue([shards count]) should] beZero];
-                            },
-                            ^{
-                                [dbHelper insertModel:shard
-                                               mapper:[EMSShardMapper new]];
-                            }
-                    ],
-                    @[
-                            [EMSDBTriggerType afterType],
-                            [EMSDBTriggerEvent insertEvent],
-                            ^{
-                            },
-                            ^{
-                                [expectation fulfill];
-                                NSArray *shards = [dbHelper executeQuery:SQL_SHARD_SELECTALL
-                                                                  mapper:[EMSShardMapper new]];
-                                [[theValue([shards count]) should] equal:theValue(1)];
-                            },
-                            ^{
-                                [dbHelper insertModel:shard
-                                               mapper:[EMSShardMapper new]];
-                            }
-                    ]
-
-            ];
-
-
             for (NSArray *parameters in testDataSet) {
                 type = parameters[0];
                 event = parameters[1];
-                setupBlock = parameters[2];
-                triggerBlock = parameters[3];
-                actionBlock = parameters[4];
+                trigger = parameters[2];
+                actionBlock = parameters[3];
 
                 it([NSString stringWithFormat:@"should call the trigger action for %@ %@", type, event], ^{
-                    setupBlock();
                     [dbHelper registerTriggerWithTableName:@"shard"
                                                triggerType:type
                                               triggerEvent:event
-                                              triggerBlock:triggerBlock];
+                                                   trigger:trigger];
                     actionBlock();
 
 
@@ -226,21 +233,26 @@ SPEC_BEGIN(DBTriggerTests)
 
         });
 
-        describe(@"registerTriggerWithTableName:triggerType:triggerEvent:triggerBlock:", ^{
+        describe(@"registerTriggerWithTableName:triggerType:triggerEvent:trigger:", ^{
 
             it(@"should run beforeDelete trigger when deleting something from the given table", ^{
                 [dbHelper open];
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType beforeType]
                                           triggerEvent:[EMSDBTriggerEvent deleteEvent]
-                                          triggerBlock:^{
-                                              [expectation fulfill];
-                                          }];
+                                               trigger:dbTrigger];
 
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
-                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id"
+                                                                type:@"type2"
+                                                                data:@{}
+                                                           timestamp:[NSDate date]
+                                                                 ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 [dbHelper insertModel:model mapper:mapper];
@@ -250,7 +262,7 @@ SPEC_BEGIN(DBTriggerTests)
                                 selection:@"type=? AND ttl=?"
                             selectionArgs:@[@"type", @"200"]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
 
             });
@@ -263,23 +275,34 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType beforeType]
                                           triggerEvent:[EMSDBTriggerEvent deleteEvent]
-                                          triggerBlock:^{
-                                              NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:[EMSShardMapper new]];
-                                              [[theValue([result count]) should] equal:theValue(2)];
-                                              [beforeDeleteExpectation fulfill];
-                                          }];
+                                               trigger:[[FakeDBTrigger alloc] initWithExpectation:beforeDeleteExpectation
+                                                                                    triggerAction:^{
+                                                                                        NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                                                                                          mapper:[EMSShardMapper new]];
+                                                                                        [[theValue([result count]) should] equal:theValue(2)];
+                                                                                    }]
+                ];
 
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent deleteEvent]
-                                          triggerBlock:^{
-                                              NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL mapper:[EMSShardMapper new]];
-                                              [[theValue([result count]) should] equal:theValue(1)];
-                                              [afterDeleteExpectation fulfill];
-                                          }];
+                                               trigger:[[FakeDBTrigger alloc] initWithExpectation:afterDeleteExpectation
+                                                                                    triggerAction:^{
+                                                                                        NSArray *result = [dbHelper executeQuery:SQL_SHARD_SELECTALL
+                                                                                                                          mapper:[EMSShardMapper new]];
+                                                                                        [[theValue([result count]) should] equal:theValue(1)];
+                                                                                    }]];
 
-                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id" type:@"type" data:@{} timestamp:[NSDate date] ttl:200.];
-                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id" type:@"type2" data:@{} timestamp:[NSDate date] ttl:200.];
+                EMSShard *model = [[EMSShard alloc] initWithShardId:@"id"
+                                                               type:@"type"
+                                                               data:@{}
+                                                          timestamp:[NSDate date]
+                                                                ttl:200.];
+                EMSShard *model2 = [[EMSShard alloc] initWithShardId:@"id"
+                                                                type:@"type2"
+                                                                data:@{}
+                                                           timestamp:[NSDate date]
+                                                                 ttl:200.];
                 EMSShardMapper *mapper = [EMSShardMapper new];
 
                 [dbHelper insertModel:model mapper:mapper];
@@ -289,7 +312,9 @@ SPEC_BEGIN(DBTriggerTests)
                                 selection:@"type=? AND ttl=?"
                             selectionArgs:@[@"type", @"200"]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[beforeDeleteExpectation, afterDeleteExpectation] timeout:2 enforceOrder:YES];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[beforeDeleteExpectation, afterDeleteExpectation]
+                                                                timeout:2
+                                                           enforceOrder:YES];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
         });
@@ -297,46 +322,52 @@ SPEC_BEGIN(DBTriggerTests)
         describe(@"registeredTriggers", ^{
             it(@"should run return the registered triggers", ^{
 
+                id afterInsertTrigger = [KWMock mockForProtocol:@protocol(EMSDBTriggerProtocol)];
+                id beforeInsertTrigger = [KWMock mockForProtocol:@protocol(EMSDBTriggerProtocol)];
+                id afterDeleteTrigger = [KWMock mockForProtocol:@protocol(EMSDBTriggerProtocol)];
+                id beforeDeleteTrigger = [KWMock mockForProtocol:@protocol(EMSDBTriggerProtocol)];
 
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                          }];
+                                               trigger:afterInsertTrigger];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType beforeType]
                                           triggerEvent:[EMSDBTriggerEvent insertEvent]
-                                          triggerBlock:^{
-                                          }];
+                                               trigger:beforeInsertTrigger];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType afterType]
                                           triggerEvent:[EMSDBTriggerEvent deleteEvent]
-                                          triggerBlock:^{
-                                          }];
+                                               trigger:afterDeleteTrigger];
                 [dbHelper registerTriggerWithTableName:@"shard"
                                            triggerType:[EMSDBTriggerType beforeType]
                                           triggerEvent:[EMSDBTriggerEvent deleteEvent]
-                                          triggerBlock:^{
-                                          }];
+                                               trigger:beforeDeleteTrigger];
 
                 NSArray *afterInsertTriggers = dbHelper.registeredTriggers[
-                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
-                                                         withEvent:[EMSDBTriggerEvent insertEvent]
-                                                          withType:[EMSDBTriggerType afterType]]];
+                    [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                     withEvent:[EMSDBTriggerEvent insertEvent]
+                                                      withType:[EMSDBTriggerType afterType]]];
 
                 NSArray *beforeInsertTriggers = dbHelper.registeredTriggers[
-                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
-                                                         withEvent:[EMSDBTriggerEvent insertEvent]
-                                                          withType:[EMSDBTriggerType beforeType]]];
+                    [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                     withEvent:[EMSDBTriggerEvent insertEvent]
+                                                      withType:[EMSDBTriggerType beforeType]]];
 
                 NSArray *beforeDeleteTriggers = dbHelper.registeredTriggers[
-                        [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
-                                                         withEvent:[EMSDBTriggerEvent deleteEvent]
-                                                          withType:[EMSDBTriggerType beforeType]]];
+                    [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                     withEvent:[EMSDBTriggerEvent deleteEvent]
+                                                      withType:[EMSDBTriggerType beforeType]]];
 
-                [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
-                [[theValue([beforeInsertTriggers count]) should] equal:theValue(1)];
-                [[theValue([beforeDeleteTriggers count]) should] equal:theValue(1)];
+                NSArray *afterDeleteTriggers = dbHelper.registeredTriggers[
+                    [[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                     withEvent:[EMSDBTriggerEvent deleteEvent]
+                                                      withType:[EMSDBTriggerType afterType]]];
+
+                [[afterInsertTriggers should] equal:@[afterInsertTrigger]];
+                [[beforeInsertTriggers should] equal:@[beforeInsertTrigger]];
+                [[afterDeleteTriggers should] equal:@[afterDeleteTrigger]];
+                [[beforeDeleteTriggers should] equal:@[beforeDeleteTrigger]];
             });
         });
 

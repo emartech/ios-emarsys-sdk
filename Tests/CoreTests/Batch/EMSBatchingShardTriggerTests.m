@@ -4,18 +4,18 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSBatchingShardTriggerFactory.h"
+#import "EMSBatchingShardTrigger.h"
 #import "EMSListChunker.h"
 #import "EMSRequestManager.h"
 #import "EMSShard.h"
 #import "EMSRequestFromShardsMapperProtocol.h"
-#import "EMSPredicateProtocol.h"
+#import "EMSPredicate.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
 
-@interface EMSBatchingShardTriggerFactoryTests : XCTestCase
+@interface EMSBatchingShardTriggerTests : XCTestCase
 
-@property(nonatomic, strong) EMSBatchingShardTriggerFactory *triggerFactory;
+@property(nonatomic, strong) EMSBatchingShardTrigger *trigger;
 @property(nonatomic, strong) id shardRepository;
 @property(nonatomic, strong) id specification;
 @property(nonatomic, strong) id mapper;
@@ -25,20 +25,17 @@
 @property(nonatomic, strong) NSArray *shards;
 @property(nonatomic, strong) NSArray<NSArray *> *chunkedShards;
 @property(nonatomic, strong) NSArray *requestModels;
-@property(nonatomic, strong) EMSTriggerBlock block;
 
 @end
 
-@implementation EMSBatchingShardTriggerFactoryTests
+@implementation EMSBatchingShardTriggerTests
 
 - (void)setUp {
-    _triggerFactory = [EMSBatchingShardTriggerFactory new];
-
     _shardRepository = OCMProtocolMock(@protocol(EMSShardRepositoryProtocol));
     _specification = OCMProtocolMock(@protocol(EMSSQLSpecificationProtocol));
     _mapper = OCMProtocolMock(@protocol(EMSRequestFromShardsMapperProtocol));
     _chunker = OCMClassMock([EMSListChunker class]);
-    _predicate = OCMProtocolMock(@protocol(EMSPredicateProtocol));
+    _predicate = OCMClassMock([EMSPredicate class]);
     _requestManager = OCMClassMock([EMSRequestManager class]);
     _shards = [self shardMocks];
     _chunkedShards = @[
@@ -51,7 +48,7 @@
 
     OCMStub([self.shardRepository query:self.specification]).andReturn(self.shards);
 
-    _block = [self.triggerFactory createTriggerBlockWithRepository:self.shardRepository
+    _trigger = [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
                                                      specification:self.specification
                                                             mapper:self.mapper
                                                            chunker:self.chunker
@@ -68,7 +65,7 @@
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
 
-    self.block();
+    [self.trigger trigger];
 
     for (EMSRequestModel *requestModel in self.requestModels) {
         OCMVerify([self.requestManager submitRequestModel:requestModel
@@ -81,7 +78,7 @@
     OCMReject([self.requestManager submitRequestModel:[OCMArg any]
                                   withCompletionBlock:[OCMArg any]]);
 
-    self.block();
+    [self.trigger trigger];
 }
 
 - (void)testTriggerBlock_removesHandledShards_fromDatabase {
@@ -90,7 +87,7 @@
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
 
-    self.block();
+    [self.trigger trigger];
 
 
     EMSFilterByValuesSpecification *removeSpecForRequest1 = [[EMSFilterByValuesSpecification alloc] initWithValues:@[@"0", @"1", @"2"]

@@ -6,6 +6,7 @@
 #import "EMSModelMapperProtocol.h"
 #import "EMSDBTriggerKey.h"
 #import "EMSSQLStatementFactory.h"
+#import "EMSDBTriggerProtocol.h"
 
 @interface EMSSQLiteHelper ()
 
@@ -81,7 +82,7 @@
 - (void)registerTriggerWithTableName:(NSString *)tableName
                          triggerType:(EMSDBTriggerType *)triggerType
                         triggerEvent:(EMSDBTriggerEvent *)triggerEvent
-                        triggerBlock:(EMSTriggerBlock)triggerBlock {
+                             trigger:(id <EMSDBTriggerProtocol>)trigger {
 
     EMSDBTriggerKey *triggerKey = [[EMSDBTriggerKey alloc] initWithTableName:tableName
                                                                    withEvent:triggerEvent
@@ -91,8 +92,7 @@
         actions = [NSMutableArray new];
         self.triggers[triggerKey] = actions;
     }
-
-    [actions addObject:[[EMSDBTriggerAction alloc] initWithTriggerActionBlock:triggerBlock]];
+    [actions addObject:trigger];
 }
 
 - (BOOL)executeCommand:(NSString *)command {
@@ -240,8 +240,8 @@
                                                             withEvent:event
                                                              withType:type];
     NSMutableArray *actions = self.triggers[key];
-    for (EMSDBTriggerAction *action in actions) {
-        [action run];
+    for (id <EMSDBTriggerProtocol> action in actions) {
+        [action trigger];
     }
 }
 

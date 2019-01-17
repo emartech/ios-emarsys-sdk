@@ -17,6 +17,7 @@
 @class AppStartBlockProvider;
 @class MEUserNotificationDelegate;
 @class EMSLogger;
+@protocol EMSDBTriggerProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -49,5 +50,9 @@
 - (AppStartBlockProvider *)appStartBlockProvider;
 
 - (EMSLogger *)logger;
+
+- (id <EMSDBTriggerProtocol>)predictTrigger;
+
+- (id <EMSDBTriggerProtocol>)loggerTrigger;
 
 @end

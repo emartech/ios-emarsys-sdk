@@ -120,18 +120,3 @@
 
 
 @end
-
-@implementation EMSDBTriggerAction
-
-- (instancetype)initWithTriggerActionBlock:(EMSTriggerBlock)triggerActionBlock {
-    self = [super init];
-    if (self) {
-        _triggerBlock = triggerActionBlock;
-    }
-    return self;
-}
-
-- (void)run {
-    self.triggerBlock();
-}
-@end
