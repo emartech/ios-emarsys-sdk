@@ -8,11 +8,11 @@
 #import "EMSResponseModel.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSTimestampProvider.h"
-#import "NSDate+EMSCore.h"
 #import "EMSLogger.h"
 #import "EMSCoreTopic.h"
 #import "EMSMacros.h"
 #import "EMSInDatabaseTime.h"
+#import "EMSNetworkingTime.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -238,11 +238,7 @@
         networkingStartTime:(NSDate *)networkingStartTime {
     EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel endDate:networkingStartTime]);
 
-    [self.logRepository add:@{
-        @"request_id": requestModel.requestId,
-        @"url": requestModel.url.absoluteString,
-        @"networking_time": [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime]
-    }];
+    EMSLog([[EMSNetworkingTime alloc] initWithResponseModel:responseModel startDate:networkingStartTime]);
 }
 
 @end

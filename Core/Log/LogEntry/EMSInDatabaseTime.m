@@ -1,5 +1,4 @@
 //
-// Created by Jozsef Pollak on 2019. 01. 16..
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 

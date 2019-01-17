@@ -484,8 +484,10 @@
 		37460F34043A699280509CD5 /* EMSCompletionMiddlewareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460F89F6C6CFDDD762FFF5 /* EMSCompletionMiddlewareTests.m */; };
 		37460F7845FFAD99F2380D2E /* EMSCompletionMiddlewareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460F89F6C6CFDDD762FFF5 /* EMSCompletionMiddlewareTests.m */; };
 		37460FE8E5129D15F541D35F /* PRERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC10842C0A13863CF72 /* PRERequestContextTests.m */; };
+		8655C1D01AF7B84E4B564AFE /* EMSNetworkingTimeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655CEB0382F2D3408E275AD /* EMSNetworkingTimeTests.m */; };
 		8655C21DE44632CC837DCDF1 /* EMSShardBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655C71E748F3E33EBC48008 /* EMSShardBuilder.m */; };
 		8655CBCFC2FDF9CF24D8265B /* EMSShardBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8655C19DCC72EDFD9EF0EEDF /* EMSShardBuilder.h */; };
+		8655CFEF615462C2FACE041A /* EMSNetworkingTimeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655CEB0382F2D3408E275AD /* EMSNetworkingTimeTests.m */; };
 		8A05D0B62139559D00252CE0 /* EMSBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A05D0AD2139559C00252CE0 /* EMSBlocks.h */; };
 		8A05D0B82139559D00252CE0 /* EMSInAppProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A05D0AF2139559D00252CE0 /* EMSInAppProtocol.h */; };
 		8A05D0B92139559D00252CE0 /* EMSPushNotificationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A05D0B02139559D00252CE0 /* EMSPushNotificationProtocol.h */; };
@@ -535,6 +537,8 @@
 		8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
 		8AFCA45A21393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
 		A540979D9B7A98E1927F6F19 /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C9FCBA8774705E2E20C872B /* libPods-PredictTests.a */; };
+		BB2EE54921F0A1EF003F09F5 /* EMSNetworkingTime.h in Headers */ = {isa = PBXBuildFile; fileRef = BB2EE54721F0A1EF003F09F5 /* EMSNetworkingTime.h */; };
+		BB2EE54A21F0A1EF003F09F5 /* EMSNetworkingTime.m in Sources */ = {isa = PBXBuildFile; fileRef = BB2EE54821F0A1EF003F09F5 /* EMSNetworkingTime.m */; };
 		C039EA44CD36B1714A872A33 /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00D4C385392E628EBC91EAFE /* libPods-CoreTests.a */; };
 		C0FEA8B9B728D95C9F26EB5C /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36D4E2EE45A245305805C33 /* libPods-Tests.a */; };
 		DFD05B02B2331EF75A28B90E /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4004244A3063E2904EC866E1 /* libPods-MobileEngageTests.a */; };
@@ -912,6 +916,7 @@
 		4004244A3063E2904EC866E1 /* libPods-MobileEngageTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileEngageTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8655C19DCC72EDFD9EF0EEDF /* EMSShardBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSShardBuilder.h; sourceTree = "<group>"; };
 		8655C71E748F3E33EBC48008 /* EMSShardBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSShardBuilder.m; sourceTree = "<group>"; };
+		8655CEB0382F2D3408E275AD /* EMSNetworkingTimeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSNetworkingTimeTests.m; sourceTree = "<group>"; };
 		8A05D0AD2139559C00252CE0 /* EMSBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSBlocks.h; sourceTree = "<group>"; };
 		8A05D0AF2139559D00252CE0 /* EMSInAppProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInAppProtocol.h; sourceTree = "<group>"; };
 		8A05D0B02139559D00252CE0 /* EMSPushNotificationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSPushNotificationProtocol.h; sourceTree = "<group>"; };
@@ -1051,6 +1056,8 @@
 		A540EE2EA225CB7E3EBE6F90 /* Pods-MobileEngageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AADB1BF78A921678A4144E49 /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B5CD4209A8625CA4B584C677 /* Pods-MobileEngageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.release.xcconfig"; sourceTree = "<group>"; };
+		BB2EE54721F0A1EF003F09F5 /* EMSNetworkingTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSNetworkingTime.h; sourceTree = "<group>"; };
+		BB2EE54821F0A1EF003F09F5 /* EMSNetworkingTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSNetworkingTime.m; sourceTree = "<group>"; };
 		C06D862D310FE18E203A2E4C /* libPods-EmarsysSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EmarsysSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C36D4E2EE45A245305805C33 /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7E83328102B2602BA298D50 /* Pods-PredictTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1866,6 +1873,8 @@
 		8A3A36C421F094CA00BB5726 /* LogEntry */ = {
 			isa = PBXGroup;
 			children = (
+				BB2EE54721F0A1EF003F09F5 /* EMSNetworkingTime.h */,
+				BB2EE54821F0A1EF003F09F5 /* EMSNetworkingTime.m */,
 				8A3A36C521F094CA00BB5726 /* EMSInDatabaseTime.m */,
 				8A3A36C621F094CA00BB5726 /* EMSLogEntryProtocol.h */,
 				8A3A36C721F094CA00BB5726 /* EMSInDatabaseTime.h */,
@@ -1877,6 +1886,7 @@
 			isa = PBXGroup;
 			children = (
 				8A3A36CC21F094F700BB5726 /* EMSInDatabaseTimeTests.m */,
+				8655CEB0382F2D3408E275AD /* EMSNetworkingTimeTests.m */,
 			);
 			path = LogEntry;
 			sourceTree = "<group>";
@@ -2323,6 +2333,7 @@
 				168F4AAF2108AF0900D0623B /* EMSSQLiteHelper.h in Headers */,
 				168F4AB12108AF0900D0623B /* EMSRequestModelMapper.h in Headers */,
 				167C9FD32118764100E01190 /* EMSTestPrefixHeader.pch in Headers */,
+				BB2EE54921F0A1EF003F09F5 /* EMSNetworkingTime.h in Headers */,
 				168F4AB22108AF0900D0623B /* EMSModelMapperProtocol.h in Headers */,
 				168F4AB32108AF0900D0623B /* EMSSqliteSchemaHandler.h in Headers */,
 				168F4AB42108AF0900D0623B /* EMSUUIDProvider.h in Headers */,
@@ -2876,6 +2887,7 @@
 				32C6FE183C0B9C894F46819E /* EMSLogMapperTests.m in Sources */,
 				32C6FFC3058166506B3FB295 /* FakeDBTrigger.m in Sources */,
 				32C6F6F80A4D06E855D1E28A /* EMSCountPredicateTests.m in Sources */,
+				8655CFEF615462C2FACE041A /* EMSNetworkingTimeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2999,6 +3011,7 @@
 				32C6F0D134BBA99C8681B748 /* EMSLogMapperTests.m in Sources */,
 				32C6F8000B1E2483E362F576 /* FakeDBTrigger.m in Sources */,
 				32C6F33C3712EE339F83B9C6 /* EMSCountPredicateTests.m in Sources */,
+				8655C1D01AF7B84E4B564AFE /* EMSNetworkingTimeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3065,6 +3078,7 @@
 				165BF3DC2108955B00FA0F6A /* EMSNotificationService.m in Sources */,
 				165BF3DE2108955B00FA0F6A /* EMSNotificationService+Actions.m in Sources */,
 				8A56D64721A561B700E7CF62 /* EMSRequestModel+RequestIds.m in Sources */,
+				BB2EE54A21F0A1EF003F09F5 /* EMSNetworkingTime.m in Sources */,
 				165BF3E02108955B00FA0F6A /* EMSNotificationService+Attachment.m in Sources */,
 				165BF3E22108955B00FA0F6A /* EMSNotificationService+PushToInApp.m in Sources */,
 				165BF3E42108955B00FA0F6A /* NSDictionary+MobileEngage.m in Sources */,
