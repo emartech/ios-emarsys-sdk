@@ -523,7 +523,11 @@
 		8AFCA45321393D640052FEFA /* PredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* PredictInternalTests.m */; };
 		8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
 		8AFCA45A21393D710052FEFA /* EmarsysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45721393D700052FEFA /* EmarsysTests.m */; };
+		ACC231B1578819499CDA91FC /* EMSInDatabaseTime.h in Headers */ = {isa = PBXBuildFile; fileRef = ACC23439CE0BD370EA20D515 /* EMSInDatabaseTime.h */; };
+		ACC232CC2DEA281758D5D640 /* EMSInDatabaseTimeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC2316F4551B741F183E847 /* EMSInDatabaseTimeTests.m */; };
 		ACC2343D01BFEB5436711CD4 /* EMSLogEntryProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = ACC23219F13CE8A7F87CB655 /* EMSLogEntryProtocol.h */; };
+		ACC23A098D85A8EE62A035AC /* EMSInDatabaseTimeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC2316F4551B741F183E847 /* EMSInDatabaseTimeTests.m */; };
+		ACC23E86633F0079DC5A3896 /* EMSInDatabaseTime.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC2389C2DD94EAAF766748C /* EMSInDatabaseTime.m */; };
 		CC6A204CB273EDC2C9AC2FFD /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC4CBE55D3E97FE45BDA8A3 /* libPods-MobileEngageTests.a */; };
 		DAF22F72F83E5977CF8010EA /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 774A663380BB9B65FBB3823F /* libPods-CoreTests.a */; };
 /* End PBXBuildFile section */
@@ -1027,7 +1031,10 @@
 		8AFCA45721393D700052FEFA /* EmarsysTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysTests.m; sourceTree = "<group>"; };
 		8AFCA45821393D700052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DD35B24444954785D640FA1 /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		ACC2316F4551B741F183E847 /* EMSInDatabaseTimeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInDatabaseTimeTests.m; sourceTree = "<group>"; };
 		ACC23219F13CE8A7F87CB655 /* EMSLogEntryProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLogEntryProtocol.h; sourceTree = "<group>"; };
+		ACC23439CE0BD370EA20D515 /* EMSInDatabaseTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInDatabaseTime.h; sourceTree = "<group>"; };
+		ACC2389C2DD94EAAF766748C /* EMSInDatabaseTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInDatabaseTime.m; sourceTree = "<group>"; };
 		B125D6D615FB43AC186D3430 /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B25D04A0F9D27E4D9C9BB6B4 /* Pods-MobileEngageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.release.xcconfig"; sourceTree = "<group>"; };
 		CC7BE7E74F65E4F985E6E7CF /* Pods-CoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -1558,6 +1565,7 @@
 			children = (
 				32C6F331D1E2359DEAF6E59A /* EMSLoggerTests.m */,
 				32C6F9F0D0F26C0E3CFD4825 /* EMSLogMapperTests.m */,
+				ACC235E9ECE6BFFEABC25BD6 /* LogEntry */,
 			);
 			path = Log;
 			sourceTree = "<group>";
@@ -2191,10 +2199,20 @@
 			path = EmarsysSDKTests;
 			sourceTree = "<group>";
 		};
+		ACC235E9ECE6BFFEABC25BD6 /* LogEntry */ = {
+			isa = PBXGroup;
+			children = (
+				ACC2316F4551B741F183E847 /* EMSInDatabaseTimeTests.m */,
+			);
+			path = LogEntry;
+			sourceTree = "<group>";
+		};
 		ACC237980354ED97B8FC7C9C /* LogEntry */ = {
 			isa = PBXGroup;
 			children = (
 				ACC23219F13CE8A7F87CB655 /* EMSLogEntryProtocol.h */,
+				ACC2389C2DD94EAAF766748C /* EMSInDatabaseTime.m */,
+				ACC23439CE0BD370EA20D515 /* EMSInDatabaseTime.h */,
 			);
 			path = LogEntry;
 			sourceTree = "<group>";
@@ -2356,6 +2374,7 @@
 				32C6F1C5A4879BC270B96E0D /* EMSPredicateProtocol.h in Headers */,
 				32C6F1545CEB3C731AEDA595 /* EMSLogMapper.h in Headers */,
 				ACC2343D01BFEB5436711CD4 /* EMSLogEntryProtocol.h in Headers */,
+				ACC231B1578819499CDA91FC /* EMSInDatabaseTime.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2853,6 +2872,7 @@
 				32C6FEF23BA9A8AE5D68CBA0 /* EMSListChunkerTests.m in Sources */,
 				32C6F208DB906C2EB16DAF94 /* EMSBatchingShardTriggerFactoryTests.m in Sources */,
 				32C6FE183C0B9C894F46819E /* EMSLogMapperTests.m in Sources */,
+				ACC232CC2DEA281758D5D640 /* EMSInDatabaseTimeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2974,6 +2994,7 @@
 				32C6F82D8D4FB3858FEB2713 /* EMSListChunkerTests.m in Sources */,
 				32C6F71C71A6D298E20648E3 /* EMSBatchingShardTriggerFactoryTests.m in Sources */,
 				32C6F0D134BBA99C8681B748 /* EMSLogMapperTests.m in Sources */,
+				ACC23A098D85A8EE62A035AC /* EMSInDatabaseTimeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3105,6 +3126,7 @@
 				32C6F2157432CD2F6E46D791 /* EMSListChunker.m in Sources */,
 				32C6F9847AF4AD81CAC44AB9 /* EMSBatchingShardTriggerFactory.m in Sources */,
 				32C6FD32347DB70F76AC7110 /* EMSLogMapper.m in Sources */,
+				ACC23E86633F0079DC5A3896 /* EMSInDatabaseTime.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
