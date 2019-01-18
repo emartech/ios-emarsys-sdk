@@ -17,8 +17,10 @@
     NSMutableString *fullUrl = [NSMutableString stringWithFormat:@"%@?", urlString];
     [queryParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [fullUrl appendFormat:@"%@=%@&",
-            [key stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters],
-            [value stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters]];
+                              [[NSString stringWithFormat:@"%@",
+                                                          key] stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters],
+                              [[NSString stringWithFormat:@"%@",
+                                                          value] stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters]];
     }];
     [fullUrl deleteCharactersInRange:NSMakeRange(fullUrl.length - 1, 1)];
     return [NSURL URLWithString:fullUrl];
