@@ -81,14 +81,13 @@ typedef void (^RunnerBlock)(void);
     }];
 }
 
-- (void)submitShard:(EMSShard *)shard {
-    NSParameterAssert(shard);
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Argument: %@", shard]];
-
-    [self runInCoreQueueWithBlock:^{
-        [[self shardRepository] add:shard];
-    }];
+- (void)submitRequestModelNow:(EMSRequestModel *)model {
+    NSParameterAssert(model);
+    [self.restClient executeTaskWithRequestModel:model
+                                    successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                    }
+                                      errorBlock:^(NSString *requestId, NSError *error) {
+                                      }];
 }
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model
@@ -100,6 +99,16 @@ typedef void (^RunnerBlock)(void);
     [self.restClient executeTaskWithRequestModel:model
                                     successBlock:successBlock
                                       errorBlock:errorBlock];
+}
+
+- (void)submitShard:(EMSShard *)shard {
+    NSParameterAssert(shard);
+    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
+                    message:[NSString stringWithFormat:@"Argument: %@", shard]];
+
+    [self runInCoreQueueWithBlock:^{
+        [[self shardRepository] add:shard];
+    }];
 }
 
 - (void)setAdditionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders {

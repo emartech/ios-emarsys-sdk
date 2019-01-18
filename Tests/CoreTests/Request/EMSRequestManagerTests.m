@@ -384,6 +384,44 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
             });
 
+            context(@"submitRequestModelNow:", ^{
+
+                it(@"should throw exception, when requestModel is nil", ^{
+                    @try {
+                        [requestManager submitRequestModelNow:nil];
+                        fail(@"Expected exception when requestModel is nil");
+                    } @catch (NSException *exception) {
+                        [[theValue(exception) shouldNot] beNil];
+                    }
+                });
+
+                it(@"should invoke restClient with the given requestModel and successBlock and errorBlock", ^{
+                    EMSRequestModel *requestModel = [EMSRequestModel nullMock];
+
+                    NSOperationQueue *queue = [NSOperationQueue new];
+                    queue.maxConcurrentOperationCount = 1;
+                    queue.qualityOfService = NSQualityOfServiceUtility;
+
+                    EMSRequestModelRepository *requestRepository = [EMSRequestModelRepository mock];
+
+                    EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
+                    EMSRESTClient *restClient = [EMSRESTClient nullMock];
+                    [[restClient should] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
+                                   withArguments:requestModel, kw_any(), kw_any()];
+
+                    EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
+                    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
+                                                                      completionMiddleware:middleware
+                                                                                restClient:restClient
+                                                                                    worker:worker
+                                                                         requestRepository:requestRepository
+                                                                           shardRepository:shardRepository];
+
+                    [core submitRequestModelNow:requestModel];
+                });
+
+            });
+
         });
 
         describe(@"Core", ^{
