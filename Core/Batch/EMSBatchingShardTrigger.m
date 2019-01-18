@@ -19,6 +19,7 @@
 @property(nonatomic, strong) EMSListChunker *chunker;
 @property(nonatomic, strong) EMSPredicate *predicate;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, assign) BOOL persistent;
 
 @end
 
@@ -29,7 +30,8 @@
                             mapper:(id <EMSRequestFromShardsMapperProtocol>)mapper
                            chunker:(EMSListChunker *)chunker
                          predicate:(EMSPredicate *)predicate
-                    requestManager:(EMSRequestManager *)requestManager {
+                    requestManager:(EMSRequestManager *)requestManager
+                        persistent:(BOOL)persistent {
     NSParameterAssert(shardRepository);
     NSParameterAssert(specification);
     NSParameterAssert(mapper);
@@ -43,6 +45,7 @@
         _chunker = chunker;
         _predicate = predicate;
         _requestManager = requestManager;
+        _persistent = persistent;
     }
     return self;
 }
@@ -53,8 +56,12 @@
         NSArray<NSArray<EMSShard *> *> *shardChunks = [self.chunker chunk:shards];
         for (NSArray<EMSShard *> *shardChunk in shardChunks) {
             EMSRequestModel *requestModel = [self.mapper requestFromShards:shardChunk];
-            [self.requestManager submitRequestModel:requestModel
-                                withCompletionBlock:nil];
+            if (self.persistent) {
+                [self.requestManager submitRequestModel:requestModel
+                                    withCompletionBlock:nil];
+            } else {
+                [self.requestManager submitRequestModelNow:requestModel];
+            }
             NSMutableArray *shardIds = [@[] mutableCopy];
             for (EMSShard *shard in shardChunk) {
                 [shardIds addObject:shard.shardId];

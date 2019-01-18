@@ -48,18 +48,10 @@
 
     OCMStub([self.shardRepository query:self.specification]).andReturn(self.shards);
 
-    _trigger = [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
-                                                     specification:self.specification
-                                                            mapper:self.mapper
-                                                           chunker:self.chunker
-                                                         predicate:self.predicate
-                                                    requestManager:self.requestManager];
+    _trigger = [self persistentTrigger];
 }
 
-- (void)tearDown {
-}
-
-- (void)testTriggerBlock_submitsRequestModels_toRequestManager {
+- (void)testTriggerBlock_persistent_submitsRequestModels_toRequestManager {
     OCMStub([self.predicate evaluate:self.shards]).andReturn(YES);
     OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
@@ -70,6 +62,19 @@
     for (EMSRequestModel *requestModel in self.requestModels) {
         OCMVerify([self.requestManager submitRequestModel:requestModel
                                       withCompletionBlock:nil]);
+    }
+}
+
+- (void)testTriggerBlock_transient_submitsRequestModels_toRequestManager {
+    OCMStub([self.predicate evaluate:self.shards]).andReturn(YES);
+    OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+
+    [[self transientTrigger] trigger];
+
+    for (EMSRequestModel *requestModel in self.requestModels) {
+        OCMVerify([self.requestManager submitRequestModelNow:requestModel]);
     }
 }
 
@@ -109,5 +114,24 @@
     }
     return [NSArray arrayWithArray:shards];
 }
+
+- (EMSBatchingShardTrigger *)persistentTrigger {
+    return [self triggerWithPersistentFlag:YES];
+}
+
+- (EMSBatchingShardTrigger *)transientTrigger {
+    return [self triggerWithPersistentFlag:NO];
+}
+
+- (EMSBatchingShardTrigger *)triggerWithPersistentFlag:(BOOL)flag {
+    return [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                                 specification:self.specification
+                                                        mapper:self.mapper
+                                                       chunker:self.chunker
+                                                     predicate:self.predicate
+                                                requestManager:self.requestManager
+                                                    persistent:flag];
+}
+
 
 @end

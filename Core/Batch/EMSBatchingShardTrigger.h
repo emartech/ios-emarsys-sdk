@@ -19,6 +19,7 @@
                             mapper:(id <EMSRequestFromShardsMapperProtocol>)mapper
                            chunker:(EMSListChunker *)chunker
                          predicate:(EMSPredicate *)predicate
-                    requestManager:(EMSRequestManager *)requestManager;
+                    requestManager:(EMSRequestManager *)requestManager
+                        persistent:(BOOL)persistent;
 
 @end

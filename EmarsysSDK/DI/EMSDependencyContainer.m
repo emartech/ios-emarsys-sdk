@@ -154,14 +154,16 @@
                                                                    mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
                                                                   chunker:[[EMSListChunker alloc] initWithChunkSize:1]
                                                                 predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
-                                                           requestManager:self.requestManager];
+                                                           requestManager:self.requestManager
+                                                               persistent:YES];
     _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%"
                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
                                                                   mapper:[[EMSLogMapper alloc] initWithRequestContext:self.requestContext]
                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:10]
                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:10]
-                                                          requestManager:self.requestManager];
+                                                          requestManager:self.requestManager
+                                                              persistent:NO];
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent
