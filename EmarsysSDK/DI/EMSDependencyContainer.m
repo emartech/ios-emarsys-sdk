@@ -36,6 +36,7 @@
 #import "EMSListChunker.h"
 #import "EMSCountPredicate.h"
 #import "EMSFilterByTypeSpecification.h"
+#import "EMSLogMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -157,7 +158,7 @@
     _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%"
                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
-                                                                  mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
+                                                                  mapper:[[EMSLogMapper alloc] initWithRequestContext:self.requestContext]
                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:10]
                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:10]
                                                           requestManager:self.requestManager];
