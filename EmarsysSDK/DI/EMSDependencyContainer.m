@@ -149,7 +149,7 @@
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
     _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
-                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%"
+                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
                                                                                                                      column:SHARD_COLUMN_NAME_TYPE]
                                                                    mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
                                                                   chunker:[[EMSListChunker alloc] initWithChunkSize:1]
@@ -157,7 +157,7 @@
                                                            requestManager:self.requestManager
                                                                persistent:YES];
     _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
-                                                           specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%"
+                                                           specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%%"
                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
                                                                   mapper:[[EMSLogMapper alloc] initWithRequestContext:self.requestContext]
                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:10]
