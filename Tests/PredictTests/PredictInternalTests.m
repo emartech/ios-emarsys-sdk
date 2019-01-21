@@ -10,6 +10,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSCartItem.h"
+#import "EMSDeviceInfo.h"
 
 SPEC_BEGIN(PredictInternalTests)
 
@@ -79,7 +80,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                                             uuidProvider:uuidProvider
-                                                                                              merchantId:@"merchantId"];
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
                 [internal trackCategoryViewWithCategoryPath:categoryPath];
@@ -126,7 +128,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                                             uuidProvider:uuidProvider
-                                                                                              merchantId:@"merchantId"];
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
                 [internal trackItemViewWithItemId:itemId];
@@ -219,7 +222,8 @@ SPEC_BEGIN(PredictInternalTests)
 
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                                             uuidProvider:uuidProvider
-                                                                                              merchantId:@"merchantId"];
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
                 [internal trackSearchWithSearchTerm:searchTerm];

@@ -5,7 +5,7 @@
 #import "EMSConfig.h"
 #import "EMSRequestModelMatcher.h"
 #import "EMSAuthentication.h"
-#import "EMSDeviceInfo.h"
+#import "EMSdeviceInfo.h"
 #import "EmarsysSDKVersion.h"
 #import "MERequestContext.h"
 #import "FakeRequestManager.h"
@@ -14,6 +14,7 @@
 #import "NSDate+EMSCore.h"
 #import "EMSWaiter.h"
 #import "EMSNotificationCache.h"
+#import "EMSUUIDProvider.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -31,6 +32,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
         __block EMSConfig *config;
         __block EMSConfig *configWithInapp;
         __block EMSRequestManager *requestManager;
+
+        __block EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
+        __block EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
+        __block EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
 
         beforeEach(^{
             config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
@@ -55,7 +60,10 @@ SPEC_BEGIN(MobileEngageInternalTests)
             [userDefaults synchronize];
 
             requestManager = [EMSRequestManager nullMock];
-            requestContext = [[MERequestContext alloc] initWithConfig:config];
+            requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                         uuidProvider:uuidProvider
+                                                    timestampProvider:timestampProvider
+                                                           deviceInfo:deviceInfo];
             _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                   requestContext:requestContext
                                                                notificationCache:[EMSNotificationCache new]];
@@ -162,11 +170,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"push_token": @NO,
                     @"application_version": @"1.0",
                     @"ems_sdk": EMARSYS_SDK_VERSION
@@ -191,11 +199,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
@@ -228,11 +236,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                         @"application_id": kAppId,
                         @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                         @"contact_field_id": @3,
                         @"contact_field_value": @"test@test.com",
                         @"push_token": @NO,
@@ -256,18 +264,21 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 NSString *applicationPassword = @"appSecret";
 
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
-                                                                      requestContext:[[MERequestContext alloc] initWithConfig:config]
+                                                                      requestContext:[[MERequestContext alloc] initWithConfig:config
+                                                                                                                 uuidProvider:uuidProvider
+                                                                                                            timestampProvider:timestampProvider
+                                                                                                                   deviceInfo:deviceInfo]
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"nottest@test.com",
                     @"push_token": @NO,
@@ -279,11 +290,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *secondModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
@@ -305,18 +316,21 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 NSString *applicationPassword = @"appSecret";
 
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
-                                                                      requestContext:[[MERequestContext alloc] initWithConfig:config]
+                                                                      requestContext:[[MERequestContext alloc] initWithConfig:config
+                                                                                                                 uuidProvider:uuidProvider
+                                                                                                            timestampProvider:timestampProvider
+                                                                                                                   deviceInfo:deviceInfo]
                                                                    notificationCache:NULL];
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"test@test.com",
                     @"push_token": @NO,
@@ -328,11 +342,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *secondModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                     @"application_id": kAppId,
                     @"platform": @"ios",
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
-                    @"language": [EMSDeviceInfo languageCode],
-                    @"timezone": [EMSDeviceInfo timeZone],
-                    @"device_model": [EMSDeviceInfo deviceModel],
-                    @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"nottest@test.com",
                     @"push_token": @NO,
@@ -361,11 +375,11 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
                         @"application_id": kAppId,
                         @"platform": @"ios",
-                        @"hardware_id": [EMSDeviceInfo hardwareId],
-                        @"language": [EMSDeviceInfo languageCode],
-                        @"timezone": [EMSDeviceInfo timeZone],
-                        @"device_model": [EMSDeviceInfo deviceModel],
-                        @"os_version": [EMSDeviceInfo osVersion],
+                    @"hardware_id": deviceInfo.hardwareId,
+                    @"language": deviceInfo.languageCode,
+                    @"timezone": deviceInfo.timeZone,
+                    @"device_model": deviceInfo.deviceModel,
+                    @"os_version": deviceInfo.osVersion,
                         @"contact_field_id": @3,
                         @"contact_field_value": @"test@test.com",
                         @"push_token": @NO,
@@ -398,7 +412,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout", @{
                     @"application_id": kAppId,
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId
                 });
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
@@ -415,7 +429,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 id requestManager = requestManagerMock();
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout", @{
                     @"application_id": kAppId,
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"contact_field_id": @3,
                     @"contact_field_value": @"test@test.com"
                 });
@@ -473,7 +487,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSDictionary *payload = @{
                     @"clicks": @[],
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"viewed_messages": @[],
                     @"events": @[
                         @{
@@ -530,7 +544,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 NSDictionary *payload = @{
                     @"clicks": @[],
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"viewed_messages": @[],
                     @"events": @[
                         @{
@@ -571,7 +585,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 NSString *eventName = @"testEventName";
 
                 NSDictionary *payload = @{
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"clicks": @[],
                     @"viewed_messages": @[],
                     @"events": @[

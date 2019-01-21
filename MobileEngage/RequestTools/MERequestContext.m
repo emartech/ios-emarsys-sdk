@@ -4,17 +4,25 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
+#import "EMSDeviceInfo.h"
 
 @implementation MERequestContext
 
-- (instancetype)initWithConfig:(EMSConfig *)config {
+- (instancetype)initWithConfig:(EMSConfig *)config
+                  uuidProvider:(EMSUUIDProvider *)uuidProvider
+             timestampProvider:(EMSTimestampProvider *)timestampProvider
+                    deviceInfo:(EMSDeviceInfo *)deviceInfo {
+    NSParameterAssert(uuidProvider);
+    NSParameterAssert(timestampProvider);
+    NSParameterAssert(deviceInfo);
     if (self = [super init]) {
         _lastAppLoginPayload = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] dictionaryForKey:kEMSLastAppLoginPayload];
         _meId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID];
         _meIdSignature = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID_SIGNATURE];
         _config = config;
-        _timestampProvider = [EMSTimestampProvider new];
-        _uuidProvider = [EMSUUIDProvider new];
+        _timestampProvider = timestampProvider;
+        _uuidProvider = uuidProvider;
+        _deviceInfo = deviceInfo;
         _contactFieldId = config.contactFieldId;
     }
     return self;

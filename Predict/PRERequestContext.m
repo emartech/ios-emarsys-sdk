@@ -5,14 +5,17 @@
 #import "PRERequestContext.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSDeviceInfo.h"
 
 @implementation PRERequestContext
 
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
                              uuidProvider:(EMSUUIDProvider *)uuidProvider
-                               merchantId:(NSString *)merchantId {
+                               merchantId:(NSString *)merchantId
+                               deviceInfo:(EMSDeviceInfo *)deviceInfo {
     NSParameterAssert(timestampProvider);
     NSParameterAssert(uuidProvider);
+    NSParameterAssert(deviceInfo);
     NSParameterAssert(merchantId);
     if (self = [super init]) {
         NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
@@ -20,6 +23,7 @@
         _visitorId = [defaults objectForKey:kEMSVisitorId];
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
+        _deviceInfo = deviceInfo;
         _merchantId = merchantId;
     }
     return self;

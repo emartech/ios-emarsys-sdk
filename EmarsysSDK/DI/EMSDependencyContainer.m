@@ -37,6 +37,7 @@
 #import "EMSCountPredicate.h"
 #import "EMSFilterByTypeSpecification.h"
 #import "EMSLogMapper.h"
+#import "EMSDeviceInfo.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -80,8 +81,12 @@
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+    EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
 
-    _requestContext = [[MERequestContext alloc] initWithConfig:config];
+    _requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                  uuidProvider:uuidProvider
+                                             timestampProvider:timestampProvider
+                                                    deviceInfo:deviceInfo];
     _notificationCenterManager = [MENotificationCenterManager new];
     MELogRepository *logRepository = [MELogRepository new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
@@ -136,7 +141,8 @@
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
-                                                                       merchantId:config.merchantId];
+                                                                       merchantId:config.merchantId
+                                                                       deviceInfo:deviceInfo];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
     [self.dbHelper open];
@@ -179,7 +185,6 @@
         _inbox = [[MEInboxV2 alloc] initWithConfig:config
                                     requestContext:self.requestContext
                                  notificationCache:self.notificationCache
-                                 timestampProvider:timestampProvider
                                     requestManager:self.requestManager];
     } else {
         _inbox = [[MEInbox alloc] initWithConfig:config

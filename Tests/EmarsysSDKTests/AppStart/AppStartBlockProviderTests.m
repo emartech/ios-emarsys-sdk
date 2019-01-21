@@ -6,6 +6,8 @@
 #import "EMSRequestManager.h"
 #import "MERequestContext.h"
 #import "AppStartBlockProvider.h"
+#import "EMSUUIDProvider.h"
+#import "EMSDeviceInfo.h"
 
 SPEC_BEGIN(AppStartBlockProviderTests)
 
@@ -17,11 +19,13 @@ SPEC_BEGIN(AppStartBlockProviderTests)
         beforeEach(^{
             requestManager = [EMSRequestManager mock];
             requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-                [builder setMerchantId:@"testMerchantId"];
-                [builder setContactFieldId:@3];
-            }]];
+                    [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                    [builder setMerchantId:@"testMerchantId"];
+                    [builder setContactFieldId:@3];
+                }]                                       uuidProvider:[EMSUUIDProvider new]
+                                                    timestampProvider:[EMSTimestampProvider new]
+                                                           deviceInfo:[EMSDeviceInfo new]];
 
             [requestContext setMeId:nil];
             [requestContext setMeIdSignature:nil];

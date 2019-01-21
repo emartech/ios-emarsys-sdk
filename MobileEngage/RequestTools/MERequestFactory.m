@@ -30,22 +30,24 @@
     return requestModel;
 }
 
-+ (BOOL)shouldSendLastMobileActivityWithRequestContext:(MERequestContext *)requestContext currentAppLoginPayload:(NSDictionary *)currentAppLoginPayload {
++ (BOOL)shouldSendLastMobileActivityWithRequestContext:(MERequestContext *)requestContext
+                                currentAppLoginPayload:(NSDictionary *)currentAppLoginPayload {
     return ([requestContext.lastAppLoginPayload isEqual:currentAppLoginPayload] && requestContext.meId);
 }
 
-+ (EMSRequestModel *)createAppLoginRequestWithPushToken:(NSData *)pushToken requestContext:(MERequestContext *)requestContext {
++ (EMSRequestModel *)createAppLoginRequestWithPushToken:(NSData *)pushToken
+                                         requestContext:(MERequestContext *)requestContext {
     return [self requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login"
                               method:HTTPMethodPOST
               additionalPayloadBlock:^(NSMutableDictionary *payload) {
                   payload[@"platform"] = @"ios";
-                  payload[@"language"] = [EMSDeviceInfo languageCode];
-                  payload[@"timezone"] = [EMSDeviceInfo timeZone];
-                  payload[@"device_model"] = [EMSDeviceInfo deviceModel];
-                  payload[@"os_version"] = [EMSDeviceInfo osVersion];
+                  payload[@"language"] = requestContext.deviceInfo.languageCode;
+                  payload[@"timezone"] = requestContext.deviceInfo.timeZone;
+                  payload[@"device_model"] = requestContext.deviceInfo.deviceModel;
+                  payload[@"os_version"] = requestContext.deviceInfo.osVersion;
                   payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
 
-                  NSString *appVersion = [EMSDeviceInfo applicationVersion];
+                  NSString *appVersion = requestContext.deviceInfo.applicationVersion;
                   if (appVersion) {
                       payload[@"application_version"] = appVersion;
                   }
@@ -127,11 +129,12 @@
                                           requestContext:(MERequestContext *)requestContext {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
-            [builder setUrl:[NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events", requestContext.meId]];
+            [builder setUrl:[NSString stringWithFormat:@"https://mobile-events.eservice.emarsys.net/v3/devices/%@/events",
+                                                       requestContext.meId]];
             NSMutableDictionary *payload = [NSMutableDictionary new];
             payload[@"clicks"] = @[];
             payload[@"viewed_messages"] = @[];
-            payload[@"hardware_id"] = [EMSDeviceInfo hardwareId];
+            payload[@"hardware_id"] = requestContext.deviceInfo.hardwareId;
 
             NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:@{
                 @"type": type,
@@ -159,8 +162,11 @@
                                uuidProvider:requestContext.uuidProvider];
 }
 
-+ (EMSRequestModel *)createTrackDeepLinkRequestWithTrackingId:(NSString *)trackingId requestContext:(MERequestContext *)requestContext {
-    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
++ (EMSRequestModel *)createTrackDeepLinkRequestWithTrackingId:(NSString *)trackingId
+                                               requestContext:(MERequestContext *)requestContext {
+    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+                                                     requestContext.deviceInfo.deviceType,
+                                                     requestContext.deviceInfo.osVersion];
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
             [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];
@@ -180,7 +186,7 @@
             [builder setMethod:method];
             NSMutableDictionary *payload = [@{
                 @"application_id": requestContext.config.applicationCode,
-                @"hardware_id": [EMSDeviceInfo hardwareId]
+                @"hardware_id": requestContext.deviceInfo.hardwareId
             } mutableCopy];
 
             if (requestContext.appLoginParameters.contactFieldId && requestContext.appLoginParameters.contactFieldValue) {

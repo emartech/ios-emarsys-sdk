@@ -10,6 +10,7 @@
 @class MEDisplayedIAMRepository;
 @class MEInApp;
 @class MERequestContext;
+@class EMSDeviceInfo;
 
 @interface MERequestRepositoryProxy : NSObject <EMSRequestModelRepositoryProtocol>
 

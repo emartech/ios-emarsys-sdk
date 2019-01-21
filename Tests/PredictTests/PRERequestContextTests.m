@@ -6,15 +6,18 @@
 #import "PRERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSTimestampProvider.h"
+#import "EMSDeviceInfo.h"
 
 SPEC_BEGIN(PRERequestContextTests)
 
         __block EMSTimestampProvider *timestampProvider;
         __block EMSUUIDProvider *uuidProvider;
+        __block EMSDeviceInfo *deviceInfo;
 
         beforeEach(^{
             timestampProvider = [EMSTimestampProvider new];
             uuidProvider = [EMSUUIDProvider new];
+            deviceInfo = [EMSDeviceInfo new];
         });
 
         afterEach(^{
@@ -26,12 +29,13 @@ SPEC_BEGIN(PRERequestContextTests)
             [userDefaults synchronize];
         });
 
-        describe(@"initWithTimestampProvider:uuidProvider:merchantId:", ^{
+        describe(@"initWithTimestampProvider:uuidProvider:merchantId:deviceInfo:", ^{
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
                     [[PRERequestContext alloc] initWithTimestampProvider:nil
                                                             uuidProvider:uuidProvider
-                                                              merchantId:@"merchantId"];
+                                                              merchantId:@"merchantId"
+                                                              deviceInfo:deviceInfo];
                     fail(@"Expected Exception when timestampProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
@@ -43,21 +47,37 @@ SPEC_BEGIN(PRERequestContextTests)
                 @try {
                     [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                             uuidProvider:nil
-                                                              merchantId:@"merchantId"];
+                                                              merchantId:@"merchantId"
+                                                              deviceInfo:deviceInfo];
                     fail(@"Expected Exception when uuidProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: uuidProvider"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
             it(@"should throw exception when merchantId is nil", ^{
                 @try {
                     [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                             uuidProvider:uuidProvider
-                                                              merchantId:nil];
+                                                              merchantId:nil
+                                                              deviceInfo:deviceInfo];
                     fail(@"Expected Exception when merchantId is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: merchantId"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when deviceInfo is nil", ^{
+                @try {
+                    [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                            uuidProvider:uuidProvider
+                                                              merchantId:@"merchantId"
+                                                              deviceInfo:nil];
+                    fail(@"Expected Exception when deviceInfo is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: deviceInfo"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -68,10 +88,12 @@ SPEC_BEGIN(PRERequestContextTests)
                 NSString *const customerId = @"testId";
                 [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                          uuidProvider:uuidProvider
-                                                           merchantId:@"merchantId"] setCustomerId:customerId];
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setCustomerId:customerId];
                 [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                            uuidProvider:uuidProvider
-                                                             merchantId:@"merchantId"] customerId] should] equal:customerId];
+                                                             merchantId:@"merchantId"
+                                                             deviceInfo:deviceInfo] customerId] should] equal:customerId];
             });
         });
 
@@ -80,10 +102,12 @@ SPEC_BEGIN(PRERequestContextTests)
                 NSString *const visitorId = @"visitorId";
                 [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                          uuidProvider:uuidProvider
-                                                           merchantId:@"merchantId"] setVisitorId:visitorId];
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setVisitorId:visitorId];
                 [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                            uuidProvider:uuidProvider
-                                                             merchantId:@"merchantId"] visitorId] should] equal:visitorId];
+                                                             merchantId:@"merchantId"
+                                                             deviceInfo:deviceInfo] visitorId] should] equal:visitorId];
             });
         });
 

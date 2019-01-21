@@ -151,7 +151,7 @@
 - (NSDictionary<NSString *, NSString *> *)createNotificationsFetchingHeaders {
     NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:self.config];
     NSMutableDictionary *mutableFetchingHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
-    mutableFetchingHeaders[@"x-ems-me-hardware-id"] = [EMSDeviceInfo hardwareId];
+    mutableFetchingHeaders[@"x-ems-me-hardware-id"] = self.requestContext.deviceInfo.hardwareId;
     mutableFetchingHeaders[@"x-ems-me-application-code"] = self.config.applicationCode;
     mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@",
                                                                                       self.requestContext.appLoginParameters.contactFieldId];

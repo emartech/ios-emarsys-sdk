@@ -16,7 +16,6 @@
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *resultBlocks;
-@property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, assign) BOOL fetchRequestInProgress;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 
@@ -27,18 +26,15 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-             timestampProvider:(EMSTimestampProvider *)timestampProvider
                 requestManager:(EMSRequestManager *)requestManager {
     NSParameterAssert(config);
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
-    NSParameterAssert(timestampProvider);
     NSParameterAssert(requestManager);
     if (self = [super init]) {
         _config = config;
         _requestContext = requestContext;
         _notificationCache = notificationCache;
-        _timestampProvider = timestampProvider;
         _requestManager = requestManager;
         _resultBlocks = [NSMutableArray new];
     }
@@ -48,7 +44,7 @@
 
 - (void)fetchNotificationsWithResultBlock:(EMSFetchNotificationResultBlock)resultBlock {
     NSParameterAssert(resultBlock);
-    if (self.lastNotificationStatus && [[self.timestampProvider provideTimestamp] timeIntervalSinceDate:self.responseTimestamp] < 60) {
+    if (self.lastNotificationStatus && [[self.requestContext.timestampProvider provideTimestamp] timeIntervalSinceDate:self.responseTimestamp] < 60) {
         self.lastNotificationStatus.notifications = [self.notificationCache mergeWithNotifications:self.lastNotificationStatus.notifications];
         resultBlock(self.lastNotificationStatus, nil);
         return;
@@ -75,7 +71,7 @@
                                                                                                     error:nil];
                                           EMSNotificationInboxStatus *status = [[MEInboxParser new] parseNotificationInboxStatus:payload];
                                           weakSelf.lastNotificationStatus = status;
-                                          weakSelf.responseTimestamp = [weakSelf.timestampProvider provideTimestamp];
+                                          weakSelf.responseTimestamp = [weakSelf.requestContext.timestampProvider provideTimestamp];
                                           weakSelf.fetchRequestInProgress = NO;
 
                                           dispatch_async(dispatch_get_main_queue(), ^{
@@ -173,9 +169,9 @@
 }
 
 - (void)purgeNotificationCache {
-    if (!self.purgeTimestamp || [[self.timestampProvider provideTimestamp] timeIntervalSinceDate:self.purgeTimestamp] >= 60) {
+    if (!self.purgeTimestamp || [[self.requestContext.timestampProvider provideTimestamp] timeIntervalSinceDate:self.purgeTimestamp] >= 60) {
         self.lastNotificationStatus = nil;
-        self.purgeTimestamp = [self.timestampProvider provideTimestamp];
+        self.purgeTimestamp = [self.requestContext.timestampProvider provideTimestamp];
     }
 }
 

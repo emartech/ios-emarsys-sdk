@@ -8,6 +8,7 @@
 #import "EMSTimestampProvider.h"
 
 @class EMSUUIDProvider;
+@class EMSDeviceInfo;
 
 #define kEMSSuiteName @"com.emarsys.mobileengage"
 #define kEMSLastAppLoginPayload @"kLastAppLoginPayload"
@@ -26,8 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong, nullable) NSNumber *contactFieldId;
+@property(nonatomic, strong, nullable) EMSDeviceInfo *deviceInfo;
 
-- (instancetype)initWithConfig:(EMSConfig *)config;
+- (instancetype)initWithConfig:(EMSConfig *)config
+                  uuidProvider:(EMSUUIDProvider *)uuidProvider
+             timestampProvider:(EMSTimestampProvider *)timestampProvider
+                    deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
 - (void)reset;
 

@@ -8,6 +8,12 @@
 
 SPEC_BEGIN(EMSDeviceInfoTests)
 
+        __block EMSDeviceInfo *deviceInfo;
+
+        beforeEach(^{
+            deviceInfo = [EMSDeviceInfo new];
+        });
+
         context(@"Timezone", ^{
             __block NSTimeZone *cachedTimeZone;
 
@@ -23,7 +29,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             describe(@"timeZone", ^{
 
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo timeZone] shouldNot] beNil];
+                    [[[deviceInfo timeZone] shouldNot] beNil];
                 });
 
                 it(@"should return with the current timeZone", ^{
@@ -32,7 +38,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                     formatter.dateFormat = @"xxxx";
                     NSString *expected = [formatter stringFromDate:[NSDate date]];
 
-                    NSString *timeZone = [EMSDeviceInfo timeZone];
+                    NSString *timeZone = [deviceInfo timeZone];
                     [[timeZone should] equal:expected];
                 });
 
@@ -40,13 +46,13 @@ SPEC_BEGIN(EMSDeviceInfoTests)
 
             describe(@"languageCode", ^{
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo languageCode] shouldNot] beNil];
+                    [[[deviceInfo languageCode] shouldNot] beNil];
                 });
             });
 
             describe(@"deviceModel", ^{
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo deviceModel] shouldNot] beNil];
+                    [[[deviceInfo deviceModel] shouldNot] beNil];
                 });
             });
 
@@ -60,32 +66,32 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 };
 
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo deviceType] shouldNot] beNil];
+                    [[[deviceInfo deviceType] shouldNot] beNil];
                 });
 
                 it(@"should return iPhone type", ^{
                     setUserInterfaceIdiom(UIUserInterfaceIdiomPhone);
 
-                    [[[EMSDeviceInfo deviceType] should] equal:@"iPhone"];
+                    [[[deviceInfo deviceType] should] equal:@"iPhone"];
                 });
 
                 it(@"should return iPad type", ^{
                     setUserInterfaceIdiom(UIUserInterfaceIdiomPad);
 
-                    [[[EMSDeviceInfo deviceType] should] equal:@"iPad"];
+                    [[[deviceInfo deviceType] should] equal:@"iPad"];
                 });
 
             });
 
             describe(@"osVersion", ^{
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo osVersion] shouldNot] beNil];
+                    [[[deviceInfo osVersion] shouldNot] beNil];
                 });
             });
 
             describe(@"systemName", ^{
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo systemName] shouldNot] beNil];
+                    [[[deviceInfo systemName] shouldNot] beNil];
                 });
             });
         });
@@ -104,8 +110,8 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             id (^createUserDefaultsMock)() = ^id() {
                 id userDefaultsMock = [NSUserDefaults mock];
                 [[NSUserDefaults should] receive:@selector(alloc)
-                                       andReturn:userDefaultsMock
-                                withCountAtLeast:0];
+                    andReturn:userDefaultsMock
+             withCountAtLeast:0];
                 [[userDefaultsMock should] receive:@selector(initWithSuiteName:)
                                          andReturn:userDefaultsMock
                                   withCountAtLeast:0
@@ -116,7 +122,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             describe(@"hardwareId", ^{
 
                 it(@"should not return nil", ^{
-                    [[[EMSDeviceInfo hardwareId] shouldNot] beNil];
+                    [[[deviceInfo hardwareId] shouldNot] beNil];
                 });
 
                 it(@"should return idfv if idfa is not available and there is no cached hardwareId", ^{
@@ -134,7 +140,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                                                   andReturn:theValue(NO)
                                            withCountAtLeast:1];
 
-                    [[[EMSDeviceInfo hardwareId] should] equal:idfv];
+                    [[[deviceInfo hardwareId] should] equal:idfv];
                 });
 
                 it(@"should return idfa if available and there is no cached hardwareId", ^{
@@ -156,7 +162,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                                                   andReturn:uuid
                                            withCountAtLeast:0];
 
-                    [[[EMSDeviceInfo hardwareId] should] equal:[uuid UUIDString]];
+                    [[[deviceInfo hardwareId] should] equal:[uuid UUIDString]];
                 });
 
                 it(@"should return the cached value if available", ^{
@@ -175,7 +181,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                                                   andReturn:uuid
                                            withCountAtLeast:0];
 
-                    [[[EMSDeviceInfo hardwareId] should] equal:[EMSDeviceInfo hardwareId]];
+                    [[[deviceInfo hardwareId] should] equal:[deviceInfo hardwareId]];
                 });
             });
         });

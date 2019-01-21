@@ -6,6 +6,7 @@
 
 @class EMSTimestampProvider;
 @class EMSUUIDProvider;
+@class EMSDeviceInfo;
 
 #define kEMSPredictSuiteName @"com.emarsys.predict"
 #define kEMSCustomerId @"customerId"
@@ -18,10 +19,12 @@
 @property(nonatomic, strong) NSString *merchantId;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
                              uuidProvider:(EMSUUIDProvider *)uuidProvider
-                               merchantId:(NSString *)merchantId;
+                               merchantId:(NSString *)merchantId
+                               deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
 
 @end

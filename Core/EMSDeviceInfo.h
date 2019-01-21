@@ -7,18 +7,21 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface EMSDeviceInfo: NSObject
 
-+ (NSString *)timeZone;
-+ (NSString *)languageCode;
+- (NSString *)timeZone;
 
-+ (nullable NSString *)applicationVersion;
-+ (NSString *)deviceModel;
+- (NSString *)languageCode;
 
-+ (NSString *)deviceType;
-+ (NSString *)osVersion;
+- (nullable NSString *)applicationVersion;
 
-+ (NSString *)systemName;
-+ (NSString *)hardwareId;
+- (NSString *)deviceModel;
+
+- (NSString *)deviceType;
+
+- (NSString *)osVersion;
+
+- (NSString *)systemName;
+
+- (NSString *)hardwareId;
 
 @end
-
 NS_ASSUME_NONNULL_END

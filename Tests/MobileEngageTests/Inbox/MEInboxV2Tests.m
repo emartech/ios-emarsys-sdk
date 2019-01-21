@@ -9,6 +9,8 @@
 #import "EMSWaiter.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
+#import "EMSUUIDProvider.h"
+#import "EMSDeviceInfo.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -23,6 +25,13 @@ SPEC_BEGIN(MEInboxV2Tests)
         __block EMSNotificationCache *notificationCache;
         __block NSMutableArray<EMSNotification *> *fakeNotifications;
         __block EMSRequestManager *requestManager;
+        __block EMSUUIDProvider *uuidProvider;
+        __block EMSTimestampProvider *timestampProvider;
+        __block EMSDeviceInfo *deviceInfo;
+
+        uuidProvider = [EMSUUIDProvider new];
+        timestampProvider = [EMSTimestampProvider new];
+        deviceInfo = [EMSDeviceInfo new];
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:applicationCode
@@ -33,7 +42,10 @@ SPEC_BEGIN(MEInboxV2Tests)
 
         id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withMeId) = ^id(EMSRequestManager *requestManager, BOOL withMeId) {
             notificationCache = [[EMSNotificationCache alloc] init];
-            requestContext = [[MERequestContext alloc] initWithConfig:config];
+            requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                         uuidProvider:uuidProvider
+                                                    timestampProvider:timestampProvider
+                                                           deviceInfo:deviceInfo];
             if (withMeId) {
                 requestContext.meId = meId;
             } else {
@@ -42,19 +54,20 @@ SPEC_BEGIN(MEInboxV2Tests)
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                notificationCache:notificationCache
-                                               timestampProvider:[EMSTimestampProvider new]
                                                   requestManager:requestManager];
             return inbox;
         };
 
-        id (^inboxWithTimestampProvider)(EMSRequestManager *requestManager, EMSTimestampProvider *timestampProvider) = ^id(EMSRequestManager *requestManager, EMSTimestampProvider *timestampProvider) {
+        id (^inboxWithTimestampProvider)(EMSRequestManager *requestManager, EMSTimestampProvider *timestampProvider) = ^id(EMSRequestManager *requestManager, EMSTimestampProvider *emsTimestampProvider) {
             notificationCache = [[EMSNotificationCache alloc] init];
-            requestContext = [[MERequestContext alloc] initWithConfig:config];
+            requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                         uuidProvider:uuidProvider
+                                                    timestampProvider:emsTimestampProvider
+                                                           deviceInfo:deviceInfo];
             requestContext.meId = meId;
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                notificationCache:notificationCache
-                                               timestampProvider:timestampProvider
                                                   requestManager:requestManager];
             return inbox;
         };
@@ -87,29 +100,13 @@ SPEC_BEGIN(MEInboxV2Tests)
         });
 
 
-        describe(@"initWithConfig:requestContext:notificationCache:timestampProvider:requestManager:", ^{
-
-            it(@"should throw exception when timestampProvider is nil", ^{
-                @try {
-                    [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
-                                       requestContext:[MERequestContext mock]
-                                    notificationCache:[EMSNotificationCache mock]
-                                    timestampProvider:nil
-                                       requestManager:[EMSRequestManager mock]];
-                    fail(@"Expected Exception when timestampProvider is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
+        describe(@"initWithConfig:requestContext:notificationCache:requestManager:", ^{
 
             it(@"should throw exception when notificationCache is nil", ^{
                 @try {
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:nil
-                                    timestampProvider:[EMSTimestampProvider new]
                                        requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
@@ -123,7 +120,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:nil
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
-                                    timestampProvider:[EMSTimestampProvider new]
                                        requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when config is nil!");
                 } @catch (NSException *exception) {
@@ -137,7 +133,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:nil
                                     notificationCache:[EMSNotificationCache mock]
-                                    timestampProvider:[EMSTimestampProvider new]
                                        requestManager:[EMSRequestManager mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
@@ -151,7 +146,6 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
-                                    timestampProvider:[EMSTimestampProvider new]
                                        requestManager:nil];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
@@ -233,8 +227,12 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     NSDate *firstDate = [NSDate date];
                     NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
-                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
-                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, timestampProvider);
+                    NSDate *thirdDate = [firstDate dateByAddingTimeInterval:120];
+                    NSDate *forthDate = [firstDate dateByAddingTimeInterval:180];
+                    NSDate *fifthDate = [firstDate dateByAddingTimeInterval:240];
+                    NSDate *sixthDate = [firstDate dateByAddingTimeInterval:300];
+                    FakeTimeStampProvider *const fakeTimestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate, thirdDate, forthDate, fifthDate, sixthDate]];
+                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, fakeTimestampProvider);
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
@@ -267,9 +265,9 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     NSDate *firstDate = [NSDate date];
                     NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
-                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
+                    FakeTimeStampProvider *const fakeTimeStampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
 
-                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, timestampProvider);
+                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, fakeTimeStampProvider);
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
@@ -306,9 +304,9 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                     NSDate *firstDate = [NSDate date];
                     NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
-                    FakeTimeStampProvider *const timestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
+                    FakeTimeStampProvider *const fakeTimeStampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate]];
 
-                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, timestampProvider);
+                    MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, fakeTimeStampProvider);
 
                     XCTestExpectation *exp1 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                     XCTestExpectation *exp2 = [[XCTestExpectation alloc] initWithDescription:@"waitForResult2"];
@@ -1056,14 +1054,15 @@ SPEC_BEGIN(MEInboxV2Tests)
 
                 FakeInboxNotificationRequestManager *fakeRequestManager = [[FakeInboxNotificationRequestManager alloc] initWithSuccessResults:results];
 
-                FakeTimeStampProvider *fakeTimeStampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[
-                    [NSDate date],
-                    [NSDate date],
-                    [[NSDate date] dateByAddingTimeInterval:60],
-                    [[NSDate date] dateByAddingTimeInterval:30]
-                ]];
+                NSDate *firstDate = [NSDate date];
+                NSDate *secondDate = [firstDate dateByAddingTimeInterval:60];
+                NSDate *thirdDate = [firstDate dateByAddingTimeInterval:120];
+                NSDate *forthDate = [firstDate dateByAddingTimeInterval:180];
+                NSDate *fifthDate = [firstDate dateByAddingTimeInterval:240];
+                NSDate *sixthDate = [firstDate dateByAddingTimeInterval:300];
+                FakeTimeStampProvider *const fakeTimestampProvider = [[FakeTimeStampProvider alloc] initWithTimestamps:@[firstDate, secondDate, thirdDate, forthDate, fifthDate, sixthDate]];
 
-                MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, fakeTimeStampProvider);
+                MEInboxV2 *inbox = inboxWithTimestampProvider(fakeRequestManager, fakeTimestampProvider);
 
                 [inbox purgeNotificationCache];
 
@@ -1107,13 +1106,15 @@ SPEC_BEGIN(MEInboxV2Tests)
             __block EMSRequestManager *requestManager;
 
             beforeEach(^{
-                MERequestContext *context = [[MERequestContext alloc] initWithConfig:config];
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
                 requestManager = [EMSRequestManager mock];
 
                 inbox = [[MEInboxV2 alloc] initWithConfig:config
                                            requestContext:context
                                         notificationCache:[EMSNotificationCache new]
-                                        timestampProvider:[EMSTimestampProvider new]
                                            requestManager:requestManager];
             });
 

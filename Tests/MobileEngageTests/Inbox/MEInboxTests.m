@@ -26,6 +26,10 @@ SPEC_BEGIN(MEInboxTests)
         NSNumber *contactFieldId = @3;
         NSString *contactFieldValue = @"valueOfContactField";
 
+        __block EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
+        __block EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
+        __block EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:applicationCode
                                 applicationPassword:applicationPassword];
@@ -37,7 +41,10 @@ SPEC_BEGIN(MEInboxTests)
 
         id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withApploginParameters) = ^id(EMSRequestManager *requestManager, BOOL withApploginParameters) {
             notificationCache = [EMSNotificationCache new];
-            MERequestContext *context = [[MERequestContext alloc] initWithConfig:config];
+            MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
+                                                                    uuidProvider:uuidProvider
+                                                               timestampProvider:timestampProvider
+                                                                      deviceInfo:deviceInfo];
             if (withApploginParameters) {
                 [context setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:contactFieldId
                                                                                 contactFieldValue:contactFieldValue]];
@@ -55,7 +62,10 @@ SPEC_BEGIN(MEInboxTests)
 
         MEInbox *(^createInbox)(void) = ^id() {
             requestManagerMock = [EMSRequestManager nullMock];
-            requestContext = [[MERequestContext alloc] initWithConfig:config];
+            requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                         uuidProvider:uuidProvider
+                                                    timestampProvider:timestampProvider
+                                                           deviceInfo:deviceInfo];
             notificationCache = [EMSNotificationCache new];
 
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
@@ -68,7 +78,7 @@ SPEC_BEGIN(MEInboxTests)
         id (^expectedHeaders)(void) = ^id() {
             NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:config];
             NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
-            mutableHeaders[@"x-ems-me-hardware-id"] = [EMSDeviceInfo hardwareId];
+            mutableHeaders[@"x-ems-me-hardware-id"] = deviceInfo.hardwareId;
             mutableHeaders[@"x-ems-me-application-code"] = config.applicationCode;
             mutableHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@", contactFieldId];
             mutableHeaders[@"x-ems-me-contact-field-value"] = contactFieldValue;
@@ -599,7 +609,7 @@ SPEC_BEGIN(MEInboxTests)
 
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
                     @"application_id": kAppId,
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"sid": @"testID",
                     @"source": @"inbox"
                 });
@@ -620,7 +630,7 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should submit a corresponding RequestModel when there are contact_field_id and contact_field_value", ^{
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
                     @"application_id": kAppId,
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"sid": @"valueOfSid",
                     @"contact_field_id": @3,
                     @"contact_field_value": @"contactFieldValue",
@@ -645,7 +655,7 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should submit a corresponding RequestModel", ^{
                 EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
                     @"application_id": kAppId,
-                    @"hardware_id": [EMSDeviceInfo hardwareId],
+                    @"hardware_id": deviceInfo.hardwareId,
                     @"sid": @"valueOfSid",
                     @"source": @"inbox"
                 });

@@ -74,7 +74,7 @@
             [builder setUrl:[[requestModel url] absoluteString]];
 
             NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-            payload[@"hardware_id"] = [EMSDeviceInfo hardwareId];
+            payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
             payload[@"viewed_messages"] = [self displayRepresentations];
             payload[@"clicks"] = [self clickRepresentations];
             if ([self.inApp isPaused]) {
@@ -82,10 +82,10 @@
             }
             payload[@"events"] = [self eventRepresentations:allCustomEvents];
 
-            payload[@"language"] = [EMSDeviceInfo languageCode];
+            payload[@"language"] = self.requestContext.deviceInfo.languageCode;
                 payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
 
-            NSString *appVersion = [EMSDeviceInfo applicationVersion];
+            NSString *appVersion = self.requestContext.deviceInfo.applicationVersion;
             if (appVersion) {
                 payload[@"application_version"] = appVersion;
             }

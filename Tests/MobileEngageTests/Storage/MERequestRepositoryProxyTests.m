@@ -31,6 +31,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         __block EMSRequestModelRepository *requestModelRepository;
         __block MERequestRepositoryProxy *compositeRequestModelRepository;
         __block EMSTimestampProvider *timestampProvider;
+        __block EMSUUIDProvider *uuidProvider;
+        __block EMSDeviceInfo *deviceInfo;
         __block MERequestContext *requestContext;
 
         registerMatchers(@"EMS");
@@ -50,8 +52,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                     [builder setMethod:HTTPMethodPOST];
                     [builder setPayload:@{@"events": @[event]}];
                 }
-                                  timestampProvider:requestContext.timestampProvider
-                                       uuidProvider:requestContext.uuidProvider];
+                                  timestampProvider:timestampProvider
+                                       uuidProvider:uuidProvider];
         };
 
         id (^normalRequestModel)(NSString *url, MERequestContext *requestContext) = ^id(NSString *url, MERequestContext *requestContext) {
@@ -59,15 +61,15 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                     [builder setUrl:url];
                     [builder setMethod:HTTPMethodGET];
                 }
-                                  timestampProvider:requestContext.timestampProvider
-                                       uuidProvider:requestContext.uuidProvider];
+                                  timestampProvider:timestampProvider
+                                       uuidProvider:uuidProvider];
         };
 
         id (^createFakeRequestRepository)(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) = ^id(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) {
             EMSQueryOldestRowSpecification *selectFirstSpecification = [EMSQueryOldestRowSpecification new];
             EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
                                                                                                                        column:REQUEST_COLUMN_NAME_URL];
-            
+
             EMSFilterByNothingSpecification *selectAllRequestsSpecification = [EMSFilterByNothingSpecification new];
 
             FakeRequestRepository *fakeRequestRepository = [FakeRequestRepository new];
@@ -86,6 +88,9 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
         beforeEach(^{
             timestampProvider = [EMSTimestampProvider new];
+            uuidProvider = [EMSUUIDProvider new];
+            deviceInfo = [EMSDeviceInfo new];
+
             displayedRepository = [MEDisplayedIAMRepository nullMock];
             buttonClickRepository = [MEButtonClickRepository nullMock];
             requestModelRepository = [EMSRequestModelRepository mock];
@@ -94,7 +99,10 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 [builder setContactFieldId:@3];
                 [builder setMobileEngageApplicationCode:@"applicationCode"
                                     applicationPassword:@"applicationPassword"];
-            }]];
+                }]
+                                                         uuidProvider:uuidProvider
+                                                    timestampProvider:timestampProvider
+                                                           deviceInfo:deviceInfo];
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:requestModelRepository
                                                                                          buttonClickRepository:buttonClickRepository
                                                                                         displayedIAMRepository:displayedRepository
@@ -105,7 +113,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         afterEach(^{
         });
 
-        describe(@"initWithRequestModelRepository:buttonClickRepository:displayedIAMRepository:inApp:requestContext:", ^{
+        describe(@"initWithRequestModelRepository:buttonClickRepository:displayedIAMRepository:inApp:requestContext:deviceInfo:", ^{
 
             it(@"should set inApp after init", ^{
                 MEInApp *inApp = [MEInApp mock];
@@ -132,7 +140,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                buttonClickRepository:[MEButtonClickRepository mock]
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:nil
-                                                                      requestContext:nil];
+                                                                      requestContext:[MERequestContext mock]];
                     fail(@"Expected Exception when inApp is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
@@ -146,7 +154,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                buttonClickRepository:[MEButtonClickRepository mock]
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:[MEInApp mock]
-                                                                      requestContext:nil];
+                                                                      requestContext:[MERequestContext mock]];
                     fail(@"Expected Exception when requestModelRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestModelRepository"];
@@ -160,7 +168,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                buttonClickRepository:nil
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:[MEInApp mock]
-                                                                      requestContext:nil];
+                                                                      requestContext:[MERequestContext mock]];
                     fail(@"Expected Exception when clickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];
@@ -174,10 +182,24 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                       buttonClickRepository:[MEButtonClickRepository mock]
                                                                      displayedIAMRepository:nil
                                                                                       inApp:[MEInApp mock]
-                                                                             requestContext:nil];
+                                                                             requestContext:[MERequestContext mock]];
                     fail(@"Expected Exception when displayedIAMRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIAMRepository"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw an exception when there is no requestContext", ^{
+                @try {
+                    (void) [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
+                                                                      buttonClickRepository:[MEButtonClickRepository mock]
+                                                                     displayedIAMRepository:[MEDisplayedIAMRepository mock]
+                                                                                      inApp:[MEInApp mock]
+                                                                             requestContext:nil];
+                    fail(@"Expected Exception when requestContext is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -281,7 +303,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events"];
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
+                            @"hardware_id": deviceInfo.hardwareId,
                             @"viewed_messages": @[],
                             @"clicks": @[],
                             @"events": @[
@@ -289,9 +311,9 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent2.payload[@"events"] firstObject],
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
-                            @"language": [EMSDeviceInfo languageCode],
+                            @"language": deviceInfo.languageCode,
                             @"ems_sdk": EMARSYS_SDK_VERSION,
-                            @"application_version": [EMSDeviceInfo applicationVersion]
+                            @"application_version": deviceInfo.applicationVersion
                         }];
                     }
                                                                                    timestampProvider:requestContext.timestampProvider
@@ -316,7 +338,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events"];
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
-                            @"hardware_id": [EMSDeviceInfo hardwareId],
+                            @"hardware_id": deviceInfo.hardwareId,
                             @"viewed_messages": @[],
                             @"clicks": @[],
                             @"events": @[
@@ -324,9 +346,9 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                 [modelCustomEvent2.payload[@"events"] firstObject],
                                 [modelCustomEvent3.payload[@"events"] firstObject]
                             ],
-                            @"language": [EMSDeviceInfo languageCode],
+                            @"language": deviceInfo.languageCode,
                             @"ems_sdk": EMARSYS_SDK_VERSION,
-                            @"application_version": [EMSDeviceInfo applicationVersion]
+                            @"application_version": deviceInfo.applicationVersion
                         }];
                     }
                                                                                    timestampProvider:requestContext.timestampProvider

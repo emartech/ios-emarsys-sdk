@@ -11,7 +11,7 @@
 #import "PRERequestContext.h"
 #import "EMSDeviceInfo.h"
 
-#define USER_AGENT [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@", [EMSDeviceInfo osVersion], [EMSDeviceInfo systemName]]
+#define USER_AGENT [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@", [[EMSDeviceInfo new] osVersion], [[EMSDeviceInfo new] systemName]]
 
 SPEC_BEGIN(EMSPredictMapperTests)
 
@@ -19,6 +19,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
         __block EMSTimestampProvider *timestampProvider;
         __block EMSUUIDProvider *uuidProvider;
         __block PRERequestContext *requestContext;
+        __block EMSDeviceInfo *deviceInfo;
 
         NSDate *timestamp = [NSDate date];
         NSString *uuidString = @"uuidString";
@@ -35,13 +36,16 @@ SPEC_BEGIN(EMSPredictMapperTests)
 
             timestampProvider = [EMSTimestampProvider mock];
             uuidProvider = [EMSUUIDProvider mock];
+            deviceInfo = [EMSDeviceInfo new];
+
             [timestampProvider stub:@selector(provideTimestamp)
                           andReturn:timestamp];
             [uuidProvider stub:@selector(provideUUIDString)
                      andReturn:uuidString];
             requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
-                                                                       merchantId:merchantId];
+                                                                       merchantId:merchantId
+                                                                       deviceInfo:deviceInfo];
             [requestContext setCustomerId:customerId];
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
         });

@@ -12,31 +12,31 @@
 #define kEMSHardwareIdKey @"kHardwareIdKey"
 #define kEMSSuiteName @"com.emarsys.core"
 
-+ (NSString *)timeZone {
+- (NSString *)timeZone {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.timeZone = [NSTimeZone localTimeZone];
     formatter.dateFormat = @"xxxx";
     return [formatter stringFromDate:[NSDate date]];
 }
 
-+ (NSString *)languageCode {
+- (NSString *)languageCode {
     NSString *language = [NSLocale preferredLanguages][0];
     NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:language];
     NSString *languageCode = languageDic[(NSString *) kCFLocaleLanguageCode];
     return languageCode;
 }
 
-+ (NSString *)applicationVersion {
+- (NSString *)applicationVersion {
     return [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
 }
 
-+ (NSString *)deviceModel {
+- (NSString *)deviceModel {
     struct utsname systemInfo;
     uname(&systemInfo);
     return @(systemInfo.machine);
 }
 
-+ (NSString *)deviceType {
+- (NSString *)deviceType {
     NSDictionary *idiomDict = @{
             @(UIUserInterfaceIdiomUnspecified): @"UnspecifiediOS",
             @(UIUserInterfaceIdiomPhone): @"iPhone",
@@ -47,15 +47,15 @@
     return idiomDict[@([UIDevice.currentDevice userInterfaceIdiom])];
 }
 
-+ (NSString *)osVersion {
+- (NSString *)osVersion {
     return [UIDevice currentDevice].systemVersion;
 }
 
-+ (NSString *)systemName {
+- (NSString *)systemName {
     return [UIDevice currentDevice].systemName;
 }
 
-+ (NSString *)hardwareId {
+- (NSString *)hardwareId {
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     NSString *hardwareId = [userDefaults objectForKey:kEMSHardwareIdKey];
 
@@ -68,7 +68,7 @@
     return hardwareId;
 }
 
-+ (NSString *)getNewHardwareId {
+- (NSString *)getNewHardwareId {
     if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier]
                 UUIDString];

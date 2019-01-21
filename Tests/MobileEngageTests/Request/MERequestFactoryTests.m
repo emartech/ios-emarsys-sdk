@@ -1,4 +1,6 @@
 #import "EMSDeviceInfo.h"
+#import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
 #import "EMSAuthentication.h"
 #import "Kiwi.h"
 #import "MERequestFactory.h"
@@ -19,6 +21,9 @@ SPEC_BEGIN(MERequestFactoryTests)
 
         registerMatchers(@"EMS");
 
+        __block EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
+        __block EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+
         afterAll(^{
             [MEExperimental reset];
         });
@@ -32,7 +37,10 @@ SPEC_BEGIN(MERequestFactoryTests)
             }];
             EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
             [timestampProvider stub:@selector(provideTimestamp) andReturn:timeStamp];
-            MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config];
+            MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:config
+                                                                           uuidProvider:uuidProvider
+                                                                      timestampProvider:timestampProvider
+                                                                             deviceInfo:deviceInfo];
             requestContext.meId = @"requestContextMeId";
             requestContext.meIdSignature = @"requestContextMeIdSignature";
             requestContext.timestampProvider = timestampProvider;
@@ -45,7 +53,9 @@ SPEC_BEGIN(MERequestFactoryTests)
                 MERequestContext *requestContext = requestContextBlock([NSDate date]);
 
                 NSString *const value = @"dl_value";
-                NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION, [EMSDeviceInfo deviceType], [EMSDeviceInfo osVersion]];
+                NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+                                                                 [[EMSDeviceInfo new] deviceType],
+                                                                 [[EMSDeviceInfo new] osVersion]];
                 EMSRequestModel *expected = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setMethod:HTTPMethodPOST];
                         [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];
@@ -86,17 +96,17 @@ SPEC_BEGIN(MERequestFactoryTests)
 
                 apploginPayload = [NSMutableDictionary new];
                 apploginPayload[@"platform"] = @"ios";
-                apploginPayload[@"language"] = [EMSDeviceInfo languageCode];
-                apploginPayload[@"timezone"] = [EMSDeviceInfo timeZone];
-                apploginPayload[@"device_model"] = [EMSDeviceInfo deviceModel];
-                apploginPayload[@"os_version"] = [EMSDeviceInfo osVersion];
+                apploginPayload[@"language"] = deviceInfo.languageCode;
+                apploginPayload[@"timezone"] = deviceInfo.timeZone;
+                apploginPayload[@"device_model"] = deviceInfo.deviceModel;
+                apploginPayload[@"os_version"] = deviceInfo.osVersion;
                 apploginPayload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
                 apploginPayload[@"application_id"] = applicationCode;
-                apploginPayload[@"hardware_id"] = [EMSDeviceInfo hardwareId];
+                apploginPayload[@"hardware_id"] = deviceInfo.hardwareId;
                 apploginPayload[@"contact_field_id"] = contactFieldId;
                 apploginPayload[@"contact_field_value"] = contactFieldValue;
 
-                NSString *appVersion = [EMSDeviceInfo applicationVersion];
+                NSString *appVersion = deviceInfo.applicationVersion;
                 if (appVersion) {
                     apploginPayload[@"application_version"] = appVersion;
                 }
@@ -201,7 +211,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                     [[requestModel.method should] equal:@"POST"];
                     [[requestModel.payload[@"sid"] should] equal:@"notificationSid"];
                     [[requestModel.payload[@"application_id"] should] equal:@"14C19-A121F"];
-                    [[requestModel.payload[@"hardware_id"] should] equal:[EMSDeviceInfo hardwareId]];
+                    [[requestModel.payload[@"hardware_id"] should] equal:deviceInfo.hardwareId];
                     [[requestModel.headers should] equal:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:requestContext.config.applicationCode
                                                                                                                    password:requestContext.config.applicationPassword]}];
                 });
@@ -239,7 +249,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                     [[requestModel.payload[@"events"][0][@"attributes"][@"sid"] should] equal:@"notificationSid"];
                     [[requestModel.payload[@"clicks"] should] equal:@[]];
                     [[requestModel.payload[@"viewed_messages"] should] equal:@[]];
-                    [[requestModel.payload[@"hardware_id"] should] equal:[EMSDeviceInfo hardwareId]];
+                    [[requestModel.payload[@"hardware_id"] should] equal:deviceInfo.hardwareId];
                 });
 
             });
@@ -275,7 +285,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 [[requestModel.payload[@"events"][0][@"attributes"][@"sid"] should] equal:@"testMessageId"];
                 [[requestModel.payload[@"clicks"] should] equal:@[]];
                 [[requestModel.payload[@"viewed_messages"] should] equal:@[]];
-                [[requestModel.payload[@"hardware_id"] should] equal:[EMSDeviceInfo hardwareId]];
+                [[requestModel.payload[@"hardware_id"] should] equal:deviceInfo.hardwareId];
 
             });
         });
