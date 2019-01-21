@@ -14,6 +14,18 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             deviceInfo = [EMSDeviceInfo new];
         });
 
+        describe(@"init", ^{
+            it(@"should throw an exception when sdkVersion is nil", ^{
+                @try {
+                    [[EMSDeviceInfo alloc] initWithSDKVersion:nil];
+                    fail(@"Expected Exception when sdkVersion is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: sdkVersion"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
+
         context(@"Timezone", ^{
             __block NSTimeZone *cachedTimeZone;
 
@@ -92,6 +104,12 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             describe(@"systemName", ^{
                 it(@"should not return nil", ^{
                     [[[deviceInfo systemName] shouldNot] beNil];
+                });
+            });
+
+            describe(@"platform", ^{
+                it(@"should return iOS", ^{
+                    [[[deviceInfo platform] should] equal:@"ios"];
                 });
             });
         });

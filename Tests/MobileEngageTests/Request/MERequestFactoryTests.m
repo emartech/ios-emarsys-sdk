@@ -95,7 +95,7 @@ SPEC_BEGIN(MERequestFactoryTests)
                 contactFieldValue = @"test@test.com";
 
                 apploginPayload = [NSMutableDictionary new];
-                apploginPayload[@"platform"] = @"ios";
+                apploginPayload[@"platform"] = deviceInfo.platform;
                 apploginPayload[@"language"] = deviceInfo.languageCode;
                 apploginPayload[@"timezone"] = deviceInfo.timeZone;
                 apploginPayload[@"device_model"] = deviceInfo.deviceModel;

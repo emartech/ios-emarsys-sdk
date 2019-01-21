@@ -7,10 +7,26 @@
 #import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
 
+@interface EMSDeviceInfo ()
+
+@end
+
 @implementation EMSDeviceInfo
 
 #define kEMSHardwareIdKey @"kHardwareIdKey"
 #define kEMSSuiteName @"com.emarsys.core"
+
+- (instancetype)initWithSDKVersion:(NSString *)sdkVersion {
+    NSParameterAssert(sdkVersion);
+    if (self = [super init]) {
+        _sdkVersion = sdkVersion;
+    }
+    return self;
+}
+
+- (NSString *)platform {
+    return @"ios";
+}
 
 - (NSString *)timeZone {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];

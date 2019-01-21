@@ -8,6 +8,7 @@
 #import "EMSShard.h"
 #import "EMSRequestModel.h"
 #import "EMSUUIDProvider.h"
+#import "EMSDeviceInfo.h"
 
 @interface EMSLogMapperTests : XCTestCase
 
@@ -16,6 +17,7 @@
 @property(nonatomic, strong) NSArray *shards;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 
 @end
 
@@ -24,12 +26,20 @@
 - (void)setUp {
     _timestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _uuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    _deviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _requestContext = OCMClassMock([MERequestContext class]);
 
     OCMStub(self.timestampProvider.provideTimestamp).andReturn([NSDate date]);
     OCMStub(self.uuidProvider.provideUUIDString).andReturn(@"requestId");
+    OCMStub(self.deviceInfo.applicationVersion).andReturn(@"applicationVersion");
+    OCMStub(self.deviceInfo.osVersion).andReturn(@"osVersion");
+    OCMStub(self.deviceInfo.deviceModel).andReturn(@"deviceModel");
+    OCMStub(self.deviceInfo.hardwareId).andReturn(@"hardwareId");
+    OCMStub(self.deviceInfo.platform).andReturn(@"ios");
+    OCMStub(self.deviceInfo.sdkVersion).andReturn(@"sdkVersion");
     OCMStub(self.requestContext.timestampProvider).andReturn(self.timestampProvider);
     OCMStub(self.requestContext.uuidProvider).andReturn(self.uuidProvider);
+    OCMStub(self.requestContext.deviceInfo).andReturn(self.deviceInfo);
 
     _logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext];
     _shards = @[
@@ -89,6 +99,15 @@
 }
 
 - (void)testRequestFromShards_shouldReturnWithRequestModel {
+    NSDictionary *deviceInfo = @{
+        @"platform": @"ios",
+        @"app_version": @"applicationVersion",
+        @"sdk_version": @"sdkVersion",
+        @"os_version": @"osVersion",
+        @"model": @"deviceModel",
+        @"hw_id": @"hardwareId"
+    };
+
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setUrl:@"https://ems-log-dealer.herokuapp.com/v1/log"];
             [builder setMethod:HTTPMethodPOST];
@@ -96,23 +115,28 @@
                 @"logs": @[
                     @{
                         @"type": @"type1",
-                        @"shardData1Key": @"shardData1Value"
+                        @"shardData1Key": @"shardData1Value",
+                        @"device_info": deviceInfo
                     },
                     @{
                         @"type": @"type2",
-                        @"shardData2Key": @"shardData2Value"
+                        @"shardData2Key": @"shardData2Value",
+                        @"device_info": deviceInfo
                     },
                     @{
                         @"type": @"type3",
-                        @"shardData3Key": @"shardData3Value"
+                        @"shardData3Key": @"shardData3Value",
+                        @"device_info": deviceInfo
                     },
                     @{
                         @"type": @"type4",
-                        @"shardData4Key": @"shardData4Value"
+                        @"shardData4Key": @"shardData4Value",
+                        @"device_info": deviceInfo
                     },
                     @{
                         @"type": @"type5",
-                        @"shardData5Key": @"shardData5Value"
+                        @"shardData5Key": @"shardData5Value",
+                        @"device_info": deviceInfo
                     }
                 ]
             }];

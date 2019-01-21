@@ -7,6 +7,12 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface EMSDeviceInfo: NSObject
 
+@property(nonatomic, readonly) NSString *sdkVersion;
+
+- (instancetype)initWithSDKVersion:(NSString *)sdkVersion;
+
+- (NSString *)platform;
+
 - (NSString *)timeZone;
 
 - (NSString *)languageCode;

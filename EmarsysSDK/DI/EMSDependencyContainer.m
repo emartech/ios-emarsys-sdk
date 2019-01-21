@@ -38,6 +38,7 @@
 #import "EMSFilterByTypeSpecification.h"
 #import "EMSLogMapper.h"
 #import "EMSDeviceInfo.h"
+#import "EmarsysSDKVersion.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -81,7 +82,7 @@
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
-    EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
+    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION];
 
     _requestContext = [[MERequestContext alloc] initWithConfig:config
                                                   uuidProvider:uuidProvider
