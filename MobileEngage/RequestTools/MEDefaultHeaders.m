@@ -11,11 +11,11 @@
 
 + (NSDictionary *)additionalHeadersWithConfig:(EMSConfig *)config {
     return @{@"Content-Type": @"application/json",
-            @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
+        @"X-EMARSYS-SDK-VERSION": EMARSYS_SDK_VERSION,
 #if DEBUG
-            @"X-MOBILEENGAGE-SDK-MODE": @"debug"
+        @"X-EMARSYS-SDK-MODE": @"debug"
 #else
-            @"X-MOBILEENGAGE-SDK-MODE" : @"production"
+        @"X-EMARSYS-SDK-MODE" : @"production"
 #endif
     };
 }

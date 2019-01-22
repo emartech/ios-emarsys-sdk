@@ -225,8 +225,8 @@ SPEC_BEGIN(EmarsysTests)
 
                 [[[EMSDependencyInjection.dependencyContainer.requestManager additionalHeaders] should] equal:@{
                     @"Content-Type": @"application/json",
-                    @"X-MOBILEENGAGE-SDK-VERSION": EMARSYS_SDK_VERSION,
-                    @"X-MOBILEENGAGE-SDK-MODE": @"debug"
+                    @"X-EMARSYS-SDK-VERSION": EMARSYS_SDK_VERSION,
+                    @"X-EMARSYS-SDK-MODE": @"debug"
                 }];
             });
 
