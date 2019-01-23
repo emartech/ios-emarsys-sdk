@@ -221,31 +221,6 @@ SPEC_BEGIN(MEInAppTests)
                                        timeout:10];
             });
 
-            it(@"should log the rendering time", ^{
-                NSString *const campaignId = @"testIdForRenderingMetric";
-
-                NSDictionary *loadingTimeMetric = @{@"loading_time": @3000, @"id": campaignId};
-
-                [[logRepository should] receive:@selector(add:) withArguments:loadingTimeMetric];
-
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": campaignId, @"html": @"<html></html>"}}
-                                                               options:0
-                                                                 error:nil];
-                EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                  headers:@{}
-                                                                                     body:body
-                                                                             requestModel:[EMSRequestModel nullMock]
-                                                                                timestamp:[NSDate dateWithTimeIntervalSince1970:100]];
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
-                 completionHandler:^{
-                     [exp fulfill];
-                 }];
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:10];
-            });
-
             it(@"should not log the rendering time when responseModel is nil", ^{
                 NSString *const campaignId = @"testIdForRenderingMetric";
 
@@ -253,7 +228,8 @@ SPEC_BEGIN(MEInAppTests)
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:campaignId
-                                                                         html:@"<html></html>"]
+                                                                         html:@"<html></html>"
+                                                            responseTimestamp:nil]
                  completionHandler:^{
                      [exp fulfill];
                  }];
@@ -266,7 +242,8 @@ SPEC_BEGIN(MEInAppTests)
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
-                                                                         html:@"<html></html>"]
+                                                                         html:@"<html></html>"
+                                                            responseTimestamp:nil]
                  completionHandler:^{
                      [exp fulfill];
                  }];
@@ -382,37 +359,6 @@ SPEC_BEGIN(MEInAppTests)
                 [EMSWaiter waitForExpectations:@[fulfilledExpectation]];
 
                 [[inApp.currentCampaignId should] equal:@"campaignId1"];
-            });
-        });
-
-        describe(@"MEIAMViewController", ^{
-            it(@"should log the on screen time", ^{
-                NSString *const campaignId = @"testIdForOnScreenMetric";
-
-                NSDictionary *loadingTimeMetric = @{@"on_screen_time": @6000, @"id": campaignId};
-                [[logRepository should] receive:@selector(add:) withArguments:loadingTimeMetric];
-
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": campaignId, @"html": @"<html></html>"}}
-                                                               options:0
-                                                                 error:nil];
-                EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                  headers:@{}
-                                                                                     body:body
-                                                                             requestModel:[EMSRequestModel nullMock]
-                                                                                timestamp:[NSDate dateWithTimeIntervalSince1970:100]];
-
-                XCTestExpectation *expForRendering = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
-                 completionHandler:^{
-                     [expForRendering fulfill];
-                 }];
-                [EMSWaiter waitForExpectations:@[expForRendering] timeout:5];
-
-                XCTestExpectation *expForClosing = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [inApp closeInAppMessageWithCompletionBlock:^{
-                    [expForClosing fulfill];
-                }];
-                [EMSWaiter waitForExpectations:@[expForClosing] timeout:5];
             });
         });
 

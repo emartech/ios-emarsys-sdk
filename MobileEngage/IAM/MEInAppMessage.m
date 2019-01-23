@@ -12,15 +12,19 @@
         _html = parsedBody[@"message"][@"html"];
         _campaignId = parsedBody[@"message"][@"id"];
         _response = responseModel;
+        _responseTimestamp = responseModel.timestamp;
     }
     return self;
 }
 
-- (instancetype)initWithCampaignId:(NSString *)campaignId html:(NSString *)html {
+- (instancetype)initWithCampaignId:(NSString *)campaignId
+                              html:(NSString *)html
+                 responseTimestamp:(NSDate *)responseTimestamp {
     self = [super init];
     if (self) {
         _campaignId = campaignId;
         _html = html;
+        _responseTimestamp = responseTimestamp;
     }
 
     return self;

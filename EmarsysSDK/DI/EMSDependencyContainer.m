@@ -205,7 +205,8 @@
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                      mobileEngageInternal:self.mobileEngage
-                                                                                    inApp:self.iam];
+                                                                                    inApp:self.iam
+                                                                        timestampProvider:timestampProvider];
 
     [self.iam setInAppTracker:self.mobileEngage];
 }

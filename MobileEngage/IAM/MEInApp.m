@@ -13,6 +13,9 @@
 #import "MEIAMJSCommandFactory.h"
 #import "MEJSBridge.h"
 #import "MEButtonClickRepository.h"
+#import "EMSMacros.h"
+#import "EMSInAppLoadingTime.h"
+#import "EMSInAppOnScreenTime.h"
 
 @interface MEInApp () <MEIAMProtocol>
 
@@ -24,6 +27,7 @@
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MELogRepository *logRepository;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
+@property(nonatomic, strong) MEInAppMessage *inAppMessage;
 
 @property(nonatomic, assign) BOOL paused;
 
@@ -75,16 +79,14 @@
         if (!self.iamWindow) {
             self.iamWindow = [self.windowProvider provideWindow];
             self.currentCampaignId = message.campaignId;
+            self.inAppMessage = message;
             MEIAMViewController *meiamViewController = [self.iamViewControllerProvider provideViewController];
             __weak typeof(self) weakSelf = self;
             [meiamViewController loadMessage:message.html
                            completionHandler:^{
                                if (message.response && weakSelf.timestampProvider) {
-                                   NSDictionary *const loadingMetric = @{
-                                       @"loading_time": [[weakSelf.timestampProvider provideTimestamp] numberValueInMillisFromDate:message.response.timestamp],
-                                       @"id": message.campaignId};
-                                   [weakSelf.logRepository add:loadingMetric];
-
+                                   EMSLog([[EMSInAppLoadingTime alloc] initWithInAppMessage:message
+                                                                          timestampProvider:weakSelf.timestampProvider])
                                }
                                [weakSelf displayInAppViewController:message
                                                      viewController:meiamViewController];
@@ -122,11 +124,9 @@
     [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                           completion:^{
                                                               if (weakSelf.currentCampaignId && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
-                                                                  NSDictionary *const onScreenMetrics = @{
-                                                                      @"on_screen_time": [[weakSelf.timestampProvider provideTimestamp] numberValueInMillisFromDate:weakSelf.onScreenShowTimestamp],
-                                                                      @"id": weakSelf.currentCampaignId};
-                                                                  [weakSelf.logRepository add:onScreenMetrics];
-
+                                                                  EMSLog([[EMSInAppOnScreenTime alloc] initWithInAppMessage:weakSelf.inAppMessage
+                                                                                                              showTimestamp:weakSelf.onScreenShowTimestamp
+                                                                                                          timestampProvider:weakSelf.timestampProvider]);
                                                               }
                                                               [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
                                                               weakSelf.iamWindow = nil;
