@@ -352,6 +352,39 @@ SPEC_BEGIN(MEInAppTests)
 
         });
 
+        describe(@"campaignId", ^{
+            it(@"should not update campaignId when trying to show another inAppMessage", ^{
+                NSData *body1 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId1", @"html": @"<html></html>"}}
+                                                                options:0
+                                                                  error:nil];
+                NSData *body2 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId2", @"html": @"<html></html>"}}
+                                                                options:0
+                                                                  error:nil];
+                EMSResponseModel *response1 = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                                   headers:@{}
+                                                                                      body:body1
+                                                                              requestModel:[EMSRequestModel nullMock]
+                                                                                 timestamp:[NSDate date]];
+                EMSResponseModel *response2 = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                                   headers:@{}
+                                                                                      body:body2
+                                                                              requestModel:[EMSRequestModel nullMock]
+                                                                                 timestamp:[NSDate date]];
+
+                XCTestExpectation *fulfilledExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForFulfill"];
+                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response1]
+                 completionHandler:^{
+                     [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response2]
+                      completionHandler:^{
+                      }];
+                     [fulfilledExpectation fulfill];
+                 }];
+                [EMSWaiter waitForExpectations:@[fulfilledExpectation]];
+
+                [[inApp.currentCampaignId should] equal:@"campaignId1"];
+            });
+        });
+
         describe(@"MEIAMViewController", ^{
             it(@"should log the on screen time", ^{
                 NSString *const campaignId = @"testIdForOnScreenMetric";

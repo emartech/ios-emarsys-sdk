@@ -71,11 +71,10 @@
 
 - (void)showMessage:(MEInAppMessage *)message
   completionHandler:(MECompletionHandler)completionHandler {
-    self.currentCampaignId = message.campaignId;
-
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.iamWindow) {
             self.iamWindow = [self.windowProvider provideWindow];
+            self.currentCampaignId = message.campaignId;
             MEIAMViewController *meiamViewController = [self.iamViewControllerProvider provideViewController];
             __weak typeof(self) weakSelf = self;
             [meiamViewController loadMessage:message.html
