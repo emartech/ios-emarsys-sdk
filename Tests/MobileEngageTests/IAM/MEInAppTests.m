@@ -229,7 +229,7 @@ SPEC_BEGIN(MEInAppTests)
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:campaignId
                                                                          html:@"<html></html>"
-                                                            responseTimestamp:nil]
+                                                            responseTimestamp:[NSDate date]]
                  completionHandler:^{
                      [exp fulfill];
                  }];
@@ -243,7 +243,7 @@ SPEC_BEGIN(MEInAppTests)
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
                                                                          html:@"<html></html>"
-                                                            responseTimestamp:nil]
+                                                            responseTimestamp:[NSDate date]]
                  completionHandler:^{
                      [exp fulfill];
                  }];
