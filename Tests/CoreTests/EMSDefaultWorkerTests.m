@@ -443,7 +443,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [[mockWatchdog should] receive:@selector(isConnected)];
 
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
-                                                                          requestRepository:[EMSRequestModelRepository mock]
+                                                                          requestRepository:[EMSRequestModelRepository nullMock]
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {

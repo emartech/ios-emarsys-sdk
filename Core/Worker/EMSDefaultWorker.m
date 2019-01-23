@@ -10,6 +10,9 @@
 #import "EMSCoreTopic.h"
 #import "EMSRequestModel+RequestIds.h"
 #import "EMSSchemaContract.h"
+#import "EMSMacros.h"
+#import "EMSOfflineQueueSize.h"
+#import "EMSFilterByNothingSpecification.h"
 
 @interface EMSDefaultWorker ()
 
@@ -86,20 +89,23 @@
 
 - (void)lock {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
-                    message:[NSString stringWithFormat:@"Lock status change from: %@, to: Locked", _locked ? @"Locked" : @"Not locked"]];
+                    message:[NSString stringWithFormat:@"Lock status change from: %@, to: Locked",
+                                                       _locked ? @"Locked" : @"Not locked"]];
     _locked = YES;
 }
 
 - (void)unlock {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
-                    message:[NSString stringWithFormat:@"Lock status change from: %@, to: Not locked", _locked ? @"Locked" : @"Not locked"]];
+                    message:[NSString stringWithFormat:@"Lock status change from: %@, to: Not locked",
+                                                       _locked ? @"Locked" : @"Not locked"]];
 
     _locked = NO;
 }
 
 - (BOOL)isLocked {
     [EMSLogger logWithTopic:EMSCoreTopic.offlineTopic
-                    message:[NSString stringWithFormat:@"Current locked status: %@", _locked ? @"Locked" : @"Not locked"]];
+                    message:[NSString stringWithFormat:@"Current locked status: %@",
+                                                       _locked ? @"Locked" : @"Not locked"]];
     return _locked;
 }
 
@@ -108,6 +114,8 @@
 - (void)connectionChangedToNetworkStatus:(EMSNetworkStatus)networkStatus
                         connectionStatus:(BOOL)connected {
     if (connected) {
+        NSUInteger queueSize = [[self.repository query:[[EMSFilterByNothingSpecification alloc] init]] count];
+        EMSLog([[EMSOfflineQueueSize alloc] initWithQueueSize:queueSize]);
         [self run];
     }
 }
@@ -120,7 +128,7 @@
         [self.repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:model.requestIds
                                                                                 column:REQUEST_COLUMN_NAME_REQUEST_ID]];
         self.errorBlock(model.requestId, [NSError errorWithCode:408
-                                                      localizedDescription:@"Request expired"]);
+                                           localizedDescription:@"Request expired"]);
     }
     return model;
 }
