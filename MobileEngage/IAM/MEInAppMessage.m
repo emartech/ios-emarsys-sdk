@@ -7,6 +7,7 @@
 @implementation MEInAppMessage
 
 - (instancetype)initWithResponse:(EMSResponseModel *)responseModel {
+    NSParameterAssert(responseModel);
     if (self = [super init]) {
         id parsedBody = responseModel.parsedBody;
         _html = parsedBody[@"message"][@"html"];
@@ -20,13 +21,14 @@
 - (instancetype)initWithCampaignId:(NSString *)campaignId
                               html:(NSString *)html
                  responseTimestamp:(NSDate *)responseTimestamp {
-    self = [super init];
-    if (self) {
+    NSParameterAssert(campaignId);
+    NSParameterAssert(html);
+    NSParameterAssert(responseTimestamp);
+    if (self = [super init]) {
         _campaignId = campaignId;
         _html = html;
         _responseTimestamp = responseTimestamp;
     }
-
     return self;
 }
 
