@@ -44,7 +44,7 @@
     @try {
         [[EMSInAppLoadingTime alloc] initWithInAppMessage:nil
                                         timestampProvider:OCMClassMock([EMSTimestampProvider class])];
-        XCTFail(@"Expected Exception when threshold is less then message!");
+        XCTFail(@"Expected Exception when message is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: message");
     }
@@ -54,7 +54,7 @@
     @try {
         [[EMSInAppLoadingTime alloc] initWithInAppMessage:OCMClassMock([MEInAppMessage class])
                                         timestampProvider:nil];
-        XCTFail(@"Expected Exception when threshold is less then timestampProvider!");
+        XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
     }

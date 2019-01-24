@@ -39,6 +39,7 @@
 #import "EMSLogMapper.h"
 #import "EMSDeviceInfo.h"
 #import "EmarsysSDKVersion.h"
+#import "EMSOperationQueue.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -111,7 +112,7 @@
 
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
 
-    _operationQueue = [NSOperationQueue new];
+    _operationQueue = [EMSOperationQueue new];
     _operationQueue.maxConcurrentOperationCount = 1;
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
