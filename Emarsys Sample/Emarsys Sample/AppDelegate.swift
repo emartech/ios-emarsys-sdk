@@ -27,7 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
 
         application.registerForRemoteNotifications()
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+        var options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        if #available(iOS 12.0, *) {
+            options.insert(.provisional)
+        }
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
             print(granted, error ?? "no error")
             if (granted) {
                 UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
