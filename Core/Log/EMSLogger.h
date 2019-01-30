@@ -23,7 +23,4 @@
 
 - (void)log:(id <EMSLogEntryProtocol>)entry;
 
-+ (void)logWithTopic:(id <EMSLogTopicProtocol>)topic
-             message:(NSString *)message;
-
 @end

@@ -3,8 +3,6 @@
 //
 
 #import "EMSRequestManager.h"
-#import "EMSLogger.h"
-#import "EMSCoreTopic.h"
 
 typedef void (^RunnerBlock)(void);
 
@@ -53,8 +51,6 @@ typedef void (^RunnerBlock)(void);
     NSParameterAssert(model);
     [self.completionMiddleware registerCompletionBlock:completionBlock
                                        forRequestModel:model];
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Argument: %@", model]];
 
     __weak typeof(self) weakSelf = self;
     [self runInCoreQueueWithBlock:^{
@@ -103,8 +99,6 @@ typedef void (^RunnerBlock)(void);
 
 - (void)submitShard:(EMSShard *)shard {
     NSParameterAssert(shard);
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Argument: %@", shard]];
 
     [self runInCoreQueueWithBlock:^{
         [[self shardRepository] add:shard];
@@ -112,8 +106,6 @@ typedef void (^RunnerBlock)(void);
 }
 
 - (void)setAdditionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders {
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Argument: %@", additionalHeaders]];
     _additionalHeaders = additionalHeaders;
 }
 

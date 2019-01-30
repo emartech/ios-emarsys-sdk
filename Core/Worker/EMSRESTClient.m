@@ -8,8 +8,6 @@
 #import "EMSResponseModel.h"
 #import "EMSCompositeRequestModel.h"
 #import "EMSTimestampProvider.h"
-#import "EMSLogger.h"
-#import "EMSCoreTopic.h"
 #import "EMSMacros.h"
 #import "EMSInDatabaseTime.h"
 #import "EMSNetworkingTime.h"
@@ -89,8 +87,6 @@
 - (void)executeTaskWithRequestModel:(EMSRequestModel *)requestModel
                        successBlock:(CoreSuccessBlock)successBlock
                          errorBlock:(CoreErrorBlock)errorBlock {
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"RequestModel: %@", requestModel]];
     __weak typeof(self) weakSelf = self;
     NSURLSessionDataTask *task =
         [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
@@ -115,8 +111,6 @@
 
 - (void)executeTaskWithOfflineCallbackStrategyWithRequestModel:(EMSRequestModel *)requestModel
                                                     onComplete:(EMSRestClientCompletionBlock)onComplete {
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"RequestModel: %@", requestModel]];
     NSParameterAssert(onComplete);
     __weak typeof(self) weakSelf = self;
     NSDate *networkingStartTime = [self.timestampProvider provideTimestamp];
@@ -177,8 +171,6 @@
                                                                                            data:data
                                                                                    requestModel:requestModel
                                                                                       timestamp:[self.timestampProvider provideTimestamp]];
-            [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                            message:[NSString stringWithFormat:@"ResponseModel: %@", responseModel]];
             [self logWithRequestModel:originalRequest
                         responseModel:responseModel
                   networkingStartTime:networkingStartTime];
@@ -189,8 +181,6 @@
                                                                                        data:data
                                                                                requestModel:requestModel
                                                                                   timestamp:[self.timestampProvider provideTimestamp]];
-        [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                        message:[NSString stringWithFormat:@"ResponseModel: %@", responseModel]];
         [self logWithRequestModel:requestModel
                     responseModel:responseModel
               networkingStartTime:networkingStartTime];
@@ -204,8 +194,6 @@
                              error:(NSError *)error {
     error = error ? error : [self errorWithData:data
                                      statusCode:statusCode];
-    [EMSLogger logWithTopic:EMSCoreTopic.networkingTopic
-                    message:[NSString stringWithFormat:@"Error: %@", error]];
     if ([requestModel isKindOfClass:[EMSCompositeRequestModel class]]) {
         NSArray<EMSRequestModel *> *originalRequests = [(EMSCompositeRequestModel *) requestModel originalRequests];
         for (EMSRequestModel *request in originalRequests) {

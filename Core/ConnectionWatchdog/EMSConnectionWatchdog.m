@@ -3,7 +3,6 @@
 //
 
 #import "EMSConnectionWatchdog.h"
-#import "EMSCoreTopic.h"
 
 @interface EMSConnectionWatchdog ()
 
@@ -39,8 +38,6 @@
 - (BOOL)isConnected {
     int state = [self connectionState];
     BOOL result = state == ReachableViaWiFi || state == ReachableViaWWAN;
-    [EMSLogger logWithTopic:EMSCoreTopic.connectivityTopic
-                    message:[NSString stringWithFormat:@"Connected to network: %@", result ? @"Connected" : @"Not connected"]];
     return result;
 }
 
@@ -67,28 +64,7 @@
                                                                                 queue:self.operationQueue
                                                                            usingBlock:^(NSNotification *note) {
                                                                                EMSNetworkStatus connectionStatus = [note.object currentReachabilityStatus];
-                                                                               NSString *networkStatus;
-                                                                               switch (connectionStatus) {
-                                                                                   case NotReachable: {
-                                                                                       networkStatus = @"Not reachable";
-                                                                                   }
-                                                                                       break;
-                                                                                   case ReachableViaWiFi: {
-                                                                                       networkStatus = @"WiFi";
-                                                                                   }
-                                                                                       break;
-                                                                                   case ReachableViaWWAN: {
-                                                                                       networkStatus = @"Mobile network";
-                                                                                   }
-                                                                                       break;
-                                                                                   default: {
-                                                                                       networkStatus = @"Not reachable";
-                                                                                   }
-                                                                               }
                                                                                BOOL connected = connectionStatus == ReachableViaWiFi || connectionStatus == ReachableViaWWAN;
-                                                                               NSString *connectionStatusString = connected ? @"Connected" : @"Not connected";
-                                                                               [EMSLogger logWithTopic:EMSCoreTopic.connectivityTopic
-                                                                                               message:[NSString stringWithFormat:@"Network status: %@, Connected to network: %@", networkStatus, connectionStatusString]];
                                                                                [weakSelf.operationQueue addOperationWithBlock:^{
                                                                                    [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:connectionStatus
                                                                                                                                       connectionStatus:connected];
