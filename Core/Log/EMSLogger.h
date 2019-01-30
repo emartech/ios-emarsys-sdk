@@ -8,12 +8,6 @@
 
 @protocol EMSLogEntryProtocol;
 
-@protocol EMSLogTopicProtocol <NSObject>
-
-- (NSString *)topicTag;
-
-@end
-
 @interface EMSLogger : NSObject
 
 - (instancetype)initWithShardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
