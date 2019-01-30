@@ -13,7 +13,6 @@
             block();
         } @catch (NSException *exception) {
             EMSLog([[EMSLogCrash alloc] initWithException:exception]);
-            @throw exception;
         }
     }];
 }

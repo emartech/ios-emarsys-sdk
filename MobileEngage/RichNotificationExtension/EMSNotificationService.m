@@ -30,7 +30,7 @@ typedef void(^ContentHandler)(UNNotificationContent *contentToDeliver);
 
     MEDownloader *downloadUtils = [MEDownloader new];
 
-    dispatch_group_t dispatchGroup = dispatch_group_create();;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
     __weak typeof(self) weakSelf = self;
     dispatch_group_enter(dispatchGroup);
