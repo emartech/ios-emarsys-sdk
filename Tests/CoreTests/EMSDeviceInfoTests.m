@@ -57,8 +57,10 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             });
 
             describe(@"languageCode", ^{
-                it(@"should not return nil", ^{
-                    [[[deviceInfo languageCode] shouldNot] beNil];
+                it(@"should return with languageCode", ^{
+                    NSString *expectedLanguage = [NSLocale preferredLanguages].firstObject;
+
+                    [[[deviceInfo languageCode] should] equal:expectedLanguage];
                 });
             });
 

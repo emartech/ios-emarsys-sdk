@@ -36,10 +36,7 @@
 }
 
 - (NSString *)languageCode {
-    NSString *language = [NSLocale preferredLanguages][0];
-    NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:language];
-    NSString *languageCode = languageDic[(NSString *) kCFLocaleLanguageCode];
-    return languageCode;
+    return [NSLocale preferredLanguages][0];
 }
 
 - (NSString *)applicationVersion {
