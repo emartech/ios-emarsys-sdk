@@ -4,14 +4,14 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSLogCrash.h"
+#import "EMSCrashLog.h"
 
-@interface EMSLogCrashTests : XCTestCase
+@interface EMSCrashLogTests : XCTestCase
 
-@property(nonatomic, strong) EMSLogCrash *logCrash;
+@property(nonatomic, strong) EMSCrashLog *logCrash;
 @end
 
-@implementation EMSLogCrashTests
+@implementation EMSCrashLogTests
 
 - (void)setUp {
     NSException *exc = OCMClassMock([NSException class]);
@@ -21,12 +21,12 @@
     OCMStub(exc.callStackSymbols).andReturn(stackSymbols);
     OCMStub(exc.userInfo).andReturn(@{@"userInfoKey": @"userInfoValue"});
 
-    self.logCrash = [[EMSLogCrash alloc] initWithException:exc];
+    self.logCrash = [[EMSCrashLog alloc] initWithException:exc];
 }
 
 - (void)testInit_shouldNotAccept_nilException {
     @try {
-        [[EMSLogCrash alloc] initWithException:nil];
+        [[EMSCrashLog alloc] initWithException:nil];
         XCTFail(@"Expected exception when exception is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: exception");

@@ -2,15 +2,15 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import <Social/Social.h>
-#import "EMSLogCrash.h"
+#import "EMSCrashLog.h"
 
-@interface EMSLogCrash ()
+@interface EMSCrashLog ()
 
 @property(nonatomic, strong) NSDictionary<NSString *, id> *data;
 
 @end
 
-@implementation EMSLogCrash
+@implementation EMSCrashLog
 
 - (instancetype)initWithException:(NSException *)exception {
     NSParameterAssert(exception);

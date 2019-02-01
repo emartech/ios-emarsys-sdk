@@ -3,7 +3,7 @@
 //
 #import "EMSOperationQueue.h"
 #import "EMSMacros.h"
-#import "EMSLogCrash.h"
+#import "EMSCrashLog.h"
 
 @implementation EMSOperationQueue
 
@@ -12,7 +12,7 @@
         @try {
             block();
         } @catch (NSException *exception) {
-            EMSLog([[EMSLogCrash alloc] initWithException:exception]);
+            EMSLog([[EMSCrashLog alloc] initWithException:exception]);
         }
     }];
 }

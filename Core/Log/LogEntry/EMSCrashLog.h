@@ -4,7 +4,7 @@
 #import <Foundation/Foundation.h>
 #import "EMSLogEntryProtocol.h"
 
-@interface EMSLogCrash : NSObject <EMSLogEntryProtocol>
+@interface EMSCrashLog : NSObject <EMSLogEntryProtocol>
 
 - (instancetype)initWithException:(NSException *)exception;
 
