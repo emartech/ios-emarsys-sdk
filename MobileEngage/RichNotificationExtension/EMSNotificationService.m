@@ -28,45 +28,55 @@ typedef void(^ContentHandler)(UNNotificationContent *contentToDeliver);
         return;
     }
 
-    MEDownloader *downloadUtils = [MEDownloader new];
+    @try {
+        MEDownloader *downloadUtils = [MEDownloader new];
 
-    dispatch_group_t dispatchGroup = dispatch_group_create();
+        dispatch_group_t dispatchGroup = dispatch_group_create();
 
-    __weak typeof(self) weakSelf = self;
-    dispatch_group_enter(dispatchGroup);
-    [self createCategoryForContent:self.bestAttemptContent
-                 completionHandler:^(UNNotificationCategory *category) {
-                     if (category) {
-                         [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
-                             [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[categories setByAddingObjectsFromArray:@[category]]];
-                             weakSelf.bestAttemptContent.categoryIdentifier = category.identifier;
+        __weak typeof(self) weakSelf = self;
+        dispatch_group_enter(dispatchGroup);
+        [self createCategoryForContent:self.bestAttemptContent
+                     completionHandler:^(UNNotificationCategory *category) {
+                         if (category) {
+                             [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
+                                 [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[categories setByAddingObjectsFromArray:@[category]]];
+                                 weakSelf.bestAttemptContent.categoryIdentifier = category.identifier;
+                                 dispatch_group_leave(dispatchGroup);
+                             }];
+                         } else {
                              dispatch_group_leave(dispatchGroup);
-                         }];
-                     } else {
-                         dispatch_group_leave(dispatchGroup);
-                     }
-                 }];
+                         }
+                     }];
 
-    dispatch_group_enter(dispatchGroup);
-    [self createUserInfoWithInAppForContent:self.bestAttemptContent
-                             withDownloader:downloadUtils
-                          completionHandler:^(NSDictionary *extendedUserInfo) {
-                              if (extendedUserInfo) {
-                                  weakSelf.bestAttemptContent.userInfo = extendedUserInfo;
-                              }
-                              dispatch_group_leave(dispatchGroup);
-                          }];
+        dispatch_group_enter(dispatchGroup);
+        [self createUserInfoWithInAppForContent:self.bestAttemptContent
+                                 withDownloader:downloadUtils
+                              completionHandler:^(NSDictionary *extendedUserInfo) {
+                                  if (extendedUserInfo) {
+                                      weakSelf.bestAttemptContent.userInfo = extendedUserInfo;
+                                  }
+                                  dispatch_group_leave(dispatchGroup);
+                              }];
 
-    dispatch_group_enter(dispatchGroup);
-    [self createAttachmentForContent:self.bestAttemptContent
-                      withDownloader:downloadUtils
-                   completionHandler:^(NSArray<UNNotificationAttachment *> *attachments) {
-                       weakSelf.bestAttemptContent.attachments = attachments;
-                       dispatch_group_leave(dispatchGroup);
-                   }];
+        dispatch_group_enter(dispatchGroup);
+        [self createAttachmentForContent:self.bestAttemptContent
+                          withDownloader:downloadUtils
+                       completionHandler:^(NSArray<UNNotificationAttachment *> *attachments) {
+                           weakSelf.bestAttemptContent.attachments = attachments;
+                           dispatch_group_leave(dispatchGroup);
+                       }];
 
-    dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER);
-    contentHandler(self.bestAttemptContent);
+        dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER);
+        contentHandler(self.bestAttemptContent);
+    } @catch (NSException *exception) {
+        NSMutableDictionary *userInfo = [self.bestAttemptContent.userInfo mutableCopy];
+        if (!userInfo) {
+            userInfo = [NSMutableDictionary dictionary];
+        }
+        userInfo[@"exception"] = exception;
+        self.bestAttemptContent.userInfo = [NSDictionary dictionaryWithDictionary:userInfo];
+        contentHandler(self.bestAttemptContent);
+    }
 }
 
 - (void)serviceExtensionTimeWillExpire {

@@ -12,6 +12,8 @@
 #import "MEInApp.h"
 #import "NSDictionary+MobileEngage.h"
 #import "EMSTimestampProvider.h"
+#import "EMSMacros.h"
+#import "EMSCrashLog.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -65,6 +67,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                         withCompletionHandler:completionHandler];
     }
     NSDictionary *userInfo = response.notification.request.content.userInfo;
+    if (userInfo[@"exception"]) {
+        EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]]);
+    }
     NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
     if (inApp) {
         NSArray *errors = [inApp validate:^(EMSDictionaryValidator *validate) {
