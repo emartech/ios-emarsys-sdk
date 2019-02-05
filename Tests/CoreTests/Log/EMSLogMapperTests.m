@@ -18,6 +18,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
+@property(nonatomic, strong) NSString *applicationCode;
 
 @end
 
@@ -28,6 +29,7 @@
     _uuidProvider = OCMClassMock([EMSUUIDProvider class]);
     _deviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _requestContext = OCMClassMock([MERequestContext class]);
+    _applicationCode = @"applicationCode";
 
     OCMStub(self.timestampProvider.provideTimestamp).andReturn([NSDate date]);
     OCMStub(self.uuidProvider.provideUUIDString).andReturn(@"requestId");
@@ -41,42 +43,51 @@
     OCMStub(self.requestContext.uuidProvider).andReturn(self.uuidProvider);
     OCMStub(self.requestContext.deviceInfo).andReturn(self.deviceInfo);
 
-    _logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext];
+    _logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:_applicationCode];
     _shards = @[
-        [[EMSShard alloc] initWithShardId:@"shardId1"
-                                     type:@"type1"
-                                     data:@{@"shardData1Key": @"shardData1Value"}
-                                timestamp:[NSDate date]
-                                      ttl:2.0],
-        [[EMSShard alloc] initWithShardId:@"shardId2"
-                                     type:@"type2"
-                                     data:@{@"shardData2Key": @"shardData2Value"}
-                                timestamp:[NSDate date]
-                                      ttl:2.0],
-        [[EMSShard alloc] initWithShardId:@"shardId3"
-                                     type:@"type3"
-                                     data:@{@"shardData3Key": @"shardData3Value"}
-                                timestamp:[NSDate date]
-                                      ttl:2.0],
-        [[EMSShard alloc] initWithShardId:@"shardId4"
-                                     type:@"type4"
-                                     data:@{@"shardData4Key": @"shardData4Value"}
-                                timestamp:[NSDate date]
-                                      ttl:2.0],
-        [[EMSShard alloc] initWithShardId:@"shardId5"
-                                     type:@"type5"
-                                     data:@{@"shardData5Key": @"shardData5Value"}
-                                timestamp:[NSDate date]
-                                      ttl:2.0]
+            [[EMSShard alloc] initWithShardId:@"shardId1"
+                                         type:@"type1"
+                                         data:@{@"shardData1Key": @"shardData1Value"}
+                                    timestamp:[NSDate date]
+                                          ttl:2.0],
+            [[EMSShard alloc] initWithShardId:@"shardId2"
+                                         type:@"type2"
+                                         data:@{@"shardData2Key": @"shardData2Value"}
+                                    timestamp:[NSDate date]
+                                          ttl:2.0],
+            [[EMSShard alloc] initWithShardId:@"shardId3"
+                                         type:@"type3"
+                                         data:@{@"shardData3Key": @"shardData3Value"}
+                                    timestamp:[NSDate date]
+                                          ttl:2.0],
+            [[EMSShard alloc] initWithShardId:@"shardId4"
+                                         type:@"type4"
+                                         data:@{@"shardData4Key": @"shardData4Value"}
+                                    timestamp:[NSDate date]
+                                          ttl:2.0],
+            [[EMSShard alloc] initWithShardId:@"shardId5"
+                                         type:@"type5"
+                                         data:@{@"shardData5Key": @"shardData5Value"}
+                                    timestamp:[NSDate date]
+                                          ttl:2.0]
     ];
 }
 
-- (void)testInitWithRequestContext_shouldThrowException_when_requestContextIsNil {
+- (void)testInit_shouldThrowException_when_requestContextIsNil {
     @try {
-        [[EMSLogMapper alloc] initWithRequestContext:nil];
+        [[EMSLogMapper alloc] initWithRequestContext:nil applicationCode:_applicationCode];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
+    }
+}
+
+- (void)testInit_shouldThrowException_when_applicationCodeIsNil {
+    @try {
+        [[EMSLogMapper alloc] initWithRequestContext:_requestContext applicationCode:nil];
+        XCTFail(@"Expected Exception when applicationCode is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: applicationCode"]);
     }
 }
 
@@ -100,47 +111,48 @@
 
 - (void)testRequestFromShards_shouldReturnWithRequestModel {
     NSDictionary *deviceInfo = @{
-        @"platform": @"ios",
-        @"app_version": @"applicationVersion",
-        @"sdk_version": @"sdkVersion",
-        @"os_version": @"osVersion",
-        @"model": @"deviceModel",
-        @"hw_id": @"hardwareId"
+            @"platform": @"ios",
+            @"app_version": @"applicationVersion",
+            @"sdk_version": @"sdkVersion",
+            @"os_version": @"osVersion",
+            @"model": @"deviceModel",
+            @"hw_id": @"hardwareId",
+            @"application_code": _applicationCode
     };
 
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://ems-log-dealer.herokuapp.com/v1/log"];
-            [builder setMethod:HTTPMethodPOST];
-            [builder setPayload:@{
-                @"logs": @[
-                    @{
-                        @"type": @"type1",
-                        @"shardData1Key": @"shardData1Value",
-                        @"device_info": deviceInfo
-                    },
-                    @{
-                        @"type": @"type2",
-                        @"shardData2Key": @"shardData2Value",
-                        @"device_info": deviceInfo
-                    },
-                    @{
-                        @"type": @"type3",
-                        @"shardData3Key": @"shardData3Value",
-                        @"device_info": deviceInfo
-                    },
-                    @{
-                        @"type": @"type4",
-                        @"shardData4Key": @"shardData4Value",
-                        @"device_info": deviceInfo
-                    },
-                    @{
-                        @"type": @"type5",
-                        @"shardData5Key": @"shardData5Value",
-                        @"device_info": deviceInfo
-                    }
-                ]
-            }];
-        }
+                [builder setUrl:@"https://ems-log-dealer.herokuapp.com/v1/log"];
+                [builder setMethod:HTTPMethodPOST];
+                [builder setPayload:@{
+                        @"logs": @[
+                                @{
+                                        @"type": @"type1",
+                                        @"shardData1Key": @"shardData1Value",
+                                        @"device_info": deviceInfo
+                                },
+                                @{
+                                        @"type": @"type2",
+                                        @"shardData2Key": @"shardData2Value",
+                                        @"device_info": deviceInfo
+                                },
+                                @{
+                                        @"type": @"type3",
+                                        @"shardData3Key": @"shardData3Value",
+                                        @"device_info": deviceInfo
+                                },
+                                @{
+                                        @"type": @"type4",
+                                        @"shardData4Key": @"shardData4Value",
+                                        @"device_info": deviceInfo
+                                },
+                                @{
+                                        @"type": @"type5",
+                                        @"shardData5Key": @"shardData5Value",
+                                        @"device_info": deviceInfo
+                                }
+                        ]
+                }];
+            }
                                                            timestampProvider:self.timestampProvider
                                                                 uuidProvider:self.uuidProvider];
 
