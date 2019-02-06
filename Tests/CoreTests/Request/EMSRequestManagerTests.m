@@ -10,7 +10,6 @@
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
 #import "EMSShard.h"
-#import "FakeLogRepository.h"
 #import "EMSReachability.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
@@ -25,7 +24,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
         __block EMSSQLiteHelper *helper;
         __block EMSRequestModelRepository *requestModelRepository;
 
-        EMSRequestManager *(^createRequestManager)(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository, id <EMSLogRepositoryProtocol> logRepository) = ^EMSRequestManager *(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository, id <EMSLogRepositoryProtocol> logRepository) {
+        EMSRequestManager *(^createRequestManager)(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) = ^EMSRequestManager *(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) {
             NSOperationQueue *queue = [NSOperationQueue new];
             queue.maxConcurrentOperationCount = 1;
             queue.qualityOfService = NSQualityOfServiceUtility;
@@ -33,8 +32,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
             EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                   errorBlock:middleware.errorBlock
-                                                                logRepository:logRepository];
+                                                                   errorBlock:middleware.errorBlock];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
                                                                      connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
@@ -159,7 +157,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
 
                 };
-                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper], shardRepository, nil);
+                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper], shardRepository);
             });
 
             afterEach(^{
@@ -187,7 +185,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     fail([NSString stringWithFormat:@"errorBlock: %@",
                                                     error]);
                 };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new], nil);
+                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
 
                 [core submitRequestModel:model
                      withCompletionBlock:nil];
@@ -213,7 +211,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     fail([NSString stringWithFormat:@"errorBlock: %@",
                                                     error]);
                 };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new], nil);
+                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 __block NSError *returnedError = [NSError errorWithCode:500
@@ -249,7 +247,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     checkableRequestId = requestId;
                     checkableError = error;
                 };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new], nil);
+                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
 
                 [core submitRequestModel:model withCompletionBlock:nil];
 
@@ -272,7 +270,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 };
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
                 };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new], nil);
+                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 __block NSError *returnedError = nil;
@@ -471,7 +469,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                         [exp fulfill];
                     }
                 };
-                EMSRequestManager *requestManager = createRequestManager(successBlock, errorBlock, repository, [EMSShardRepository new], [FakeLogRepository new]);
+                EMSRequestManager *requestManager = createRequestManager(successBlock, errorBlock, repository, [EMSShardRepository new]);
 
                 for (int i = 0; i < 100; ++i) {
                     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {

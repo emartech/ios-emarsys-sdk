@@ -32,8 +32,7 @@ SPEC_BEGIN(OfflineTests)
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
             EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                   errorBlock:middleware.errorBlock
-                                                                logRepository:nil];
+                                                                   errorBlock:middleware.errorBlock];
             id <EMSWorkerProtocol> worker = [[EMSDefaultWorker alloc] initWithOperationQueue:operationQueue
                                                                            requestRepository:repository
                                                                           connectionWatchdog:watchdog

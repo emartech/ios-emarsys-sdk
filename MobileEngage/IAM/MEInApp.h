@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "MEInAppMessage.h"
 #import "MEInAppTrackingProtocol.h"
-#import "MELogRepository.h"
 #import "MEIAMProtocol.h"
 
 @class EMSWindowProvider;
@@ -34,7 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-                         logRepository:(MELogRepository *)logRepository
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository;
 

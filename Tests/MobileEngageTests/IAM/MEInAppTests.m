@@ -18,7 +18,6 @@ SPEC_BEGIN(MEInAppTests)
         __block FakeInAppTracker *inAppTracker;
         __block XCTestExpectation *displayExpectation;
         __block XCTestExpectation *clickExpectation;
-        __block MELogRepository *logRepository;
         __block FakeTimeStampProvider *timestampProvider;
         __block EMSWindowProvider *windowProvider;
         __block NSDate *firstTimestamp;
@@ -35,7 +34,6 @@ SPEC_BEGIN(MEInAppTests)
             clickExpectation = [[XCTestExpectation alloc] initWithDescription:@"clickExpectation"];
             inAppTracker = [[FakeInAppTracker alloc] initWithDisplayExpectation:displayExpectation
                                                                clickExpectation:clickExpectation];
-            logRepository = [MELogRepository nullMock];
 
             firstTimestamp = [NSDate dateWithTimeIntervalSince1970:103];
             secondTimestamp = [firstTimestamp dateByAddingTimeInterval:6];
@@ -52,7 +50,6 @@ SPEC_BEGIN(MEInAppTests)
             inApp = [[MEInApp alloc] initWithWindowProvider:windowProvider
                                          mainWindowProvider:[EMSMainWindowProvider nullMock]
                                           timestampProvider:timestampProvider
-                                              logRepository:logRepository
                                      displayedIamRepository:displayedIAMRepository
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
             [inApp setInAppTracker:inAppTracker];
@@ -65,7 +62,6 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:nil
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                              logRepository:[MELogRepository mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when windowProvider is nil!");
@@ -80,7 +76,6 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:nil
                                           timestampProvider:[EMSTimestampProvider mock]
-                                              logRepository:[MELogRepository mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when mainWindowProvider is nil!");
@@ -95,7 +90,6 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:nil
-                                              logRepository:[MELogRepository mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when timestampProvider is nil!");
@@ -105,27 +99,11 @@ SPEC_BEGIN(MEInAppTests)
                 }
             });
 
-            it(@"should throw exception when logRepository is nil", ^{
-                @try {
-                    [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
-                                         mainWindowProvider:[EMSMainWindowProvider mock]
-                                          timestampProvider:[EMSTimestampProvider mock]
-                                              logRepository:nil
-                                     displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
-                    fail(@"Expected Exception when logRepository is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: logRepository"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
             it(@"should throw exception when displayedIamRepository is nil", ^{
                 @try {
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                              logRepository:[MELogRepository mock]
                                      displayedIamRepository:nil
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when displayedIamRepository is nil!");
@@ -140,7 +118,6 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                              logRepository:[MELogRepository mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:nil];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
@@ -218,22 +195,6 @@ SPEC_BEGIN(MEInAppTests)
                  }];
 
                 [EMSWaiter waitForExpectations:@[exp, displayExpectation]
-                                       timeout:10];
-            });
-
-            it(@"should not log the rendering time when responseModel is nil", ^{
-                NSString *const campaignId = @"testIdForRenderingMetric";
-
-                [[logRepository shouldNot] receive:@selector(add:)];
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:campaignId
-                                                                         html:@"<html></html>"
-                                                            responseTimestamp:[NSDate date]]
-                 completionHandler:^{
-                     [exp fulfill];
-                 }];
-                [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];
             });
 

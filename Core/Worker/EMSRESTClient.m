@@ -26,7 +26,6 @@
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
                           errorBlock:(CoreErrorBlock)errorBlock
                              session:(NSURLSession *)session
-                       logRepository:(nullable id <EMSLogRepositoryProtocol>)logRepository
                    timestampProvider:(EMSTimestampProvider *)timestampProvider {
     if (self = [super init]) {
         NSParameterAssert(successBlock);
@@ -34,7 +33,6 @@
         NSParameterAssert(timestampProvider);
         _successBlock = successBlock;
         _errorBlock = errorBlock;
-        _logRepository = logRepository;
         _timestampProvider = timestampProvider;
         if (session) {
             _session = session;
@@ -54,33 +52,24 @@
 
 + (EMSRESTClient *)clientWithSession:(NSURLSession *)session {
     return [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-        }
-                                      errorBlock:^(NSString *requestId, NSError *error) {
-                                      }
-                                         session:session
-                                   logRepository:nil
-                               timestampProvider:[EMSTimestampProvider new]];
+    }                                 errorBlock:^(NSString *requestId, NSError *error) {
+    }                                    session:session timestampProvider:[EMSTimestampProvider new]];
 }
 
-+ (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock
-                               errorBlock:(CoreErrorBlock)errorBlock
-                            logRepository:(id <EMSLogRepositoryProtocol>)logRepository {
++ (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock errorBlock:(CoreErrorBlock)errorBlock {
     return [EMSRESTClient clientWithSuccessBlock:successBlock
                                       errorBlock:errorBlock
                                          session:nil
-                                   logRepository:logRepository
                                timestampProvider:[EMSTimestampProvider new]];
 }
 
 + (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock
                                errorBlock:(CoreErrorBlock)errorBlock
                                   session:(nullable NSURLSession *)session
-                            logRepository:(nullable id <EMSLogRepositoryProtocol>)logRepository
                         timestampProvider:(EMSTimestampProvider *)timestampProvider {
     return [[EMSRESTClient alloc] initWithSuccessBlock:successBlock
                                             errorBlock:errorBlock
                                                session:session
-                                         logRepository:logRepository
                                      timestampProvider:timestampProvider];
 }
 

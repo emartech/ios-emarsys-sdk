@@ -7,7 +7,6 @@
 #import "EMSCoreCompletion.h"
 #import "EMSConnectionWatchdog.h"
 #import "EMSRequestModelRepositoryProtocol.h"
-#import "EMSLogRepositoryProtocol.h"
 #import "EMSRESTClient.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -6,7 +6,6 @@
 #import "EMSCoreCompletion.h"
 #import "EMSRequestModelRepositoryProtocol.h"
 #import "EMSShardRepositoryProtocol.h"
-#import "EMSLogRepositoryProtocol.h"
 #import "EMSBlocks.h"
 #import "EMSCompletionMiddleware.h"
 #import "EMSWorkerProtocol.h"

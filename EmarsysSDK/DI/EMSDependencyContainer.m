@@ -90,7 +90,6 @@
                                              timestampProvider:timestampProvider
                                                     deviceInfo:deviceInfo];
     _notificationCenterManager = [MENotificationCenterManager new];
-    MELogRepository *logRepository = [MELogRepository new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
@@ -98,7 +97,6 @@
     _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
                                 mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
                                  timestampProvider:timestampProvider
-                                     logRepository:logRepository
                             displayedIamRepository:displayedIAMRepository
                              buttonClickRepository:buttonClickRepository];
     [_dbHelper open];
@@ -124,8 +122,7 @@
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
     _restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                             errorBlock:middleware.errorBlock
-                                          logRepository:logRepository];
+                                             errorBlock:middleware.errorBlock];
 
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
@@ -149,9 +146,9 @@
     [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository]]
+        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                      displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];

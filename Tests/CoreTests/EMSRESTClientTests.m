@@ -6,13 +6,10 @@
 #import "EMSResponseModel.h"
 #import "TestUtils.h"
 #import "EMSRESTClient.h"
-#import "EMSRequestModelBuilder.h"
 #import "NSURLRequest+EMSCore.h"
 #import "NSError+EMSCore.h"
 #import "EMSCompositeRequestModel.h"
-#import "FakeLogRepository.h"
 #import "EMSTimestampProvider.h"
-#import "FakeTimeStampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSWaiter.h"
 
@@ -58,33 +55,25 @@ SPEC_BEGIN(EMSRESTClientTests)
 
         describe(@"RESTClient", ^{
 
-            FakeLogRepository *const fakeLogRepository = [FakeLogRepository new];
             id sessionMock = [NSURLSession mock];
 
             itShouldThrowException(@"should throw exception when successBlock is nil", ^{
-                [EMSRESTClient clientWithSuccessBlock:nil
-                                           errorBlock:errorBlock
-                                        logRepository:fakeLogRepository];
+                [EMSRESTClient clientWithSuccessBlock:nil errorBlock:errorBlock];
             });
 
             itShouldThrowException(@"should throw exception when errorBlock is nil", ^{
-                [EMSRESTClient clientWithSuccessBlock:successBlock
-                                           errorBlock:nil
-                                        logRepository:fakeLogRepository];
+                [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:nil];
             });
 
             itShouldThrowException(@"should throw exception when timestampProvider is nil", ^{
                 [EMSRESTClient clientWithSuccessBlock:successBlock
                                            errorBlock:errorBlock
                                               session:sessionMock
-                                        logRepository:fakeLogRepository
                                     timestampProvider:nil];
             });
 
             itShouldThrowException(@"should throw exception when completionBlock is nil", ^{
-                EMSRESTClient *client = [EMSRESTClient clientWithSuccessBlock:successBlock
-                                                                   errorBlock:errorBlock
-                                                                logRepository:fakeLogRepository];
+                EMSRESTClient *client = [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:errorBlock];
                 [client executeTaskWithOfflineCallbackStrategyWithRequestModel:requestModel(@"https://url1.com", nil)
                                                                     onComplete:nil];
             });
@@ -99,7 +88,10 @@ SPEC_BEGIN(EMSRESTClientTests)
 
                 EMSRequestModel *model = requestModel(@"https://url1.com", nil);
 
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:errorBlock session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock
+                                                                       errorBlock:errorBlock
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
                 KWCaptureSpy *sessionSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
                                                                 atIndex:0];
 
@@ -119,7 +111,10 @@ SPEC_BEGIN(EMSRESTClientTests)
 
                 EMSRequestModel *model = requestModel(@"https://url1.com", nil);
 
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:errorBlock session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock
+                                                                       errorBlock:errorBlock
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
                 NSURLSessionDataTask *dataTaskMock = [NSURLSessionDataTask mock];
                 [[sessionMock should] receive:@selector(dataTaskWithRequest:completionHandler:)
                                     andReturn:dataTaskMock];
@@ -162,10 +157,13 @@ SPEC_BEGIN(EMSRESTClientTests)
                 EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                     successRequestId = requestId;
                     returnedResponse = response;
-                }                                                      errorBlock:^(NSString *requestId, NSError *error) {
-                    errorRequestId = requestId;
-                    returnedError = error;
-                }                                                         session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                    }
+                                                                       errorBlock:^(NSString *requestId, NSError *error) {
+                                                                           errorRequestId = requestId;
+                                                                           returnedError = error;
+                                                                       }
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
 
                 [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     returnedShouldContinue = shouldContinue;
@@ -208,10 +206,13 @@ SPEC_BEGIN(EMSRESTClientTests)
                 EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                     successRequestId = requestId;
                     returnedResponse = response;
-                }                                                      errorBlock:^(NSString *requestId, NSError *blockError) {
-                    errorRequestId = requestId;
-                    returnedError = blockError;
-                }                                                         session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                    }
+                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
+                                                                           errorRequestId = requestId;
+                                                                           returnedError = blockError;
+                                                                       }
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
 
                 [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     returnedShouldContinue = shouldContinue;
@@ -252,10 +253,13 @@ SPEC_BEGIN(EMSRESTClientTests)
                 EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                     successRequestId = requestId;
                     returnedResponse = response;
-                }                                                      errorBlock:^(NSString *requestId, NSError *blockError) {
-                    errorRequestId = requestId;
-                    returnedError = blockError;
-                }                                                         session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                    }
+                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
+                                                                           errorRequestId = requestId;
+                                                                           returnedError = blockError;
+                                                                       }
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
 
                 [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     returnedShouldContinue = shouldContinue;
@@ -296,10 +300,13 @@ SPEC_BEGIN(EMSRESTClientTests)
                 EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                     successRequestId = requestId;
                     returnedResponse = response;
-                }                                                      errorBlock:^(NSString *requestId, NSError *blockError) {
-                    errorRequestId = requestId;
-                    returnedError = blockError;
-                }                                                         session:sessionMock logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                    }
+                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
+                                                                           errorRequestId = requestId;
+                                                                           returnedError = blockError;
+                                                                       }
+                                                                          session:sessionMock
+                                                                timestampProvider:[EMSTimestampProvider new]];
 
                 [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     returnedShouldContinue = shouldContinue;
@@ -338,9 +345,12 @@ SPEC_BEGIN(EMSRESTClientTests)
                         if ([_requestIds count] >= 3) {
                             [exp fulfill];
                         }
-                    }                                    errorBlock:^(NSString *requestId, NSError *error) {
+                        }
+                                                         errorBlock:^(NSString *requestId, NSError *error) {
 
-                    }                                       session:session logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                                                         }
+                                                            session:session
+                                                  timestampProvider:[EMSTimestampProvider new]];
 
                     [_client executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     }];
@@ -372,12 +382,15 @@ SPEC_BEGIN(EMSRESTClientTests)
 
                 sessionMockWithCannedResponse(model, 404, originalResponseData, nil, ^(NSURLSession *session) {
                     _client = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    }                                    errorBlock:^(NSString *requestId, NSError *error) {
-                        [_requestIds addObject:requestId];
-                        if ([_requestIds count] >= 3) {
-                            [exp fulfill];
                         }
-                    }                                       session:session logRepository:nil timestampProvider:[EMSTimestampProvider new]];
+                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                                                             [_requestIds addObject:requestId];
+                                                             if ([_requestIds count] >= 3) {
+                                                                 [exp fulfill];
+                                                             }
+                                                         }
+                                                            session:session
+                                                  timestampProvider:[EMSTimestampProvider new]];
 
                     [_client executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
                     }];

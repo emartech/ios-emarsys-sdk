@@ -5,7 +5,6 @@
 #import <Foundation/Foundation.h>
 #import "EMSCoreCompletion.h"
 #import "EMSRequestModel.h"
-#import "EMSLogRepositoryProtocol.h"
 
 @class EMSTimestampProvider;
 
@@ -15,18 +14,14 @@ typedef void (^EMSRestClientCompletionBlock)(BOOL shouldContinue);
 
 @interface EMSRESTClient : NSObject
 
-@property(nonatomic, strong, nullable) id <EMSLogRepositoryProtocol> logRepository;
-
 + (EMSRESTClient *)clientWithSession:(NSURLSession *)session;
 
 + (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock
-                               errorBlock:(CoreErrorBlock)errorBlock
-                            logRepository:(id <EMSLogRepositoryProtocol>)logRepository;
+                               errorBlock:(CoreErrorBlock)errorBlock;
 
 + (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock
                                errorBlock:(CoreErrorBlock)errorBlock
                                   session:(nullable NSURLSession *)session
-                            logRepository:(nullable id <EMSLogRepositoryProtocol>)logRepository
                         timestampProvider:(EMSTimestampProvider *)timestampProvider;
 
 - (void)executeTaskWithRequestModel:(EMSRequestModel *)requestModel

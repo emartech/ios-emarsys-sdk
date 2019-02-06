@@ -25,7 +25,6 @@
 @property(nonatomic, strong) NSDate *onScreenShowTimestamp;
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
-@property(nonatomic, strong) MELogRepository *logRepository;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
 @property(nonatomic, strong) MEInAppMessage *inAppMessage;
 
@@ -40,18 +39,15 @@
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-                         logRepository:(MELogRepository *)logRepository
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
     NSParameterAssert(windowProvider);
     NSParameterAssert(mainWindowProvider);
     NSParameterAssert(timestampProvider);
-    NSParameterAssert(logRepository);
     NSParameterAssert(displayedIamRepository);
     NSParameterAssert(buttonClickRepository);
     if (self = [super init]) {
         _timestampProvider = timestampProvider;
-        _logRepository = logRepository;
         _windowProvider = windowProvider;
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
                                                                                                                                                                 buttonClickRepository:buttonClickRepository]]];
