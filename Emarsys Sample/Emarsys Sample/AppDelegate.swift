@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
             builder.setExperimentalFeatures([USER_CENTRIC_INBOX]);
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
-            builder.setMobileEngageApplicationCode("14C19-A121F", applicationPassword: "PaNkfOD90AVpYimMBuZopCpm8OWCrREu")
+            builder.setMobileEngageApplicationCode("EMS11-C3FD3", applicationPassword: "kyuQy3bwWUfLLp7Gy4pjXnehRvArTWOs")
         }
         Emarsys.setup(with: config)
         Emarsys.inApp.eventHandler = self
