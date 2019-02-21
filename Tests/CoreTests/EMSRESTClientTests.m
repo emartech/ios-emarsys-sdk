@@ -1,468 +1,266 @@
 //
-//  Copyright (c) 2017 Emarsys. All rights reserved.
+//  Copyright © 2019 Emarsys. All rights reserved.
 //
 
-#import "Kiwi.h"
-#import "EMSResponseModel.h"
-#import "TestUtils.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "EMSRESTClient.h"
-#import "NSURLRequest+EMSCore.h"
-#import "NSError+EMSCore.h"
-#import "EMSCompositeRequestModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-#import "EMSWaiter.h"
-
-SPEC_BEGIN(EMSRESTClientTests)
-
-        void (^successBlock)(NSString *, EMSResponseModel *) = ^(NSString *requestId, EMSResponseModel *response) {
-        };
-        void (^errorBlock)(NSString *, NSError *) = ^(NSString *requestId, NSError *error) {
-        };
-
-        id (^requestModel)(NSString *url, NSDictionary *payload) = ^id(NSString *url, NSDictionary *payload) {
-            return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:url];
-                [builder setMethod:HTTPMethodPOST];
-                [builder setPayload:payload];
-            }                     timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
-        };
-
-        id (^compositeRequestModel)(NSString *url, NSDictionary *payload, NSArray<EMSRequestModel *> *originals) = ^id(NSString *url, NSDictionary *payload, NSArray<EMSRequestModel *> *originals) {
-            EMSCompositeRequestModel *model = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:url];
-                [builder setMethod:HTTPMethodPOST];
-                [builder setPayload:payload];
-            }                                                         timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
-            model.originalRequests = originals;
-
-            return model;
-        };
-
-        typedef void(^SessionMockBlock)(NSURLSession *session);
-        void (^sessionMockWithCannedResponse)(EMSRequestModel *requestModel, int responseStatusCode, NSData *responseData, NSError *responseError, SessionMockBlock actionBlock) = ^(EMSRequestModel *requestModel, int responseStatusCode, NSData *responseData, NSError *responseError, SessionMockBlock actionBlock) {
-            NSURLSession *sessionMock = [NSURLSession mock];
-            NSURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestModel.url
-                                                                     statusCode:responseStatusCode
-                                                                    HTTPVersion:nil
-                                                                   headerFields:nil];
-            KWCaptureSpy *blockSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                          atIndex:1];
-            actionBlock(sessionMock);
-            void (^onComplete)(NSData *_Nullable data, NSURLResponse *_Nullable response, NSError *_Nullable error) = blockSpy.argument;
-            onComplete(responseData, urlResponse, responseError);
-        };
-
-        describe(@"RESTClient", ^{
-
-            id sessionMock = [NSURLSession mock];
-
-            itShouldThrowException(@"should throw exception when successBlock is nil", ^{
-                [EMSRESTClient clientWithSuccessBlock:nil errorBlock:errorBlock];
-            });
-
-            itShouldThrowException(@"should throw exception when errorBlock is nil", ^{
-                [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:nil];
-            });
-
-            itShouldThrowException(@"should throw exception when timestampProvider is nil", ^{
-                [EMSRESTClient clientWithSuccessBlock:successBlock
-                                           errorBlock:errorBlock
-                                              session:sessionMock
-                                    timestampProvider:nil];
-            });
-
-            itShouldThrowException(@"should throw exception when completionBlock is nil", ^{
-                EMSRESTClient *client = [EMSRESTClient clientWithSuccessBlock:successBlock errorBlock:errorBlock];
-                [client executeTaskWithOfflineCallbackStrategyWithRequestModel:requestModel(@"https://url1.com", nil)
-                                                                    onComplete:nil];
-            });
-
-        });
-
-        describe(@"executeTaskWithOfflineCallbackStrategyWithRequestModel", ^{
-
-
-            it(@"should call dataTaskWithRequest:completionHandler: with the correct requestModel", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                EMSRequestModel *model = requestModel(@"https://url1.com", nil);
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock
-                                                                       errorBlock:errorBlock
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-                KWCaptureSpy *sessionSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                                atIndex:0];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model
-                                                                        onComplete:^(BOOL shouldContinue) {
-
-                                                                        }];
-
-                NSURLRequest *expectedRequest = [NSURLRequest requestWithRequestModel:model];
-                NSURLRequest *capturedRequest = sessionSpy.argument;
-
-                [[expectedRequest should] equal:capturedRequest];
-            });
-
-            it(@"should execute datatask returned by dataTaskWithRequest:completionHandler:", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                EMSRequestModel *model = requestModel(@"https://url1.com", nil);
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:successBlock
-                                                                       errorBlock:errorBlock
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-                NSURLSessionDataTask *dataTaskMock = [NSURLSessionDataTask mock];
-                [[sessionMock should] receive:@selector(dataTaskWithRequest:completionHandler:)
-                                    andReturn:dataTaskMock];
-                [[dataTaskMock should] receive:@selector(resume)];
-
-                KWCaptureSpy *sessionSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                                atIndex:0];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model
-                                                                        onComplete:^(BOOL shouldContinue) {
-
-                                                                        }];
-
-                NSURLRequest *expectedRequest = [NSURLRequest requestWithRequestModel:model];
-                NSURLRequest *capturedRequest = sessionSpy.argument;
-
-                [[expectedRequest should] equal:capturedRequest];
-            });
-
-            it(@"should return requestId, and responseModel on successBlock, when everything is fine", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                NSString *urlString = @"https://url1.com";
-                EMSRequestModel *model = requestModel(urlString, nil);
-                NSURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:urlString]
-                                                                         statusCode:200
-                                                                        HTTPVersion:nil
-                                                                       headerFields:nil];
-                NSData *data = [urlString dataUsingEncoding:NSUTF8StringEncoding];
-
-                __block NSString *successRequestId;
-                __block NSString *errorRequestId;
-                __block EMSResponseModel *returnedResponse;
-                __block NSError *returnedError;
-                __block BOOL returnedShouldContinue;
-
-                KWCaptureSpy *blockSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                              atIndex:1];
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    successRequestId = requestId;
-                    returnedResponse = response;
-                    }
-                                                                       errorBlock:^(NSString *requestId, NSError *error) {
-                                                                           errorRequestId = requestId;
-                                                                           returnedError = error;
-                                                                       }
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    returnedShouldContinue = shouldContinue;
-                }];
-
-                void (^completionBlock)(NSData *_Nullable completionData, NSURLResponse *_Nullable response, NSError *_Nullable error) = blockSpy.argument;
-
-                completionBlock(data, urlResponse, nil);
-
-                [[expectFutureValue(successRequestId) shouldEventually] equal:model.requestId];
-                [[expectFutureValue(returnedResponse) shouldNotEventually] beNil];
-                [[expectFutureValue(returnedResponse.requestModel) shouldNot] beNil];
-                [[expectFutureValue(returnedResponse.requestModel) should] equal:model];
-                [[expectFutureValue(errorRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedError) shouldEventually] beNil];
-                [[expectFutureValue(theValue(returnedShouldContinue)) shouldEventually] beYes];
-            });
-
-            it(@"should not return requestId or error on errorBlock nor successId and response when there is a retriable error", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                NSString *urlString = @"https://url1.com";
-                EMSRequestModel *model = requestModel(urlString, nil);
-                NSData *data = [urlString dataUsingEncoding:NSUTF8StringEncoding];
-                NSURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:urlString]
-                                                                         statusCode:500
-                                                                        HTTPVersion:nil
-                                                                       headerFields:nil];
-                NSError *error = [NSError errorWithCode:5000 localizedDescription:@"crazy"];
-
-                __block NSString *successRequestId;
-                __block NSString *errorRequestId;
-                __block EMSResponseModel *returnedResponse;
-                __block NSError *returnedError;
-                __block BOOL returnedShouldContinue;
-
-                KWCaptureSpy *blockSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                              atIndex:1];
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    successRequestId = requestId;
-                    returnedResponse = response;
-                    }
-                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
-                                                                           errorRequestId = requestId;
-                                                                           returnedError = blockError;
-                                                                       }
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    returnedShouldContinue = shouldContinue;
-                }];
-
-                void (^completionBlock)(NSData *_Nullable completionData, NSURLResponse *_Nullable response, NSError *_Nullable completionError) = blockSpy.argument;
-
-                completionBlock(data, urlResponse, error);
-
-                [[expectFutureValue(successRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedResponse) shouldEventually] beNil];
-                [[expectFutureValue(errorRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedError) shouldEventually] beNil];
-                [[expectFutureValue(theValue(returnedShouldContinue)) shouldEventually] beNo];
-            });
-
-            it(@"should not return requestId or error on errorBlock nor successId and response when there is a request timeout", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                NSString *urlString = @"https://url1.com";
-                EMSRequestModel *model = requestModel(urlString, nil);
-                NSData *data = [urlString dataUsingEncoding:NSUTF8StringEncoding];
-                NSURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:urlString]
-                                                                         statusCode:408
-                                                                        HTTPVersion:nil
-                                                                       headerFields:nil];
-                NSError *error = [NSError errorWithCode:5000 localizedDescription:@"crazy"];
-
-                __block NSString *successRequestId;
-                __block NSString *errorRequestId;
-                __block EMSResponseModel *returnedResponse;
-                __block NSError *returnedError;
-                __block BOOL returnedShouldContinue;
-
-                KWCaptureSpy *blockSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                              atIndex:1];
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    successRequestId = requestId;
-                    returnedResponse = response;
-                    }
-                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
-                                                                           errorRequestId = requestId;
-                                                                           returnedError = blockError;
-                                                                       }
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    returnedShouldContinue = shouldContinue;
-                }];
-
-                void (^completionBlock)(NSData *_Nullable completionData, NSURLResponse *_Nullable response, NSError *_Nullable completionError) = blockSpy.argument;
-
-                completionBlock(data, urlResponse, error);
-
-                [[expectFutureValue(successRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedResponse) shouldEventually] beNil];
-                [[expectFutureValue(errorRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedError) shouldEventually] beNil];
-                [[expectFutureValue(theValue(returnedShouldContinue)) shouldEventually] beNo];
-            });
-
-            it(@"should return requestId, and error on errorBlock, when there is a non-retriable error", ^{
-                NSURLSession *sessionMock = [NSURLSession mock];
-
-                NSString *urlString = @"https://url1.com";
-                EMSRequestModel *model = requestModel(urlString, nil);
-                NSData *data = [urlString dataUsingEncoding:NSUTF8StringEncoding];
-                NSURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:urlString]
-                                                                         statusCode:404
-                                                                        HTTPVersion:nil
-                                                                       headerFields:nil];
-                NSError *error = [NSError errorWithCode:5000 localizedDescription:@"crazy"];
-
-                __block NSString *successRequestId;
-                __block NSString *errorRequestId;
-                __block EMSResponseModel *returnedResponse;
-                __block NSError *returnedError;
-                __block BOOL returnedShouldContinue;
-
-                KWCaptureSpy *blockSpy = [sessionMock captureArgument:@selector(dataTaskWithRequest:completionHandler:)
-                                                              atIndex:1];
-
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    successRequestId = requestId;
-                    returnedResponse = response;
-                    }
-                                                                       errorBlock:^(NSString *requestId, NSError *blockError) {
-                                                                           errorRequestId = requestId;
-                                                                           returnedError = blockError;
-                                                                       }
-                                                                          session:sessionMock
-                                                                timestampProvider:[EMSTimestampProvider new]];
-
-                [restClient executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    returnedShouldContinue = shouldContinue;
-                }];
-
-                void (^completionBlock)(NSData *_Nullable completionData, NSURLResponse *_Nullable response, NSError *_Nullable completionError) = blockSpy.argument;
-
-                completionBlock(data, urlResponse, error);
-
-                [[expectFutureValue(successRequestId) shouldEventually] beNil];
-                [[expectFutureValue(returnedResponse) shouldEventually] beNil];
-                [[expectFutureValue(errorRequestId) shouldEventually] equal:model.requestId];
-                [[expectFutureValue(returnedError) shouldEventually] equal:error];
-                [[expectFutureValue(theValue(returnedShouldContinue)) shouldEventually] beYes];
-            });
-
-
-            it(@"should call onSuccess with the correct requestIDs for CompositeRequestModel", ^{
-                __block NSMutableArray *_requestIds = [NSMutableArray new];
-                __block NSError *_error;
-                __block EMSRESTClient *_client;
-
-                NSData *originalResponseData = [@"OK" dataUsingEncoding:NSUTF8StringEncoding];
-                EMSRequestModel *originalRequestModel1 = requestModel(@"https://www.emarsys.com", nil);
-                EMSRequestModel *originalRequestModel2 = requestModel(@"https://www.emarsys.com", nil);
-                EMSRequestModel *originalRequestModel3 = requestModel(@"https://www.emarsys.com", nil);
-                NSArray *originals = @[originalRequestModel1, originalRequestModel2, originalRequestModel3];
-
-                EMSRequestModel *model = compositeRequestModel(@"https://www.google.com", nil, originals);
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
-
-                sessionMockWithCannedResponse(model, 200, originalResponseData, nil, ^(NSURLSession *session) {
-                    _client = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        [_requestIds addObject:requestId];
-                        if ([_requestIds count] >= 3) {
-                            [exp fulfill];
-                        }
-                        }
-                                                         errorBlock:^(NSString *requestId, NSError *error) {
-
-                                                         }
-                                                            session:session
-                                                  timestampProvider:[EMSTimestampProvider new]];
-
-                    [_client executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    }];
-                });
-
-                [EMSWaiter waitForExpectations:@[exp] timeout:10];
-
-                [[theValue([_requestIds count]) should] equal:theValue(3)];
-                [[_requestIds[0] should] equal:originalRequestModel1.requestId];
-                [[_requestIds[1] should] equal:originalRequestModel2.requestId];
-                [[_requestIds[2] should] equal:originalRequestModel3.requestId];
-            });
-
-
-            it(@"should call onError with the correct requestIDs for CompositeRequestModel", ^{
-                __block NSMutableArray *_requestIds = [NSMutableArray new];
-                __block NSError *_error;
-                __block EMSRESTClient *_client;
-
-                NSData *originalResponseData = [@"OK" dataUsingEncoding:NSUTF8StringEncoding];
-                EMSRequestModel *originalRequestModel1 = requestModel(@"https://www.emarsys.com", nil);
-                EMSRequestModel *originalRequestModel2 = requestModel(@"https://www.emarsys.com", nil);
-                EMSRequestModel *originalRequestModel3 = requestModel(@"https://www.emarsys.com", nil);
-                NSArray *originals = @[originalRequestModel1, originalRequestModel2, originalRequestModel3];
-
-                EMSRequestModel *model = compositeRequestModel(@"https://www.google.com", nil, originals);
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
-
-                sessionMockWithCannedResponse(model, 404, originalResponseData, nil, ^(NSURLSession *session) {
-                    _client = [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        }
-                                                         errorBlock:^(NSString *requestId, NSError *error) {
-                                                             [_requestIds addObject:requestId];
-                                                             if ([_requestIds count] >= 3) {
-                                                                 [exp fulfill];
-                                                             }
-                                                         }
-                                                            session:session
-                                                  timestampProvider:[EMSTimestampProvider new]];
-
-                    [_client executeTaskWithOfflineCallbackStrategyWithRequestModel:model onComplete:^(BOOL shouldContinue) {
-                    }];
-                });
-
-                [EMSWaiter waitForExpectations:@[exp] timeout:10];
-
-                [[theValue([_requestIds count]) should] equal:theValue(3)];
-                [[_requestIds[0] should] equal:originalRequestModel1.requestId];
-                [[_requestIds[1] should] equal:originalRequestModel2.requestId];
-                [[_requestIds[2] should] equal:originalRequestModel3.requestId];
-            });
-
-        });
-
-        describe(@"executeTaskWithRequestModel:onSuccess:onError", ^{
-
-            it(@"should call onSuccess with the response data if the request was successful", ^{
-                __block NSData *_data;
-                __block NSError *_error;
-
-                NSData *originalResponseData = [@"OK" dataUsingEncoding:NSUTF8StringEncoding];
-                id model = requestModel(@"https://www.google.com", nil);
-                sessionMockWithCannedResponse(model, 200, originalResponseData, nil, ^(NSURLSession *session) {
-                    EMSRESTClient *client = [EMSRESTClient clientWithSession:session];
-                    [client executeTaskWithRequestModel:model successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        _data = response.body;
-                    }                        errorBlock:^(NSString *requestId, NSError *error) {
-                        _error = error;
-                    }];
-                });
-
-                [[originalResponseData shouldEventually] equal:_data];
-            });
-
-            it(@"should call onSuccess with the correct requestID", ^{
-                __block NSString *_requestId;
-                __block NSError *_error;
-
-                NSData *originalResponseData = [@"OK" dataUsingEncoding:NSUTF8StringEncoding];
-                EMSRequestModel *model = requestModel(@"https://www.google.com", nil);
-                sessionMockWithCannedResponse(model, 200, originalResponseData, nil, ^(NSURLSession *session) {
-                    EMSRESTClient *client = [EMSRESTClient clientWithSession:session];
-                    [client executeTaskWithRequestModel:model successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        _requestId = requestId;
-                    }                        errorBlock:^(NSString *requestId, NSError *error) {
-                        _error = error;
-                    }];
-                });
-
-                [[model.requestId shouldEventually] equal:_requestId];
-            });
-
-            it(@"should call onError if the request gone crazy", ^{
-                __block NSData *_data;
-                __block NSError *_error;
-
-                NSData *originalResponseData = [@"OK" dataUsingEncoding:NSUTF8StringEncoding];
-                NSError *originalError = [NSError errorWithCode:42 localizedDescription:@"desc"];
-                id model = requestModel(@"https://www.google.com", nil);
-                sessionMockWithCannedResponse(model, 500, nil, originalError, ^(NSURLSession *session) {
-                    EMSRESTClient *client = [EMSRESTClient clientWithSession:session];
-                    [client executeTaskWithRequestModel:model successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        _data = response.body;
-                    }                        errorBlock:^(NSString *requestId, NSError *error) {
-                        _error = error;
-                    }];
-                });
-
-                [[originalError shouldEventually] equal:_error];
-            });
-
-        });
-
-SPEC_END
+#import "EMSOperationQueue.h"
+#import "EMSResponseModel.h"
+#import "NSURLRequest+EMSCore.h"
+#import "NSError+EMSCore.h"
+
+typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, NSError *);
+
+@interface EMSRESTClientTests : XCTestCase
+
+@property(nonatomic, strong) EMSRESTClient *restClient;
+@property(nonatomic, strong) NSURLSession *mockSession;
+@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *mockQueue;
+@property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
+@property(nonatomic, strong) EMSCoreCompletionHandler *mockCoreCompletionHandler;
+@property(nonatomic, strong) EMSRequestModel *mockRequestModel;
+@property(nonatomic, strong) EMSRequestModel *requestModel;
+@property(nonatomic, strong) NSURLRequest *request;
+@property(nonatomic, strong) NSHTTPURLResponse *response;
+@property(nonatomic, strong) NSData *data;
+@property(nonatomic, strong) NSDate *responseTimestamp;
+@property(nonatomic, strong) EMSResponseModel *expectedResponseModel;
+@property(nonatomic, strong) NSNull *nullValue;
+
+@end
+
+@implementation EMSRESTClientTests
+
+- (void)setUp {
+    _mockSession = OCMClassMock([NSURLSession class]);
+    _queue = [EMSOperationQueue new];
+    _mockQueue = OCMClassMock([NSOperationQueue class]);
+    _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    _mockCoreCompletionHandler = OCMClassMock([EMSCoreCompletionHandler class]);
+    _mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    _requestModel = [self generateRequestModel];
+    _request = [NSURLRequest requestWithRequestModel:self.requestModel];
+    _response = [self generateResponse];
+    _data = [self generateBodyData];
+    _responseTimestamp = [NSDate date];
+    _expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:self.response
+                                                                          data:self.data
+                                                                  requestModel:self.requestModel
+                                                                     timestamp:self.responseTimestamp];
+    _nullValue = [NSNull null];
+
+    _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                                   queue:self.queue
+                                       timestampProvider:self.mockTimestampProvider];
+}
+
+- (void)testInit_shouldNotAccept_nilSession {
+    @try {
+        [[EMSRESTClient alloc] initWithSession:nil
+                                         queue:self.mockQueue
+                             timestampProvider:self.mockTimestampProvider];
+        XCTFail(@"Expected Exception when session is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: session");
+    }
+}
+
+- (void)testInit_shouldNotAccept_nilQueue {
+    @try {
+        [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                         queue:nil
+                             timestampProvider:self.mockTimestampProvider];
+        XCTFail(@"Expected Exception when queue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
+    }
+}
+
+- (void)testInit_shouldNotAccept_nilTimestampProvider {
+    @try {
+        [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                         queue:self.mockQueue
+                             timestampProvider:nil];
+        XCTFail(@"Expected Exception when timestampProvider is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
+    }
+}
+
+- (void)testExecute_shouldNotAccept_nilRequestModel {
+    @try {
+        [self.restClient executeWithRequestModel:nil
+                           coreCompletionHandler:self.mockCoreCompletionHandler];
+        XCTFail(@"Expected Exception when requestModel is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestModel");
+    }
+}
+
+- (void)testExecute_shouldNotAccept_nilCoreCompletionHandler {
+    @try {
+        [self.restClient executeWithRequestModel:self.mockRequestModel
+                           coreCompletionHandler:nil];
+        XCTFail(@"Expected Exception when completionHandler is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionHandler");
+    }
+}
+
+- (void)testExecute_shouldNotCrash_when_successBlockIsNil {
+    OCMStub([self.mockSession dataTaskWithRequest:self.request
+                                completionHandler:([OCMArg invokeBlockWithArgs:self.data,
+                                                                               self.response,
+                                                                               self.nullValue,
+                                                                               nil])]);
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.responseTimestamp);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
+    [self.restClient executeWithRequestModel:self.requestModel
+                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:nil
+                                                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                             XCTFail(@"ErrorBlock has been called.");
+                                                                                         }]];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:1];
+    XCTAssertEqual(result, XCTWaiterResultTimedOut);
+}
+
+- (void)testExecute_shouldNotCrash_when_errorBlockIsNil {
+    OCMStub([self.mockSession dataTaskWithRequest:self.request
+                                completionHandler:([OCMArg invokeBlockWithArgs:self.nullValue,
+                                                                               self.nullValue,
+                                                                               [[NSError alloc] init],
+                                                                               nil])]);
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.responseTimestamp);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
+    [self.restClient executeWithRequestModel:self.requestModel
+                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                               XCTFail(@"SuccessBlock has been called.");
+                           }
+                                                                                         errorBlock:nil]];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:1];
+    XCTAssertEqual(result, XCTWaiterResultTimedOut);
+}
+
+- (void)testExecute_shouldInvokeSuccessBlock {
+    __weak typeof(self) weakSelf = self;
+    [self runExecuteWithData:self.data
+                 urlResponse:self.response
+                       error:self.nullValue
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequestId, weakSelf.requestModel.requestId);
+                  XCTAssertEqualObjects(returnedResponseModel, weakSelf.expectedResponseModel);
+                  XCTAssertNil(returnedError);
+              }];
+}
+
+- (void)testExecute_shouldInvokeErrorBlock_whenErrorIsAvailable {
+    NSError *expectedError = [[NSError alloc] init];
+    [self runExecuteWithData:self.nullValue
+                 urlResponse:self.nullValue
+                       error:expectedError
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
+                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedError, expectedError);
+              }];
+}
+
+- (void)testExecute_shouldInvokeErrorBlock_when_noError_noResponseModel {
+    NSError *expectedError = [NSError errorWithCode:1500
+                               localizedDescription:@"Missing response"];
+    [self runExecuteWithData:self.data
+                 urlResponse:self.nullValue
+                       error:self.nullValue
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
+                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedError, expectedError);
+              }];
+}
+
+- (void)testExecute_shouldInvokeErrorBlock_when_noData {
+    NSError *expectedError = [NSError errorWithCode:1500
+                               localizedDescription:@"Missing data"];
+    [self runExecuteWithData:self.nullValue
+                 urlResponse:self.response
+                       error:self.nullValue
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
+                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedError, expectedError);
+              }];
+}
+
+- (EMSRequestModel *)generateRequestModel {
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setUrl:@"https://www.emarsys.com"];
+            [builder setMethod:HTTPMethodPOST];
+        }
+                          timestampProvider:[EMSTimestampProvider new]
+                               uuidProvider:[EMSUUIDProvider new]];
+}
+
+- (NSHTTPURLResponse *)generateResponse {
+    return [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                       statusCode:200
+                                      HTTPVersion:nil
+                                     headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}];
+}
+
+- (NSData *)generateBodyData {
+    return [NSJSONSerialization dataWithJSONObject:@{@"bodyKey": @"bodyValue"}
+                                           options:NSJSONWritingPrettyPrinted
+                                             error:nil];
+}
+
+- (void)runExecuteWithData:(id)data
+               urlResponse:(id)urlResponse
+                     error:(id)error
+            assertionBlock:(AssertionBlock)assertionBlock {
+    NSURLSessionDataTask *mockTask = OCMClassMock([NSURLSessionDataTask class]);
+
+    OCMStub([self.mockSession dataTaskWithRequest:self.request
+                                completionHandler:([OCMArg invokeBlockWithArgs:data,
+                                                                               urlResponse,
+                                                                               error,
+                                                                               nil])]).andReturn(mockTask);
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.responseTimestamp);
+
+    __block NSString *returnedRequestId = nil;
+    __block EMSResponseModel *returnedResponseModel = nil;
+    __block NSError *returnedError = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
+    [self.restClient executeWithRequestModel:self.requestModel
+                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                               returnedRequestId = requestId;
+                               returnedResponseModel = response;
+                               [expectation fulfill];
+                           }
+                                                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                             returnedRequestId = requestId;
+                                                                                             returnedError = error;
+                                                                                             [expectation fulfill];
+                                                                                         }]];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:1];
+    OCMVerify([self.mockSession dataTaskWithRequest:self.request
+                                  completionHandler:[OCMArg any]]);
+    OCMVerify([mockTask resume]);
+
+    assertionBlock(result, returnedRequestId, returnedResponseModel, returnedError);
+}
+
+@end

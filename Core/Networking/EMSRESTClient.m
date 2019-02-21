@@ -17,11 +17,69 @@
 @property(nonatomic, strong) CoreSuccessBlock successBlock;
 @property(nonatomic, strong) CoreErrorBlock errorBlock;
 @property(nonatomic, strong) NSURLSession *session;
+@property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 
 @end
 
 @implementation EMSRESTClient
+
+- (instancetype)initWithSession:(NSURLSession *)session
+                          queue:(NSOperationQueue *)queue
+              timestampProvider:(EMSTimestampProvider *)timestampProvider {
+    NSParameterAssert(session);
+    NSParameterAssert(queue);
+    NSParameterAssert(timestampProvider);
+    if (self = [super init]) {
+        _session = session;
+        _queue = queue;
+        _timestampProvider = timestampProvider;
+    }
+    return self;
+}
+
+- (void)executeWithRequestModel:(EMSRequestModel *)requestModel
+          coreCompletionHandler:(EMSCoreCompletionHandler *)completionHandler {
+    NSParameterAssert(requestModel);
+    NSParameterAssert(completionHandler);
+    __weak typeof(self) weakSelf = self;
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
+                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                     NSError *runtimeError = [self errorWithData:data
+                                                                                        response:response
+                                                                                           error:error];
+                                                     if (runtimeError) {
+                                                         if (completionHandler.errorBlock) {
+                                                             completionHandler.errorBlock(requestModel.requestId, runtimeError);
+                                                         }
+                                                     } else {
+                                                         EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:(NSHTTPURLResponse *) response
+                                                                                                                                        data:data
+                                                                                                                                requestModel:requestModel
+                                                                                                                                   timestamp:[weakSelf.timestampProvider provideTimestamp]];
+                                                         if (completionHandler.successBlock) {
+                                                             completionHandler.successBlock(requestModel.requestId, responseModel);
+                                                         }
+                                                     }
+                                                 }];
+    [task resume];
+}
+
+- (NSError *)errorWithData:(NSData *)data response:(NSURLResponse *)response error:(NSError *)error {
+    NSError *runtimeError = error;
+    if (!error) {
+        if (!response) {
+            runtimeError = [NSError errorWithCode:1500
+                             localizedDescription:@"Missing response"];
+        }
+        if (!data) {
+            runtimeError = [NSError errorWithCode:1500
+                             localizedDescription:@"Missing data"];
+        }
+    }
+    return runtimeError;
+}
+
 
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
                           errorBlock:(CoreErrorBlock)errorBlock
@@ -48,29 +106,6 @@
         }
     }
     return self;
-}
-
-+ (EMSRESTClient *)clientWithSession:(NSURLSession *)session {
-    return [EMSRESTClient clientWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-    }                                 errorBlock:^(NSString *requestId, NSError *error) {
-    }                                    session:session timestampProvider:[EMSTimestampProvider new]];
-}
-
-+ (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock errorBlock:(CoreErrorBlock)errorBlock {
-    return [EMSRESTClient clientWithSuccessBlock:successBlock
-                                      errorBlock:errorBlock
-                                         session:nil
-                               timestampProvider:[EMSTimestampProvider new]];
-}
-
-+ (EMSRESTClient *)clientWithSuccessBlock:(CoreSuccessBlock)successBlock
-                               errorBlock:(CoreErrorBlock)errorBlock
-                                  session:(nullable NSURLSession *)session
-                        timestampProvider:(EMSTimestampProvider *)timestampProvider {
-    return [[EMSRESTClient alloc] initWithSuccessBlock:successBlock
-                                            errorBlock:errorBlock
-                                               session:session
-                                     timestampProvider:timestampProvider];
 }
 
 - (void)executeTaskWithRequestModel:(EMSRequestModel *)requestModel
