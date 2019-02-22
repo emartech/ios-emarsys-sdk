@@ -3,12 +3,11 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSCoreCompletion.h"
-#import "EMSCoreCompletionHandlerProtocol.h"
+#import "EMSRESTClientCompletionProxyProtocol.h"
 
-@interface EMSCoreCompletionHandler : NSObject <EMSCoreCompletionHandlerProtocol>
+@interface EMSCoreCompletionHandler : NSObject <EMSRESTClientCompletionProxyProtocol>
 
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
                           errorBlock:(CoreErrorBlock)errorBlock;
-
 
 @end

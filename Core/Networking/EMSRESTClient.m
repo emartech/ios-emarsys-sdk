@@ -39,9 +39,9 @@
 }
 
 - (void)executeWithRequestModel:(EMSRequestModel *)requestModel
-          coreCompletionHandler:(id <EMSCoreCompletionHandlerProtocol>)completionHandler {
+            coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy {
     NSParameterAssert(requestModel);
-    NSParameterAssert(completionHandler);
+    NSParameterAssert((NSObject *) completionProxy);
     __weak typeof(self) weakSelf = self;
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
@@ -49,35 +49,30 @@
                                                          NSError *runtimeError = [weakSelf errorWithData:data
                                                                                                 response:response
                                                                                                    error:error];
-                                                         if (runtimeError) {
-                                                             if (completionHandler.errorBlock) {
-                                                                 completionHandler.errorBlock(requestModel.requestId, runtimeError);
-                                                             }
-                                                         } else {
-                                                             EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:(NSHTTPURLResponse *) response
-                                                                                                                                            data:data
-                                                                                                                                    requestModel:requestModel
-                                                                                                                                       timestamp:[weakSelf.timestampProvider provideTimestamp]];
-                                                             if (completionHandler.successBlock) {
-                                                                 completionHandler.successBlock(requestModel.requestId, responseModel);
-                                                             }
+                                                         EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:(NSHTTPURLResponse *) response
+                                                                                                                                        data:data
+                                                                                                                                requestModel:requestModel
+                                                                                                                                   timestamp:[weakSelf.timestampProvider provideTimestamp]];
+                                                         if (completionProxy.completionBlock) {
+                                                             completionProxy.completionBlock(requestModel, responseModel, runtimeError);
                                                          }
                                                      }];
                                                  }];
-
     [task resume];
 }
 
-- (NSError *)errorWithData:(NSData *)data response:(NSURLResponse *)response error:(NSError *)error {
+- (NSError *)errorWithData:(NSData *)data
+                  response:(NSURLResponse *)response
+                     error:(NSError *)error {
     NSError *runtimeError = error;
     if (!error) {
-        if (!response) {
-            runtimeError = [NSError errorWithCode:1500
-                             localizedDescription:@"Missing response"];
-        }
         if (!data) {
             runtimeError = [NSError errorWithCode:1500
                              localizedDescription:@"Missing data"];
+        }
+        if (!response) {
+            runtimeError = [NSError errorWithCode:1500
+                             localizedDescription:@"Missing response"];
         }
     }
     return runtimeError;

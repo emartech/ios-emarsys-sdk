@@ -11,9 +11,9 @@
 #import "EMSResponseModel.h"
 #import "NSURLRequest+EMSCore.h"
 #import "NSError+EMSCore.h"
-#import "FakeCompletionHandler.h"
+#import "FakeRESTClientCompletionProxy.h"
 
-typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
+typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
 @interface EMSRESTClientTests : XCTestCase
 
@@ -96,24 +96,24 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
 - (void)testExecute_shouldNotAccept_nilRequestModel {
     @try {
         [self.restClient executeWithRequestModel:nil
-                           coreCompletionHandler:self.mockCoreCompletionHandler];
+                             coreCompletionProxy:self.mockCoreCompletionHandler];
         XCTFail(@"Expected Exception when requestModel is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestModel");
     }
 }
 
-- (void)testExecute_shouldNotAccept_nilCoreCompletionHandler {
+- (void)testExecute_shouldNotAccept_nilCoreCompletionProxy {
     @try {
         [self.restClient executeWithRequestModel:self.mockRequestModel
-                           coreCompletionHandler:nil];
-        XCTFail(@"Expected Exception when completionHandler is nil!");
+                             coreCompletionProxy:nil];
+        XCTFail(@"Expected Exception when completionProxy is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionHandler");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: (NSObject *) completionProxy");
     }
 }
 
-- (void)testExecute_shouldNotCrash_when_successBlockIsNil {
+- (void)testExecute_shouldNotCrash_when_completionBlock {
     OCMStub([self.mockSession dataTaskWithRequest:self.request
                                 completionHandler:([OCMArg invokeBlockWithArgs:self.data,
                                                                                self.response,
@@ -123,86 +123,76 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
     [self.restClient executeWithRequestModel:self.requestModel
-                       coreCompletionHandler:[[FakeCompletionHandler alloc] initWithSuccessBlock:nil
-                                                                                      errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                          XCTFail(@"ErrorBlock has been called.");
-                                                                                      }]];
+                         coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:nil]];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:1];
     XCTAssertEqual(result, XCTWaiterResultTimedOut);
 }
 
-- (void)testExecute_shouldNotCrash_when_errorBlockIsNil {
-    OCMStub([self.mockSession dataTaskWithRequest:self.request
-                                completionHandler:([OCMArg invokeBlockWithArgs:self.nullValue,
-                                                                               self.nullValue,
-                                                                               [[NSError alloc] init],
-                                                                               nil])]);
-    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.responseTimestamp);
-
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
-    [self.restClient executeWithRequestModel:self.requestModel
-                       coreCompletionHandler:[[FakeCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                               XCTFail(@"SuccessBlock has been called.");
-                           }
-                                                                                      errorBlock:nil]];
-    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                    timeout:1];
-    XCTAssertEqual(result, XCTWaiterResultTimedOut);
-}
-
-- (void)testExecute_shouldInvokeSuccessBlock {
+- (void)testExecute_shouldGiveResponse {
     [self runExecuteWithData:self.data
                  urlResponse:self.response
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
                   XCTAssertEqualObjects(returnedResponseModel, self.expectedResponseModel);
                   XCTAssertNil(returnedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
-- (void)testExecute_shouldInvokeErrorBlock_whenErrorIsAvailable {
+- (void)testExecute_shouldGiveError_whenErrorIsAvailable {
     NSError *expectedError = [[NSError alloc] init];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:nil
+                                                                                           data:nil
+                                                                                   requestModel:self.requestModel
+                                                                                      timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.nullValue
                        error:expectedError
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
-                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
+                  XCTAssertEqualObjects(returnedResponseModel, expectedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
-- (void)testExecute_shouldInvokeErrorBlock_when_noError_noResponseModel {
+- (void)testExecute_shouldGiveError_when_noError_noResponseModel {
     NSError *expectedError = [NSError errorWithCode:1500
                                localizedDescription:@"Missing response"];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:nil
+                                                                                           data:self.data
+                                                                                   requestModel:self.requestModel
+                                                                                      timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.data
                  urlResponse:self.nullValue
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
-                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
+                  XCTAssertEqualObjects(returnedResponseModel, expectedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
-- (void)testExecute_shouldInvokeErrorBlock_when_noData {
+- (void)testExecute_shouldGiveError_when_noData {
     NSError *expectedError = [NSError errorWithCode:1500
                                localizedDescription:@"Missing data"];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:self.response
+                                                                                           data:nil
+                                                                                   requestModel:self.requestModel
+                                                                                      timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.response
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
-                  XCTAssertNil(returnedResponseModel);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
+                  XCTAssertEqualObjects(returnedResponseModel, expectedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
@@ -243,31 +233,26 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
                                                                                nil])]).andReturn(mockTask);
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.responseTimestamp);
 
-    __block NSString *returnedRequestId = nil;
+    __block EMSRequestModel *returnedRequest = nil;
     __block EMSResponseModel *returnedResponseModel = nil;
     __block NSError *returnedError = nil;
     __block NSOperationQueue *usedOperationQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
     [self.restClient executeWithRequestModel:self.requestModel
-                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                               returnedRequestId = requestId;
-                               returnedResponseModel = response;
-                               usedOperationQueue = [NSOperationQueue currentQueue];
-                               [expectation fulfill];
-                           }
-                                                                                         errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                             returnedRequestId = requestId;
-                                                                                             returnedError = error;
-                                                                                             usedOperationQueue = [NSOperationQueue currentQueue];
-                                                                                             [expectation fulfill];
-                                                                                         }]];
+                         coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+                             returnedRequest = requestModel;
+                             returnedResponseModel = responseModel;
+                             returnedError = error;
+                             usedOperationQueue = [NSOperationQueue currentQueue];
+                             [expectation fulfill];
+                         }]];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:1];
     OCMVerify([self.mockSession dataTaskWithRequest:self.request
                                   completionHandler:[OCMArg any]]);
     OCMVerify([mockTask resume]);
 
-    assertionBlock(result, returnedRequestId, returnedResponseModel, returnedError, usedOperationQueue);
+    assertionBlock(result, returnedRequest, returnedResponseModel, returnedError, usedOperationQueue);
 }
 
 @end

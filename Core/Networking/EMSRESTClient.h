@@ -6,7 +6,7 @@
 #import "EMSCoreCompletion.h"
 #import "EMSRequestModel.h"
 #import "EMSCoreCompletionHandler.h"
-#import "EMSCoreCompletionHandlerProtocol.h"
+#import "EMSRESTClientCompletionProxyProtocol.h"
 
 @class EMSTimestampProvider;
 
@@ -24,7 +24,7 @@ typedef void (^EMSRestClientCompletionBlock)(BOOL shouldContinue);
               timestampProvider:(EMSTimestampProvider *)timestampProvider;
 
 - (void)executeWithRequestModel:(EMSRequestModel *)requestModel
-          coreCompletionHandler:(id <EMSCoreCompletionHandlerProtocol>)completionHandler;
+            coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy;
 
 - (void)executeTaskWithRequestModel:(EMSRequestModel *)requestModel
                        successBlock:(CoreSuccessBlock)successBlock
