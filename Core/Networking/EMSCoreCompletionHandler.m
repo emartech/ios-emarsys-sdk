@@ -3,6 +3,12 @@
 //
 #import "EMSCoreCompletionHandler.h"
 
+@interface EMSCoreCompletionHandler ()
+
+@property(nonatomic, readonly) CoreSuccessBlock successBlock;
+@property(nonatomic, readonly) CoreErrorBlock errorBlock;
+
+@end
 
 @implementation EMSCoreCompletionHandler
 

@@ -401,6 +401,7 @@
 		32C6F88031A905948A821C46 /* EMSIAMViewControllerProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FEDD96C09FF98C2B367B /* EMSIAMViewControllerProviderTests.m */; };
 		32C6F88A34EAA25B99A6B766 /* EMSCrashLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F73B8CDC6CB1850AF204 /* EMSCrashLog.h */; };
 		32C6F89A5BB84BDF9AC15E9C /* EMSOperationQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F063C9DE78FCB4EC804B /* EMSOperationQueueTests.m */; };
+		32C6F8CA295E2C33588BCCE5 /* EMSCoreCompletionHandlerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FB4D8BC88FFFBBBF4211 /* EMSCoreCompletionHandlerProtocol.h */; };
 		32C6F8E44E39901A6E015B26 /* MEJSBridgeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA1DB0324C3ED5E04770 /* MEJSBridgeTests.m */; };
 		32C6F8F484A17FFF5E311862 /* FakeDependencyContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F2CD8EC4C95A37BA1C4A /* FakeDependencyContainer.m */; };
 		32C6F90A34648AD412FA1698 /* EMSDependencyContainerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F7330D21EFD61CCCA8EE /* EMSDependencyContainerProtocol.h */; };
@@ -837,6 +838,7 @@
 		32C6FB14FB4A6541BF316131 /* EMSRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRequestManager.m; sourceTree = "<group>"; };
 		32C6FB2A54BC6177E5F09C4C /* MobileEngageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileEngageInternal.h; sourceTree = "<group>"; };
 		32C6FB41E86494A1EA73A269 /* MEInApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEInApp.m; sourceTree = "<group>"; };
+		32C6FB4D8BC88FFFBBBF4211 /* EMSCoreCompletionHandlerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreCompletionHandlerProtocol.h; sourceTree = "<group>"; };
 		32C6FB6ABC5937B793BDE506 /* EmarsysNotificationService.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.podspec; path = EmarsysNotificationService.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		32C6FB89A41877A45A95C960 /* EMSCoreCompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreCompletionHandler.h; sourceTree = "<group>"; };
 		32C6FB95D36E9CF6BFE92911 /* EMSCoreCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreCompletion.h; sourceTree = "<group>"; };
@@ -1193,6 +1195,7 @@
 				32C6F0BC31230D4369B55FCD /* EMSRESTClient.h */,
 				32C6FF8BE961213852703E76 /* EMSCoreCompletionHandler.m */,
 				32C6FB89A41877A45A95C960 /* EMSCoreCompletionHandler.h */,
+				32C6FB4D8BC88FFFBBBF4211 /* EMSCoreCompletionHandlerProtocol.h */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -2413,6 +2416,7 @@
 				32C6F88A34EAA25B99A6B766 /* EMSCrashLog.h in Headers */,
 				32C6FB11580B1AC9992057AC /* EMSRESTClient.h in Headers */,
 				32C6F1EB6B97BBFEBED29A2B /* EMSCoreCompletionHandler.h in Headers */,
+				32C6F8CA295E2C33588BCCE5 /* EMSCoreCompletionHandlerProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

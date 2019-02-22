@@ -3,11 +3,9 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSCoreCompletion.h"
+#import "EMSCoreCompletionHandlerProtocol.h"
 
-@interface EMSCoreCompletionHandler : NSObject
-
-@property(nonatomic, readonly) CoreSuccessBlock successBlock;
-@property(nonatomic, readonly) CoreErrorBlock errorBlock;
+@interface EMSCoreCompletionHandler : NSObject <EMSCoreCompletionHandlerProtocol>
 
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
                           errorBlock:(CoreErrorBlock)errorBlock;

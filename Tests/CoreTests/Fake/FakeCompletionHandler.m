@@ -20,5 +20,14 @@
     return self;
 }
 
+- (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
+                          errorBlock:(CoreErrorBlock)errorBlock {
+    if (self = [super init]) {
+        _successBlock = successBlock;
+        _errorBlock = errorBlock;
+    }
+    return self;
+}
+
 
 @end

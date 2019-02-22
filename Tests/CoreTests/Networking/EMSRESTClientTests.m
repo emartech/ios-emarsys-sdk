@@ -11,14 +11,15 @@
 #import "EMSResponseModel.h"
 #import "NSURLRequest+EMSCore.h"
 #import "NSError+EMSCore.h"
+#import "FakeCompletionHandler.h"
 
-typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, NSError *);
+typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
 @interface EMSRESTClientTests : XCTestCase
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) NSURLSession *mockSession;
-@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *expectedOperationQueue;
 @property(nonatomic, strong) NSOperationQueue *mockQueue;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSCoreCompletionHandler *mockCoreCompletionHandler;
@@ -37,7 +38,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
 
 - (void)setUp {
     _mockSession = OCMClassMock([NSURLSession class]);
-    _queue = [EMSOperationQueue new];
+    _expectedOperationQueue = [EMSOperationQueue new];
     _mockQueue = OCMClassMock([NSOperationQueue class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockCoreCompletionHandler = OCMClassMock([EMSCoreCompletionHandler class]);
@@ -55,7 +56,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
     _nullValue = [NSNull null];
 
     _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
-                                                   queue:self.queue
+                                                   queue:self.expectedOperationQueue
                                        timestampProvider:self.mockTimestampProvider];
 }
 
@@ -122,10 +123,10 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
     [self.restClient executeWithRequestModel:self.requestModel
-                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:nil
-                                                                                         errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                             XCTFail(@"ErrorBlock has been called.");
-                                                                                         }]];
+                       coreCompletionHandler:[[FakeCompletionHandler alloc] initWithSuccessBlock:nil
+                                                                                      errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                          XCTFail(@"ErrorBlock has been called.");
+                                                                                      }]];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:1];
     XCTAssertEqual(result, XCTWaiterResultTimedOut);
@@ -141,25 +142,25 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
     [self.restClient executeWithRequestModel:self.requestModel
-                       coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                       coreCompletionHandler:[[FakeCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                                XCTFail(@"SuccessBlock has been called.");
                            }
-                                                                                         errorBlock:nil]];
+                                                                                      errorBlock:nil]];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:1];
     XCTAssertEqual(result, XCTWaiterResultTimedOut);
 }
 
 - (void)testExecute_shouldInvokeSuccessBlock {
-    __weak typeof(self) weakSelf = self;
     [self runExecuteWithData:self.data
                  urlResponse:self.response
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                  XCTAssertEqualObjects(returnedRequestId, weakSelf.requestModel.requestId);
-                  XCTAssertEqualObjects(returnedResponseModel, weakSelf.expectedResponseModel);
+                  XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
+                  XCTAssertEqualObjects(returnedResponseModel, self.expectedResponseModel);
                   XCTAssertNil(returnedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
@@ -168,11 +169,12 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.nullValue
                        error:expectedError
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
                   XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
                   XCTAssertNil(returnedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
@@ -182,11 +184,12 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
     [self runExecuteWithData:self.data
                  urlResponse:self.nullValue
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
                   XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
                   XCTAssertNil(returnedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
@@ -196,11 +199,12 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.response
                        error:self.nullValue
-              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError) {
+              assertionBlock:^(XCTWaiterResult waiterResult, NSString *returnedRequestId, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
                   XCTAssertEqualObjects(returnedRequestId, self.requestModel.requestId);
                   XCTAssertNil(returnedResponseModel);
                   XCTAssertEqualObjects(returnedError, expectedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
 }
 
@@ -242,16 +246,19 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
     __block NSString *returnedRequestId = nil;
     __block EMSResponseModel *returnedResponseModel = nil;
     __block NSError *returnedError = nil;
+    __block NSOperationQueue *usedOperationQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSuccessBlock"];
     [self.restClient executeWithRequestModel:self.requestModel
                        coreCompletionHandler:[[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                                returnedRequestId = requestId;
                                returnedResponseModel = response;
+                               usedOperationQueue = [NSOperationQueue currentQueue];
                                [expectation fulfill];
                            }
                                                                                          errorBlock:^(NSString *requestId, NSError *error) {
                                                                                              returnedRequestId = requestId;
                                                                                              returnedError = error;
+                                                                                             usedOperationQueue = [NSOperationQueue currentQueue];
                                                                                              [expectation fulfill];
                                                                                          }]];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
@@ -260,7 +267,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, NSString *, EMSResponseModel *, 
                                   completionHandler:[OCMArg any]]);
     OCMVerify([mockTask resume]);
 
-    assertionBlock(result, returnedRequestId, returnedResponseModel, returnedError);
+    assertionBlock(result, returnedRequestId, returnedResponseModel, returnedError, usedOperationQueue);
 }
 
 @end
