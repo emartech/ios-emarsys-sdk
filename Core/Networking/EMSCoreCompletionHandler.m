@@ -5,6 +5,7 @@
 #import "EMSRequestModel.h"
 #import "EMSResponseModel.h"
 #import "NSError+EMSCore.h"
+#import "EMSResponseModel+EMSCore.h"
 
 @interface EMSCoreCompletionHandler ()
 
@@ -31,7 +32,7 @@
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
         NSParameterAssert(requestModel);
         NSParameterAssert(responseModel);
-        if (!error && [self isStatusCodeOK:responseModel.statusCode]) {
+        if (!error && [responseModel isSuccess]) {
             weakSelf.successBlock(requestModel.requestId, responseModel);
         } else {
             NSError *responseError = error ? error : [weakSelf errorWithData:responseModel.body
@@ -39,10 +40,6 @@
             weakSelf.errorBlock(requestModel.requestId, responseError);
         }
     };
-}
-
-- (BOOL)isStatusCodeOK:(NSInteger)statusCode {
-    return statusCode >= 200 && statusCode <= 299;
 }
 
 - (NSError *)errorWithData:(NSData *)data
