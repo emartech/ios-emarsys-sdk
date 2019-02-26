@@ -7,6 +7,9 @@
 
 @interface EMSCoreCompletionHandler : NSObject <EMSRESTClientCompletionProxyProtocol>
 
+@property(nonatomic, readonly) CoreSuccessBlock successBlock;
+@property(nonatomic, readonly) CoreErrorBlock errorBlock;
+
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock
                           errorBlock:(CoreErrorBlock)errorBlock;
 

@@ -7,13 +7,6 @@
 #import "NSError+EMSCore.h"
 #import "EMSResponseModel+EMSCore.h"
 
-@interface EMSCoreCompletionHandler ()
-
-@property(nonatomic, readonly) CoreSuccessBlock successBlock;
-@property(nonatomic, readonly) CoreErrorBlock errorBlock;
-
-@end
-
 @implementation EMSCoreCompletionHandler
 
 - (instancetype)initWithSuccessBlock:(CoreSuccessBlock)successBlock

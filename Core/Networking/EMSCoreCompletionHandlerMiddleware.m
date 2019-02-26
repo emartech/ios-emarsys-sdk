@@ -9,15 +9,6 @@
 #import "EMSSchemaContract.h"
 #import "EMSResponseModel+EMSCore.h"
 
-@interface EMSCoreCompletionHandlerMiddleware ()
-
-@property(nonatomic, assign) id <EMSRESTClientCompletionProxyProtocol> completionHandler;
-@property(nonatomic, assign) id <EMSWorkerProtocol> worker;
-@property(nonatomic, assign) id <EMSRequestModelRepositoryProtocol> requestRepository;
-@property(nonatomic, assign) NSOperationQueue *operationQueue;
-
-@end
-
 @implementation EMSCoreCompletionHandlerMiddleware
 
 - (instancetype)initWithCoreCompletionHandler:(id <EMSRESTClientCompletionProxyProtocol>)completionHandler
