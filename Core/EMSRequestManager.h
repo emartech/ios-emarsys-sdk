@@ -12,6 +12,7 @@
 #import "EMSRESTClient.h"
 
 @class EMSRequestModel;
+@class EMSRESTClientCompletionProxyFactory;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
                        restClient:(EMSRESTClient *)restClient
                            worker:(id <EMSWorkerProtocol>)worker
                 requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-                  shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository;
+                  shardRepository:(id <EMSShardRepositoryProtocol>)shardRepository
+                     proxyFactory:(EMSRESTClientCompletionProxyFactory *)proxyFactory;
 
 - (void)submitRequestModel:(EMSRequestModel *)model
        withCompletionBlock:(EMSCompletionBlock)completionBlock;

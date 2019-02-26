@@ -6,6 +6,7 @@
 #import "EMSResponseModel.h"
 #import "NSError+EMSCore.h"
 #import "EMSResponseModel+EMSCore.h"
+#import "EMSRequestModel+RequestIds.h"
 
 @implementation EMSCoreCompletionHandler
 
@@ -26,11 +27,15 @@
         NSParameterAssert(requestModel);
         NSParameterAssert(responseModel);
         if (!error && [responseModel isSuccess]) {
-            weakSelf.successBlock(requestModel.requestId, responseModel);
+            for (NSString *requestId in requestModel.requestIds) {
+                weakSelf.successBlock(requestId, responseModel);
+            }
         } else {
             NSError *responseError = error ? error : [weakSelf errorWithData:responseModel.body
                                                                   statusCode:responseModel.statusCode];
-            weakSelf.errorBlock(requestModel.requestId, responseError);
+            for (NSString *requestId in requestModel.requestIds) {
+                weakSelf.errorBlock(requestId, responseError);
+            }
         }
     };
 }
@@ -42,6 +47,5 @@
     return [NSError errorWithCode:@(statusCode).intValue
              localizedDescription:description];
 }
-
 
 @end

@@ -40,6 +40,7 @@
 #import "EMSDeviceInfo.h"
 #import "EmarsysSDKVersion.h"
 #import "EMSOperationQueue.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -121,21 +122,38 @@
                                             uuidProvider:uuidProvider];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
-    _restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                             errorBlock:middleware.errorBlock];
+
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+    [sessionConfiguration setHTTPCookieStorage:nil];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                          delegate:nil
+                                                     delegateQueue:self.operationQueue];
+
+    _restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                   queue:self.operationQueue
+                                       timestampProvider:timestampProvider];
+    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
+                                                                                                                operationQueue:self.operationQueue
+                                                                                                           defaultSuccessBlock:middleware.successBlock
+                                                                                                             defaultErrorBlock:middleware.errorBlock];
 
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
                                                               requestRepository:self.requestRepository
                                                              connectionWatchdog:watchdog
                                                                      restClient:self.restClient
-                                                                     errorBlock:middleware.errorBlock];
+                                                                     errorBlock:middleware.errorBlock
+                                                                   proxyFactory:proxyFactory];
+
+
     _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.operationQueue
                                               completionMiddleware:middleware
                                                         restClient:self.restClient
                                                             worker:worker
                                                  requestRepository:self.requestRepository
-                                                   shardRepository:shardRepository];
+                                                   shardRepository:shardRepository
+                                                      proxyFactory:proxyFactory];
     [self.requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]];
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider

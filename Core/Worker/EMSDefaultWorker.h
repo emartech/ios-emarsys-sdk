@@ -9,6 +9,8 @@
 #import "EMSRequestModelRepositoryProtocol.h"
 #import "EMSRESTClient.h"
 
+@class EMSRESTClientCompletionProxyFactory;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSDefaultWorker : NSObject <EMSWorkerProtocol, EMSConnectionChangeListener>
@@ -17,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository
                     connectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog
                             restClient:(EMSRESTClient *)client
-                            errorBlock:(CoreErrorBlock)errorBlock;
+                            errorBlock:(CoreErrorBlock)errorBlock
+                          proxyFactory:(EMSRESTClientCompletionProxyFactory *)proxyFactory;
 @end
 
 NS_ASSUME_NONNULL_END

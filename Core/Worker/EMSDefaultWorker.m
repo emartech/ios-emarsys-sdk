@@ -11,6 +11,7 @@
 #import "EMSMacros.h"
 #import "EMSOfflineQueueSize.h"
 #import "EMSFilterByNothingSpecification.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
 
 @interface EMSDefaultWorker ()
 
@@ -20,6 +21,7 @@
 @property(nonatomic, strong) EMSRESTClient *client;
 @property(nonatomic, strong) CoreErrorBlock errorBlock;
 @property(nonatomic, strong) NSOperationQueue *coreQueue;
+@property(nonatomic, strong) id <EMSRESTClientCompletionProxyProtocol> completionMiddleware;
 
 - (EMSRequestModel *)nextNonExpiredModel;
 
@@ -35,19 +37,24 @@
                      requestRepository:(id <EMSRequestModelRepositoryProtocol>)repository
                     connectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog
                             restClient:(EMSRESTClient *)client
-                            errorBlock:(CoreErrorBlock)errorBlock {
+                            errorBlock:(CoreErrorBlock)errorBlock
+                          proxyFactory:(EMSRESTClientCompletionProxyFactory *)proxyFactory {
     if (self = [super init]) {
         NSParameterAssert(operationQueue);
         NSParameterAssert(repository);
         NSParameterAssert(connectionWatchdog);
         NSParameterAssert(client);
         NSParameterAssert(errorBlock);
+        NSParameterAssert(proxyFactory);
         _coreQueue = operationQueue;
         _repository = repository;
         _connectionWatchdog = connectionWatchdog;
         [_connectionWatchdog setConnectionChangeListener:self];
         _client = client;
         _errorBlock = errorBlock;
+        _completionMiddleware = [proxyFactory createWithWorker:self
+                                                  successBlock:nil
+                                                    errorBlock:nil];
     }
     return self;
 }
@@ -58,19 +65,9 @@
     if (![self isLocked] && [self.connectionWatchdog isConnected] && ![self.repository isEmpty]) {
         [self lock];
         EMSRequestModel *model = [self nextNonExpiredModel];
-        __weak typeof(self) weakSelf = self;
         if (model) {
-            [self.client executeTaskWithOfflineCallbackStrategyWithRequestModel:model
-                                                                     onComplete:^(BOOL shouldContinue) {
-                                                                         [weakSelf unlock];
-                                                                         if (shouldContinue) {
-                                                                             [weakSelf.repository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:model.requestIds
-                                                                                                                                                         column:REQUEST_COLUMN_NAME_REQUEST_ID]];
-                                                                             [weakSelf.coreQueue addOperationWithBlock:^{
-                                                                                 [weakSelf run];
-                                                                             }];
-                                                                         }
-                                                                     }];
+            [self.client executeWithRequestModel:model
+                             coreCompletionProxy:self.completionMiddleware];
         } else {
             [self unlock];
         }

@@ -19,6 +19,7 @@
 #import "EMSCompletionMiddleware.h"
 #import "EMSRequestManager.h"
 #import "EMSWaiter.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -31,20 +32,35 @@ SPEC_BEGIN(OfflineTests)
         id (^requestManager)(NSOperationQueue *operationQueue, id <EMSRequestModelRepositoryProtocol> repository, EMSConnectionWatchdog *watchdog, CoreSuccessBlock successBlock, CoreErrorBlock errorBlock) = ^id(NSOperationQueue *operationQueue, id <EMSRequestModelRepositoryProtocol> repository, EMSConnectionWatchdog *watchdog, CoreSuccessBlock successBlock, CoreErrorBlock errorBlock) {
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
-            EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                   errorBlock:middleware.errorBlock];
-            id <EMSWorkerProtocol> worker = [[EMSDefaultWorker alloc] initWithOperationQueue:operationQueue
-                                                                           requestRepository:repository
-                                                                          connectionWatchdog:watchdog
-                                                                                  restClient:restClient
-                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                  }];
+
+            NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+            [sessionConfiguration setHTTPCookieStorage:nil];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                                  delegate:nil
+                                                             delegateQueue:operationQueue];
+
+            EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                         queue:operationQueue
+                                                             timestampProvider:[EMSTimestampProvider new]];
+            EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:repository
+                                                                                                                        operationQueue:operationQueue
+                                                                                                                   defaultSuccessBlock:middleware.successBlock
+                                                                                                                     defaultErrorBlock:middleware.errorBlock];
+            EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:operationQueue
+                                                                      requestRepository:repository
+                                                                     connectionWatchdog:watchdog
+                                                                             restClient:restClient
+                                                                             errorBlock:middleware.errorBlock
+                                                                           proxyFactory:proxyFactory];
+
             return [[EMSRequestManager alloc] initWithCoreQueue:operationQueue
                                            completionMiddleware:middleware
                                                      restClient:restClient
                                                          worker:worker
                                               requestRepository:repository
-                                                shardRepository:[EMSShardRepository new]];
+                                                shardRepository:[EMSShardRepository new]
+                                                   proxyFactory:proxyFactory];
         };
 
         NSOperationQueue *(^testQueue)(void) = ^NSOperationQueue * {

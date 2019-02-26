@@ -13,6 +13,8 @@
 #import "EMSFilterByNothingSpecification.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
+#import "EMSCoreCompletionHandlerMiddleware.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -49,7 +51,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
-                                                             }];
+                                                             }
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             };
 
             it(@"should not return nil", ^{
@@ -61,43 +64,53 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                       requestRepository:repository
                                                      connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient mock]
-                                                             errorBlock:errorBlock];
+                                                             errorBlock:errorBlock
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             });
-
 
             itShouldThrowException(@"should throw exception, when requestModelRepository is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:nil
                                                      connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient mock]
-                                                             errorBlock:errorBlock];
+                                                             errorBlock:errorBlock
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             });
-
 
             itShouldThrowException(@"should throw exception, when watchdog is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
                                                      connectionWatchdog:nil
                                                              restClient:[EMSRESTClient new]
-                                                             errorBlock:errorBlock];
+                                                             errorBlock:errorBlock
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             });
-
 
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:nil
-                                                             errorBlock:errorBlock];
+                                                             errorBlock:errorBlock
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             });
-
 
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:[EMSRESTClient new]
-                                                             errorBlock:nil];
+                                                             errorBlock:nil
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
+            });
+
+            itShouldThrowException(@"should throw exception, when restClient is nil", ^{
+                (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
+                                                      requestRepository:repository
+                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                             restClient:[EMSRESTClient new]
+                                                             errorBlock:errorBlock
+                                                           proxyFactory:nil];
             });
 
             it(@"should initialize worker as unlocked", ^{
@@ -109,7 +122,6 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
         });
 
         describe(@"run", ^{
-
 
             beforeEach(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
@@ -136,6 +148,12 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
             };
 
             it(@"should lock", ^{
+                EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
+                EMSCoreCompletionHandlerMiddleware *middleware = [EMSCoreCompletionHandlerMiddleware mock];
+
+                [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
+                             andReturn:middleware];
+
                 EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog new];
                 [watchdog stub:@selector(isConnected)
                      andReturn:theValue(YES)];
@@ -147,7 +165,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:watchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:mockProxyFactory];
                 [worker unlock];
                 [worker run];
 
@@ -165,7 +184,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [worker lock];
                 [worker run];
             });
@@ -180,24 +200,25 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [worker run];
             });
 
-            it(@"should invoke peek on requestModelRepository, when its running", ^{
+            it(@"should invoke isEmpty on requestModelRepository, when its running", ^{
                 EMSRequestModelRepository *repositoryMock = [EMSRequestModelRepository mock];
                 EMSConnectionWatchdog *watchdogMock = [EMSConnectionWatchdog mock];
                 EMSRESTClient *restClient = [EMSRESTClient new];
 
                 [watchdogMock stub:@selector(setConnectionChangeListener:)];
-                [restClient stub:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)];
 
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
                                                                           requestRepository:repositoryMock
                                                                          connectionWatchdog:watchdogMock
                                                                                  restClient:restClient
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [[watchdogMock should] receive:@selector(isConnected)
                                      andReturn:theValue(YES)];
                 [[repositoryMock should] receive:@selector(isEmpty)
@@ -207,11 +228,15 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [worker run];
             });
 
-            it(@"should invoke executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete: on Restclient, when its running", ^{
+            it(@"should invoke executeWithRequestModel:coreCompletionProxy: on Restclient, when its running", ^{
                 EMSRequestModelRepository *repositoryMock = [EMSRequestModelRepository mock];
                 EMSConnectionWatchdog *watchdogMock = [EMSConnectionWatchdog mock];
                 EMSRESTClient *clientMock = [EMSRESTClient mock];
+                EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
+                EMSCoreCompletionHandlerMiddleware *middleware = [EMSCoreCompletionHandlerMiddleware mock];
 
+                [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
+                             andReturn:middleware];
                 [watchdogMock stub:@selector(setConnectionChangeListener:)];
 
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
@@ -219,7 +244,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:watchdogMock
                                                                                  restClient:clientMock
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:mockProxyFactory];
                 [[watchdogMock should] receive:@selector(isConnected)
                                      andReturn:theValue(YES)];
                 [[repositoryMock should] receive:@selector(isEmpty)
@@ -229,84 +255,18 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
                 [[worker should] receive:@selector(nextNonExpiredModel)
                                andReturn:expectedModel];
-                KWCaptureSpy *requestSpy = [clientMock captureArgument:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)
+
+                KWCaptureSpy *requestSpy = [clientMock captureArgument:@selector(executeWithRequestModel:coreCompletionProxy:)
                                                                atIndex:0];
+                KWCaptureSpy *completionProxySpy = [clientMock captureArgument:@selector(executeWithRequestModel:coreCompletionProxy:)
+                                                                       atIndex:1];
                 [worker run];
 
                 EMSRequestModel *capturedModel = requestSpy.argument;
+                EMSRequestModel *capturedCompletionProxy = completionProxySpy.argument;
+
                 [[expectedModel should] equal:capturedModel];
-            });
-
-            it(@"should unlock after onComplete called with false", ^{
-                EMSRequestModelRepository *repositoryMock = [EMSRequestModelRepository mock];
-                EMSConnectionWatchdog *watchdogMock = [EMSConnectionWatchdog mock];
-                EMSRESTClient *clientMock = [EMSRESTClient mock];
-
-                [watchdogMock stub:@selector(setConnectionChangeListener:)];
-
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
-                                                                          requestRepository:repositoryMock
-                                                                         connectionWatchdog:watchdogMock
-                                                                                 restClient:clientMock
-                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
-                [[watchdogMock should] receive:@selector(isConnected)
-                                     andReturn:theValue(YES)];
-                [[repositoryMock should] receive:@selector(isEmpty)
-                                       andReturn:theValue(NO)];
-
-                EMSRequestModel *expectedModel = requestModel(@"https://url1.com", nil, NO);
-
-                [[worker should] receive:@selector(nextNonExpiredModel)
-                               andReturn:expectedModel];
-                KWCaptureSpy *completionSpy = [clientMock captureArgument:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)
-                                                                  atIndex:1];
-                [worker run];
-
-                EMSRestClientCompletionBlock capturedBlock = completionSpy.argument;
-
-                capturedBlock(false);
-
-                [[theValue([worker isLocked]) should] beNo];
-            });
-
-            it(@"should unlock and rerun after onComplete called with true", ^{
-                EMSRequestModelRepository *repositoryMock = [EMSRequestModelRepository mock];
-                EMSConnectionWatchdog *watchdogMock = [EMSConnectionWatchdog mock];
-                EMSRESTClient *clientMock = [EMSRESTClient mock];
-
-                [watchdogMock stub:@selector(setConnectionChangeListener:)];
-
-                NSOperationQueue *queue = [NSOperationQueue currentQueue];
-                queue.maxConcurrentOperationCount = 1;
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
-                                                                          requestRepository:repositoryMock
-                                                                         connectionWatchdog:watchdogMock
-                                                                                 restClient:clientMock
-                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
-                [[watchdogMock should] receive:@selector(isConnected)
-                                     andReturn:theValue(YES)];
-                [[repositoryMock should] receive:@selector(isEmpty)
-                                       andReturn:theValue(NO)];
-
-                EMSRequestModel *expectedModel = requestModel(@"https://url1.com", nil, NO);
-
-                [[worker should] receive:@selector(nextNonExpiredModel)
-                               andReturn:expectedModel];
-                KWCaptureSpy *completionSpy = [clientMock captureArgument:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)
-                                                                  atIndex:1];
-                [worker run];
-
-                EMSRestClientCompletionBlock capturedBlock = completionSpy.argument;
-
-                [[repositoryMock should] receive:@selector(remove:)];
-
-                capturedBlock(true);
-
-                [[worker shouldEventually] receive:@selector(run)];
-
-                [[theValue([worker isLocked]) should] beNo];
+                [[middleware should] equal:capturedCompletionProxy];
             });
 
             it(@"should get rid of expired requestModels", ^{
@@ -328,12 +288,13 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:clientMock
-                                                                                 errorBlock:errorBlock];
+                                                                                 errorBlock:errorBlock
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
 
                 [worker setConnectionWatchdog:watchDog];
                 [worker setClient:clientMock];
 
-                KWCaptureSpy *requestSpy = [clientMock captureArgument:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)
+                KWCaptureSpy *requestSpy = [clientMock captureArgument:@selector(executeWithRequestModel:coreCompletionProxy:)
                                                                atIndex:0];
                 [worker run];
 
@@ -359,7 +320,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [watchDog stub:@selector(setConnectionChangeListener:)];
 
                 EMSRESTClient *clientMock = [EMSRESTClient mock];
-                [[clientMock should] receive:@selector(executeTaskWithOfflineCallbackStrategyWithRequestModel:onComplete:)
+                [[clientMock should] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
                                withArguments:expectedModel, kw_any()];
 
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
@@ -367,7 +328,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:clientMock
-                                                                                 errorBlock:completionHandler.errorBlock];
+                                                                                 errorBlock:completionHandler.errorBlock
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [worker run];
 
                 [[expectFutureValue(completionHandler.successCount) shouldEventually] equal:theValue(0)];
@@ -388,7 +350,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:[EMSRESTClient nullMock]
-                                                                                 errorBlock:errorBlock];
+                                                                                 errorBlock:errorBlock
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
 
                 [worker run];
 
@@ -405,7 +368,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
-                                                             }];
+                                                             }
+                                                           proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
             };
 
             it(@"isLocked should return YES after calling lock", ^{
@@ -433,7 +397,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:watchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [[worker should] equal:watchdog.connectionChangeListener];
             });
 
@@ -447,7 +412,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                 }];
+                                                                                 }
+                                                                               proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
                 [worker unlock];
                 [worker connectionChangedToNetworkStatus:ReachableViaWiFi
                                         connectionStatus:YES];

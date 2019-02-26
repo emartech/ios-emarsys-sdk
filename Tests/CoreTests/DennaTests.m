@@ -14,6 +14,8 @@
 #import "EMSUUIDProvider.h"
 #import "EMSDefaultWorker.h"
 #import "EMSSqliteSchemaHandler.h"
+#import "EMSOperationQueue.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -54,19 +56,36 @@ SPEC_BEGIN(DennaTest)
             EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                               schemaDelegate:[EMSSqliteSchemaHandler new]]];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
-            EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                   errorBlock:middleware.errorBlock];
+
+            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
+
+            NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+            [sessionConfiguration setHTTPCookieStorage:nil];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                                  delegate:nil
+                                                             delegateQueue:operationQueue];
+
+            EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                         queue:operationQueue
+                                                             timestampProvider:[EMSTimestampProvider new]];
+            EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                        operationQueue:operationQueue
+                                                                                                                   defaultSuccessBlock:middleware.successBlock
+                                                                                                                     defaultErrorBlock:middleware.errorBlock];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
                                                                      connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
                                                                              restClient:restClient
-                                                                             errorBlock:middleware.errorBlock];
+                                                                             errorBlock:middleware.errorBlock
+                                                                           proxyFactory:proxyFactory];
             EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                               completionMiddleware:middleware
                                                                         restClient:restClient
                                                                             worker:worker
                                                                  requestRepository:requestRepository
-                                                                   shardRepository:shardRepository];
+                                                                   shardRepository:shardRepository
+                                                                      proxyFactory:proxyFactory];
             [core submitRequestModel:model
                  withCompletionBlock:nil];
 
@@ -108,19 +127,35 @@ SPEC_BEGIN(DennaTest)
                 EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                                   schemaDelegate:[EMSSqliteSchemaHandler new]]];
                 EMSShardRepository *shardRepository = [EMSShardRepository new];
-                EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                       errorBlock:middleware.errorBlock];
+                NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
+
+                NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+                [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+                [sessionConfiguration setHTTPCookieStorage:nil];
+                NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                                      delegate:nil
+                                                                 delegateQueue:operationQueue];
+
+                EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                             queue:operationQueue
+                                                                 timestampProvider:[EMSTimestampProvider new]];
+                EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                            operationQueue:operationQueue
+                                                                                                                       defaultSuccessBlock:middleware.successBlock
+                                                                                                                         defaultErrorBlock:middleware.errorBlock];
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository
                                                                          connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
                                                                                  restClient:restClient
-                                                                                 errorBlock:middleware.errorBlock];
+                                                                                 errorBlock:middleware.errorBlock
+                                                                               proxyFactory:proxyFactory];
                 EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
                                                                   completionMiddleware:middleware
                                                                             restClient:restClient
                                                                                 worker:worker
                                                                      requestRepository:requestRepository
-                                                                       shardRepository:shardRepository];
+                                                                       shardRepository:shardRepository
+                                                                          proxyFactory:proxyFactory];
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [core submitRequestModel:model
                      withCompletionBlock:^(NSError *error) {

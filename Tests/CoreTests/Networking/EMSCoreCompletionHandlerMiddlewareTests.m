@@ -11,6 +11,7 @@
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
 #import "EMSResponseModel+EMSCore.h"
+#import "EMSRequestModel+RequestIds.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue);
 
@@ -42,6 +43,9 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _mockResponseModel = OCMClassMock([EMSResponseModel class]);
     _mockError = OCMClassMock([NSError class]);
+
+    NSArray *requestIds = @[@"requestId", @"requestId2"];
+    OCMStub([self.mockRequestModel requestIds]).andReturn(requestIds);
 
     _completionHandlerMiddleware = [[EMSCoreCompletionHandlerMiddleware alloc] initWithCoreCompletionHandler:self.mockCompletionProxy
                                                                                                       worker:self.mockWorker
@@ -98,7 +102,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldUseGivenOperationQueue {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockResponseModel statusCode]).andReturn(200);
     OCMStub([self.mockResponseModel isSuccess]).andReturn(YES);
 
@@ -115,7 +118,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldContinue_whenStatusCodeIsGreaterThan399 {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockResponseModel statusCode]).andReturn(400);
 
     [self setupOrderCheckWorkerShouldContinue];
@@ -129,7 +131,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldContinue_whenResponseIsSuccess {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockResponseModel statusCode]).andReturn(200);
     OCMStub([self.mockResponseModel isSuccess]).andReturn(YES);
 
@@ -144,7 +145,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorCannotFindHost {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockError code]).andReturn(NSURLErrorCannotFindHost);
 
     [self setupOrderCheckWorkerShouldContinue];
@@ -158,7 +158,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorBadURL {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockError code]).andReturn(NSURLErrorBadURL);
 
     [self setupOrderCheckWorkerShouldContinue];
@@ -172,7 +171,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorUnsupportedURL {
-    OCMStub([self.mockRequestModel requestId]).andReturn(@"requestId");
     OCMStub([self.mockError code]).andReturn(NSURLErrorUnsupportedURL);
 
     [self setupOrderCheckWorkerShouldContinue];
@@ -280,7 +278,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)setupOrderCheckWorkerShouldContinue {
-    OCMStub([self.mockRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[@"requestId"]
+    NSArray *expectedRequestIds = @[@"requestId", @"requestId2"];
+    OCMStub([self.mockRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:expectedRequestIds
                                                                                         column:REQUEST_COLUMN_NAME_REQUEST_ID]]).andDo(^(NSInvocation *invocation) {
         self.deleteDate = [NSDate date];
     });
@@ -293,8 +292,9 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)assertForOrderWhenWorkerShouldContinue {
-    OCMVerify([self.mockRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[@"requestId"]
-                                                                                          column:REQUEST_COLUMN_NAME_REQUEST_ID]]);
+    NSArray *expectedRequestIds = @[@"requestId", @"requestId2"];
+    OCMStub([self.mockRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:expectedRequestIds
+                                                                                        column:REQUEST_COLUMN_NAME_REQUEST_ID]]);
     OCMVerify([self.mockWorker unlock]);
     OCMVerify([self.mockWorker run]);
     OCMVerify([self.mockCompletionProxy completionBlock]);

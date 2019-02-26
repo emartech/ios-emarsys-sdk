@@ -17,6 +17,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSDefaultWorker.h"
 #import "EMSResponseModel.h"
+#import "EMSRESTClientCompletionProxyFactory.h"
+#import "EMSOperationQueue.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -31,22 +33,38 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
-            EMSRESTClient *restClient = [EMSRESTClient clientWithSuccessBlock:middleware.successBlock
-                                                                   errorBlock:middleware.errorBlock];
+            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
+
+            NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+            [sessionConfiguration setHTTPCookieStorage:nil];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                                  delegate:nil
+                                                             delegateQueue:operationQueue];
+
+            EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                         queue:operationQueue
+                                                             timestampProvider:[EMSTimestampProvider new]];
+            EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                        operationQueue:operationQueue
+                                                                                                                   defaultSuccessBlock:middleware.successBlock
+                                                                                                                     defaultErrorBlock:middleware.errorBlock];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
                                                                      connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
                                                                              restClient:restClient
-                                                                             errorBlock:errorBlock];
+                                                                             errorBlock:middleware.errorBlock
+                                                                           proxyFactory:proxyFactory];
             return [[EMSRequestManager alloc] initWithCoreQueue:queue
                                            completionMiddleware:middleware
                                                      restClient:restClient
                                                          worker:worker
                                               requestRepository:requestRepository
-                                                shardRepository:shardRepository];
+                                                shardRepository:shardRepository
+                                                   proxyFactory:proxyFactory];
         };
 
-        describe(@"initWithCoreQueue:completionMiddleware:restClient:worker:requestRepository:shardRepository:", ^{
+        describe(@"initWithCoreQueue:completionMiddleware:restClient:worker:requestRepository:shardRepository:proxyFactory:", ^{
 
             it(@"should throw an exception when coreQueue is nil", ^{
                 @try {
@@ -55,7 +73,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:[EMSRESTClient mock]
                                                           worker:[EMSDefaultWorker mock]
                                                requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]];
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when coreQueue is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: coreQueue"];
@@ -70,7 +89,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:[EMSRESTClient mock]
                                                           worker:[EMSDefaultWorker mock]
                                                requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]];
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when completionMiddleware is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: completionMiddleware"];
@@ -85,7 +105,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:nil
                                                           worker:[EMSDefaultWorker mock]
                                                requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]];
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when restClient is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: restClient"];
@@ -100,7 +121,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:[EMSRESTClient mock]
                                                           worker:nil
                                                requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]];
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when worker is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: worker"];
@@ -115,7 +137,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:[EMSRESTClient mock]
                                                           worker:[EMSDefaultWorker mock]
                                                requestRepository:nil
-                                                 shardRepository:[EMSShardRepository mock]];
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when requestRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestRepository"];
@@ -130,10 +153,27 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                       restClient:[EMSRESTClient mock]
                                                           worker:[EMSDefaultWorker mock]
                                                requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:nil];
+                                                 shardRepository:nil
+                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
                     fail(@"Expected Exception when shardRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: shardRepository"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw an exception when proxyFactory is nil", ^{
+                @try {
+                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
+                                            completionMiddleware:[EMSCompletionMiddleware mock]
+                                                      restClient:[EMSRESTClient mock]
+                                                          worker:[EMSDefaultWorker mock]
+                                               requestRepository:[EMSRequestModelRepository mock]
+                                                 shardRepository:[EMSShardRepository mock]
+                                                    proxyFactory:nil];
+                    fail(@"Expected Exception when proxyFactory is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: proxyFactory"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -350,6 +390,11 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 it(@"should invoke restClient with the given requestModel and successBlock and errorBlock", ^{
                     EMSRequestModel *requestModel = [EMSRequestModel nullMock];
+                    EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
+                    EMSCoreCompletionHandler *completionHandler = [EMSCoreCompletionHandler mock];
+
+                    [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
+                                 andReturn:completionHandler];
 
                     NSOperationQueue *queue = [NSOperationQueue new];
                     queue.maxConcurrentOperationCount = 1;
@@ -364,8 +409,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient should] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
-                                   withArguments:requestModel, successBlock, errorBlock];
+                    [[restClient should] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
+                                   withArguments:requestModel, completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -373,8 +418,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                                 restClient:restClient
                                                                                     worker:worker
                                                                          requestRepository:requestRepository
-                                                                           shardRepository:shardRepository];
-
+                                                                           shardRepository:shardRepository
+                                                                              proxyFactory:mockProxyFactory];
                     [core submitRequestModelNow:requestModel
                                    successBlock:successBlock
                                      errorBlock:errorBlock];
@@ -395,6 +440,12 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 it(@"should invoke restClient with the given requestModel and successBlock and errorBlock", ^{
                     EMSRequestModel *requestModel = [EMSRequestModel nullMock];
+                    EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
+                    EMSCoreCompletionHandler *completionHandler = [EMSCoreCompletionHandler mock];
+
+                    [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
+                                 andReturn:completionHandler];
+
 
                     NSOperationQueue *queue = [NSOperationQueue new];
                     queue.maxConcurrentOperationCount = 1;
@@ -404,8 +455,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient should] receive:@selector(executeTaskWithRequestModel:successBlock:errorBlock:)
-                                   withArguments:requestModel, kw_any(), kw_any()];
+                    [[restClient should] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
+                                   withArguments:requestModel, completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -413,7 +464,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                                 restClient:restClient
                                                                                     worker:worker
                                                                          requestRepository:requestRepository
-                                                                           shardRepository:shardRepository];
+                                                                           shardRepository:shardRepository
+                                                                              proxyFactory:mockProxyFactory];
 
                     [core submitRequestModelNow:requestModel];
                 });

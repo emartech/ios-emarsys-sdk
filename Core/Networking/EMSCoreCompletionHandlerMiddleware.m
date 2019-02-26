@@ -8,6 +8,7 @@
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
 #import "EMSResponseModel+EMSCore.h"
+#import "EMSRequestModel+RequestIds.h"
 
 @implementation EMSCoreCompletionHandlerMiddleware
 
@@ -35,7 +36,7 @@
         [weakSelf.operationQueue addOperationWithBlock:^{
             if ([weakSelf shouldContinueWorkerWithResponseModel:responseModel
                                                           error:error]) {
-                [weakSelf.requestRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:@[requestModel.requestId]
+                [weakSelf.requestRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:requestModel.requestIds
                                                                                                    column:REQUEST_COLUMN_NAME_REQUEST_ID]];
             }
             [weakSelf.worker unlock];

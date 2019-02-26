@@ -11,6 +11,8 @@
 #import "EMSResponseModel.h"
 #import "EMSWaiter.h"
 #import "NSError+EMSCore.h"
+#import "EMSCompositeRequestModel.h";
+#import "EMSRequestModel+RequestIds.h"
 
 @interface EMSCoreCompletionHandlerTests : XCTestCase
 
@@ -111,6 +113,34 @@
     XCTAssertNil(self.returnedError);
 }
 
+- (void)testCompletionBlock_shouldCallSuccessBlock_with_multipleRequestIds {
+    [self.successExpectation setExpectedFulfillmentCount:3];
+
+    EMSResponseModel *expectedResponseModel = [self generateResponseWithRequestModel:self.expectedRequestModel
+                                                                          statusCode:200];
+    EMSCompositeRequestModel *request = [EMSCompositeRequestModel new];
+    [request setOriginalRequests:@[[self generateRequestModel], [self generateRequestModel], [self generateRequestModel]]];
+
+    __block NSMutableArray *requestIds = [@[] mutableCopy];
+    __weak typeof(self) weakSelf = self;
+    _coreCompletionHandler = [[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+            _returnedResponseModel = response;
+            [requestIds addObject:requestId];
+            [weakSelf.successExpectation fulfill];
+        }
+                                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                                                                         }];
+
+    self.coreCompletionHandler.completionBlock((id) request, expectedResponseModel, nil);
+
+    [EMSWaiter waitForExpectations:@[self.successExpectation]
+                           timeout:1];
+
+    XCTAssertEqualObjects([request requestIds], requestIds);
+    XCTAssertEqualObjects(expectedResponseModel, self.returnedResponseModel);
+    XCTAssertNil(self.returnedError);
+}
+
 - (void)testCompletionBlock_shouldCallErrorBlock_when_statusCodeIsGreaterThan299_andNoError {
     EMSResponseModel *expectedResponseModel = [self generateResponseWithRequestModel:self.expectedRequestModel
                                                                           statusCode:300];
@@ -126,6 +156,37 @@
     XCTAssertEqualObjects(self.expectedRequestModel.requestId, self.returnedRequestId);
     XCTAssertEqualObjects(expectedError, self.returnedError);
     XCTAssertNil(self.returnedResponseModel);
+}
+
+
+- (void)testCompletionBlock_shouldCallErrorBlock_with_multipleRequestIds {
+    [self.errorExpectation setExpectedFulfillmentCount:3];
+
+    EMSResponseModel *expectedResponseModel = [self generateResponseWithRequestModel:self.expectedRequestModel
+                                                                          statusCode:199];
+    NSError *expectedError = [NSError errorWithCode:1234
+                               localizedDescription:@"testError"];
+
+    EMSCompositeRequestModel *request = [EMSCompositeRequestModel new];
+    [request setOriginalRequests:@[[self generateRequestModel], [self generateRequestModel], [self generateRequestModel]]];
+
+    __block NSMutableArray *requestIds = [@[] mutableCopy];
+    __weak typeof(self) weakSelf = self;
+    _coreCompletionHandler = [[EMSCoreCompletionHandler alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+        }
+                                                                         errorBlock:^(NSString *requestId, NSError *error) {
+                                                                             _returnedError = error;
+                                                                             [requestIds addObject:requestId];
+                                                                             [weakSelf.errorExpectation fulfill];
+                                                                         }];
+
+    self.coreCompletionHandler.completionBlock((id) request, expectedResponseModel, expectedError);
+
+    [EMSWaiter waitForExpectations:@[self.errorExpectation]
+                           timeout:1];
+
+    XCTAssertEqualObjects([request requestIds], requestIds);
+    XCTAssertEqualObjects(expectedError, self.returnedError);
 }
 
 - (void)testCompletionBlock_shouldCallErrorBlock_when_statusCodeIsLessThan200_andNoError {
