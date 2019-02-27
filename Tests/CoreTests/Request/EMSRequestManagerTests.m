@@ -26,27 +26,25 @@ SPEC_BEGIN(EMSRequestManagerTests)
         __block EMSSQLiteHelper *helper;
         __block EMSRequestModelRepository *requestModelRepository;
 
-        EMSRequestManager *(^createRequestManager)(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) = ^EMSRequestManager *(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) {
-            NSOperationQueue *queue = [NSOperationQueue new];
-            queue.maxConcurrentOperationCount = 1;
-            queue.qualityOfService = NSQualityOfServiceUtility;
+        NSOperationQueue *queue = [EMSOperationQueue new];
+        queue.maxConcurrentOperationCount = 1;
+        queue.qualityOfService = NSQualityOfServiceUtility;
 
+        EMSRequestManager *(^createRequestManager)(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) = ^EMSRequestManager *(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) {
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                              errorBlock:errorBlock];
-            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
-
             NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
             [sessionConfiguration setTimeoutIntervalForRequest:30.0];
             [sessionConfiguration setHTTPCookieStorage:nil];
             NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                                   delegate:nil
-                                                             delegateQueue:operationQueue];
+                                                             delegateQueue:queue];
 
             EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                         queue:operationQueue
+                                                                         queue:queue
                                                              timestampProvider:[EMSTimestampProvider new]];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                        operationQueue:operationQueue
+                                                                                                                        operationQueue:queue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
                                                                                                                      defaultErrorBlock:middleware.errorBlock];
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
@@ -396,10 +394,6 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
                                  andReturn:completionHandler];
 
-                    NSOperationQueue *queue = [NSOperationQueue new];
-                    queue.maxConcurrentOperationCount = 1;
-                    queue.qualityOfService = NSQualityOfServiceUtility;
-
                     CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
                     };
                     CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
@@ -409,8 +403,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient should] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                   withArguments:requestModel, completionHandler];
+                    [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
+                                             withArguments:requestModel, completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -446,17 +440,12 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
                                  andReturn:completionHandler];
 
-
-                    NSOperationQueue *queue = [NSOperationQueue new];
-                    queue.maxConcurrentOperationCount = 1;
-                    queue.qualityOfService = NSQualityOfServiceUtility;
-
                     EMSRequestModelRepository *requestRepository = [EMSRequestModelRepository mock];
 
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient should] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                   withArguments:requestModel, completionHandler];
+                    [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
+                                             withArguments:requestModel, completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -480,7 +469,6 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
                 __block NSInteger successCount = 0;
                 __block NSInteger errorCount = 0;
-
 
                 EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                            schemaDelegate:[EMSSqliteSchemaHandler new]];
