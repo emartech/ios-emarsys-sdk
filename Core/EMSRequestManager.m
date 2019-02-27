@@ -54,11 +54,10 @@ typedef void (^RunnerBlock)(void);
 - (void)submitRequestModel:(EMSRequestModel *)model
        withCompletionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(model);
-    [self.completionMiddleware registerCompletionBlock:completionBlock
-                                       forRequestModel:model];
-
     __weak typeof(self) weakSelf = self;
     [self runInCoreQueueWithBlock:^{
+        [weakSelf.completionMiddleware registerCompletionBlock:completionBlock
+                                               forRequestModel:model];
         EMSRequestModel *requestModel = model;
         if (weakSelf.additionalHeaders) {
             NSMutableDictionary *headers;
@@ -84,12 +83,14 @@ typedef void (^RunnerBlock)(void);
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model {
     NSParameterAssert(model);
-    [self.restClient executeWithRequestModel:model
-                         coreCompletionProxy:[self.proxyFactory createWithWorker:nil
-                                                                    successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                                    }
-                                                                      errorBlock:^(NSString *requestId, NSError *error) {
-                                                                      }]];
+    [self runInCoreQueueWithBlock:^{
+        [self.restClient executeWithRequestModel:model
+                             coreCompletionProxy:[self.proxyFactory createWithWorker:nil
+                                                                        successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                                        }
+                                                                          errorBlock:^(NSString *requestId, NSError *error) {
+                                                                          }]];
+    }];
 }
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model
@@ -98,15 +99,16 @@ typedef void (^RunnerBlock)(void);
     NSParameterAssert(model);
     NSParameterAssert(successBlock);
     NSParameterAssert(errorBlock);
-    [self.restClient executeWithRequestModel:model
-                         coreCompletionProxy:[self.proxyFactory createWithWorker:nil
-                                                                    successBlock:successBlock
-                                                                      errorBlock:errorBlock]];
+    [self runInCoreQueueWithBlock:^{
+        [self.restClient executeWithRequestModel:model
+                             coreCompletionProxy:[self.proxyFactory createWithWorker:nil
+                                                                        successBlock:successBlock
+                                                                          errorBlock:errorBlock]];
+    }];
 }
 
 - (void)submitShard:(EMSShard *)shard {
     NSParameterAssert(shard);
-
     [self runInCoreQueueWithBlock:^{
         [[self shardRepository] add:shard];
     }];
