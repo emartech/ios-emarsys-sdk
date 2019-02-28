@@ -112,4 +112,45 @@ SPEC_BEGIN(MERequestContextTests)
             });
         });
 
+        describe(@"clientState", ^{
+
+            beforeEach(^{
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults removeObjectForKey:kCLIENT_STATE];
+                [userDefaults synchronize];
+            });
+
+            it(@"should load the stored value", ^{
+                NSString *clientState = @"Stored client state";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults setObject:clientState
+                                 forKey:kCLIENT_STATE];
+                [userDefaults synchronize];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.clientState should] equal:clientState];
+            });
+
+            it(@"should store client state", ^{
+                NSString *expectedClientState = @"Stored client state";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.clientState should] beNil];
+
+                [context setClientState:expectedClientState];
+
+                [[[userDefaults stringForKey:kCLIENT_STATE] should] equal:expectedClientState];
+                [[context.clientState should] equal:expectedClientState];
+            });
+        });
+
 SPEC_END

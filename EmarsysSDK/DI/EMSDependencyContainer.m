@@ -41,6 +41,7 @@
 #import "EmarsysSDKVersion.h"
 #import "EMSOperationQueue.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
+#import "EMSClientStateResponseHandler.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -129,7 +130,6 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil
                                                      delegateQueue:self.operationQueue];
-
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.operationQueue
                                        timestampProvider:timestampProvider];
@@ -169,6 +169,7 @@
                                                       displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
+    [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
     _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository

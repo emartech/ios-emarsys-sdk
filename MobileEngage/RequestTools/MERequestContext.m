@@ -24,6 +24,7 @@
         _uuidProvider = uuidProvider;
         _deviceInfo = deviceInfo;
         _contactFieldId = config.contactFieldId;
+        _clientState = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCLIENT_STATE];
     }
     return self;
 }
@@ -49,6 +50,14 @@
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:meIdSignature
                      forKey:kMEID_SIGNATURE];
+    [userDefaults synchronize];
+}
+
+- (void)setClientState:(NSString *)clientState {
+    _clientState = clientState;
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [userDefaults setObject:clientState
+                     forKey:kCLIENT_STATE];
     [userDefaults synchronize];
 }
 
