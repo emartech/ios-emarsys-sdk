@@ -8,7 +8,7 @@
 #import "EMSResponseModel.h"
 #import "MEDefaultHeaders.h"
 #import "NSError+EMSCore.h"
-#import "MERequestFactory.h"
+#import "MERequestFactory_old.h"
 
 @interface MEInboxV2 ()
 
@@ -151,8 +151,8 @@
 - (void)trackMessageOpenWith:(EMSNotification *)inboxMessage
              completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(inboxMessage);
-    EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxMessage
-                                                                                     requestContext:self.requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:inboxMessage
+                                                                                         requestContext:self.requestContext];
     if (!inboxMessage.id) {
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing messageId"]);

@@ -11,7 +11,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSRESTClient.h"
 #import "EMSAuthentication.h"
-#import "MERequestFactory.h"
+#import "MERequestFactory_old.h"
 #import "EMSRequestManager.h"
 #import "EMSNotificationCache.h"
 
@@ -136,8 +136,8 @@
     NSParameterAssert(inboxNotification);
     EMSRequestModel *requestModel;
 
-    requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:inboxNotification
-                                                                    requestContext:self.requestContext];
+    requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:inboxNotification
+                                                                        requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];;
 }

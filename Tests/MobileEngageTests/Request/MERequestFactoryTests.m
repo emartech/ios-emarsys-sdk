@@ -3,7 +3,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSAuthentication.h"
 #import "Kiwi.h"
-#import "MERequestFactory.h"
+#import "MERequestFactory_old.h"
 #import "EMSRequestModel.h"
 #import "EmarsysSDKVersion.h"
 #import "EMSRequestModelMatcher.h"
@@ -65,8 +65,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                                                            timestampProvider:requestContext.timestampProvider
                                                                 uuidProvider:requestContext.uuidProvider];
 
-                EMSRequestModel *result = [MERequestFactory createTrackDeepLinkRequestWithTrackingId:value
-                                                                                      requestContext:requestContext];
+                EMSRequestModel *result = [MERequestFactory_old createTrackDeepLinkRequestWithTrackingId:value
+                                                                                          requestContext:requestContext];
                 [[result should] beSimilarWithRequest:expected];
             });
 
@@ -121,8 +121,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 requestContext.lastAppLoginPayload = apploginPayload;
                 requestContext.meId = nil;
 
-                EMSRequestModel *request = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:nil
-                                                                                                  requestContext:requestContext];
+                EMSRequestModel *request = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:nil
+                                                                                                      requestContext:requestContext];
                 [[[request.url absoluteString] should] equal:kAppLoginURL];
             });
 
@@ -136,8 +136,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 requestContext.meId = @"something";
                 requestContext.lastAppLoginPayload = apploginPayload;
 
-                EMSRequestModel *request = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:nil
-                                                                                                  requestContext:requestContext];
+                EMSRequestModel *request = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:nil
+                                                                                                      requestContext:requestContext];
                 [[[request.url absoluteString] should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/something/events"];
                 [[request.payload[@"events"][0][@"name"] should] equal:@"last_mobile_activity"];
             });
@@ -152,8 +152,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 apploginPayload[@"application_version"] = @"changed";
                 requestContext.lastAppLoginPayload = apploginPayload;
 
-                EMSRequestModel *request = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:nil
-                                                                                                  requestContext:requestContext];
+                EMSRequestModel *request = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:nil
+                                                                                                      requestContext:requestContext];
                 [[[request.url absoluteString] should] equal:kAppLoginURL];
             });
 
@@ -167,8 +167,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 apploginPayload[@"application_version"] = @"changed";
                 requestContext.lastAppLoginPayload = apploginPayload;
 
-                EMSRequestModel *request = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:nil
-                                                                                                  requestContext:requestContext];
+                EMSRequestModel *request = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:nil
+                                                                                                      requestContext:requestContext];
                 [[[request.url absoluteString] should] equal:kAppLoginURL];
             });
         });
@@ -204,8 +204,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                     EMSNotification *notification = notificationBlock();
                     MERequestContext *requestContext = requestContextBlock([NSDate date]);
 
-                    EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:notification
-                                                                                                     requestContext:requestContext];
+                    EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:notification
+                                                                                                         requestContext:requestContext];
 
                     [[requestModel.url.absoluteString should] equal:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"];
                     [[requestModel.method should] equal:@"POST"];
@@ -232,8 +232,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                     NSDate *timeStamp = [NSDate date];
                     MERequestContext *requestContext = requestContextBlock(timeStamp);
 
-                    EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithNotification:notification
-                                                                                                     requestContext:requestContext];
+                    EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:notification
+                                                                                                         requestContext:requestContext];
 
                     [[requestModel.url.absoluteString should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/requestContextMeId/events"];
                     [[requestModel.method should] equal:@"POST"];
@@ -269,8 +269,8 @@ SPEC_BEGIN(MERequestFactoryTests)
 
                 MERequestContext *requestContext = requestContextBlock(timeStamp);
 
-                EMSRequestModel *requestModel = [MERequestFactory createTrackMessageOpenRequestWithMessageId:@"testMessageId"
-                                                                                              requestContext:requestContext];
+                EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithMessageId:@"testMessageId"
+                                                                                                  requestContext:requestContext];
 
                 [[requestModel.url.absoluteString should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/requestContextMeId/events"];
                 [[requestModel.method should] equal:@"POST"];

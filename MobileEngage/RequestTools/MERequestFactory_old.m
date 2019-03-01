@@ -1,7 +1,7 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "MERequestFactory.h"
+#import "MERequestFactory_old.h"
 #import "MERequestContext.h"
 #import "EmarsysSDKVersion.h"
 #import "NSData+MobileEngine.h"
@@ -12,7 +12,7 @@
 #import "NSDate+EMSCore.h"
 #import "EMSAuthentication.h"
 
-@implementation MERequestFactory
+@implementation MERequestFactory_old
 
 + (EMSRequestModel *)createLoginOrLastMobileActivityRequestWithPushToken:(NSData *)pushToken
                                                           requestContext:(MERequestContext *)requestContext {
@@ -20,10 +20,10 @@
                                                               requestContext:requestContext];
     if ([self shouldSendLastMobileActivityWithRequestContext:requestContext
                                       currentAppLoginPayload:requestModel.payload]) {
-        requestModel = [MERequestFactory createCustomEventModelWithEventName:@"last_mobile_activity"
-                                                             eventAttributes:nil
-                                                                        type:@"internal"
-                                                              requestContext:requestContext];
+        requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"last_mobile_activity"
+                                                                 eventAttributes:nil
+                                                                            type:@"internal"
+                                                                  requestContext:requestContext];
     } else {
         requestContext.lastAppLoginPayload = requestModel.payload;
     }
@@ -61,10 +61,10 @@
 }
 
 + (EMSRequestModel *)createAppLogoutRequestWithRequestContext:(MERequestContext *)requestContext {
-    EMSRequestModel *requestModel = [MERequestFactory requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout"
-                                                                   method:HTTPMethodPOST
-                                                   additionalPayloadBlock:nil
-                                                           requestContext:requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/logout"
+                                                                       method:HTTPMethodPOST
+                                                       additionalPayloadBlock:nil
+                                                               requestContext:requestContext];
     return requestModel;
 }
 
@@ -82,18 +82,18 @@
             attributes[@"sid"] = inboxMessage.sid;
         }
 
-        requestModel = [MERequestFactory createCustomEventModelWithEventName:@"inbox:open"
-                                                             eventAttributes:attributes
-                                                                        type:@"internal"
-                                                              requestContext:requestContext];
+        requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"inbox:open"
+                                                                 eventAttributes:attributes
+                                                                            type:@"internal"
+                                                                  requestContext:requestContext];
     } else {
-        requestModel = [MERequestFactory requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
-                                                      method:HTTPMethodPOST
-                                      additionalPayloadBlock:^(NSMutableDictionary *payload) {
+        requestModel = [MERequestFactory_old requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
+                                                          method:HTTPMethodPOST
+                                          additionalPayloadBlock:^(NSMutableDictionary *payload) {
                                           payload[@"sid"] = inboxMessage.sid;
                                           payload[@"source"] = @"inbox";
                                       }
-                                              requestContext:requestContext];
+                                                  requestContext:requestContext];
     }
     return requestModel;
 }
@@ -106,20 +106,20 @@
         attributes[@"sid"] = messageId;
     }
 
-    requestModel = [MERequestFactory createCustomEventModelWithEventName:@"inbox:open"
-                                                         eventAttributes:attributes
-                                                                    type:@"internal"
-                                                          requestContext:requestContext];
+    requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"inbox:open"
+                                                             eventAttributes:attributes
+                                                                        type:@"internal"
+                                                              requestContext:requestContext];
     return requestModel;
 }
 
 + (EMSRequestModel *)createTrackCustomEventRequestWithEventName:(NSString *)eventName
                                                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                                                  requestContext:(MERequestContext *)requestContext {
-    EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
-                                                                          eventAttributes:eventAttributes
-                                                                                     type:@"custom"
-                                                                           requestContext:requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createCustomEventModelWithEventName:eventName
+                                                                              eventAttributes:eventAttributes
+                                                                                         type:@"custom"
+                                                                               requestContext:requestContext];
     return requestModel;
 }
 

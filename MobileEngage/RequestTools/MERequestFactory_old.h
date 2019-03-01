@@ -8,7 +8,7 @@
 @class EMSNotification;
 @class EMSRequestModel;
 
-@interface MERequestFactory : NSObject
+@interface MERequestFactory_old : NSObject
 
 + (EMSRequestModel *)createLoginOrLastMobileActivityRequestWithPushToken:(NSData *)pushToken
                                                           requestContext:(MERequestContext *)requestContext;

@@ -6,7 +6,7 @@
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
 #import "MERequestContext.h"
-#import "MERequestFactory.h"
+#import "MERequestFactory_old.h"
 #import "EMSNotificationCache.h"
 
 @interface MobileEngageInternal ()
@@ -42,8 +42,8 @@
             if (sourceHandler) {
                 sourceHandler(webPageURL);
             }
-            [self.requestManager submitRequestModel:[MERequestFactory createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
-                                                                                                requestContext:self.requestContext]
+            [self.requestManager submitRequestModel:[MERequestFactory_old createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
+                                                                                                    requestContext:self.requestContext]
                                 withCompletionBlock:completionBlock];
         }
     }
@@ -69,16 +69,16 @@
 
 
 - (void)trackInAppDisplay:(NSString *)campaignId {
-    [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:viewed"
-                                                                                  eventAttributes:@{@"message_id": campaignId}
-                                                                                             type:@"internal"
-                                                                                   requestContext:self.requestContext]
+    [self.requestManager submitRequestModel:[MERequestFactory_old createCustomEventModelWithEventName:@"inapp:viewed"
+                                                                                      eventAttributes:@{@"message_id": campaignId}
+                                                                                                 type:@"internal"
+                                                                                       requestContext:self.requestContext]
                         withCompletionBlock:nil];
 }
 
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
-    [self.requestManager submitRequestModel:[MERequestFactory createCustomEventModelWithEventName:@"inapp:click"
-                                                                                  eventAttributes:@{
+    [self.requestManager submitRequestModel:[MERequestFactory_old createCustomEventModelWithEventName:@"inapp:click"
+                                                                                      eventAttributes:@{
                                                                                       @"message_id": campaignId,
                                                                                       @"button_id": buttonId
                                                                                   }
@@ -114,8 +114,8 @@
     self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
                                                                               contactFieldValue:contactFieldValue];
 
-    EMSRequestModel *requestModel = [MERequestFactory createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
-                                                                                           requestContext:self.requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
+                                                                                               requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];
 }
@@ -125,7 +125,7 @@
 }
 
 - (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    EMSRequestModel *requestModel = [MERequestFactory createAppLogoutRequestWithRequestContext:self.requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createAppLogoutRequestWithRequestContext:self.requestContext];
     [self.requestContext reset];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];
@@ -144,12 +144,12 @@
     }
     NSString *messageId = [userInfo messageId];
     if (messageId) {
-        EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:@"push:click"
-                                                                              eventAttributes:@{
+        EMSRequestModel *requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"push:click"
+                                                                                  eventAttributes:@{
                                                                                   @"origin": @"main",
                                                                                   @"sid": messageId
                                                                               }
-                                                                                         type:@"internal"
+                                                                                             type:@"internal"
                                                                                requestContext:self.requestContext];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:completionBlock];
@@ -170,9 +170,9 @@
          completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
-    EMSRequestModel *requestModel = [MERequestFactory createTrackCustomEventRequestWithEventName:eventName
-                                                                                 eventAttributes:eventAttributes
-                                                                                  requestContext:self.requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createTrackCustomEventRequestWithEventName:eventName
+                                                                                     eventAttributes:eventAttributes
+                                                                                      requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
 }
 
@@ -181,10 +181,10 @@
                        completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
-    EMSRequestModel *requestModel = [MERequestFactory createCustomEventModelWithEventName:eventName
-                                                                          eventAttributes:eventAttributes
-                                                                                     type:@"internal"
-                                                                           requestContext:self.requestContext];
+    EMSRequestModel *requestModel = [MERequestFactory_old createCustomEventModelWithEventName:eventName
+                                                                              eventAttributes:eventAttributes
+                                                                                         type:@"internal"
+                                                                               requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
     return requestModel.requestId;
 }
