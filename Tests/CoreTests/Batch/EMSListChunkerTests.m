@@ -20,7 +20,6 @@
     _chunker = nil;
 }
 
-
 - (void)testInit_shouldThrowException_when_chunkSizeLessThan1 {
     @try {
         [[EMSListChunker alloc] initWithChunkSize:0];

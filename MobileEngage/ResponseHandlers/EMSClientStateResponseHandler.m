@@ -2,7 +2,7 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import "EMSClientStateResponseHandler.h"
-
+#import "MEEndpoints.h"
 
 @implementation EMSClientStateResponseHandler
 
@@ -16,7 +16,7 @@
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:@"https://ems-me-client.herokuapp.com"] && [response.headers.allKeys containsObject:CLIENT_STATE]) {
+    if ([response.requestModel.url.absoluteString hasPrefix:HOST_URL] && [response.headers.allKeys containsObject:CLIENT_STATE]) {
         result = YES;
     }
     return result;
