@@ -34,6 +34,8 @@
     return ^{
         NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
         if (![[userDefaults dictionaryForKey:kDEVICE_INFO] isEqualToDictionary:[deviceInfo clientPayload]]) {
+            [userDefaults setObject:[deviceInfo clientPayload]
+                             forKey:kDEVICE_INFO];
             EMSRequestModel *deviceInfoRequest = [requestFactory createDeviceInfoRequestModel];
             [requestManager submitRequestModel:deviceInfoRequest
                            withCompletionBlock:^(NSError *error) {

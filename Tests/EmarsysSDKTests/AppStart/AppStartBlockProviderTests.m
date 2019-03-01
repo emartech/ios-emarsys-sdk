@@ -120,17 +120,30 @@
 }
 
 - (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_submitRequest {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [userDefaults setObject:@{@"testStoredPayloadKey": @"testStoredPayloadValue"}
+                     forKey:kDEVICE_INFO];
+    [userDefaults synchronize];
+
+    NSDictionary *expectedDeviceInfoDict = @{
+        @"testPayloadKey": @"testPayloadValue",
+        @"testPayloadKey2": @"testPayloadValue2"
+    };
+    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockDeviceInfo clientPayload]).andReturn(expectedDeviceInfoDict);
+    OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
+
     _handlerBlock = [self.appStartBlockProvider createAppStartBlockWithRequestManager:self.mockRequestManager
                                                                        requestFactory:self.mockRequestFactory
                                                                            deviceInfo:self.mockDeviceInfo];
-    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
-
-    OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
-
     self.handlerBlock();
+
+    NSDictionary *storedDeviceInfoDict = [userDefaults dictionaryForKey:kDEVICE_INFO];
 
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:[OCMArg any]]);
+    XCTAssertEqualObjects(storedDeviceInfoDict, expectedDeviceInfoDict);
 }
 
 - (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_shouldNotSubmit_whenDeviceInfoHasNotChanged {
