@@ -83,9 +83,14 @@
     AppStartBlockProvider *appStartBlockProvider = EMSDependencyInjection.dependencyContainer.appStartBlockProvider;
     EMSRequestManager *requestManager = EMSDependencyInjection.dependencyContainer.requestManager;
     MERequestContext *requestContext = EMSDependencyInjection.dependencyContainer.requestContext;
+    EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
 
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartBlockWithRequestManager:requestManager
                                                                                              requestContext:requestContext]
+                               forNotification:UIApplicationDidBecomeActiveNotification];
+    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartBlockWithRequestManager:requestManager
+                                                                                             requestFactory:requestFactory
+                                                                                                 deviceInfo:requestContext.deviceInfo]
                                forNotification:UIApplicationDidBecomeActiveNotification];
 }
 

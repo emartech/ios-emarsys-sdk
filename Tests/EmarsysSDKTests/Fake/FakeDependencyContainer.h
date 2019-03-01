@@ -12,6 +12,7 @@
                              iam:(MEInApp *)iam
                          predict:(PredictInternal *)predict
                   requestContext:(MERequestContext *)requestContext
+                  requestFactory:(EMSRequestFactory *)requestFactory
                requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
                notificationCache:(EMSNotificationCache *)notificationCache
                 responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers

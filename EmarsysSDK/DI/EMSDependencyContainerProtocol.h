@@ -18,6 +18,7 @@
 @class MEUserNotificationDelegate;
 @class EMSLogger;
 @protocol EMSDBTriggerProtocol;
+@class EMSRequestFactory;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -46,6 +47,8 @@
 - (MENotificationCenterManager *)notificationCenterManager;
 
 - (MERequestContext *)requestContext;
+
+- (EMSRequestFactory *)requestFactory;
 
 - (AppStartBlockProvider *)appStartBlockProvider;
 

@@ -17,6 +17,7 @@
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
+@property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 
 @end
@@ -29,6 +30,7 @@
                              iam:(MEInApp *)iam
                          predict:(PredictInternal *)predict
                   requestContext:(MERequestContext *)requestContext
+                  requestFactory:(EMSRequestFactory *)requestFactory
                requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
                notificationCache:(EMSNotificationCache *)notificationCache
                 responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers
@@ -50,6 +52,7 @@
         _operationQueue = operationQueue;
         _notificationCenterManager = notificationCenterManager;
         _appStartBlockProvider = appStartBlockProvider;
+        _requestFactory = requestFactory;
     }
     return self;
 }

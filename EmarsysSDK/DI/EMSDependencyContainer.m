@@ -42,6 +42,7 @@
 #import "EMSOperationQueue.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSClientStateResponseHandler.h"
+#import "EMSRequestFactory.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -49,6 +50,7 @@
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
+@property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
@@ -91,6 +93,7 @@
                                                   uuidProvider:uuidProvider
                                              timestampProvider:timestampProvider
                                                     deviceInfo:deviceInfo];
+    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext];
     _notificationCenterManager = [MENotificationCenterManager new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];

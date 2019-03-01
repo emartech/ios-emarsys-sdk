@@ -22,6 +22,8 @@
 #import "FakeDependencyContainer.h"
 #import "AppStartBlockProvider.h"
 #import "MERequestContext.h"
+#import "EMSDeviceInfo.h"
+#import "EMSRequestFactory.h"
 #import "EMSClientStateResponseHandler.h"
 
 SPEC_BEGIN(EmarsysTests)
@@ -29,6 +31,8 @@ SPEC_BEGIN(EmarsysTests)
         __block MobileEngageInternal *engage;
         __block PredictInternal *predict;
         __block MERequestContext *requestContext;
+        __block EMSDeviceInfo *deviceInfo;
+        __block EMSRequestFactory *requestFactory;
         __block EMSRequestManager *requestManager;
         __block MENotificationCenterManager *notificationCenterManagerMock;
         __block AppStartBlockProvider *appStartBlockProvider;
@@ -42,7 +46,10 @@ SPEC_BEGIN(EmarsysTests)
             engage = [MobileEngageInternal nullMock];
             predict = [PredictInternal nullMock];
             requestContext = [MERequestContext nullMock];
+            deviceInfo = [EMSDeviceInfo nullMock];
             [requestContext stub:@selector(meId) andReturn:@"fakeMeId"];
+            [requestContext stub:@selector(deviceInfo) andReturn:deviceInfo];
+            requestFactory = [EMSRequestFactory nullMock];
             requestManager = [EMSRequestManager nullMock];
             notificationCenterManagerMock = [MENotificationCenterManager nullMock];
             appStartBlockProvider = [AppStartBlockProvider nullMock];
@@ -53,6 +60,7 @@ SPEC_BEGIN(EmarsysTests)
                                                                                 iam:nil
                                                                             predict:predict
                                                                      requestContext:requestContext
+                                                                     requestFactory:requestFactory
                                                                   requestRepository:nil
                                                                   notificationCache:nil
                                                                    responseHandlers:nil
@@ -278,13 +286,20 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"should register UIApplicationDidBecomeActiveNotification", ^{
                     void (^appStartBlock)() = ^{
                     };
+                    void (^appStartBlock2)() = ^{
+                    };
                     [[appStartBlockProvider should] receive:@selector(createAppStartBlockWithRequestManager:requestContext:)
                                                   andReturn:appStartBlock
                                               withArguments:requestManager, requestContext];
+                    [[appStartBlockProvider should] receive:@selector(createAppStartBlockWithRequestManager:requestFactory:deviceInfo:)
+                                                  andReturn:appStartBlock2
+                                              withArguments:requestManager, requestFactory, deviceInfo];
                     [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                       withArguments:appStartBlock,
                                                                     UIApplicationDidBecomeActiveNotification];
-
+                    [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                                                      withArguments:appStartBlock2,
+                                                                    UIApplicationDidBecomeActiveNotification];
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:dependencyContainer];
                 });
