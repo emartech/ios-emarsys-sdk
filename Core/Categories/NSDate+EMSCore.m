@@ -19,7 +19,7 @@
 
 
 - (NSNumber *)timeIntervalInMillis:(NSTimeInterval)timeInterval {
-    return @((int) (timeInterval * 1000));
+    return @((long long) (timeInterval * 1000));
 }
 
 + (NSDateFormatter *)utcDateFormatter {
