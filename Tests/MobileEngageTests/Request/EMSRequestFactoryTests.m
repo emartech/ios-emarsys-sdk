@@ -10,7 +10,6 @@
 #import "MERequestContext.h"
 #import "EMSDeviceInfo.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
-#import "NSDate+EMSCore.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
@@ -71,10 +70,7 @@
                                                                                    url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/applicationCode/client"]
                                                                                 method:@"POST"
                                                                                payload:payload
-                                                                               headers:@{
-                                                                                   @"X-Client-Id": @"hardwareId",
-                                                                                   @"X-Request-Order": [self.timestamp.numberValueInMillis stringValue],
-                                                                               }
+                                                                               headers:nil
                                                                                 extras:nil];
     OCMStub(self.mockDeviceInfo.clientPayload).andReturn(payload);
 
