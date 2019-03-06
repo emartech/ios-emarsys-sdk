@@ -58,25 +58,7 @@ typedef void (^RunnerBlock)(void);
     [self runInCoreQueueWithBlock:^{
         [weakSelf.completionMiddleware registerCompletionBlock:completionBlock
                                                forRequestModel:model];
-        EMSRequestModel *requestModel = model;
-        if (weakSelf.additionalHeaders) {
-            NSMutableDictionary *headers;
-            if (model.headers) {
-                headers = [NSMutableDictionary dictionaryWithDictionary:model.headers];
-                [headers addEntriesFromDictionary:weakSelf.additionalHeaders];
-            } else {
-                headers = [NSMutableDictionary dictionaryWithDictionary:weakSelf.additionalHeaders];
-            }
-            requestModel = [[EMSRequestModel alloc] initWithRequestId:model.requestId
-                                                            timestamp:model.timestamp
-                                                               expiry:model.ttl
-                                                                  url:model.url
-                                                               method:model.method
-                                                              payload:model.payload
-                                                              headers:[NSDictionary dictionaryWithDictionary:headers]
-                                                               extras:[NSDictionary dictionaryWithDictionary:model.extras]];
-        }
-        [weakSelf.requestModelRepository add:requestModel];
+        [weakSelf.requestModelRepository add:model];
         [weakSelf.worker run];
     }];
 }
@@ -113,11 +95,6 @@ typedef void (^RunnerBlock)(void);
         [[self shardRepository] add:shard];
     }];
 }
-
-- (void)setAdditionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders {
-    _additionalHeaders = additionalHeaders;
-}
-
 
 #pragma mark - Private methods
 

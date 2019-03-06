@@ -16,7 +16,6 @@
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
-#import "EmarsysSDKVersion.h"
 #import "EMSDependencyInjection.h"
 #import "MENotificationCenterManager.h"
 #import "FakeDependencyContainer.h"
@@ -268,17 +267,6 @@ SPEC_BEGIN(EmarsysTests)
 
                     [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(5)];
                 });
-            });
-
-            it(@"should set additionalHeaders on requestManager", ^{
-                [EMSDependencyInjection tearDown];
-                [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
-
-                [[[EMSDependencyInjection.dependencyContainer.requestManager additionalHeaders] should] equal:@{
-                    @"Content-Type": @"application/json",
-                    @"X-EMARSYS-SDK-VERSION": EMARSYS_SDK_VERSION,
-                    @"X-EMARSYS-SDK-MODE": @"debug"
-                }];
             });
 
             context(@"appStart", ^{

@@ -137,7 +137,7 @@
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.operationQueue
                                        timestampProvider:timestampProvider
-                                       additionalHeaders:nil
+                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]
                                      requestModelMappers:@[[[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
                                                                                                                 operationQueue:self.operationQueue
@@ -160,7 +160,6 @@
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
-    [self.requestManager setAdditionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]];
 
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
