@@ -11,6 +11,7 @@
 #import "EMSInDatabaseTime.h"
 #import "EMSNetworkingTime.h"
 #import "EMSResponseModel+EMSCore.h"
+#import "EMSRequestModelMapperProtocol.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -19,6 +20,8 @@
 @property(nonatomic, strong) NSURLSession *session;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
+@property(nonatomic, strong) NSArray<id <EMSRequestModelMapperProtocol>> *requestModelMappers;
+
 
 @end
 
@@ -26,7 +29,9 @@
 
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
-              timestampProvider:(EMSTimestampProvider *)timestampProvider {
+              timestampProvider:(EMSTimestampProvider *)timestampProvider
+              additionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
+            requestModelMappers:(NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers {
     NSParameterAssert(session);
     NSParameterAssert(queue);
     NSParameterAssert(timestampProvider);
@@ -34,6 +39,8 @@
         _session = session;
         _queue = queue;
         _timestampProvider = timestampProvider;
+        _additionalHeaders = additionalHeaders;
+        _requestModelMappers = requestModelMappers;
     }
     return self;
 }
@@ -42,9 +49,10 @@
             coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy {
     NSParameterAssert(requestModel);
     NSParameterAssert((NSObject *) completionProxy);
-    __weak typeof(self) weakSelf = self;
+
     NSDate *networkingStartTime = [self.timestampProvider provideTimestamp];
-    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:[NSURLRequest requestWithRequestModel:requestModel]
+    __weak typeof(self) weakSelf = self;
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:[self createURLRequestFromRequestModel:requestModel]
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                      [weakSelf.queue addOperationWithBlock:^{
                                                          NSError *runtimeError = [weakSelf errorWithData:data
@@ -83,6 +91,33 @@
         }
     }
     return runtimeError;
+}
+
+- (NSURLRequest *)createURLRequestFromRequestModel:(EMSRequestModel *)requestModel {
+    return [NSURLRequest requestWithRequestModel:[self finalizeRequestModel:requestModel]];
+}
+
+- (EMSRequestModel *)finalizeRequestModel:(EMSRequestModel *)requestModel {
+    EMSRequestModel *resultModel = [self extendRequestModelWithAdditionalHeaders:requestModel];
+    for (id modelMapper in self.requestModelMappers) {
+        if ([modelMapper shouldHandleWithRequestModel:resultModel]) {
+            resultModel = [modelMapper modelFromModel:resultModel];
+        }
+    }
+    return resultModel;
+}
+
+- (EMSRequestModel *)extendRequestModelWithAdditionalHeaders:(EMSRequestModel *)requestModel {
+    NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithDictionary:requestModel.headers];
+    [headers addEntriesFromDictionary:self.additionalHeaders];
+    return [[EMSRequestModel alloc] initWithRequestId:requestModel.requestId
+                                            timestamp:requestModel.timestamp
+                                               expiry:requestModel.ttl
+                                                  url:requestModel.url
+                                               method:requestModel.method
+                                              payload:requestModel.payload
+                                              headers:[NSDictionary dictionaryWithDictionary:headers]
+                                               extras:requestModel.extras];
 }
 
 @end

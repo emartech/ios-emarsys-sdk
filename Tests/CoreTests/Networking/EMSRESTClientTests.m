@@ -12,6 +12,8 @@
 #import "NSURLRequest+EMSCore.h"
 #import "NSError+EMSCore.h"
 #import "FakeRESTClientCompletionProxy.h"
+#import "EMSRequestModelMapperProtocol.h"
+#import "FakeRequestModelMapper.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
@@ -57,14 +59,18 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 
     _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
                                                    queue:self.expectedOperationQueue
-                                       timestampProvider:self.mockTimestampProvider];
+                                       timestampProvider:self.mockTimestampProvider
+                                       additionalHeaders:nil
+                                     requestModelMappers:nil];
 }
 
 - (void)testInit_shouldNotAccept_nilSession {
     @try {
         [[EMSRESTClient alloc] initWithSession:nil
                                          queue:self.mockQueue
-                             timestampProvider:self.mockTimestampProvider];
+                             timestampProvider:self.mockTimestampProvider
+                             additionalHeaders:nil
+                           requestModelMappers:nil];
         XCTFail(@"Expected Exception when session is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: session");
@@ -75,7 +81,9 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     @try {
         [[EMSRESTClient alloc] initWithSession:self.mockSession
                                          queue:nil
-                             timestampProvider:self.mockTimestampProvider];
+                             timestampProvider:self.mockTimestampProvider
+                             additionalHeaders:nil
+                           requestModelMappers:nil];
         XCTFail(@"Expected Exception when queue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
@@ -86,7 +94,9 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     @try {
         [[EMSRESTClient alloc] initWithSession:self.mockSession
                                          queue:self.mockQueue
-                             timestampProvider:nil];
+                             timestampProvider:nil
+                             additionalHeaders:nil
+                           requestModelMappers:nil];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
@@ -196,6 +206,48 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                   XCTAssertEqualObjects(returnedError, expectedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
+}
+
+- (void)testExecute_shouldUseModelMappers {
+    EMSRequestModel *requestModel1 = [self generateRequestModel];
+    EMSRequestModel *mockRequestModel1 = OCMClassMock([EMSRequestModel class]);
+    EMSRequestModel *requestModel2 = [self generateRequestModel];
+
+    FakeRequestModelMapper *mapper1 = [[FakeRequestModelMapper alloc] initWithShouldHandle:YES
+                                                                            returningValue:mockRequestModel1];
+    FakeRequestModelMapper *mapper2 = [[FakeRequestModelMapper alloc] initWithShouldHandle:NO
+                                                                            returningValue:nil];
+    FakeRequestModelMapper *mapper3 = [[FakeRequestModelMapper alloc] initWithShouldHandle:YES
+                                                                            returningValue:requestModel2];
+
+    NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionaryWithDictionary:requestModel1.headers];
+    mutableHeaders[@"testAdditionalHeaderKey"] = @"testAdditionalHeaderValue";
+    NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mutableHeaders];
+    EMSRequestModel *requestModelWithAdditionalHeaders = [[EMSRequestModel alloc] initWithRequestId:requestModel1.requestId
+                                                                                          timestamp:requestModel1.timestamp
+                                                                                             expiry:requestModel1.ttl
+                                                                                                url:requestModel1.url
+                                                                                             method:requestModel1.method
+                                                                                            payload:requestModel1.payload
+                                                                                            headers:headers
+                                                                                             extras:requestModel1.extras];
+    NSURLRequest *urlRequest = [NSURLRequest requestWithRequestModel:requestModel2];
+
+    _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                                   queue:self.expectedOperationQueue
+                                       timestampProvider:self.mockTimestampProvider
+                                       additionalHeaders:@{@"testAdditionalHeaderKey": @"testAdditionalHeaderValue"}
+                                     requestModelMappers:@[mapper1, mapper2, mapper3]];
+
+    [self.restClient executeWithRequestModel:requestModel1
+                         coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+                         }]];
+
+    OCMVerify([self.mockSession dataTaskWithRequest:urlRequest
+                                  completionHandler:[OCMArg any]]);
+
+    XCTAssertEqualObjects(mapper1.inputValue, requestModelWithAdditionalHeaders);
+    XCTAssertEqualObjects(mapper3.inputValue, mockRequestModel1);
 }
 
 - (EMSRequestModel *)generateRequestModel {

@@ -43,6 +43,7 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSRequestFactory.h"
+#import "EMSV3Mapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -135,7 +136,9 @@
                                                      delegateQueue:self.operationQueue];
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.operationQueue
-                                       timestampProvider:timestampProvider];
+                                       timestampProvider:timestampProvider
+                                       additionalHeaders:nil
+                                     requestModelMappers:@[[[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
                                                                                                                 operationQueue:self.operationQueue
                                                                                                            defaultSuccessBlock:middleware.successBlock

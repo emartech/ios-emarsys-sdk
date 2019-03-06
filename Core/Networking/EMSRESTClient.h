@@ -9,14 +9,19 @@
 #import "EMSRESTClientCompletionProxyProtocol.h"
 
 @class EMSTimestampProvider;
+@protocol EMSRequestModelMapperProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSRESTClient : NSObject
 
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *additionalHeaders;
+
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
-              timestampProvider:(EMSTimestampProvider *)timestampProvider;
+              timestampProvider:(EMSTimestampProvider *)timestampProvider
+              additionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
+            requestModelMappers:(NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers;
 
 - (void)executeWithRequestModel:(EMSRequestModel *)requestModel
             coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy;
