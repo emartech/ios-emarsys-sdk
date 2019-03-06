@@ -27,32 +27,32 @@
     [Emarsys registerAppStartBlock];
 }
 
-+ (void)setAnonymousCustomer {
++ (void)setAnonymousContact {
     [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:nil];
 }
 
-+ (void)setAnonymousCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
++ (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:completionBlock];
 }
 
-+ (void)setCustomerWithId:(NSString *)customerId
-          completionBlock:(EMSCompletionBlock)completionBlock {
-    NSParameterAssert(customerId);
-    [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:customerId];
-    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithContactFieldValue:customerId
++ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
+                        completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(contactFieldValue);
+    [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:contactFieldValue];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithContactFieldValue:contactFieldValue
                                                                            completionBlock:completionBlock];
 }
 
-+ (void)setCustomerWithId:(NSString *)customerId {
-    [Emarsys setCustomerWithId:customerId
-               completionBlock:nil];
++ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+    [Emarsys setContactWithContactFieldValue:contactFieldValue
+                             completionBlock:nil];
 }
 
-+ (void)clearCustomer {
-    [Emarsys clearCustomerWithCompletionBlock:nil];
++ (void)clearContact {
+    [Emarsys clearContactWithCompletionBlock:nil];
 }
 
-+ (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock {
++ (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     [EMSDependencyInjection.dependencyContainer.predict clearCustomer];
     [EMSDependencyInjection.dependencyContainer.mobileEngage appLogoutWithCompletionBlock:completionBlock];
 }

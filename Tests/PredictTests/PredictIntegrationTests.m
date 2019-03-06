@@ -205,11 +205,11 @@ SPEC_BEGIN(PredictIntegrationTests)
                 visitorId = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
                 [[visitorId shouldNot] beNil];
 
-                [Emarsys clearCustomer];
+                [Emarsys clearContact];
                 [EMSWaiter waitForExpectations:@[expectation2]
                                        timeout:10];
 
-                [Emarsys setCustomerWithId:@"test@test.com"];
+                [Emarsys setContactWithContactFieldValue:@"test@test.com"];
                 [EMSWaiter waitForExpectations:@[expectation3]
                                        timeout:10];
 

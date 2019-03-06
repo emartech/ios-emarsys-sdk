@@ -14,7 +14,7 @@
 
 SPEC_BEGIN(PredictInternalTests)
 
-        describe(@"setCustomerWithId:", ^{
+        describe(@"setContactWithContactFieldValue:", ^{
 
             it(@"should throw exception when customerId is nil", ^{
                 @try {
@@ -288,7 +288,7 @@ SPEC_BEGIN(PredictInternalTests)
 
         });
 
-        describe(@"clearCustomer", ^{
+        describe(@"clearContact", ^{
             it(@"should setCustomerId and visitorId to nil on requestContext", ^{
                 PRERequestContext *const requestContext = [PRERequestContext mock];
                 [[requestContext should] receive:@selector(setCustomerId:)

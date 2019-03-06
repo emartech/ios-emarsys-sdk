@@ -58,11 +58,11 @@
     __block NSError *returnedErrorForSetCustomer = [NSError mock];
 
     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-    [Emarsys setCustomerWithId:@"test@test.com"
-               completionBlock:^(NSError *error) {
-                   returnedErrorForSetCustomer = error;
-                   [setCustomerExpectation fulfill];
-               }];
+    [Emarsys setContactWithContactFieldValue:@"test@test.com"
+                             completionBlock:^(NSError *error) {
+                                 returnedErrorForSetCustomer = error;
+                                 [setCustomerExpectation fulfill];
+                             }];
 
     XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
                                                                timeout:TIMEOUT];

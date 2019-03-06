@@ -295,11 +295,11 @@ SPEC_BEGIN(EmarsysTests)
             });
         });
 
-        describe(@"setAnonymousCustomerWithCompletionBlock:", ^{
+        describe(@"setAnonymousContactWithCompletionBlock:", ^{
             it(@"should delegate the call to mobileEngageInternal", ^{
                 [[engage should] receive:@selector(appLoginWithCompletionBlock:)
                            withArguments:nil];
-                [Emarsys setAnonymousCustomer];
+                [Emarsys setAnonymousContact];
             });
 
             it(@"should delegate the call to mobileEngageInternal", ^{
@@ -308,7 +308,7 @@ SPEC_BEGIN(EmarsysTests)
 
                 [[engage should] receive:@selector(appLoginWithCompletionBlock:)
                            withArguments:completionBlock];
-                [Emarsys setAnonymousCustomerWithCompletionBlock:completionBlock];
+                [Emarsys setAnonymousContactWithCompletionBlock:completionBlock];
             });
         });
 
@@ -316,13 +316,13 @@ SPEC_BEGIN(EmarsysTests)
             it(@"should delegate the call to predictInternal", ^{
                 [[predict should] receive:@selector(setCustomerWithId:)
                             withArguments:customerId];
-                [Emarsys setCustomerWithId:customerId];
+                [Emarsys setContactWithContactFieldValue:customerId];
             });
 
             it(@"should delegate the call to mobileEngageInternal", ^{
                 [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
                            withArguments:customerId, kw_any()];
-                [Emarsys setCustomerWithId:customerId];
+                [Emarsys setContactWithContactFieldValue:customerId];
             });
 
             it(@"should delegate the call to mobileEngageInternal with customerId and completionBlock", ^{
@@ -332,22 +332,22 @@ SPEC_BEGIN(EmarsysTests)
                 [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
                            withArguments:customerId, completionBlock];
 
-                [Emarsys setCustomerWithId:customerId
-                           completionBlock:completionBlock];
+                [Emarsys setContactWithContactFieldValue:customerId
+                                         completionBlock:completionBlock];
             });
         });
 
-        describe(@"clearCustomer", ^{
+        describe(@"clearContact", ^{
             it(@"should delegate call to MobileEngage", ^{
                 [[engage should] receive:@selector(appLogoutWithCompletionBlock:)];
 
-                [Emarsys clearCustomer];
+                [Emarsys clearContact];
             });
 
             it(@"should delegate call to Predict", ^{
                 [[predict should] receive:@selector(clearCustomer)];
 
-                [Emarsys clearCustomer];
+                [Emarsys clearContact];
             });
         });
 

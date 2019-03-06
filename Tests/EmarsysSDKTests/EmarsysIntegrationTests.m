@@ -30,11 +30,11 @@ SPEC_BEGIN(EmarsysIntegrationTests)
             __block NSError *returnedErrorForSetCustomer = [NSError mock];
 
             XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-            [Emarsys setCustomerWithId:@"test@test.com"
-                       completionBlock:^(NSError *error) {
-                           returnedErrorForSetCustomer = error;
-                           [setCustomerExpectation fulfill];
-                       }];
+            [Emarsys setContactWithContactFieldValue:@"test@test.com"
+                                     completionBlock:^(NSError *error) {
+                                         returnedErrorForSetCustomer = error;
+                                         [setCustomerExpectation fulfill];
+                                     }];
 
             XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
                                                                        timeout:TIMEOUT];
@@ -49,13 +49,13 @@ SPEC_BEGIN(EmarsysIntegrationTests)
                                    withDependencyContainer:nil];
             });
 
-            describe(@"setAnonymousCustomerWithCompletionBlock:", ^{
+            describe(@"setAnonymousContactWithCompletionBlock:", ^{
 
                 it(@"should invoke completion block when its done", ^{
                     __block NSError *returnedError = [NSError mock];
 
                     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-                    [Emarsys setAnonymousCustomerWithCompletionBlock:^(NSError *error) {
+                    [Emarsys setAnonymousContactWithCompletionBlock:^(NSError *error) {
                         returnedError = error;
                         [setCustomerExpectation fulfill];
                     }];
@@ -69,7 +69,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             });
 
-            describe(@"setCustomerWithId:completionBlock:", ^{
+            describe(@"setContactWithContactFieldValue:completionBlock:", ^{
 
                 it(@"should invoke completion block when its done", ^{
                     doLogin();
@@ -77,12 +77,12 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             });
 
-            describe(@"clearCustomerWithCompletionBlock:", ^{
+            describe(@"clearContactWithCompletionBlock:", ^{
                 it(@"should invoke completion block when its done", ^{
                     __block NSError *returnedError = [NSError mock];
 
                     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [Emarsys clearCustomerWithCompletionBlock:^(NSError *error) {
+                    [Emarsys clearContactWithCompletionBlock:^(NSError *error) {
                         returnedError = error;
                         [expectation fulfill];
                     }];

@@ -23,18 +23,18 @@ typedef void (^EMSSourceHandler)(NSString *source);
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
-+ (void)setAnonymousCustomer;
++ (void)setAnonymousContact;
 
-+ (void)setAnonymousCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock;
++ (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
-+ (void)setCustomerWithId:(NSString *)customerId;
++ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
 
-+ (void)setCustomerWithId:(NSString *)customerId
-          completionBlock:(EMSCompletionBlock)completionBlock;
++ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
+                        completionBlock:(EMSCompletionBlock)completionBlock;
 
-+ (void)clearCustomer;
++ (void)clearContact;
 
-+ (void)clearCustomerWithCompletionBlock:(EMSCompletionBlock)completionBlock;
++ (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
                         sourceHandler:(EMSSourceHandler)sourceHandler;
