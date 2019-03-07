@@ -23,7 +23,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
 
         describe(@"Notification Inbox", ^{
 
-            it(@"fetchNotificationsWithResultBlock", ^{
+            xit(@"fetchNotificationsWithResultBlock", ^{
                 __block EMSNotificationInboxStatus *_inboxStatus;
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -44,7 +44,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
             });
 
 
-            it(@"resetBadgeCount", ^{
+            xit(@"resetBadgeCount", ^{
                 __block BOOL _success = NO;
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -64,7 +64,7 @@ SPEC_BEGIN(InboxV2IntegrationTests)
                 [[theValue(_success) should] beYes];
             });
 
-            it(@"trackMessageOpenWithInboxMessage", ^{
+            xit(@"trackMessageOpenWithInboxMessage", ^{
                 NSArray<NSDictionary *> *notificationResponses = @[
                     @{@"sid": @"sid1", @"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
                     @{@"sid": @"sid2", @"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},

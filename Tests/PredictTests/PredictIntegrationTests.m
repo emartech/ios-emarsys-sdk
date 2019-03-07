@@ -185,7 +185,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
         describe(@"visitorId", ^{
 
-            it(@"should simulate login flow", ^{
+            xit(@"should simulate login flow", ^{
                 XCTestExpectation *expectation1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
                 XCTestExpectation *expectation2 = [[XCTestExpectation alloc] initWithDescription:@"waitForClearCustomer"];
                 XCTestExpectation *expectation3 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetCustomer"];

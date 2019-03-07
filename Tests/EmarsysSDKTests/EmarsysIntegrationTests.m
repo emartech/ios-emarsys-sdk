@@ -51,7 +51,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             describe(@"setAnonymousContactWithCompletionBlock:", ^{
 
-                it(@"should invoke completion block when its done", ^{
+                xit(@"should invoke completion block when its done", ^{
                     __block NSError *returnedError = [NSError mock];
 
                     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
@@ -71,14 +71,14 @@ SPEC_BEGIN(EmarsysIntegrationTests)
 
             describe(@"setContactWithContactFieldValue:completionBlock:", ^{
 
-                it(@"should invoke completion block when its done", ^{
+                xit(@"should invoke completion block when its done", ^{
                     doLogin();
                 });
 
             });
 
             describe(@"clearContactWithCompletionBlock:", ^{
-                it(@"should invoke completion block when its done", ^{
+                xit(@"should invoke completion block when its done", ^{
                     __block NSError *returnedError = [NSError mock];
 
                     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -95,7 +95,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
             });
 
             describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
-                it(@"should invoke completion block when its done", ^{
+                xit(@"should invoke completion block when its done", ^{
                     doLogin();
 
                     __block NSError *returnedErrorForTrackCustomEvent = [NSError mock];
@@ -116,7 +116,7 @@ SPEC_BEGIN(EmarsysIntegrationTests)
             });
 
             describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
-                it(@"should invoke completion block when its done", ^{
+                xit(@"should invoke completion block when its done", ^{
                     doLogin();
 
                     __block NSError *returnedError = [NSError mock];

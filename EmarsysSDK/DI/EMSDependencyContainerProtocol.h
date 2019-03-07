@@ -29,6 +29,8 @@
 
 - (id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol>)mobileEngage;
 
+- (id <EMSPushNotificationProtocol>)push;
+
 - (id <EMSInboxProtocol>)inbox;
 
 - (MEInApp *)iam;

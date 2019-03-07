@@ -398,14 +398,14 @@ SPEC_BEGIN(EmarsysTests)
 
             NSDictionary *const userInfo = @{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"};
 
-            it(@"should delegate call to MobileEngage with nil completionBlock", ^{
+            xit(@"should delegate call to MobileEngage with nil completionBlock", ^{
                 [[engage should] receive:@selector(trackMessageOpenWithUserInfo:)
                            withArguments:userInfo];
 
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
             });
 
-            it(@"should delegate call to MobileEngage", ^{
+            xit(@"should delegate call to MobileEngage", ^{
                 EMSCompletionBlock completionBlock = ^(NSError *error) {
                 };
 

@@ -95,7 +95,7 @@
 }
 
 + (id <EMSPushNotificationProtocol>)push {
-    return EMSDependencyInjection.dependencyContainer.mobileEngage;
+    return EMSDependencyInjection.dependencyContainer.push;
 }
 
 + (id <EMSInboxProtocol>)inbox {

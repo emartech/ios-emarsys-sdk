@@ -44,6 +44,8 @@
 #import "EMSClientStateResponseHandler.h"
 #import "EMSRequestFactory.h"
 #import "EMSV3Mapper.h"
+#import "EMSPushV3Internal.h"
+#import "EMSMobileEngageV3Internal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -56,6 +58,7 @@
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol> mobileEngage;
+@property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) MEInApp *iam;
 @property(nonatomic, strong) PredictInternal *predict;
@@ -222,9 +225,11 @@
 
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];
-    _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:self.requestManager
-                                                          requestContext:self.requestContext
-                                                       notificationCache:self.notificationCache];
+
+    _mobileEngage = [EMSMobileEngageV3Internal new];
+
+    _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                               requestManager:self.requestManager];
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                      mobileEngageInternal:self.mobileEngage
