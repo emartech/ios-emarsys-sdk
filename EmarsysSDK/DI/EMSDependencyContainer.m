@@ -55,7 +55,7 @@
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
-@property(nonatomic, strong) MobileEngageInternal *mobileEngage;
+@property(nonatomic, strong) id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol> mobileEngage;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) MEInApp *iam;
 @property(nonatomic, strong) PredictInternal *predict;

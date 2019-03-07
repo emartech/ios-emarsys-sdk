@@ -9,6 +9,8 @@
 #import "EMSResponseModel.h"
 #import "EMSRequestManager.h"
 #import "EMSPushNotificationProtocol.h"
+#import "EMSMobileEngageProtocol.h"
+#import "EMSDeepLinkProtocol.h"
 
 @protocol MobileEngageStatusDelegate;
 @class EMSConfig;
@@ -28,7 +30,7 @@ typedef void (^MEErrorBlock)(NSString *requestId, NSError *error);
 typedef void (^MESourceHandler)(NSString *source);
 
 
-@interface MobileEngageInternal : NSObject <MEInAppTrackingProtocol, EMSPushNotificationProtocol>
+@interface MobileEngageInternal : NSObject <EMSMobileEngageProtocol, EMSDeepLinkProtocol, MEInAppTrackingProtocol, EMSPushNotificationProtocol>
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MESuccessBlock successBlock;
@@ -43,33 +45,9 @@ typedef void (^MESourceHandler)(NSString *source);
                         requestContext:(MERequestContext *)requestContext
                      notificationCache:(EMSNotificationCache *)notificationCache;
 
-- (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler;
-
-- (void)appLogin;
-
-- (void)appLoginWithCompletionBlock:(EMSCompletionBlock)completionBlock;
-
-- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue;
-
-- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue
-                      completionBlock:(EMSCompletionBlock)completionBlock;
-
-
-- (void)trackCustomEvent:(nonnull NSString *)eventName
-         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
-
-- (void)trackCustomEvent:(nonnull NSString *)eventName
-         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
-         completionBlock:(EMSCompletionBlock)completionBlock;
-
 - (NSString *)trackInternalCustomEvent:(NSString *)eventName
                        eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                        completionBlock:(nullable EMSCompletionBlock)completionBlock;
-
-
-- (void)appLogout;
-- (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 @end
 

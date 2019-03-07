@@ -117,20 +117,20 @@ SPEC_BEGIN(MobileEngageInternalTests)
         });
 
         describe(@"setPushToken:", ^{
-            it(@"should call appLogin with lastAppLogin parameters", ^{
+            it(@"should call setContactWithContactFieldValue with lastAppLogin parameters", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldValue:)
+                [[_mobileEngage should] receive:@selector(setContactWithContactFieldValue:)
                                       withCount:1
-                                      arguments:nil, nil, nil];
+                                      arguments:nil, nil];
 
                 _mobileEngage.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:nil
                                                                                                    contactFieldValue:nil];
                 [_mobileEngage setPushToken:deviceToken];
             });
 
-            it(@"should call appLogin with lastAppLogin parameters when there are previous values", ^{
+            it(@"should call setContactWithContactFieldValue with lastAppLogin parameters when there are previous values", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage should] receive:@selector(appLoginWithContactFieldValue:)
+                [[_mobileEngage should] receive:@selector(setContactWithContactFieldValue:)
                                       withCount:1
                                       arguments:@"23", nil];
 
@@ -139,31 +139,31 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [_mobileEngage setPushToken:deviceToken];
             });
 
-            it(@"appLogin should save last anonymous AppLogin parameters", ^{
+            it(@"setAnonymousContact should save last anonymous AppLogin parameters", ^{
                 [[requestManagerMock() should] receive:@selector(submitRequestModel:withCompletionBlock:)];
-                [_mobileEngage appLogin];
+                [_mobileEngage setAnonymousContact];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] equal:@3];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldValue should] beNil];
             });
 
-            it(@"appLogin should save last AppLogin parameters", ^{
+            it(@"setAnonymousContact should save last AppLogin parameters", ^{
                 [[requestManagerMock() should] receive:@selector(submitRequestModel:withCompletionBlock:)];
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
                 [[_mobileEngage.requestContext.appLoginParameters shouldNot] beNil];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldId should] equal:@3];
                 [[_mobileEngage.requestContext.appLoginParameters.contactFieldValue should] equal:@"test@test.com"];
             });
 
-            it(@"should not call appLogin with setPushToken when there was no previous appLogin call", ^{
+            it(@"should not call appLogin with setPushToken when there was no previous setContactWithContactFieldValue call", ^{
                 NSData *deviceToken = [NSData new];
-                [[_mobileEngage shouldNot] receive:@selector(appLoginWithContactFieldValue:)];
+                [[_mobileEngage shouldNot] receive:@selector(setContactWithContactFieldValue:)];
                 [_mobileEngage setPushToken:deviceToken];
             });
         });
 
 
-        describe(@"anonymous appLogin", ^{
+        describe(@"anonymous setAnonymousContact", ^{
 
             it(@"should submit a corresponding RequestModel", ^{
                 id requestManager = requestManagerMock();
@@ -184,7 +184,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
-                [_mobileEngage appLoginWithCompletionBlock:nil];
+                [_mobileEngage setAnonymousContactWithCompletionBlock:nil];
 
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
@@ -192,7 +192,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
         });
 
-        describe(@"appLoginWithContactFieldValue:", ^{
+        describe(@"setContactWithContactFieldValue:", ^{
 
             it(@"should submit a corresponding RequestModel", ^{
                 id requestManager = requestManagerMock();
@@ -215,7 +215,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
             });
@@ -234,23 +234,23 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
                     @"hardware_id": deviceInfo.hardwareId,
                     @"language": deviceInfo.languageCode,
                     @"timezone": deviceInfo.timeZone,
                     @"device_model": deviceInfo.deviceModel,
                     @"os_version": deviceInfo.osVersion,
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": EMARSYS_SDK_VERSION
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
                 [requestContext setMeId:@"meId"];
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 NSDictionary *event = [[requestManager.submittedModels[1] payload][@"events"] firstObject];
@@ -303,8 +303,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldValue:@"nottest@test.com"];
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"nottest@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
@@ -355,8 +355,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
-                [_mobileEngage appLoginWithContactFieldValue:@"nottest@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"nottest@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
                 [[requestManager.submittedModels[1] should] beSimilarWithRequest:secondModel];
@@ -373,29 +373,29 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [MEExperimental reset];
 
                 EMSRequestModel *firstModel = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/users/login", @{
-                        @"application_id": kAppId,
-                        @"platform": @"ios",
+                    @"application_id": kAppId,
+                    @"platform": @"ios",
                     @"hardware_id": deviceInfo.hardwareId,
                     @"language": deviceInfo.languageCode,
                     @"timezone": deviceInfo.timeZone,
                     @"device_model": deviceInfo.deviceModel,
                     @"os_version": deviceInfo.osVersion,
-                        @"contact_field_id": @3,
-                        @"contact_field_value": @"test@test.com",
-                        @"push_token": @NO,
-                        @"application_version": @"1.0",
-                        @"ems_sdk": EMARSYS_SDK_VERSION
+                    @"contact_field_id": @3,
+                    @"contact_field_value": @"test@test.com",
+                    @"push_token": @NO,
+                    @"application_version": @"1.0",
+                    @"ems_sdk": EMARSYS_SDK_VERSION
                 });
 
 
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
 
                 _mobileEngage = [MobileEngageInternal new];
                 _mobileEngage = [[MobileEngageInternal alloc] initWithRequestManager:requestManager
                                                                       requestContext:requestContext
                                                                    notificationCache:NULL];
                 [requestContext setMeId:@"meId"];
-                [_mobileEngage appLoginWithContactFieldValue:@"test@test.com"];
+                [_mobileEngage setContactWithContactFieldValue:@"test@test.com"];
 
                 [[requestManager.submittedModels[0] should] beSimilarWithRequest:firstModel];
 
@@ -419,7 +419,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                    withArguments:kw_any(), kw_any()];
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
 
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
@@ -441,7 +441,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage.requestContext setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:@3
                                                                                                      contactFieldValue:@"test@test.com"]];
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
 
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
@@ -453,7 +453,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
                 [_mobileEngage.requestContext setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:@3
                                                                                                      contactFieldValue:@"test@test.com"]];
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
                 [[_mobileEngage.requestContext.appLoginParameters should] beNil];
             });
 
@@ -462,7 +462,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)];
 
                 [_mobileEngage.requestContext setLastAppLoginPayload:@{@"t": @"v"}];
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
                 [[_mobileEngage.requestContext.lastAppLoginPayload should] beNil];
             });
 
@@ -515,12 +515,12 @@ SPEC_BEGIN(MobileEngageInternalTests)
 
         });
 
-        describe(@"trackCustomEvent:eventAttributes:", ^{
+        describe(@"trackCustomEventWithName:eventAttributes:", ^{
 
             it(@"should throw exception when eventName is nil", ^{
                 @try {
-                    [_mobileEngage trackCustomEvent:nil
-                                    eventAttributes:@{}];
+                    [_mobileEngage trackCustomEventWithName:nil
+                                            eventAttributes:@{}];
                     fail(@"Expected Exception when eventName is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -564,8 +564,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
 
-                [_mobileEngage trackCustomEvent:eventName
-                                eventAttributes:eventAttributes];
+                [_mobileEngage trackCustomEventWithName:eventName
+                                        eventAttributes:eventAttributes];
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
             });
@@ -605,8 +605,8 @@ SPEC_BEGIN(MobileEngageInternalTests)
                 KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModel:withCompletionBlock:)
                                                             atIndex:0];
 
-                [_mobileEngage trackCustomEvent:eventName
-                                eventAttributes:nil];
+                [_mobileEngage trackCustomEventWithName:eventName
+                                        eventAttributes:nil];
                 EMSRequestModel *actualModel = spy.argument;
                 [[model should] beSimilarWithRequest:actualModel];
             });
@@ -698,7 +698,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                  forKey:kMEID];
                 [userDefaults synchronize];
 
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
 
                 [[_mobileEngage.requestContext.meId should] beNil];
             });
@@ -744,7 +744,7 @@ SPEC_BEGIN(MobileEngageInternalTests)
                                                                    notificationCache:NULL];
 
 
-                [_mobileEngage appLogout];
+                [_mobileEngage clearContact];
 
                 [[_mobileEngage.requestContext.meIdSignature should] beNil];
             });

@@ -250,7 +250,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     ]},
                     @"u": @"{\"sid\": \"123456789\"}"
                 };
-                [[mobileEngage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                [[mobileEngage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                                  withArguments:eventName,
                                                payload, kw_any()];
 
@@ -323,7 +323,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     @"u": @"{\"sid\": \"123456789\"}"
                 };
 
-                [[mockMEInternal should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                                    withArguments:eventName,
                                                  payload, kw_any()];
 
@@ -447,7 +447,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     @"u": @"{\"sid\": \"123456789\"}"
                 };
 
-                [[mockMEInternal should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                                    withArguments:eventName,
                                                  payload, kw_any()];
 

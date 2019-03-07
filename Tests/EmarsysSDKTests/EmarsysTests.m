@@ -297,7 +297,7 @@ SPEC_BEGIN(EmarsysTests)
 
         describe(@"setAnonymousContactWithCompletionBlock:", ^{
             it(@"should delegate the call to mobileEngageInternal", ^{
-                [[engage should] receive:@selector(appLoginWithCompletionBlock:)
+                [[engage should] receive:@selector(setAnonymousContactWithCompletionBlock:)
                            withArguments:nil];
                 [Emarsys setAnonymousContact];
             });
@@ -306,7 +306,7 @@ SPEC_BEGIN(EmarsysTests)
                 EMSCompletionBlock completionBlock = ^(NSError *error) {
                 };
 
-                [[engage should] receive:@selector(appLoginWithCompletionBlock:)
+                [[engage should] receive:@selector(setAnonymousContactWithCompletionBlock:)
                            withArguments:completionBlock];
                 [Emarsys setAnonymousContactWithCompletionBlock:completionBlock];
             });
@@ -320,7 +320,7 @@ SPEC_BEGIN(EmarsysTests)
             });
 
             it(@"should delegate the call to mobileEngageInternal", ^{
-                [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
+                [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)
                            withArguments:customerId, kw_any()];
                 [Emarsys setContactWithContactFieldValue:customerId];
             });
@@ -329,7 +329,7 @@ SPEC_BEGIN(EmarsysTests)
                 void (^ const completionBlock)(NSError *) = ^(NSError *error) {
                 };
 
-                [[engage should] receive:@selector(appLoginWithContactFieldValue:completionBlock:)
+                [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)
                            withArguments:customerId, completionBlock];
 
                 [Emarsys setContactWithContactFieldValue:customerId
@@ -339,7 +339,7 @@ SPEC_BEGIN(EmarsysTests)
 
         describe(@"clearContact", ^{
             it(@"should delegate call to MobileEngage", ^{
-                [[engage should] receive:@selector(appLogoutWithCompletionBlock:)];
+                [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
 
                 [Emarsys clearContact];
             });
@@ -372,7 +372,7 @@ SPEC_BEGIN(EmarsysTests)
                 NSString *eventName = @"eventName";
                 NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
 
-                [[engage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                            withArguments:eventName, eventAttributes, kw_any()];
 
                 [Emarsys trackCustomEventWithName:eventName
@@ -385,7 +385,7 @@ SPEC_BEGIN(EmarsysTests)
                 EMSCompletionBlock completionBlock = ^(NSError *error) {
                 };
 
-                [[engage should] receive:@selector(trackCustomEvent:eventAttributes:completionBlock:)
+                [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                            withArguments:eventName, eventAttributes, completionBlock];
 
                 [Emarsys trackCustomEventWithName:eventName

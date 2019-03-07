@@ -28,19 +28,19 @@
 }
 
 + (void)setAnonymousContact {
-    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:nil];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage setAnonymousContactWithCompletionBlock:nil];
 }
 
 + (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithCompletionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage setAnonymousContactWithCompletionBlock:completionBlock];
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);
     [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:contactFieldValue];
-    [EMSDependencyInjection.dependencyContainer.mobileEngage appLoginWithContactFieldValue:contactFieldValue
-                                                                           completionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
+                                                                             completionBlock:completionBlock];
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
@@ -54,7 +54,7 @@
 
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     [EMSDependencyInjection.dependencyContainer.predict clearCustomer];
-    [EMSDependencyInjection.dependencyContainer.mobileEngage appLogoutWithCompletionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
 }
 
 + (void)trackCustomEventWithName:(NSString *)eventName
@@ -67,9 +67,9 @@
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(EMSCompletionBlock)completionBlock {
-    [EMSDependencyInjection.dependencyContainer.mobileEngage trackCustomEvent:eventName
-                                                              eventAttributes:eventAttributes
-                                                              completionBlock:completionBlock];
+    [EMSDependencyInjection.dependencyContainer.mobileEngage trackCustomEventWithName:eventName
+                                                                      eventAttributes:eventAttributes
+                                                                      completionBlock:completionBlock];
 }
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity

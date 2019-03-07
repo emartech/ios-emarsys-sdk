@@ -9,4 +9,6 @@ typedef void (^EMSSuccessBlock)(void);
 
 typedef void (^EMSCompletionBlock)(NSError* _Nullable error);
 
+typedef void (^EMSSourceHandler)(NSString *source);
+
 NS_ASSUME_NONNULL_END

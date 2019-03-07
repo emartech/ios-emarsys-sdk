@@ -107,9 +107,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                               options:@{}
                     completionHandler:nil];
         } else if ([type isEqualToString:@"MECustomEvent"]) {
-            [self.mobileEngage trackCustomEvent:action[@"name"]
-                                eventAttributes:action[@"payload"]
-                                completionBlock:nil];
+            [self.mobileEngage trackCustomEventWithName:action[@"name"]
+                                        eventAttributes:action[@"payload"]
+                                        completionBlock:nil];
         }
     }
     completionHandler();

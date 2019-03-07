@@ -13,8 +13,6 @@
 
 @interface Emarsys : NSObject
 
-typedef void (^EMSSourceHandler)(NSString *source);
-
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
 @property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;

@@ -91,26 +91,26 @@
     _pushToken = pushToken;
 
     if (self.requestContext.appLoginParameters != nil) {
-        [self appLoginWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
+        [self setContactWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
     }
 }
 
-- (void)appLoginWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [self appLoginWithContactFieldValue:nil
-                        completionBlock:completionBlock];
+- (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    [self setContactWithContactFieldValue:nil
+                          completionBlock:completionBlock];
 }
 
-- (void)appLogin {
-    return [self appLoginWithContactFieldValue:nil];
+- (void)setAnonymousContact {
+    return [self setContactWithContactFieldValue:nil];
 }
 
-- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue {
-    [self appLoginWithContactFieldValue:contactFieldValue
-                        completionBlock:nil];
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+    [self setContactWithContactFieldValue:contactFieldValue
+                          completionBlock:nil];
 }
 
-- (void)appLoginWithContactFieldValue:(NSString *)contactFieldValue
-                      completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
+                        completionBlock:(EMSCompletionBlock)completionBlock {
     self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
                                                                               contactFieldValue:contactFieldValue];
 
@@ -120,11 +120,11 @@
                         withCompletionBlock:completionBlock];
 }
 
-- (void)appLogout {
-    [self appLogoutWithCompletionBlock:nil];
+- (void)clearContact {
+    [self clearContactWithCompletionBlock:nil];
 }
 
-- (void)appLogoutWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+- (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [MERequestFactory_old createAppLogoutRequestWithRequestContext:self.requestContext];
     [self.requestContext reset];
     [self.requestManager submitRequestModel:requestModel
@@ -160,14 +160,14 @@
 }
 
 
-- (void)trackCustomEvent:(nonnull NSString *)eventName
-         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
-    [self trackCustomEvent:eventName eventAttributes:eventAttributes completionBlock:nil];
+- (void)trackCustomEventWithName:(nonnull NSString *)eventName
+                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
+    [self trackCustomEventWithName:eventName eventAttributes:eventAttributes completionBlock:nil];
 }
 
-- (void)trackCustomEvent:(nonnull NSString *)eventName
-         eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
-         completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)trackCustomEventWithName:(nonnull NSString *)eventName
+                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+                 completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(eventName);
 
     EMSRequestModel *requestModel = [MERequestFactory_old createTrackCustomEventRequestWithEventName:eventName

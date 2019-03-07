@@ -19,12 +19,15 @@
 @class EMSLogger;
 @protocol EMSDBTriggerProtocol;
 @class EMSRequestFactory;
+@protocol EMSMobileEngageProtocol;
+@protocol EMSPushNotificationProtocol;
+@protocol EMSDeepLinkProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
 - (EMSSQLiteHelper *)dbHelper;
 
-- (MobileEngageInternal *)mobileEngage;
+- (id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol>)mobileEngage;
 
 - (id <EMSInboxProtocol>)inbox;
 
