@@ -45,7 +45,7 @@
                     };
                     [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
                 }
-                [builder setUrl:@"https://ems-log-dealer.herokuapp.com/v1/log"];
+                [builder setUrl:@"https://log-dealer.eservice.emarsys.net/v1/log"];
                 [builder setMethod:HTTPMethodPOST];
                 [builder setPayload:@{@"logs": [NSArray arrayWithArray:logs]}];
             }
