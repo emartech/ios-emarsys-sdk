@@ -193,6 +193,18 @@ SPEC_BEGIN(DennaTest)
                 shouldEventuallySucceed(model, @"POST", inputHeaders, payload);
             });
 
+            it(@"should respond with the PUT request's headers/body", ^{
+                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:echo];
+                        [builder setMethod:HTTPMethodPUT];
+                        [builder setHeaders:inputHeaders];
+                        [builder setPayload:payload];
+                    }
+                                                        timestampProvider:[EMSTimestampProvider new]
+                                                             uuidProvider:[EMSUUIDProvider new]];
+                shouldEventuallySucceed(model, @"PUT", inputHeaders, payload);
+            });
+
             it(@"should respond with the DELETE request's headers/body", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                         [builder setUrl:echo];

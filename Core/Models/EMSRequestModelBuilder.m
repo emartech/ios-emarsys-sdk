@@ -26,6 +26,9 @@
         case HTTPMethodPOST:
             _requestMethod = @"POST";
             break;
+        case HTTPMethodPUT:
+            _requestMethod = @"PUT";
+            break;
         case HTTPMethodGET:
             _requestMethod = @"GET";
             break;

@@ -13,4 +13,6 @@
 
 - (EMSRequestModel *)createDeviceInfoRequestModel;
 
+- (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken;
+
 @end

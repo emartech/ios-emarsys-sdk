@@ -79,11 +79,11 @@
 - (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId {
     [self.requestManager submitRequestModel:[MERequestFactory_old createCustomEventModelWithEventName:@"inapp:click"
                                                                                       eventAttributes:@{
-                                                                                      @"message_id": campaignId,
-                                                                                      @"button_id": buttonId
-                                                                                  }
-                                                                                             type:@"internal"
-                                                                                   requestContext:self.requestContext]
+                                                                                          @"message_id": campaignId,
+                                                                                          @"button_id": buttonId
+                                                                                      }
+                                                                                                 type:@"internal"
+                                                                                       requestContext:self.requestContext]
                         withCompletionBlock:nil];
 }
 
@@ -94,6 +94,12 @@
         [self setContactWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
     }
 }
+
+- (void)setPushToken:(NSData *)pushToken
+     completionBlock:(EMSCompletionBlock)completionBlock {
+    [self setPushToken:pushToken];
+}
+
 
 - (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     [self setContactWithContactFieldValue:nil
@@ -146,11 +152,11 @@
     if (messageId) {
         EMSRequestModel *requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                  @"origin": @"main",
-                                                                                  @"sid": messageId
-                                                                              }
+                                                                                      @"origin": @"main",
+                                                                                      @"sid": messageId
+                                                                                  }
                                                                                              type:@"internal"
-                                                                               requestContext:self.requestContext];
+                                                                                   requestContext:self.requestContext];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:completionBlock];
     } else {

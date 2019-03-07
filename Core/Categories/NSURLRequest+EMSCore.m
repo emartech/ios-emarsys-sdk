@@ -22,14 +22,12 @@
     }
     [request setAllHTTPHeaderFields:headers];
 
-    if ([requestModel.method isEqualToString:@"POST"] && requestModel.payload) {
-        NSError *error;
-        [request setHTTPBody:[NSJSONSerialization dataWithJSONObject:requestModel.payload
-                                                             options:NSJSONWritingPrettyPrinted
-                                                               error:&error]];
-        if (error) {
-            request = nil;
-        }
+    NSError *error;
+    [request setHTTPBody:[NSJSONSerialization dataWithJSONObject:requestModel.payload
+                                                         options:NSJSONWritingPrettyPrinted
+                                                           error:&error]];
+    if (error) {
+        request = nil;
     }
     NSAssert(request, @"Cannot create NSURLRequest from RequestModel");
     return request;
@@ -41,7 +39,7 @@
     if (requestModel.headers) {
         [request setAllHTTPHeaderFields:requestModel.headers];
     }
-    if ([requestModel.method isEqualToString:@"POST"] && requestModel.payload) {
+    if (requestModel.payload) {
         NSError *error;
         [request setHTTPBody:[NSJSONSerialization dataWithJSONObject:requestModel.payload
                                                              options:NSJSONWritingPrettyPrinted

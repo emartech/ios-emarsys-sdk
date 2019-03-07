@@ -40,7 +40,7 @@
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
     OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
-    OCMStub(self.mockConfig.applicationCode).andReturn(@"applicationCode");
+    OCMStub(self.mockConfig.applicationCode).andReturn(@"testApplicationCode");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
 }
@@ -67,7 +67,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/applicationCode/client"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client"]
                                                                                 method:@"POST"
                                                                                payload:payload
                                                                                headers:nil
@@ -75,6 +75,22 @@
     OCMStub(self.mockDeviceInfo.clientPayload).andReturn(payload);
 
     EMSRequestModel *requestModel = [self.requestFactory createDeviceInfoRequestModel];
+
+    XCTAssertEqualObjects(expectedRequestModel, requestModel);
+}
+
+- (void)testCreatePushTokenRequestModelWithPushToken {
+    NSString *const pushToken = @"awesdrxcftvgyhbj";
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/push-token"]
+                                                                                method:@"PUT"
+                                                                               payload:@{@"pushToken": pushToken}
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:pushToken];
 
     XCTAssertEqualObjects(expectedRequestModel, requestModel);
 }

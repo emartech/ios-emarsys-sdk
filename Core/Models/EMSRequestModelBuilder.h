@@ -9,6 +9,7 @@
 
 typedef enum {
     HTTPMethodPOST,
+    HTTPMethodPUT,
     HTTPMethodGET,
     HTTPMethodDELETE
 } HTTPMethod;

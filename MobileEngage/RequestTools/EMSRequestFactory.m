@@ -38,4 +38,15 @@
                                uuidProvider:self.requestContext.uuidProvider];
 }
 
+- (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken {
+    __weak typeof(self) weakSelf = self;
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setUrl:PUSH_TOKEN_URL(weakSelf.applicationCode)];
+            [builder setMethod:HTTPMethodPUT];
+            [builder setPayload:@{@"pushToken": pushToken}];
+        }
+                          timestampProvider:self.requestContext.timestampProvider
+                               uuidProvider:self.requestContext.uuidProvider];
+}
+
 @end
