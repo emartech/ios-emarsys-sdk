@@ -12,6 +12,8 @@
 #import "EMSSchemaContract.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModel+RequestIds.h"
+#import "EMSOperationQueue.h"
+#import "NSError+EMSCore.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue);
 
@@ -25,7 +27,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 @property(nonatomic, strong) NSOperationQueue *mockOperationQueue;
 @property(nonatomic, strong) EMSRequestModel *mockRequestModel;
 @property(nonatomic, strong) EMSResponseModel *mockResponseModel;
-@property(nonatomic, strong) NSError *mockError;
+@property(nonatomic, strong) NSError *error;
 @property(nonatomic, strong) NSDate *deleteDate;
 @property(nonatomic, strong) NSDate *unlockDate;
 @property(nonatomic, strong) NSDate *runDate;
@@ -35,14 +37,14 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 @implementation EMSCoreCompletionHandlerMiddlewareTests
 
 - (void)setUp {
-    _operationQueue = [[NSOperationQueue alloc] init];
+    _operationQueue = [EMSOperationQueue new];
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockWorker = OCMProtocolMock(@protocol(EMSWorkerProtocol));
     _mockRepository = OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol));
     _mockOperationQueue = OCMClassMock([NSOperationQueue class]);
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _mockResponseModel = OCMClassMock([EMSResponseModel class]);
-    _mockError = OCMClassMock([NSError class]);
+    _error = [NSError new];
 
     NSArray *requestIds = @[@"requestId", @"requestId2"];
     OCMStub([self.mockRequestModel requestIds]).andReturn(requestIds);
@@ -52,6 +54,11 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
                                                                                            requestRepository:self.mockRepository
                                                                                               operationQueue:self.operationQueue];
 }
+
+- (void)tearDown {
+    [self.operationQueue waitUntilAllOperationsAreFinished];
+}
+
 
 - (void)testInit_completionHandler_mustNotBeNull {
     @try {
@@ -107,13 +114,13 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   XCTAssertEqual(result, XCTWaiterResultCompleted);
                                   XCTAssertEqualObjects(returnedOperationQueue, self.operationQueue);
                                   XCTAssertEqualObjects(returnedRequestModel, self.mockRequestModel);
                                   XCTAssertEqualObjects(returnedResponseModel, self.mockResponseModel);
-                                  XCTAssertEqualObjects(returnedError, self.mockError);
+                                  XCTAssertEqualObjects(returnedError, self.error);
                               }];
 }
 
@@ -124,7 +131,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   [self assertForOrderWhenWorkerShouldContinue];
                               }];
@@ -138,46 +145,49 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   [self assertForOrderWhenWorkerShouldContinue];
                               }];
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorCannotFindHost {
-    OCMStub([self.mockError code]).andReturn(NSURLErrorCannotFindHost);
+    _error = [NSError errorWithCode:NSURLErrorCannotFindHost
+               localizedDescription:@"NSURLErrorCannotFindHost"];
 
     [self setupOrderCheckWorkerShouldContinue];
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   [self assertForOrderWhenWorkerShouldContinue];
                               }];
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorBadURL {
-    OCMStub([self.mockError code]).andReturn(NSURLErrorBadURL);
+    _error = [NSError errorWithCode:NSURLErrorBadURL
+               localizedDescription:@"NSURLErrorBadURL"];
 
     [self setupOrderCheckWorkerShouldContinue];
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   [self assertForOrderWhenWorkerShouldContinue];
                               }];
 }
 
 - (void)testCompletionBlock_shouldContinue_whenErrorCodeIsNSURLErrorUnsupportedURL {
-    OCMStub([self.mockError code]).andReturn(NSURLErrorUnsupportedURL);
+    _error = [NSError errorWithCode:NSURLErrorUnsupportedURL
+               localizedDescription:@"NSURLErrorUnsupportedURL"];
 
     [self setupOrderCheckWorkerShouldContinue];
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:^(XCTWaiterResult result, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue) {
                                   [self assertForOrderWhenWorkerShouldContinue];
                               }];
@@ -189,7 +199,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:nil];
 }
 
@@ -199,7 +209,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:nil];
 }
 
@@ -209,7 +219,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:nil];
 }
 
@@ -221,7 +231,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:nil];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
@@ -241,7 +251,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel
                                responseModel:self.mockResponseModel
-                                       error:self.mockError
+                                       error:self.error
                               assertionBlock:nil];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
