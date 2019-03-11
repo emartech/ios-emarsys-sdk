@@ -49,4 +49,27 @@
                                uuidProvider:self.requestContext.uuidProvider];
 }
 
+- (EMSRequestModel *)createContactRequestModel {
+    __weak typeof(self) weakSelf = self;
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setMethod:HTTPMethodPOST];
+            BOOL anonymousLogin = NO;
+            NSDictionary *payload = @{};
+            if (weakSelf.requestContext.appLoginParameters.contactFieldId && weakSelf.requestContext.appLoginParameters.contactFieldValue) {
+                payload = @{
+                    @"contactFieldId": weakSelf.requestContext.appLoginParameters.contactFieldId,
+                    @"contactFieldValue": weakSelf.requestContext.appLoginParameters.contactFieldValue
+                };
+            } else {
+                anonymousLogin = YES;
+            }
+            [builder setUrl:CONTACT_URL(weakSelf.applicationCode)
+            queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
+            [builder setPayload:payload];
+        }
+                          timestampProvider:self.requestContext.timestampProvider
+                               uuidProvider:self.requestContext.uuidProvider];
+}
+
+
 @end

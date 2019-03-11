@@ -47,6 +47,23 @@
     return self;
 }
 
+- (EMSRequestModelBuilder *)setUrl:(NSString *)url
+                   queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters {
+    NSURL *urlToCheck = [NSURL URLWithString:url];
+    if (urlToCheck && urlToCheck.scheme && urlToCheck.host) {
+        NSURLComponents *components = [[NSURLComponents alloc] initWithURL:urlToCheck
+                                                   resolvingAgainstBaseURL:YES];
+        NSMutableArray *queryItems = [NSMutableArray array];
+        for (NSString *name in queryParameters.allKeys) {
+            [queryItems addObject:[[NSURLQueryItem alloc] initWithName:name
+                                                                 value:queryParameters[name]]];
+        }
+        [components setQueryItems:queryItems];
+        _requestUrl = [components URL];
+    }
+    return self;
+}
+
 - (EMSRequestModelBuilder *)setExpiry:(NSTimeInterval)expiry {
     _expiry = expiry;
     return self;

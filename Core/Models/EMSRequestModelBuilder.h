@@ -36,6 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModelBuilder *)setUrl:(NSString *)url;
 
+- (EMSRequestModelBuilder *)setUrl:(NSString *)url
+                   queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters;
+
 - (EMSRequestModelBuilder *)setExpiry:(NSTimeInterval)expiry;
 
 - (EMSRequestModelBuilder *)setPayload:(NSDictionary<NSString *, id> *)payload;

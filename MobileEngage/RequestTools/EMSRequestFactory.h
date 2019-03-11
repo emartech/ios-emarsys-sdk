@@ -15,4 +15,6 @@
 
 - (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken;
 
+- (EMSRequestModel *)createContactRequestModel;
+
 @end

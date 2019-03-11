@@ -4,7 +4,6 @@
 
 #import "Kiwi.h"
 #import "EMSRequestModel.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 
@@ -181,6 +180,26 @@ SPEC_BEGIN(EMSRequestModelTests)
                     fail(@"Assertation doesn't called!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should create requestUrl with query parameters", ^{
+                NSURLComponents *expectedComponents = [[NSURLComponents alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com?queryName1=queryValue1&queryName2=queryValue2"]
+                                                                   resolvingAgainstBaseURL:YES];
+                EMSRequestModel *returnedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:@"https://www.emarsys.com"
+                        queryParameters:@{
+                            @"queryName1": @"queryValue1",
+                            @"queryName2": @"queryValue2"
+                        }];
+                    }                                                  timestampProvider:[EMSTimestampProvider new]
+                                                                            uuidProvider:[EMSUUIDProvider new]];
+
+                NSURLComponents *componentsFromReturned = [[NSURLComponents alloc] initWithURL:returnedRequestModel.url
+                                                                       resolvingAgainstBaseURL:YES];
+                [[componentsFromReturned.host should] equal:expectedComponents.host];
+                for (NSURLQueryItem *queryItem in expectedComponents.queryItems) {
+                    [[componentsFromReturned.queryItems should] contain:queryItem];
                 }
             });
 
