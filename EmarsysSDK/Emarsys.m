@@ -27,14 +27,6 @@
     [Emarsys registerAppStartBlock];
 }
 
-+ (void)setAnonymousContact {
-    [EMSDependencyInjection.dependencyContainer.mobileEngage setAnonymousContactWithCompletionBlock:nil];
-}
-
-+ (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [EMSDependencyInjection.dependencyContainer.mobileEngage setAnonymousContactWithCompletionBlock:completionBlock];
-}
-
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);

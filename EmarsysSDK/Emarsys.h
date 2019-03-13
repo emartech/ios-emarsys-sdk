@@ -21,10 +21,6 @@
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
-+ (void)setAnonymousContact;
-
-+ (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
-
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue

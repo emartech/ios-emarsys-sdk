@@ -52,18 +52,18 @@ SPEC_BEGIN(EmarsysIntegrationTests)
             describe(@"setAnonymousContactWithCompletionBlock:", ^{
 
                 xit(@"should invoke completion block when its done", ^{
-                    __block NSError *returnedError = [NSError mock];
-
-                    XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-                    [Emarsys setAnonymousContactWithCompletionBlock:^(NSError *error) {
-                        returnedError = error;
-                        [setCustomerExpectation fulfill];
-                    }];
-
-                    XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
-                                                                               timeout:TIMEOUT];
-                    [[returnedError should] beNil];
-                    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
+//                    __block NSError *returnedError = [NSError mock];
+//
+//                    XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
+//                    [Emarsys setAnonymousContactWithCompletionBlock:^(NSError *error) {
+//                        returnedError = error;
+//                        [setCustomerExpectation fulfill];
+//                    }];
+//
+//                    XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
+//                                                                               timeout:TIMEOUT];
+//                    [[returnedError should] beNil];
+//                    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
 
                 });
 

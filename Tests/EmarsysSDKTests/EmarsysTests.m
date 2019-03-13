@@ -295,23 +295,6 @@ SPEC_BEGIN(EmarsysTests)
             });
         });
 
-        describe(@"setAnonymousContactWithCompletionBlock:", ^{
-            it(@"should delegate the call to mobileEngageInternal", ^{
-                [[engage should] receive:@selector(setAnonymousContactWithCompletionBlock:)
-                           withArguments:nil];
-                [Emarsys setAnonymousContact];
-            });
-
-            it(@"should delegate the call to mobileEngageInternal", ^{
-                EMSCompletionBlock completionBlock = ^(NSError *error) {
-                };
-
-                [[engage should] receive:@selector(setAnonymousContactWithCompletionBlock:)
-                           withArguments:completionBlock];
-                [Emarsys setAnonymousContactWithCompletionBlock:completionBlock];
-            });
-        });
-
         describe(@"setCustomerWithCustomerId:resultBlock:", ^{
             it(@"should delegate the call to predictInternal", ^{
                 [[predict should] receive:@selector(setCustomerWithId:)
