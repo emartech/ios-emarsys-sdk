@@ -1,139 +1,60 @@
 //
-//  Copyright © 2018. Emarsys. All rights reserved.
+//  Copyright © 2019 Emarsys. All rights reserved.
 //
 
-#import "Kiwi.h"
-#import "Emarsys.h"
-#import "EMSSQLiteHelper.h"
-#import "EMSDependencyContainer.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "EmarsysTestUtils.h"
+#import "EMSWaiter.h"
+#import "NSData+MobileEngine.h"
 
-#define TIMEOUT 10
-
-@interface Emarsys ()
-
-+ (void)setDependencyContainer:(EMSDependencyContainer *)dependencyContainer;
-
-+ (EMSSQLiteHelper *)sqliteHelper;
-
-+ (EMSDependencyContainer *)dependencyContainer;
+@interface EmarsysIntegrationTests : XCTestCase
 
 @end
 
-SPEC_BEGIN(EmarsysIntegrationTests)
+@implementation EmarsysIntegrationTests
 
-        afterEach(^{
-            [EmarsysTestUtils tearDownEmarsys];
-        });
+- (void)setUp {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
+                       withDependencyContainer:nil];
+}
 
-        void (^doLogin)() = ^{
-            __block NSError *returnedErrorForSetCustomer = [NSError mock];
+- (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
+}
 
-            XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-            [Emarsys setContactWithContactFieldValue:@"test@test.com"
-                                     completionBlock:^(NSError *error) {
-                                         returnedErrorForSetCustomer = error;
-                                         [setCustomerExpectation fulfill];
-                                     }];
+- (void)testSetContactWithContactFieldValue {
+    [self doSetPushToken];
 
-            XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
-                                                                       timeout:TIMEOUT];
-            [[returnedErrorForSetCustomer should] beNil];
-            [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
-        };
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys setContactWithContactFieldValue:@"test@test.com"
+                             completionBlock:^(NSError *error) {
+                                 returnedError = error;
+                                 [expectation fulfill];
+                             }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
 
-        context(@"V3", ^{
+- (void)doSetPushToken {
+    NSData *deviceToken = OCMClassMock([NSData class]);
+    OCMStub([deviceToken deviceTokenString]).andReturn(@"test_pushToken_for_iOS_integrationTest");
 
-            beforeEach(^{
-                [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
-                                   withDependencyContainer:nil];
-            });
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys.push setPushToken:deviceToken
+               completionBlock:^(NSError *error) {
+                   returnedError = error;
+                   [expectation fulfill];
+               }];
 
-            describe(@"setAnonymousContactWithCompletionBlock:", ^{
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
 
-                xit(@"should invoke completion block when its done", ^{
-//                    __block NSError *returnedError = [NSError mock];
-//
-//                    XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-//                    [Emarsys setAnonymousContactWithCompletionBlock:^(NSError *error) {
-//                        returnedError = error;
-//                        [setCustomerExpectation fulfill];
-//                    }];
-//
-//                    XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
-//                                                                               timeout:TIMEOUT];
-//                    [[returnedError should] beNil];
-//                    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
-
-                });
-
-            });
-
-            describe(@"setContactWithContactFieldValue:completionBlock:", ^{
-
-                xit(@"should invoke completion block when its done", ^{
-                    doLogin();
-                });
-
-            });
-
-            describe(@"clearContactWithCompletionBlock:", ^{
-                xit(@"should invoke completion block when its done", ^{
-                    __block NSError *returnedError = [NSError mock];
-
-                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                    [Emarsys clearContactWithCompletionBlock:^(NSError *error) {
-                        returnedError = error;
-                        [expectation fulfill];
-                    }];
-
-                    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                    timeout:TIMEOUT];
-                    [[returnedError should] beNil];
-                    [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
-                });
-            });
-
-            describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
-                xit(@"should invoke completion block when its done", ^{
-                    doLogin();
-
-                    __block NSError *returnedErrorForTrackCustomEvent = [NSError mock];
-
-                    XCTestExpectation *trackCustomEventExpectation = [[XCTestExpectation alloc] initWithDescription:@"trackCustomEvent"];
-                    [Emarsys trackCustomEventWithName:@"eventName"
-                                      eventAttributes:@{@"key": @"value"}
-                                      completionBlock:^(NSError *error) {
-                                          returnedErrorForTrackCustomEvent = error;
-                                          [trackCustomEventExpectation fulfill];
-                                      }];
-
-                    XCTWaiterResult trackCustomEventResult = [XCTWaiter waitForExpectations:@[trackCustomEventExpectation]
-                                                                                    timeout:TIMEOUT];
-                    [[returnedErrorForTrackCustomEvent should] beNil];
-                    [[theValue(trackCustomEventResult) should] equal:theValue(XCTWaiterResultCompleted)];
-                });
-            });
-
-            describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
-                xit(@"should invoke completion block when its done", ^{
-                    doLogin();
-
-                    __block NSError *returnedError = [NSError mock];
-                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"trackMessageOpen"];
-                    [Emarsys.push trackMessageOpenWithUserInfo:@{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"}
-                                               completionBlock:^(NSError *error) {
-                                                   returnedError = error;
-                                                   [expectation fulfill];
-                                               }];
-
-                    XCTWaiterResult trackMessageOpenResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                                    timeout:TIMEOUT];
-                    [[returnedError should] beNil];
-                    [[theValue(trackMessageOpenResult) should] equal:theValue(XCTWaiterResultCompleted)];
-                });
-            });
-
-        });
-
-SPEC_END
+@end

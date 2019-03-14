@@ -4,23 +4,28 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
+#import "MERequestContext.h"
 
 @interface EMSMobileEngageV3Internal ()
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) MERequestContext *requestContext;
 
 @end
 
 @implementation EMSMobileEngageV3Internal
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
-                        requestManager:(EMSRequestManager *)requestManager {
+                        requestManager:(EMSRequestManager *)requestManager
+                        requestContext:(MERequestContext *)requestContext {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
+    NSParameterAssert(requestContext);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
+        _requestContext = requestContext;
     }
     return self;
 }
@@ -33,6 +38,11 @@
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);
+    [self.requestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:self.requestContext.contactFieldId
+                                                                                  contactFieldValue:contactFieldValue]];
+    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
 }
 
 - (void)clearContact {

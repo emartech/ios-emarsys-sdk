@@ -27,17 +27,17 @@
     [Emarsys registerAppStartBlock];
 }
 
++ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+    [Emarsys setContactWithContactFieldValue:contactFieldValue
+                             completionBlock:nil];
+}
+
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);
     [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:contactFieldValue];
     [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
                                                                              completionBlock:completionBlock];
-}
-
-+ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
-    [Emarsys setContactWithContactFieldValue:contactFieldValue
-                             completionBlock:nil];
 }
 
 + (void)clearContact {
@@ -105,7 +105,6 @@
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
     return EMSDependencyInjection.dependencyContainer.notificationCenterDelegate;
 }
-
 
 + (EMSSQLiteHelper *)sqliteHelper {
     return EMSDependencyInjection.dependencyContainer.dbHelper;

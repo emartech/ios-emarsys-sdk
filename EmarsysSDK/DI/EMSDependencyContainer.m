@@ -172,9 +172,9 @@
     [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                      displayIamRepository:displayedIAMRepository]]
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                          displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
@@ -226,7 +226,9 @@
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];
 
-    _mobileEngage = [EMSMobileEngageV3Internal new];
+    _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                                               requestManager:self.requestManager
+                                                               requestContext:self.requestContext];
 
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                requestManager:self.requestManager];
