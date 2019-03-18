@@ -25,6 +25,7 @@
         _deviceInfo = deviceInfo;
         _contactFieldId = config.contactFieldId;
         _clientState = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCLIENT_STATE];
+        _contactToken = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_TOKEN];
     }
     return self;
 }
@@ -58,6 +59,14 @@
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:clientState
                      forKey:kCLIENT_STATE];
+    [userDefaults synchronize];
+}
+
+- (void)setContactToken:(NSString *)contactToken {
+    _contactToken = contactToken;
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [userDefaults setObject:contactToken
+                     forKey:kCONTACT_TOKEN];
     [userDefaults synchronize];
 }
 

@@ -15,6 +15,7 @@
 #define kMEID @"kMEID"
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 #define kCLIENT_STATE @"kCLIENT_STATE"
+#define kCONTACT_TOKEN @"kCONTACT_TOKEN"
 
 @interface MERequestContext : NSObject
 
@@ -30,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSNumber *contactFieldId;
 @property(nonatomic, strong, nullable) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong, nullable) NSString *clientState;
+@property(nonatomic, strong, nullable) NSString *contactToken;
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                   uuidProvider:(EMSUUIDProvider *)uuidProvider
