@@ -23,9 +23,21 @@
     [EmarsysTestUtils tearDownEmarsys];
 }
 
-- (void)testSetContactWithContactFieldValue {
+- (void)testSetContactWithContactFieldValue_when_valid_clientStateHasSet {
     [self doSetPushToken];
 
+    [self doLogin];
+}
+
+- (void)testSetPushToken_when_valid_clientState_contactToken_HaveSet {
+    [self doSetPushToken];
+
+    [self doLogin];
+
+    [self doSetPushToken];
+}
+
+- (void)doLogin {
     __block NSError *returnedError = [NSError new];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys setContactWithContactFieldValue:@"test@test.com"
@@ -34,7 +46,7 @@
                                  [expectation fulfill];
                              }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:300];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -52,7 +64,7 @@
                }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:300];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }

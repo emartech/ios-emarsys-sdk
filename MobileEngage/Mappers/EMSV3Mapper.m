@@ -43,6 +43,7 @@
     mergedHeaders[@"X-Client-State"] = self.requestContext.clientState;
     mergedHeaders[@"X-Request-Order"] = [self requestOrder];
     mergedHeaders[@"X-Client-Id"] = [self.requestContext.deviceInfo hardwareId];
+    mergedHeaders[@"X-Contact-Token"] = self.requestContext.contactToken;
     NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mergedHeaders];
     return headers;
 }
