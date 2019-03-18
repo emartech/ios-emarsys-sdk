@@ -46,6 +46,7 @@
 #import "EMSV3Mapper.h"
 #import "EMSPushV3Internal.h"
 #import "EMSMobileEngageV3Internal.h"
+#import "EMSContactTokenResponseHandler.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -178,6 +179,7 @@
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    [responseHandlers addObject:[[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext]];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
     _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository

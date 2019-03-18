@@ -258,14 +258,14 @@ SPEC_BEGIN(EmarsysTests)
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:nil];
 
-                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(5)];
+                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(6)];
                 });
 
                 it(@"should register EMSClientStateResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
                                        withDependencyContainer:nil];
 
-                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(5)];
+                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(6)];
                 });
             });
 
