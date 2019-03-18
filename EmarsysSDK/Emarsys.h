@@ -30,14 +30,14 @@
 
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
-+ (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
-                        sourceHandler:(EMSSourceHandler)sourceHandler;
-
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(EMSCompletionBlock)completionBlock;
+
++ (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
+        sourceHandler:(EMSSourceHandler)sourceHandler;
 
 @end
