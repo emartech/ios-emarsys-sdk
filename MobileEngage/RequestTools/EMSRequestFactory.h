@@ -7,6 +7,13 @@
 @class MERequestContext;
 @class EMSDeviceInfo;
 
+typedef enum {
+    EventTypeInternal,
+    EventTypeCustom
+} EventType;
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface EMSRequestFactory : NSObject
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext;
@@ -17,4 +24,9 @@
 
 - (EMSRequestModel *)createContactRequestModel;
 
+- (EMSRequestModel *)createEventRequestModelWithEventName:(NSString *)eventName
+                                          eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
+                                                eventType:(EventType)eventType;
 @end
+
+NS_ASSUME_NONNULL_END

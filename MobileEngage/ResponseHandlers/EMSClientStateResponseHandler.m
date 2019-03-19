@@ -16,7 +16,7 @@
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:HOST_URL] && [response.headers.allKeys containsObject:CLIENT_STATE]) {
+    if ([response.requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] && [response.headers.allKeys containsObject:CLIENT_STATE]) {
         result = YES;
     }
     return result;

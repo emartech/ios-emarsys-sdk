@@ -19,7 +19,7 @@
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:HOST_URL] && response.parsedBody && response.parsedBody[@"contactToken"]) {
+    if ([response.requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] && response.parsedBody && response.parsedBody[@"contactToken"]) {
         result = YES;
     }
     return result;
