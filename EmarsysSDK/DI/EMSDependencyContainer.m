@@ -47,6 +47,7 @@
 #import "EMSPushV3Internal.h"
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSContactTokenResponseHandler.h"
+#import "EMSInAppInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -224,7 +225,6 @@
 
     _appStartBlockProvider = [AppStartBlockProvider new];
 
-
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];
 
@@ -240,7 +240,8 @@
                                                                                     inApp:self.iam
                                                                         timestampProvider:timestampProvider];
 
-    [self.iam setInAppTracker:self.mobileEngage];
+    [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
+                                                                requestFactory:self.requestFactory]];
 }
 
 - (EMSCompletionMiddleware *)createMiddleware {

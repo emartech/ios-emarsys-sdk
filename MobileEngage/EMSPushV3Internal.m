@@ -46,7 +46,8 @@
 
 }
 
-- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
+                     completionBlock:(EMSCompletionBlock)completionBlock {
 
 }
 
