@@ -73,8 +73,14 @@
     XCTAssertFalse([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
 }
 
-- (void)testShouldHandleWithRequestModel_when_V3Url {
+- (void)testShouldHandleWithRequestModel_when_V3ClientUrl {
     _url = [[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com"];
+
+    XCTAssertTrue([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
+}
+
+- (void)testShouldHandleWithRequestModel_when_V3EventUrl {
+    _url = [[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net"];
 
     XCTAssertTrue([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
 }

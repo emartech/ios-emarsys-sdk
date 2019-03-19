@@ -21,6 +21,9 @@
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong) NSString *eventName;
+@property(nonatomic, strong) NSDictionary *eventAttributes;
+@property(nonatomic, copy) void (^completionBlock)(NSError *);
 
 @end
 
@@ -31,6 +34,13 @@
     _uuidProvider = [EMSUUIDProvider new];
 
     _contactFieldValue = @"testContactFieldValue";
+    _eventName = @"testEventName";
+    _eventAttributes = @{
+            @"TestKey": @"TestValue"
+    };
+    _completionBlock = ^(NSError *error) {
+    };
+
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
@@ -86,8 +96,7 @@
 - (void)testSetContactWithContactFieldValueCompletionBlock_contactFieldValue_mustNotBeNil {
     @try {
         [self.internal setContactWithContactFieldValue:nil
-                                       completionBlock:^(NSError *error) {
-                                       }];
+                                       completionBlock:self.completionBlock];
         XCTFail(@"Expected Exception when contactFieldValue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldValue");
@@ -105,22 +114,70 @@
 
 - (void)testSetContactWithContactFieldValueCompletionBlock {
     EMSRequestModel *requestModel = [self createRequestModel];
-    void (^completionBlock)(NSError *) = ^(NSError *error) {
-    };
     NSNumber *contactFieldId = @3;
 
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(contactFieldId);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
     [self.internal setContactWithContactFieldValue:self.contactFieldValue
-                                   completionBlock:completionBlock];
+                                   completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestContext contactFieldId]);
     OCMVerify([self.mockRequestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:contactFieldId
                                                                                                 contactFieldValue:self.contactFieldValue]]);
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
-                                      withCompletionBlock:completionBlock]);
+                                      withCompletionBlock:self.completionBlock]);
+}
+
+- (void)testTrackCustomEventWithNameEventAttributes_eventName_mustNotBeNil {
+    @try {
+        [self.internal trackCustomEventWithName:nil
+                                eventAttributes:@{}];
+        XCTFail(@"Expected Exception when eventName is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: eventName");
+    }
+}
+
+- (void)testTrackCustomEventWithNameEventAttributesCompletionBlock_eventName_mustNotBeNil {
+    @try {
+        [self.internal trackCustomEventWithName:nil
+                                eventAttributes:@{}
+                                completionBlock:self.completionBlock];
+        XCTFail(@"Expected Exception when eventName is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: eventName");
+    }
+}
+
+- (void)testTrackCustomEventWithNameEventAttributes {
+    EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
+
+    [partialMockInternal trackCustomEventWithName:self.eventName
+                                  eventAttributes:self.eventAttributes];
+
+    OCMVerify([partialMockInternal trackCustomEventWithName:self.eventName
+                                            eventAttributes:self.eventAttributes
+                                            completionBlock:nil]);
+}
+
+- (void)testTrackCustomEventWithNameEventAttributesCompletionBlock {
+    EMSRequestModel *requestModel = [self createRequestModel];
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:self.eventName
+                                                          eventAttributes:self.eventAttributes
+                                                                eventType:EventTypeCustom]).andReturn(requestModel);
+
+    [self.internal trackCustomEventWithName:self.eventName
+                            eventAttributes:self.eventAttributes
+                            completionBlock:self.completionBlock];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:self.eventName
+                                                            eventAttributes:self.eventAttributes
+                                                                  eventType:EventTypeCustom]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:self.completionBlock]);
 }
 
 - (EMSRequestModel *)createRequestModel {

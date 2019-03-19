@@ -24,7 +24,7 @@
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return [requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL];
+    return [requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] || [requestModel.url.absoluteString hasPrefix:EVENT_SERVICE_URL];
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

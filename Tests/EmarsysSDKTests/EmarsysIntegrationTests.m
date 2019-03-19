@@ -37,6 +37,27 @@
     [self doSetPushToken];
 }
 
+- (void)testTrackCustomEventWithNameEventAttributes {
+    [self doSetPushToken];
+
+    [self doLogin];
+
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys trackCustomEventWithName:@"testEventName"
+                      eventAttributes:@{
+                              @"testEventAttributesKey1": @"testEventAttributesValue1",
+                              @"testEventAttributesKey2": @"testEventAttributesValue2"}
+                      completionBlock:^(NSError *error) {
+                          returnedError = error;
+                          [expectation fulfill];
+                      }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
 - (void)doLogin {
     __block NSError *returnedError = [NSError new];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
@@ -46,7 +67,7 @@
                                  [expectation fulfill];
                              }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:300];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -64,7 +85,7 @@
                }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:300];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }

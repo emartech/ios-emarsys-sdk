@@ -55,13 +55,20 @@
 
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes {
-
+    [self trackCustomEventWithName:eventName
+                   eventAttributes:eventAttributes
+                   completionBlock:nil];
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(EMSCompletionBlock)completionBlock {
-
+    NSParameterAssert(eventName);
+    EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:eventName
+                                                                              eventAttributes:eventAttributes
+                                                                                    eventType:EventTypeCustom];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
 }
 
 @end
