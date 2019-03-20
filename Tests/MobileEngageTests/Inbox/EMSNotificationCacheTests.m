@@ -55,7 +55,7 @@ SPEC_BEGIN(EMSNotificationCacheTests)
                         @"sound": @"default"
                     }
                 };
-                EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo];
+                EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo timestampProvider:nil];
 
                 [notificationCache cache:notification];
 

@@ -146,7 +146,7 @@
                      completionBlock:(EMSCompletionBlock)completionBlock {
     NSNumber *inbox = userInfo[@"inbox"];
     if (inbox && [inbox boolValue]) {
-        [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo]];
+        [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo timestampProvider:nil]];
     }
     NSString *messageId = [userInfo messageId];
     if (messageId) {

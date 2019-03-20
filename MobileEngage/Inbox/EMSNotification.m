@@ -5,10 +5,12 @@
 #import "EMSNotification.h"
 #import "NSDictionary+MobileEngage.h"
 #import "MEExperimental.h"
+#import "EMSTimestampProvider.h"
 
 @implementation EMSNotification
 
-- (instancetype)initWithUserInfo:(NSDictionary *)dictionary {
+- (instancetype)initWithUserInfo:(NSDictionary *)dictionary
+               timestampProvider:(EMSTimestampProvider *)timestampProvider {
     if (self = [super init]) {
 
         if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
@@ -29,7 +31,7 @@
 
         _customData = [self customDataWithoutSid:dictionary];
         _expirationTime = @7200;
-        _receivedAtTimestamp = @([[NSDate date] timeIntervalSince1970]);
+        _receivedAtTimestamp = @([[timestampProvider provideTimestamp] timeIntervalSince1970]);
     }
     return self;
 }

@@ -5,23 +5,35 @@
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
 #import "NSData+MobileEngine.h"
+#import "NSDictionary+MobileEngage.h"
+#import "NSError+EMSCore.h"
+#import "EMSNotificationCache.h"
+#import "EMSTimestampProvider.h"
 
 @interface EMSPushV3Internal ()
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSNotificationCache *notificationCache;
+@property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 
 @end
 
 @implementation EMSPushV3Internal
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
-                        requestManager:(EMSRequestManager *)requestManager {
+                        requestManager:(EMSRequestManager *)requestManager
+                     notificationCache:(EMSNotificationCache *)notificationCache
+                     timestampProvider:(EMSTimestampProvider *)timestampProvider {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
+    NSParameterAssert(notificationCache);
+    NSParameterAssert(timestampProvider);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
+        _notificationCache = notificationCache;
+        _timestampProvider = timestampProvider;
     }
     return self;
 }
@@ -43,12 +55,36 @@
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
-
+    [self trackMessageOpenWithUserInfo:userInfo
+                       completionBlock:nil];
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(userInfo);
+    NSNumber *inbox = userInfo[@"inbox"];
+    if (inbox && [inbox boolValue]) {
+        [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo
+                                                              timestampProvider:self.timestampProvider]];
+    }
 
+    NSString *sid = [userInfo messageId];
+    if (sid) {
+        EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
+                                                                                  eventAttributes:@{
+                                                                                          @"origin": @"main",
+                                                                                          @"sid": sid
+                                                                                  }
+                                                                                        eventType:EventTypeInternal];
+        [self.requestManager submitRequestModel:requestModel
+                            withCompletionBlock:nil];
+
+    } else if (completionBlock) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionBlock([NSError errorWithCode:1400
+                              localizedDescription:@"No messageId found!"]);
+        });
+    }
 }
 
 @end

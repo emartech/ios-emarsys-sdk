@@ -233,7 +233,9 @@
                                                                requestContext:self.requestContext];
 
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                               requestManager:self.requestManager];
+                                               requestManager:self.requestManager
+                                            notificationCache:self.notificationCache
+                                            timestampProvider:timestampProvider];
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                      mobileEngageInternal:self.mobileEngage inApp:self.iam timestampProvider:timestampProvider

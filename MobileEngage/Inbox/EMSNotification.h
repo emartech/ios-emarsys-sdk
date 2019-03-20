@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class EMSTimestampProvider;
 
 @interface EMSNotification : NSObject
 
@@ -16,7 +17,8 @@
 @property(nonatomic, strong) NSNumber *expirationTime;
 @property(nonatomic, strong) NSNumber *receivedAtTimestamp;
 
-- (instancetype)initWithUserInfo:(NSDictionary *)dictionary;
+- (instancetype)initWithUserInfo:(NSDictionary *)dictionary
+               timestampProvider:(EMSTimestampProvider *)timestampProvider;
 - (instancetype)initWithNotificationDictionary:(NSDictionary *)dictionary;
 
 - (BOOL)isEqual:(id)other;

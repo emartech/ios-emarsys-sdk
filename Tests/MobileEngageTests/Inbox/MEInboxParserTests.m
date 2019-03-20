@@ -96,7 +96,7 @@ SPEC_BEGIN(MEInboxParserTests)
                             @"rootKey": @"rootValue"
                     };
 
-                    EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo];
+                    EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo timestampProvider:nil];
                     [[notification.id should] equal:@"userInfoMessageId"];
                     [[notification.sid should] equal:@"userInfoSid"];
                     [[notification.title should] equal:@"title"];
