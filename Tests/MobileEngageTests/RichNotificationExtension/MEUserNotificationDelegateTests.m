@@ -9,6 +9,9 @@
 #import "EMSWaiter.h"
 #import "MEInApp.h"
 #import "EMSTimestampProvider.h"
+#import "EMSPushNotificationProtocol.h"
+#import "EMSRequestManager.h"
+#import "EMSRequestFactory.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -34,13 +37,35 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             return notificationResponseWithUserInfoWithActionId(userInfo, @"uniqueId");
         };
 
+        __block id application;
+        __block id mobileEngageInternal;
+        __block id inApp;
+        __block id timestampProvider;
+        __block id pushInternal;
+        __block id requestManager;
+        __block id requestFactory;
+
+        beforeEach(^{
+            application = [UIApplication mock];
+            mobileEngageInternal = [MobileEngageInternal mock];
+            inApp = [MEInApp mock];
+            timestampProvider = [EMSTimestampProvider mock];
+            pushInternal = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
+            requestManager = [EMSRequestManager nullMock];
+            requestFactory = [EMSRequestFactory nullMock];
+        });
+
         describe(@"init", ^{
+
             it(@"should throw an exception when there is no application", ^{
                 @try {
                     [[MEUserNotificationDelegate alloc] initWithApplication:nil
-                                                       mobileEngageInternal:[MobileEngageInternal mock]
-                                                                      inApp:[MEInApp mock]
-                                                          timestampProvider:[EMSTimestampProvider mock]];
+                                                       mobileEngageInternal:mobileEngageInternal
+                                                                      inApp:inApp
+                                                          timestampProvider:timestampProvider
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:requestFactory];
                     fail(@"Expected Exception when application is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: application"];
@@ -50,10 +75,13 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should throw an exception when there is no mobileEngageInternal", ^{
                 @try {
-                    [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
                                                        mobileEngageInternal:nil
-                                                                      inApp:[MEInApp mock]
-                                                          timestampProvider:[EMSTimestampProvider mock]];
+                                                                      inApp:inApp
+                                                          timestampProvider:timestampProvider
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:requestFactory];
                     fail(@"Expected Exception when mobileEngage is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: mobileEngage"];
@@ -63,10 +91,13 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should throw an exception when there is no inApp", ^{
                 @try {
-                    [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                       mobileEngageInternal:[MobileEngageInternal mock]
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
+                                                       mobileEngageInternal:mobileEngageInternal
                                                                       inApp:nil
-                                                          timestampProvider:[EMSTimestampProvider mock]];
+                                                          timestampProvider:timestampProvider
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:requestFactory];
                     fail(@"Expected Exception when inApp is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
@@ -76,13 +107,61 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should throw an exception when there is no timestampProvider", ^{
                 @try {
-                    [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                       mobileEngageInternal:[MobileEngageInternal mock]
-                                                                      inApp:[MEInApp mock]
-                                                          timestampProvider:nil];
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
+                                                       mobileEngageInternal:mobileEngageInternal
+                                                                      inApp:inApp
+                                                          timestampProvider:nil
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:requestFactory];
                     fail(@"Expected Exception when timestampProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+            it(@"should throw an exception when there is no pushInternal", ^{
+                @try {
+                    [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
+                                                       mobileEngageInternal:[MobileEngageInternal mock]
+                                                                      inApp:[MEInApp mock]
+                                                          timestampProvider:[EMSTimestampProvider mock]
+                                                               pushInternal:nil
+                                                             requestManager:[EMSRequestManager mock]
+                                                             requestFactory:[EMSRequestFactory mock]];
+                    fail(@"Expected Exception when pushInternal is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: pushInternal"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+            it(@"should throw an exception when there is no requestManager", ^{
+                @try {
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
+                                                       mobileEngageInternal:mobileEngageInternal
+                                                                      inApp:inApp
+                                                          timestampProvider:timestampProvider
+                                                               pushInternal:pushInternal
+                                                             requestManager:nil
+                                                             requestFactory:requestFactory];
+                    fail(@"Expected Exception when requestManager is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+            it(@"should throw an exception when there is no requestFactory", ^{
+                @try {
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
+                                                       mobileEngageInternal:mobileEngageInternal
+                                                                      inApp:inApp
+                                                          timestampProvider:timestampProvider
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:nil];
+                    fail(@"Expected Exception when requestFactory is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestFactory"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -145,7 +224,10 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 userNotification.delegate = userNotificationCenterDelegate;
 
                 [userNotification userNotificationCenter:center
@@ -178,16 +260,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 userNotification.eventHandler = eventHandlerMock;
 
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"MEAppEvent",
-                            @"name": eventName,
-                            @"payload": payload
-                        }
-                    ]},
-                    @"u": @"{\"sid\": \"123456789\"}"
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"MEAppEvent",
+                                        @"name": eventName,
+                                        @"payload": payload
+                                }
+                        ]},
+                        @"u": @"{\"sid\": \"123456789\"}"
 
                 };
 
@@ -208,16 +290,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 userNotification.eventHandler = eventHandlerMock;
 
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"someStuff",
-                            @"name": @"testEventName",
-                            @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
-                        }
-                    ]},
-                    @"u": @"{\"sid\": \"123456789\"}"
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"someStuff",
+                                        @"name": @"testEventName",
+                                        @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
+                                }
+                        ]},
+                        @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -234,21 +316,26 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
 
-                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                  mobileEngageInternal:mobileEngage
-                                                                                                                 inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc]
+                        initWithApplication:[UIApplication mock]
+                       mobileEngageInternal:mobileEngage
+                                      inApp:[MEInApp nullMock]
+                          timestampProvider:[EMSTimestampProvider nullMock]
+                               pushInternal:pushInternal
+                             requestManager:requestManager
+                             requestFactory:requestFactory];
+
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"MECustomEvent",
-                            @"name": eventName,
-                            @"payload": payload
-                        }
-                    ]},
-                    @"u": @"{\"sid\": \"123456789\"}"
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"MECustomEvent",
+                                        @"name": eventName,
+                                        @"payload": payload
+                                }
+                        ]},
+                        @"u": @"{\"sid\": \"123456789\"}"
                 };
                 [[mobileEngage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                                  withArguments:eventName,
@@ -264,28 +351,39 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             });
 
-            it(@"should call trackInternalCustomEvent on MobileEngage with richNotification:actionClicked eventName and title and action id in the payload", ^{
+            it(@"should call track click with richNotification:actionClicked eventName and title and action id in the payload", ^{
                 MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:mobileEngage
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"key": @"value"
-                        }
-                    ]}, @"u": @"{\"sid\": \"123456789\"}"
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"key": @"value"
+                                }
+                        ]}, @"u": @"{\"sid\": \"123456789\"}"
                 };
-                [[mobileEngage should] receive:@selector(trackInternalCustomEvent:eventAttributes:completionBlock:)
-                                 withArguments:@"push:click",
-                                               @{
-                                                   @"origin": @"button",
-                                                   @"button_id": @"uniqueId",
-                                                   @"sid": @"123456789"
-                                               }, kw_any()];
+
+                EMSRequestModel *requestModel = [EMSRequestModel mock];
+
+                [[requestFactory should] receive:@selector(createEventRequestModelWithEventName:eventAttributes:eventType:)
+                                       andReturn:requestModel
+                                   withArguments:@"push:click",
+                                                 @{
+                                                         @"origin": @"button",
+                                                         @"button_id": @"uniqueId",
+                                                         @"sid": @"123456789"
+                                                 },
+                                theValue(EventTypeInternal)];
+
+                [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                   withArguments:requestModel, kw_any()];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
@@ -302,25 +400,28 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
 
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 NSString *eventName = @"eventName";
                 NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                    @{
-                        @"id": @"uniqueId",
-                        @"title": @"actionTitle",
-                        @"type": @"OpenExternalUrl",
-                        @"url": @"https://www.emarsys.com"
-                    }, @{
-                        @"id": @"uniqueId2",
-                        @"title": @"actionTitle",
-                        @"type": @"MECustomEvent",
-                        @"name": eventName,
-                        @"payload": payload
-                    }
+                        @{
+                                @"id": @"uniqueId",
+                                @"title": @"actionTitle",
+                                @"type": @"OpenExternalUrl",
+                                @"url": @"https://www.emarsys.com"
+                        }, @{
+                                @"id": @"uniqueId2",
+                                @"title": @"actionTitle",
+                                @"type": @"MECustomEvent",
+                                @"name": eventName,
+                                @"payload": payload
+                        }
                 ]},
-                    @"u": @"{\"sid\": \"123456789\"}"
+                        @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
@@ -343,12 +444,15 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                       mobileEngageInternal:mobileEngage
                                                                                                                      inApp:[MEInApp nullMock]
-                                                                                                         timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                         timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                              pushInternal:pushInternal
+                                                                                                            requestManager:requestManager
+                                                                                                            requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"u": @{
-                        @"sid": @"123456789"
-                    }}};
-                [[mobileEngage should] receive:@selector(trackMessageOpenWithUserInfo:)
+                        @"u": @{
+                                @"sid": @"123456789"
+                        }}};
+                [[pushInternal should] receive:@selector(trackMessageOpenWithUserInfo:)
                                  withArguments:userInfo];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -370,14 +474,17 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:application
                                                                                                   mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                    @{
-                        @"id": @"uniqueId",
-                        @"title": @"actionTitle",
-                        @"type": @"OpenExternalUrl",
-                        @"url": @"https://www.emarsys.com"
-                    }
+                        @{
+                                @"id": @"uniqueId",
+                                @"title": @"actionTitle",
+                                @"type": @"OpenExternalUrl",
+                                @"url": @"https://www.emarsys.com"
+                        }
                 ]}, @"u": @"{\"sid\": \"123456789\"}"};
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -401,12 +508,15 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                       mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                      inApp:inApp
-                                                                                                         timestampProvider:timestampProvider];
+                                                                                                         timestampProvider:timestampProvider
+                                                                                                              pushInternal:pushInternal
+                                                                                                            requestManager:requestManager
+                                                                                                            requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"inapp": @{
-                        @"campaign_id": @"42",
-                        @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
-                    }}};
+                        @"inapp": @{
+                                @"campaign_id": @"42",
+                                @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+                        }}};
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [notificationDelegate userNotificationCenter:nil
@@ -423,28 +533,30 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should call mobileEngage with default action", ^{
                 MobileEngageInternal *mockMEInternal = [MobileEngageInternal nullMock];
-                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                  mobileEngageInternal:mockMEInternal
+                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 NSString *eventName = @"eventName";
                 NSDictionary *defaultAction = @{
-                    @"type": @"MECustomEvent",
-                    @"name": eventName,
-                    @"payload": payload
+                        @"type": @"MECustomEvent",
+                        @"name": eventName,
+                        @"payload": payload
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"default_action": defaultAction,
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"OpenExternalUrl",
-                            @"url": @"https://www.emarsys.com"
-                        }
-                    ]},
-                    @"u": @"{\"sid\": \"123456789\"}"
+                        @"default_action": defaultAction,
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"OpenExternalUrl",
+                                        @"url": @"https://www.emarsys.com"
+                                }
+                        ]},
+                        @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
@@ -468,24 +580,27 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 NSDictionary *expectedAction = @{
-                    @"type": @"MEAppEvent",
-                    @"name": @"nameValue",
-                    @"payload": @{
-                        @"someKey": @"someValue"
-                    }
+                        @"type": @"MEAppEvent",
+                        @"name": @"nameValue",
+                        @"payload": @{
+                                @"someKey": @"someValue"
+                        }
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"default_action": expectedAction,
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"OpenExternalUrl",
-                            @"url": @"https://www.emarsys.com"
-                        }
-                    ]
+                        @"default_action": expectedAction,
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"OpenExternalUrl",
+                                        @"url": @"https://www.emarsys.com"
+                                }
+                        ]
                 }, @"u": @"{\"sid\": \"123456789\"}"};
 
                 NSDictionary *action = [userNotification actionFromResponse:notificationResponseWithUserInfoWithActionId(userInfo, UNNotificationDefaultActionIdentifier)];
@@ -497,24 +612,27 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:[MobileEngageInternal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
-                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]];
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
                 NSDictionary *expectedAction = @{
-                    @"type": @"MEAppEvent",
-                    @"name": @"nameValue",
-                    @"payload": @{
-                        @"someKey": @"someValue"
-                    }
+                        @"type": @"MEAppEvent",
+                        @"name": @"nameValue",
+                        @"payload": @{
+                                @"someKey": @"someValue"
+                        }
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                    @"default_action": expectedAction,
-                    @"actions": @[
-                        @{
-                            @"id": @"uniqueId",
-                            @"title": @"actionTitle",
-                            @"type": @"OpenExternalUrl",
-                            @"url": @"https://www.emarsys.com"
-                        }
-                    ]
+                        @"default_action": expectedAction,
+                        @"actions": @[
+                                @{
+                                        @"id": @"uniqueId",
+                                        @"title": @"actionTitle",
+                                        @"type": @"OpenExternalUrl",
+                                        @"url": @"https://www.emarsys.com"
+                                }
+                        ]
                 }, @"u": @"{\"sid\": \"123456789\"}"};
 
                 NSDictionary *action = [userNotification actionFromResponse:notificationResponseWithUserInfoWithActionId(userInfo, UNNotificationDismissActionIdentifier)];

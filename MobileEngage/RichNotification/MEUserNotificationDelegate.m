@@ -14,6 +14,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSMacros.h"
 #import "EMSCrashLog.h"
+#import "EMSRequestFactory.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -21,6 +22,9 @@
 @property(nonatomic, strong) MobileEngageInternal *mobileEngage;
 @property(nonatomic, strong) MEInApp *inApp;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
+@property(nonatomic, strong) id <EMSPushNotificationProtocol> pushInternal;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSRequestFactory *requestFactory;
 
 @end
 
@@ -32,16 +36,25 @@
 - (instancetype)initWithApplication:(UIApplication *)application
                mobileEngageInternal:(MobileEngageInternal *)mobileEngage
                               inApp:(id <MEIAMProtocol>)inApp
-                  timestampProvider:(EMSTimestampProvider *)timestampProvider {
+                  timestampProvider:(EMSTimestampProvider *)timestampProvider
+                       pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
+                     requestManager:(EMSRequestManager *)requestManager
+                     requestFactory:(EMSRequestFactory *)requestFactory {
     NSParameterAssert(application);
     NSParameterAssert(mobileEngage);
     NSParameterAssert(inApp);
     NSParameterAssert(timestampProvider);
+    NSParameterAssert(pushInternal);
+    NSParameterAssert(requestManager);
+    NSParameterAssert(requestFactory);
     if (self = [super init]) {
         _application = application;
         _mobileEngage = mobileEngage;
         _inApp = inApp;
         _timestampProvider = timestampProvider;
+        _pushInternal = pushInternal;
+        _requestManager = requestManager;
+        _requestFactory = requestFactory;
     }
     return self;
 }
@@ -88,14 +101,16 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
     NSDictionary *action = [self actionFromResponse:response];
     if (action && action[@"id"]) {
-        [self.mobileEngage trackInternalCustomEvent:@"push:click"
-                                    eventAttributes:@{
-                                        @"origin": @"button",
-                                        @"button_id": action[@"id"],
-                                        @"sid": [userInfo messageId]
-                                    } completionBlock:nil];
+        EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
+                                                                                  eventAttributes:@{
+                                                                                          @"origin": @"button",
+                                                                                          @"button_id": action[@"id"],
+                                                                                          @"sid": [userInfo messageId]
+                                                                                  } eventType:EventTypeInternal];
+        [self.requestManager submitRequestModel:requestModel
+                            withCompletionBlock:nil];
     } else {
-        [self.mobileEngage trackMessageOpenWithUserInfo:userInfo];
+        [self.pushInternal trackMessageOpenWithUserInfo:userInfo];
     }
     if (action) {
         NSString *type = action[@"type"];

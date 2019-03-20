@@ -236,9 +236,10 @@
                                                requestManager:self.requestManager];
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
-                                                                     mobileEngageInternal:self.mobileEngage
-                                                                                    inApp:self.iam
-                                                                        timestampProvider:timestampProvider];
+                                                                     mobileEngageInternal:self.mobileEngage inApp:self.iam timestampProvider:timestampProvider
+                                                                             pushInternal:self.push
+                                                                           requestManager:self.requestManager
+                                                                           requestFactory:self.requestFactory];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

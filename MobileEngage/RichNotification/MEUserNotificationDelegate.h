@@ -8,12 +8,18 @@
 
 @class MobileEngageInternal;
 @class EMSTimestampProvider;
+@class EMSRequestManager;
+@class EMSRequestFactory;
+@protocol EMSPushNotificationProtocol;
 
 @interface MEUserNotificationDelegate : NSObject <EMSUserNotificationCenterDelegate>
 
 - (instancetype)initWithApplication:(UIApplication *)application
                mobileEngageInternal:(MobileEngageInternal *)mobileEngage
                               inApp:(id <MEIAMProtocol>)inApp
-                  timestampProvider:(EMSTimestampProvider *)timestampProvider;
+                  timestampProvider:(EMSTimestampProvider *)timestampProvider
+                       pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
+                     requestManager:(EMSRequestManager *)requestManager
+                     requestFactory:(EMSRequestFactory *)requestFactory;
 
 @end
