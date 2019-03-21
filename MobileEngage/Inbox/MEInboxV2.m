@@ -9,10 +9,12 @@
 #import "MEDefaultHeaders.h"
 #import "NSError+EMSCore.h"
 #import "MERequestFactory_old.h"
+#import "EMSRequestFactory.h"
 
 @interface MEInboxV2 ()
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSMutableArray *resultBlocks;
@@ -26,7 +28,8 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager {
+                requestManager:(EMSRequestManager *)requestManager
+                requestFactory:(EMSRequestFactory *)requestFactory {
     NSParameterAssert(config);
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
@@ -37,6 +40,7 @@
         _notificationCache = notificationCache;
         _requestManager = requestManager;
         _resultBlocks = [NSMutableArray new];
+        _requestFactory = requestFactory;
     }
     return self;
 }
@@ -56,11 +60,11 @@
     if (self.requestContext.meId) {
         __weak typeof(self) weakSelf = self;
         EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodGET];
-                [builder setHeaders:[weakSelf createNotificationsFetchingHeaders]];
-                [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@",
-                                                           weakSelf.requestContext.meId]];
-            }
+                    [builder setMethod:HTTPMethodGET];
+                    [builder setHeaders:[weakSelf createNotificationsFetchingHeaders]];
+                    [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@",
+                                                               weakSelf.requestContext.meId]];
+                }
                                                        timestampProvider:self.requestContext.timestampProvider
                                                             uuidProvider:self.requestContext.uuidProvider];
         self.fetchRequestInProgress = YES;
@@ -111,11 +115,11 @@
     if (self.requestContext.meId) {
         __weak typeof(self) weakSelf = self;
         EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodDELETE];
-                [builder setHeaders:[weakSelf createNotificationsFetchingHeaders]];
-                [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@/count",
-                                                           weakSelf.requestContext.meId]];
-            }
+                    [builder setMethod:HTTPMethodDELETE];
+                    [builder setHeaders:[weakSelf createNotificationsFetchingHeaders]];
+                    [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@/count",
+                                                               weakSelf.requestContext.meId]];
+                }
                                                        timestampProvider:self.requestContext.timestampProvider
                                                             uuidProvider:self.requestContext.uuidProvider];
         [self.requestManager submitRequestModelNow:requestModel
@@ -151,8 +155,6 @@
 - (void)trackMessageOpenWith:(EMSNotification *)inboxMessage
              completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(inboxMessage);
-    EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:inboxMessage
-                                                                                         requestContext:self.requestContext];
     if (!inboxMessage.id) {
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing messageId"]);
@@ -160,7 +162,14 @@
         completionBlock([NSError errorWithCode:1
                           localizedDescription:@"Missing sid"]);
     } else {
-        [self.requestManager submitRequestModel:requestModel withCompletionBlock:completionBlock];
+        NSMutableDictionary *attributes = [NSMutableDictionary new];
+        attributes[@"message_id"] = inboxMessage.id;
+        attributes[@"sid"] = inboxMessage.sid;
+        EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inbox:open"
+                                                                                  eventAttributes:[NSDictionary dictionaryWithDictionary:attributes]
+                                                                                        eventType:EventTypeInternal];
+        [self.requestManager submitRequestModel:requestModel
+                            withCompletionBlock:completionBlock];
     }
 }
 

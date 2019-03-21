@@ -9,6 +9,8 @@
 #import "EMSInboxProtocol.h"
 #import "EMSNotificationCache.h"
 
+@class EMSRequestFactory;
+
 @interface MEInboxV2 : NSObject <EMSInboxProtocol>
 
 @property(nonatomic, strong) EMSNotificationInboxStatus *lastNotificationStatus;
@@ -18,6 +20,7 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager;
+                requestManager:(EMSRequestManager *)requestManager
+                requestFactory:(EMSRequestFactory *)requestFactory;
 
 @end

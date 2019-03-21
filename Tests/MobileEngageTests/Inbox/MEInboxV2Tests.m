@@ -11,6 +11,7 @@
 #import "MEExperimental+Test.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "EMSrequestFactory.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -28,6 +29,7 @@ SPEC_BEGIN(MEInboxV2Tests)
         __block EMSUUIDProvider *uuidProvider;
         __block EMSTimestampProvider *timestampProvider;
         __block EMSDeviceInfo *deviceInfo;
+        __block EMSRequestFactory *mockRequestFactory;
 
         uuidProvider = [EMSUUIDProvider new];
         timestampProvider = [EMSTimestampProvider new];
@@ -54,7 +56,8 @@ SPEC_BEGIN(MEInboxV2Tests)
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                notificationCache:notificationCache
-                                                  requestManager:requestManager];
+                                                  requestManager:requestManager
+                                                  requestFactory:mockRequestFactory];
             return inbox;
         };
 
@@ -68,7 +71,8 @@ SPEC_BEGIN(MEInboxV2Tests)
             MEInboxV2 *inbox = [[MEInboxV2 alloc] initWithConfig:config
                                                   requestContext:requestContext
                                                notificationCache:notificationCache
-                                                  requestManager:requestManager];
+                                                  requestManager:requestManager
+                                                  requestFactory:mockRequestFactory];
             return inbox;
         };
 
@@ -83,13 +87,13 @@ SPEC_BEGIN(MEInboxV2Tests)
 
         beforeEach(^{
             NSDictionary *jsonResponse = @{@"notifications": @[
-                @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
-                @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
-                @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)},
+                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                    @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)},
             ]};
 
             NSMutableArray<EMSNotification *> *nots = [NSMutableArray array];
@@ -97,6 +101,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                 [nots addObject:[[EMSNotification alloc] initWithNotificationDictionary:notificationDict]];
             }
             fakeNotifications = nots;
+
+            mockRequestFactory = [EMSRequestFactory mock];
         });
 
 
@@ -107,7 +113,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:nil
-                                       requestManager:[EMSRequestManager mock]];
+                                       requestManager:[EMSRequestManager mock]
+                                       requestFactory:mockRequestFactory];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCache"];
@@ -120,7 +127,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:nil
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
-                                       requestManager:[EMSRequestManager mock]];
+                                       requestManager:[EMSRequestManager mock]
+                                       requestFactory:mockRequestFactory];
                     fail(@"Expected Exception when config is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
@@ -133,7 +141,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:nil
                                     notificationCache:[EMSNotificationCache mock]
-                                       requestManager:[EMSRequestManager mock]];
+                                       requestManager:[EMSRequestManager mock]
+                                       requestFactory:mockRequestFactory];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -146,7 +155,8 @@ SPEC_BEGIN(MEInboxV2Tests)
                     [[MEInboxV2 alloc] initWithConfig:[EMSConfig mock]
                                        requestContext:[MERequestContext mock]
                                     notificationCache:[EMSNotificationCache mock]
-                                       requestManager:nil];
+                                       requestManager:nil
+                                       requestFactory:mockRequestFactory];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
@@ -679,11 +689,11 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should invoke requestManager with the correct requestModel", ^{
                 EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setMethod:HTTPMethodDELETE];
-                        [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@/count",
-                                                                   meId]];
-                        [builder setHeaders:expectedHeaders()];
-                    }
+                            [builder setMethod:HTTPMethodDELETE];
+                            [builder setUrl:[NSString stringWithFormat:@"https://me-inbox.eservice.emarsys.net/api/v1/notifications/%@/count",
+                                                                       meId]];
+                            [builder setHeaders:expectedHeaders()];
+                        }
                                                                        timestampProvider:requestContext.timestampProvider
                                                                             uuidProvider:requestContext.uuidProvider];
 
@@ -831,13 +841,13 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should reset the badge count in the lastNotificationStatus too", ^{
                 NSArray<NSArray<NSDictionary *> *> *results = @[@[
-                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                        @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                        @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                        @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
                 ], @[
-                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
                 NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
@@ -898,13 +908,13 @@ SPEC_BEGIN(MEInboxV2Tests)
         describe(@"purgeNotificationCache", ^{
             it(@"should allow fetch after calling purgeNotificationCache", ^{
                 NSArray<NSArray<NSDictionary *> *> *results = @[@[
-                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                        @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                        @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                        @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
                 ], @[
-                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
                 NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
@@ -956,17 +966,17 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should not do anything when method has been called already in 60 sec", ^{
                 NSArray<NSArray<NSDictionary *> *> *results = @[@[
-                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                        @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                        @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                        @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
                 ], @[
-                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ], @[
-                    @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id8", @"title": @"title8", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id9", @"title": @"title9", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id8", @"title": @"title8", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id9", @"title": @"title9", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
                 NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
@@ -1034,13 +1044,13 @@ SPEC_BEGIN(MEInboxV2Tests)
 
             it(@"should allow purge after 60 seconds", ^{
                 NSArray<NSArray<NSDictionary *> *> *results = @[@[
-                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                        @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                        @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                        @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
                 ], @[
-                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
                 ]];
 
                 NSMutableArray<EMSNotification *> *expectedNotifications1 = [NSMutableArray array];
@@ -1115,11 +1125,43 @@ SPEC_BEGIN(MEInboxV2Tests)
                 inbox = [[MEInboxV2 alloc] initWithConfig:config
                                            requestContext:context
                                         notificationCache:[EMSNotificationCache new]
-                                           requestManager:requestManager];
+                                           requestManager:requestManager
+                                           requestFactory:mockRequestFactory];
             });
 
             afterEach(^{
                 [MEExperimental reset];
+            });
+
+            it(@"should submit a request", ^{
+                EMSNotification *message = [EMSNotification new];
+                message.id = @"testID";
+                message.sid = @"testSID";
+                message.title = @"title";
+                message.body = @"body";
+                message.customData = @{};
+                message.rootParams = @{};
+                message.expirationTime = @100;
+                message.receivedAtTimestamp = @50;
+
+                EMSRequestModel *expectedRequest = [EMSRequestModel mock];
+                EMSCompletionBlock completionBlock = ^(NSError *error) {
+                };
+
+                [mockRequestFactory stub:@selector(createEventRequestModelWithEventName:eventAttributes:eventType:)
+                               andReturn:expectedRequest
+                           withArguments:@"inbox:open",
+                                         @{
+                                                 @"message_id": @"testID",
+                                                 @"sid": @"testSID"
+                                         },
+                                theValue(EventTypeInternal)];
+
+                [[requestManager shouldEventually] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                             withArguments:expectedRequest, completionBlock];
+
+                [inbox trackMessageOpenWith:message
+                            completionBlock:completionBlock];
             });
 
             it(@"should return an error on completionHandler instead of submitting an invalid request without messageId", ^{

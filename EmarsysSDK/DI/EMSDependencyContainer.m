@@ -215,7 +215,8 @@
         _inbox = [[MEInboxV2 alloc] initWithConfig:config
                                     requestContext:self.requestContext
                                  notificationCache:self.notificationCache
-                                    requestManager:self.requestManager];
+                                    requestManager:self.requestManager
+                                    requestFactory:self.requestFactory];
     } else {
         _inbox = [[MEInbox alloc] initWithConfig:config
                                   requestContext:self.requestContext
