@@ -7,10 +7,9 @@
 #import "EMSRequestManager.h"
 #import "MERequestContext.h"
 #import "AppStartBlockProvider.h"
-#import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
-#import "EMSWaiter.h"
 #import "EMSRequestFactory.h"
+#import "EMSUUIDProvider.h"
 
 @interface AppStartBlockProviderTests : XCTestCase
 
@@ -19,7 +18,8 @@
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
-@property(nonatomic, strong) MEHandlerBlock handlerBlock;
+@property(nonatomic, strong) MERequestContext *mockRequestContext;
+@property(nonatomic, strong) MEHandlerBlock appStartEventBlock;
 
 @end
 
@@ -30,93 +30,103 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    _mockRequestContext = OCMClassMock([MERequestContext class]);
     _requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-            [builder setMerchantId:@"testMerchantId"];
-            [builder setContactFieldId:@3];
-        }]                                        uuidProvider:[EMSUUIDProvider new]
+                [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                    applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                [builder setMerchantId:@"testMerchantId"];
+                [builder setContactFieldId:@3];
+            }]                                    uuidProvider:[EMSUUIDProvider new]
                                              timestampProvider:[EMSTimestampProvider new]
                                                     deviceInfo:[EMSDeviceInfo new]];
 
     [self.requestContext setMeId:nil];
     [self.requestContext setMeIdSignature:nil];
+    [self.requestContext setContactToken:nil];
 
-    _appStartBlockProvider = [AppStartBlockProvider new];
-    _handlerBlock = [self.appStartBlockProvider createAppStartBlockWithRequestManager:self.mockRequestManager
-                                                                       requestContext:self.requestContext];
+    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                                    requestFactory:self.mockRequestFactory
+                                                                    requestContext:self.requestContext
+                                                                        deviceInfo:self.mockDeviceInfo];
+    _appStartEventBlock = [self.appStartBlockProvider createAppStartEventBlock];
 }
 
 - (void)tearDown {
     [self.requestContext setMeId:nil];
     [self.requestContext setMeIdSignature:nil];
+    [self.requestContext setContactToken:nil];
 }
 
-- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock {
-    [self.requestContext setMeId:@"testMeId"];
-    [self.requestContext setMeIdSignature:@"testMeIdSignature"];
-
-    __block EMSRequestModel *requestModel;
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForRequestModel"];
-    OCMStub([self.mockRequestManager submitRequestModel:[OCMArg any]
-                                    withCompletionBlock:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
-        [invocation getArgument:&requestModel
-                        atIndex:2];
-        [expectation fulfill];
-    });
-
-    self.handlerBlock();
-
-    [EMSWaiter waitForExpectations:@[expectation]];
-
-    OCMVerify([self.mockRequestManager submitRequestModel:[OCMArg any]
-                                      withCompletionBlock:[OCMArg any]]);
-
-    XCTAssertEqualObjects([requestModel.url absoluteString], @"https://mobile-events.eservice.emarsys.net/v3/devices/testMeId/events");
-    XCTAssertEqualObjects(requestModel.payload[@"events"][0][@"type"], @"internal");
-    XCTAssertEqualObjects(requestModel.payload[@"events"][0][@"name"], @"app:start");
-}
-
-- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldNotCallSubmit_whenThereIsNoMEid {
-    OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
-                                      withCompletionBlock:[OCMArg any]]);
-    self.handlerBlock();
-}
-
-- (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_requestManager_mustNotBeNull {
+- (void)testInit_requestManager_mustNotBeNil {
     @try {
-        [self.appStartBlockProvider createAppStartBlockWithRequestManager:nil
-                                                           requestFactory:OCMClassMock([EMSRequestFactory class])
-                                                               deviceInfo:OCMClassMock([EMSDeviceInfo class])];
-
+        [[AppStartBlockProvider alloc] initWithRequestManager:nil
+                                               requestFactory:self.mockRequestFactory
+                                               requestContext:self.mockRequestContext
+                                                   deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
     }
 }
 
-- (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_requestFactory_mustNotBeNull {
+- (void)testInit_requestFactory_mustNotBeNil {
     @try {
-        [self.appStartBlockProvider createAppStartBlockWithRequestManager:OCMClassMock([EMSRequestManager class])
-                                                           requestFactory:nil
-                                                               deviceInfo:OCMClassMock([EMSDeviceInfo class])];
-
+        [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                               requestFactory:nil
+                                               requestContext:self.mockRequestContext
+                                                   deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
     }
 }
 
-- (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_deviceInfo_mustNotBeNull {
+- (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [self.appStartBlockProvider createAppStartBlockWithRequestManager:OCMClassMock([EMSRequestManager class])
-                                                           requestFactory:OCMClassMock([EMSRequestFactory class])
-                                                               deviceInfo:nil];
+        [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                               requestFactory:self.mockRequestFactory
+                                               requestContext:nil
+                                                   deviceInfo:self.mockDeviceInfo];
+        XCTFail(@"Expected Exception when requestContext is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
 
+- (void)testInit_deviceInfor_mustNotBeNil {
+    @try {
+        [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                               requestFactory:self.mockRequestFactory
+                                               requestContext:self.mockRequestContext
+                                                   deviceInfo:nil];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
     }
+}
+
+- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock {
+    [self.requestContext setContactToken:@"testContactToken"];
+
+    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:EventTypeInternal]).andReturn(requestModel);
+
+    self.appStartEventBlock();
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
+                                                            eventAttributes:[OCMArg any]
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldNotCallSubmit_whenThereIsNoContactToken {
+    OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                      withCompletionBlock:[OCMArg any]]);
+    self.appStartEventBlock();
 }
 
 - (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_submitRequest {
@@ -126,18 +136,16 @@
     [userDefaults synchronize];
 
     NSDictionary *expectedDeviceInfoDict = @{
-        @"testPayloadKey": @"testPayloadValue",
-        @"testPayloadKey2": @"testPayloadValue2"
+            @"testPayloadKey": @"testPayloadValue",
+            @"testPayloadKey2": @"testPayloadValue2"
     };
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
 
     OCMStub([self.mockDeviceInfo clientPayload]).andReturn(expectedDeviceInfoDict);
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
 
-    _handlerBlock = [self.appStartBlockProvider createAppStartBlockWithRequestManager:self.mockRequestManager
-                                                                       requestFactory:self.mockRequestFactory
-                                                                           deviceInfo:self.mockDeviceInfo];
-    self.handlerBlock();
+    MEHandlerBlock handlerBlock = [self.appStartBlockProvider createDeviceInfoEventBlock];
+    handlerBlock();
 
     NSDictionary *storedDeviceInfoDict = [userDefaults dictionaryForKey:kDEVICE_INFO];
 
@@ -148,9 +156,11 @@
 
 - (void)testCreateAppStartBlockWithRequestManagerRequestFactoryDeviceInfo_shouldNotSubmit_whenDeviceInfoHasNotChanged {
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"];
-    _handlerBlock = [self.appStartBlockProvider createAppStartBlockWithRequestManager:self.mockRequestManager
-                                                                       requestFactory:self.mockRequestFactory
-                                                                           deviceInfo:deviceInfo];
+    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                                    requestFactory:self.mockRequestFactory
+                                                                    requestContext:self.requestContext
+                                                                        deviceInfo:deviceInfo];
+    MEHandlerBlock handlerBlock = [self.appStartBlockProvider createDeviceInfoEventBlock];
     OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
                                       withCompletionBlock:[OCMArg any]]);
 
@@ -161,8 +171,7 @@
                      forKey:kDEVICE_INFO];
     [userDefaults synchronize];
 
-    self.handlerBlock();
+    handlerBlock();
 }
 
 @end
-

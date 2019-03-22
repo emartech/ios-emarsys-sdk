@@ -13,10 +13,14 @@
 
 @interface AppStartBlockProvider : NSObject
 
-- (MEHandlerBlock)createAppStartBlockWithRequestManager:(EMSRequestManager *)requestManager
-                                         requestContext:(MERequestContext *)requestContext;
+        - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
+                                requestFactory:(EMSRequestFactory *)requestFactory
+                                requestContext:(MERequestContext *)requestContext
+                                    deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
-- (MEHandlerBlock)createAppStartBlockWithRequestManager:(EMSRequestManager *)requestManager
-                                         requestFactory:(EMSRequestFactory *)requestFactory
-                                             deviceInfo:(EMSDeviceInfo *)deviceInfo;
+
+- (MEHandlerBlock)createAppStartEventBlock;
+
+- (MEHandlerBlock)createDeviceInfoEventBlock;
+
 @end

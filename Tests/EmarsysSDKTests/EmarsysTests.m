@@ -276,10 +276,10 @@ SPEC_BEGIN(EmarsysTests)
                     };
                     void (^appStartBlock2)() = ^{
                     };
-                    [[appStartBlockProvider should] receive:@selector(createAppStartBlockWithRequestManager:requestContext:)
+                    [[appStartBlockProvider should] receive:@selector(createAppStartEventBlock)
                                                   andReturn:appStartBlock
                                               withArguments:requestManager, requestContext];
-                    [[appStartBlockProvider should] receive:@selector(createAppStartBlockWithRequestManager:requestFactory:deviceInfo:)
+                    [[appStartBlockProvider should] receive:@selector(createDeviceInfoEventBlock)
                                                   andReturn:appStartBlock2
                                               withArguments:requestManager, requestFactory, deviceInfo];
                     [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
