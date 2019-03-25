@@ -14,6 +14,7 @@
 #import "MEInApp.h"
 #import "MERequestContext.h"
 #import "EMSSchemaContract.h"
+#import "MEEndpoints.h"
 
 @implementation MERequestRepositoryProxy
 
@@ -65,7 +66,7 @@
 }
 
 - (EMSRequestModel *)createCompositeRequestModel:(EMSRequestModel *)requestModel {
-    EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+    EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:[NSString stringWithFormat:@"%%%@%%/events", EVENT_SERVICE_URL]
                                                                                                                column:REQUEST_COLUMN_NAME_URL];
     NSArray *allCustomEvents = [self.requestModelRepository query:filterCustomEventsSpecification];
 

@@ -20,6 +20,7 @@
 #import "MEInApp.h"
 #import "NSDate+EMSCore.h"
 #import "MERequestContext.h"
+#import "MEEndpoints.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -48,7 +49,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         event[@"attributes"] = eventAttributes;
                     }
 
-                    [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events"];
+                    [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
                     [builder setMethod:HTTPMethodPOST];
                     [builder setPayload:@{@"events": @[event]}];
                 }
@@ -67,7 +68,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
         id (^createFakeRequestRepository)(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) = ^id(NSArray *nextRequest, NSArray *allCustomEvents, NSArray *AllRequests, MEInApp *inApp, MERequestContext *requestContext) {
             EMSQueryOldestRowSpecification *selectFirstSpecification = [EMSQueryOldestRowSpecification new];
-            EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:@"%%/v3/devices/_%%/events"
+            EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:[NSString stringWithFormat:@"%%%@%%/events", EVENT_SERVICE_URL]
                                                                                                                        column:REQUEST_COLUMN_NAME_URL];
 
             EMSFilterByNothingSpecification *selectAllRequestsSpecification = [EMSFilterByNothingSpecification new];
@@ -97,7 +98,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMerchantId:@"merchantId"];
                 [builder setContactFieldId:@3];
-                [builder setMobileEngageApplicationCode:@"applicationCode"
+                [builder setMobileEngageApplicationCode:@"testAppplicationCode"
                                     applicationPassword:@"applicationPassword"];
                 }]
                                                          uuidProvider:uuidProvider
@@ -300,7 +301,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 EMSRequestModel *modelCustomEvent3 = customEventRequestModel(@"event3", @{@"star": @"wars"}, requestContext);
 
                 EMSCompositeRequestModel *compositeModel = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events"];
+                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
                             @"hardware_id": deviceInfo.hardwareId,
@@ -331,11 +332,11 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 EMSRequestModel *model1 = normalRequestModel(@"https://www.google.com", requestContext);
                 EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
                 EMSRequestModel *modelCustomEvent2 = customEventRequestModel(@"event2", @{@"key1": @"value1", @"key2": @"value2"}, requestContext);
-                EMSRequestModel *model2 = normalRequestModel(@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events534", requestContext);
+                EMSRequestModel *model2 = normalRequestModel(@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events456", requestContext);
                 EMSRequestModel *modelCustomEvent3 = customEventRequestModel(@"event3", @{@"star": @"wars"}, requestContext);
 
                 EMSCompositeRequestModel *compositeModel = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/devices/12345/events"];
+                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
                             @"hardware_id": deviceInfo.hardwareId,
