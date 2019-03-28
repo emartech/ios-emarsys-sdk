@@ -48,4 +48,31 @@
              localizedDescription:description];
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![[other class] isEqual:[self class]])
+        return NO;
+
+    return [self isEqualToHandler:other];
+}
+
+- (BOOL)isEqualToHandler:(EMSCoreCompletionHandler *)handler {
+    if (self == handler)
+        return YES;
+    if (handler == nil)
+        return NO;
+    if (self.successBlock != handler.successBlock)
+        return NO;
+    if (self.errorBlock != handler.errorBlock)
+        return NO;
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash = (NSUInteger) self.successBlock;
+    hash = hash * 31u + (NSUInteger) self.errorBlock;
+    return hash;
+}
+
 @end

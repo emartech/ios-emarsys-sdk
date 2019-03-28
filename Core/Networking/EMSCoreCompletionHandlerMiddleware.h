@@ -18,4 +18,5 @@
                                        worker:(id <EMSWorkerProtocol>)worker
                             requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
                                operationQueue:(NSOperationQueue *)operationQueue;
+
 @end

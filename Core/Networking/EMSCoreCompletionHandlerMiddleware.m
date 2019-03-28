@@ -61,5 +61,37 @@
     return statusCode >= 400 && statusCode < 500 && statusCode != 408;
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![[other class] isEqual:[self class]])
+        return NO;
+
+    return [self isEqualToMiddleware:other];
+}
+
+- (BOOL)isEqualToMiddleware:(EMSCoreCompletionHandlerMiddleware *)middleware {
+    if (self == middleware)
+        return YES;
+    if (middleware == nil)
+        return NO;
+    if (self.completionHandler != middleware.completionHandler && ![self.completionHandler isEqual:middleware.completionHandler])
+        return NO;
+    if (self.worker != middleware.worker && ![self.worker isEqual:middleware.worker])
+        return NO;
+    if (self.requestRepository != middleware.requestRepository && ![self.requestRepository isEqual:middleware.requestRepository])
+        return NO;
+    if (self.operationQueue != middleware.operationQueue && ![self.operationQueue isEqual:middleware.operationQueue])
+        return NO;
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash = [self.completionHandler hash];
+    hash = hash * 31u + [self.worker hash];
+    hash = hash * 31u + [self.requestRepository hash];
+    hash = hash * 31u + [self.operationQueue hash];
+    return hash;
+}
 
 @end
