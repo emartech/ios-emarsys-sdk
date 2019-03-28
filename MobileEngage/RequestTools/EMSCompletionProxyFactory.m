@@ -4,11 +4,13 @@
 
 #import "EMSCompletionProxyFactory.h"
 #import "EMSRefreshTokenCompletionProxy.h"
+#import "EMSContactTokenResponseHandler.h"
 
 @interface EMSCompletionProxyFactory ()
 
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
+@property(nonatomic, strong) EMSContactTokenResponseHandler *contactResponseHandler;
 
 @end
 
@@ -19,15 +21,18 @@
                       defaultSuccessBlock:(CoreSuccessBlock)defaultSuccessBlock
                         defaultErrorBlock:(CoreErrorBlock)defaultErrorBlock
                                restClient:(EMSRESTClient *)restClient
-                           requestFactory:(EMSRequestFactory *)requestFactory {
+                           requestFactory:(EMSRequestFactory *)requestFactory
+                   contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler {
     NSParameterAssert(restClient);
     NSParameterAssert(requestFactory);
+    NSParameterAssert(contactResponseHandler);
     if (self = [super initWithRequestRepository:requestRepository
                                  operationQueue:operationQueue
                             defaultSuccessBlock:defaultSuccessBlock
                               defaultErrorBlock:defaultErrorBlock]) {
         _restClient = restClient;
         _requestFactory = requestFactory;
+        _contactResponseHandler = contactResponseHandler;
     }
     return self;
 }
@@ -42,7 +47,7 @@
     return [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:proxy
                                                                 restClient:self.restClient
                                                             requestFactory:self.requestFactory
-                                                    contactResponseHandler:NULL];
+                                                    contactResponseHandler:self.contactResponseHandler];
 }
 
 @end

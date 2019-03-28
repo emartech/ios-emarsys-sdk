@@ -7,6 +7,8 @@
 #import "EMSRESTClient.h"
 #import "EMSRequestFactory.h"
 
+@class EMSContactTokenResponseHandler;
+
 @interface EMSCompletionProxyFactory : EMSRESTClientCompletionProxyFactory
 
 - (instancetype)initWithRequestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
@@ -14,6 +16,7 @@
                       defaultSuccessBlock:(CoreSuccessBlock)defaultSuccessBlock
                         defaultErrorBlock:(CoreErrorBlock)defaultErrorBlock
                                restClient:(EMSRESTClient *)restClient
-                           requestFactory:(EMSRequestFactory *)requestFactory;
+                           requestFactory:(EMSRequestFactory *)requestFactory
+                   contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler;
 
 @end
