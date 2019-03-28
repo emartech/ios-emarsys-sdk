@@ -194,4 +194,45 @@ SPEC_BEGIN(MERequestContextTests)
             });
         });
 
+        describe(@"refreshToken", ^{
+
+            beforeEach(^{
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults removeObjectForKey:kREFRESH_TOKEN];
+                [userDefaults synchronize];
+            });
+
+            it(@"should load the stored value", ^{
+                NSString *refreshToken = @"Stored refreshToken";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults setObject:refreshToken
+                                 forKey:kREFRESH_TOKEN];
+                [userDefaults synchronize];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.refreshToken should] equal:refreshToken];
+            });
+
+            it(@"should store refresh token", ^{
+                NSString *expectedRefreshToken = @"Stored refresh token";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.refreshToken should] beNil];
+
+                [context setRefreshToken:expectedRefreshToken];
+
+                [[[userDefaults stringForKey:kREFRESH_TOKEN] should] equal:expectedRefreshToken];
+                [[context.refreshToken should] equal:expectedRefreshToken];
+            });
+        });
+
 SPEC_END

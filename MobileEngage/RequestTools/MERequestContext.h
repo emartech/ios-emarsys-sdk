@@ -16,6 +16,7 @@
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 #define kCLIENT_STATE @"kCLIENT_STATE"
 #define kCONTACT_TOKEN @"kCONTACT_TOKEN"
+#define kREFRESH_TOKEN @"kREFRESH_TOKEN"
 
 @interface MERequestContext : NSObject
 
