@@ -98,6 +98,19 @@
                                uuidProvider:self.requestContext.uuidProvider];
 }
 
+- (EMSRequestModel *)createRefreshTokenRequestModel {
+    __weak typeof(self) weakSelf = self;
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setMethod:HTTPMethodPOST];
+                [builder setUrl:CONTACT_TOKEN_URL(weakSelf.applicationCode)];
+                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+                mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
+                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+            }
+                          timestampProvider:self.requestContext.timestampProvider
+                               uuidProvider:self.requestContext.uuidProvider];
+}
+
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
     NSString *result = @"custom";
     if (eventType == EventTypeInternal) {

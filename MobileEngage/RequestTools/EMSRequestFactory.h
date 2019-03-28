@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (EMSRequestModel *)createEventRequestModelWithEventName:(NSString *)eventName
                                           eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                                                 eventType:(EventType)eventType;
+
+- (EMSRequestModel *)createRefreshTokenRequestModel;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -38,6 +38,7 @@
     OCMStub(self.mockRequestContext.deviceInfo).andReturn(self.mockDeviceInfo);
     OCMStub(self.mockRequestContext.config).andReturn(self.mockConfig);
     OCMStub(self.mockRequestContext.uuidProvider).andReturn(self.mockUUIDProvider);
+    OCMStub(self.mockRequestContext.refreshToken).andReturn(@"testRefreshToken");
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
     OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
@@ -213,6 +214,23 @@
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"testEventName"
                                                                               eventAttributes:nil
                                                                                     eventType:EventTypeCustom];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+}
+
+- (void)testCreateRefreshTokenRequestModel {
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/contact-token"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"refreshToken": @"testRefreshToken"
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
