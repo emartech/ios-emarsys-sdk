@@ -4,37 +4,38 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSContactTokenResponseHandler.h"
-#import "EMSRequestFactory.h"
+#import "EMSRefreshTokenResponseHandler.h"
 #import "MERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
 #import "EMSAbstractResponseHandler+Private.h"
 
-@interface EMSContactTokenResponseHandlerTests : XCTestCase
+@interface EMSRefreshTokenResponseHandlerTests : XCTestCase
 
 @property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) EMSContactTokenResponseHandler *responseHandler;
+@property(nonatomic, strong) EMSRefreshTokenResponseHandler *responseHandler;
+
 @end
 
-@implementation EMSContactTokenResponseHandlerTests
+@implementation EMSRefreshTokenResponseHandlerTests
 
 - (void)setUp {
     _requestContext = [[MERequestContext alloc] initWithConfig:OCMClassMock([EMSConfig class])
                                                   uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                              timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                     deviceInfo:OCMClassMock([EMSDeviceInfo class])];
-    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
+    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [[EMSContactTokenResponseHandler alloc] initWithRequestContext:nil];
+        [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:nil];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
     }
 }
+
 
 - (void)testShouldHandleResponse_shouldBeNO_whenMERequest_missingParsedBody {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
@@ -45,42 +46,43 @@
     XCTAssertFalse(result);
 }
 
-- (void)testShouldHandleResponse_shouldBeNO_whenMERequest_missingContactToken_withRefreshToken {
+- (void)testShouldHandleResponse_shouldBeNO_whenMERequest_missingRefreshToken_withContactToken {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
-                                                                parsedBody:@{@"refreshToken": @"refreshToken"}];
+                                                                parsedBody:@{@"contactToken": @"contactToken"}];
 
     BOOL result = [self.responseHandler shouldHandleResponse:mockResponseModel];
 
     XCTAssertFalse(result);
 }
 
-- (void)testShouldHandleResponse_shouldBeNO_whenNotMERequest_withContactToken {
+- (void)testShouldHandleResponse_shouldBeNO_whenNotMERequest_withRefreshTokenToken {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://not.mobile-engage.com/"
-                                                                parsedBody:@{@"contactToken": @"token"}];
+                                                                parsedBody:@{@"refreshToken": @"token"}];
 
     BOOL result = [self.responseHandler shouldHandleResponse:mockResponseModel];
 
     XCTAssertFalse(result);
 }
 
-- (void)testShouldHandleResponse_shouldBeYES_whenMERequest_withContactToken {
+- (void)testShouldHandleResponse_shouldBeYES_whenMERequest_withRefreshTokenToken {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
-                                                                parsedBody:@{@"contactToken": @"token"}];
+                                                                parsedBody:@{@"refreshToken": @"token"}];
 
     BOOL result = [self.responseHandler shouldHandleResponse:mockResponseModel];
 
     XCTAssertTrue(result);
 }
 
-- (void)testHandleResponse_shouldSetContactTokenOnRequestContext {
+
+- (void)testHandleResponse_shouldSetRefreshTokenOnRequestContext {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
-                                                                parsedBody:@{@"contactToken": @"token"}];
+                                                                parsedBody:@{@"refreshToken": @"token"}];
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
-    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];
+    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];
 
     [self.responseHandler handleResponse:mockResponseModel];
 
-    OCMVerify([mockRequestContext setContactToken:@"token"]);
+    OCMVerify([mockRequestContext setRefreshToken:@"token"]);
 }
 
 - (EMSResponseModel *)createResponseModelWithUrl:(NSString *)url
@@ -94,5 +96,6 @@
 
     return mockResponseModel;
 }
+
 
 @end
