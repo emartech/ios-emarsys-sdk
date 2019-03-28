@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong, nullable) NSString *clientState;
 @property(nonatomic, strong, nullable) NSString *contactToken;
+@property(nonatomic, strong, nullable) NSString *refreshToken;
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                   uuidProvider:(EMSUUIDProvider *)uuidProvider

@@ -41,7 +41,8 @@
                                                                    errorBlock:errorBlock];
     return [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:proxy
                                                                 restClient:self.restClient
-                                                            requestFactory:self.requestFactory];
+                                                            requestFactory:self.requestFactory
+                                                    contactResponseHandler:NULL];
 }
 
 @end

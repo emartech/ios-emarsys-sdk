@@ -10,4 +10,5 @@
 #define CLIENT_URL(applicationCode) BASE_URL(applicationCode, CLIENT_SERVICE_URL)
 #define PUSH_TOKEN_URL(applicationCode) [NSString stringWithFormat:@"%@/push-token", CLIENT_URL(applicationCode)]
 #define CONTACT_URL(applicationCode) [NSString stringWithFormat:@"%@/contact", CLIENT_URL(applicationCode)]
+#define CONTACT_TOKEN_URL(applicationCode) [NSString stringWithFormat:@"%@/contact-token", CLIENT_URL(applicationCode)]
 #define EVENT_URL(applicationCode) [NSString stringWithFormat:@"%@/events", BASE_URL(applicationCode, EVENT_SERVICE_URL)]
