@@ -21,7 +21,6 @@
 @property(nonatomic, strong) EMSV3Mapper *mapper;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) NSString *clientState;
-@property(nonatomic, strong) NSString *contactToken;
 @property(nonatomic, strong) NSDate *requestOrderTimestamp;
 @property(nonatomic, strong) NSString *hardwareId;
 
@@ -36,7 +35,6 @@
     _httpMethod = @"POST";
     _payload = @{@"testPayloadKey": @"testPayloadValue"};
     _clientState = @"testClientStateValue";
-    _contactToken = @"testContactTokenValue";
     _requestOrderTimestamp = [NSDate date];
     _headers = @{
             @"testHeaderKey": @"testHeaderValue"
@@ -106,22 +104,6 @@
     mutableHeaders[@"X-Request-Order"] = [[self.requestOrderTimestamp numberValueInMillis] stringValue];
     mutableHeaders[@"X-Client-Id"] = self.hardwareId;
     mutableHeaders[@"X-Client-State"] = self.clientState;
-    NSDictionary *expectedHeaders = [NSDictionary dictionaryWithDictionary:mutableHeaders];
-
-    EMSRequestModel *returnedModel = [self.mapper modelFromModel:[self createRequestModel]];
-
-    _headers = expectedHeaders;
-
-    XCTAssertEqualObjects(returnedModel, [self createRequestModel]);
-}
-
-- (void)testModelFromModel_when_contactTokenIsNotNil {
-    OCMStub([self.mockRequestContext contactToken]).andReturn(self.contactToken);
-
-    NSMutableDictionary *mutableHeaders = [self.headers mutableCopy];
-    mutableHeaders[@"X-Request-Order"] = [[self.requestOrderTimestamp numberValueInMillis] stringValue];
-    mutableHeaders[@"X-Client-Id"] = self.hardwareId;
-    mutableHeaders[@"X-Contact-Token"] = self.contactToken;
     NSDictionary *expectedHeaders = [NSDictionary dictionaryWithDictionary:mutableHeaders];
 
     EMSRequestModel *returnedModel = [self.mapper modelFromModel:[self createRequestModel]];

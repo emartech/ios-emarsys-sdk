@@ -5,8 +5,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EmarsysTestUtils.h"
-#import "EMSWaiter.h"
 #import "NSData+MobileEngine.h"
+#import "EMSDependencyInjection.h"
+#import "MERequestContext.h"
 
 @interface EmarsysIntegrationTests : XCTestCase
 
@@ -46,8 +47,8 @@
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys trackCustomEventWithName:@"testEventName"
                       eventAttributes:@{
-                              @"testEventAttributesKey1": @"testEventAttributesValue1",
-                              @"testEventAttributesKey2": @"testEventAttributesValue2"}
+                          @"testEventAttributesKey1": @"testEventAttributesValue1",
+                          @"testEventAttributesKey2": @"testEventAttributesValue2"}
                       completionBlock:^(NSError *error) {
                           returnedError = error;
                           [expectation fulfill];
@@ -56,6 +57,32 @@
                                                           timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
+}
+
+- (void)testTokenRefresh {
+    NSString *const contactToken = @"testContactToken for refresh";
+    MERequestContext *requestContext = EMSDependencyInjection.dependencyContainer.requestContext;
+
+    [self doSetPushToken];
+    [self doLogin];
+
+    [requestContext setContactToken:contactToken];
+
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys trackCustomEventWithName:@"testEventName"
+                      eventAttributes:@{
+                          @"testEventAttributesKey1": @"testEventAttributesValue1",
+                          @"testEventAttributesKey2": @"testEventAttributesValue2"}
+                      completionBlock:^(NSError *error) {
+                          returnedError = error;
+                          [expectation fulfill];
+                      }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:300000];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+    XCTAssertNotEqualObjects(requestContext.contactToken, contactToken);
 }
 
 - (void)doLogin {

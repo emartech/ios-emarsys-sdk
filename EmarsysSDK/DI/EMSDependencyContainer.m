@@ -48,6 +48,9 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSInAppInternal.h"
+#import "EMSCompletionProxyFactory.h"
+#import "EMSRefreshTokenResponseHandler.h"
+#import "EMSContactTokenMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -99,6 +102,11 @@
                                                   uuidProvider:uuidProvider
                                              timestampProvider:timestampProvider
                                                     deviceInfo:deviceInfo];
+    _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                     uuidProvider:uuidProvider
+                                                                       merchantId:config.merchantId
+                                                                       deviceInfo:deviceInfo];
+
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext];
     _notificationCenterManager = [MENotificationCenterManager new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
@@ -143,11 +151,32 @@
                                                    queue:self.operationQueue
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]
-                                     requestModelMappers:@[[[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
-    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
-                                                                                                                operationQueue:self.operationQueue
-                                                                                                           defaultSuccessBlock:middleware.successBlock
-                                                                                                             defaultErrorBlock:middleware.errorBlock];
+                                     requestModelMappers:@[
+                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
+                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
+
+    EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
+    NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
+    [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    [self.dbHelper open];
+    [responseHandlers addObjectsFromArray:@[
+        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                      displayIamRepository:displayedIAMRepository]]
+    ];
+    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
+    [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext]];
+    [responseHandlers addObject:contactTokenResponseHandler];
+    _responseHandlers = [NSArray arrayWithArray:responseHandlers];
+
+    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
+                                                                                                      operationQueue:self.operationQueue
+                                                                                                 defaultSuccessBlock:middleware.successBlock
+                                                                                                   defaultErrorBlock:middleware.errorBlock
+                                                                                                          restClient:self.restClient
+                                                                                                      requestFactory:self.requestFactory
+                                                                                              contactResponseHandler:contactTokenResponseHandler];
 
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue
@@ -157,7 +186,6 @@
                                                                      errorBlock:middleware.errorBlock
                                                                    proxyFactory:proxyFactory];
 
-
     _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.operationQueue
                                               completionMiddleware:middleware
                                                         restClient:self.restClient
@@ -165,23 +193,6 @@
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
-
-    _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
-                                                                     uuidProvider:uuidProvider
-                                                                       merchantId:config.merchantId
-                                                                       deviceInfo:deviceInfo];
-    NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
-    [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
-    [self.dbHelper open];
-    [responseHandlers addObjectsFromArray:@[
-            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository]]
-    ];
-    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
-    [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
-    [responseHandlers addObject:[[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext]];
-    _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
     _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                             specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
@@ -239,7 +250,9 @@
                                             timestampProvider:timestampProvider];
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
-                                                                     mobileEngageInternal:self.mobileEngage inApp:self.iam timestampProvider:timestampProvider
+                                                                     mobileEngageInternal:self.mobileEngage
+                                                                                    inApp:self.iam
+                                                                        timestampProvider:timestampProvider
                                                                              pushInternal:self.push
                                                                            requestManager:self.requestManager
                                                                            requestFactory:self.requestFactory];

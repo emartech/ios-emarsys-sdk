@@ -1,19 +1,12 @@
 //
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
-#import "EMSV3Mapper.h"
+#import "EMSContactTokenMapper.h"
+#import "MERequestContext.h"
 #import "EMSRequestModel.h"
-#import "NSDate+EMSCore.h"
-#import "EMSDeviceInfo.h"
 #import "MEEndpoints.h"
 
-@interface EMSV3Mapper ()
-
-@property(nonatomic, strong) MERequestContext *requestContext;
-
-@end
-
-@implementation EMSV3Mapper
+@implementation EMSContactTokenMapper
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext {
     NSParameterAssert(requestContext);
@@ -24,7 +17,9 @@
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return [requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] || [requestModel.url.absoluteString hasPrefix:EVENT_SERVICE_URL];
+    NSString *url = requestModel.url.absoluteString;
+    return ![url hasSuffix:@"/client/contact-token"] &&
+        ([requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] || [requestModel.url.absoluteString hasPrefix:EVENT_SERVICE_URL]);
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {
@@ -36,20 +31,15 @@
                                               payload:requestModel.payload
                                               headers:[self headers:requestModel]
                                                extras:requestModel.extras];
+
 }
 
 - (NSDictionary *)headers:(EMSRequestModel *)requestModel {
     NSMutableDictionary *mergedHeaders = [NSMutableDictionary dictionaryWithDictionary:requestModel.headers];
-    mergedHeaders[@"X-Client-State"] = self.requestContext.clientState;
-    mergedHeaders[@"X-Request-Order"] = [self requestOrder];
-    mergedHeaders[@"X-Client-Id"] = [self.requestContext.deviceInfo hardwareId];
+    mergedHeaders[@"X-Contact-Token"] = self.requestContext.contactToken;
     NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mergedHeaders];
     return headers;
 }
 
-- (NSString *)requestOrder {
-    NSDate *timestamp = [self.requestContext.timestampProvider provideTimestamp];
-    return [[timestamp numberValueInMillis] stringValue];
-}
 
 @end
