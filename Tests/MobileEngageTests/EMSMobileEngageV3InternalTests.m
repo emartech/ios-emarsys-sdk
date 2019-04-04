@@ -7,7 +7,6 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
-#import "EMSRequestModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
@@ -36,7 +35,7 @@
     _contactFieldValue = @"testContactFieldValue";
     _eventName = @"testEventName";
     _eventAttributes = @{
-            @"TestKey": @"TestValue"
+        @"TestKey": @"TestValue"
     };
     _completionBlock = ^(NSError *error) {
     };
@@ -84,25 +83,6 @@
     }
 }
 
-- (void)testSetContactWithContactFieldValue_contactFieldValue_mustNotBeNil {
-    @try {
-        [self.internal setContactWithContactFieldValue:nil];
-        XCTFail(@"Expected Exception when contactFieldValue is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldValue");
-    }
-}
-
-- (void)testSetContactWithContactFieldValueCompletionBlock_contactFieldValue_mustNotBeNil {
-    @try {
-        [self.internal setContactWithContactFieldValue:nil
-                                       completionBlock:self.completionBlock];
-        XCTFail(@"Expected Exception when contactFieldValue is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldValue");
-    }
-}
-
 - (void)testSetContactWithContactFieldValue {
     EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
 
@@ -129,6 +109,24 @@
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
 }
+
+- (void)testClearContact {
+    EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
+
+    [partialMockInternal clearContact];
+
+    OCMVerify([partialMockInternal clearContactWithCompletionBlock:nil];);
+}
+
+- (void)testClearContactWithCompletionBlock {
+    EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
+
+    [partialMockInternal clearContactWithCompletionBlock:self.completionBlock];
+
+    OCMVerify([partialMockInternal setContactWithContactFieldValue:nil
+                                                   completionBlock:self.completionBlock]);
+}
+
 
 - (void)testTrackCustomEventWithNameEventAttributes_eventName_mustNotBeNil {
     @try {
@@ -182,8 +180,8 @@
 
 - (EMSRequestModel *)createRequestModel {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://www.emarsys.com"];
-            }             timestampProvider:self.timestampProvider
+            [builder setUrl:@"https://www.emarsys.com"];
+        }                 timestampProvider:self.timestampProvider
                                uuidProvider:self.uuidProvider];
 }
 

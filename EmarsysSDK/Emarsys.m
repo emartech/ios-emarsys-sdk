@@ -11,7 +11,6 @@
 #import "MEInApp.h"
 #import "EMSDependencyInjection.h"
 #import "MEExperimental.h"
-#import "MERequestContext.h"
 #import "MENotificationCenterManager.h"
 #import "AppStartBlockProvider.h"
 #import "MEUserNotificationDelegate.h"
@@ -73,10 +72,6 @@
 + (void)registerAppStartBlock {
     MENotificationCenterManager *notificationCenterManager = EMSDependencyInjection.dependencyContainer.notificationCenterManager;
     AppStartBlockProvider *appStartBlockProvider = EMSDependencyInjection.dependencyContainer.appStartBlockProvider;
-    EMSRequestManager *requestManager = EMSDependencyInjection.dependencyContainer.requestManager;
-    MERequestContext *requestContext = EMSDependencyInjection.dependencyContainer.requestContext;
-    EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
                                forNotification:UIApplicationDidBecomeActiveNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDeviceInfoEventBlock]

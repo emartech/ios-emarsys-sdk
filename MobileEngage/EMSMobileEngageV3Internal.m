@@ -37,7 +37,6 @@
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
-    NSParameterAssert(contactFieldValue);
     [self.requestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:self.requestContext.contactFieldId
                                                                                   contactFieldValue:contactFieldValue]];
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
@@ -46,11 +45,12 @@
 }
 
 - (void)clearContact {
-
+    [self clearContactWithCompletionBlock:nil];
 }
 
 - (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-
+    [self setContactWithContactFieldValue:nil
+                          completionBlock:completionBlock];
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName

@@ -150,7 +150,7 @@
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.operationQueue
                                        timestampProvider:timestampProvider
-                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:self.requestContext.config]
+                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:config]
                                      requestModelMappers:@[
                                          [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
                                          [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
