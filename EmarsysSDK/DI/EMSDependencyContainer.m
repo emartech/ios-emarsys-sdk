@@ -80,8 +80,6 @@
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
-- (void)handleResponse:(EMSResponseModel *)responseModel;
-
 @end
 
 @implementation EMSDependencyContainer
@@ -147,13 +145,6 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil
                                                      delegateQueue:self.operationQueue];
-    _restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                   queue:self.operationQueue
-                                       timestampProvider:timestampProvider
-                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:config]
-                                     requestModelMappers:@[
-                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
-                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]];
 
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
@@ -169,6 +160,15 @@
     [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext]];
     [responseHandlers addObject:contactTokenResponseHandler];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
+
+    _restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                   queue:self.operationQueue
+                                       timestampProvider:timestampProvider
+                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:config]
+                                     requestModelMappers:@[
+                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
+                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]
+                                        responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
                                                                                                       operationQueue:self.operationQueue
@@ -267,21 +267,13 @@
 }
 
 - (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
-    __weak typeof(self) weakSelf = self;
     return ^(NSString *requestId, EMSResponseModel *response) {
-        [weakSelf handleResponse:response];
     };
 }
 
 - (void (^)(NSString *, NSError *))createErrorBlock {
     return ^(NSString *requestId, NSError *error) {
     };
-}
-
-- (void)handleResponse:(EMSResponseModel *)responseModel {
-    for (EMSAbstractResponseHandler *handler in self.responseHandlers) {
-        [handler processResponse:responseModel];
-    }
 }
 
 @end

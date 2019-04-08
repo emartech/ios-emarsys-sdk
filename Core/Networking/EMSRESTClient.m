@@ -12,6 +12,7 @@
 #import "EMSNetworkingTime.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModelMapperProtocol.h"
+#import "EMSAbstractResponseHandler.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -21,7 +22,7 @@
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) NSArray<id <EMSRequestModelMapperProtocol>> *requestModelMappers;
-
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 
 @end
 
@@ -30,8 +31,9 @@
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
               timestampProvider:(EMSTimestampProvider *)timestampProvider
-              additionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
-            requestModelMappers:(NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers {
+              additionalHeaders:(nullable NSDictionary<NSString *, NSString *> *)additionalHeaders
+            requestModelMappers:(nullable NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers
+               responseHandlers:(nullable NSArray<EMSAbstractResponseHandler *> *)responseHandlers {
     NSParameterAssert(session);
     NSParameterAssert(queue);
     NSParameterAssert(timestampProvider);
@@ -41,6 +43,7 @@
         _timestampProvider = timestampProvider;
         _additionalHeaders = additionalHeaders;
         _requestModelMappers = requestModelMappers;
+        _responseHandlers = responseHandlers;
     }
     return self;
 }
@@ -62,6 +65,7 @@
                                                                                                                                         data:data
                                                                                                                                 requestModel:requestModel
                                                                                                                                    timestamp:[weakSelf.timestampProvider provideTimestamp]];
+                                                         [weakSelf handleResponse:responseModel];
                                                          if (!error && [responseModel isSuccess]) {
                                                              EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel
                                                                                                             endDate:networkingStartTime]);
@@ -118,6 +122,12 @@
                                               payload:requestModel.payload
                                               headers:[NSDictionary dictionaryWithDictionary:headers]
                                                extras:requestModel.extras];
+}
+
+- (void)handleResponse:(EMSResponseModel *)responseModel {
+    for (EMSAbstractResponseHandler *handler in self.responseHandlers) {
+        [handler processResponse:responseModel];
+    }
 }
 
 @end

@@ -70,7 +70,8 @@ SPEC_BEGIN(DennaTest)
                                                                          queue:operationQueue
                                                              timestampProvider:[EMSTimestampProvider new]
                                                              additionalHeaders:nil
-                                                           requestModelMappers:nil];
+                                                           requestModelMappers:nil
+                                                              responseHandlers:nil];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                         operationQueue:operationQueue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
@@ -142,7 +143,8 @@ SPEC_BEGIN(DennaTest)
                                                                              queue:operationQueue
                                                                  timestampProvider:[EMSTimestampProvider new]
                                                                  additionalHeaders:nil
-                                                               requestModelMappers:nil];
+                                                               requestModelMappers:nil
+                                                                  responseHandlers:nil];
                 EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                             operationQueue:operationQueue
                                                                                                                        defaultSuccessBlock:middleware.successBlock

@@ -14,6 +14,7 @@
 #import "FakeRESTClientCompletionProxy.h"
 #import "EMSRequestModelMapperProtocol.h"
 #import "FakeRequestModelMapper.h"
+#import "EMSAbstractResponseHandler.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
@@ -61,42 +62,46 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                                    queue:self.expectedOperationQueue
                                        timestampProvider:self.mockTimestampProvider
                                        additionalHeaders:nil
-                                     requestModelMappers:nil];
+                                     requestModelMappers:nil
+                                        responseHandlers:nil];
 }
 
-- (void)testInit_shouldNotAccept_nilSession {
+- (void)testInit_session_mustNotBeNil {
     @try {
         [[EMSRESTClient alloc] initWithSession:nil
                                          queue:self.mockQueue
                              timestampProvider:self.mockTimestampProvider
                              additionalHeaders:nil
-                           requestModelMappers:nil];
+                           requestModelMappers:nil
+                              responseHandlers:nil];
         XCTFail(@"Expected Exception when session is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: session");
     }
 }
 
-- (void)testInit_shouldNotAccept_nilQueue {
+- (void)testInit_queue_mustNotBeNil {
     @try {
         [[EMSRESTClient alloc] initWithSession:self.mockSession
                                          queue:nil
                              timestampProvider:self.mockTimestampProvider
                              additionalHeaders:nil
-                           requestModelMappers:nil];
+                           requestModelMappers:nil
+                              responseHandlers:nil];
         XCTFail(@"Expected Exception when queue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
     }
 }
 
-- (void)testInit_shouldNotAccept_nilTimestampProvider {
+- (void)testInit_timestampProvider_mustNotBeNil {
     @try {
         [[EMSRESTClient alloc] initWithSession:self.mockSession
                                          queue:self.mockQueue
                              timestampProvider:nil
                              additionalHeaders:nil
-                           requestModelMappers:nil];
+                           requestModelMappers:nil
+                              responseHandlers:nil];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
@@ -237,7 +242,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                                    queue:self.expectedOperationQueue
                                        timestampProvider:self.mockTimestampProvider
                                        additionalHeaders:@{@"testAdditionalHeaderKey": @"testAdditionalHeaderValue"}
-                                     requestModelMappers:@[mapper1, mapper2, mapper3]];
+                                     requestModelMappers:@[mapper1, mapper2, mapper3]
+                                        responseHandlers:nil];
 
     [self.restClient executeWithRequestModel:requestModel1
                          coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
@@ -248,6 +254,41 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 
     XCTAssertEqualObjects(mapper1.inputValue, requestModelWithAdditionalHeaders);
     XCTAssertEqualObjects(mapper3.inputValue, mockRequestModel1);
+}
+
+- (void)testExecute_shouldUseResponseHandlers {
+    EMSAbstractResponseHandler *mockResponseHandler1 = OCMClassMock([EMSAbstractResponseHandler class]);
+    EMSAbstractResponseHandler *mockResponseHandler2 = OCMClassMock([EMSAbstractResponseHandler class]);
+
+    OCMStub([self.mockSession dataTaskWithRequest:self.request
+                                completionHandler:([OCMArg invokeBlockWithArgs:self.data,
+                                                                               self.response,
+                                                                               [NSError new],
+                                                                               nil])]);
+
+    _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                                   queue:self.expectedOperationQueue
+                                       timestampProvider:self.mockTimestampProvider
+                                       additionalHeaders:nil
+                                     requestModelMappers:nil
+                                        responseHandlers:@[mockResponseHandler1, mockResponseHandler2]];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionProxy"];
+    __block EMSResponseModel *returnedResponseModel = nil;
+    [self.restClient executeWithRequestModel:self.requestModel
+                         coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+                             returnedResponseModel = responseModel;
+                             [expectation fulfill];
+                         }]];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNotNil(returnedResponseModel);
+
+    OCMVerify([mockResponseHandler1 processResponse:returnedResponseModel]);
+    OCMVerify([mockResponseHandler2 processResponse:returnedResponseModel]);
 }
 
 - (EMSRequestModel *)generateRequestModel {

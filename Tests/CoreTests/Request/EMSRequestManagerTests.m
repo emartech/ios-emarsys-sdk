@@ -44,7 +44,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                          queue:queue
                                                              timestampProvider:[EMSTimestampProvider new]
                                                              additionalHeaders:nil
-                                                           requestModelMappers:nil];
+                                                           requestModelMappers:nil
+                                                              responseHandlers:nil];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                         operationQueue:queue
                                                                                                                    defaultSuccessBlock:middleware.successBlock

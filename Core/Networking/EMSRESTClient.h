@@ -10,6 +10,7 @@
 
 @class EMSTimestampProvider;
 @protocol EMSRequestModelMapperProtocol;
+@class EMSAbstractResponseHandler;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
               timestampProvider:(EMSTimestampProvider *)timestampProvider
-              additionalHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
-            requestModelMappers:(NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers;
+              additionalHeaders:(nullable NSDictionary<NSString *, NSString *> *)additionalHeaders
+            requestModelMappers:(nullable NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers
+               responseHandlers:(nullable NSArray<EMSAbstractResponseHandler *> *)responseHandlers;
 
 - (void)executeWithRequestModel:(EMSRequestModel *)requestModel
             coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy;
