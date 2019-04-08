@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSRESTClient : NSObject
 
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *additionalHeaders;
+@property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *additionalHeaders;
 
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
