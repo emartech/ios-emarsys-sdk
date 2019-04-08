@@ -127,7 +127,6 @@
                                                    completionBlock:self.completionBlock]);
 }
 
-
 - (void)testTrackCustomEventWithNameEventAttributes_eventName_mustNotBeNil {
     @try {
         [self.internal trackCustomEventWithName:nil
