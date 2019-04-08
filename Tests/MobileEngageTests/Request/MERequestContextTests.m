@@ -15,11 +15,11 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when uuidProvider is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMerchantId:@"merchantId"];
-                                [builder setContactFieldId:@3];
-                                [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                    applicationPassword:@"applicationPassword"];
-                            }]
+                            [builder setMerchantId:@"merchantId"];
+                            [builder setContactFieldId:@3];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"
+                                                applicationPassword:@"applicationPassword"];
+                        }]
                                                                                    uuidProvider:nil
                                                                               timestampProvider:[EMSTimestampProvider mock]
                                                                                      deviceInfo:[EMSDeviceInfo mock]];
@@ -33,11 +33,11 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMerchantId:@"merchantId"];
-                                [builder setContactFieldId:@3];
-                                [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                    applicationPassword:@"applicationPassword"];
-                            }]
+                            [builder setMerchantId:@"merchantId"];
+                            [builder setContactFieldId:@3];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"
+                                                applicationPassword:@"applicationPassword"];
+                        }]
                                                                                    uuidProvider:[EMSUUIDProvider mock]
                                                                               timestampProvider:nil
                                                                                      deviceInfo:[EMSDeviceInfo mock]];
@@ -51,11 +51,11 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when deviceInfo is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMerchantId:@"merchantId"];
-                                [builder setContactFieldId:@3];
-                                [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                    applicationPassword:@"applicationPassword"];
-                            }]
+                            [builder setMerchantId:@"merchantId"];
+                            [builder setContactFieldId:@3];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"
+                                                applicationPassword:@"applicationPassword"];
+                        }]
                                                                                    uuidProvider:[EMSUUIDProvider mock]
                                                                               timestampProvider:[EMSTimestampProvider mock]
                                                                                      deviceInfo:nil];
@@ -233,6 +233,48 @@ SPEC_BEGIN(MERequestContextTests)
                 [[[userDefaults stringForKey:kREFRESH_TOKEN] should] equal:expectedRefreshToken];
                 [[context.refreshToken should] equal:expectedRefreshToken];
             });
+        });
+
+        describe(@"contactFieldValue", ^{
+
+            beforeEach(^{
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults removeObjectForKey:kCONTACT_FIELD_VALUE];
+                [userDefaults synchronize];
+            });
+
+            it(@"should load the stored value", ^{
+                NSString *contactFieldValue = @"Stored contactFieldValue";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+                [userDefaults setObject:contactFieldValue
+                                 forKey:kCONTACT_FIELD_VALUE];
+                [userDefaults synchronize];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.contactFieldValue should] equal:contactFieldValue];
+            });
+
+            it(@"should store contactFieldValue", ^{
+                NSString *expectedContactFieldValue = @"Stored contactFieldValue";
+
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+
+                MERequestContext *context = [[MERequestContext alloc] initWithConfig:[EMSConfig nullMock]
+                                                                        uuidProvider:uuidProvider
+                                                                   timestampProvider:timestampProvider
+                                                                          deviceInfo:deviceInfo];
+                [[context.contactFieldValue should] beNil];
+
+                [context setContactFieldValue:expectedContactFieldValue];
+
+                [[[userDefaults stringForKey:kCONTACT_FIELD_VALUE] should] equal:expectedContactFieldValue];
+                [[context.contactFieldValue should] equal:expectedContactFieldValue];
+            });
+
         });
 
 SPEC_END
