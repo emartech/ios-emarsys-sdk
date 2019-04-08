@@ -72,7 +72,7 @@
 }
 
 - (void)testShouldHandleWithRequestModel_when_V3ClientUrl {
-    _url = [[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com"];
+    _url = [[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net"];
 
     XCTAssertTrue([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
 }

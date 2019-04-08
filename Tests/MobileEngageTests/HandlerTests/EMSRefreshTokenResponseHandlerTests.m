@@ -65,7 +65,7 @@
 }
 
 - (void)testShouldHandleResponse_shouldBeYES_whenMERequest_withRefreshTokenToken {
-    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
+    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"refreshToken": @"token"}];
 
     BOOL result = [self.responseHandler shouldHandleResponse:mockResponseModel];
@@ -75,7 +75,7 @@
 
 
 - (void)testHandleResponse_shouldSetRefreshTokenOnRequestContext {
-    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
+    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"refreshToken": @"token"}];
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
     _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];

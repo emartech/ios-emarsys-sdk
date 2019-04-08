@@ -70,7 +70,7 @@
 
 - (EMSResponseModel *)createResponseModelWithHeaders:(NSDictionary<NSString *, NSString *> *)headers {
     return [self createResponseModelWithHeaders:headers
-                                            url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/"]];
+                                            url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net"]];
 }
 
 - (EMSResponseModel *)createResponseModelWithHeaders:(NSDictionary<NSString *, NSString *> *)headers

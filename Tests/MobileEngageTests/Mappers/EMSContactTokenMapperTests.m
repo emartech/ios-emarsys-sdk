@@ -33,7 +33,7 @@
 - (void)testShouldHandleWithRequestModel_true_whenRequestIsMobileEngage_clientService {
     EMSContactTokenMapper *contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext];
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
-    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com"]);
+    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net"]);
 
     BOOL result = [contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 

@@ -69,7 +69,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client"]
                                                                                 method:@"POST"
                                                                                payload:payload
                                                                                headers:nil
@@ -86,7 +86,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/push-token"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/push-token"]
                                                                                 method:@"PUT"
                                                                                payload:@{@"pushToken": pushToken}
                                                                                headers:nil
@@ -105,7 +105,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,
@@ -126,7 +126,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/contact?anonymous=true"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=true"]
                                                                                 method:@"POST"
                                                                                payload:@{}
                                                                                headers:nil
@@ -145,7 +145,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/contact?anonymous=true"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=true"]
                                                                                 method:@"POST"
                                                                                payload:@{}
                                                                                headers:nil
@@ -222,7 +222,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-me-client.herokuapp.com/v3/apps/testApplicationCode/client/contact-token"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact-token"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"refreshToken": @"testRefreshToken"

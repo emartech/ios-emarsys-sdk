@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSContactTokenResponseHandler.h"
-#import "EMSRequestFactory.h"
 #import "MERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
@@ -64,7 +63,7 @@
 }
 
 - (void)testShouldHandleResponse_shouldBeYES_whenMERequest_withContactToken {
-    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
+    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"contactToken": @"token"}];
 
     BOOL result = [self.responseHandler shouldHandleResponse:mockResponseModel];
@@ -73,7 +72,7 @@
 }
 
 - (void)testHandleResponse_shouldSetContactTokenOnRequestContext {
-    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
+    EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"contactToken": @"token"}];
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
     _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];

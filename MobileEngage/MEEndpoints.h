@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define CLIENT_SERVICE_URL @"https://ems-me-client.herokuapp.com"
+#define CLIENT_SERVICE_URL @"https://me-client.eservice.emarsys.net"
 #define EVENT_SERVICE_URL @"https://mobile-events.eservice.emarsys.net"
 #define BASE_URL(applicationCode, serviceUrl) [NSString stringWithFormat:@"%@/v3/apps/%@/client", serviceUrl, applicationCode]
 #define CLIENT_URL(applicationCode) BASE_URL(applicationCode, CLIENT_SERVICE_URL)
