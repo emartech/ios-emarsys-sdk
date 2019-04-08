@@ -56,10 +56,10 @@
                 [builder setMethod:HTTPMethodPOST];
                 BOOL anonymousLogin = NO;
                 NSDictionary *payload = @{};
-                if (weakSelf.requestContext.appLoginParameters.contactFieldId && weakSelf.requestContext.appLoginParameters.contactFieldValue) {
+            if (weakSelf.requestContext.contactFieldId && weakSelf.requestContext.contactFieldValue) {
                     payload = @{
-                            @"contactFieldId": weakSelf.requestContext.appLoginParameters.contactFieldId,
-                            @"contactFieldValue": weakSelf.requestContext.appLoginParameters.contactFieldValue
+                        @"contactFieldId": weakSelf.requestContext.contactFieldId,
+                        @"contactFieldValue": weakSelf.requestContext.contactFieldValue
                     };
                 } else {
                     anonymousLogin = YES;

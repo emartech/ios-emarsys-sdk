@@ -89,7 +89,6 @@
 }
 
 - (void)reset {
-    self.appLoginParameters = nil;
     self.lastAppLoginPayload = nil;
     self.meId = nil;
     self.meIdSignature = nil;

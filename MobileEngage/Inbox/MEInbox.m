@@ -154,15 +154,15 @@
     mutableFetchingHeaders[@"x-ems-me-hardware-id"] = self.requestContext.deviceInfo.hardwareId;
     mutableFetchingHeaders[@"x-ems-me-application-code"] = self.config.applicationCode;
     mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@",
-                                                                                      self.requestContext.appLoginParameters.contactFieldId];
-    mutableFetchingHeaders[@"x-ems-me-contact-field-value"] = self.requestContext.appLoginParameters.contactFieldValue;
+                                                                                      self.requestContext.contactFieldId];
+    mutableFetchingHeaders[@"x-ems-me-contact-field-value"] = self.requestContext.contactFieldValue;
     mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode
                                                                                      password:self.config.applicationPassword];
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 
 - (BOOL)hasLoginParameters {
-    return self.requestContext.appLoginParameters && self.requestContext.appLoginParameters.contactFieldId && self.requestContext.appLoginParameters.contactFieldValue;
+    return self.requestContext.contactFieldId && self.requestContext.contactFieldValue;
 }
 
 @end

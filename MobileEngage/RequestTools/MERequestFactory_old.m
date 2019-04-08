@@ -189,9 +189,9 @@
                 @"hardware_id": requestContext.deviceInfo.hardwareId
             } mutableCopy];
 
-            if (requestContext.appLoginParameters.contactFieldId && requestContext.appLoginParameters.contactFieldValue) {
-                payload[@"contact_field_id"] = requestContext.appLoginParameters.contactFieldId;
-                payload[@"contact_field_value"] = requestContext.appLoginParameters.contactFieldValue;
+            if (requestContext.contactFieldId && requestContext.contactFieldValue) {
+                payload[@"contact_field_id"] = requestContext.contactFieldId;
+                payload[@"contact_field_value"] = requestContext.contactFieldValue;
             }
 
             if (payloadBlock) {

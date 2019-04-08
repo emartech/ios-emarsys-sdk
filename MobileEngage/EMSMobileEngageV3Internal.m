@@ -37,8 +37,8 @@
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
-    [self.requestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:self.requestContext.contactFieldId
-                                                                                  contactFieldValue:contactFieldValue]];
+    [self.requestContext setContactFieldValue:contactFieldValue];
+
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];

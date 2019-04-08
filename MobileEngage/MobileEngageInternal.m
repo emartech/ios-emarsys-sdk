@@ -90,9 +90,9 @@
 - (void)setPushToken:(NSData *)pushToken {
     _pushToken = pushToken;
 
-    if (self.requestContext.appLoginParameters != nil) {
-        [self setContactWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
-    }
+//    if (self.requestContext.appLoginParameters != nil) {
+//        [self setContactWithContactFieldValue:self.requestContext.appLoginParameters.contactFieldValue];
+//    }
 }
 
 - (void)setPushToken:(NSData *)pushToken
@@ -117,8 +117,7 @@
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
-    self.requestContext.appLoginParameters = [MEAppLoginParameters parametersWithContactFieldId:self.requestContext.contactFieldId
-                                                                              contactFieldValue:contactFieldValue];
+    self.requestContext.contactFieldValue = contactFieldValue;
 
     EMSRequestModel *requestModel = [MERequestFactory_old createLoginOrLastMobileActivityRequestWithPushToken:self.pushToken
                                                                                                requestContext:self.requestContext];

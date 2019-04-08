@@ -3,7 +3,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MEAppLoginParameters.h"
 #import "EMSNotification.h"
 #import "MEInAppTrackingProtocol.h"
 #import "EMSResponseModel.h"

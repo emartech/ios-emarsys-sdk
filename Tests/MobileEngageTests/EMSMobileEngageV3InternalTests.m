@@ -102,9 +102,8 @@
     [self.internal setContactWithContactFieldValue:self.contactFieldValue
                                    completionBlock:self.completionBlock];
 
-    OCMVerify([self.mockRequestContext contactFieldId]);
-    OCMVerify([self.mockRequestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:contactFieldId
-                                                                                                contactFieldValue:self.contactFieldValue]]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);

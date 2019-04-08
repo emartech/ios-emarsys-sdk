@@ -3,7 +3,6 @@
 #import "EMSConfig.h"
 #import "EMSDeviceInfo.h"
 #import "MEDefaultHeaders.h"
-#import "MEAppLoginParameters.h"
 #import "FakeInboxNotificationRequestManager.h"
 #import "MEInbox.h"
 #import "EMSRequestModelMatcher.h"
@@ -39,15 +38,16 @@ SPEC_BEGIN(MEInboxTests)
 
         __block EMSNotificationCache *notificationCache;
 
-        id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withApploginParameters) = ^id(EMSRequestManager *requestManager, BOOL withApploginParameters) {
+        id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withContactFieldValue) = ^id(EMSRequestManager *requestManager, BOOL withContactFieldValue) {
             notificationCache = [EMSNotificationCache new];
             MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
                                                                     uuidProvider:uuidProvider
                                                                timestampProvider:timestampProvider
                                                                       deviceInfo:deviceInfo];
-            if (withApploginParameters) {
-                [context setAppLoginParameters:[MEAppLoginParameters parametersWithContactFieldId:contactFieldId
-                                                                                contactFieldValue:contactFieldValue]];
+            if (withContactFieldValue) {
+                [context setContactFieldValue:contactFieldValue];
+            } else {
+                [context setContactFieldValue:nil];
             }
 
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
@@ -207,7 +207,7 @@ SPEC_BEGIN(MEInboxTests)
                 MEInbox *inbox = inboxWithParameters(requestManager, YES);
 
                 KWCaptureSpy *requestModelSpy = [requestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                                                atIndex:0];
+                                                                        atIndex:0];
 
                 [inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
                 }];
@@ -614,6 +614,8 @@ SPEC_BEGIN(MEInboxTests)
                     @"source": @"inbox"
                 });
 
+                [requestContext setContactFieldValue:nil];
+
                 [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
                                        withArguments:kw_any(), kw_any()];
 
@@ -637,8 +639,8 @@ SPEC_BEGIN(MEInboxTests)
                     @"source": @"inbox"
                 });
 
-                [requestContext setAppLoginParameters:[[MEAppLoginParameters alloc] initWithContactFieldId:@3
-                                                                                         contactFieldValue:@"contactFieldValue"]];
+                [requestContext setContactFieldValue:@"contactFieldValue"];
+
                 [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
                                        withArguments:kw_any(), kw_any()];
 
@@ -659,6 +661,8 @@ SPEC_BEGIN(MEInboxTests)
                     @"sid": @"valueOfSid",
                     @"source": @"inbox"
                 });
+
+                [requestContext setContactFieldValue:nil];
 
                 [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
                                        withArguments:kw_any(), kw_any()];

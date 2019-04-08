@@ -98,9 +98,8 @@
 }
 
 - (void)testCreateContactRequestModel {
-    MEAppLoginParameters *appLoginParameters = [[MEAppLoginParameters alloc] initWithContactFieldId:@3
-                                                                                  contactFieldValue:@"test@test.com"];
-    OCMStub([self.mockRequestContext appLoginParameters]).andReturn(appLoginParameters);
+    OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"test@test.com");
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -119,28 +118,8 @@
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
 
-- (void)testCreateContactRequestModel_when_appLoginParametersIsNil {
-    MEAppLoginParameters *appLoginParameters = nil;
-    OCMStub([self.mockRequestContext appLoginParameters]).andReturn(appLoginParameters);
-
-    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
-                                                                             timestamp:self.timestamp
-                                                                                expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=true"]
-                                                                                method:@"POST"
-                                                                               payload:@{}
-                                                                               headers:nil
-                                                                                extras:nil];
-
-    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
-
-    XCTAssertEqualObjects(requestModel, expectedRequestModel);
-}
-
 - (void)testCreateContactRequestModel_when_contactFieldValueIsNil {
-    MEAppLoginParameters *appLoginParameters = [[MEAppLoginParameters alloc] initWithContactFieldId:@3
-                                                                                  contactFieldValue:nil];
-    OCMStub([self.mockRequestContext appLoginParameters]).andReturn(appLoginParameters);
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(nil);
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
