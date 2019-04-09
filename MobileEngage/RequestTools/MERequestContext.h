@@ -10,7 +10,6 @@
 @class EMSDeviceInfo;
 
 #define kEMSSuiteName @"com.emarsys.mobileengage"
-#define kEMSLastAppLoginPayload @"kLastAppLoginPayload"
 #define kMEID @"kMEID"
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 #define kCLIENT_STATE @"kCLIENT_STATE"
@@ -22,7 +21,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property(nonatomic, strong, nullable) NSDictionary *lastAppLoginPayload;
 @property(nonatomic, strong, nullable) NSString *meId;
 @property(nonatomic, strong, nullable) NSString *meIdSignature;
 @property(nonatomic, strong, nullable) EMSConfig *config;

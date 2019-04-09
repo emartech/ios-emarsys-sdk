@@ -18,21 +18,11 @@
                                                           requestContext:(MERequestContext *)requestContext {
     EMSRequestModel *requestModel = [self createAppLoginRequestWithPushToken:pushToken
                                                               requestContext:requestContext];
-    if ([self shouldSendLastMobileActivityWithRequestContext:requestContext
-                                      currentAppLoginPayload:requestModel.payload]) {
-        requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"last_mobile_activity"
-                                                                 eventAttributes:nil
-                                                                            type:@"internal"
-                                                                  requestContext:requestContext];
-    } else {
-        requestContext.lastAppLoginPayload = requestModel.payload;
-    }
+    requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"last_mobile_activity"
+                                                             eventAttributes:nil
+                                                                        type:@"internal"
+                                                              requestContext:requestContext];
     return requestModel;
-}
-
-+ (BOOL)shouldSendLastMobileActivityWithRequestContext:(MERequestContext *)requestContext
-                                currentAppLoginPayload:(NSDictionary *)currentAppLoginPayload {
-    return ([requestContext.lastAppLoginPayload isEqual:currentAppLoginPayload] && requestContext.meId);
 }
 
 + (EMSRequestModel *)createAppLoginRequestWithPushToken:(NSData *)pushToken
@@ -90,9 +80,9 @@
         requestModel = [MERequestFactory_old requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
                                                           method:HTTPMethodPOST
                                           additionalPayloadBlock:^(NSMutableDictionary *payload) {
-                                          payload[@"sid"] = inboxMessage.sid;
-                                          payload[@"source"] = @"inbox";
-                                      }
+                                              payload[@"sid"] = inboxMessage.sid;
+                                              payload[@"source"] = @"inbox";
+                                          }
                                                   requestContext:requestContext];
     }
     return requestModel;

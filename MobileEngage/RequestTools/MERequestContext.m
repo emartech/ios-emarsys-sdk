@@ -16,7 +16,6 @@
     NSParameterAssert(timestampProvider);
     NSParameterAssert(deviceInfo);
     if (self = [super init]) {
-        _lastAppLoginPayload = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] dictionaryForKey:kEMSLastAppLoginPayload];
         _meId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID];
         _meIdSignature = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID_SIGNATURE];
         _config = config;
@@ -30,14 +29,6 @@
         _contactFieldValue = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_FIELD_VALUE];
     }
     return self;
-}
-
-- (void)setLastAppLoginPayload:(NSDictionary *)lastAppLoginPayload {
-    _lastAppLoginPayload = lastAppLoginPayload;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults setObject:lastAppLoginPayload
-                     forKey:kEMSLastAppLoginPayload];
-    [userDefaults synchronize];
 }
 
 - (void)setMeId:(NSString *)meId {
@@ -89,7 +80,6 @@
 }
 
 - (void)reset {
-    self.lastAppLoginPayload = nil;
     self.meId = nil;
     self.meIdSignature = nil;
 }
