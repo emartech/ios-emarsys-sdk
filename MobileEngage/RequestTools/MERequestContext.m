@@ -82,6 +82,9 @@
 - (void)reset {
     self.meId = nil;
     self.meIdSignature = nil;
+    self.contactFieldValue = nil;
+    self.contactToken = nil;
+    self.refreshToken = nil;
 }
 
 @end

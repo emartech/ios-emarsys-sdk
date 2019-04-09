@@ -49,6 +49,7 @@
 }
 
 - (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    [self.requestContext reset];
     [self setContactWithContactFieldValue:nil
                           completionBlock:completionBlock];
 }

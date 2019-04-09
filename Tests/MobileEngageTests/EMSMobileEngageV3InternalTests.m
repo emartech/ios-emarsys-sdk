@@ -120,6 +120,11 @@
 - (void)testClearContactWithCompletionBlock {
     EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
 
+    OCMStub([partialMockInternal setContactWithContactFieldValue:nil
+                                                 completionBlock:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
+        OCMVerify([self.mockRequestContext reset]);
+    });
+
     [partialMockInternal clearContactWithCompletionBlock:self.completionBlock];
 
     OCMVerify([partialMockInternal setContactWithContactFieldValue:nil
