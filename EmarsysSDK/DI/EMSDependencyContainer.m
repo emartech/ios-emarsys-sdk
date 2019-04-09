@@ -235,7 +235,10 @@
                                   requestManager:self.requestManager];
     }
 
-    _appStartBlockProvider = [AppStartBlockProvider new];
+    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
+                                                                    requestFactory:self.requestFactory
+                                                                    requestContext:self.requestContext
+                                                                        deviceInfo:deviceInfo];
 
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];
