@@ -6,18 +6,15 @@
 
 @class EMSRequestManager;
 @class MERequestContext;
-@class EMSDeviceInfo;
 @class EMSRequestFactory;
-
-#define kDEVICE_INFO @"kDEVICE_INFO"
+@protocol EMSDeviceInfoClientProtocol;
 
 @interface AppStartBlockProvider : NSObject
 
         - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                                 requestFactory:(EMSRequestFactory *)requestFactory
                                 requestContext:(MERequestContext *)requestContext
-                                    deviceInfo:(EMSDeviceInfo *)deviceInfo;
-
+                              deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
 - (MEHandlerBlock)createAppStartEventBlock;
 

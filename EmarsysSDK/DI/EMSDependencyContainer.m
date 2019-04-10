@@ -51,6 +51,7 @@
 #import "EMSCompletionProxyFactory.h"
 #import "EMSRefreshTokenResponseHandler.h"
 #import "EMSContactTokenMapper.h"
+#import "EMSDeviceInfoV3ClientInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -235,10 +236,14 @@
                                   requestManager:self.requestManager];
     }
 
+    EMSDeviceInfoV3ClientInternal *clientInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
+                                                                                                   requestFactory:self.requestFactory
+                                                                                                       deviceInfo:deviceInfo];
+
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                     requestFactory:self.requestFactory
                                                                     requestContext:self.requestContext
-                                                                        deviceInfo:deviceInfo];
+                                                                  deviceInfoClient:clientInternal];
 
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];

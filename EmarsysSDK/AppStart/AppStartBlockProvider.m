@@ -5,15 +5,14 @@
 #import "EMSRequestManager.h"
 #import "MERequestContext.h"
 #import "EMSRequestFactory.h"
-#import "EMSDeviceInfo.h"
-#import "EMSDeviceInfo+MEClientPayload.h"
+#import "EMSDeviceInfoClientProtocol.h"
 
 @interface AppStartBlockProvider ()
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
+@property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 
 @end
 
@@ -22,47 +21,39 @@
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestFactory:(EMSRequestFactory *)requestFactory
                         requestContext:(MERequestContext *)requestContext
-                            deviceInfo:(EMSDeviceInfo *)deviceInfo {
+                      deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient {
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestContext);
-    NSParameterAssert(deviceInfo);
+    NSParameterAssert(deviceInfoClient);
     if (self = [super init]) {
         _requestManager = requestManager;
         _requestFactory = requestFactory;
         _requestContext = requestContext;
-        _deviceInfo = deviceInfo;
+        _deviceInfoClient = deviceInfoClient;
     }
     return self;
 }
 
-
 - (MEHandlerBlock)createAppStartEventBlock {
+    __weak typeof(self) weakSelf = self;
     return ^{
-        if (self.requestContext.contactToken) {
-            EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"app:start"
-                                                                                      eventAttributes:nil
-                                                                                            eventType:EventTypeInternal];
-            [self.requestManager submitRequestModel:requestModel
-                                withCompletionBlock:^(NSError *error) {
-                                }];
+        if (weakSelf.requestContext.contactToken) {
+            EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"app:start"
+                                                                                          eventAttributes:nil
+                                                                                                eventType:EventTypeInternal];
+            [weakSelf.requestManager submitRequestModel:requestModel
+                                    withCompletionBlock:^(NSError *error) {
+                                    }];
         }
     };
 }
 
 - (MEHandlerBlock)createDeviceInfoEventBlock {
+    __weak typeof(self) weakSelf = self;
     return ^{
-        NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-        if (![[userDefaults dictionaryForKey:kDEVICE_INFO] isEqualToDictionary:[self.deviceInfo clientPayload]]) {
-            [userDefaults setObject:[self.deviceInfo clientPayload]
-                             forKey:kDEVICE_INFO];
-            EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
-            [self.requestManager submitRequestModel:deviceInfoRequest
-                                withCompletionBlock:^(NSError *error) {
-                                }];
-        }
+        [weakSelf.deviceInfoClient sendDeviceInfo];
     };
 }
-
 
 @end
