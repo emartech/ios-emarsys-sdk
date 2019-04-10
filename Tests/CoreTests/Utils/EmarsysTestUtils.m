@@ -74,4 +74,24 @@
     [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
 }
 
++ (void)waitForSetPushToken {
+    NSData *mockDeviceToken = [NSData mock];
+
+    [mockDeviceToken stub:@selector(deviceTokenString)
+                andReturn:@"test_pushToken_for_iOS_integrationTest"];
+
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys.push setPushToken:mockDeviceToken
+               completionBlock:^(NSError *error) {
+                   returnedError = error;
+                   [expectation fulfill];
+               }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
+    [returnedError shouldBeNil];
+}
+
 @end

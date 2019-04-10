@@ -11,6 +11,7 @@ SPEC_BEGIN(InboxIntegrationTests)
         beforeEach(^{
             [EmarsysTestUtils tearDownEmarsys];
             [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+            [EmarsysTestUtils waitForSetPushToken];
             [EmarsysTestUtils waitForSetCustomer];
         });
 
@@ -20,7 +21,7 @@ SPEC_BEGIN(InboxIntegrationTests)
 
         describe(@"Notification Inbox", ^{
 
-            xit(@"fetchNotificationsWithResultBlock", ^{
+            it(@"fetchNotificationsWithResultBlock", ^{
                 __block EMSNotificationInboxStatus *_inboxStatus;
                 __block NSError *_error;
 
@@ -37,7 +38,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[_inboxStatus shouldNotEventually] beNil];
             });
 
-            xit(@"fetchNotificationsWithResultBlock result should contain the gained notification", ^{
+            it(@"fetchNotificationsWithResultBlock result should contain the gained notification", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{
@@ -81,7 +82,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[returnedNotification.id should] equal:notificationId];
             });
 
-            xit(@"fetchNotificationsWithResultBlock result should contain the gained notification with title and body", ^{
+            it(@"fetchNotificationsWithResultBlock result should contain the gained notification with title and body", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{
@@ -130,7 +131,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[returnedNotification.body should] equal:@"body"];
             });
 
-            xit(@"fetchNotificationsWithResultBlock result should not contain the gained notification if it's not inbox message", ^{
+            it(@"fetchNotificationsWithResultBlock result should not contain the gained notification if it's not inbox message", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @NO;
                 NSDictionary *userInfo = @{
@@ -172,7 +173,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 [[resultInboxStatus shouldNot] beNil];
             });
 
-            xit(@"resetBadgeCount", ^{
+            it(@"resetBadgeCount", ^{
                 __block BOOL _success = NO;
                 __block BOOL _error = YES;
 
