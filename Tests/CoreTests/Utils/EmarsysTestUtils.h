@@ -16,6 +16,10 @@
 
 + (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer;
+
++ (void)setupEmarsysWithConfig:(EMSConfig *)config
+           dependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer;
+
 + (void)tearDownEmarsys;
 
 + (void)waitForSetPushToken;

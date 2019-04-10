@@ -78,6 +78,7 @@
 @property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
+@property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -236,14 +237,14 @@
                                   requestManager:self.requestManager];
     }
 
-    EMSDeviceInfoV3ClientInternal *clientInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
-                                                                                                   requestFactory:self.requestFactory
-                                                                                                       deviceInfo:deviceInfo];
+    _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
+                                                                       requestFactory:self.requestFactory
+                                                                           deviceInfo:deviceInfo];
 
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                     requestFactory:self.requestFactory
                                                                     requestContext:self.requestContext
-                                                                  deviceInfoClient:clientInternal];
+                                                                  deviceInfoClient:self.deviceInfoClient];
 
     _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                 requestManager:self.requestManager];

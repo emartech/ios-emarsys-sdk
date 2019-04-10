@@ -22,6 +22,7 @@
 @protocol EMSMobileEngageProtocol;
 @protocol EMSPushNotificationProtocol;
 @protocol EMSDeepLinkProtocol;
+@protocol EMSDeviceInfoClientProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -62,5 +63,7 @@
 - (id <EMSDBTriggerProtocol>)predictTrigger;
 
 - (id <EMSDBTriggerProtocol>)loggerTrigger;
+
+- (id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
 @end

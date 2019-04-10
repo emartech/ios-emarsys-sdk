@@ -27,7 +27,7 @@
 
 SPEC_BEGIN(EmarsysTests)
 
-        __block MobileEngageInternal *engage;
+        __block id engage;
         __block PredictInternal *predict;
         __block MERequestContext *requestContext;
         __block EMSDeviceInfo *deviceInfo;
@@ -35,6 +35,7 @@ SPEC_BEGIN(EmarsysTests)
         __block EMSRequestManager *requestManager;
         __block MENotificationCenterManager *notificationCenterManagerMock;
         __block AppStartBlockProvider *appStartBlockProvider;
+        __block id deviceInfoClient;
 
         __block EMSConfig *baseConfig;
         __block id <EMSDependencyContainerProtocol> dependencyContainer;
@@ -42,7 +43,7 @@ SPEC_BEGIN(EmarsysTests)
         NSString *const customerId = @"customerId";
 
         beforeEach(^{
-            engage = [MobileEngageInternal nullMock];
+            engage = [KWMock nullMockForProtocol:@protocol(EMSMobileEngageProtocol)];
             predict = [PredictInternal nullMock];
             requestContext = [MERequestContext nullMock];
             deviceInfo = [EMSDeviceInfo nullMock];
@@ -52,6 +53,7 @@ SPEC_BEGIN(EmarsysTests)
             requestManager = [EMSRequestManager nullMock];
             notificationCenterManagerMock = [MENotificationCenterManager nullMock];
             appStartBlockProvider = [AppStartBlockProvider nullMock];
+            deviceInfoClient = [KWMock nullMockForProtocol:@protocol(EMSDeviceInfoClientProtocol)];
 
             dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil
                                                                        mobileEngage:engage
@@ -66,7 +68,8 @@ SPEC_BEGIN(EmarsysTests)
                                                                      requestManager:requestManager
                                                                      operationQueue:nil
                                                           notificationCenterManager:notificationCenterManagerMock
-                                                              appStartBlockProvider:appStartBlockProvider];
+                                                              appStartBlockProvider:appStartBlockProvider
+                                                                   deviceInfoClient:deviceInfoClient];
 
             [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                withDependencyContainer:dependencyContainer];
@@ -290,6 +293,49 @@ SPEC_BEGIN(EmarsysTests)
                                                                     UIApplicationDidBecomeActiveNotification];
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:dependencyContainer];
+                });
+
+            });
+
+            context(@"automatic anonym applogin", ^{
+
+                it(@"setupWithConfig should send deviceInfo and login", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                        [builder setMerchantId:@"1428C8EE286EC34B"];
+                        [builder setContactFieldId:@3];
+                    }];
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[deviceInfoClient should] receive:@selector(sendDeviceInfo)];
+                    [[engage should] receive:@selector(setContactWithContactFieldValue:)
+                               withArguments:kw_any()];
+
+                    [Emarsys setupWithConfig:config];
+                });
+
+                it(@"setupWithConfig should not send deviceInfo and login", ^{
+                    [requestContext stub:@selector(contactFieldValue)
+                               andReturn:@"testContactFieldValue"];
+
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                        [builder setMerchantId:@"1428C8EE286EC34B"];
+                        [builder setContactFieldId:@3];
+                    }];
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfo)];
+                    [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:)
+                                  withArguments:kw_any()];
+
+                    [Emarsys setupWithConfig:config];
                 });
 
             });

@@ -62,7 +62,7 @@
 
 SPEC_BEGIN(PredictIntegrationTests)
 
-        __block XCTestExpectation *expectation;
+        __block NSArray<XCTestExpectation *> *expectations;
         __block PredictIntegrationDependencyContainer *dependencyContainer;
 
         beforeEach(^{
@@ -84,9 +84,11 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [builder setContactFieldId:@3];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
             }];
-            expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
+            expectations = @[
+                [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"],
+                [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
             dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
-                                                                                    expectation:expectation];
+                                                                                   expectations:expectations];
             [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
             [Emarsys setupWithConfig:config];
         });
@@ -101,14 +103,15 @@ SPEC_BEGIN(PredictIntegrationTests)
                 NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackCartWithCartItems:@[
-                        [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
-                        [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
+                    [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
+                    [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
                 ]];
 
-                [EMSWaiter waitForExpectations:@[expectation]
+                [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
 
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] beBetween:theValue(200)
+                                                                                             and:theValue(299)];
                 [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
             });
         });
@@ -121,15 +124,15 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[
-                                                            [EMSCartItem itemWithItemId:@"2508"
-                                                                                  price:200.0
-                                                                               quantity:100.0],
-                                                            [EMSCartItem itemWithItemId:@"2073"
-                                                                                  price:201.0
-                                                                               quantity:101.0]
+                                                        [EMSCartItem itemWithItemId:@"2508"
+                                                                              price:200.0
+                                                                           quantity:100.0],
+                                                        [EMSCartItem itemWithItemId:@"2073"
+                                                                              price:201.0
+                                                                           quantity:101.0]
                                                     ]];
 
-                [EMSWaiter waitForExpectations:@[expectation]
+                [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
@@ -145,7 +148,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackCategoryViewWithCategoryPath:@"DESIGNS>Living Room"];
 
-                [EMSWaiter waitForExpectations:@[expectation]
+                [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
@@ -160,7 +163,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackItemViewWithItemId:@"2508"];
 
-                [EMSWaiter waitForExpectations:@[expectation]
+                [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
@@ -175,7 +178,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
 
-                [EMSWaiter waitForExpectations:@[expectation]
+                [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];

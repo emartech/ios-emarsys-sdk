@@ -19,6 +19,7 @@
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
+@property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 
 @end
 
@@ -37,7 +38,8 @@
                   requestManager:(EMSRequestManager *)requestManager
                   operationQueue:(NSOperationQueue *)operationQueue
        notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
-           appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider {
+           appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider
+                deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient {
     if (self = [super init]) {
         _dbHelper = dbHelper;
         _mobileEngage = mobileEngage;
@@ -53,6 +55,7 @@
         _notificationCenterManager = notificationCenterManager;
         _appStartBlockProvider = appStartBlockProvider;
         _requestFactory = requestFactory;
+        _deviceInfoClient = deviceInfoClient;
     }
     return self;
 }

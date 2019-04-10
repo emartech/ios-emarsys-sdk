@@ -12,13 +12,14 @@
                              iam:(MEInApp *)iam
                          predict:(PredictInternal *)predict
                   requestContext:(MERequestContext *)requestContext
-                  requestFactory:(EMSRequestFactory *)requestFactory
-               requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-               notificationCache:(EMSNotificationCache *)notificationCache
-                responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers
-                  requestManager:(EMSRequestManager *)requestManager
-                  operationQueue:(NSOperationQueue *)operationQueue
-       notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
-           appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider;
+           requestFactory:(EMSRequestFactory *)requestFactory
+        requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+        notificationCache:(EMSNotificationCache *)notificationCache
+         responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers
+           requestManager:(EMSRequestManager *)requestManager
+           operationQueue:(NSOperationQueue *)operationQueue
+notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
+    appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider
+         deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
 @end

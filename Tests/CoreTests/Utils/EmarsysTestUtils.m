@@ -6,6 +6,7 @@
 #import "EMSDependencyInjection.h"
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
+#import "MERequestContext.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -21,6 +22,21 @@
 
 + (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer {
+    [EmarsysTestUtils setupEmarsysWithFeatures:features
+                       withDependencyContainer:dependencyContainer
+                                        config:nil];
+}
+
++ (void)setupEmarsysWithConfig:(EMSConfig *)config
+           dependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer {
+    [EmarsysTestUtils setupEmarsysWithFeatures:nil
+                       withDependencyContainer:dependencyContainer
+                                        config:config];
+}
+
++ (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
+         withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
+                          config:(EMSConfig *)config {
     [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
                                                error:nil];
     [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
@@ -42,19 +58,25 @@
         [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
     }
 
-    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-        [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
-        [builder setMerchantId:@"1428C8EE286EC34B"];
-        [builder setContactFieldId:@3];
-        [builder setExperimentalFeatures:features];
-    }];
-    [Emarsys setupWithConfig:config];
+    if (features) {
+        EMSConfig *configWithFeatures = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+            [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+            [builder setMerchantId:@"1428C8EE286EC34B"];
+            [builder setContactFieldId:@3];
+            [builder setExperimentalFeatures:features];
+        }];
+
+        [Emarsys setupWithConfig:configWithFeatures];
+    } else {
+        [Emarsys setupWithConfig:config];
+    }
 }
 
 + (void)tearDownEmarsys {
     [MEExperimental reset];
     [EMSDependencyInjection.dependencyContainer.operationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.requestContext reset];
     [EMSDependencyInjection tearDown];
 }
 

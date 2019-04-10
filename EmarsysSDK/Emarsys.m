@@ -14,6 +14,8 @@
 #import "MENotificationCenterManager.h"
 #import "AppStartBlockProvider.h"
 #import "MEUserNotificationDelegate.h"
+#import "EMSDeviceInfoClientProtocol.h"
+#import "MERequestContext.h"
 
 @implementation Emarsys
 
@@ -24,6 +26,12 @@
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
 
     [Emarsys registerAppStartBlock];
+
+    EMSDependencyContainer *container = EMSDependencyInjection.dependencyContainer;
+    if (!container.requestContext.contactFieldValue) {
+        [container.deviceInfoClient sendDeviceInfo];
+        [container.mobileEngage setContactWithContactFieldValue:nil];
+    }
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
