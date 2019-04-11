@@ -54,17 +54,12 @@ class MESMobileEngageViewController: UIViewController {
     }
 
 //MARK: Actions
-    @IBAction func anonymLoginButtonClicked(_ sender: Any) {
-//TODO:        MobileEngage.anonymapplogin
-        self.tvInfos.text = "Anonymus login: "
-    }
-
     @IBAction func loginButtonClicked(_ sender: Any) {
         guard let valueText = self.contactFieldValueTextField.text else {
             showAlert(with: "Wrong parameter")
             return
         }
-        Emarsys.setCustomerWithId(valueText) { (error) in
+        Emarsys.setContactWithContactFieldValue(valueText) { (error) in
             self.createResponseHandler()(error)
             let inboxViewController = self.tabBarController?.viewControllers?[1] as! MESInboxViewController
             inboxViewController.refresh(refreshControl: nil)
@@ -102,7 +97,7 @@ class MESMobileEngageViewController: UIViewController {
     }
 
     @IBAction func logoutButtonClicked(_ sender: Any) {
-        Emarsys.clearCustomer(completionBlock: createResponseHandler())
+        Emarsys.clearContact(completionBlock: createResponseHandler())
         self.tvInfos.text = "App logout: "
     }
 
