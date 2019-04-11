@@ -28,6 +28,7 @@
 SPEC_BEGIN(EmarsysTests)
 
         __block id engage;
+        __block id push;
         __block PredictInternal *predict;
         __block MERequestContext *requestContext;
         __block EMSDeviceInfo *deviceInfo;
@@ -44,6 +45,7 @@ SPEC_BEGIN(EmarsysTests)
 
         beforeEach(^{
             engage = [KWMock nullMockForProtocol:@protocol(EMSMobileEngageProtocol)];
+            push = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
             predict = [PredictInternal nullMock];
             requestContext = [MERequestContext nullMock];
             deviceInfo = [EMSDeviceInfo nullMock];
@@ -57,6 +59,7 @@ SPEC_BEGIN(EmarsysTests)
 
             dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil
                                                                        mobileEngage:engage
+                                                                               push:push
                                                                               inbox:nil
                                                                                 iam:nil
                                                                             predict:predict
@@ -427,19 +430,19 @@ SPEC_BEGIN(EmarsysTests)
 
             NSDictionary *const userInfo = @{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"};
 
-            xit(@"should delegate call to MobileEngage with nil completionBlock", ^{
-                [[engage should] receive:@selector(trackMessageOpenWithUserInfo:)
-                           withArguments:userInfo];
+            it(@"should delegate call to MobileEngage with nil completionBlock", ^{
+                [[push should] receive:@selector(trackMessageOpenWithUserInfo:)
+                         withArguments:userInfo];
 
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
             });
 
-            xit(@"should delegate call to MobileEngage", ^{
+            it(@"should delegate call to MobileEngage", ^{
                 EMSCompletionBlock completionBlock = ^(NSError *error) {
                 };
 
-                [[engage should] receive:@selector(trackMessageOpenWithUserInfo:completionBlock:)
-                           withArguments:userInfo, completionBlock];
+                [[push should] receive:@selector(trackMessageOpenWithUserInfo:completionBlock:)
+                         withArguments:userInfo, completionBlock];
 
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo
                                            completionBlock:completionBlock];

@@ -38,6 +38,6 @@
                  completionBlock:(EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
-        sourceHandler:(EMSSourceHandler)sourceHandler;
+                        sourceHandler:(EMSSourceHandler)sourceHandler;
 
 @end

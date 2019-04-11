@@ -188,12 +188,13 @@ SPEC_BEGIN(PredictIntegrationTests)
 
         describe(@"visitorId", ^{
 
-            xit(@"should simulate login flow", ^{
+            it(@"should simulate login flow", ^{
+                XCTestExpectation *expectation0 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
                 XCTestExpectation *expectation1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
                 XCTestExpectation *expectation2 = [[XCTestExpectation alloc] initWithDescription:@"waitForClearCustomer"];
                 XCTestExpectation *expectation3 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetCustomer"];
                 XCTestExpectation *expectation4 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
-                [dependencyContainer setExpectations:[@[expectation1, expectation2, expectation3, expectation4] mutableCopy]];
+                [dependencyContainer setExpectations:[@[expectation0, expectation1, expectation2, expectation3, expectation4] mutableCopy]];
 
                 NSString *expectedQueryParams = @"q=searchTerm";
                 NSString *visitorId;

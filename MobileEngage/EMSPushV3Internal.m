@@ -87,7 +87,7 @@
                                                                                   }
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
-                            withCompletionBlock:nil];
+                            withCompletionBlock:completionBlock];
 
     } else if (completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^{

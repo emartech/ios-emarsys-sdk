@@ -7,6 +7,7 @@
 
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, strong) MobileEngageInternal *mobileEngage;
+@property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) MEInApp *iam;
 @property(nonatomic, strong) PredictInternal *predict;
@@ -27,6 +28,7 @@
 
 - (instancetype)initWithDbHelper:(EMSSQLiteHelper *)dbHelper
                     mobileEngage:(MobileEngageInternal *)mobileEngage
+                            push:(id <EMSPushNotificationProtocol>)push
                            inbox:(id <EMSInboxProtocol>)inbox
                              iam:(MEInApp *)iam
                          predict:(PredictInternal *)predict
@@ -56,6 +58,7 @@
         _appStartBlockProvider = appStartBlockProvider;
         _requestFactory = requestFactory;
         _deviceInfoClient = deviceInfoClient;
+        _push = push;
     }
     return self;
 }
