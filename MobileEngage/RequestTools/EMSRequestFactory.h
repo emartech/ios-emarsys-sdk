@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken;
 
+- (EMSRequestModel *)createClearPushTokenRequestModel;
+
 - (EMSRequestModel *)createContactRequestModel;
 
 - (EMSRequestModel *)createEventRequestModelWithEventName:(NSString *)eventName

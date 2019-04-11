@@ -31,10 +31,10 @@
 - (EMSRequestModel *)createDeviceInfoRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:CLIENT_URL(weakSelf.applicationCode)];
-                [builder setMethod:HTTPMethodPOST];
-                [builder setPayload:[weakSelf.deviceInfo clientPayload]];
-            }
+            [builder setUrl:CLIENT_URL(weakSelf.applicationCode)];
+            [builder setMethod:HTTPMethodPOST];
+            [builder setPayload:[weakSelf.deviceInfo clientPayload]];
+        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }
@@ -42,10 +42,21 @@
 - (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:PUSH_TOKEN_URL(weakSelf.applicationCode)];
-                [builder setMethod:HTTPMethodPUT];
-                [builder setPayload:@{@"pushToken": pushToken}];
-            }
+            [builder setUrl:PUSH_TOKEN_URL(weakSelf.applicationCode)];
+            [builder setMethod:HTTPMethodPUT];
+            [builder setPayload:@{@"pushToken": pushToken}];
+        }
+                          timestampProvider:self.requestContext.timestampProvider
+                               uuidProvider:self.requestContext.uuidProvider];
+}
+
+- (EMSRequestModel *)createClearPushTokenRequestModel {
+    __weak typeof(self) weakSelf = self;
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setUrl:PUSH_TOKEN_URL(weakSelf.applicationCode)];
+            [builder setMethod:HTTPMethodDELETE];
+            [builder setPayload:@{}];
+        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }
@@ -53,21 +64,21 @@
 - (EMSRequestModel *)createContactRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodPOST];
-                BOOL anonymousLogin = NO;
-                NSDictionary *payload = @{};
+            [builder setMethod:HTTPMethodPOST];
+            BOOL anonymousLogin = NO;
+            NSDictionary *payload = @{};
             if (weakSelf.requestContext.contactFieldId && weakSelf.requestContext.contactFieldValue) {
-                    payload = @{
-                        @"contactFieldId": weakSelf.requestContext.contactFieldId,
-                        @"contactFieldValue": weakSelf.requestContext.contactFieldValue
-                    };
-                } else {
-                    anonymousLogin = YES;
-                }
-                [builder setUrl:CONTACT_URL(weakSelf.applicationCode)
-                queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
-                [builder setPayload:payload];
+                payload = @{
+                    @"contactFieldId": weakSelf.requestContext.contactFieldId,
+                    @"contactFieldValue": weakSelf.requestContext.contactFieldValue
+                };
+            } else {
+                anonymousLogin = YES;
             }
+            [builder setUrl:CONTACT_URL(weakSelf.applicationCode)
+            queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
+            [builder setPayload:payload];
+        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }
@@ -77,23 +88,23 @@
                                                 eventType:(EventType)eventType {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:EVENT_URL(weakSelf.applicationCode)];
+            [builder setMethod:HTTPMethodPOST];
+            [builder setUrl:EVENT_URL(weakSelf.applicationCode)];
 
-                NSMutableDictionary *mutableEvent = [NSMutableDictionary dictionary];
-                mutableEvent[@"type"] = [weakSelf eventTypeStringRepresentationFromEventType:eventType];
-                mutableEvent[@"name"] = eventName;
-                mutableEvent[@"timestamp"] = [[weakSelf.requestContext.timestampProvider provideTimestamp] stringValueInUTC];
-                mutableEvent[@"attributes"] = eventAttributes;
+            NSMutableDictionary *mutableEvent = [NSMutableDictionary dictionary];
+            mutableEvent[@"type"] = [weakSelf eventTypeStringRepresentationFromEventType:eventType];
+            mutableEvent[@"name"] = eventName;
+            mutableEvent[@"timestamp"] = [[weakSelf.requestContext.timestampProvider provideTimestamp] stringValueInUTC];
+            mutableEvent[@"attributes"] = eventAttributes;
 
-                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
-                mutablePayload[@"clicks"] = @[];
-                mutablePayload[@"viewedMessages"] = @[];
-                mutablePayload[@"events"] = @[
-                        [NSDictionary dictionaryWithDictionary:mutableEvent]
-                ];
-                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
-            }
+            NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+            mutablePayload[@"clicks"] = @[];
+            mutablePayload[@"viewedMessages"] = @[];
+            mutablePayload[@"events"] = @[
+                [NSDictionary dictionaryWithDictionary:mutableEvent]
+            ];
+            [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }
@@ -101,12 +112,12 @@
 - (EMSRequestModel *)createRefreshTokenRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:CONTACT_TOKEN_URL(weakSelf.applicationCode)];
-                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
-                mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
-                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
-            }
+            [builder setMethod:HTTPMethodPOST];
+            [builder setUrl:CONTACT_TOKEN_URL(weakSelf.applicationCode)];
+            NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+            mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
+            [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }

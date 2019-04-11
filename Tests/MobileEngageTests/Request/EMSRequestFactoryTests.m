@@ -97,6 +97,21 @@
     XCTAssertEqualObjects(expectedRequestModel, requestModel);
 }
 
+- (void)testClearCreatePushTokenRequestModelWithPushToken {
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/push-token"]
+                                                                                method:@"DELETE"
+                                                                               payload:@{}
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createClearPushTokenRequestModel];
+
+    XCTAssertEqualObjects(expectedRequestModel, requestModel);
+}
+
 - (void)testCreateContactRequestModel {
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"test@test.com");

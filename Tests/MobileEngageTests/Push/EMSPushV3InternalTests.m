@@ -174,6 +174,28 @@
                                       withCompletionBlock:completionBlock]);
 }
 
+- (void)testClearPushToken {
+    EMSPushV3Internal *partialMockPush = OCMPartialMock(self.push);
+
+    [partialMockPush clearPushToken];
+
+    OCMVerify([partialMockPush clearPushTokenWithCompletionBlock:nil]);
+}
+
+- (void)testClearPushTokenWithCompletionBlock {
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+    id mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockRequestFactory createClearPushTokenRequestModel]).andReturn(mockRequestModel);
+
+    [self.push clearPushTokenWithCompletionBlock:completionBlock];
+
+    OCMVerify([self.mockRequestFactory createClearPushTokenRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:completionBlock];);
+}
+
 - (void)testTrackMessageOpenWithUserInfo_userInfo_mustNotBeNil {
     @try {
         [self.push trackMessageOpenWithUserInfo:nil];
@@ -210,8 +232,8 @@
     NSString *messageId = @"testMessageId";
     NSString *eventName = @"push:click";
     NSDictionary *eventAttributes = @{
-            @"origin": @"main",
-            @"sid": messageId
+        @"origin": @"main",
+        @"sid": messageId
     };
 
     id mockRequestModel = OCMClassMock([EMSRequestModel class]);
@@ -253,7 +275,7 @@
 
 - (void)testTrackMessageOpenWithUserInfoCompletionBlock_cachesInboxNotifications {
     NSDictionary *userInfo = @{
-            @"inbox": @(1)
+        @"inbox": @(1)
     };
     NSDate *date = [NSDate date];
 

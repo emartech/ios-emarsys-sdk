@@ -11,6 +11,10 @@
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(EMSCompletionBlock)completionBlock;
 
+- (void)clearPushToken;
+
+- (void)clearPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo

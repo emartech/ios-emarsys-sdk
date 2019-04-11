@@ -54,6 +54,16 @@
     }
 }
 
+- (void)clearPushToken {
+    [self clearPushTokenWithCompletionBlock:nil];
+}
+
+- (void)clearPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    EMSRequestModel *requestModel = [self.requestFactory createClearPushTokenRequestModel];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
+}
+
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
     [self trackMessageOpenWithUserInfo:userInfo
                        completionBlock:nil];
@@ -72,8 +82,8 @@
     if (sid) {
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                          @"origin": @"main",
-                                                                                          @"sid": sid
+                                                                                      @"origin": @"main",
+                                                                                      @"sid": sid
                                                                                   }
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel

@@ -38,6 +38,23 @@
     [self doSetPushToken];
 }
 
+- (void)testClearPushToken {
+    [self doSetPushToken];
+    [self doLogin];
+
+    __block NSError *returnedError = [NSError new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [Emarsys.push clearPushTokenWithCompletionBlock:^(NSError *error) {
+        returnedError = error;
+        [expectation fulfill];
+    }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
 - (void)testTrackCustomEventWithNameEventAttributes {
     [self doSetPushToken];
 
