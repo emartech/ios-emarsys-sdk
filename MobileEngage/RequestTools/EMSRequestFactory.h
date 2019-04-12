@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModel *)createRefreshTokenRequestModel;
 
+- (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId;
+
 @end
 
 NS_ASSUME_NONNULL_END

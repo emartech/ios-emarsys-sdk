@@ -29,6 +29,7 @@ SPEC_BEGIN(EmarsysTests)
 
         __block id engage;
         __block id push;
+        __block id deepLink;
         __block PredictInternal *predict;
         __block MERequestContext *requestContext;
         __block EMSDeviceInfo *deviceInfo;
@@ -46,6 +47,7 @@ SPEC_BEGIN(EmarsysTests)
         beforeEach(^{
             engage = [KWMock nullMockForProtocol:@protocol(EMSMobileEngageProtocol)];
             push = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
+            deepLink = [KWMock nullMockForProtocol:@protocol(EMSDeepLinkProtocol)];
             predict = [PredictInternal nullMock];
             requestContext = [MERequestContext nullMock];
             deviceInfo = [EMSDeviceInfo nullMock];
@@ -59,6 +61,7 @@ SPEC_BEGIN(EmarsysTests)
 
             dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil
                                                                        mobileEngage:engage
+                                                                           deepLink:deepLink
                                                                                push:push
                                                                               inbox:nil
                                                                                 iam:nil
@@ -390,8 +393,8 @@ SPEC_BEGIN(EmarsysTests)
                 EMSSourceHandler sourceHandler = ^(NSString *source) {
                 };
 
-                [[engage should] receive:@selector(trackDeepLinkWith:sourceHandler:)
-                           withArguments:userActivity, sourceHandler];
+                [[deepLink should] receive:@selector(trackDeepLinkWith:sourceHandler:)
+                             withArguments:userActivity, sourceHandler];
 
                 [Emarsys trackDeepLinkWithUserActivity:userActivity
                                          sourceHandler:sourceHandler];

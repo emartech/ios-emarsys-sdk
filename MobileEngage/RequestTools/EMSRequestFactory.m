@@ -7,6 +7,7 @@
 #import "MEEndpoints.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
+#import "EmarsysSDKVersion.h"
 
 @interface EMSRequestFactory ()
 
@@ -117,6 +118,20 @@
             NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
             mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
             [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+        }
+                          timestampProvider:self.requestContext.timestampProvider
+                               uuidProvider:self.requestContext.uuidProvider];
+}
+
+- (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId {
+    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+                                                     self.requestContext.deviceInfo.deviceType,
+                                                     self.requestContext.deviceInfo.osVersion];
+    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setMethod:HTTPMethodPOST];
+            [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];
+            [builder setHeaders:@{@"User-Agent": userAgent}];
+            [builder setPayload:@{@"ems_dl": trackingId}];
         }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];

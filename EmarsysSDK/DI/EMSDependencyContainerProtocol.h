@@ -30,6 +30,8 @@
 
 - (id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol>)mobileEngage;
 
+- (id <EMSDeepLinkProtocol>)deepLink;
+
 - (id <EMSPushNotificationProtocol>)push;
 
 - (id <EMSInboxProtocol>)inbox;

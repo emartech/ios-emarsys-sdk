@@ -52,6 +52,7 @@
 #import "EMSRefreshTokenResponseHandler.h"
 #import "EMSContactTokenMapper.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
+#import "EMSDeepLinkInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -63,7 +64,8 @@
 @property(nonatomic, strong) EMSRESTClient *restClient;
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
-@property(nonatomic, strong) id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol> mobileEngage;
+@property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
+@property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) MEInApp *iam;
@@ -257,6 +259,9 @@
                                                requestManager:self.requestManager
                                             notificationCache:self.notificationCache
                                             timestampProvider:timestampProvider];
+
+    _deepLink = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
+                                                     requestFactory:self.requestFactory];
 
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                      mobileEngageInternal:self.mobileEngage

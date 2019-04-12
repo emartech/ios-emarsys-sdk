@@ -11,6 +11,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
+#import "EmarsysSDKVersion.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
@@ -42,6 +43,8 @@
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
     OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
+    OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
+    OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
     OCMStub(self.mockConfig.applicationCode).andReturn(@"testApplicationCode");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
@@ -58,13 +61,13 @@
 
 - (void)testCreateDeviceInfoRequestModel {
     NSDictionary *payload = @{
-            @"platform": @"ios",
-            @"applicationVersion": @"0.0.1",
-            @"deviceModel": @"iPhone 6",
-            @"osVersion": @"12.1",
-            @"sdkVersion": @"0.0.1",
-            @"language": @"en-US",
-            @"timezone": @"+100"
+        @"platform": @"ios",
+        @"applicationVersion": @"0.0.1",
+        @"deviceModel": @"iPhone 6",
+        @"osVersion": @"12.1",
+        @"sdkVersion": @"0.0.1",
+        @"language": @"en-US",
+        @"timezone": @"+100"
     };
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -122,8 +125,8 @@
                                                                                    url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
                                                                                 method:@"POST"
                                                                                payload:@{
-                                                                                       @"contactFieldId": @3,
-                                                                                       @"contactFieldValue": @"test@test.com"
+                                                                                   @"contactFieldId": @3,
+                                                                                   @"contactFieldValue": @"test@test.com"
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
@@ -157,28 +160,28 @@
                                                                                    url:[[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v3/apps/testApplicationCode/client/events"]
                                                                                 method:@"POST"
                                                                                payload:@{
-                                                                                       @"clicks": @[],
-                                                                                       @"viewedMessages": @[],
-                                                                                       @"events": @[
-                                                                                               @{
-                                                                                                       @"type": @"internal",
-                                                                                                       @"name": @"testEventName",
-                                                                                                       @"timestamp": [self.timestamp stringValueInUTC],
-                                                                                                       @"attributes":
-                                                                                                       @{
-                                                                                                               @"testEventAttributeKey1": @"testEventAttributeValue1",
-                                                                                                               @"testEventAttributeKey2": @"testEventAttributeValue2"
-                                                                                                       }
-                                                                                               }
-                                                                                       ]
+                                                                                   @"clicks": @[],
+                                                                                   @"viewedMessages": @[],
+                                                                                   @"events": @[
+                                                                                       @{
+                                                                                           @"type": @"internal",
+                                                                                           @"name": @"testEventName",
+                                                                                           @"timestamp": [self.timestamp stringValueInUTC],
+                                                                                           @"attributes":
+                                                                                           @{
+                                                                                               @"testEventAttributeKey1": @"testEventAttributeValue1",
+                                                                                               @"testEventAttributeKey2": @"testEventAttributeValue2"
+                                                                                           }
+                                                                                       }
+                                                                                   ]
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"testEventName"
                                                                               eventAttributes:@{
-                                                                                      @"testEventAttributeKey1": @"testEventAttributeValue1",
-                                                                                      @"testEventAttributeKey2": @"testEventAttributeValue2"
+                                                                                  @"testEventAttributeKey1": @"testEventAttributeValue1",
+                                                                                  @"testEventAttributeKey2": @"testEventAttributeValue2"
                                                                               }
                                                                                     eventType:EventTypeInternal];
 
@@ -192,15 +195,15 @@
                                                                                    url:[[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v3/apps/testApplicationCode/client/events"]
                                                                                 method:@"POST"
                                                                                payload:@{
-                                                                                       @"clicks": @[],
-                                                                                       @"viewedMessages": @[],
-                                                                                       @"events": @[
-                                                                                               @{
-                                                                                                       @"type": @"custom",
-                                                                                                       @"name": @"testEventName",
-                                                                                                       @"timestamp": [self.timestamp stringValueInUTC]
-                                                                                               }
-                                                                                       ]
+                                                                                   @"clicks": @[],
+                                                                                   @"viewedMessages": @[],
+                                                                                   @"events": @[
+                                                                                       @{
+                                                                                           @"type": @"custom",
+                                                                                           @"name": @"testEventName",
+                                                                                           @"timestamp": [self.timestamp stringValueInUTC]
+                                                                                       }
+                                                                                   ]
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
@@ -219,12 +222,33 @@
                                                                                    url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact-token"]
                                                                                 method:@"POST"
                                                                                payload:@{
-                                                                                       @"refreshToken": @"testRefreshToken"
+                                                                                   @"refreshToken": @"testRefreshToken"
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+}
+
+
+- (void)testCreateDeepLinkRequestModel {
+    NSString *const value = @"dl_value";
+    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+                                                     @"testDeviceType",
+                                                     @"testOSVersion"];
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://deep-link.eservice.emarsys.net/api/clicks"]
+                                                                                method:@"POST"
+                                                                               payload:@{@"ems_dl": value}
+                                                                               headers:@{@"User-Agent": userAgent}
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createDeepLinkRequestModelWithTrackingId:value];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }

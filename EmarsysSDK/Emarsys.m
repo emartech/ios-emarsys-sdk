@@ -73,8 +73,8 @@
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
                         sourceHandler:(EMSSourceHandler)sourceHandler {
-    return [EMSDependencyInjection.dependencyContainer.mobileEngage trackDeepLinkWith:userActivity
-                                                                        sourceHandler:sourceHandler];
+    return [EMSDependencyInjection.dependencyContainer.deepLink trackDeepLinkWith:userActivity
+                                                                    sourceHandler:sourceHandler];
 }
 
 + (void)registerAppStartBlock {

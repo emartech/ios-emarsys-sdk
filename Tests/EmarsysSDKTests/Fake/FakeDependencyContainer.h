@@ -8,6 +8,7 @@
 
 - (instancetype)initWithDbHelper:(EMSSQLiteHelper *)dbHelper
                     mobileEngage:(MobileEngageInternal *)mobileEngage
+                        deepLink:(id <EMSDeepLinkProtocol>)deepLink
                             push:(id <EMSPushNotificationProtocol>)push
                            inbox:(id <EMSInboxProtocol>)inbox
                              iam:(MEInApp *)iam
