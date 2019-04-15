@@ -3,11 +3,7 @@
 //
 
 #import "EMSRefreshTokenCompletionProxy.h"
-#import "EMSRESTClient.h"
-#import "EMSRequestFactory.h"
 #import "EMSResponseModel.h"
-#import "EMSRESTClientCompletionProxyFactory.h"
-#import "EMSRESTClientCompletionProxyProtocol.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSContactTokenResponseHandler.h"
 
@@ -34,14 +30,14 @@
     __weak typeof(self) weakSelf = self;
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
         if (responseModel.statusCode == 401) {
-            _originalRequestModel = requestModel;
+            weakSelf.originalRequestModel = requestModel;
             [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
                                      coreCompletionProxy:weakSelf];
         } else if (responseModel.isSuccess &&  weakSelf.originalRequestModel) {
             [weakSelf.contactResponseHandler processResponse:responseModel];
             [weakSelf.restClient executeWithRequestModel:weakSelf.originalRequestModel
                                      coreCompletionProxy:weakSelf];
-            _originalRequestModel = nil;
+            weakSelf.originalRequestModel = nil;
         } else {
             weakSelf.completionProxy.completionBlock(requestModel, responseModel, error);
         }

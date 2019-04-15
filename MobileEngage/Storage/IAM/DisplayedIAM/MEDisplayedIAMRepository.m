@@ -24,7 +24,7 @@
 }
 
 - (void)add:(MEDisplayedIAM *)item {
-    [self.sqliteHelper insertModel:item withQuery:SQL_REQUEST_INSERT mapper:self.mapper];
+    [self.sqliteHelper insertModel:item withQuery:SQL_REQUEST_INSERT_DISPLAYED_IAM mapper:self.mapper];
 }
 
 - (void)remove:(id <EMSSQLSpecificationProtocol>)sqlSpecification {

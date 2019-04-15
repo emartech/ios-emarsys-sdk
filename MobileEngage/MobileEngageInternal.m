@@ -28,33 +28,6 @@
     return self;
 }
 
-- (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler
-      withCompletionBlock:(EMSCompletionBlock)completionBlock {
-    BOOL result = NO;
-    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        NSString *const webPageURL = userActivity.webpageURL.absoluteString;
-        NSString *const queryNameDeepLink = @"ems_dl";
-        NSURLQueryItem *queryItem = [self extractQueryItemFromUrl:webPageURL
-                                                        queryName:queryNameDeepLink];
-        if (queryItem) {
-            result = YES;
-            if (sourceHandler) {
-                sourceHandler(webPageURL);
-            }
-            [self.requestManager submitRequestModel:[MERequestFactory_old createTrackDeepLinkRequestWithTrackingId:queryItem.value ? queryItem.value : @""
-                                                                                                    requestContext:self.requestContext]
-                                withCompletionBlock:completionBlock];
-        }
-    }
-    return result;
-}
-
-- (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
-            sourceHandler:(nullable MESourceHandler)sourceHandler {
-    return [self trackDeepLinkWith:userActivity sourceHandler:sourceHandler withCompletionBlock:nil];
-}
-
 - (NSURLQueryItem *)extractQueryItemFromUrl:(NSString *const)webPageURL
                                   queryName:(NSString *const)queryName {
     NSURLQueryItem *result;

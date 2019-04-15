@@ -11,6 +11,8 @@
 #import "EMSPredictProtocol.h"
 #import "EMSUserNotificationCenterDelegate.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Emarsys : NSObject
 
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
@@ -24,20 +26,22 @@
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
-                        completionBlock:(EMSCompletionBlock)completionBlock;
+                        completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (void)clearContact;
 
-+ (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
++ (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
-                 completionBlock:(EMSCompletionBlock)completionBlock;
+                 completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
-                        sourceHandler:(EMSSourceHandler)sourceHandler;
+                        sourceHandler:(_Nullable EMSSourceHandler)sourceHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

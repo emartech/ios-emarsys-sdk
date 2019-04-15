@@ -19,7 +19,7 @@
 @interface MEUserNotificationDelegate ()
 
 @property(nonatomic, strong) UIApplication *application;
-@property(nonatomic, strong) MobileEngageInternal *mobileEngage;
+@property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) MEInApp *inApp;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> pushInternal;
@@ -34,8 +34,8 @@
 @synthesize eventHandler = _eventHandler;
 
 - (instancetype)initWithApplication:(UIApplication *)application
-               mobileEngageInternal:(MobileEngageInternal *)mobileEngage
-                              inApp:(id <MEIAMProtocol>)inApp
+               mobileEngageInternal:(id <EMSMobileEngageProtocol>)mobileEngage
+                              inApp:(MEInApp *)inApp
                   timestampProvider:(EMSTimestampProvider *)timestampProvider
                        pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                      requestManager:(EMSRequestManager *)requestManager

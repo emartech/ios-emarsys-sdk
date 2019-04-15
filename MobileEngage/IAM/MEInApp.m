@@ -21,7 +21,7 @@
 
 @property(nonatomic, weak) NSString *currentCampaignId;
 
-@property(nonatomic, strong) UIWindow *iamWindow;
+@property(nonatomic, strong, nullable) UIWindow *iamWindow;
 @property(nonatomic, strong) NSDate *onScreenShowTimestamp;
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;

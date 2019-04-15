@@ -18,7 +18,7 @@
 @property(nonatomic, readonly) EMSRequestFactory *requestFactory;
 @property(nonatomic, readonly) EMSContactTokenResponseHandler *contactResponseHandler;
 
-@property(nonatomic, readonly) EMSRequestModel *originalRequestModel;
+@property(nonatomic, strong) EMSRequestModel *originalRequestModel;
 
 - (instancetype)initWithCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy
                              restClient:(EMSRESTClient *)restClient

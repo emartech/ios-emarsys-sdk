@@ -4,19 +4,20 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "EMSUserNotificationCenterDelegate.h"
-#import "MEIAMProtocol.h"
 
 @class MobileEngageInternal;
 @class EMSTimestampProvider;
 @class EMSRequestManager;
 @class EMSRequestFactory;
+@class MEInApp;
 @protocol EMSPushNotificationProtocol;
+@protocol EMSMobileEngageProtocol;
 
 @interface MEUserNotificationDelegate : NSObject <EMSUserNotificationCenterDelegate>
 
 - (instancetype)initWithApplication:(UIApplication *)application
-               mobileEngageInternal:(MobileEngageInternal *)mobileEngage
-                              inApp:(id <MEIAMProtocol>)inApp
+               mobileEngageInternal:(id <EMSMobileEngageProtocol>)mobileEngage
+                              inApp:(MEInApp *)inApp
                   timestampProvider:(EMSTimestampProvider *)timestampProvider
                        pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                      requestManager:(EMSRequestManager *)requestManager

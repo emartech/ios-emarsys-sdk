@@ -17,12 +17,12 @@ typedef void (^EMSFetchNotificationResultBlock)(EMSNotificationInboxStatus* _Nul
 
 - (void)resetBadgeCount;
 
-- (void)resetBadgeCountWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+- (void)resetBadgeCountWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification;
 
 - (void)trackMessageOpenWith:(EMSNotification *)inboxMessage
-             completionBlock:(EMSCompletionBlock)completionBlock;
+             completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)purgeNotificationCache;
 

@@ -41,7 +41,7 @@
                             @"os_version": deviceInfo.osVersion,
                             @"model": deviceInfo.deviceModel,
                             @"hw_id": deviceInfo.hardwareId,
-                            @"application_code": _applicationCode
+                        @"application_code": weakSelf.applicationCode
                     };
                     [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
                 }

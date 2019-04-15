@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
                      proxyFactory:(EMSRESTClientCompletionProxyFactory *)proxyFactory;
 
 - (void)submitRequestModel:(EMSRequestModel *)model
-       withCompletionBlock:(EMSCompletionBlock)completionBlock;
+       withCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)submitRequestModelNow:(EMSRequestModel *)model;
 

@@ -4,20 +4,24 @@
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSPushNotificationProtocol <NSObject>
 
 - (void)setPushToken:(NSData *)pushToken;
 
 - (void)setPushToken:(NSData *)pushToken
-     completionBlock:(EMSCompletionBlock)completionBlock;
+     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)clearPushToken;
 
-- (void)clearPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+- (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
-                     completionBlock:(EMSCompletionBlock)completionBlock;
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

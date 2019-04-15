@@ -4,6 +4,8 @@
 #import <Foundation/Foundation.h>
 #import "EMSCartItemProtocol.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSPredictProtocol <NSObject>
 
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
@@ -18,3 +20,5 @@
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
 
 @end
+
+NS_ASSUME_NONNULL_END

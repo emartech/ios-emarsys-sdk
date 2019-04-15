@@ -4,26 +4,26 @@
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSMobileEngageProtocol <NSObject>
 
-- (void)setAnonymousContact;
+- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue;
 
-- (void)setAnonymousContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
-
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
-
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
-                        completionBlock:(EMSCompletionBlock)completionBlock;
+- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue
+                        completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)clearContact;
 
-- (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+- (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
 
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
-                 completionBlock:(EMSCompletionBlock)completionBlock;
+                 completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

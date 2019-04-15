@@ -29,7 +29,7 @@ typedef void (^MEErrorBlock)(NSString *requestId, NSError *error);
 typedef void (^MESourceHandler)(NSString *source);
 
 
-@interface MobileEngageInternal : NSObject <EMSMobileEngageProtocol, EMSDeepLinkProtocol, MEInAppTrackingProtocol, EMSPushNotificationProtocol>
+@interface MobileEngageInternal : NSObject <EMSMobileEngageProtocol, MEInAppTrackingProtocol>
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MESuccessBlock successBlock;
