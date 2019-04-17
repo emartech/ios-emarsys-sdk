@@ -8,7 +8,6 @@
 #import "NSData+MobileEngine.h"
 #import "EMSDependencyInjection.h"
 #import "MERequestContext.h"
-#import "NSDictionary+MobileEngage.h"
 
 typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 
@@ -79,12 +78,12 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 }
 
 - (void)testTrackMessageOpenWithUserInfo {
-    NSDictionary *mockUserInfo = OCMClassMock([NSDictionary class]);
-
-    OCMStub([mockUserInfo messageId]).andReturn(@"testSID");
+    NSDictionary *userInfo = @{
+        @"u": @"{\"sid\": \"testSID\"}"
+    };
 
     [self integrationTestWithExecutionBlock:^(EMSCompletionBlock completionBlock) {
-        [Emarsys.push trackMessageOpenWithUserInfo:mockUserInfo
+        [Emarsys.push trackMessageOpenWithUserInfo:userInfo
                                    completionBlock:completionBlock];
     }];
 }
