@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
-                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes;
+                 eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
 
 + (void)trackCustomEventWithName:(NSString *)eventName
-                 eventAttributes:(NSDictionary<NSString *, NSString *> *)eventAttributes
+                 eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
