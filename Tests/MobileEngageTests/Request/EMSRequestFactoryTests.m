@@ -235,7 +235,7 @@
 
 - (void)testCreateDeepLinkRequestModel {
     NSString *const value = @"dl_value";
-    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+    NSString *userAgent = [NSString stringWithFormat:@"Emarsys SDK %@ %@ %@", EMARSYS_SDK_VERSION,
                                                      @"testDeviceType",
                                                      @"testOSVersion"];
 

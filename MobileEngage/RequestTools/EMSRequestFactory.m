@@ -124,7 +124,7 @@
 }
 
 - (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId {
-    NSString *userAgent = [NSString stringWithFormat:@"Mobile Engage SDK %@ %@ %@", EMARSYS_SDK_VERSION,
+    NSString *userAgent = [NSString stringWithFormat:@"Emarsys SDK %@ %@ %@", EMARSYS_SDK_VERSION,
                                                      self.requestContext.deviceInfo.deviceType,
                                                      self.requestContext.deviceInfo.osVersion];
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
