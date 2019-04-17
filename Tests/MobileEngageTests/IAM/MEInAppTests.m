@@ -131,7 +131,7 @@ SPEC_BEGIN(MEInAppTests)
         describe(@"showMessage:completionHandler:", ^{
 
             it(@"it should set currentCampaignId", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"testIdForCurrentCampaignId", @"html": @"<html></html>"}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"testIdForCurrentCampaignId", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -149,7 +149,7 @@ SPEC_BEGIN(MEInAppTests)
             });
 
             it(@"should call trackInAppDisplay: on inAppTracker", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"testIdForInAppTracker", @"html": @"<html></html>"}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"testIdForInAppTracker", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -178,7 +178,7 @@ SPEC_BEGIN(MEInAppTests)
                                            withArguments:[[MEDisplayedIAM alloc] initWithCampaignId:@"testIdForInAppTracker"
                                                                                           timestamp:thirdTimestamp]];
 
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"testIdForInAppTracker", @"html": @"<html></html>"}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"testIdForInAppTracker", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -246,7 +246,7 @@ SPEC_BEGIN(MEInAppTests)
                                     "  <body style=\"background: transparent;\">\n"
                                     "  </body>\n"
                                     "</html>";
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": message}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId", @"html": message}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -265,7 +265,7 @@ SPEC_BEGIN(MEInAppTests)
             });
 
             it(@"should not try to display inapp in case if there is already one being displayed", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId", @"html": @"<html></html>"}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -292,10 +292,10 @@ SPEC_BEGIN(MEInAppTests)
 
         describe(@"campaignId", ^{
             it(@"should not update campaignId when trying to show another inAppMessage", ^{
-                NSData *body1 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId1", @"html": @"<html></html>"}}
+                NSData *body1 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId1", @"html": @"<html></html>"}}
                                                                 options:0
                                                                   error:nil];
-                NSData *body2 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId2", @"html": @"<html></html>"}}
+                NSData *body2 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId2", @"html": @"<html></html>"}}
                                                                 options:0
                                                                   error:nil];
                 EMSResponseModel *response1 = [[EMSResponseModel alloc] initWithStatusCode:200

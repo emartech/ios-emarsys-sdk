@@ -29,7 +29,7 @@
                                           html:@"<HTML></HTML>"
                              responseTimestamp:[NSDate date]];
 
-    NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"id": @"campaignId456", @"html": @"<html></html>"}}
+    NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId456", @"html": @"<html></html>"}}
                                                    options:0
                                                      error:nil];
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);

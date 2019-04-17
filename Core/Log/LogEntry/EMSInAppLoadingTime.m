@@ -17,10 +17,9 @@
     NSParameterAssert(message);
     NSParameterAssert(timestampProvider);
     if (self = [super init]) {
-        NSMutableDictionary *dict = [@{
-            @"campaign_id": message.campaignId,
-            @"loading_time": [[timestampProvider provideTimestamp] numberValueInMillisFromDate:message.responseTimestamp]
-        } mutableCopy];
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        dict[@"campaign_id"] = message.campaignId;
+        dict[@"loading_time"] = [[timestampProvider provideTimestamp] numberValueInMillisFromDate:message.responseTimestamp];
         if (message.response) {
             dict[@"source"] = @"customEvent";
             dict[@"request_id"] = message.response.requestModel.requestId;

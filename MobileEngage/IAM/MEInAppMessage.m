@@ -11,7 +11,7 @@
     if (self = [super init]) {
         id parsedBody = responseModel.parsedBody;
         _html = parsedBody[@"message"][@"html"];
-        _campaignId = parsedBody[@"message"][@"id"];
+        _campaignId = parsedBody[@"message"][@"campaignId"];
         _response = responseModel;
         _responseTimestamp = responseModel.timestamp;
     }
