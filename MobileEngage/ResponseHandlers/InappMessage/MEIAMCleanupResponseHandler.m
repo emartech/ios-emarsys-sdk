@@ -7,10 +7,10 @@
 #import "EMSSchemaContract.h"
 #import "MERequestMatcher.h"
 
-@interface MEIAMCleanupResponseHandler()
+@interface MEIAMCleanupResponseHandler ()
 
-@property (nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
-@property (nonatomic, strong) MEDisplayedIAMRepository *displayedIAMRepository;
+@property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
+@property(nonatomic, strong) MEDisplayedIAMRepository *displayedIAMRepository;
 
 @end
 
@@ -31,12 +31,13 @@
         return NO;
     }
 
-    id messages = response.parsedBody[@"old_messages"];
+    id messages = response.parsedBody[@"oldCampaigns"];
     return [messages isKindOfClass:[NSArray class]] && [messages count] > 0;
 }
 
 - (void)handleResponse:(EMSResponseModel *)response {
-    for (NSString *campaignId in response.parsedBody[@"old_messages"]) {
+    for (id campaign in response.parsedBody[@"oldCampaigns"]) {
+        NSString *campaignId = [NSString stringWithFormat:@"%@", campaign];
         EMSFilterByValuesSpecification *filterByCampaignIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:@[campaignId]
                                                                                                                           column:COLUMN_NAME_CAMPAIGN_ID];
         [self.buttonClickRepository remove:filterByCampaignIdSpecification];

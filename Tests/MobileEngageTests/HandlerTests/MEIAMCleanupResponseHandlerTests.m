@@ -30,7 +30,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
         describe(@"MEIAMCleanupResponseHandler.shouldHandleResponse", ^{
 
             it(@"should return YES when the response contains old_messages and the array contains more than 0 ids", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"old_messages": @[@"asdad", @"34g433t"]}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@1234, @56789]}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -51,7 +51,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                                                                          timestampProvider:[EMSTimestampProvider new]
                                                                               uuidProvider:[EMSUUIDProvider new]];
 
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"old_messages": @[@"asdad", @"34g433t"]}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@1234, @56789, @"245678"]}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -94,7 +94,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
             });
 
             it(@"should return NO when the response contains not an array under key old_messages", ^{
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"old_messages": @{@"s": @"t"}}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @{@"1234": @56789}}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -143,7 +143,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                                                                 timestamp:[NSDate date]]];
 
 
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"old_messages": @[@"id2", @"id4"]}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@"id2", @"id4"]}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
@@ -172,7 +172,7 @@ SPEC_BEGIN(MEIAMCleanupResponseHandlerTests)
                 [repository add:[[MEDisplayedIAM alloc] initWithCampaignId:@"id4a" timestamp:[NSDate date]]];
 
 
-                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"old_messages": @[@"id2a", @"id4a"]}
+                NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@"id2a", @"id4a"]}
                                                                options:0
                                                                  error:nil];
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
