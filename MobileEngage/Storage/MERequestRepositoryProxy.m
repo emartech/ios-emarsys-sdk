@@ -76,7 +76,7 @@
 
             NSMutableDictionary *payload = [NSMutableDictionary dictionary];
             payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
-            payload[@"viewed_messages"] = [self displayRepresentations];
+            payload[@"viewedMessages"] = [self displayRepresentations];
             payload[@"clicks"] = [self clickRepresentations];
             if ([self.inApp isPaused]) {
                 payload[@"dnd"] = @([self.inApp isPaused]);

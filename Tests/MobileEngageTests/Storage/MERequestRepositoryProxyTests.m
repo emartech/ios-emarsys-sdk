@@ -244,7 +244,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
 
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
-                [[[result[0] payload][@"viewed_messages"] should] equal:@[
+                [[[result[0] payload][@"viewedMessages"] should] equal:@[
                     @{@"message_id": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
                     @{@"message_id": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
                 ]];
@@ -305,7 +305,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
                             @"hardware_id": deviceInfo.hardwareId,
-                            @"viewed_messages": @[],
+                            @"viewedMessages": @[],
                             @"clicks": @[],
                             @"events": @[
                                 [modelCustomEvent1.payload[@"events"] firstObject],
@@ -340,7 +340,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         [builder setMethod:HTTPMethodPOST];
                         [builder setPayload:@{
                             @"hardware_id": deviceInfo.hardwareId,
-                            @"viewed_messages": @[],
+                            @"viewedMessages": @[],
                             @"clicks": @[],
                             @"events": @[
                                 [modelCustomEvent1.payload[@"events"] firstObject],
