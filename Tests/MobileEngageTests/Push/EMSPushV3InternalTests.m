@@ -106,7 +106,7 @@
 - (void)testSetPushToken_shouldNotCallRequestFactory_when_pushTokenStringIsNilOrEmpty {
     OCMStub([self.mockPushTokenData deviceTokenString]).andReturn(nil);
 
-    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:nil]);
+    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:[OCMArg any]]);
 
     [self.push setPushToken:self.mockPushTokenData];
 }
