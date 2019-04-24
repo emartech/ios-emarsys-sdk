@@ -135,7 +135,7 @@
 
     self.appStartEventBlock();
 
-    OCMVerify([self.mockDeviceInfoClient sendDeviceInfo]);
+    OCMVerify([self.mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:nil];);
 }
 
 

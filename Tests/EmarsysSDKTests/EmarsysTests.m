@@ -316,7 +316,7 @@ SPEC_BEGIN(EmarsysTests)
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
 
-                    [[deviceInfoClient should] receive:@selector(sendDeviceInfo)];
+                    [[deviceInfoClient should] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
                     [[engage should] receive:@selector(setContactWithContactFieldValue:)
                                withArguments:kw_any()];
 
@@ -337,7 +337,7 @@ SPEC_BEGIN(EmarsysTests)
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
 
-                    [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfo)];
+                    [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
                     [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:)
                                   withArguments:kw_any()];
 

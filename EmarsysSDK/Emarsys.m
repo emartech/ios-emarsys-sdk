@@ -29,7 +29,7 @@
 
     EMSDependencyContainer *container = EMSDependencyInjection.dependencyContainer;
     if (!container.requestContext.contactFieldValue) {
-        [container.deviceInfoClient sendDeviceInfo];
+        [container.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
         [container.mobileEngage setContactWithContactFieldValue:nil];
     }
 }

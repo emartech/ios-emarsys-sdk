@@ -31,15 +31,14 @@
     return self;
 }
 
-- (void)sendDeviceInfo {
+- (void)sendDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     if (![[userDefaults dictionaryForKey:kDEVICE_INFO] isEqualToDictionary:[self.deviceInfo clientPayload]]) {
         [userDefaults setObject:[self.deviceInfo clientPayload]
                          forKey:kDEVICE_INFO];
         EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
         [self.requestManager submitRequestModel:deviceInfoRequest
-                            withCompletionBlock:^(NSError *error) {
-                            }];
+                            withCompletionBlock:completionBlock];
     }
 }
 

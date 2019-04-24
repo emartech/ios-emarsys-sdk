@@ -16,6 +16,7 @@
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 #define kCLIENT_STATE @"kCLIENT_STATE"
 #define kCONTACT_TOKEN @"kCONTACT_TOKEN"
+#define kDEVICE_INFO @"kDEVICE_INFO"
 #define TIMEOUT 5
 
 @implementation EmarsysTestUtils
@@ -47,6 +48,7 @@
     [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
     [userDefaults removeObjectForKey:kCLIENT_STATE];
     [userDefaults removeObjectForKey:kCONTACT_TOKEN];
+    [userDefaults removeObjectForKey:kDEVICE_INFO];
     [userDefaults synchronize];
 
     userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];

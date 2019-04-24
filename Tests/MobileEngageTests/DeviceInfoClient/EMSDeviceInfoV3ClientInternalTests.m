@@ -65,6 +65,8 @@
 }
 
 - (void)testSendDeviceInfo_submitRequest {
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:@{@"testStoredPayloadKey": @"testStoredPayloadValue"}
                      forKey:kDEVICE_INFO];
@@ -79,12 +81,12 @@
     OCMStub([self.mockDeviceInfo clientPayload]).andReturn(expectedDeviceInfoDict);
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
 
-    [self.deviceInfoInternal sendDeviceInfo];
+    [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:completionBlock];
 
     NSDictionary *storedDeviceInfoDict = [userDefaults dictionaryForKey:kDEVICE_INFO];
 
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
-                                      withCompletionBlock:[OCMArg any]]);
+                                      withCompletionBlock:completionBlock]);
     XCTAssertEqualObjects(storedDeviceInfoDict, expectedDeviceInfoDict);
 }
 
@@ -103,7 +105,8 @@
                      forKey:kDEVICE_INFO];
     [userDefaults synchronize];
 
-    [self.deviceInfoInternal sendDeviceInfo];
+    [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:^(NSError *error) {
+    }];
 }
 
 @end
