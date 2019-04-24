@@ -104,6 +104,7 @@
 }
 
 - (void)testSetPushToken_shouldNotCallRequestFactory_when_pushTokenStringIsNilOrEmpty {
+    _mockPushTokenData = OCMClassMock([NSData class]);
     OCMStub([self.mockPushTokenData deviceTokenString]).andReturn(nil);
 
     OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:[OCMArg any]]);
@@ -163,12 +164,11 @@
 }
 
 - (void)testSetPushTokenCompletionBlock {
-    NSString *token = @"pushTokenString";
     id mockRequestModel = OCMClassMock([EMSRequestModel class]);
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
 
-    OCMStub([self.mockRequestFactory createPushTokenRequestModelWithPushToken:token]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestFactory createPushTokenRequestModelWithPushToken:self.pushToken]).andReturn(mockRequestModel);
 
     [self.push setPushToken:self.mockPushTokenData
             completionBlock:completionBlock];
