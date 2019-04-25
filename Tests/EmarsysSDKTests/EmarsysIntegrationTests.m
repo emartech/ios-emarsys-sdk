@@ -62,13 +62,15 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 }
 
 - (void)testSetPushToken_when_valid_clientState_contactToken_HaveSet {
-    NSData *deviceToken = OCMClassMock([NSData class]);
+    id deviceToken = OCMClassMock([NSData class]);
     OCMStub([deviceToken deviceTokenString]).andReturn(@"test_pushToken_for_iOS_integrationTest");
 
     [self integrationTestWithExecutionBlock:^(EMSCompletionBlock completionBlock) {
         [Emarsys.push setPushToken:deviceToken
                    completionBlock:completionBlock];
     }];
+
+    [deviceToken stopMocking];
 }
 
 - (void)testClearPushToken {

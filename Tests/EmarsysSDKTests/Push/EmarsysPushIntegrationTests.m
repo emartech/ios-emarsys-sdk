@@ -24,7 +24,7 @@
 }
 
 - (void)testSetPushToken {
-    NSData *deviceToken = OCMClassMock([NSData class]);
+    id deviceToken = OCMClassMock([NSData class]);
     OCMStub([deviceToken deviceTokenString]).andReturn(@"test_pushToken_for_iOS_integrationTest");
 
     __block NSError *returnedError = [NSError new];
@@ -39,6 +39,8 @@
                                                           timeout:5];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
+
+    [deviceToken stopMocking];
 }
 
 @end

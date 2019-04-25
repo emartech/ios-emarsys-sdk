@@ -43,6 +43,12 @@
                                             timestampProvider:self.mockTimestampProvider];
 }
 
+- (void)tearDown {
+    [(id) self.mockPushTokenData stopMocking];
+    [super tearDown];
+}
+
+
 - (void)testInit_requestFactory_mustNotBeNil {
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:nil
@@ -131,12 +137,10 @@
 }
 
 - (void)testSetPushTokenCompletionBlock_requestFactory_calledWithProperPushToken {
-    NSString *token = @"pushTokenString";
-
     [self.push setPushToken:self.mockPushTokenData
             completionBlock:nil];
 
-    OCMVerify([self.mockRequestFactory createPushTokenRequestModelWithPushToken:token]);
+    OCMVerify([self.mockRequestFactory createPushTokenRequestModelWithPushToken:self.pushToken]);
 }
 
 - (void)testSetPushTokenCompletionBlock_shouldNotCallRequestFactory_when_pushTokenIsNil {
@@ -147,9 +151,10 @@
 }
 
 - (void)testSetPushTokenCompletionBlock_shouldNotCallRequestFactory_when_pushTokenStringIsNilOrEmpty {
-    NSString *token = nil;
+    _mockPushTokenData = OCMClassMock([NSData class]);
+    OCMStub([self.mockPushTokenData deviceTokenString]).andReturn(nil);
 
-    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:token]);
+    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:[OCMArg any]]);
 
     [self.push setPushToken:self.mockPushTokenData
             completionBlock:nil];

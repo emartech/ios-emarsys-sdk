@@ -5,9 +5,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSRefreshTokenCompletionProxy.h"
-#import "EMSRESTClient.h"
-#import "EMSRequestFactory.h"
-#import "EMSRequestModel.h"
 #import "EMSResponseModel.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSResponseModel+EMSCore.h"
@@ -76,7 +73,7 @@
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
     EMSContactTokenResponseHandler *mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
-    NSError *mockError = OCMClassMock([NSError class]);
+    id mockError = OCMClassMock([NSError class]);
 
     EMSRefreshTokenCompletionProxy *refreshTokenCompletionProxy = [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:mockCompletionProxy
                                                                                                                        restClient:mockRestClient
@@ -101,6 +98,8 @@
     XCTAssertEqualObjects(returnedRequestModel, mockRequestModel);
     XCTAssertEqualObjects(returnedResponseModel, mockResponseModel);
     XCTAssertEqualObjects(returnedError, mockError);
+
+    [mockError stopMocking];
 }
 
 - (void)testCompletionBlock_shouldRefreshToken {
@@ -112,7 +111,7 @@
     EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
     EMSContactTokenResponseHandler *mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
 
-    NSError *mockError = OCMClassMock([NSError class]);
+    id mockError = OCMClassMock([NSError class]);
 
     OCMStub([mockResponseModel statusCode]).andReturn(401);
     OCMStub([mockRequestFactory createRefreshTokenRequestModel]).andReturn(mockRequestModelForRefresh);
@@ -127,6 +126,8 @@
     OCMVerify([mockRestClient executeWithRequestModel:mockRequestModelForRefresh
                                   coreCompletionProxy:refreshTokenCompletionProxy]);
     XCTAssertEqualObjects(refreshTokenCompletionProxy.originalRequestModel, mockRequestModel);
+
+    [mockError stopMocking];
 }
 
 - (void)testCompletionBlock_shouldHandleResponse {
@@ -138,7 +139,7 @@
     EMSRequestModel *mockOriginalRequestModel = OCMClassMock([EMSRequestModel class]);
     EMSResponseModel *mockResponseModelForRefresh = OCMClassMock([EMSResponseModel class]);
     EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
-    NSError *mockError = OCMClassMock([NSError class]);
+    id mockError = OCMClassMock([NSError class]);
 
     OCMStub([mockResponseModel isSuccess]).andReturn(YES);
     OCMStub([mockResponseModelForRefresh statusCode]).andReturn(401);
@@ -154,6 +155,8 @@
     OCMVerify([mockRestClient executeWithRequestModel:mockOriginalRequestModel
                                   coreCompletionProxy:refreshTokenCompletionProxy]);
     XCTAssertNil(refreshTokenCompletionProxy.originalRequestModel);
+
+    [mockError stopMocking];
 }
 
 - (void)testCompletionBlock_shouldNotHandleResponse_when_success_and_noOriginalRequestModel {
@@ -163,7 +166,7 @@
     EMSContactTokenResponseHandler *mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
-    NSError *mockError = OCMClassMock([NSError class]);
+    id mockError = OCMClassMock([NSError class]);
 
     OCMStub([mockResponseModel isSuccess]).andReturn(YES);
     OCMReject([mockResponseHandler processResponse:[OCMArg any]]);
@@ -182,6 +185,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:2];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    [mockError stopMocking];
 }
 
 @end
