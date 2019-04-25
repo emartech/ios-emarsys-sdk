@@ -21,7 +21,7 @@
 @property(nonatomic, strong) EMSNotificationCache *mockNotificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) NSString *pushToken;
-@property(nonatomic, strong) NSData *mockPushTokenData;
+@property(nonatomic, strong) id mockPushTokenData;
 
 @end
 
@@ -44,7 +44,7 @@
 }
 
 - (void)tearDown {
-    [(id) self.mockPushTokenData stopMocking];
+    [self.mockPushTokenData stopMocking];
     [super tearDown];
 }
 
@@ -133,6 +133,8 @@
 }
 
 - (void)testSetPushTokenCompletionBlock_shouldNotCallRequestManager_when_pushTokenIsNil {
+    [self.mockPushTokenData stopMocking];
+
     OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
                                       withCompletionBlock:[OCMArg any]]);
 

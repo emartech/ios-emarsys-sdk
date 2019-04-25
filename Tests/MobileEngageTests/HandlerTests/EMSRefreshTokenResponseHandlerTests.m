@@ -36,7 +36,6 @@
     }
 }
 
-
 - (void)testShouldHandleResponse_shouldBeNO_whenMERequest_missingParsedBody {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://ems-me-client.herokuapp.com/"
                                                                 parsedBody:nil];
@@ -73,29 +72,34 @@
     XCTAssertTrue(result);
 }
 
-
 - (void)testHandleResponse_shouldSetRefreshTokenOnRequestContext {
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"refreshToken": @"token"}];
-    MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    id mockRequestContext = OCMClassMock([MERequestContext class]);
     _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];
 
     [self.responseHandler handleResponse:mockResponseModel];
 
     OCMVerify([mockRequestContext setRefreshToken:@"token"]);
+
+    [mockRequestContext stopMocking];
 }
 
 - (EMSResponseModel *)createResponseModelWithUrl:(NSString *)url
                                       parsedBody:(NSDictionary *)parsedBody {
-    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
-    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
-
-    OCMStub([mockRequestModel url]).andReturn([[NSURL alloc] initWithString:url]);
-    OCMStub([mockResponseModel requestModel]).andReturn(mockRequestModel);
-    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
-
-    return mockResponseModel;
+    return [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:url]
+                                                                                         statusCode:200
+                                                                                        HTTPVersion:nil
+                                                                                       headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
+                                                        data:parsedBody ? [NSJSONSerialization dataWithJSONObject:parsedBody
+                                                                                                          options:NSJSONWritingPrettyPrinted
+                                                                                                            error:nil] : nil
+                                                requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                                                        [builder setUrl:url];
+                                                    }
+                                                                            timestampProvider:[EMSTimestampProvider new]
+                                                                                 uuidProvider:[EMSUUIDProvider new]]
+                                                   timestamp:[[EMSTimestampProvider new] provideTimestamp]];
 }
-
 
 @end
