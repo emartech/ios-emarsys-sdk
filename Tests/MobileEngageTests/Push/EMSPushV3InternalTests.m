@@ -97,43 +97,15 @@
     }
 }
 
-- (void)testSetPushToken_requestFactory_calledWithProperPushToken {
-    [self.push setPushToken:self.mockPushTokenData];
-
-    OCMVerify([self.mockRequestFactory createPushTokenRequestModelWithPushToken:self.pushToken]);
-}
-
-- (void)testSetPushToken_shouldNotCallRequestFactory_when_pushTokenIsNil {
-    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:[OCMArg any]]);
-
-    [self.push setPushToken:nil];
-}
-
-- (void)testSetPushToken_shouldNotCallRequestFactory_when_pushTokenStringIsNilOrEmpty {
-    _mockPushTokenData = OCMClassMock([NSData class]);
-    OCMStub([self.mockPushTokenData deviceTokenString]).andReturn(nil);
-
-    OCMReject([self.mockRequestFactory createPushTokenRequestModelWithPushToken:[OCMArg any]]);
-
-    [self.push setPushToken:self.mockPushTokenData];
-}
-
-- (void)testSetPushToken_shouldNotCallRequestManager_when_pushTokenIsNil {
-    OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
-                                      withCompletionBlock:[OCMArg any]]);
-
-    [self.push setPushToken:nil];
-}
-
 - (void)testSetPushToken {
-    id mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    id partialMockPush = OCMPartialMock(self.push);
 
-    OCMStub([self.mockRequestFactory createPushTokenRequestModelWithPushToken:self.pushToken]).andReturn(mockRequestModel);
+    [partialMockPush setPushToken:self.mockPushTokenData];
 
-    [self.push setPushToken:self.mockPushTokenData];
+    OCMVerify([partialMockPush setPushToken:self.mockPushTokenData
+                            completionBlock:nil]);
 
-    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
-                                      withCompletionBlock:[OCMArg any]]);
+    [partialMockPush stopMocking];
 }
 
 - (void)testSetPushTokenCompletionBlock_requestFactory_calledWithProperPushToken {
