@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
 
 
         let config = EMSConfig.make { builder in
-            builder.setExperimentalFeatures([USER_CENTRIC_INBOX]);
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
 #if DEBUG

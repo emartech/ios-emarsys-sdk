@@ -11,7 +11,3 @@ end
 target "EMSNotificationService" do
   pod 'EmarsysNotificationService'
 end
-
-target "Emarsys SampleUITests" do
-  pod 'Kiwi'
-end
