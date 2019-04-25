@@ -183,11 +183,13 @@
 }
 
 - (void)testClearPushToken {
-    EMSPushV3Internal *partialMockPush = OCMPartialMock(self.push);
+    id partialMockPush = OCMPartialMock(self.push);
 
     [partialMockPush clearPushToken];
 
     OCMVerify([partialMockPush clearPushTokenWithCompletionBlock:nil]);
+
+    [partialMockPush stopMocking];
 }
 
 - (void)testClearPushTokenWithCompletionBlock {
@@ -216,12 +218,13 @@
 - (void)testTrackMessageOpenWithUserInfo {
     NSDictionary *testUserInfo = @{@"testKey": @"testValue"};
 
-    EMSPushV3Internal *partialMockPush = OCMPartialMock(self.push);
+    id partialMockPush = OCMPartialMock(self.push);
 
     [partialMockPush trackMessageOpenWithUserInfo:testUserInfo];
 
     OCMVerify([partialMockPush trackMessageOpenWithUserInfo:testUserInfo
                                             completionBlock:nil]);
+    [partialMockPush stopMocking];
 }
 
 - (void)testTrackMessageOpenWithUserInfoCompletionBlock_userInfo_mustNotBeNil {
