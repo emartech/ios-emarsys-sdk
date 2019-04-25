@@ -33,7 +33,7 @@
             weakSelf.originalRequestModel = requestModel;
             [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
                                      coreCompletionProxy:weakSelf];
-        } else if (responseModel.isSuccess &&  weakSelf.originalRequestModel) {
+        } else if (responseModel.isSuccess && weakSelf.originalRequestModel) {
             [weakSelf.contactResponseHandler processResponse:responseModel];
             [weakSelf.restClient executeWithRequestModel:weakSelf.originalRequestModel
                                      coreCompletionProxy:weakSelf];
