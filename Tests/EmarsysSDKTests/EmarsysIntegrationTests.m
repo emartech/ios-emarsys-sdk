@@ -18,7 +18,7 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 @implementation EmarsysIntegrationTests
 
 - (void)setUp {
-    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
     [EmarsysTestUtils waitForSetPushToken];
     [EmarsysTestUtils waitForSetCustomer];

@@ -194,13 +194,8 @@ SPEC_BEGIN(MERequestFactoryTests)
                 return notification;
             };
 
-            context(@"USER_CENTRIC_INBOX TURNED OFF", ^{
 
-                beforeEach(^{
-                    [MEExperimental reset];
-                });
-
-                it(@"should create v2 request when USER_CENTRIC_INBOX feature is turned off", ^{
+            it(@"should create v2 request", ^{
                     EMSNotification *notification = notificationBlock();
                     MERequestContext *requestContext = requestContextBlock([NSDate date]);
 
@@ -215,44 +210,6 @@ SPEC_BEGIN(MERequestFactoryTests)
                     [[requestModel.headers should] equal:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:requestContext.config.applicationCode
                                                                                                                    password:requestContext.config.applicationPassword]}];
                 });
-            });
-            context(@"USER_CENTRIC_INBOX TURNED ON", ^{
-
-                beforeEach(^{
-                    [MEExperimental enableFeature:USER_CENTRIC_INBOX];
-                });
-
-                afterEach(^{
-                    [MEExperimental reset];
-                });
-
-
-                it(@"should create v3 request when USER_CENTRIC_INBOX feature is turned on", ^{
-                    EMSNotification *notification = notificationBlock();
-                    NSDate *timeStamp = [NSDate date];
-                    MERequestContext *requestContext = requestContextBlock(timeStamp);
-
-                    EMSRequestModel *requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:notification
-                                                                                                         requestContext:requestContext];
-
-                    [[requestModel.url.absoluteString should] equal:@"https://mobile-events.eservice.emarsys.net/v3/devices/requestContextMeId/events"];
-                    [[requestModel.method should] equal:@"POST"];
-
-                    [[requestModel.headers[@"X-ME-ID"] should] equal:@"requestContextMeId"];
-                    [[requestModel.headers[@"X-ME-ID-SIGNATURE"] should] equal:@"requestContextMeIdSignature"];
-                    [[requestModel.headers[@"X-ME-APPLICATIONCODE"] should] equal:@"14C19-A121F"];
-
-                    [[requestModel.payload[@"events"][0][@"name"] should] equal:@"inbox:open"];
-                    [[requestModel.payload[@"events"][0][@"type"] should] equal:@"internal"];
-                    [[requestModel.payload[@"events"][0][@"timestamp"] should] equal:[timeStamp stringValueInUTC]];
-                    [[requestModel.payload[@"events"][0][@"attributes"][@"message_id"] should] equal:@"notificationId"];
-                    [[requestModel.payload[@"events"][0][@"attributes"][@"sid"] should] equal:@"notificationSid"];
-                    [[requestModel.payload[@"clicks"] should] equal:@[]];
-                    [[requestModel.payload[@"viewed_messages"] should] equal:@[]];
-                    [[requestModel.payload[@"hardware_id"] should] equal:deviceInfo.hardwareId];
-                });
-
-            });
         });
 
         describe(@"createTrackMessageOpenRequestWithMessageId:requestContext:", ^{

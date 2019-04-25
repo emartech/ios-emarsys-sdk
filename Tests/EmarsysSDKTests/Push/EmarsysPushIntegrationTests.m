@@ -15,7 +15,7 @@
 @implementation EmarsysPushIntegrationTests
 
 - (void)setUp {
-    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
 }
 

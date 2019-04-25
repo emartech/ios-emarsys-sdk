@@ -4,7 +4,6 @@
 
 #import "EMSNotification.h"
 #import "NSDictionary+MobileEngage.h"
-#import "MEExperimental.h"
 #import "EMSTimestampProvider.h"
 
 @implementation EMSNotification
@@ -12,13 +11,7 @@
 - (instancetype)initWithUserInfo:(NSDictionary *)dictionary
                timestampProvider:(EMSTimestampProvider *)timestampProvider {
     if (self = [super init]) {
-
-        if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-            _id = dictionary[@"message_id"];
-        } else {
-            _id = dictionary[@"id"];
-        }
-
+        _id = dictionary[@"id"];
         _sid = [dictionary messageId];
 
         NSObject *alert = dictionary[@"aps"][@"alert"];

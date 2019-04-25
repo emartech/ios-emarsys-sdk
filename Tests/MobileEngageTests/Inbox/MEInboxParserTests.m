@@ -2,8 +2,6 @@
 #import "MEInboxParser.h"
 #import "EMSNotification.h"
 #import "EMSNotificationInboxStatus.h"
-#import "MEExperimental.h"
-#import "MEExperimental+Test.h"
 
 SPEC_BEGIN(MEInboxParserTests)
 
@@ -61,49 +59,6 @@ SPEC_BEGIN(MEInboxParserTests)
         });
 
         describe(@"InboxParser.parseNotification:", ^{
-            context(@"USER_CENTRIC_INBOX turned on", ^{
-                beforeEach(^{
-                    [MEExperimental enableFeature:USER_CENTRIC_INBOX];
-                });
-
-                afterEach(^{
-                    [MEExperimental reset];
-                });
-
-                it(@"should not return nil", ^{
-                    MEInboxParser *parser = [MEInboxParser new];
-                    EMSNotification *result = [parser parseNotification:@{}];
-                    [[theValue(result) shouldNot] beNil];
-                });
-
-                it(@"should create the correct notification", ^{
-                    NSDictionary *userInfo = @{
-                            @"channel_id": @"ems_sample_news",
-                            @"message_id": @"userInfoMessageId",
-                            @"ems_msg": @YES,
-                            @"u": @{
-                                    @"barmi_kulcs": @"hello",
-                                    @"Url": @"",
-                                    @"sid": @"userInfoSid"
-                            },
-                            @"aps": @{
-                                    @"alert": @{
-                                            @"title": @"title",
-                                            @"body": @"body",}
-                            },
-                            @"id": @"userInfoId",
-                            @"inbox": @YES,
-                            @"rootKey": @"rootValue"
-                    };
-
-                    EMSNotification *notification = [[EMSNotification alloc] initWithUserInfo:userInfo timestampProvider:nil];
-                    [[notification.id should] equal:@"userInfoMessageId"];
-                    [[notification.sid should] equal:@"userInfoSid"];
-                    [[notification.title should] equal:@"title"];
-                });
-            });
-
-            context(@"USER_CENTRIC_INBOX turned off", ^{
                 it(@"should not return nil", ^{
                     MEInboxParser *parser = [MEInboxParser new];
                     EMSNotification *result = [parser parseNotification:@{}];
@@ -137,7 +92,6 @@ SPEC_BEGIN(MEInboxParserTests)
                     [[notification.receivedAtTimestamp should] equal:@12345678123];
                 });
 
-            });
         });
 
 SPEC_END

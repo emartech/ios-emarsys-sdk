@@ -143,33 +143,6 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registered) should] beYes];
                 });
 
-                it(@"should register MEIDResponseHandler if USER_CENTRIC_INBOX is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX] withDependencyContainer:nil];
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-
-                it(@"should  register MEIDResponseHandler only once if USER_CENTRIC_INBOX", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
-                                       withDependencyContainer:nil];
-
-                    NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registerCount++;
-                        }
-                    }
-
-                    [[theValue(registerCount) should] equal:theValue(1)];
-                });
-
                 it(@"should register MEIAMResponseHandler", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
@@ -222,19 +195,6 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registerCount) should] equal:theValue(1)];
                 });
 
-                it(@"should register EMSVisitorIdResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX] withDependencyContainer:nil];
-
-                    NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
-                            registerCount++;
-                        }
-                    }
-
-                    [[theValue(registerCount) should] equal:theValue(1)];
-                });
-
                 it(@"should register EMSClientStateResponseHandler", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:nil];
@@ -249,29 +209,8 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue(registerCount) should] equal:theValue(1)];
                 });
 
-                it(@"should register EMSClientStateResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
-                                       withDependencyContainer:nil];
-
-                    NSUInteger registerCount = 0;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[EMSClientStateResponseHandler class]]) {
-                            registerCount++;
-                        }
-                    }
-
-                    [[theValue(registerCount) should] equal:theValue(1)];
-                });
-
                 it(@"should initialize responseHandlers", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-
-                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(7)];
-                });
-
-                it(@"should register EMSClientStateResponseHandler if USER_CENTRIC_INBOX feature is turned on", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[USER_CENTRIC_INBOX]
                                        withDependencyContainer:nil];
 
                     [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(7)];

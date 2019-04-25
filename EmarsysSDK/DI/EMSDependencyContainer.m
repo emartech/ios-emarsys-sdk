@@ -4,7 +4,6 @@
 #import <UIKit/UIKit.h>
 #import "EMSDependencyContainer.h"
 #import "MobileEngageInternal.h"
-#import "MEExperimental.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
 #import "EMSShardRepository.h"
@@ -18,7 +17,6 @@
 #import "EMSPredictMapper.h"
 #import "EMSAbstractResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
-#import "MEInboxV2.h"
 #import "MEInbox.h"
 #import "MENotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
@@ -53,6 +51,7 @@
 #import "EMSContactTokenMapper.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeepLinkInternal.h"
+#import "EMSNotificationCache.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -226,18 +225,10 @@
 
 
     _notificationCache = [[EMSNotificationCache alloc] init];
-    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        _inbox = [[MEInboxV2 alloc] initWithConfig:config
-                                    requestContext:self.requestContext
-                                 notificationCache:self.notificationCache
-                                    requestManager:self.requestManager
-                                    requestFactory:self.requestFactory];
-    } else {
-        _inbox = [[MEInbox alloc] initWithConfig:config
-                                  requestContext:self.requestContext
-                               notificationCache:self.notificationCache
-                                  requestManager:self.requestManager];
-    }
+    _inbox = [[MEInbox alloc] initWithConfig:config
+                              requestContext:self.requestContext
+                           notificationCache:self.notificationCache
+                              requestManager:self.requestManager];
 
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory

@@ -6,7 +6,6 @@
 #import "EmarsysSDKVersion.h"
 #import "NSData+MobileEngine.h"
 #import "EMSNotification.h"
-#import "MEExperimental.h"
 #import "EMSRequestModel.h"
 #import "EMSDeviceInfo.h"
 #import "NSDate+EMSCore.h"
@@ -61,30 +60,13 @@
 + (EMSRequestModel *)createTrackMessageOpenRequestWithNotification:(EMSNotification *)inboxMessage
                                                     requestContext:(MERequestContext *)requestContext {
     EMSRequestModel *requestModel;
-    if ([MEExperimental isFeatureEnabled:USER_CENTRIC_INBOX]) {
-        NSMutableDictionary *attributes = [NSMutableDictionary new];
-
-        if (inboxMessage.id) {
-            attributes[@"message_id"] = inboxMessage.id;
-        }
-
-        if (inboxMessage.sid) {
-            attributes[@"sid"] = inboxMessage.sid;
-        }
-
-        requestModel = [MERequestFactory_old createCustomEventModelWithEventName:@"inbox:open"
-                                                                 eventAttributes:attributes
-                                                                            type:@"internal"
-                                                                  requestContext:requestContext];
-    } else {
-        requestModel = [MERequestFactory_old requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
-                                                          method:HTTPMethodPOST
-                                          additionalPayloadBlock:^(NSMutableDictionary *payload) {
-                                              payload[@"sid"] = inboxMessage.sid;
-                                              payload[@"source"] = @"inbox";
-                                          }
-                                                  requestContext:requestContext];
-    }
+    requestModel = [MERequestFactory_old requestModelWithUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
+                                                      method:HTTPMethodPOST
+                                      additionalPayloadBlock:^(NSMutableDictionary *payload) {
+                                          payload[@"sid"] = inboxMessage.sid;
+                                          payload[@"source"] = @"inbox";
+                                      }
+                                              requestContext:requestContext];
     return requestModel;
 }
 
