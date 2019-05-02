@@ -56,7 +56,7 @@
 
 - (NSDictionary *)dictionaryRepresentation {
     return @{
-            @"message_id" : self.campaignId,
+            @"campaignId" : self.campaignId,
             @"timestamp" : [self.timestamp stringValueInUTC]
     };
 }

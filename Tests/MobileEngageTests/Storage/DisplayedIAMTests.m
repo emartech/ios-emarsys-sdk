@@ -13,7 +13,7 @@ SPEC_BEGIN(MEDisplayedIAMTests)
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:12345];
             MEDisplayedIAM *display = [[MEDisplayedIAM alloc] initWithCampaignId:@"123" timestamp:date];
             [[[display dictionaryRepresentation] should] equal:@{
-                    @"message_id" : @"123",
+                    @"campaignId" : @"123",
                     @"timestamp" : date.stringValueInUTC
             }];
         });

@@ -13,8 +13,8 @@ SPEC_BEGIN(MEButtonClickTests)
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:12345];
             MEButtonClick *click = [[MEButtonClick alloc] initWithCampaignId:@"123" buttonId:@"456" timestamp:date];
             [[[click dictionaryRepresentation] should] equal:@{
-                    @"message_id" : @"123",
-                    @"button_id" : @"456",
+                    @"campaignId" : @"123",
+                    @"buttonId" : @"456",
                     @"timestamp" : date.stringValueInUTC
             }];
         });

@@ -36,7 +36,7 @@
     return self;
 }
 
-- (id <EMSRESTClientCompletionProxyProtocol>)createWithWorker:(id <EMSWorkerProtocol>)worker
+ - (id <EMSRESTClientCompletionProxyProtocol>)createWithWorker:(id <EMSWorkerProtocol>)worker
                                                  successBlock:(CoreSuccessBlock)successBlock
                                                    errorBlock:(CoreErrorBlock)errorBlock {
     NSParameterAssert((successBlock != nil) == (errorBlock != nil));

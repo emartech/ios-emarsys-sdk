@@ -226,12 +226,12 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"clicks"] should] equal:@[
-                    @{@"message_id": [clicks[0] campaignId], @"button_id": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
-                    @{@"message_id": [clicks[1] campaignId], @"button_id": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
+                    @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
+                    @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
                 ]];
             });
 
-            it(@"should add viewed_messages on the custom event requests", ^{
+            it(@"should add viewedMessages on the custom event requests", ^{
                 NSArray<MEDisplayedIAM *> *viewedMessages = @[
                     [[MEDisplayedIAM alloc] initWithCampaignId:@"123" timestamp:[NSDate date]],
                     [[MEDisplayedIAM alloc] initWithCampaignId:@"42" timestamp:[NSDate date]]
@@ -245,8 +245,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"viewedMessages"] should] equal:@[
-                    @{@"message_id": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
-                    @{@"message_id": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
+                    @{@"campaignId": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
+                    @{@"campaignId": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
                 ]];
             });
 
