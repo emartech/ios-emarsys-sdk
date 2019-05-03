@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSInAppOnScreenTime.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSInAppOnScreenTimeTests : XCTestCase
 
@@ -86,10 +87,12 @@
 
 - (void)testData_when_requestIdAvailable {
     NSDictionary *expectedData = @{
-        @"request_id": @"requestId456",
-        @"campaign_id": @"campaignId456",
-        @"on_screen_time": @123000,
-        @"source": @"customEvent"
+            @"request_id": @"requestId456",
+            @"campaign_id": @"campaignId456",
+            @"start": [self.showTimestamp numberValueInMillis],
+            @"end": [self.timestamp numberValueInMillis],
+            @"duration": @123000,
+            @"source": @"customEvent"
     };
     XCTAssertEqualObjects(self.onScreenTime.data, expectedData);
 }
@@ -102,9 +105,11 @@
                                                      timestampProvider:self.timestampProvider];
 
     NSDictionary *expectedData = @{
-        @"campaign_id": @"campaignId456",
-        @"on_screen_time": @123000,
-        @"source": @"push"
+            @"campaign_id": @"campaignId456",
+            @"start": [self.showTimestamp numberValueInMillis],
+            @"end": [self.timestamp numberValueInMillis],
+            @"duration": @123000,
+            @"source": @"push"
     };
     XCTAssertEqualObjects(self.onScreenTime.data, expectedData);
 }

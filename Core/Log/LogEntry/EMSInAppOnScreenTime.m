@@ -20,9 +20,12 @@
     NSParameterAssert(showTimestamp);
     NSParameterAssert(timestampProvider);
     if (self = [super init]) {
+        NSDate *endTimeStamp = [timestampProvider provideTimestamp];
         NSMutableDictionary *dict = [@{
-            @"campaign_id": message.campaignId,
-            @"on_screen_time": [[timestampProvider provideTimestamp] numberValueInMillisFromDate:showTimestamp]
+                @"campaign_id": message.campaignId,
+                @"start": [showTimestamp numberValueInMillis],
+                @"end": [endTimeStamp numberValueInMillis],
+                @"duration": [endTimeStamp numberValueInMillisFromDate:showTimestamp]
         } mutableCopy];
         if (message.response) {
             dict[@"source"] = @"customEvent";

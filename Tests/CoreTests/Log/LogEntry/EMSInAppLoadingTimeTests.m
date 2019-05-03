@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSInAppLoadingTime.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSInAppLoadingTimeTests : XCTestCase
 
@@ -66,10 +67,12 @@
 
 - (void)testData_when_requestIdAvailable {
     NSDictionary *expectedData = @{
-        @"request_id": @"requestId123",
-        @"campaign_id": @"campaignId123",
-        @"loading_time": @60000,
-        @"source": @"customEvent"
+            @"request_id": @"requestId123",
+            @"campaign_id": @"campaignId123",
+            @"duration": @60000,
+            @"start": [self.responseTimestamp numberValueInMillis],
+            @"end": [self.timestamp numberValueInMillis],
+            @"source": @"customEvent"
     };
     XCTAssertEqualObjects(self.loadingTime.data, expectedData);
 }
@@ -81,9 +84,11 @@
                                                    timestampProvider:self.timestampProvider];
 
     NSDictionary *expectedData = @{
-        @"campaign_id": @"campaignId456",
-        @"loading_time": @60000,
-        @"source": @"push"
+            @"campaign_id": @"campaignId456",
+            @"duration": @60000,
+            @"start": [self.responseTimestamp numberValueInMillis],
+            @"end": [self.timestamp numberValueInMillis],
+            @"source": @"push"
     };
     XCTAssertEqualObjects(self.loadingTime.data, expectedData);
 }

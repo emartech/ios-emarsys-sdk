@@ -18,8 +18,11 @@
     NSParameterAssert(timestampProvider);
     if (self = [super init]) {
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        NSDate *endTimestamp = [timestampProvider provideTimestamp];
         dict[@"campaign_id"] = message.campaignId;
-        dict[@"loading_time"] = [[timestampProvider provideTimestamp] numberValueInMillisFromDate:message.responseTimestamp];
+        dict[@"start"] = [message.responseTimestamp numberValueInMillis];
+        dict[@"end"] = [endTimestamp numberValueInMillis];
+        dict[@"duration"] = [endTimestamp numberValueInMillisFromDate:message.responseTimestamp];
         if (message.response) {
             dict[@"source"] = @"customEvent";
             dict[@"request_id"] = message.response.requestModel.requestId;
