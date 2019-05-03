@@ -9,7 +9,7 @@
 @implementation MERequestTools
 
 + (BOOL)isRequestCustomEvent:(EMSRequestModel *)request {
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".*/v3/apps/[a-zA-Z\\-0-9]*/client/events$"
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"https://mobile-events\\.eservice\\.emarsys\\.net/(.+)/events$"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:nil];
     NSString *url = [request.url absoluteString];
