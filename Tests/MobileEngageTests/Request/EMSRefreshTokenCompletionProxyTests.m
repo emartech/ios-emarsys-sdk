@@ -28,7 +28,8 @@
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
-    _mockError = OCMClassMock([NSError class]);
+    NSError *error = [NSError new];
+    _mockError = OCMPartialMock(error);
 
     _refreshCompletionProxy = [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
                                                                                    restClient:self.mockRestClient
@@ -38,7 +39,6 @@
 
 - (void)tearDown {
     [(id) self.mockError stopMocking];
-
     [super tearDown];
 }
 

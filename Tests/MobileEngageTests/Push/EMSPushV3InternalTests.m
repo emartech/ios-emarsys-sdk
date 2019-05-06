@@ -34,7 +34,8 @@
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
 
     _pushToken = @"pushTokenString";
-    _mockPushTokenData = OCMClassMock([NSData class]);
+    NSData *data = [NSData new];
+    _mockPushTokenData = OCMPartialMock(data);
     OCMStub([self.mockPushTokenData deviceTokenString]).andReturn(self.pushToken);
 
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
@@ -47,7 +48,6 @@
     [self.mockPushTokenData stopMocking];
     [super tearDown];
 }
-
 
 - (void)testInit_requestFactory_mustNotBeNil {
     @try {
