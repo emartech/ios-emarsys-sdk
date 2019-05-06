@@ -16,7 +16,6 @@
     NSParameterAssert(timestampProvider);
     NSParameterAssert(uuidProvider);
     NSParameterAssert(deviceInfo);
-    NSParameterAssert(merchantId);
     if (self = [super init]) {
         NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
         _customerId = [defaults objectForKey:kEMSCustomerId];

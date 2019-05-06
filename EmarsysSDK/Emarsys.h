@@ -18,7 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
 @property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
-@property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
 @property(class, nonatomic, readonly) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 
 + (void)setupWithConfig:(EMSConfig *)config;

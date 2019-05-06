@@ -3,7 +3,6 @@
 //
 
 #import "EMSConfig.h"
-#import "EMSConfigBuilder.h"
 
 @implementation EMSConfig
 
@@ -14,7 +13,6 @@
 
     NSParameterAssert(builder.applicationCode);
     NSParameterAssert(builder.applicationPassword);
-    NSParameterAssert(builder.merchantId);
     NSParameterAssert(builder.contactFieldId);
 
     return [[EMSConfig alloc] initWithBuilder:builder];

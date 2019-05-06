@@ -56,7 +56,7 @@ SPEC_BEGIN(PRERequestContextTests)
                 }
             });
 
-            it(@"should throw exception when merchantId is nil", ^{
+            xit(@"should throw exception when merchantId is nil", ^{
                 @try {
                     [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                             uuidProvider:uuidProvider

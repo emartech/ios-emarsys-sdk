@@ -73,19 +73,6 @@ SPEC_BEGIN(BuilderTest)
 
         describe(@"setMerchantId", ^{
 
-            it(@"should throw exception when merchantId is nil", ^{
-                @try {
-                    [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
-                        [builder setMerchantId:nil];
-                        [builder setContactFieldId:@"contactFieldId"];
-                    }];
-                    fail(@"Expected Exception when merchantId is nil!");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
             it(@"should set merchantId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
