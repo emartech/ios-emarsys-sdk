@@ -28,8 +28,8 @@ Pod::Spec.new do |spec|
 			'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
 			'MobileEngage/Flipper/EMSFlipperFeatures.h',
 			'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h',
-			'MobileEngage/EMSConfig.h',
-			'MobileEngage/EMSConfigBuilder.h'
+			'EmarsysSDK/Setup/EMSConfig.h',
+			'EmarsysSDK/Setup/EMSConfigBuilder.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
