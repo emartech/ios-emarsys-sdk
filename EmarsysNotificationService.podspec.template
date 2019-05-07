@@ -5,7 +5,7 @@ Pod::Spec.new do |spec|
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
 	spec.summary              = 'Emarsys NotificationService'
-	spec.platform             = :ios, '9.0'
+	spec.platform             = :ios, '11.0'
 	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', <COMMIT_REF> }
 	spec.source_files         = [
 	    'MobileEngage/RichNotificationExtension/**/*.{h,m}',
