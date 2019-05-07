@@ -33,21 +33,21 @@ class PredictViewController: UIViewController {
         guard let itemId = tfItemId.text, itemId.count > 0 else {
             return
         }
-        Emarsys.predict.trackItemView(withItemId: itemId)
+//        Emarsys.predict.trackItemView(withItemId: itemId)
     }
 
     @IBAction func trackCategoryIdButtonClicked(_ sender: Any) {
         guard let categoryId = tfCategoryId.text, categoryId.count > 0 else {
             return
         }
-        Emarsys.predict.trackCategoryView(withCategoryPath: categoryId)
+//        Emarsys.predict.trackCategoryView(withCategoryPath: categoryId)
     }
 
     @IBAction func trackSearchTermButtonClicked(_ sender: Any) {
         guard let searchTerm = tfSearchTerm.text, searchTerm.count > 0 else {
             return
         }
-        Emarsys.predict.trackSearch(withSearchTerm: searchTerm)
+//        Emarsys.predict.trackSearch(withSearchTerm: searchTerm)
     }
 
     @IBAction func addCartItemButtonClicked(_ sender: Any) {
@@ -56,14 +56,14 @@ class PredictViewController: UIViewController {
     }
 
     @IBAction func trackCartItemButtonClicked(_ sender: Any) {
-        Emarsys.predict.trackCart(withCartItems: cartItems)
+//        Emarsys.predict.trackCart(withCartItems: cartItems)
     }
 
     @IBAction func trackPurchaseButtonClicked(_ sender: Any) {
         guard let orderId = tfOrderId.text, orderId.count > 0 else {
             return
         }
-        Emarsys.predict.trackPurchase(withOrderId: orderId, items: cartItems)
+//        Emarsys.predict.trackPurchase(withOrderId: orderId, items: cartItems)
     }
 
     //MARK: Privates

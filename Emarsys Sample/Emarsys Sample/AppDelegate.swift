@@ -34,9 +34,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
         if #available(iOS 12.0, *) {
             options.insert(.provisional)
         }
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { [unowned self] granted, error in
             print(granted, error ?? "no error")
             if (granted) {
+                Emarsys.notificationCenterDelegate.eventHandler = self
                 UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
             }
         }
