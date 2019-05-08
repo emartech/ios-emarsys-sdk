@@ -2,7 +2,6 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "MEUserNotificationDelegate.h"
-#import "MobileEngageInternal.h"
 #import <UserNotifications/UNNotificationResponse.h>
 #import <UserNotifications/UNNotification.h>
 #import <UserNotifications/UNNotificationContent.h>
@@ -15,6 +14,9 @@
 #import "EMSMacros.h"
 #import "EMSCrashLog.h"
 #import "EMSRequestFactory.h"
+#import "EMSRequestManager.h"
+#import "EMSPushNotificationProtocol.h"
+#import "EMSMobileEngageProtocol.h"
 
 @interface MEUserNotificationDelegate ()
 

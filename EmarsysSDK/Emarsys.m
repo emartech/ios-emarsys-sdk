@@ -5,7 +5,6 @@
 #import <UIKit/UIKit.h>
 #import "Emarsys.h"
 #import "PredictInternal.h"
-#import "MobileEngageInternal.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "MEInApp.h"
@@ -16,6 +15,8 @@
 #import "MEUserNotificationDelegate.h"
 #import "EMSDeviceInfoClientProtocol.h"
 #import "MERequestContext.h"
+#import "EMSDeepLinkProtocol.h"
+#import "EMSMobileEngageProtocol.h"
 
 @implementation Emarsys
 

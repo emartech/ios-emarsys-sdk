@@ -6,7 +6,6 @@
 #import "Kiwi.h"
 #import "Emarsys.h"
 #import "PredictInternal.h"
-#import "MobileEngageInternal.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSDBTriggerKey.h"
 #import "EMSDependencyContainer.h"
@@ -25,6 +24,7 @@
 #import "EMSRequestFactory.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSLogger.h"
+#import "EMSRequestManager.h"
 
 SPEC_BEGIN(EmarsysTests)
 

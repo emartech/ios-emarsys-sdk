@@ -3,7 +3,6 @@
 //
 #import <UIKit/UIKit.h>
 #import "EMSDependencyContainer.h"
-#import "MobileEngageInternal.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
 #import "EMSShardRepository.h"
@@ -43,7 +42,6 @@
 #import "EMSRequestFactory.h"
 #import "EMSV3Mapper.h"
 #import "EMSPushV3Internal.h"
-#import "EMSMobileEngageV3Internal.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSInAppInternal.h"
 #import "EMSCompletionProxyFactory.h"
@@ -52,6 +50,9 @@
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSNotificationCache.h"
+#import "EMSMobileEngageV3Internal.h"
+#import "EMSCompletionMiddleware.h"
+#import "EMSRequestManager.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 

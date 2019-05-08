@@ -6,7 +6,6 @@
 #import "FakeInboxNotificationRequestManager.h"
 #import "MEInbox.h"
 #import "EMSRequestModelMatcher.h"
-#import "FakeStatusDelegate.h"
 #import "EMSAuthentication.h"
 #import "MEExperimental+Test.h"
 #import "EMSUUIDProvider.h"
@@ -540,12 +539,6 @@ SPEC_BEGIN(MEInboxTests)
         });
 
         describe(@"inbox.trackMessageOpen", ^{
-
-            FakeStatusDelegate *(^createStatusDelegate)(void) = ^FakeStatusDelegate *() {
-                FakeStatusDelegate *statusDelegate = [FakeStatusDelegate new];
-                statusDelegate.printErrors = YES;
-                return statusDelegate;
-            };
 
             it(@"should return with eventId, and finish with success for trackNotificationOpenWithNotification:", ^{
                 [Emarsys setupWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {

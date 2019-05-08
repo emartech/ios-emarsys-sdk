@@ -1,5 +1,4 @@
 #import "Kiwi.h"
-#import "MobileEngageInternal.h"
 #import <UserNotifications/UNNotification.h>
 #import <UserNotifications/UNNotificationResponse.h>
 #import <UserNotifications/UNNotificationRequest.h>
@@ -12,6 +11,7 @@
 #import "EMSPushNotificationProtocol.h"
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
+#import "EMSMobileEngageV3Internal.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -47,7 +47,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
         beforeEach(^{
             application = [UIApplication mock];
-            mobileEngageInternal = [MobileEngageInternal mock];
+            mobileEngageInternal = [EMSMobileEngageV3Internal mock];
             inApp = [MEInApp mock];
             timestampProvider = [EMSTimestampProvider mock];
             pushInternal = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
@@ -123,7 +123,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             it(@"should throw an exception when there is no pushInternal", ^{
                 @try {
                     [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                       mobileEngageInternal:[MobileEngageInternal mock]
+                                                       mobileEngageInternal:[EMSMobileEngageV3Internal mock]
                                                                       inApp:[MEInApp mock]
                                                           timestampProvider:[EMSTimestampProvider mock]
                                                                pushInternal:nil
@@ -222,7 +222,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                  completionHandler];
 
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                  mobileEngageInternal:[MobileEngageInternal nullMock]
+                                                                                                  mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
                                                                                                           pushInternal:pushInternal
@@ -314,7 +314,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             it(@"should call trackCustomEvent on MobileEngage with the defined eventName and payload if the action is type of MECustomEvent", ^{
                 NSString *eventName = @"testEventName";
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
-                MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
+                EMSMobileEngageV3Internal *mobileEngage = [EMSMobileEngageV3Internal nullMock];
 
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc]
                         initWithApplication:[UIApplication mock]
@@ -352,7 +352,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             });
 
             it(@"should call track click with richNotification:actionClicked eventName and title and action id in the payload", ^{
-                MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
+                EMSMobileEngageV3Internal *mobileEngage = [EMSMobileEngageV3Internal nullMock];
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:mobileEngage
                                                                                                                  inApp:[MEInApp nullMock]
@@ -396,7 +396,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             });
 
             it(@"should call mobileEngage with the correct action", ^{
-                MobileEngageInternal *mockMEInternal = [MobileEngageInternal nullMock];
+                EMSMobileEngageV3Internal *mockMEInternal = [EMSMobileEngageV3Internal nullMock];
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
@@ -439,7 +439,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             });
 
             it(@"should call trackMessageOpenWithUserInfo on MobileEngage with the userInfo when didReceiveNotificationResponse:withCompletionHandler: is called", ^{
-                MobileEngageInternal *mobileEngage = [MobileEngageInternal nullMock];
+                EMSMobileEngageV3Internal *mobileEngage = [EMSMobileEngageV3Internal nullMock];
 
                 MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                       mobileEngageInternal:mobileEngage
@@ -472,7 +472,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                               @{}, kw_any()];
 
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:application
-                                                                                                  mobileEngageInternal:[MobileEngageInternal nullMock]
+                                                                                                  mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
                                                                                                           pushInternal:pushInternal
@@ -506,7 +506,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                         responseTimestamp:responseTimestamp];
                 KWCaptureSpy *messageSpy = [inApp captureArgument:@selector(showMessage:completionHandler:) atIndex:0];
                 MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                      mobileEngageInternal:[MobileEngageInternal nullMock]
+                                                                                                      mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                      inApp:inApp
                                                                                                          timestampProvider:timestampProvider
                                                                                                               pushInternal:pushInternal
@@ -532,7 +532,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             });
 
             it(@"should call mobileEngage with default action", ^{
-                MobileEngageInternal *mockMEInternal = [MobileEngageInternal nullMock];
+                EMSMobileEngageV3Internal *mockMEInternal = [EMSMobileEngageV3Internal nullMock];
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
@@ -578,7 +578,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should return the default action when the action identifier is UNNotificationDefaultActionIdentifier", ^{
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                  mobileEngageInternal:[MobileEngageInternal nullMock]
+                                                                                                  mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
                                                                                                           pushInternal:pushInternal
@@ -610,7 +610,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
             it(@"should return nil when the action identifier is not UNNotificationDefaultActionIdentifier and no custom actions", ^{
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
-                                                                                                  mobileEngageInternal:[MobileEngageInternal nullMock]
+                                                                                                  mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
                                                                                                           pushInternal:pushInternal
