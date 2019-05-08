@@ -28,7 +28,7 @@
     [Emarsys registerAppStartBlock];
 
     EMSDependencyContainer *container = EMSDependencyInjection.dependencyContainer;
-    if (!container.requestContext.contactFieldValue) {
+    if (!container.requestContext.contactToken && !container.requestContext.contactFieldValue) {
         [container.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
         [container.mobileEngage setContactWithContactFieldValue:nil];
     }

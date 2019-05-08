@@ -7,6 +7,7 @@
 @class EMSRequestManager;
 @class EMSRequestFactory;
 @class EMSDeviceInfo;
+@class MERequestContext;
 
 #define kDEVICE_INFO @"kDEVICE_INFO"
 
@@ -14,6 +15,7 @@
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestFactory:(EMSRequestFactory *)requestFactory
-                            deviceInfo:(EMSDeviceInfo *)deviceInfo;
+                            deviceInfo:(EMSDeviceInfo *)deviceInfo
+                        requestContext:(MERequestContext *)requestContext;
 
 @end

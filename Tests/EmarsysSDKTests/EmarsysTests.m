@@ -262,9 +262,30 @@ SPEC_BEGIN(EmarsysTests)
                     [Emarsys setupWithConfig:config];
                 });
 
-                it(@"setupWithConfig should not send deviceInfo and login", ^{
+                it(@"setupWithConfig should not send deviceInfo and login when contactFieldValue is available", ^{
                     [requestContext stub:@selector(contactFieldValue)
                                andReturn:@"testContactFieldValue"];
+
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"
+                                            applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                        [builder setMerchantId:@"1428C8EE286EC34B"];
+                        [builder setContactFieldId:@3];
+                    }];
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
+                    [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:)
+                                  withArguments:kw_any()];
+
+                    [Emarsys setupWithConfig:config];
+                });
+
+                it(@"setupWithConfig should not send deviceInfo and login when contactToken is available", ^{
+                    [requestContext stub:@selector(contactToken)
+                               andReturn:@"testContactToken"];
 
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMobileEngageApplicationCode:@"14C19-A121F"

@@ -232,7 +232,8 @@
 
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
-                                                                           deviceInfo:deviceInfo];
+                                                                           deviceInfo:deviceInfo
+                                                                       requestContext:self.requestContext];
 
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                     requestFactory:self.requestFactory
