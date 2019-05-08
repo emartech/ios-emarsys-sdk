@@ -22,6 +22,7 @@
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
+@property(nonatomic, strong) EMSLogger *logger;
 
 @end
 
@@ -43,7 +44,8 @@
                   operationQueue:(NSOperationQueue *)operationQueue
        notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
            appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider
-                deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient {
+                deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
+                          logger:(EMSLogger *)logger {
     if (self = [super init]) {
         _dbHelper = dbHelper;
         _mobileEngage = mobileEngage;
@@ -62,6 +64,7 @@
         _deviceInfoClient = deviceInfoClient;
         _push = push;
         _deepLink = deepLink;
+        _logger = logger;
     }
     return self;
 }

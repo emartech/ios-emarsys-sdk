@@ -24,6 +24,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSRequestFactory.h"
 #import "EMSClientStateResponseHandler.h"
+#import "EMSLogger.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -75,7 +76,8 @@ SPEC_BEGIN(EmarsysTests)
                                                                      operationQueue:nil
                                                           notificationCenterManager:notificationCenterManagerMock
                                                               appStartBlockProvider:appStartBlockProvider
-                                                                   deviceInfoClient:deviceInfoClient];
+                                                                   deviceInfoClient:deviceInfoClient
+                                                                             logger:[EMSLogger nullMock]];
 
             [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                withDependencyContainer:dependencyContainer];
