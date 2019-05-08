@@ -11,9 +11,9 @@
 #import "EMSDeviceInfo.h"
 #import "EMSRESTClient.h"
 #import "EMSAuthentication.h"
-#import "MERequestFactory_old.h"
 #import "EMSRequestManager.h"
 #import "EMSNotificationCache.h"
+#import "EMSRequestFactory.h"
 
 @interface MEInbox ()
 
@@ -21,6 +21,7 @@
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
+@property(nonatomic, strong) EMSRequestFactory *requestFactory;
 
 @end
 
@@ -31,16 +32,19 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager {
+                requestManager:(EMSRequestManager *)requestManager
+                requestFactory:(EMSRequestFactory *)requestFactory {
     NSParameterAssert(config);
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
     NSParameterAssert(requestManager);
+    NSParameterAssert(requestFactory);
     if (self = [super init]) {
         _config = config;
         _requestContext = requestContext;
         _notificationCache = notificationCache;
         _requestManager = requestManager;
+        _requestFactory = requestFactory;
     }
     return self;
 }
@@ -126,25 +130,22 @@
     }
 }
 
-- (void)trackNotificationOpenWithNotification:(EMSNotification *)inboxNotification {
-    [self trackMessageOpenWith:inboxNotification
-               completionBlock:nil];
+- (void)trackNotificationOpenWithNotification:(EMSNotification *)notification {
+    [self trackNotificationOpenWithNotification:notification
+                                completionBlock:nil];
 }
 
-- (void)trackMessageOpenWith:(EMSNotification *)inboxNotification
-             completionBlock:(EMSCompletionBlock)completionBlock {
-    NSParameterAssert(inboxNotification);
-    EMSRequestModel *requestModel;
+- (void)trackNotificationOpenWithNotification:(EMSNotification *)notification
+                              completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSParameterAssert(notification);
+    EMSRequestModel *requestModel = [self.requestFactory createMessageOpenWithNotification:notification];
 
-    requestModel = [MERequestFactory_old createTrackMessageOpenRequestWithNotification:inboxNotification
-                                                                        requestContext:self.requestContext];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];;
 }
 
 - (void)purgeNotificationCache {
 }
-
 
 #pragma mark - Private methods
 

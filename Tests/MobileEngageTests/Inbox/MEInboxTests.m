@@ -12,6 +12,7 @@
 #import "EMSNotificationCache.h"
 #import "EMSWaiter.h"
 #import "Emarsys.h"
+#import "EMSRequestFactory.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -52,7 +53,8 @@ SPEC_BEGIN(MEInboxTests)
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
                                               requestContext:context
                                            notificationCache:notificationCache
-                                              requestManager:requestManager];
+                                              requestManager:requestManager
+                                              requestFactory:[EMSRequestFactory mock]];
             return inbox;
         };
 
@@ -70,7 +72,8 @@ SPEC_BEGIN(MEInboxTests)
             MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
                                               requestContext:requestContext
                                            notificationCache:notificationCache
-                                              requestManager:requestManagerMock];
+                                              requestManager:requestManagerMock
+                                              requestFactory:[EMSRequestFactory mock]];
             return inbox;
         };
 
@@ -90,14 +93,15 @@ SPEC_BEGIN(MEInboxTests)
             [MEExperimental reset];
         });
 
-        describe(@"initWithConfig:requestContext:notificationCache:requestManager:", ^{
+        describe(@"initWithConfig:requestContext:notificationCache:requestManager:requestFactory:", ^{
 
             it(@"should throw exception when config is nil", ^{
                 @try {
                     [[MEInbox alloc] initWithConfig:nil
                                      requestContext:[MERequestContext mock]
                                   notificationCache:[EMSNotificationCache mock]
-                                     requestManager:[EMSRequestManager mock]];
+                                     requestManager:[EMSRequestManager mock]
+                                     requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when config is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
@@ -110,7 +114,8 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:nil
                                   notificationCache:[EMSNotificationCache mock]
-                                     requestManager:[EMSRequestManager mock]];
+                                     requestManager:[EMSRequestManager mock]
+                                     requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -123,7 +128,8 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:[MERequestContext mock]
                                   notificationCache:nil
-                                     requestManager:[EMSRequestManager mock]];
+                                     requestManager:[EMSRequestManager mock]
+                                     requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCache"];
@@ -136,10 +142,25 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithConfig:[EMSConfig mock]
                                      requestContext:[MERequestContext mock]
                                   notificationCache:[EMSNotificationCache mock]
-                                     requestManager:nil];
+                                     requestManager:nil
+                                     requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when requestFactory is nil", ^{
+                @try {
+                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
+                                     requestContext:[MERequestContext mock]
+                                  notificationCache:[EMSNotificationCache mock]
+                                     requestManager:[EMSRequestManager mock]
+                                     requestFactory:nil];
+                    fail(@"Expected Exception when requestFactory is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestFactory"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -554,130 +575,55 @@ SPEC_BEGIN(MEInboxTests)
                 __block NSError *returnedError = [NSError mock];
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [Emarsys.inbox trackMessageOpenWith:notification
-                                    completionBlock:^(NSError *error) {
-                                        returnedError = error;
-                                        [expectation fulfill];
-                                    }];
+                [Emarsys.inbox trackNotificationOpenWithNotification:notification
+                                                     completionBlock:^(NSError *error) {
+                                                         returnedError = error;
+                                                         [expectation fulfill];
+                                                     }];
                 [EMSWaiter waitForExpectations:@[expectation]
                                        timeout:20];
                 [[returnedError should] beNil];
             });
         });
 
-        describe(@"trackMessageOpenWithInboxMessage:", ^{
-
-            __block MEInbox *inbox;
-
-            beforeEach(^{
-                inbox = createInbox();
-            });
-
-            afterEach(^{
-                [requestContext reset];
-            });
-
-            id (^requestModel)(NSString *url, NSDictionary *payload) = ^id(NSString *url, NSDictionary *payload) {
-                return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setPayload:payload];
-                        [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:applicationCode
-                                                                                                      password:applicationPassword]}];
-                    }
-                                      timestampProvider:[EMSTimestampProvider new]
-                                           uuidProvider:[EMSUUIDProvider new]];
-            };
+        describe(@"trackNotificationOpenWithNotification:", ^{
 
             it(@"should throw exception when parameter is nil", ^{
                 @try {
                     [createInbox() trackNotificationOpenWithNotification:nil];
-                    fail(@"Expected Exception when inboxMessage is nil!");
+                    fail(@"Expected Exception when notification is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
 
-            it(@"should submit a corresponding RequestModel when there is no contact_field_id and contact_field_value", ^{
-
-                EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
-                    @"application_id": kAppId,
-                    @"hardware_id": deviceInfo.hardwareId,
-                    @"sid": @"testID",
-                    @"source": @"inbox"
-                });
-
-                [requestContext setContactFieldValue:nil];
-
-                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
-                                       withArguments:kw_any(), kw_any()];
-
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
-                                                                atIndex:0];
-                EMSNotification *message = [EMSNotification new];
-                message.sid = @"testID";
-                [inbox trackNotificationOpenWithNotification:message];
-
-                EMSRequestModel *actualModel = spy.argument;
-                [[model should] beSimilarWithRequest:actualModel];
-            });
-
-            it(@"should submit a corresponding RequestModel when there are contact_field_id and contact_field_value", ^{
-                EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
-                    @"application_id": kAppId,
-                    @"hardware_id": deviceInfo.hardwareId,
-                    @"sid": @"valueOfSid",
-                    @"contact_field_id": @3,
-                    @"contact_field_value": @"contactFieldValue",
-                    @"source": @"inbox"
-                });
-
-                [requestContext setContactFieldValue:@"contactFieldValue"];
-
-                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
-                                       withArguments:kw_any(), kw_any()];
-
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
-                                                                atIndex:0];
-                EMSNotification *message = [EMSNotification new];
-                message.sid = @"valueOfSid";
-                [inbox trackNotificationOpenWithNotification:message];
-
-                EMSRequestModel *actualModel = spy.argument;
-                [[model should] beSimilarWithRequest:actualModel];
-            });
-
-            it(@"should submit a corresponding RequestModel", ^{
-                EMSRequestModel *model = requestModel(@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open", @{
-                    @"application_id": kAppId,
-                    @"hardware_id": deviceInfo.hardwareId,
-                    @"sid": @"valueOfSid",
-                    @"source": @"inbox"
-                });
-
-                [requestContext setContactFieldValue:nil];
-
-                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
-                                       withArguments:kw_any(), kw_any()];
-
-                KWCaptureSpy *spy = [requestManagerMock captureArgument:@selector(submitRequestModel:withCompletionBlock:)
-                                                                atIndex:0];
-                EMSNotification *message = [EMSNotification new];
-                message.sid = @"valueOfSid";
-                [inbox trackNotificationOpenWithNotification:message];
-
-                EMSRequestModel *actualModel = spy.argument;
-                [[model should] beSimilarWithRequest:actualModel];
-            });
-
             it(@"should submit requestModel", ^{
-                EMSNotification *message = [EMSNotification new];
-                message.sid = @"testID";
+                EMSCompletionBlock completionBlock = ^(NSError *error) {
+                };
+                EMSNotification *notification = [EMSNotification new];
+                EMSRequestModel *requestModel = [EMSRequestModel new];
 
-                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)];
+                EMSRequestFactory *mockRequestFactory = [EMSRequestFactory mock];
 
-                [inbox trackNotificationOpenWithNotification:message];
+                requestManagerMock = [EMSRequestManager mock];
+
+                [[mockRequestFactory should] receive:@selector(createMessageOpenWithNotification:)
+                                           andReturn:requestModel
+                                       withArguments:notification];
+
+                [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
+                                       withArguments:requestModel, completionBlock];
+
+                MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
+                                                  requestContext:[MERequestContext nullMock]
+                                               notificationCache:notificationCache
+                                                  requestManager:requestManagerMock
+                                                  requestFactory:mockRequestFactory];
+
+                [inbox trackNotificationOpenWithNotification:notification
+                                             completionBlock:completionBlock];
             });
+
         });
 
 SPEC_END

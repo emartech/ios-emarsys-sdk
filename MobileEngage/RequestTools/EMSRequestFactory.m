@@ -8,6 +8,8 @@
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
 #import "EmarsysSDKVersion.h"
+#import "EMSNotification.h"
+#import "EMSAuthentication.h"
 
 @interface EMSRequestFactory ()
 
@@ -136,6 +138,32 @@
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }
+
+- (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification {
+    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"];
+            [builder setMethod:HTTPMethodPOST];
+
+            NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+            payload[@"application_id"] = self.requestContext.config.applicationCode;
+            payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
+            payload[@"sid"] = notification.sid;
+            payload[@"source"] = @"inbox";
+
+            if (self.requestContext.contactFieldId && self.requestContext.contactFieldValue) {
+                payload[@"contact_field_id"] = self.requestContext.contactFieldId;
+                payload[@"contact_field_value"] = self.requestContext.contactFieldValue;
+            }
+
+            [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
+            [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.config.applicationCode
+                                                                                          password:self.requestContext.config.applicationPassword]}];
+        }
+                                                   timestampProvider:self.requestContext.timestampProvider
+                                                        uuidProvider:self.requestContext.uuidProvider];
+    return requestModel;
+}
+
 
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
     NSString *result = @"custom";

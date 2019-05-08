@@ -6,6 +6,7 @@
 @class EMSRequestModel;
 @class MERequestContext;
 @class EMSDeviceInfo;
+@class EMSNotification;
 
 typedef enum {
     EventTypeInternal,
@@ -33,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (EMSRequestModel *)createRefreshTokenRequestModel;
 
 - (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId;
+
+- (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification;
 
 @end
 

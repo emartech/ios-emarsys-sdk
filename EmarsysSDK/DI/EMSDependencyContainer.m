@@ -229,7 +229,8 @@
     _inbox = [[MEInbox alloc] initWithConfig:config
                               requestContext:self.requestContext
                            notificationCache:self.notificationCache
-                              requestManager:self.requestManager];
+                              requestManager:self.requestManager
+                              requestFactory:self.requestFactory];
 
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory

@@ -10,12 +10,14 @@
 @class EMSRESTClient;
 @class EMSRequestManager;
 @class EMSNotificationCache;
+@class EMSRequestFactory;
 
 @interface MEInbox : NSObject <EMSInboxProtocol>
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
              notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager;
+                requestManager:(EMSRequestManager *)requestManager
+                requestFactory:(EMSRequestFactory *)requestFactory;
 
 @end

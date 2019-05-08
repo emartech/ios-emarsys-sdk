@@ -12,8 +12,11 @@
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
 #import "EmarsysSDKVersion.h"
+#import "EMSAuthentication.h"
+#import "EMSNotification.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
+
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
@@ -22,6 +25,7 @@
 @property(nonatomic, strong) EMSConfig *mockConfig;
 
 @property(nonatomic, strong) NSDate *timestamp;
+
 @end
 
 @implementation EMSRequestFactoryTests
@@ -40,12 +44,14 @@
     OCMStub(self.mockRequestContext.config).andReturn(self.mockConfig);
     OCMStub(self.mockRequestContext.uuidProvider).andReturn(self.mockUUIDProvider);
     OCMStub(self.mockRequestContext.refreshToken).andReturn(@"testRefreshToken");
+
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
     OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
     OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
     OCMStub(self.mockConfig.applicationCode).andReturn(@"testApplicationCode");
+    OCMStub(self.mockConfig.applicationPassword).andReturn(@"testApplicationPassword");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
 }
@@ -232,7 +238,6 @@
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
 
-
 - (void)testCreateDeepLinkRequestModel {
     NSString *const value = @"dl_value";
     NSString *userAgent = [NSString stringWithFormat:@"Emarsys SDK %@ %@ %@", EMARSYS_SDK_VERSION,
@@ -249,6 +254,36 @@
                                                                                 extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createDeepLinkRequestModelWithTrackingId:value];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+}
+
+- (void)testCreateMessageOpenWithNotification {
+    EMSNotification *notification = [[EMSNotification alloc] initWithNotificationDictionary:@{
+        @"sid": @"testSID"
+    }];
+
+    OCMStub(self.mockRequestContext.contactFieldId).andReturn(@"testContactFieldId");
+    OCMStub(self.mockRequestContext.contactFieldValue).andReturn(@"testContactFieldValue");
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                   @"application_id": @"testApplicationCode",
+                                                                                   @"hardware_id": @"hardwareId",
+                                                                                   @"sid": @"testSID",
+                                                                                   @"source": @"inbox",
+                                                                                   @"contact_field_id": @"testContactFieldId",
+                                                                                   @"contact_field_value": @"testContactFieldValue"
+                                                                               }
+                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"
+                                                                                                                                                 password:@"testApplicationPassword"]}
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createMessageOpenWithNotification:notification];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
