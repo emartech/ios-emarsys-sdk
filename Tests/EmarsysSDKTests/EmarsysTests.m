@@ -11,7 +11,6 @@
 #import "EMSDependencyContainer.h"
 #import "EmarsysTestUtils.h"
 #import "EMSAbstractResponseHandler.h"
-#import "MEIdResponseHandler.h"
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
@@ -132,19 +131,6 @@ SPEC_BEGIN(EmarsysTests)
 
             context(@"ResponseHandlers", ^{
 
-                it(@"should register MEIDResponseHandler", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
-
-                    BOOL registered = NO;
-                    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                        if ([responseHandler isKindOfClass:[MEIdResponseHandler class]]) {
-                            registered = YES;
-                        }
-                    }
-
-                    [[theValue(registered) should] beYes];
-                });
-
                 it(@"should register MEIAMResponseHandler", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
 
@@ -215,7 +201,7 @@ SPEC_BEGIN(EmarsysTests)
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:nil];
 
-                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(7)];
+                    [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(6)];
                 });
             });
 

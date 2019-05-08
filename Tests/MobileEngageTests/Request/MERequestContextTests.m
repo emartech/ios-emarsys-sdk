@@ -68,50 +68,6 @@ SPEC_BEGIN(MERequestContextTests)
 
         });
 
-        describe(@"meId, meIdSignature", ^{
-
-            it(@"should load the stored value when setup called on MobileEngageInternal", ^{
-                NSString *meID = @"StoredValueOfMobileEngageId";
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-                [userDefaults setObject:meID
-                                 forKey:kMEID];
-                [userDefaults synchronize];
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"kAppId"
-                                        applicationPassword:@"kAppSecret"];
-                    [builder setMerchantId:@"dummyMerchantId"];
-                    [builder setContactFieldId:@3];
-                }];
-                MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
-                                                                        uuidProvider:uuidProvider
-                                                                   timestampProvider:timestampProvider
-                                                                          deviceInfo:deviceInfo];
-                [[context.meId should] equal:meID];
-            });
-
-
-            it(@"should load the stored value when setup called on MobileEngageInternal", ^{
-                NSString *meIDSignature = @"signature";
-
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-                [userDefaults setObject:meIDSignature
-                                 forKey:kMEID_SIGNATURE];
-                [userDefaults synchronize];
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"kAppId"
-                                        applicationPassword:@"kAppSecret"];
-                    [builder setMerchantId:@"dummyMerchantId"];
-                    [builder setContactFieldId:@3];
-                }];
-                MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
-                                                                        uuidProvider:uuidProvider
-                                                                   timestampProvider:timestampProvider
-                                                                          deviceInfo:deviceInfo];
-
-                [[context.meIdSignature should] equal:meIDSignature];
-            });
-        });
-
         describe(@"clientState", ^{
 
             beforeEach(^{

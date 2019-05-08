@@ -21,8 +21,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property(nonatomic, strong, nullable) NSString *meId;
-@property(nonatomic, strong, nullable) NSString *meIdSignature;
 @property(nonatomic, strong, nullable) EMSConfig *config;
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;

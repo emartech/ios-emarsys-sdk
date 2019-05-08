@@ -16,8 +16,6 @@
     NSParameterAssert(timestampProvider);
     NSParameterAssert(deviceInfo);
     if (self = [super init]) {
-        _meId = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID];
-        _meIdSignature = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kMEID_SIGNATURE];
         _config = config;
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
@@ -29,22 +27,6 @@
         _contactFieldValue = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_FIELD_VALUE];
     }
     return self;
-}
-
-- (void)setMeId:(NSString *)meId {
-    _meId = meId;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults setObject:meId
-                     forKey:kMEID];
-    [userDefaults synchronize];
-}
-
-- (void)setMeIdSignature:(NSString *)meIdSignature {
-    _meIdSignature = meIdSignature;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults setObject:meIdSignature
-                     forKey:kMEID_SIGNATURE];
-    [userDefaults synchronize];
 }
 
 - (void)setClientState:(NSString *)clientState {
@@ -80,8 +62,6 @@
 }
 
 - (void)reset {
-    self.meId = nil;
-    self.meIdSignature = nil;
     self.contactFieldValue = nil;
     self.contactToken = nil;
     self.refreshToken = nil;

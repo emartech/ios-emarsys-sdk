@@ -38,7 +38,6 @@
 		165BF3C02108955B00FA0F6A /* MERequestMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FEF293B33C5E8A4610E3 /* MERequestMatcher.m */; };
 		165BF3C42108955B00FA0F6A /* MEIAMResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA8881E58E163CCEA02F /* MEIAMResponseHandler.m */; };
 		165BF3C62108955B00FA0F6A /* MEIAMCleanupResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7FC8598E2C548ED1F4E /* MEIAMCleanupResponseHandler.m */; };
-		165BF3C82108955B00FA0F6A /* MEIdResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F2F8E1DB666EF56A42F7 /* MEIdResponseHandler.m */; };
 		165BF3CC2108955B00FA0F6A /* MEUserNotificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FF5DC8ABA5AE9EC21AEF /* MEUserNotificationDelegate.m */; };
 		165BF3D32108955B00FA0F6A /* NSData+MobileEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FFE46EF60F1D1A93B8EA /* NSData+MobileEngine.m */; };
 		165BF3DA2108955B00FA0F6A /* MEDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F42AFFE0000A083514C8 /* MEDownloader.m */; };
@@ -103,7 +102,6 @@
 		166B3F5B2119A840006CD35C /* MEIAMTriggerAppEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CF21075B270030E659 /* MEIAMTriggerAppEventTests.m */; };
 		166B3F5C2119A840006CD35C /* MEIAMJSCommandFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D021075B270030E659 /* MEIAMJSCommandFactoryTests.m */; };
 		166B3F5D2119A840006CD35C /* MEIAMResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D221075B270030E659 /* MEIAMResponseHandlerTests.m */; };
-		166B3F5E2119A840006CD35C /* MEIDResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D321075B270030E659 /* MEIDResponseHandlerTests.m */; };
 		166B3F5F2119A840006CD35C /* MEIAMCleanupResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerTests.m */; };
 		166B3F602119A840006CD35C /* AbstractResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */; };
 		166B3F622119A840006CD35C /* EMSRequestToolsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9EE21075B270030E659 /* EMSRequestToolsTests.m */; };
@@ -176,7 +174,6 @@
 		166B404B2119A91F006CD35C /* MEIAMTriggerAppEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CF21075B270030E659 /* MEIAMTriggerAppEventTests.m */; };
 		166B404C2119A91F006CD35C /* MEIAMJSCommandFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D021075B270030E659 /* MEIAMJSCommandFactoryTests.m */; };
 		166B404D2119A91F006CD35C /* MEIAMResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D221075B270030E659 /* MEIAMResponseHandlerTests.m */; };
-		166B404E2119A91F006CD35C /* MEIDResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D321075B270030E659 /* MEIDResponseHandlerTests.m */; };
 		166B40502119A91F006CD35C /* MEIAMCleanupResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerTests.m */; };
 		166B40512119A91F006CD35C /* AbstractResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */; };
 		166B40542119A91F006CD35C /* FakeResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */; };
@@ -247,7 +244,6 @@
 		168F4A8C2108AF0900D0623B /* MERequestMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F2805F0359F07DE108C5 /* MERequestMatcher.h */; };
 		168F4A8E2108AF0900D0623B /* MEIAMResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F4A3248295BC86668A96 /* MEIAMResponseHandler.h */; };
 		168F4A8F2108AF0900D0623B /* MEIAMCleanupResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F8BB0A555130A824882B /* MEIAMCleanupResponseHandler.h */; };
-		168F4A902108AF0900D0623B /* MEIdResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FE23AEAADAFDBA633ACC /* MEIdResponseHandler.h */; };
 		168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FC0540BEE69AC1B57B96 /* MEUserNotificationDelegate.h */; };
 		168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F293AE63FD25E7440DAF /* EMSUserNotificationCenterDelegate.h */; };
 		168F4A972108AF0900D0623B /* NSData+MobileEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F337273FE75F74039200 /* NSData+MobileEngine.h */; };
@@ -743,7 +739,6 @@
 		32C6F2E2ACB170E8E63BFC0C /* EMSIAMViewControllerProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMViewControllerProvider.h; sourceTree = "<group>"; };
 		32C6F2F0BA92D79A082AC496 /* MERequestTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MERequestTools.h; sourceTree = "<group>"; };
 		32C6F2F5AD62A5F7D05AE845 /* MobileEngageTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = MobileEngageTests.plist; sourceTree = "<group>"; };
-		32C6F2F8E1DB666EF56A42F7 /* MEIdResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIdResponseHandler.m; sourceTree = "<group>"; };
 		32C6F32531107829CE19187F /* NSDictionary+EMSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+EMSCore.h"; sourceTree = "<group>"; };
 		32C6F32B57A25FBEFFF9E5F3 /* EMSSqliteSchemaHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSSqliteSchemaHandler.h; sourceTree = "<group>"; };
 		32C6F331D1E2359DEAF6E59A /* EMSLoggerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLoggerTests.m; sourceTree = "<group>"; };
@@ -966,7 +961,6 @@
 		32C6FDF3859668EA80DC8880 /* NSURL+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+EMSCoreTests.m"; sourceTree = "<group>"; };
 		32C6FDFF82B9DFE883AA4CD2 /* EMSOfflineQueueSizeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSOfflineQueueSizeTests.m; sourceTree = "<group>"; };
 		32C6FE217176492CD0F78429 /* EMSDeviceInfoV3ClientInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDeviceInfoV3ClientInternal.h; sourceTree = "<group>"; };
-		32C6FE23AEAADAFDBA633ACC /* MEIdResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIdResponseHandler.h; sourceTree = "<group>"; };
 		32C6FE29AE6A04B39A427359 /* MEIAMCommandResultUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMCommandResultUtils.h; sourceTree = "<group>"; };
 		32C6FE3FE7427EE69C3E34B0 /* EMSPredictMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSPredictMapper.h; sourceTree = "<group>"; };
 		32C6FE569D7F5C4EBE0D00D6 /* MERequestTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MERequestTools.m; sourceTree = "<group>"; };
@@ -1095,7 +1089,6 @@
 		8AB2F9CF21075B270030E659 /* MEIAMTriggerAppEventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMTriggerAppEventTests.m; sourceTree = "<group>"; };
 		8AB2F9D021075B270030E659 /* MEIAMJSCommandFactoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMJSCommandFactoryTests.m; sourceTree = "<group>"; };
 		8AB2F9D221075B270030E659 /* MEIAMResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMResponseHandlerTests.m; sourceTree = "<group>"; };
-		8AB2F9D321075B270030E659 /* MEIDResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIDResponseHandlerTests.m; sourceTree = "<group>"; };
 		8AB2F9D421075B270030E659 /* EMSAbstractResponseHandler+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EMSAbstractResponseHandler+Private.h"; sourceTree = "<group>"; };
 		8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMCleanupResponseHandlerTests.m; sourceTree = "<group>"; };
 		8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractResponseHandlerTests.m; sourceTree = "<group>"; };
@@ -1562,8 +1555,6 @@
 			isa = PBXGroup;
 			children = (
 				32C6F592D516D16AEE411017 /* InappMessage */,
-				32C6FE23AEAADAFDBA633ACC /* MEIdResponseHandler.h */,
-				32C6F2F8E1DB666EF56A42F7 /* MEIdResponseHandler.m */,
 				32C6F9FA1D67408EE20AC917 /* EMSClientStateResponseHandler.m */,
 				32C6FF6E930BE057A68877C7 /* EMSClientStateResponseHandler.h */,
 				94493D629575C72AD4D9CEB9 /* EMSContactTokenResponseHandler.m */,
@@ -2338,7 +2329,6 @@
 			isa = PBXGroup;
 			children = (
 				8AB2F9D221075B270030E659 /* MEIAMResponseHandlerTests.m */,
-				8AB2F9D321075B270030E659 /* MEIDResponseHandlerTests.m */,
 				8AB2F9D421075B270030E659 /* EMSAbstractResponseHandler+Private.h */,
 				8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerTests.m */,
 				8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */,
@@ -2531,7 +2521,6 @@
 				168F4A8E2108AF0900D0623B /* MEIAMResponseHandler.h in Headers */,
 				8A3A36C921F094CA00BB5726 /* EMSLogEntryProtocol.h in Headers */,
 				168F4A8F2108AF0900D0623B /* MEIAMCleanupResponseHandler.h in Headers */,
-				168F4A902108AF0900D0623B /* MEIdResponseHandler.h in Headers */,
 				168F4A922108AF0900D0623B /* MEUserNotificationDelegate.h in Headers */,
 				168F4A932108AF0900D0623B /* EMSUserNotificationCenterDelegate.h in Headers */,
 				168F4A972108AF0900D0623B /* NSData+MobileEngine.h in Headers */,
@@ -3059,7 +3048,6 @@
 				166B404B2119A91F006CD35C /* MEIAMTriggerAppEventTests.m in Sources */,
 				166B404C2119A91F006CD35C /* MEIAMJSCommandFactoryTests.m in Sources */,
 				166B404D2119A91F006CD35C /* MEIAMResponseHandlerTests.m in Sources */,
-				166B404E2119A91F006CD35C /* MEIDResponseHandlerTests.m in Sources */,
 				166B40502119A91F006CD35C /* MEIAMCleanupResponseHandlerTests.m in Sources */,
 				166B40512119A91F006CD35C /* AbstractResponseHandlerTests.m in Sources */,
 				166B40542119A91F006CD35C /* FakeResponseHandler.m in Sources */,
@@ -3238,7 +3226,6 @@
 				166B3F5B2119A840006CD35C /* MEIAMTriggerAppEventTests.m in Sources */,
 				166B3F5C2119A840006CD35C /* MEIAMJSCommandFactoryTests.m in Sources */,
 				166B3F5D2119A840006CD35C /* MEIAMResponseHandlerTests.m in Sources */,
-				166B3F5E2119A840006CD35C /* MEIDResponseHandlerTests.m in Sources */,
 				166B3F5F2119A840006CD35C /* MEIAMCleanupResponseHandlerTests.m in Sources */,
 				166B3F602119A840006CD35C /* AbstractResponseHandlerTests.m in Sources */,
 				166B3F622119A840006CD35C /* EMSRequestToolsTests.m in Sources */,
@@ -3370,7 +3357,6 @@
 				165BF3C02108955B00FA0F6A /* MERequestMatcher.m in Sources */,
 				165BF3C42108955B00FA0F6A /* MEIAMResponseHandler.m in Sources */,
 				165BF3C62108955B00FA0F6A /* MEIAMCleanupResponseHandler.m in Sources */,
-				165BF3C82108955B00FA0F6A /* MEIdResponseHandler.m in Sources */,
 				165BF3CC2108955B00FA0F6A /* MEUserNotificationDelegate.m in Sources */,
 				165BF3D32108955B00FA0F6A /* NSData+MobileEngine.m in Sources */,
 				165BF3DA2108955B00FA0F6A /* MEDownloader.m in Sources */,

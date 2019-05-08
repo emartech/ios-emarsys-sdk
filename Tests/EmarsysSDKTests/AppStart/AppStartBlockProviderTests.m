@@ -41,8 +41,6 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                     deviceInfo:[EMSDeviceInfo new]];
 
-    [self.requestContext setMeId:nil];
-    [self.requestContext setMeIdSignature:nil];
     [self.requestContext setContactToken:nil];
 
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
@@ -53,8 +51,6 @@
 }
 
 - (void)tearDown {
-    [self.requestContext setMeId:nil];
-    [self.requestContext setMeIdSignature:nil];
     [self.requestContext setContactToken:nil];
 }
 

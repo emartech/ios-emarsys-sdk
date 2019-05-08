@@ -19,7 +19,6 @@
 #import "MEInbox.h"
 #import "MENotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
-#import "MEIdResponseHandler.h"
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "MEDefaultHeaders.h"
@@ -152,7 +151,6 @@
 
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
-    [responseHandlers addObject:[[MEIdResponseHandler alloc] initWithRequestContext:self.requestContext]];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
         [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
