@@ -8,7 +8,7 @@
 
 + (NSError *)errorWithCode:(int)errorCode
       localizedDescription:(NSString *)localizedDescription {
-    return [NSError errorWithDomain:@"com.emarsys.mobileengage"
+    return [NSError errorWithDomain:@"com.emarsys.emarsys-sdk"
                                code:errorCode
                            userInfo:@{
                                NSLocalizedDescriptionKey: localizedDescription
