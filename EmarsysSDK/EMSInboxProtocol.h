@@ -23,9 +23,6 @@ typedef void (^EMSFetchNotificationResultBlock)(EMSNotificationInboxStatus* _Nul
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)notification
                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
-
-- (void)purgeNotificationCache;
-
 @end
 
 NS_ASSUME_NONNULL_END

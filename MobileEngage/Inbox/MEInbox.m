@@ -144,9 +144,6 @@
                         withCompletionBlock:completionBlock];;
 }
 
-- (void)purgeNotificationCache {
-}
-
 #pragma mark - Private methods
 
 - (NSDictionary<NSString *, NSString *> *)createNotificationsFetchingHeaders {
