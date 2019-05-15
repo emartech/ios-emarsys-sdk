@@ -10,17 +10,14 @@ The Emarsys SDK enables you to use Mobile Engage and Predict in a very straightf
 
 The Emarsys SDK is open sourced to enhance transparency and to remove privacy concerns. This also means that you can always be up-to-date with what we are working on.
 
-Using the SDK is also beneficial from the product aspect: it simply makes it much easier to send push messages through your app. You do not have to follow and implement changes in our API calls, endpoints and parameters: we do it for you in the SDK. Your only task is to use the latest version of the SDK in your app and we take care of everything else.
+Using the SDK is also beneficial from the product aspect: it simply makes it much easier to send push messages through your app. Please always use the latest version of the SDK in your app.
 
 ### Why Emarsys SDK over Mobile Engage SDK?
 
-We learned a lot from running Mobile Engage SDK in the past 2 years and managed to implement
-many solutions to the challenges customers were facing in the Emarsys SDK.
+We learned a lot from running Mobile Engage SDK in the past 2 years and managed to apply these learnings and feedbacks in our new SDK.
 
-##### The workflow for linking a contact to a device was sensitive to race conditions:
-* We have automated the anonymous contact creation and linking in a more sensitive way that is race condition proof
-##### The workflow for setting the push token in our backend was sensitive to race conditions
-* The new workflow cannot accidentally reset the push token even when the network is causing problems
+##### The workflow for linking/unlinking a contact to a device was too complex
+* We removed anonymous contacts from our API. This way you can always send behaviour events, opens without having the complexity to login first with an identified contact or use hard-to-understand anonymous contact concept
 ##### The API was stateful and limited our scalability
 * We can scale with our new stateless or state savvy APIs in the backend We now include anonymous inapp metrics support
 * We would like to make sure we understand end to end the experience of your app users and give you some insight through the data platform
