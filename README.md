@@ -19,8 +19,8 @@ We learned a lot from running Mobile Engage SDK in the past 2 years and managed 
 ##### The workflow for linking/unlinking a contact to a device was too complex
 * We removed anonymous contacts from our API. This way you can always send behaviour events, opens without having the complexity to login first with an identified contact or use hard-to-understand anonymous contact concept
 ##### The API was stateful and limited our scalability
-* We can scale with our new stateless or state savvy APIs in the backend We now include anonymous inapp metrics support
-* We would like to make sure we understand end to end the experience of your app users and give you some insight through the data platform
+* We can scale with our new stateless APIs in the backend We now include anonymous inapp metrics support
+* We would like to make sure we understand end to end the experience of your app users and give you some insights through the data platform
 ##### Swift first approach
 * We have improved the interoperability of our SDK with Swift. Using our SDK from Swift is now more convenient.
 #####  Repetition of arguments
@@ -58,6 +58,7 @@ For more information please check our [documentation](https://help.emarsys.com/h
 ### 3. Usage
 #### 3.1 Initialization
 To configure the SDK, the following has to be done in the `AppDelegate` of the application:
+###### Objective-C
 ```objectivec
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
@@ -71,6 +72,7 @@ To configure the SDK, the following has to be done in the `AppDelegate` of the a
     return YES;
 }
 ```
+###### Swift
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     let config = EMSConfig.make { builder in
@@ -85,33 +87,39 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 ```
 #### 3.2 setContact
 After application setup is finished, you can use `setContact` method to identify the user with `contactFieldValue`.
+###### Objective-C
 ```objectivec
 [Emarsys setContactWithContactFieldValue:<contactFieldValue: NSString>
                          completionBlock:^(NSError *error) {
                          }];
 ```
+###### Swift
 ```swift
 Emarsys.setContactWithContactFieldValue(<contactFieldValue: String>) { error in
 }
 ```
 #### 3.3 clearContact
 When the user signs out, the `clearContact` method should be used:
+###### Objective-C
 ```objectivec
 [Emarsys clearContactWithCompletionBlock:^(NSError *error) {
 }];
 ```
+###### Swift
 ```swift
 Emarsys.clearContact { error in
 }
 ```
 #### 3.4 trackCustomEvent
 If you want to track custom events, the `trackCustomEvent` method should be used, where the `eventName` parameter is required, but the other attributes are optional.
+###### Objective-C
 ```objectivec
 [Emarsys trackCustomEventWithName:<eventName: String>
                   eventAttributes:<eventAttributes: NSDictionary<String, String>
                   completionBlock:^(NSError *error) {
                   }];
 ```
+###### Swift
 ```swift
 Emarsys.trackCustomEvent(withName: <eventName: String>, eventAttributes: <eventAttributes: NSDictionary<String, String>) { error in
 }
@@ -119,6 +127,7 @@ Emarsys.trackCustomEvent(withName: <eventName: String>, eventAttributes: <eventA
 ### 4. Push
 #### 4.1 setPushToken
 The `pushToken` has to be set when it arrives:
+###### Objective-C
 ```objectivec
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [Emarsys.push setPushToken:deviceToken
@@ -126,6 +135,7 @@ The `pushToken` has to be set when it arrives:
                }];
 }
 ```
+###### Swift
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     Emarsys.push.setPushToken(deviceToken) { error in   
@@ -133,11 +143,13 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 }
 ```
 #### 4.2 clearPushToken
-If you want to remove `pushToken` for the Contact, you can use `clearPushToken` 
+If you want to remove `pushToken` for the Contact, you can use `clearPushToken`
+###### Objective-C 
 ```objectivec
 [Emarsys.push clearPushTokenWithCompletionBlock:^(NSError *error) {
 }];
 ```
+###### Swift
 ```swift
 Emarsys.push.clearPushToken { error in
 }
@@ -145,7 +157,7 @@ Emarsys.push.clearPushToken { error in
 #### 4.3 trackMessageOpen
 If you want to track whether the push messages have been opened, the `trackMessageOpen` method should be used. 
 In the simplest case this call will be in the AppDelegate's `didReceiveRemoteNotification:fetchCompletionHandler:` method:
-
+###### Objective-C
 ```objectivec
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     [Emarsys.push trackMessageOpenWithUserInfo:userInfo
@@ -153,6 +165,7 @@ In the simplest case this call will be in the AppDelegate's `didReceiveRemoteNot
                                }];
 }
 ```
+###### Swift
 ```swift
 func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
     Emarsys.push.trackMessageOpen(userInfo: userInfo) { error in
@@ -162,6 +175,7 @@ func application(_ application: UIApplication, didReceiveRemoteNotification user
 ### 5. Inbox
 #### 5.1 fetchNotifications
 In order to receive the inbox content, you can use the `fetchNotifications` method.
+###### Objective-C
 ```objectivec
 [Emarsys.inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
     if (error) {
@@ -172,6 +186,7 @@ In order to receive the inbox content, you can use the `fetchNotifications` meth
     }
 }];
 ```
+###### Swift
 ```swift
 Emarsys.inbox.fetchNotifications { status, error in
     if let error = error {
@@ -183,21 +198,25 @@ Emarsys.inbox.fetchNotifications { status, error in
 ```
 #### 5.2 resetBadgeCount
 When your user opened the application inbox you might want to reset the unread count (badge). To do so you can use the `resetBadgeCount` method.
+###### Objective-C
 ```objectivec
 [Emarsys.inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
 }];
 ```
+###### Swift
 ```swift
 Emarsys.inbox.resetBadgeCount { error in
 }
 ```
 #### 5.3 trackNotificationOpen
 To track the notification opens in inbox, use the following `trackNotificationOpen` method.
+###### Objective-C
 ```objectivec
 [Emarsys.inbox trackNotificationOpenWithNotification:<notification: EMSNotification>
                                      completionBlock:^(NSError *error) {
 }];
 ```
+###### Swift
 ```swift
 Emarsys.inbox.trackNotificationOpen(with: <notification: EMSNotification>) { error in
 }
@@ -205,25 +224,31 @@ Emarsys.inbox.trackNotificationOpen(with: <notification: EMSNotification>) { err
 ### 6. InApp
 #### 6.1 pause
 When a critical activity starts and should not be interrupted by InApp, `pause` InApp messages
+###### Objective-C
 ```objectivec
 [Emarsys.inApp pause];
 ```
+###### Swift
 ```swift
 Emarsys.inApp.pause()
 ```
 #### 6.2 resume
 In order to show inApp messages after being paused use the `resume` method
+###### Objective-C
 ```objectivec
 [Emarsys.inApp resume];
 ```
+###### Swift
 ```swift
 Emarsys.inApp.resume()
 ```
 #### 6.3 setEventHandler
 In order to get an event, triggered from the InApp message, you can register for it using the `setEventHandler` method.
+###### Objective-C
 ```objectivec
 [Emarsys.inApp setEventHandler:<eventHandler: id<EMSEventHandler>>];
 ```
+###### Swift
 ```swift
 Emarsys.inApp.eventHandler = <eventHandler: EMSEventHandler>
 ```
@@ -238,61 +263,73 @@ In order to track Predict events you can use the methods available on our Predic
 #### 7.2 trackCart
 When you want to track the cart items in the basket you can call the `trackCart` method with a list of CartItems. `CartItem` is an interface
 which can be used in your application for your own CartItems and then simply use the same items with the SDK
+###### Objective-C
 ```objectivec
 [Emarsys.predict trackCartWithCartItems:<cartItems: NSArray<EMSCartItem *> *>];
 ```
+###### Swift
 ```swift
 Emarsys.predict.trackCart(withCartItems: <cartItems: Array<EMSCartItem>>)
 ```
 #### 7.3 trackPurchase
 To report a purchase event you should call `trackPurchase` with the items purchased and with an `orderId`
+###### Objective-C
 ```objectivec
 [Emarsys.predict trackPurchaseWithOrderId:<orderId: NSString>
                                     items:<cartItems: NSArray<EMSCartItem *> *>];
 ```
+###### Swift
 ```swift
 Emarsys.predict.trackPurchase(withOrderId: <orderId: String>, items: <cartItems: Array<EMSCartItem>>)
 ```
 #### 7.4 trackItemView
 If an item was viewed use the `trackItemView` method with an `itemId`.
+###### Objective-C
 ```objectivec
 [Emarsys.predict trackItemViewWithItemId:<itemId: NSString>];
 ```
+###### Swift
 ```swift
 Emarsys.predict.trackItemView(withItemId: <itemId: String>)
 ```
 #### 7.5 trackCategoryView
 When the user navigates between the categories you should call `trackCategoryView` in every navigation. Be aware to send `categoryPath`
 in the required format. Please visit [Predict's documentation](https://dev.emarsys.com/v2/web-extend-command-reference "Predict documentation") for more information.
+###### Objective-C
 ```objectivec
 [Emarsys.predict trackCategoryViewWithCategoryPath:<categoryPath: NSString>];
 ```
+###### Swift
 ```swift
 Emarsys.predict.trackCategoryView(withCategoryPath:<categoryPath: String>)
 ```
 #### 7.6 trackSearchTerm
 To report search terms entered by the contact use `trackSearchTerm` method.
+###### Objective-C
 ```objectivec
 [Emarsys.predict trackSearchWithSearchTerm:<searchTerm: NSString>];
 ```
+###### Swift
 ```swift
 Emarsys.predict.trackSearch(withSearchTerm: <searchTerm: String>)
 ```
 #### 7.7 trackCustomEvent
 If you want to track custom events, the `trackCustomEvent` method should be used, where the `eventName` parameter is required, but the other attributes are optional.
+###### Objective-C
 ```objectivec
 [Emarsys trackCustomEventWithName:<eventName: NSString>
                   eventAttributes:<eventAttributes: NSDictionary<NSString, NSString>
                   completionBlock:^(NSError *error) {
                   }];
 ```
+###### Swift
 ```swift
 Emarsys.trackCustomEvent(withName: <eventName: String>, eventAttributes: <eventAttributes: NSDictionary<String, String>) { error in
 }
 ```
 ### 8. DeepLink
 In order to track deep links with the Emarsys SDK, you need to call `trackDeepLink` in your AppDelegate's `application:continueUserActivity:restorationHandler:` method.
-
+###### Objective-C
 ```objectivec
 -  (BOOL)application:(UIApplication *)application 
 continueUserActivity:(NSUserActivity *)userActivity 
@@ -302,6 +339,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     }];
 }
 ```
+###### Swift
 ```swift
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
     return Emarsys.trackDeepLink(with: userActivity, sourceHandler: { url in
