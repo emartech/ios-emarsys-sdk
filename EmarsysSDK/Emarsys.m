@@ -81,9 +81,9 @@
 + (void)registerAppStartBlock {
     MENotificationCenterManager *notificationCenterManager = EMSDependencyInjection.dependencyContainer.notificationCenterManager;
     AppStartBlockProvider *appStartBlockProvider = EMSDependencyInjection.dependencyContainer.appStartBlockProvider;
-    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
-                               forNotification:UIApplicationDidBecomeActiveNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDeviceInfoEventBlock]
+                               forNotification:UIApplicationDidBecomeActiveNotification];
+    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
                                forNotification:UIApplicationDidBecomeActiveNotification];
 }
 
