@@ -34,8 +34,8 @@ function release {
   git push
   git push origin $VERSION_NUMBER
 
-  pod spec lint --allow-warnings
-  pod trunk push EmarsysSDK.podspec --allow-warnings
+  pod spec lint
+  pod trunk push EmarsysSDK.podspec
 
   printf "[$VERSION_NUMBER] released, go eat some cookies."
 }
