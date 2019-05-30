@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import <UserNotifications/UserNotifications.h>
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "EMSRequestManager.h"
@@ -111,7 +112,8 @@
 - (void)testSendDeviceInfo_shouldNotSubmit_whenDeviceInfoHasNotChanged {
     OCMStub(self.mockRequestContext.clientState).andReturn(@"testClientState");
 
-    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"];
+    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo
@@ -135,7 +137,8 @@
     };
     OCMStub(self.mockRequestContext.clientState).andReturn(nil);
 
-    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"];
+    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo

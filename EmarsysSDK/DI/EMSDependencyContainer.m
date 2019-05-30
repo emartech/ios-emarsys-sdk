@@ -97,7 +97,8 @@
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
-    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION];
+    EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
 
     _requestContext = [[MERequestContext alloc] initWithConfig:config
                                                   uuidProvider:uuidProvider

@@ -5,23 +5,39 @@
 #import "Kiwi.h"
 #import "EMSDeviceInfo.h"
 #import <AdSupport/AdSupport.h>
+#import <UserNotifications/UserNotifications.h>
 
 SPEC_BEGIN(EMSDeviceInfoTests)
 
         __block EMSDeviceInfo *deviceInfo;
+        __block UNUserNotificationCenter *mockCenter;
 
         beforeEach(^{
-            deviceInfo = [EMSDeviceInfo new];
+            mockCenter = [UNUserNotificationCenter nullMock];
+            deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSdkVersion"
+                                                notificationCenter:mockCenter];
         });
 
         describe(@"init", ^{
             it(@"should throw an exception when sdkVersion is nil", ^{
                 @try {
-                    [[EMSDeviceInfo alloc] initWithSDKVersion:nil];
+                    [[EMSDeviceInfo alloc] initWithSDKVersion:nil
+                                           notificationCenter:[UNUserNotificationCenter mock]];
                     fail(@"Expected Exception when sdkVersion is nil!");
                 } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: sdkVersion"];
                     [[theValue(exception) shouldNot] beNil];
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: sdkVersion"];
+                }
+            });
+
+            it(@"should throw an exception when notificationCenter is nil", ^{
+                @try {
+                    [[EMSDeviceInfo alloc] initWithSDKVersion:@""
+                                           notificationCenter:nil];
+                    fail(@"Expected Exception when notificationCenter is nil!");
+                } @catch (NSException *exception) {
+                    [[theValue(exception) shouldNot] beNil];
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCenter"];
                 }
             });
         });
@@ -116,6 +132,227 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             });
         });
 
+        describe(@"pushSettings", ^{
+
+            NSDictionary *(^setupNotificationSetting)(SEL sel, NSInteger returnValue) = ^NSDictionary *(SEL sel, NSInteger returnValue) {
+                KWCaptureSpy *spy = [mockCenter captureArgument:@selector(getNotificationSettingsWithCompletionHandler:)
+                                                        atIndex:0];
+
+                NSDictionary *result = [deviceInfo pushSettings];
+
+                void (^notificationSettingsBlock)(UNNotificationSettings *notificationSetting) = spy.argument;
+
+
+                UNNotificationSettings *mockNotificationSetting = [UNNotificationSettings nullMock];
+                [mockNotificationSetting stub:sel
+                                    andReturn:theValue(returnValue)];
+
+                notificationSettingsBlock(mockNotificationSetting);
+                return result;
+            };
+
+            it(@"should contain authorizationStatus with value authorized", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(authorizationStatus), UNAuthorizationStatusAuthorized);
+
+                [[result[@"authorizationStatus"] should] equal:@"authorized"];
+            });
+
+            it(@"should contain authorizationStatus with value denied", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(authorizationStatus), UNAuthorizationStatusDenied);
+
+                [[result[@"authorizationStatus"] should] equal:@"denied"];
+            });
+
+            if (@available(iOS 12.0, *)) {
+                it(@"should contain authorizationStatus with value provisional", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(authorizationStatus), UNAuthorizationStatusProvisional);
+
+                    [[result[@"authorizationStatus"] should] equal:@"provisional"];
+                });
+            }
+
+            it(@"should contain authorizationStatus with value notDetermined", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(authorizationStatus), UNAuthorizationStatusNotDetermined);
+
+                [[result[@"authorizationStatus"] should] equal:@"notDetermined"];
+            });
+
+            it(@"should contain soundSetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(soundSetting), UNNotificationSettingNotSupported);
+
+                [[result[@"soundSetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain soundSetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(soundSetting), UNNotificationSettingDisabled);
+
+                [[result[@"soundSetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain soundSetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(soundSetting), UNNotificationSettingEnabled);
+
+                [[result[@"soundSetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain badgeSetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(badgeSetting), UNNotificationSettingNotSupported);
+
+                [[result[@"badgeSetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain badgeSetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(badgeSetting), UNNotificationSettingDisabled);
+
+                [[result[@"badgeSetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain badgeSetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(badgeSetting), UNNotificationSettingEnabled);
+
+                [[result[@"badgeSetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain alertSetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertSetting), UNNotificationSettingNotSupported);
+
+                [[result[@"alertSetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain alertSetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertSetting), UNNotificationSettingDisabled);
+
+                [[result[@"alertSetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain alertSetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertSetting), UNNotificationSettingEnabled);
+
+                [[result[@"alertSetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain notificationCenterSetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(notificationCenterSetting), UNNotificationSettingNotSupported);
+
+                [[result[@"notificationCenterSetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain notificationCenterSetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(notificationCenterSetting), UNNotificationSettingDisabled);
+
+                [[result[@"notificationCenterSetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain notificationCenterSetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(notificationCenterSetting), UNNotificationSettingEnabled);
+
+                [[result[@"notificationCenterSetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain lockScreenSetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(lockScreenSetting), UNNotificationSettingNotSupported);
+
+                [[result[@"lockScreenSetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain lockScreenSetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(lockScreenSetting), UNNotificationSettingDisabled);
+
+                [[result[@"lockScreenSetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain lockScreenSetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(lockScreenSetting), UNNotificationSettingEnabled);
+
+                [[result[@"lockScreenSetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain carPlaySetting with value notSupported", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(carPlaySetting), UNNotificationSettingNotSupported);
+
+                [[result[@"carPlaySetting"] should] equal:@"notSupported"];
+            });
+
+            it(@"should contain carPlaySetting with value disabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(carPlaySetting), UNNotificationSettingDisabled);
+
+                [[result[@"carPlaySetting"] should] equal:@"disabled"];
+            });
+
+            it(@"should contain carPlaySetting with value enabled", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(carPlaySetting), UNNotificationSettingEnabled);
+
+                [[result[@"carPlaySetting"] should] equal:@"enabled"];
+            });
+
+            it(@"should contain alertStyle with value none", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertStyle), UNAlertStyleNone);
+
+                [[result[@"alertStyle"] should] equal:@"none"];
+            });
+
+            it(@"should contain alertStyle with value banner", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertStyle), UNAlertStyleBanner);
+
+                [[result[@"alertStyle"] should] equal:@"banner"];
+            });
+
+            it(@"should contain alertStyle with value alert", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(alertStyle), UNAlertStyleAlert);
+
+                [[result[@"alertStyle"] should] equal:@"alert"];
+            });
+
+            it(@"should contain showPreviewsSetting with value never", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(showPreviewsSetting), UNShowPreviewsSettingNever);
+
+                [[result[@"showPreviewsSetting"] should] equal:@"never"];
+            });
+
+            it(@"should contain showPreviewsSetting with value whenAuthenticated", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(showPreviewsSetting), UNShowPreviewsSettingWhenAuthenticated);
+
+                [[result[@"showPreviewsSetting"] should] equal:@"whenAuthenticated"];
+            });
+
+            it(@"should contain showPreviewsSetting with value always", ^{
+                NSDictionary *result = setupNotificationSetting(@selector(showPreviewsSetting), UNShowPreviewsSettingAlways);
+
+                [[result[@"showPreviewsSetting"] should] equal:@"always"];
+            });
+            if (@available(iOS 12.0, *)) {
+                it(@"should contain criticalAlertSetting with value notSupported", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(criticalAlertSetting), UNNotificationSettingNotSupported);
+
+                    [[result[@"criticalAlertSetting"] should] equal:@"notSupported"];
+                });
+
+                it(@"should contain criticalAlertSetting with value disabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(criticalAlertSetting), UNNotificationSettingDisabled);
+
+                    [[result[@"criticalAlertSetting"] should] equal:@"disabled"];
+                });
+
+                it(@"should contain criticalAlertSetting with value enabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(criticalAlertSetting), UNNotificationSettingEnabled);
+
+                    [[result[@"criticalAlertSetting"] should] equal:@"enabled"];
+                });
+
+                it(@"should contain providesAppNotificationSettings with value NO", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(providesAppNotificationSettings), NO);
+
+                    [[result[@"providesAppNotificationSettings"] should] equal:@(NO)];
+                });
+
+                it(@"should contain providesAppNotificationSettings with value YES", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(providesAppNotificationSettings), YES);
+
+                    [[result[@"providesAppNotificationSettings"] should] equal:@(YES)];
+                });
+            }
+        });
+
         context(@"HWID", ^{
 
             id (^createIdentifierManagerMock)() = ^id() {
@@ -130,8 +367,8 @@ SPEC_BEGIN(EMSDeviceInfoTests)
             id (^createUserDefaultsMock)() = ^id() {
                 id userDefaultsMock = [NSUserDefaults mock];
                 [[NSUserDefaults should] receive:@selector(alloc)
-                    andReturn:userDefaultsMock
-             withCountAtLeast:0];
+                                       andReturn:userDefaultsMock
+                                withCountAtLeast:0];
                 [[userDefaultsMock should] receive:@selector(initWithSuiteName:)
                                          andReturn:userDefaultsMock
                                   withCountAtLeast:0

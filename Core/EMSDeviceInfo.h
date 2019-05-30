@@ -4,12 +4,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class UNUserNotificationCenter;
+
 NS_ASSUME_NONNULL_BEGIN
 @interface EMSDeviceInfo: NSObject
 
 @property(nonatomic, readonly) NSString *sdkVersion;
+@property(nonatomic, readonly) UNUserNotificationCenter *notificationCenter;
 
-- (instancetype)initWithSDKVersion:(NSString *)sdkVersion;
+- (instancetype)initWithSDKVersion:(NSString *)sdkVersion
+                notificationCenter:(UNUserNotificationCenter *)notificationCenter;
 
 - (NSString *)platform;
 
@@ -28,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)systemName;
 
 - (NSString *)hardwareId;
+
+- (NSDictionary *)pushSettings;
 
 @end
 NS_ASSUME_NONNULL_END

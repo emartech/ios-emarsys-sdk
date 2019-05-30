@@ -6,6 +6,7 @@
 #import <sys/utsname.h>
 #import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
+#import <UserNotifications/UserNotifications.h>
 
 @interface EMSDeviceInfo ()
 
@@ -16,10 +17,13 @@
 #define kEMSHardwareIdKey @"kHardwareIdKey"
 #define kEMSSuiteName @"com.emarsys.core"
 
-- (instancetype)initWithSDKVersion:(NSString *)sdkVersion {
+- (instancetype)initWithSDKVersion:(NSString *)sdkVersion
+                notificationCenter:(UNUserNotificationCenter *)notificationCenter {
     NSParameterAssert(sdkVersion);
+    NSParameterAssert(notificationCenter);
     if (self = [super init]) {
         _sdkVersion = sdkVersion;
+        _notificationCenter = notificationCenter;
     }
     return self;
 }
@@ -51,12 +55,13 @@
 
 - (NSString *)deviceType {
     NSDictionary *idiomDict = @{
-            @(UIUserInterfaceIdiomUnspecified): @"UnspecifiediOS",
-            @(UIUserInterfaceIdiomPhone): @"iPhone",
-            @(UIUserInterfaceIdiomPad): @"iPad",
-            @(UIUserInterfaceIdiomTV): @"AppleTV",
-            @(UIUserInterfaceIdiomCarPlay): @"iPhone"
+        @(UIUserInterfaceIdiomUnspecified): @"UnspecifiediOS",
+        @(UIUserInterfaceIdiomPhone): @"iPhone",
+        @(UIUserInterfaceIdiomPad): @"iPad",
+        @(UIUserInterfaceIdiomTV): @"AppleTV",
+        @(UIUserInterfaceIdiomCarPlay): @"iPhone"
     };
+
     return idiomDict[@([UIDevice.currentDevice userInterfaceIdiom])];
 }
 
@@ -81,10 +86,97 @@
     return hardwareId;
 }
 
+- (NSDictionary *)pushSettings {
+    NSMutableDictionary *pushSettings = [NSMutableDictionary dictionary];
+    __weak typeof(self) weakSelf = self;
+    [self.notificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *settings) {
+        pushSettings[@"authorizationStatus"] = [weakSelf authorizationStatusStringRepresentation:settings.authorizationStatus];
+        pushSettings[@"soundSetting"] = [weakSelf notificationSettingStringRepresentation:settings.soundSetting];
+        pushSettings[@"badgeSetting"] = [weakSelf notificationSettingStringRepresentation:settings.badgeSetting];
+        pushSettings[@"alertSetting"] = [weakSelf notificationSettingStringRepresentation:settings.alertSetting];
+        pushSettings[@"notificationCenterSetting"] = [weakSelf notificationSettingStringRepresentation:settings.notificationCenterSetting];
+        pushSettings[@"lockScreenSetting"] = [weakSelf notificationSettingStringRepresentation:settings.lockScreenSetting];
+        pushSettings[@"carPlaySetting"] = [weakSelf notificationSettingStringRepresentation:settings.carPlaySetting];
+        pushSettings[@"alertStyle"] = [weakSelf alertStyleStringRepresentation:settings.alertStyle];
+        pushSettings[@"showPreviewsSetting"] = [weakSelf showPreviewsSettingStringRepresentation:settings.showPreviewsSetting];
+        if (@available(iOS 12.0, *)) {
+            pushSettings[@"criticalAlertSetting"] = [weakSelf notificationSettingStringRepresentation:settings.criticalAlertSetting];
+            pushSettings[@"providesAppNotificationSettings"] = @(settings.providesAppNotificationSettings);
+        }
+    }];
+    return pushSettings;
+}
+
+- (NSString *)showPreviewsSettingStringRepresentation:(UNShowPreviewsSetting)setting {
+    NSString *result = @"never";
+    switch (setting) {
+        case UNShowPreviewsSettingNever:
+            result = @"never";
+            break;
+        case UNShowPreviewsSettingWhenAuthenticated:
+            result = @"whenAuthenticated";
+            break;
+        case UNShowPreviewsSettingAlways:
+            result = @"always";
+            break;
+    }
+    return result;
+}
+
+- (NSString *)alertStyleStringRepresentation:(UNAlertStyle)setting {
+    NSString *alertStyle = @"none";
+    switch (setting) {
+        case UNAlertStyleAlert:
+            alertStyle = @"alert";
+            break;
+        case UNAlertStyleBanner:
+            alertStyle = @"banner";
+            break;
+        case UNAlertStyleNone:
+            alertStyle = @"none";
+            break;
+    }
+    return alertStyle;
+}
+
+- (NSString *)notificationSettingStringRepresentation:(UNNotificationSetting)setting {
+    NSString *notificationSetting = @"notSupported";
+    switch (setting) {
+        case UNNotificationSettingEnabled:
+            notificationSetting = @"enabled";
+            break;
+        case UNNotificationSettingDisabled:
+            notificationSetting = @"disabled";
+            break;
+        case UNNotificationSettingNotSupported:
+            notificationSetting = @"notSupported";
+            break;
+    }
+    return notificationSetting;
+}
+
+- (NSString *)authorizationStatusStringRepresentation:(UNAuthorizationStatus)status {
+    NSString *authorizationStatus = @"notDetermined";
+    switch (status) {
+        case UNAuthorizationStatusAuthorized:
+            authorizationStatus = @"authorized";
+            break;
+        case UNAuthorizationStatusDenied:
+            authorizationStatus = @"denied";
+            break;
+        case UNAuthorizationStatusProvisional:
+            authorizationStatus = @"provisional";
+            break;
+        case UNAuthorizationStatusNotDetermined:
+            authorizationStatus = @"notDetermined";
+            break;
+    }
+    return authorizationStatus;
+}
+
 - (NSString *)getNewHardwareId {
     if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
-        return [[[ASIdentifierManager sharedManager] advertisingIdentifier]
-                UUIDString];
+        return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     }
     return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 }
