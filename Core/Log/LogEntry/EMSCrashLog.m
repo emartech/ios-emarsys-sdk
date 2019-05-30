@@ -16,7 +16,7 @@
     NSParameterAssert(exception);
     if (self = [super init]) {
         NSMutableDictionary *crashInfos = [@{
-            @"type": exception.name,
+            @"exception": exception.name,
             @"stack_trace": exception.callStackSymbols
         } mutableCopy];
         if (exception.reason) {

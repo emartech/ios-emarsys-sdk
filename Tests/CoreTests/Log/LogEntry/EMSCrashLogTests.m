@@ -39,7 +39,7 @@
 
 - (void)testData {
     NSDictionary *expectedData = @{
-        @"type": @"exceptionName",
+        @"exception": @"exceptionName",
         @"reason": @"reasonOfTheException",
         @"stack_trace": @[@"stack1", @"stack2", @"stack3"],
         @"user_info": @{

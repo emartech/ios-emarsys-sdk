@@ -10,6 +10,7 @@
     NSParameterAssert(urlString);
     NSParameterAssert(queryParameters);
     NSURL *url = [NSURL URLWithString:urlString];
+#pragma unused (url)
     NSParameterAssert(url.scheme);
     NSParameterAssert(url.host);
 
