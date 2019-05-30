@@ -5,7 +5,7 @@
 
 @implementation EMSDeviceInfo (MEClientPayload)
 
-- (NSDictionary<NSString *, NSString *> *)clientPayload {
+- (NSDictionary<NSString *, id> *)clientPayload {
     return @{
         @"platform": self.platform,
         @"applicationVersion": self.applicationVersion,
@@ -13,9 +13,9 @@
         @"osVersion": self.osVersion,
         @"sdkVersion": self.sdkVersion,
         @"language": self.languageCode,
-        @"timezone": self.timeZone
+        @"timezone": self.timeZone,
+        @"pushSettings": self.pushSettings
     };
 }
-
 
 @end

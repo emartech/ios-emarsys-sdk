@@ -6,6 +6,6 @@
 
 @interface EMSDeviceInfo (MEClientPayload)
 
-- (NSDictionary<NSString *, NSString *> *)clientPayload;
+- (NSDictionary<NSString *, id> *)clientPayload;
 
 @end
