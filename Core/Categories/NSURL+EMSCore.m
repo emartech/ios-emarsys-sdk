@@ -9,8 +9,7 @@
           queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters {
     NSParameterAssert(urlString);
     NSParameterAssert(queryParameters);
-    NSURL *url = [NSURL URLWithString:urlString];
-#pragma unused (url)
+    NSURL __unused *url = [NSURL URLWithString:urlString];
     NSParameterAssert(url.scheme);
     NSParameterAssert(url.host);
 
