@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
-@property(nonatomic, weak, nullable) id <MEInAppTrackingProtocol> inAppTracker;
+@property(nonatomic, strong, nullable) id <MEInAppTrackingProtocol> inAppTracker;
 
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
