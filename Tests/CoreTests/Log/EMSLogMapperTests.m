@@ -102,6 +102,15 @@
     }
 }
 
+- (void)testRequestFromShards_shouldThrowException_when_shardsArrayIsEmpty {
+    @try {
+        [self.logMapper requestFromShards:@[]];
+        XCTFail(@"Expected Exception when shards array is empty!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: [shards count] > 0"]);
+    }
+}
+
 - (void)testRequestFromShards_shouldReturnWithRequestModel {
     NSDictionary *expectedDeviceInfo = @{
             @"platform": @"ios",
