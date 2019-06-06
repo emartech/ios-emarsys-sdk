@@ -209,7 +209,8 @@
                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%%"
                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
                                                                   mapper:[[EMSLogMapper alloc] initWithRequestContext:self.requestContext
-                                                                                                      applicationCode:config.applicationCode]
+                                                                                                      applicationCode:config.applicationCode
+                                                                                                           merchantId:config.merchantId]
                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:10]
                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:10]
                                                           requestManager:self.requestManager
