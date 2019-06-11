@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) NSString *applicationCode;
 @property(nonatomic, readonly) NSString *applicationPassword;
-@property(nonatomic, readonly) NSArray<EMSFlipperFeature> *experimentalFeatures;
+@property(nonatomic, readonly) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
 

@@ -7,10 +7,8 @@
 
 @interface MEExperimental : NSObject
 
-+ (BOOL)isFeatureEnabled:(EMSFlipperFeature)feature;
++ (BOOL)isFeatureEnabled:(id <EMSFlipperFeature>)feature;
 
-+ (void)enableFeature:(EMSFlipperFeature)feature;
-
-+ (void)enableFeatures:(NSArray<EMSFlipperFeature> *)features;
++ (void)enableFeature:(id <EMSFlipperFeature>)feature;
 
 @end

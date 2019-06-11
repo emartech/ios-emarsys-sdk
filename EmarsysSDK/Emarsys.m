@@ -9,7 +9,6 @@
 #import "EMSDependencyContainer.h"
 #import "MEInApp.h"
 #import "EMSDependencyInjection.h"
-#import "MEExperimental.h"
 #import "MENotificationCenterManager.h"
 #import "AppStartBlockProvider.h"
 #import "MEUserNotificationDelegate.h"
@@ -23,7 +22,6 @@
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
 
-    [MEExperimental enableFeatures:config.experimentalFeatures];
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
 
     [Emarsys registerAppStartBlock];

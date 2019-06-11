@@ -4,5 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
-#define EMSFlipperFeature const NSString *
+@protocol EMSFlipperFeature <NSObject>
 
+- (NSString *)name;
+
+@end
