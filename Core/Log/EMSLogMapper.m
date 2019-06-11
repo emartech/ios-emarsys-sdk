@@ -9,17 +9,20 @@
 @interface EMSLogMapper ()
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSString *merchantId;
 @end
 
 @implementation EMSLogMapper
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
-                       applicationCode:(NSString *)applicationCode {
+                       applicationCode:(NSString *)applicationCode
+                            merchantId:(NSString *)merchantId {
     NSParameterAssert(requestContext);
     NSParameterAssert(applicationCode);
     if (self = [super init]) {
-        _applicationCode = applicationCode;
         _requestContext = requestContext;
+        _applicationCode = applicationCode;
+        _merchantId = merchantId;
     }
     return self;
 }
@@ -34,15 +37,18 @@
                 for (EMSShard *shard in shards) {
                     NSMutableDictionary<NSString *, id> *shardData = [NSMutableDictionary dictionaryWithDictionary:shard.data];
                     shardData[@"type"] = shard.type;
-                    shardData[@"device_info"] = @{
-                            @"platform": deviceInfo.platform,
-                            @"app_version": deviceInfo.applicationVersion,
-                            @"sdk_version": deviceInfo.sdkVersion,
-                            @"os_version": deviceInfo.osVersion,
-                            @"model": deviceInfo.deviceModel,
-                            @"hw_id": deviceInfo.hardwareId,
-                        @"application_code": weakSelf.applicationCode
-                    };
+
+                    NSMutableDictionary *mutableDeviceInfoDictionary = [NSMutableDictionary dictionary];
+                    mutableDeviceInfoDictionary[@"platform"] = deviceInfo.platform;
+                    mutableDeviceInfoDictionary[@"app_version"] = deviceInfo.applicationVersion;
+                    mutableDeviceInfoDictionary[@"sdk_version"] = deviceInfo.sdkVersion;
+                    mutableDeviceInfoDictionary[@"os_version"] = deviceInfo.osVersion;
+                    mutableDeviceInfoDictionary[@"model"] = deviceInfo.deviceModel;
+                    mutableDeviceInfoDictionary[@"hw_id"] = deviceInfo.hardwareId;
+                    mutableDeviceInfoDictionary[@"application_code"] = weakSelf.applicationCode;
+                    mutableDeviceInfoDictionary[@"merchant_id"] = weakSelf.merchantId;
+                    shardData[@"device_info"] = [NSDictionary dictionaryWithDictionary:mutableDeviceInfoDictionary];
+
                     [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
                 }
                 [builder setUrl:@"https://log-dealer.eservice.emarsys.net/v1/log"];

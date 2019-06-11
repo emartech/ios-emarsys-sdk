@@ -19,6 +19,7 @@
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSString *merchantId;
 
 @end
 
@@ -30,6 +31,7 @@
     _deviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _requestContext = OCMClassMock([MERequestContext class]);
     _applicationCode = @"applicationCode";
+    _merchantId = @"merchantId";
 
     OCMStub(self.timestampProvider.provideTimestamp).andReturn([NSDate date]);
     OCMStub(self.uuidProvider.provideUUIDString).andReturn(@"requestId");
@@ -43,7 +45,7 @@
     OCMStub(self.requestContext.uuidProvider).andReturn(self.uuidProvider);
     OCMStub(self.requestContext.deviceInfo).andReturn(self.deviceInfo);
 
-    _logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:_applicationCode];
+    _logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:_applicationCode merchantId: _merchantId];
     _shards = @[
             [[EMSShard alloc] initWithShardId:@"shardId1"
                                          type:@"type1"
@@ -75,7 +77,7 @@
 
 - (void)testInit_shouldThrowException_when_requestContextIsNil {
     @try {
-        [[EMSLogMapper alloc] initWithRequestContext:nil applicationCode:_applicationCode];
+        [[EMSLogMapper alloc] initWithRequestContext:nil applicationCode:_applicationCode merchantId:_merchantId];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
@@ -84,7 +86,7 @@
 
 - (void)testInit_shouldThrowException_when_applicationCodeIsNil {
     @try {
-        [[EMSLogMapper alloc] initWithRequestContext:_requestContext applicationCode:nil];
+        [[EMSLogMapper alloc] initWithRequestContext:_requestContext applicationCode:nil merchantId:_merchantId];
         XCTFail(@"Expected Exception when applicationCode is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: applicationCode"]);
@@ -110,14 +112,15 @@
 }
 
 - (void)testRequestFromShards_shouldReturnWithRequestModel {
-    NSDictionary *deviceInfo = @{
+    NSDictionary *expectedDeviceInfo = @{
             @"platform": @"ios",
             @"app_version": @"applicationVersion",
             @"sdk_version": @"sdkVersion",
             @"os_version": @"osVersion",
             @"model": @"deviceModel",
             @"hw_id": @"hardwareId",
-            @"application_code": _applicationCode
+            @"application_code": _applicationCode,
+            @"merchant_id": _merchantId,
     };
 
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -128,27 +131,27 @@
                                 @{
                                         @"type": @"type1",
                                         @"shardData1Key": @"shardData1Value",
-                                        @"device_info": deviceInfo
+                                        @"device_info": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type2",
                                         @"shardData2Key": @"shardData2Value",
-                                        @"device_info": deviceInfo
+                                        @"device_info": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type3",
                                         @"shardData3Key": @"shardData3Value",
-                                        @"device_info": deviceInfo
+                                        @"device_info": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type4",
                                         @"shardData4Key": @"shardData4Value",
-                                        @"device_info": deviceInfo
+                                        @"device_info": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type5",
                                         @"shardData5Key": @"shardData5Value",
-                                        @"device_info": deviceInfo
+                                        @"device_info": expectedDeviceInfo
                                 }
                         ]
                 }];
@@ -159,6 +162,24 @@
     EMSRequestModel *returnedRequestModel = [self.logMapper requestFromShards:self.shards];
 
     XCTAssertTrue([returnedRequestModel isEqual:expectedRequestModel]);
+}
+
+- (void)testRequestFromShards_shouldReturnWithRequestModelWithoutMerchantId_when_merchantIdIsNil {
+    NSDictionary *expectedDeviceInfo = @{
+            @"platform": @"ios",
+            @"app_version": @"applicationVersion",
+            @"sdk_version": @"sdkVersion",
+            @"os_version": @"osVersion",
+            @"model": @"deviceModel",
+            @"hw_id": @"hardwareId",
+            @"application_code": _applicationCode,
+    };
+
+    EMSLogMapper *logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:self.applicationCode merchantId:nil];
+
+    EMSRequestModel *returnedRequestModel = [logMapper requestFromShards:self.shards];
+
+    XCTAssertTrue([returnedRequestModel.payload[@"logs"][0][@"device_info"] isEqual:expectedDeviceInfo]);
 }
 
 @end

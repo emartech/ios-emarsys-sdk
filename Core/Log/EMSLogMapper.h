@@ -8,6 +8,7 @@
 @interface EMSLogMapper : NSObject <EMSRequestFromShardsMapperProtocol>
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
-                       applicationCode:(NSString *)applicationCode;
+                    applicationCode:(NSString *)applicationCode
+                    merchantId:(NSString *)merchantId;
 
 @end
