@@ -12,14 +12,14 @@
 @implementation EMSMethodNotAllowed
 
 - (instancetype)initWithClass:(Class)klass
-                   methodName:(NSString *)methodName
+                          sel:(SEL)sel
                    parameters:(nullable NSDictionary<NSString *, id> *)parameters {
     NSParameterAssert(klass);
-    NSParameterAssert(methodName);
+    NSParameterAssert(sel);
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
         mutableData[@"class_name"] = NSStringFromClass(klass);
-        mutableData[@"method_name"] = methodName;
+        mutableData[@"method_name"] = NSStringFromSelector(sel);
         mutableData[@"parameters"] = parameters;
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }

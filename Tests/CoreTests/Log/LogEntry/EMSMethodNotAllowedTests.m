@@ -14,7 +14,7 @@
 - (void)testInit_shouldNotAccept_nilClass {
     @try {
         [[EMSMethodNotAllowed alloc] initWithClass:nil
-                                        methodName:@"methodName"
+                                               sel:_cmd
                                         parameters:@{@"key": @"value"}];
         XCTFail(@"Expected exception when klass is nil!");
     } @catch (NSException *exception) {
@@ -22,20 +22,20 @@
     }
 }
 
-- (void)testInit_shouldNotAccept_nilMethodName {
+- (void)testInit_shouldNotAccept_nilSel {
     @try {
         [[EMSMethodNotAllowed alloc] initWithClass:[NSObject class]
-                                        methodName:nil
+                                               sel:nil
                                         parameters:@{@"key": @"value"}];
-        XCTFail(@"Expected exception when methodName is nil!");
+        XCTFail(@"Expected exception when sel is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: methodName");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: sel");
     }
 }
 
 - (void)testTopic {
     EMSMethodNotAllowed *methodNotAllowed = [[EMSMethodNotAllowed alloc] initWithClass:[NSObject class]
-                                                                            methodName:@"methodName"
+                                                                                   sel:_cmd
                                                                             parameters:nil];
     XCTAssertEqualObjects(methodNotAllowed.topic, @"log_method_not_allowed");
 }
@@ -43,11 +43,11 @@
 - (void)testData {
     NSDictionary *expectedDataDictionary = @{
         @"class_name": @"NSObject",
-        @"method_name": @"methodName",
+        @"method_name": @"testData",
         @"parameters": @{@"param1": @"value1"}
     };
     EMSMethodNotAllowed *methodNotAllowed = [[EMSMethodNotAllowed alloc] initWithClass:[NSObject class]
-                                                                            methodName:@"methodName"
+                                                                                   sel:_cmd
                                                                             parameters:@{@"param1": @"value1"}];
     XCTAssertEqualObjects(expectedDataDictionary, methodNotAllowed.data);
 }

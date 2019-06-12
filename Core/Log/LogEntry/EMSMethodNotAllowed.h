@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSMethodNotAllowed : NSObject <EMSLogEntryProtocol>
 
 - (instancetype)initWithClass:(Class)klass
-                   methodName:(NSString *)methodName
+                          sel:(SEL)sel
                    parameters:(nullable NSDictionary<NSString *, id> *)parameters;
 
 @end
