@@ -7,20 +7,27 @@
 #import "PredictInternal.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
-#import "MEInApp.h"
 #import "EMSDependencyInjection.h"
 #import "MENotificationCenterManager.h"
 #import "AppStartBlockProvider.h"
-#import "MEUserNotificationDelegate.h"
 #import "EMSDeviceInfoClientProtocol.h"
 #import "MERequestContext.h"
 #import "EMSDeepLinkProtocol.h"
 #import "EMSMobileEngageProtocol.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @implementation Emarsys
 
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
+
+    if (config.applicationCode) {
+        [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+    }
+    if (config.merchantId) {
+        [MEExperimental enableFeature:EMSInnerFeature.predict];
+    }
 
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
 

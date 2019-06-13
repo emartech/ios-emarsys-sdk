@@ -84,15 +84,6 @@
     }
 }
 
-- (void)testInit_shouldThrowException_when_applicationCodeIsNil {
-    @try {
-        [[EMSLogMapper alloc] initWithRequestContext:_requestContext applicationCode:nil merchantId:_merchantId];
-        XCTFail(@"Expected Exception when applicationCode is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: applicationCode"]);
-    }
-}
-
 - (void)testRequestFromShards_shouldThrowException_when_shardsIsNil {
     @try {
         [self.logMapper requestFromShards:nil];

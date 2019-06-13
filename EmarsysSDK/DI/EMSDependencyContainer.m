@@ -52,6 +52,15 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSCompletionMiddleware.h"
 #import "EMSRequestManager.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
+#import "EMSLoggingPredictInternal.h"
+#import "EMSLoggingPushInternal.h"
+#import "EMSLoggingInbox.h"
+#import "EMSLoggingUserNotificationDelegate.h"
+#import "EMSLoggingInApp.h"
+#import "EMSLoggingMobileEngageInternal.h"
+#import "EMSLoggingDeepLinkInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -67,15 +76,15 @@
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
-@property(nonatomic, strong) MEInApp *iam;
-@property(nonatomic, strong) PredictInternal *predict;
+@property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> iam;
+@property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> predict;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
-@property(nonatomic, strong) MEUserNotificationDelegate *notificationCenterDelegate;
+@property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
@@ -115,11 +124,16 @@
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
-    _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
-                                mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
-                                 timestampProvider:timestampProvider
-                            displayedIamRepository:displayedIAMRepository
-                             buttonClickRepository:buttonClickRepository];
+
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
+                                    mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
+                                     timestampProvider:timestampProvider
+                                displayedIamRepository:displayedIAMRepository
+                                 buttonClickRepository:buttonClickRepository];
+    } else {
+        _iam = [EMSLoggingInApp new];
+    }
     [_dbHelper open];
 
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
@@ -224,13 +238,7 @@
                                triggerEvent:EMSDBTriggerEvent.insertEvent
                                     trigger:self.loggerTrigger];
 
-
     _notificationCache = [[EMSNotificationCache alloc] init];
-    _inbox = [[MEInbox alloc] initWithConfig:config
-                              requestContext:self.requestContext
-                           notificationCache:self.notificationCache
-                              requestManager:self.requestManager
-                              requestFactory:self.requestFactory];
 
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
@@ -242,28 +250,42 @@
                                                                     requestContext:self.requestContext
                                                                   deviceInfoClient:self.deviceInfoClient];
 
-    _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
-                                                requestManager:self.requestManager];
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
+        _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
+                                                    requestManager:self.requestManager];
+    } else {
+        _predict = [EMSLoggingPredictInternal new];
+    }
 
-    _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                                               requestManager:self.requestManager
-                                                               requestContext:self.requestContext];
-
-    _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                               requestManager:self.requestManager
-                                            notificationCache:self.notificationCache
-                                            timestampProvider:timestampProvider];
-
-    _deepLink = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
-                                                     requestFactory:self.requestFactory];
-
-    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
-                                                                     mobileEngageInternal:self.mobileEngage
-                                                                                    inApp:self.iam
-                                                                        timestampProvider:timestampProvider
-                                                                             pushInternal:self.push
-                                                                           requestManager:self.requestManager
-                                                                           requestFactory:self.requestFactory];
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                                                   requestManager:self.requestManager
+                                                                   requestContext:self.requestContext];
+        _deepLink = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
+                                                         requestFactory:self.requestFactory];
+        _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                                   requestManager:self.requestManager
+                                                notificationCache:self.notificationCache
+                                                timestampProvider:timestampProvider];
+        _inbox = [[MEInbox alloc] initWithConfig:config
+                                  requestContext:self.requestContext
+                               notificationCache:self.notificationCache
+                                  requestManager:self.requestManager
+                                  requestFactory:self.requestFactory];
+        _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
+                                                                         mobileEngageInternal:self.mobileEngage
+                                                                                        inApp:self.iam
+                                                                            timestampProvider:timestampProvider
+                                                                                 pushInternal:self.push
+                                                                               requestManager:self.requestManager
+                                                                               requestFactory:self.requestFactory];
+    } else {
+        _mobileEngage = [EMSLoggingMobileEngageInternal new];
+        _deepLink = [EMSLoggingDeepLinkInternal new];
+        _push = [EMSLoggingPushInternal new];
+        _inbox = [EMSLoggingInbox new];
+        _notificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
+    }
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

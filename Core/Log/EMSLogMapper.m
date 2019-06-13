@@ -18,7 +18,6 @@
                        applicationCode:(NSString *)applicationCode
                             merchantId:(NSString *)merchantId {
     NSParameterAssert(requestContext);
-    NSParameterAssert(applicationCode);
     if (self = [super init]) {
         _requestContext = requestContext;
         _applicationCode = applicationCode;

@@ -10,6 +10,8 @@
 #import "EmarsysTestUtils.h"
 #import "EMSCartItem.h"
 #import "EMSWaiter.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -30,8 +32,7 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                   expectations:(NSArray<XCTestExpectation *> *)expectations {
-    self = [super initWithConfig:config];
-    if (self) {
+    if (self = [super initWithConfig:config]) {
         _expectations = expectations.mutableCopy;
     }
     return self;
@@ -84,6 +85,13 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [builder setContactFieldId:@3];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
             }];
+            if (config.applicationCode) {
+                [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+            }
+            if (config.merchantId) {
+                [MEExperimental enableFeature:EMSInnerFeature.predict];
+            }
+
             expectations = @[
                 [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"],
                 [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];

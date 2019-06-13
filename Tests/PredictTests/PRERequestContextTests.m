@@ -56,19 +56,6 @@ SPEC_BEGIN(PRERequestContextTests)
                 }
             });
 
-            xit(@"should throw exception when merchantId is nil", ^{
-                @try {
-                    [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
-                                                            uuidProvider:uuidProvider
-                                                              merchantId:nil
-                                                              deviceInfo:deviceInfo];
-                    fail(@"Expected Exception when merchantId is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: merchantId"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
             it(@"should throw exception when deviceInfo is nil", ^{
                 @try {
                     [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider

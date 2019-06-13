@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showMessage:(MEInAppMessage *)message
   completionHandler:(MECompletionHandler _Nullable)completionHandler;
 
-- (void)closeInAppMessageWithCompletionBlock:(MECompletionHandler)completionHandler;
+- (void)closeInAppMessageWithCompletionBlock:(_Nullable MECompletionHandler)completionHandler;
 
 @end
 

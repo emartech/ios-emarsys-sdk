@@ -23,12 +23,17 @@
 @protocol EMSPushNotificationProtocol;
 @protocol EMSDeepLinkProtocol;
 @protocol EMSDeviceInfoClientProtocol;
+@protocol EMSPredictProtocol;
+@protocol EMSPredictInternalProtocol;
+@protocol EMSUserNotificationCenterDelegate;
+@protocol EMSInAppProtocol;
+@protocol MEIAMProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
 - (EMSSQLiteHelper *)dbHelper;
 
-- (id <EMSMobileEngageProtocol, EMSDeepLinkProtocol, EMSPushNotificationProtocol>)mobileEngage;
+- (id <EMSMobileEngageProtocol>)mobileEngage;
 
 - (id <EMSDeepLinkProtocol>)deepLink;
 
@@ -36,11 +41,11 @@
 
 - (id <EMSInboxProtocol>)inbox;
 
-- (MEInApp *)iam;
+- (id <EMSInAppProtocol, MEIAMProtocol>)iam;
 
-- (PredictInternal *)predict;
+- (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
 
-- (MEUserNotificationDelegate *)notificationCenterDelegate;
+- (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
 
 - (id <EMSRequestModelRepositoryProtocol>)requestRepository;
 
