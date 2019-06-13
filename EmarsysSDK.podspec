@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
 			'MobileEngage/IAM/EMSEventHandler.h',
 			'MobileEngage/Inbox/EMSNotification.h',
 			'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
-			'MobileEngage/Flipper/EMSFlipperFeatures.h',
+			'Core/Flipper/EMSFlipperFeatures.h',
 			'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h'
    	]
 	spec.libraries = 'z', 'c++'
