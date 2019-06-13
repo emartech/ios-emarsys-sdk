@@ -10,9 +10,8 @@
 @implementation EMSLoggingPredictInternal
 
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
-    NSDictionary *const parameters = @{
-        @"cartItems": cartItems
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"cartItems"] = [cartItems description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -20,40 +19,50 @@
 
 - (void)trackPurchaseWithOrderId:(NSString *)orderId
                            items:(NSArray<id <EMSCartItemProtocol>> *)items {
-    NSDictionary *const parameters = @{
-        @"orderId": orderId,
-        @"cartItems": items
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"orderId"] = orderId;
+    parameters[@"cartItems"] = [items description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
 }
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
-    NSDictionary *const parameters = @{
-        @"categoryPath": categoryPath
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"categoryPath"] = categoryPath;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
 }
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
-    NSDictionary *const parameters = @{
-        @"itemId": itemId
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"itemId"] = itemId;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
 }
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
-    NSDictionary *const parameters = @{
-        @"searchTerm": searchTerm
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"searchTerm"] = searchTerm;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
+}
+
+- (void)setCustomerWithId:(NSString *)customerId {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"customerId"] = customerId;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
+                                                  sel:_cmd
+                                           parameters:parameters]);
+}
+
+- (void)clearCustomer {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
+                                                  sel:_cmd
+                                           parameters:nil]);
 }
 
 @end

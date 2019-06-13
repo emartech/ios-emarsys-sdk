@@ -11,10 +11,9 @@
 
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(_Nullable EMSSourceHandler)sourceHandler {
-    NSDictionary *const parameters = @{
-        @"userActivity": userActivity,
-        @"sourceHandler": @(sourceHandler != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"userActivity"] = [userActivity description];
+    parameters[@"sourceHandler"] = @(sourceHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -24,11 +23,10 @@
 - (BOOL)trackDeepLinkWith:(NSUserActivity *)userActivity
             sourceHandler:(_Nullable EMSSourceHandler)sourceHandler
       withCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"userActivity": userActivity,
-        @"sourceHandler": @(sourceHandler != nil),
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"userActivity"] = [userActivity description];
+    parameters[@"sourceHandler"] = @(sourceHandler != nil);
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);

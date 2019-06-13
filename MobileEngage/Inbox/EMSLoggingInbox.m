@@ -10,9 +10,11 @@
 @implementation EMSLoggingInbox
 
 - (void)fetchNotificationsWithResultBlock:(EMSFetchNotificationResultBlock)resultBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"resultBlock"] = @(resultBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"resultBlock": @(resultBlock != nil)}]);
+                                           parameters:parameters]);
 }
 
 - (void)resetBadgeCount {
@@ -22,23 +24,26 @@
 }
 
 - (void)resetBadgeCountWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"completionBlock": @(completionBlock != nil)}]);
+                                           parameters:parameters]);
 }
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)notification {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"notification"] = [notification description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"notification": notification}]);
+                                           parameters:parameters]);
 }
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)notification
                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"completionBlock": @(completionBlock != nil),
-        @"notification": notification
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"completionBlock"] = @(completionBlock != nil);
+    parameters[@"notification"] = [notification description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);

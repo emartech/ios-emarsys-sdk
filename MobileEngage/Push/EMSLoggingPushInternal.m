@@ -4,6 +4,7 @@
 #import "EMSLoggingPushInternal.h"
 #import "EMSMacros.h"
 #import "EMSMethodNotAllowed.h"
+#import "NSData+MobileEngine.h"
 
 #define klass [EMSLoggingPushInternal class]
 
@@ -17,10 +18,9 @@
 
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"pushToken": pushToken,
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"pushToken"] = [pushToken deviceTokenString];
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -33,17 +33,16 @@
 }
 
 - (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{
-                                               @"completionBlock": @(completionBlock != nil)
-                                           }]);
+                                           parameters:parameters]);
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
-    NSDictionary *const parameters = @{
-        @"userInfo": userInfo,
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"userInfo"] = userInfo;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -51,10 +50,9 @@
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"userInfo": userInfo,
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"userInfo"] = userInfo;
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);

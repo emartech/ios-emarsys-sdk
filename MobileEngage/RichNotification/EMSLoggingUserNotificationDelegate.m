@@ -17,9 +17,11 @@
 }
 
 - (void)setDelegate:(id <UNUserNotificationCenterDelegate>)delegate {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"delegate"] = @(delegate != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"delegate": @(delegate != nil)}]);
+                                           parameters:parameters]);
 }
 
 - (id <EMSEventHandler>)eventHandler {
@@ -30,9 +32,11 @@
 }
 
 - (void)setEventHandler:(id <EMSEventHandler>)eventHandler {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"eventHandler"] = @(eventHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"eventHandler": @(eventHandler != nil)}]);
+                                           parameters:parameters]);
 }
 
 @end

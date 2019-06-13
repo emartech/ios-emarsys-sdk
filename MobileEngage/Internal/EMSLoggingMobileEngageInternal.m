@@ -10,17 +10,19 @@
 @implementation EMSLoggingMobileEngageInternal
 
 - (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"contactFieldValue"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:@{@"contactFieldValue": contactFieldValue}]);
+                                           parameters:parameters]);
 }
 
 - (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue
                         completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"contactFieldValue": contactFieldValue,
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"contactFieldValue"] = contactFieldValue;
+    parameters[@"completionBlock"] = @(completionBlock != nil);
+
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -33,9 +35,8 @@
 }
 
 - (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -43,10 +44,9 @@
 
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes {
-    NSDictionary *const parameters = @{
-        @"eventName": eventName,
-        @"eventAttributes": eventAttributes
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"eventName"] = eventName;
+    parameters[@"eventAttributes"] = eventAttributes;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
@@ -55,11 +55,10 @@
 - (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSDictionary *const parameters = @{
-        @"eventName": eventName,
-        @"eventAttributes": eventAttributes,
-        @"completionBlock": @(completionBlock != nil)
-    };
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"eventName"] = eventName;
+    parameters[@"eventAttributes"] = eventAttributes;
+    parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
