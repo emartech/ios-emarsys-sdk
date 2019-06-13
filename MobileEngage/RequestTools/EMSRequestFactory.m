@@ -156,8 +156,7 @@
             }
 
             [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
-            [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.config.applicationCode
-                                                                                          password:self.requestContext.config.applicationPassword]}];
+            [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.config.applicationCode]}];
         }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];

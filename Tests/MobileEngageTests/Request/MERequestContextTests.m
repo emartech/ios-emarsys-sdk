@@ -17,8 +17,7 @@ SPEC_BEGIN(MERequestContextTests)
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                             [builder setMerchantId:@"merchantId"];
                             [builder setContactFieldId:@3];
-                            [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                applicationPassword:@"applicationPassword"];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"];
                         }]
                                                                                    uuidProvider:nil
                                                                               timestampProvider:[EMSTimestampProvider mock]
@@ -35,8 +34,7 @@ SPEC_BEGIN(MERequestContextTests)
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                             [builder setMerchantId:@"merchantId"];
                             [builder setContactFieldId:@3];
-                            [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                applicationPassword:@"applicationPassword"];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"];
                         }]
                                                                                    uuidProvider:[EMSUUIDProvider mock]
                                                                               timestampProvider:nil
@@ -53,8 +51,7 @@ SPEC_BEGIN(MERequestContextTests)
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                             [builder setMerchantId:@"merchantId"];
                             [builder setContactFieldId:@3];
-                            [builder setMobileEngageApplicationCode:@"applicationCode"
-                                                applicationPassword:@"applicationPassword"];
+                            [builder setMobileEngageApplicationCode:@"applicationCode"];
                         }]
                                                                                    uuidProvider:[EMSUUIDProvider mock]
                                                                               timestampProvider:[EMSTimestampProvider mock]

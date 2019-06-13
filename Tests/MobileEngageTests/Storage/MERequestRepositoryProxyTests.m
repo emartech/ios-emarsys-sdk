@@ -98,8 +98,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMerchantId:@"merchantId"];
                 [builder setContactFieldId:@3];
-                [builder setMobileEngageApplicationCode:@"testAppplicationCode"
-                                    applicationPassword:@"applicationPassword"];
+                [builder setMobileEngageApplicationCode:@"testAppplicationCode"];
                 }]
                                                          uuidProvider:uuidProvider
                                                     timestampProvider:timestampProvider

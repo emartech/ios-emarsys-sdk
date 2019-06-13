@@ -7,8 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface EMSAuthentication : NSObject
 
-+ (NSString *)createBasicAuthWithUsername:(NSString *)username
-                                 password:(NSString *)password;
++ (NSString *)createBasicAuthWithUsername:(NSString *)username;
 @end
 
 NS_ASSUME_NONNULL_END

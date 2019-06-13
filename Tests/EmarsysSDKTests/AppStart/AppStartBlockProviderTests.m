@@ -33,8 +33,7 @@
     _mockDeviceInfoClient = OCMProtocolMock(@protocol(EMSDeviceInfoClientProtocol));
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
             [builder setMerchantId:@"testMerchantId"];
             [builder setContactFieldId:@3];
         }]                                        uuidProvider:[EMSUUIDProvider new]

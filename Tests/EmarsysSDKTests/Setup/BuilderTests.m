@@ -7,7 +7,7 @@ SPEC_BEGIN(BuilderTest)
             it(@"should set the given accepted experimental features in the config", ^{
 
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code"];
                     [builder setExperimentalFeatures:@[]];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
@@ -22,7 +22,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should create a config with applicationCode", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"test1" applicationPassword:@"pwd"];
+                    [builder setMobileEngageApplicationCode:@"test1"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
 
@@ -30,24 +30,13 @@ SPEC_BEGIN(BuilderTest)
 
                 [[@"test1" should] equal:config.applicationCode];
             });
-
-            it(@"should create a config with applicationPassword", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"test1" applicationPassword:@"pwd"];
-                    [builder setMerchantId:@"merchantId"];
-                    [builder setContactFieldId:@"contactFieldId"];
-
-                }];
-
-                [[@"pwd" should] equal:config.applicationPassword];
-            });
         });
 
         describe(@"setMerchantId", ^{
 
             it(@"should set merchantId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
                 }];
@@ -59,7 +48,7 @@ SPEC_BEGIN(BuilderTest)
 
             it(@"should set contactFieldId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
+                    [builder setMobileEngageApplicationCode:@"code"];
                     [builder setMerchantId:@"merchantId"];
                     [builder setContactFieldId:@"contactFieldId"];
                 }];

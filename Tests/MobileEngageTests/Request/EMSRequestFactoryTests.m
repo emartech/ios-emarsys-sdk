@@ -51,7 +51,6 @@
     OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
     OCMStub(self.mockConfig.applicationCode).andReturn(@"testApplicationCode");
-    OCMStub(self.mockConfig.applicationPassword).andReturn(@"testApplicationPassword");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
 }
@@ -279,9 +278,8 @@
                                                                                    @"contact_field_id": @"testContactFieldId",
                                                                                    @"contact_field_value": @"testContactFieldValue"
                                                                                }
-                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"
-                                                                                                                                                 password:@"testApplicationPassword"]}
-                                                                                extras:nil];
+                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}
+                                                                               extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createMessageOpenWithNotification:notification];
 

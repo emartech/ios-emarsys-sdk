@@ -21,7 +21,6 @@ SPEC_BEGIN(MEInboxTests)
         registerMatchers(@"EMS");
 
         NSString *applicationCode = kAppId;
-        NSString *applicationPassword = @"appSecret";
         NSNumber *contactFieldId = @3;
         NSString *contactFieldValue = @"valueOfContactField";
 
@@ -30,8 +29,7 @@ SPEC_BEGIN(MEInboxTests)
         __block EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setMobileEngageApplicationCode:applicationCode
-                                applicationPassword:applicationPassword];
+            [builder setMobileEngageApplicationCode:applicationCode];
             [builder setMerchantId:@"dummyMerchantId"];
             [builder setContactFieldId:@3];
         }];
@@ -84,8 +82,7 @@ SPEC_BEGIN(MEInboxTests)
             mutableHeaders[@"x-ems-me-application-code"] = config.applicationCode;
             mutableHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@", contactFieldId];
             mutableHeaders[@"x-ems-me-contact-field-value"] = contactFieldValue;
-            mutableHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:config.applicationCode
-                                                                                     password:config.applicationPassword];
+            mutableHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:config.applicationCode];
             return [NSDictionary dictionaryWithDictionary:mutableHeaders];
         };
 
@@ -563,8 +560,7 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should return with eventId, and finish with success for trackNotificationOpenWithNotification:", ^{
                 [Emarsys setupWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                        applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                    [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                     [builder setMerchantId:@"dummyMerchantId"];
                     [builder setContactFieldId:@3];
                 }]];

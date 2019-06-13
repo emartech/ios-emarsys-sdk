@@ -154,8 +154,7 @@
     mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@",
                                                                                       self.requestContext.contactFieldId];
     mutableFetchingHeaders[@"x-ems-me-contact-field-value"] = self.requestContext.contactFieldValue;
-    mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode
-                                                                                     password:self.config.applicationPassword];
+    mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode];
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 

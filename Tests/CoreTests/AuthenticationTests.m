@@ -18,12 +18,11 @@ SPEC_BEGIN(AuthenticationTests)
             [NSTimeZone setDefaultTimeZone:cachedTimeZone];
         });
 
-        describe(@"NSString+CoreTests createBasicAuthWith:(NSString *)username password:(NSString *)password", ^{
+        describe(@"NSString+CoreTests createBasicAuthWith:(NSString *)username", ^{
             it(@"should throw exception when username is nil", ^{
                 @try {
                     IGNORE_NONNULL_BEGIN
-                    [EMSAuthentication createBasicAuthWithUsername:nil
-                                                          password:@"pass"];
+                    [EMSAuthentication createBasicAuthWithUsername:nil];
                     IGNORE_NONNULL_END
                     fail(@"Expected exception when username is nil");
                 } @catch (NSException *exception) {
@@ -31,24 +30,12 @@ SPEC_BEGIN(AuthenticationTests)
                 }
             });
 
-            it(@"should throw exception when password is nil", ^{
-                @try {
-                    [EMSAuthentication createBasicAuthWithUsername:@"valami"
-                                                          password:nil];
-                    fail(@"Expected exception when password is nil");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+            it(@"should create the correct basicAuth when username set", ^{
+                NSString *basicAuth1 = [EMSAuthentication createBasicAuthWithUsername:@"user"];
+                [[basicAuth1 should] equal:@"Basic dXNlcjo="];
 
-            it(@"should create the correct basicAuth when username and password set", ^{
-                NSString *basicAuth1 = [EMSAuthentication createBasicAuthWithUsername:@"user"
-                                                                             password:@"pass"];
-                [[basicAuth1 should] equal:@"Basic dXNlcjpwYXNz"];
-
-                NSString *basicAuth2 = [EMSAuthentication createBasicAuthWithUsername:@"user2"
-                                                                             password:@"pass2"];
-                [[basicAuth2 should] equal:@"Basic dXNlcjI6cGFzczI="];
+                NSString *basicAuth2 = [EMSAuthentication createBasicAuthWithUsername:@"user2"];
+                [[basicAuth2 should] equal:@"Basic dXNlcjI6"];
             });
         });
 

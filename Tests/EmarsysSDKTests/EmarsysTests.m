@@ -251,8 +251,7 @@ SPEC_BEGIN(EmarsysTests)
 
                     it(@"setupWithConfig should send deviceInfo and login", ^{
                         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setContactFieldId:@3];
                         }];
@@ -272,8 +271,7 @@ SPEC_BEGIN(EmarsysTests)
                                    andReturn:@"testContactFieldValue"];
 
                         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setContactFieldId:@3];
                         }];
@@ -293,8 +291,7 @@ SPEC_BEGIN(EmarsysTests)
                                    andReturn:@"testContactToken"];
 
                         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setContactFieldId:@3];
                         }];
@@ -424,8 +421,7 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"
-                                                applicationPassword:@"PaNkfOD90AVpYimMBuZopCpm8OWCrREu"];
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setContactFieldId:@3];
                         }]

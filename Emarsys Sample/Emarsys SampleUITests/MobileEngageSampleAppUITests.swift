@@ -13,8 +13,7 @@ class MobileEngageSampleAppUITests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
 
-        app.launchEnvironment = ["applicationCode": "EMSEC-B103E",
-                                 "applicationPassword": "RM1ZSuX8mgRBhQIgOsf6m8bn/bMQLAIb"]
+        app.launchEnvironment = ["applicationCode": "EMSEC-B103E"]
         app.activate()
     }
 

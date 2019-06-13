@@ -7,10 +7,8 @@
 
 @implementation EMSConfigBuilder
 
-- (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode
-                                 applicationPassword:(NSString *)applicationPassword {
+- (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode {
     _applicationCode = applicationCode;
-    _applicationPassword = applicationPassword;
     return self;
 }
 

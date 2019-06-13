@@ -6,11 +6,9 @@
 
 @implementation EMSAuthentication
 
-+ (NSString *)createBasicAuthWithUsername:(NSString *)username
-                                 password:(NSString *)password {
++ (NSString *)createBasicAuthWithUsername:(NSString *)username {
     NSParameterAssert(username);
-    NSParameterAssert(password);
-    NSString *credentials = [NSString stringWithFormat:@"%@:%@", username, password];
+    NSString *credentials = [NSString stringWithFormat:@"%@:", username];
     NSData *credentialsData = [credentials dataUsingEncoding:NSUTF8StringEncoding];
     NSString *base64Credentials = [credentialsData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
     return [NSString stringWithFormat:@"Basic %@", base64Credentials];

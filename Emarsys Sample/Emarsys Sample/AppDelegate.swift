@@ -20,9 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
 #if DEBUG
-            builder.setMobileEngageApplicationCode("EMS11-C3FD3", applicationPassword: "kyuQy3bwWUfLLp7Gy4pjXnehRvArTWOs")
+            builder.setMobileEngageApplicationCode("EMS11-C3FD3")
 #else
-            builder.setMobileEngageApplicationCode("EMS4C-9A869", applicationPassword: "IUfyQMXtN5NC1gkvxCWRjMfHRZCErjsD")
+            builder.setMobileEngageApplicationCode("EMS4C-9A869")
 #endif
         }
         Emarsys.setup(with: config)
