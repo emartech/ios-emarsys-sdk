@@ -41,34 +41,6 @@ SPEC_BEGIN(BuilderTest)
 
                 [[@"pwd" should] equal:config.applicationPassword];
             });
-
-            it(@"should throw exception when applicationCode is nil", ^{
-                @try {
-                    [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:nil applicationPassword:@"pwd"];
-                        [builder setMerchantId:@"merchantId"];
-                        [builder setContactFieldId:@"contactFieldId"];
-
-                    }];
-                    fail(@"Expected Exception when applicationCode is nil!");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw exception when secret is nil", ^{
-                @try {
-                    [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"test1" applicationPassword:nil];
-                        [builder setMerchantId:@"merchantId"];
-                        [builder setContactFieldId:@"contactFieldId"];
-
-                    }];
-                    fail(@"Expected Exception when applicationPassword is nil!");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
         });
 
         describe(@"setMerchantId", ^{
@@ -84,19 +56,6 @@ SPEC_BEGIN(BuilderTest)
             });
         });
         describe(@"setContactFieldId", ^{
-
-            it(@"should throw exception when contactFieldId is nil", ^{
-                @try {
-                    [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"code" applicationPassword:@"pass"];
-                        [builder setMerchantId:@"merchantId"];
-                        [builder setContactFieldId:nil];
-                    }];
-                    fail(@"Expected Exception when contactFieldId is nil!");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
 
             it(@"should set contactFieldId on EMSConfig", ^{
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {

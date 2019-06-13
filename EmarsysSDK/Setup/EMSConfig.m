@@ -11,10 +11,6 @@
     EMSConfigBuilder *builder = [EMSConfigBuilder new];
     builderBlock(builder);
 
-    NSParameterAssert(builder.applicationCode);
-    NSParameterAssert(builder.applicationPassword);
-    NSParameterAssert(builder.contactFieldId);
-
     return [[EMSConfig alloc] initWithBuilder:builder];
 }
 

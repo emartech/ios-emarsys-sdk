@@ -3,9 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSFlipperFeatures.h"
 
 @class EMSConfig;
+@protocol EMSFlipperFeature;
 
 NS_ASSUME_NONNULL_BEGIN
 

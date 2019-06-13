@@ -3,6 +3,7 @@
 //
 
 #import "EMSConfigBuilder.h"
+#import "EMSFlipperFeatures.h"
 
 @implementation EMSConfigBuilder
 
