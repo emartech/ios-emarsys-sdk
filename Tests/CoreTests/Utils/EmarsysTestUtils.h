@@ -8,8 +8,6 @@
 
 @interface Emarsys ()
 
-@property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
-
 + (EMSSQLiteHelper *)sqliteHelper;
 
 @end
