@@ -51,15 +51,15 @@
                                            parameters:parameters]);
 }
 
-- (void)setCustomerWithId:(NSString *)customerId {
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"customerId"] = customerId;
+    parameters[@"customerId"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters]);
 }
 
-- (void)clearCustomer {
+- (void)clearContact {
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:nil]);

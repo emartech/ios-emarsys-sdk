@@ -16,12 +16,12 @@ SPEC_BEGIN(PredictInternalTests)
 
         describe(@"setContactWithContactFieldValue:", ^{
 
-            it(@"should throw exception when customerId is nil", ^{
+            it(@"should throw exception when contactFieldValue is nil", ^{
                 @try {
-                    [[PredictInternal new] setCustomerWithId:nil];
-                    fail(@"Expected Exception when customerId is nil!");
+                    [[PredictInternal new] setContactWithContactFieldValue:nil];
+                    fail(@"Expected Exception when contactFieldValue is nil!");
                 } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: customerId"];
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: contactFieldValue"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -34,7 +34,7 @@ SPEC_BEGIN(PredictInternalTests)
                                                                              requestManager:requestManagerMock];
 
                 [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
-                [internal setCustomerWithId:customerId];
+                [internal setContactWithContactFieldValue:customerId];
             });
 
         });
@@ -300,7 +300,7 @@ SPEC_BEGIN(PredictInternalTests)
 
                 PredictInternal *internal = [[PredictInternal alloc] initWithRequestContext:requestContext
                                                                              requestManager:requestManager];
-                [internal clearCustomer];
+                [internal clearContact];
             });
         });
 SPEC_END

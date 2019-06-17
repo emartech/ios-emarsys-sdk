@@ -48,7 +48,7 @@
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);
-    [EMSDependencyInjection.dependencyContainer.predict setCustomerWithId:contactFieldValue];
+    [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldValue:contactFieldValue];
     [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
                                                                              completionBlock:completionBlock];
 }
@@ -58,7 +58,7 @@
 }
 
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [EMSDependencyInjection.dependencyContainer.predict clearCustomer];
+    [EMSDependencyInjection.dependencyContainer.predict clearContact];
     [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
 }
 

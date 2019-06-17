@@ -15,10 +15,6 @@
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
                         requestManager:(EMSRequestManager *)requestManager;
 
-- (void)setCustomerWithId:(NSString *)customerId;
-
-- (void)clearCustomer;
-
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
 
 - (void)trackItemViewWithItemId:(NSString *)itemId;

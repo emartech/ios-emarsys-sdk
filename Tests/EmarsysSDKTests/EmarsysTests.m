@@ -311,7 +311,7 @@ SPEC_BEGIN(EmarsysTests)
 
             describe(@"setCustomerWithCustomerId:resultBlock:", ^{
                 it(@"should delegate the call to predictInternal", ^{
-                    [[predict should] receive:@selector(setCustomerWithId:)
+                    [[predict should] receive:@selector(setContactWithContactFieldValue:)
                                 withArguments:customerId];
                     [Emarsys setContactWithContactFieldValue:customerId];
                 });
@@ -342,7 +342,7 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should delegate call to Predict", ^{
-                    [[predict should] receive:@selector(clearCustomer)];
+                    [[predict should] receive:@selector(clearContact)];
 
                     [Emarsys clearContact];
                 });

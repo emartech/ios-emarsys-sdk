@@ -26,12 +26,12 @@
     return self;
 }
 
-- (void)setCustomerWithId:(NSString *)customerId {
-    NSParameterAssert(customerId);
-    [self.requestContext setCustomerId:customerId];
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+    NSParameterAssert(contactFieldValue);
+    [self.requestContext setCustomerId:contactFieldValue];
 }
 
-- (void)clearCustomer {
+- (void)clearContact {
     [self.requestContext setCustomerId:nil];
     [self.requestContext setVisitorId:nil];
 }
