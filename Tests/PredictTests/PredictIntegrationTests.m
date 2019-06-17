@@ -80,19 +80,12 @@ SPEC_BEGIN(PredictIntegrationTests)
 
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                 [builder setContactFieldId:@3];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
             }];
-            if (config.applicationCode) {
-                [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
-            }
-            if (config.merchantId) {
-                [MEExperimental enableFeature:EMSInnerFeature.predict];
-            }
+            [MEExperimental enableFeature:EMSInnerFeature.predict];
 
             expectations = @[
-                [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"],
                 [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
             dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
                                                                                    expectations:expectations];
@@ -196,19 +189,16 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"visitorId", ^{
 
             it(@"should simulate login flow", ^{
-                XCTestExpectation *expectation0 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
-                XCTestExpectation *expectation1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
-                XCTestExpectation *expectation2 = [[XCTestExpectation alloc] initWithDescription:@"waitForClearCustomer"];
-                XCTestExpectation *expectation3 = [[XCTestExpectation alloc] initWithDescription:@"waitForSetCustomer"];
-                XCTestExpectation *expectation4 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
-                [dependencyContainer setExpectations:[@[expectation0, expectation1, expectation2, expectation3, expectation4] mutableCopy]];
+                XCTestExpectation *expectationSearchTerm1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
+                XCTestExpectation *expectationSearchTerm2 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
+                [dependencyContainer setExpectations:[@[expectationSearchTerm1, expectationSearchTerm2] mutableCopy]];
 
                 NSString *expectedQueryParams = @"q=searchTerm";
                 NSString *visitorId;
                 NSString *visitorId2;
 
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-                [EMSWaiter waitForExpectations:@[expectation1]
+                [EMSWaiter waitForExpectations:@[expectationSearchTerm1]
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
@@ -217,15 +207,11 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [[visitorId shouldNot] beNil];
 
                 [Emarsys clearContact];
-                [EMSWaiter waitForExpectations:@[expectation2]
-                                       timeout:10];
 
                 [Emarsys setContactWithContactFieldValue:@"test@test.com"];
-                [EMSWaiter waitForExpectations:@[expectation3]
-                                       timeout:10];
 
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-                [EMSWaiter waitForExpectations:@[expectation4]
+                [EMSWaiter waitForExpectations:@[expectationSearchTerm2]
                                        timeout:10];
 
                 [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
