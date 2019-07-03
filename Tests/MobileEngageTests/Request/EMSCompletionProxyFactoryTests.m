@@ -5,9 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSCompletionProxyFactory.h"
-#import "EMSRESTClient.h"
-#import "EMSRequestFactory.h"
-#import "EMSRefreshTokenCompletionProxy.h"
+#import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSContactTokenResponseHandler.h"
 
 @interface EMSCompletionProxyFactoryTests : XCTestCase
@@ -94,9 +92,9 @@
                                                                    successBlock:nil
                                                                      errorBlock:nil];
 
-    XCTAssertEqualObjects([proxy class], [EMSRefreshTokenCompletionProxy class]);
+    XCTAssertEqualObjects([proxy class], [EMSMobileEngageRefreshTokenCompletionProxy class]);
 
-    EMSRefreshTokenCompletionProxy *refreshTokenCompletionProxy = (EMSRefreshTokenCompletionProxy *) proxy;
+    EMSMobileEngageRefreshTokenCompletionProxy *refreshTokenCompletionProxy = (EMSMobileEngageRefreshTokenCompletionProxy *) proxy;
 
     XCTAssertEqualObjects(refreshTokenCompletionProxy.completionProxy, parentGeneratedProxy);
 }

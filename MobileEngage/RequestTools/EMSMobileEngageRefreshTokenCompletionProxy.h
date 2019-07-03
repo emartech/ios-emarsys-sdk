@@ -11,7 +11,7 @@
 @class EMSRequestFactory;
 @class EMSContactTokenResponseHandler;
 
-@interface EMSRefreshTokenCompletionProxy : NSObject <EMSRESTClientCompletionProxyProtocol>
+@interface EMSMobileEngageRefreshTokenCompletionProxy : NSObject <EMSRESTClientCompletionProxyProtocol>
 
 @property(nonatomic, readonly) id <EMSRESTClientCompletionProxyProtocol> completionProxy;
 @property(nonatomic, readonly) EMSRESTClient *restClient;
