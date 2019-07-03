@@ -40,9 +40,7 @@
 
 SPEC_BEGIN(EmarsysTests)
 
-
         context(@"EmarsysTests", ^{
-
 
             __block id engage;
             __block id push;
@@ -311,6 +309,15 @@ SPEC_BEGIN(EmarsysTests)
 
             describe(@"setCustomerWithCustomerId:resultBlock:", ^{
                 it(@"should delegate the call to predictInternal", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setMerchantId:@"1428C8EE286EC34B"];
+                        [builder setContactFieldId:@3];
+                    }];
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
                     [[predict should] receive:@selector(setContactWithContactFieldValue:)
                                 withArguments:customerId];
                     [Emarsys setContactWithContactFieldValue:customerId];
@@ -342,6 +349,15 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 it(@"should delegate call to Predict", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setMerchantId:@"1428C8EE286EC34B"];
+                        [builder setContactFieldId:@3];
+                    }];
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
                     [[predict should] receive:@selector(clearContact)];
 
                     [Emarsys clearContact];

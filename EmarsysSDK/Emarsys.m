@@ -48,9 +48,13 @@
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldValue);
-    [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldValue:contactFieldValue];
-    [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
-                                                                             completionBlock:completionBlock];
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
+                                                                                 completionBlock:completionBlock];
+    }
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
+        [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldValue:contactFieldValue];
+    }
 }
 
 + (void)clearContact {
@@ -58,8 +62,12 @@
 }
 
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [EMSDependencyInjection.dependencyContainer.predict clearContact];
-    [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
+    }
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
+        [EMSDependencyInjection.dependencyContainer.predict clearContact];
+    }
 }
 
 + (void)trackCustomEventWithName:(NSString *)eventName
