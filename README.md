@@ -5,17 +5,21 @@ This SDK is still in Pilot phase, please only use if you have a pilot agreement 
 If you are looking for our recommended SDK then please head to [Mobile Engage SDK](https://github.com/emartech/ios-mobile-engage-sdk.git "Mobile Engage SDK")
 
 #### Contents
-- [What is the Emarsys SDK?](#what-is-the-emarsys-sdk?)
-- [Why Emarsys SDK over Mobile Engage SDK?](#why-emarsys-sdk-over-mobile-engage-sdk?)
-    - [The workflow for linking/unlinking a contact to a device was too complex](#the-workflow-for-linking/unlinking-a-contact-to-a-device-was-too-complex)
-    - [The API was stateful and limited our scalability](#the-api-was-stateful-and-limited-our-scalability)
-    - [Swift first approach](#swift-first-approach)
-    - [Repetition of arguments](#repetition-of-arguments)
-    - [Unification of github projects](#unification-of-github-projects)
-- [Setup](#setup)
-    - [Installation with CocoaPods](#1-installation-with-cocoapods)
-    - [Requirements](#2-requirements)
-- [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki)
+- [What is the Emarsys SDK?](#what-is-the-emarsys-sdk "What is EmarsysSDK?")
+- [Why Emarsys SDK over Mobile Engage SDK?](#why-emarsys-sdk-over-mobile-engage-sdk "Why use EmarsysSDK")
+    - [The workflow for linking/unlinking a contact to a device was too complex](#the-workflow-for-linkingunlinking-a-contact-to-a-device-was-too-complex "Contact workflow")
+    - [The API was stateful and limited our scalability](#the-api-was-stateful-and-limited-our-scalability "Scalability")
+    - [Swift first approach](#swift-first-approach "Swift first")
+    - [Repetition of arguments](#repetition-of-arguments "Repetition of arguments")
+    - [Unification of github projects](#unification-of-github-projects "Unification")
+- [Setup](#setup "Setup")
+    - [Installation with CocoaPods](#1-installation-with-cocoapods "CocoaPods")
+    - [Requirements](#2-requirements "Requirements")
+- [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki "Wiki")
+- [DeepLink](https://github.com/emartech/ios-emarsys-sdk/wiki/deeplink "DeepLink")
+- [Glossary](https://github.com/emartech/ios-emarsys-sdk/wiki/glossary "Glossary")
+- [Migrate from MobileEngage](https://github.com/emartech/ios-emarsys-sdk/wiki/migrate-from-mobile-engage "Migration guide")
+- [Rich Push Notifications](https://github.com/emartech/ios-emarsys-sdk/wiki/rich-push-notifications "Rich Push notifications")
 
 ## What is the Emarsys SDK?
 
