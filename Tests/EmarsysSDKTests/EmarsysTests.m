@@ -121,9 +121,14 @@ SPEC_BEGIN(EmarsysTests)
                     [[(NSObject *) [Emarsys notificationCenterDelegate] shouldNot] beNil];
                 });
 
-                it(@"register triggers", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
+                it(@"register triggers_when_PredictTurnedOn", ^{
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                            [builder setMerchantId:@"1428C8EE286EC34B"];
+                            [builder setContactFieldId:@3];
+                        }]
+                                         dependencyContainer:nil];
                     NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
                     NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
@@ -132,6 +137,22 @@ SPEC_BEGIN(EmarsysTests)
                     [[theValue([afterInsertTriggers count]) should] equal:theValue(2)];
                     [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.loggerTrigger];
                     [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.predictTrigger];
+                });
+
+                it(@"register triggers", ^{
+                    [EmarsysTestUtils tearDownEmarsys];
+                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                            [builder setContactFieldId:@3];
+                        }]
+                                         dependencyContainer:nil];
+                    NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
+
+                    NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                                                             withEvent:[EMSDBTriggerEvent insertEvent]
+                                                                                              withType:[EMSDBTriggerType afterType]]];
+                    [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
+                    [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.loggerTrigger];
                 });
 
                 it(@"should throw an exception when there is no config set", ^{
