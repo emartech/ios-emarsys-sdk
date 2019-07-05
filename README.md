@@ -12,7 +12,10 @@ If you are looking for our recommended SDK then please head to [Mobile Engage SD
     - [Swift first approach](#swift-first-approach)
     - [Repetition of arguments](#repetition-of-arguments)
     - [Unification of github projects](#unification-of-github-projects)
-- [Documentation](#documentation)
+- [Setup](#setup)
+    - [Installation with CocoaPods](#1-installation-with-cocoapods)
+    - [Requirements](#2-requirements)
+- [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki)
 
 ## What is the Emarsys SDK?
 
@@ -38,7 +41,35 @@ We learned a lot from running Mobile Engage SDK in the past 2 years and managed 
 #####  Unification of github projects
 * The Predict SDK, The Emarsys core SDK, the Mobile Engage SDK and the corresponding sample app are all now in a single repository. You can now find up to date and tested usage examples easily
 [Emarsys setContactWithContactFieldValue:<contactFieldValue: NSString>
-### Documentation
+
+## Setup
+### 1. Installation with CocoaPods
+#### 1.1 Install CocoaPods
+CocoaPods is a dependency manager for iOS, which automates and simplifies the process of using 3rd-party libraries.
+You can install it with the following command:
+
+`$ gem install cocoapods`
+
+#### 1.2 Podfile
+To integrate the Emarsys SDK into your Xcode project using CocoaPods, specify it in your Podfile:
+```ruby
+platform :ios, '11.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+target "<TargetName>" do
+	pod ‘EmarsysSDK’, '~> 2.0.0’
+end
+```
+> Wherever you see <TargetName> or anything similar in <> brackets, you should change those according to your own naming convention.
+
+#### 1.3 Install Pods
+After creating the Podfile, you need to execute the command below to download dependencies:
+`pod install`
+### 2. Requirements
+* The iOS target should be iOS 11 or higher.
+* In order to be able to send push messages to your app, you need to have certifications from Apple Push Notification service (APNs).
+
 > `Note`
 >
 > For further informations about how to use our SDK please visit our [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki "Wiki")
