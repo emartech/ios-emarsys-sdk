@@ -4,8 +4,9 @@
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSMacros.h"
 #import "EMSMethodNotAllowed.h"
+#import "Emarsys.h"
 
-#define klass [EMSLoggingDeepLinkInternal class]
+#define klass [Emarsys class]
 
 @implementation EMSLoggingDeepLinkInternal
 

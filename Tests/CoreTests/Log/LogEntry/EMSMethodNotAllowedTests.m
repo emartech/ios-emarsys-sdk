@@ -33,6 +33,28 @@
     }
 }
 
+- (void)testInitProto_shouldNotAccept_nilProtocol {
+    @try {
+        [[EMSMethodNotAllowed alloc] initWithProtocol:nil
+                                                  sel:_cmd
+                                           parameters:@{@"key": @"value"}];
+        XCTFail(@"Expected exception when proto is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: proto");
+    }
+}
+
+- (void)testInitProto_shouldNotAccept_nilSel {
+    @try {
+        [[EMSMethodNotAllowed alloc] initWithProtocol:@protocol(EMSLogEntryProtocol)
+                                                  sel:nil
+                                           parameters:@{@"key": @"value"}];
+        XCTFail(@"Expected exception when sel is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: sel");
+    }
+}
+
 - (void)testTopic {
     EMSMethodNotAllowed *methodNotAllowed = [[EMSMethodNotAllowed alloc] initWithClass:[NSObject class]
                                                                                    sel:_cmd

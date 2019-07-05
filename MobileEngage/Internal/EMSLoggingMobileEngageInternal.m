@@ -4,8 +4,9 @@
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSMethodNotAllowed.h"
 #import "EMSMacros.h"
+#import "Emarsys.h"
 
-#define klass [EMSLoggingMobileEngageInternal class]
+#define klass [Emarsys class]
 
 @implementation EMSLoggingMobileEngageInternal
 
