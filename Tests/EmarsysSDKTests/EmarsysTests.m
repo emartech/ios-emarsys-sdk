@@ -37,6 +37,8 @@
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -309,45 +311,6 @@ SPEC_BEGIN(EmarsysTests)
                 });
             });
 
-            describe(@"setCustomerWithCustomerId:resultBlock:", ^{
-                it(@"should delegate the call to predictInternal", ^{
-                    [[predict should] receive:@selector(setContactWithContactFieldValue:)
-                                withArguments:customerId];
-                    [Emarsys setContactWithContactFieldValue:customerId];
-                });
-
-                it(@"should delegate the call to mobileEngageInternal", ^{
-                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)
-                               withArguments:customerId, kw_any()];
-                    [Emarsys setContactWithContactFieldValue:customerId];
-                });
-
-                it(@"should delegate the call to mobileEngageInternal with customerId and completionBlock", ^{
-                    void (^ const completionBlock)(NSError *) = ^(NSError *error) {
-                    };
-
-                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)
-                               withArguments:customerId, completionBlock];
-
-                    [Emarsys setContactWithContactFieldValue:customerId
-                                             completionBlock:completionBlock];
-                });
-            });
-
-            describe(@"clearContact", ^{
-                it(@"should delegate call to MobileEngage", ^{
-                    [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
-
-                    [Emarsys clearContact];
-                });
-
-                it(@"should delegate call to Predict", ^{
-                    [[predict should] receive:@selector(clearContact)];
-
-                    [Emarsys clearContact];
-                });
-            });
-
             describe(@"trackDeepLinkWithUserActivity:sourceHandler:", ^{
 
                 it(@"should delegate call to MobileEngage", ^{
@@ -413,6 +376,139 @@ SPEC_BEGIN(EmarsysTests)
                                                completionBlock:completionBlock];
                 });
             });
+
+            describe(@"setContactWithContactFieldValue delegates properly based on enabled features", ^{
+                beforeEach(^{
+                    [EmarsysTestUtils tearDownEmarsys];
+                });
+
+                it(@"setContactWithContactFieldValue is not called by predict when predict is disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict shouldNot] receive:@selector(setContactWithContactFieldValue:)];
+
+                    [Emarsys setContactWithContactFieldValue:@"contact"];
+                });
+
+                it(@"setContactWithContactFieldValue is called by predict when predict is enabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMerchantId:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict should] receive:@selector(setContactWithContactFieldValue:)];
+
+                    [Emarsys setContactWithContactFieldValue:@"contact"];
+                });
+
+                it(@"setContactWithContactFieldValue is not called by mobileEngage when mobileEngage is disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMerchantId:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
+
+                    [Emarsys setContactWithContactFieldValue:@"contact"];
+                });
+
+                it(@"setContactWithContactFieldValue is called by mobileEngage when mobileEngage is enabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
+
+                    [Emarsys setContactWithContactFieldValue:@"contact"];
+                });
+
+                it(@"setContactWithContactFieldValue is only called once when mobileEngage and predict are disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict shouldNot] receive:@selector(setContactWithContactFieldValue:)];
+                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
+
+                    [Emarsys setContactWithContactFieldValue:@"contact"];
+                });
+            });
+
+            describe(@"clearContact delegates properly based on enabled features", ^{
+                beforeEach(^{
+                    [EmarsysTestUtils tearDownEmarsys];
+                });
+
+                it(@"clearContact is not called by predict when predict is disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict shouldNot] receive:@selector(clearContact)];
+
+                    [Emarsys clearContact];
+                });
+
+                it(@"clearContact is called by predict when predict is enabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMerchantId:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict should] receive:@selector(clearContact)];
+
+                    [Emarsys clearContact];
+                });
+
+                it(@"clearContact is not called by mobileEngage when mobileEngage is disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMerchantId:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[engage shouldNot] receive:@selector(clearContact)];
+
+                    [Emarsys clearContact];
+                });
+
+                it(@"clearContact is called by mobileEngage when mobileEngage is enabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
+
+                    [Emarsys clearContact];
+                });
+
+                it(@"clearContact is only called once when mobileEngage and predict are disabled", ^{
+                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                    }];
+                    [EmarsysTestUtils setupEmarsysWithConfig:config
+                                         dependencyContainer:dependencyContainer];
+
+                    [[predict shouldNot] receive:@selector(clearContact)];
+                    [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
+
+                    [Emarsys clearContact];
+                });
+            });
+
         });
         context(@"production setup", ^{
 
@@ -421,10 +517,10 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }]
+                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                                [builder setMerchantId:@"1428C8EE286EC34B"];
+                                [builder setContactFieldId:@3];
+                            }]
                                          dependencyContainer:nil];
                 });
 
@@ -480,7 +576,7 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        }]
+                            }]
                                          dependencyContainer:nil];
                 });
 
@@ -530,7 +626,5 @@ SPEC_BEGIN(EmarsysTests)
                     });
                 });
             });
-
         });
-
 SPEC_END
