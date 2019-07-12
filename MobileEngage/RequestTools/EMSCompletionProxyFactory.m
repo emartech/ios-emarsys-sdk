@@ -3,7 +3,7 @@
 //
 
 #import "EMSCompletionProxyFactory.h"
-#import "EMSRefreshTokenCompletionProxy.h"
+#import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSContactTokenResponseHandler.h"
 
 @interface EMSCompletionProxyFactory ()
@@ -44,10 +44,10 @@
     id <EMSRESTClientCompletionProxyProtocol> proxy = [super createWithWorker:worker
                                                                  successBlock:successBlock
                                                                    errorBlock:errorBlock];
-    return [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:proxy
-                                                                restClient:self.restClient
-                                                            requestFactory:self.requestFactory
-                                                    contactResponseHandler:self.contactResponseHandler];
+    return [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:proxy
+                                                                            restClient:self.restClient
+                                                                        requestFactory:self.requestFactory
+                                                                contactResponseHandler:self.contactResponseHandler];
 }
 
 @end

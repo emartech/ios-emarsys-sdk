@@ -2,12 +2,13 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 
-#import "EMSRefreshTokenCompletionProxy.h"
+#import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSResponseModel.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSContactTokenResponseHandler.h"
+#import "NSURL+MobileEngage.h"
 
-@implementation EMSRefreshTokenCompletionProxy
+@implementation EMSMobileEngageRefreshTokenCompletionProxy
 
 - (instancetype)initWithCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy
                              restClient:(EMSRESTClient *)restClient
@@ -29,7 +30,7 @@
 - (EMSRESTClientCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
-        if (responseModel.statusCode == 401) {
+        if (responseModel.statusCode == 401 && requestModel.url.isV3) {
             weakSelf.originalRequestModel = requestModel;
             [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
                                      coreCompletionProxy:weakSelf];

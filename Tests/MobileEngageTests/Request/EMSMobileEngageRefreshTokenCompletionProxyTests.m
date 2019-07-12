@@ -4,24 +4,25 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSRefreshTokenCompletionProxy.h"
+#import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSResponseModel.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "MEEndpoints.h"
 
-@interface EMSRefreshTokenCompletionProxyTests : XCTestCase
+@interface EMSMobileEngageRefreshTokenCompletionProxyTests : XCTestCase
 
 @property(nonatomic, strong) EMSRESTClient *mockRestClient;
 @property(nonatomic, strong) id <EMSRESTClientCompletionProxyProtocol> mockCompletionProxy;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *mockResponseHandler;
 @property(nonatomic, strong) NSError *mockError;
-@property(nonatomic, strong) EMSRefreshTokenCompletionProxy *refreshCompletionProxy;
+@property(nonatomic, strong) EMSMobileEngageRefreshTokenCompletionProxy *refreshCompletionProxy;
 
 @end
 
-@implementation EMSRefreshTokenCompletionProxyTests
+@implementation EMSMobileEngageRefreshTokenCompletionProxyTests
 
 - (void)setUp {
     _mockRestClient = OCMClassMock([EMSRESTClient class]);
@@ -31,10 +32,10 @@
     NSError *error = [NSError new];
     _mockError = OCMPartialMock(error);
 
-    _refreshCompletionProxy = [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
-                                                                                   restClient:self.mockRestClient
-                                                                               requestFactory:self.mockRequestFactory
-                                                                       contactResponseHandler:self.mockResponseHandler];
+    _refreshCompletionProxy = [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
+                                                                                               restClient:self.mockRestClient
+                                                                                           requestFactory:self.mockRequestFactory
+                                                                                   contactResponseHandler:self.mockResponseHandler];
 }
 
 - (void)tearDown {
@@ -44,10 +45,10 @@
 
 - (void)testInit_completionProxy_mustNotBeNil {
     @try {
-        [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:nil
-                                                             restClient:self.mockRestClient
-                                                         requestFactory:self.mockRequestFactory
-                                                 contactResponseHandler:self.mockResponseHandler];
+        [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:nil
+                                                                         restClient:self.mockRestClient
+                                                                     requestFactory:self.mockRequestFactory
+                                                             contactResponseHandler:self.mockResponseHandler];
         XCTFail(@"Expected Exception when completionProxy is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: completionProxy"]);
@@ -56,10 +57,10 @@
 
 - (void)testInit_restClient_mustNotBeNil {
     @try {
-        [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
-                                                             restClient:nil
-                                                         requestFactory:self.mockRequestFactory
-                                                 contactResponseHandler:self.mockResponseHandler];
+        [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
+                                                                         restClient:nil
+                                                                     requestFactory:self.mockRequestFactory
+                                                             contactResponseHandler:self.mockResponseHandler];
         XCTFail(@"Expected Exception when restClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: restClient"]);
@@ -68,10 +69,10 @@
 
 - (void)testInit_requestFactory_mustNotBeNil {
     @try {
-        [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
-                                                             restClient:self.mockRestClient
-                                                         requestFactory:nil
-                                                 contactResponseHandler:self.mockResponseHandler];
+        [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
+                                                                         restClient:self.mockRestClient
+                                                                     requestFactory:nil
+                                                             contactResponseHandler:self.mockResponseHandler];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestFactory"]);
@@ -80,10 +81,10 @@
 
 - (void)testInit_contactResponseHandler_mustNotBeNil {
     @try {
-        [[EMSRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
-                                                             restClient:self.mockRestClient
-                                                         requestFactory:self.mockRequestFactory
-                                                 contactResponseHandler:nil];
+        [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
+                                                                         restClient:self.mockRestClient
+                                                                     requestFactory:self.mockRequestFactory
+                                                             contactResponseHandler:nil];
         XCTFail(@"Expected Exception when contactResponseHandler is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: contactResponseHandler"]);
@@ -115,8 +116,26 @@
     XCTAssertEqualObjects(returnedError, self.mockError);
 }
 
-- (void)testCompletionBlock_shouldRefreshToken {
+- (void)testCompletionBlock_delegateToCompletionProxy_when_statusCode401_andNotV3 {
     EMSRequestModel *requestModel = [self generateRequestModel];
+    EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
+
+    OCMReject([self.mockResponseHandler processResponse:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    OCMStub([self.mockCompletionProxy completionBlock]).andReturn(^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+        [expectation fulfill];
+    });
+
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testCompletionBlock_shouldRefreshToken_when_requestIsV3 {
+    EMSRequestModel *requestModel = [self generateRequestModelWithUrlString:EVENT_URL(@"testApplicationCode")];
     EMSRequestModel *requestModelForRefresh = [self generateRequestModel];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
 
@@ -133,10 +152,10 @@
 - (void)testCompletionBlock_shouldHandleResponse {
     EMSRequestModel *requestModel = [self generateRequestModel];
     EMSRequestModel *mockOriginalRequestModel = [self generateRequestModel];
-    EMSResponseModel *responseModelForRefresh = [self generateResponseWithStatusCode:401];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
 
-    self.refreshCompletionProxy.completionBlock(mockOriginalRequestModel, responseModelForRefresh, self.mockError);
+    self.refreshCompletionProxy.originalRequestModel = mockOriginalRequestModel;
+
     self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
 
     OCMVerify([self.mockResponseHandler processResponse:responseModel]);
@@ -164,8 +183,12 @@
 }
 
 - (EMSRequestModel *)generateRequestModel {
+    return [self generateRequestModelWithUrlString:@"https://www.emarsys.com"];
+}
+
+- (EMSRequestModel *)generateRequestModelWithUrlString:(NSString *)url {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://www.emarsys.com"];
+            [builder setUrl:url];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:@{@"payloadKey": @"payloadValue"}];
         }

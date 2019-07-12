@@ -5,16 +5,16 @@
 #import "EMSMacros.h"
 #import "EMSMethodNotAllowed.h"
 
-#define klass [EMSLoggingPredictInternal class]
+#define proto @protocol(EMSPredictProtocol)
 
 @implementation EMSLoggingPredictInternal
 
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"cartItems"] = [cartItems description];
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)trackPurchaseWithOrderId:(NSString *)orderId
@@ -22,47 +22,47 @@
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"orderId"] = orderId;
     parameters[@"cartItems"] = [items description];
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"categoryPath"] = categoryPath;
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"itemId"] = itemId;
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"searchTerm"] = searchTerm;
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"customerId"] = contactFieldValue;
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:parameters]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
 }
 
 - (void)clearContact {
-    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
-                                                  sel:_cmd
-                                           parameters:nil]);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil]);
 }
 
 @end
