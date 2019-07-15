@@ -1,12 +1,14 @@
 #!/bin/bash
 
 function askForSure {
-    read -p "Did you mean to release EmarsysSDK '$1'? " yn
-    case $yn in
-      [Yy]* ) release $1 ; break;;
-      [Nn]* ) exit;;
-      * ) echo "Please answer yes or no.";;
-    esac
+  while true; do
+      read -p "Did you mean to release EmarsysSDK and EmarsysNotificationService '$1'? " yn
+        case $yn in
+            [Yy]* ) release $1 ; break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+  done
 }
 
 function release {
@@ -19,14 +21,20 @@ function release {
 
   printf "Releasing version $VERSION_NUMBER\n";
 
-  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > MobileEngage/MobileEngageVersion.h
+  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > EmarsysSDK/EmarsysSDKVersion.h
 
   TEMPLATE="`cat EmarsysSDK.podspec.template`"
   PODSPEC="${TEMPLATE/<VERSION_NUMBER>/$VERSION_NUMBER}"
   PODSPEC="${PODSPEC/<COMMIT_REF>/:tag => spec.version}"
   printf "$PODSPEC" > EmarsysSDK.podspec
 
+  NSTEMPLATE="`cat EmarsysNotificationService.podspec.template`"
+  NSPODSPEC="${NSTEMPLATE/<VERSION_NUMBER>/$VERSION_NUMBER}"
+  NSPODSPEC="${NSPODSPEC/<COMMIT_REF>/:tag => spec.version}"
+  printf "$NSPODSPEC" > EmarsysNotificationService.podspec
+
   git add EmarsysSDK/EmarsysSDKVersion.h
+  git add EmarsysNotificationService.podspec
   git add EmarsysSDK.podspec
   git commit -m "chore(release): version set to $VERSION_NUMBER"
   git tag -a "$VERSION_NUMBER" -m "$VERSION_NUMBER"
@@ -35,6 +43,7 @@ function release {
   git push origin $VERSION_NUMBER
 
   pod spec lint
+  pod trunk push EmarsysNotificationService.podspec
   pod trunk push EmarsysSDK.podspec
 
   printf "[$VERSION_NUMBER] released, go eat some cookies."

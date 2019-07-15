@@ -28,7 +28,8 @@ function revoke {
       printf "$VERSION_NUMBER tag removed.\n"
 
       printf "Removing $VERSION_NUMBER from Cocoapod...\n"
-      pod trunk delete MobileEngageSDK $VERSION_NUMBER
+      pod trunk delete EmarsysNotificationService $VERSION_NUMBER
+      pod trunk delete EmarsysSDK $VERSION_NUMBER
       printf "Removed $VERSION_NUMBER from Cocoapod.\n"
       exit
   else
