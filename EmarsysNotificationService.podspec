@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
 	spec.summary              = 'Emarsys NotificationService'
 	spec.platform             = :ios, '11.0'
-	spec.source               = { :git => 'git@github.com:emartech/ios-emarsys-sdk.git', :tag => spec.version }
+	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
 	    'MobileEngage/RichNotificationExtension/**/*.{h,m}',
 	    'Core/Categories/NSError*.{h,m}',
