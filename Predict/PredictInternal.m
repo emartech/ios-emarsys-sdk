@@ -6,6 +6,7 @@
 #import "EMSRequestManager.h"
 #import "EMSShard.h"
 #import "EMSCartItemUtils.h"
+#import "EMSProduct.h"
 
 @interface PredictInternal ()
 
@@ -102,5 +103,14 @@
                                                   uuidProvider:self.requestContext.uuidProvider]];
 }
 
+- (void)recommendProducts:(EMSProductsBlock)productsBlock {
+    NSParameterAssert(productsBlock);
+    EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+        [builder setRequiredFieldsWithProductId:@"productId"
+                                          title:@"productTitle"
+                                        linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]];
+    }];
+    productsBlock(@[product], nil);
+}
 
 @end

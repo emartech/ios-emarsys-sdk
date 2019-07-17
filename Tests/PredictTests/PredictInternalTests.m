@@ -303,4 +303,17 @@ SPEC_BEGIN(PredictInternalTests)
                 [internal clearContact];
             });
         });
+
+        describe(@"recommendProducts:", ^{
+
+            it(@"should throw exception productBlocks is nil", ^{
+                @try {
+                    [[PredictInternal new] recommendProducts:nil];
+                    fail(@"Expected Exception when productBlocks is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: productsBlock"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
 SPEC_END

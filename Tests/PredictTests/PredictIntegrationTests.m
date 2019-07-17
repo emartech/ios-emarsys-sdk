@@ -221,4 +221,20 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
         });
 
+        describe(@"recommendProducts", ^{
+            it(@"should recommend products", ^{
+                __block NSArray *returnedProducts = nil;
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+                [Emarsys.predict recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                    returnedProducts = products;
+                    [expectation fulfill];
+                }];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:3];
+                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+                XCTAssertNotNil(returnedProducts);
+            });
+        });
+
 SPEC_END
