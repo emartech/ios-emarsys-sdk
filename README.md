@@ -1,8 +1,8 @@
 # PILOT VERSION
 
-This SDK is still in Pilot phase, please only use if you have a pilot agreement contract in place!
+This SDK is still in pilot phase, please only use if you have a pilot agreement contract in place!
 
-If you are looking for our recommended SDK then please head to [Mobile Engage SDK](https://github.com/emartech/ios-mobile-engage-sdk.git "Mobile Engage SDK")
+If you are looking for our recommended SDK, then please head to [Mobile Engage SDK](https://github.com/emartech/ios-mobile-engage-sdk.git "Mobile Engage SDK").
 
 #### Contents
 - [What is the Emarsys SDK?](#what-is-the-emarsys-sdk "What is EmarsysSDK?")
@@ -17,9 +17,9 @@ If you are looking for our recommended SDK then please head to [Mobile Engage SD
 
 ## What is the Emarsys SDK?
 
-The Emarsys SDK enables you to use Mobile Engage and Predict in a very straightforward way. By incorporating the SDK in your app, we support you, among other things, in handling credentials, API calls, tracking of opens and events as well as logins and logouts in the app.
+The Emarsys SDK enables you to use Mobile Engage and Predict in a very straightforward way. By incorporating the SDK in your app, we, among others, support you in handling credentials, API calls, tracking of opens and events as well as logins and logouts in the app.
 
-The Emarsys SDK is open sourced to enhance transparency and to remove privacy concerns. This also means that you can always be up-to-date with what we are working on.
+The Emarsys SDK is open-sourced to enhance transparency and to remove privacy concerns. This also means that you will always be up-to-date with what we are working on.
 
 Using the SDK is also beneficial from the product aspect: it simply makes it much easier to send push messages through your app. Please always use the latest version of the SDK in your app.
 
@@ -53,4 +53,4 @@ After creating the Podfile, you need to execute the command below to download de
 
 > `Note`
 >
-> For further informations about how to use our SDK please visit our [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki "Wiki")
+> For further information about how to use our SDK please visit our [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki "Wiki")
