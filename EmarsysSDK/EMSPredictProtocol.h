@@ -4,7 +4,11 @@
 #import <Foundation/Foundation.h>
 #import "EMSCartItemProtocol.h"
 
+@class EMSProduct;
+
 NS_ASSUME_NONNULL_BEGIN
+
+typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSError *_Nullable error);
 
 @protocol EMSPredictProtocol <NSObject>
 
@@ -18,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)trackItemViewWithItemId:(NSString *)itemId;
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock;
 
 @end
 
