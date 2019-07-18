@@ -71,4 +71,27 @@
     return self;
 }
 
+- (NSString *)description {
+    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ", NSStringFromClass([self class])];
+    [description appendFormat:@"self.productId=%@", self.productId];
+    [description appendFormat:@", self.title=%@", self.title];
+    [description appendFormat:@", self.linkUrl=%@", self.linkUrl];
+    [description appendFormat:@", self.customFields=%@", self.customFields];
+    [description appendFormat:@", self.imageUrl=%@", self.imageUrl];
+    [description appendFormat:@", self.zoomImageUrl=%@", self.zoomImageUrl];
+    [description appendFormat:@", self.categoryPath=%@", self.categoryPath];
+    [description appendFormat:@", self.available=%@", self.available];
+    [description appendFormat:@", self.productDescription=%@", self.productDescription];
+    [description appendFormat:@", self.price=%@", self.price];
+    [description appendFormat:@", self.msrp=%@", self.msrp];
+    [description appendFormat:@", self.album=%@", self.album];
+    [description appendFormat:@", self.actor=%@", self.actor];
+    [description appendFormat:@", self.artist=%@", self.artist];
+    [description appendFormat:@", self.author=%@", self.author];
+    [description appendFormat:@", self.brand=%@", self.brand];
+    [description appendFormat:@", self.year=%@", self.year];
+    [description appendString:@">"];
+    return description;
+}
+
 @end
