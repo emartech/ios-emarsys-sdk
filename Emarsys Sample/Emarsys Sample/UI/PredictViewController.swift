@@ -13,7 +13,8 @@ class PredictViewController: UIViewController {
     @IBOutlet weak var tfSearchTerm: UITextField!
     @IBOutlet weak var tvCartItems: UITextView!
     @IBOutlet weak var tfOrderId: UITextField!
-
+    @IBOutlet weak var tvRecommendation: UITextView!
+    
     //MARK: Variables
     var cartItems = [EMSCartItem]()
 
@@ -65,6 +66,16 @@ class PredictViewController: UIViewController {
         }
         Emarsys.predict.trackPurchase(withOrderId: orderId, items: cartItems)
     }
+
+    @IBAction func recommendProductsButtonClicked(_ sender: Any) {
+        Emarsys.predict.recommendProducts { [unowned self](products, error) in
+            guard let existingProducts = products else {
+                return
+            }
+            self.tvRecommendation.text = existingProducts.description
+        }
+    }
+    
 
     //MARK: Privates
     private func generateCartItem() -> EMSCartItem {
