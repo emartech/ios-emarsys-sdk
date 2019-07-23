@@ -15,12 +15,5 @@
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
                         requestManager:(EMSRequestManager *)requestManager;
 
-- (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath;
-
-- (void)trackItemViewWithItemId:(NSString *)itemId;
-
-- (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
-
-- (void)trackTag:(NSString *)tag withAttributes:(NSDictionary *)attributes;
 
 @end
