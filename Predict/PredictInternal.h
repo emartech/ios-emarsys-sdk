@@ -21,4 +21,6 @@
 
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
 
+- (void)trackTag:(NSString *)tag withAttributes:(NSDictionary *)attributes;
+
 @end
