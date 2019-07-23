@@ -188,7 +188,7 @@ SPEC_BEGIN(PredictInternalTests)
             it(@"should throw exception when searchTerm is nil", ^{
                 @try {
                     [[PredictInternal new] trackSearchWithSearchTerm:nil];
-                    fail(@"Expected Exception when cartItems is nil!");
+                    fail(@"Expected Exception when searchTerm is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: searchTerm"];
                     [[theValue(exception) shouldNot] beNil];
