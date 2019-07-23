@@ -41,8 +41,8 @@
     NSParameterAssert(categoryPath);
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_item_category_view"];
-            [builder addPayloadEntryWithKey:@"vc"
-                                      value:categoryPath];
+                [builder addPayloadEntryWithKey:@"vc"
+                                          value:categoryPath];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -54,7 +54,7 @@
     NSParameterAssert(itemId);
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_item_view"];
-            [builder addPayloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
+                [builder addPayloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -67,8 +67,8 @@
 
     [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_cart"];
-            [builder addPayloadEntryWithKey:@"cv" value:@"1"];
-            [builder addPayloadEntryWithKey:@"ca" value:[EMSCartItemUtils queryParamFromCartItems:cartItems]];
+                [builder addPayloadEntryWithKey:@"cv" value:@"1"];
+                [builder addPayloadEntryWithKey:@"ca" value:[EMSCartItemUtils queryParamFromCartItems:cartItems]];
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
@@ -79,7 +79,7 @@
 
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_search_term"];
-            [builder addPayloadEntryWithKey:@"q" value:searchTerm];
+                [builder addPayloadEntryWithKey:@"q" value:searchTerm];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -94,10 +94,10 @@
 
     [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_purchase"];
-            [builder addPayloadEntryWithKey:@"co"
-                                      value:[EMSCartItemUtils queryParamFromCartItems:items]];
-            [builder addPayloadEntryWithKey:@"oi"
-                                      value:orderId];
+                [builder addPayloadEntryWithKey:@"co"
+                                          value:[EMSCartItemUtils queryParamFromCartItems:items]];
+                [builder addPayloadEntryWithKey:@"oi"
+                                          value:orderId];
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
