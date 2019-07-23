@@ -67,10 +67,10 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_category_view"];
-                        [builder addPayloadEntryWithKey:@"vc"
-                                                  value:categoryPath];
-                    }
+                            [builder setType:@"predict_item_category_view"];
+                            [builder addPayloadEntryWithKey:@"vc"
+                                                      value:categoryPath];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -115,10 +115,10 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_view"];
-                        [builder addPayloadEntryWithKey:@"v"
-                                                  value:[NSString stringWithFormat:@"i:%@", itemId]];
-                    }
+                            [builder setType:@"predict_item_view"];
+                            [builder addPayloadEntryWithKey:@"v"
+                                                      value:[NSString stringWithFormat:@"i:%@", itemId]];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -176,8 +176,8 @@ SPEC_BEGIN(PredictInternalTests)
 
 
                 [internal trackCartWithCartItems:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
                 ]];
             });
 
@@ -209,10 +209,10 @@ SPEC_BEGIN(PredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_search_term"];
-                        [builder addPayloadEntryWithKey:@"q"
-                                                  value:searchTerm];
-                    }
+                            [builder setType:@"predict_search_term"];
+                            [builder addPayloadEntryWithKey:@"q"
+                                                      value:searchTerm];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -281,8 +281,8 @@ SPEC_BEGIN(PredictInternalTests)
 
 
                 [internal trackPurchaseWithOrderId:orderId items:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
                 ]];
             });
 
