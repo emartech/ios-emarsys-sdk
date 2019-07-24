@@ -23,6 +23,8 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
 
+- (void)trackTag:(NSString *)tag withAttributes:(nullable NSDictionary *)attributes;
+
 - (void)recommendProducts:(EMSProductsBlock)productsBlock;
 
 @end
