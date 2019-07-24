@@ -5,7 +5,7 @@
 #import <XCTest/XCTest.h>
 #import "Kiwi.h"
 #import "Emarsys.h"
-#import "PredictInternal.h"
+#import "EMSPredictInternal.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSDBTriggerKey.h"
 #import "EMSDependencyContainer.h"
@@ -37,8 +37,6 @@
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
-#import "MEExperimental.h"
-#import "EMSInnerFeature.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -49,7 +47,7 @@ SPEC_BEGIN(EmarsysTests)
             __block id engage;
             __block id push;
             __block id deepLink;
-            __block PredictInternal *predict;
+            __block EMSPredictInternal *predict;
             __block MERequestContext *requestContext;
             __block EMSDeviceInfo *deviceInfo;
             __block EMSRequestFactory *requestFactory;
@@ -67,7 +65,7 @@ SPEC_BEGIN(EmarsysTests)
                 engage = [KWMock nullMockForProtocol:@protocol(EMSMobileEngageProtocol)];
                 push = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
                 deepLink = [KWMock nullMockForProtocol:@protocol(EMSDeepLinkProtocol)];
-                predict = [PredictInternal nullMock];
+                predict = [EMSPredictInternal nullMock];
                 requestContext = [MERequestContext nullMock];
                 deviceInfo = [EMSDeviceInfo nullMock];
                 [requestContext stub:@selector(meId) andReturn:@"fakeMeId"];
@@ -568,8 +566,8 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 describe(@"predict", ^{
-                    it(@"should be PredictInternal", ^{
-                        [[((NSObject *) Emarsys.predict) should] beKindOfClass:[PredictInternal class]];
+                    it(@"should be EMSPredictInternal", ^{
+                        [[((NSObject *) Emarsys.predict) should] beKindOfClass:[EMSPredictInternal class]];
                     });
                 });
 

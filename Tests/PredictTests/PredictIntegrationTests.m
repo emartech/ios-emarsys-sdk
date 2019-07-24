@@ -231,7 +231,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                     [expectation fulfill];
                 }];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:3];
+                                                                      timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
                 XCTAssertNotNil(returnedProducts);
             });

@@ -4,7 +4,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Emarsys.h"
-#import "PredictInternal.h"
+#import "EMSPredictInternal.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "EMSDependencyInjection.h"

@@ -12,7 +12,7 @@
                             push:(id <EMSPushNotificationProtocol>)push
                            inbox:(id <EMSInboxProtocol>)inbox
                              iam:(MEInApp *)iam
-                         predict:(PredictInternal *)predict
+                         predict:(EMSPredictInternal *)predict
                   requestContext:(MERequestContext *)requestContext
                   requestFactory:(EMSRequestFactory *)requestFactory
         requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository

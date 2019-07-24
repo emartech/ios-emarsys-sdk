@@ -8,7 +8,7 @@
 #import "PRERequestContext.h"
 #import "NSURL+EMSCore.h"
 #import "EMSShard.h"
-#import "PredictInternal.h"
+#import "EMSPredictInternal.h"
 #import "EMSDeviceInfo.h"
 
 @implementation EMSPredictMapper

@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSVisitorIdResponseHandler.h"
-#import "PredictInternal.h"
+#import "EMSPredictInternal.h"
 
 #define COOKIE_KEY_CDV @"cdv"
 

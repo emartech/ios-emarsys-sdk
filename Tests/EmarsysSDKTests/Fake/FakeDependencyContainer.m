@@ -11,7 +11,7 @@
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) MEInApp *iam;
-@property(nonatomic, strong) PredictInternal *predict;
+@property(nonatomic, strong) EMSPredictInternal *predict;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
@@ -34,7 +34,7 @@
                             push:(id <EMSPushNotificationProtocol>)push
                            inbox:(id <EMSInboxProtocol>)inbox
                              iam:(MEInApp *)iam
-                         predict:(PredictInternal *)predict
+                         predict:(EMSPredictInternal *)predict
                   requestContext:(MERequestContext *)requestContext
                   requestFactory:(EMSRequestFactory *)requestFactory
                requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository

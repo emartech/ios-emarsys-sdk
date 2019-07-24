@@ -30,6 +30,12 @@ typedef void(^EMSProductBuilderBlock)(EMSProductBuilder *builder);
 
 + (instancetype)makeWithBuilder:(EMSProductBuilderBlock)builderBlock;
 
+- (BOOL)isEqual:(id)other;
+
+- (BOOL)isEqualToProduct:(EMSProduct *)product;
+
+- (NSUInteger)hash;
+
 @end
 
 NS_ASSUME_NONNULL_END

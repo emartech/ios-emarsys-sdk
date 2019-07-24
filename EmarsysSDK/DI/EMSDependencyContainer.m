@@ -9,7 +9,7 @@
 #import "EMSSQLiteHelper.h"
 #import "MERequestModelRepositoryFactory.h"
 #import "EMSSqliteSchemaHandler.h"
-#import "PredictInternal.h"
+#import "EMSPredictInternal.h"
 #import "PRERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSSchemaContract.h"
@@ -254,7 +254,7 @@
                                                                   deviceInfoClient:self.deviceInfoClient];
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
-        _predict = [[PredictInternal alloc] initWithRequestContext:self.predictRequestContext
+        _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                     requestManager:self.requestManager];
     } else {
         _predict = [EMSLoggingPredictInternal new];

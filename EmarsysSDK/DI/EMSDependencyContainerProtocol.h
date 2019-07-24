@@ -5,7 +5,7 @@
 
 @class MobileEngageInternal;
 @class MEInApp;
-@class PredictInternal;
+@class EMSPredictInternal;
 @class EMSSQLiteHelper;
 @class EMSNotificationCache;
 @class EMSAbstractResponseHandler;
