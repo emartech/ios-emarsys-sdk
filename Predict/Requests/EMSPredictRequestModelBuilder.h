@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithContext:(PRERequestContext *)requestContext;
 
-- (instancetype)setSearchTerm:(NSString *)searchTerm;
+- (instancetype)addSearchTerm:(NSString *)searchTerm;
 
 - (EMSRequestModel *)build;
 

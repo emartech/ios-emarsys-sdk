@@ -37,6 +37,7 @@
     OCMStub([self.mockContext timestampProvider]).andReturn(self.mockTimestampProvider);
     OCMStub([self.mockContext uuidProvider]).andReturn(self.mockUuidProvider);
     OCMStub([self.mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
+    OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId");
 }
 
 
@@ -49,11 +50,34 @@
     }
 }
 
-- (void)testBuild {
-    OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId");
+- (void)testBuild_requestModelUrlContainsCorrectMerchantId {
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:nil
+          builderBlock:nil];
+}
 
+- (void)testAddSearchTerm {
+    NSString *searchTerm = @"jeans";
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:@{
+               @"f": @"f:SEARCH,l:2,o:0",
+               @"q": searchTerm
+       }
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder addSearchTerm:searchTerm];
+          }];
+}
+
+- (void)assertForUrl:(NSString *)urlString
+     queryParameters:(NSDictionary *)queryParameters
+        builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"];
+                if (queryParameters) {
+                    [builder setUrl:urlString
+                    queryParameters:queryParameters];
+                } else {
+                    [builder setUrl:urlString];
+                }
                 [builder setMethod:HTTPMethodGET];
                 [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
                                                                                 self.mockContext.deviceInfo.osVersion,
@@ -63,30 +87,12 @@
                                                                 uuidProvider:self.mockUuidProvider];
 
     EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
-
+    if (builderBlock) {
+        builderBlock(builder);
+    }
     EMSRequestModel *returnedRequestModel = [builder build];
 
     XCTAssertEqualObjects(returnedRequestModel, expectedRequestModel);
 }
-
-- (void)testBuild_requestModelUrlContainsCorrectMerchantId {
-    OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId2");
-
-    EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId2/"];
-                [builder setMethod:HTTPMethodGET];
-                [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
-                                                                                self.mockContext.deviceInfo.osVersion,
-                                                                                self.mockContext.deviceInfo.systemName]}];
-            }                                              timestampProvider:self.mockTimestampProvider
-                                                                uuidProvider:self.mockUuidProvider];
-
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
-
-    EMSRequestModel *returnedRequestModel = [builder build];
-    XCTAssertEqualObjects(returnedRequestModel, expectedRequestModel);
-}
-
-
 
 @end

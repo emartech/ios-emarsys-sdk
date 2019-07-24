@@ -10,6 +10,7 @@
 @interface EMSPredictRequestModelBuilder ()
 
 @property(nonatomic, strong) PRERequestContext *requestContext;
+@property(nonatomic, strong) NSString *searchTerm;
 
 @end
 
@@ -24,9 +25,22 @@
     return self;
 }
 
+- (instancetype)addSearchTerm:(NSString *)searchTerm {
+    _searchTerm = searchTerm;
+    return self;
+}
+
+
 - (EMSRequestModel *)build {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]];
+                if (_searchTerm) {
+                    [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]
+                    queryParameters:@{@"f": @"f:SEARCH,l:2,o:0",
+                                    @"q": self.searchTerm}];
+                } else {
+                    [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]];
+                }
+
                 [builder setMethod:HTTPMethodGET];
                 [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
                                                                                 self.requestContext.deviceInfo.osVersion,
