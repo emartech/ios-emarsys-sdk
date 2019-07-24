@@ -557,4 +557,94 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 [[returnedThread should] equal: NSThread.mainThread];
             });
         });
+
+        describe(@"trackTag:withAttributes:", ^{
+
+            it(@"should throw exception when tag is nil", ^{
+                @try {
+                    [[EMSPredictInternal new] trackTag:nil withAttributes:@{}];
+                    fail(@"Expected Exception when tag is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: tag"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should submit shard to requestManager when attributes is nil", ^{
+                NSString *tag = @"testTag";
+                NSDate *timestamp = [NSDate date];
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:@"uuid"
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                            [builder setType:@"predict_tag"];
+                            [builder addPayloadEntryWithKey:@"t"
+                                                      value:tag];
+                        }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal trackTag:tag withAttributes:nil];
+            });
+
+            it(@"should submit shard to requestManager with attributes", ^{
+                NSString *tag = @"testTag";
+                NSDictionary *attributes = @{
+                        @"att1": @"value1",
+                        @"att2": @"value2",
+                        @"att3": @"value3"};
+                NSDate *timestamp = [NSDate date];
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:@"uuid"
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+
+                NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes} options:0 error:nil];
+                NSString *expectedPayload = [[NSString alloc] initWithData:serializedData encoding:NSUTF8StringEncoding];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                            [builder setType:@"predict_tag"];
+                            [builder addPayloadEntryWithKey:@"ta"
+                                                      value:expectedPayload];
+                        }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
+                                                                             requestManager:requestManager];
+                [internal trackTag:tag withAttributes:attributes];
+            });
+
+        });
 SPEC_END

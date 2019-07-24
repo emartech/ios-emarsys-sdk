@@ -21,8 +21,7 @@
 
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
                         requestManager:(EMSRequestManager *)requestManager {
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
         _requestContext = requestContext;
         _requestManager = requestManager;
     }
@@ -103,6 +102,27 @@
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
+}
+
+- (void)trackTag:(NSString *)tag
+  withAttributes:(NSDictionary *)attributes {
+    NSParameterAssert(tag);
+
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                [builder setType:@"predict_tag"];
+
+                if (!attributes) {
+                    [builder addPayloadEntryWithKey:@"t" value:tag];
+                } else {
+                    NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes} options:0 error:nil];
+                    NSString *payload = [[NSString alloc] initWithData:serializedData encoding:NSUTF8StringEncoding];
+                    [builder addPayloadEntryWithKey:@"ta" value:payload];
+                }
+            }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
 }
 
 - (void)recommendProducts:(EMSProductsBlock)productsBlock {
