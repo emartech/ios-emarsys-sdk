@@ -10,7 +10,7 @@
 
 #define PREDICT_BASE_URL @"https://recommender.scarabresearch.com"
 
-@interface PredictInternal : NSObject <EMSPredictProtocol, EMSPredictInternalProtocol>
+@interface EMSPredictInternal : NSObject <EMSPredictProtocol, EMSPredictInternalProtocol>
 
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
                         requestManager:(EMSRequestManager *)requestManager;
