@@ -61,6 +61,7 @@
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
+#import "EMSPredictRequestModelBuilderProvider.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -168,9 +169,9 @@
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                      displayIamRepository:displayedIAMRepository]]
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                          displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
     [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext]];
@@ -183,8 +184,8 @@
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:config]
                                      requestModelMappers:@[
-                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
-                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]
+                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
+                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
@@ -254,8 +255,10 @@
                                                                   deviceInfoClient:self.deviceInfoClient];
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
+        EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext];
         _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
-                                                    requestManager:self.requestManager];
+                                                       requestManager:self.requestManager
+                                               requestBuilderProvider:builderProvider];
     } else {
         _predict = [EMSLoggingPredictInternal new];
     }

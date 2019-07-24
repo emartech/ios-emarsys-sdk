@@ -9,21 +9,29 @@
 #import "EMSCartItemUtils.h"
 #import "EMSProduct.h"
 #import "NSMutableDictionary+EMSCore.h"
+#import "EMSPredictRequestModelBuilderProvider.h"
+#import "EMSPredictRequestModelBuilder.h"
 
 @interface EMSPredictInternal ()
 
 @property(nonatomic, strong) PRERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSPredictRequestModelBuilderProvider *requestBuilderProvider;
 
 @end
 
 @implementation EMSPredictInternal
 
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
-                        requestManager:(EMSRequestManager *)requestManager {
+                        requestManager:(EMSRequestManager *)requestManager
+                requestBuilderProvider:(EMSPredictRequestModelBuilderProvider *)requestBuilderProvider {
+    NSParameterAssert(requestContext);
+    NSParameterAssert(requestManager);
+    NSParameterAssert(requestBuilderProvider);
     if (self = [super init]) {
         _requestContext = requestContext;
         _requestManager = requestManager;
+        _requestBuilderProvider = requestBuilderProvider;
     }
     return self;
 }
@@ -127,17 +135,7 @@
 
 - (void)recommendProducts:(EMSProductsBlock)productsBlock {
     NSParameterAssert(productsBlock);
-    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/",
-                                                           self.requestContext.merchantId]
-                queryParameters:@{
-                        @"f": @"f:SEARCH,l:2,o:0",
-                        @"q": @"polo shirt"
-                }];
-                [builder setMethod:HTTPMethodGET];
-            }
-                                                   timestampProvider:self.requestContext.timestampProvider
-                                                        uuidProvider:self.requestContext.uuidProvider];
+    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] addSearchTerm:@"polo shirt"] build];
 
     [_requestManager submitRequestModelNow:requestModel
                               successBlock:^(NSString *requestId, EMSResponseModel *response) {

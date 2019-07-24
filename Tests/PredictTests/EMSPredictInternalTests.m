@@ -14,8 +14,46 @@
 #import "EMSResponseModel.h"
 #import "EMSProduct.h"
 #import "NSError+EMSCore.h"
+#import "EMSPredictRequestModelBuilderProvider.h"
+#import "EMSPredictRequestModelBuilder.h"
 
 SPEC_BEGIN(EMSPredictInternalTests)
+
+        describe(@"init", ^{
+            it(@"should throw exception when requestManager is nil", ^{
+                @try {
+                    [[EMSPredictInternal alloc] initWithRequestContext:[PRERequestContext mock]
+                                                        requestManager:nil
+                                                requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
+                    fail(@"Expected Exception when requestManager is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when requestContext is nil", ^{
+                @try {
+                    [[EMSPredictInternal alloc] initWithRequestContext:nil
+                                                        requestManager:[EMSRequestManager mock]
+                                                requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
+                    fail(@"Expected Exception when requestContext is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when requestBuilderProvider is nil", ^{
+                @try {
+                    [[EMSPredictInternal alloc] initWithRequestContext:[PRERequestContext mock] requestManager:[EMSRequestManager mock] requestBuilderProvider:nil];
+                    fail(@"Expected Exception when requestBuilderProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestBuilderProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
 
         describe(@"setContactWithContactFieldValue:", ^{
 
@@ -33,8 +71,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 PRERequestContext *requestContextMock = [PRERequestContext mock];
                 EMSRequestManager *requestManagerMock = [EMSRequestManager mock];
                 NSString *const customerId = @"customerID";
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContextMock
-                                                                                   requestManager:requestManagerMock];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContextMock requestManager:requestManagerMock requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
 
                 [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
                 [internal setContactWithContactFieldValue:customerId];
@@ -85,8 +122,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"
                                                                                               deviceInfo:[EMSDeviceInfo new]];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal trackCategoryViewWithCategoryPath:categoryPath];
             });
 
@@ -133,8 +169,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"
                                                                                               deviceInfo:[EMSDeviceInfo new]];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal trackItemViewWithItemId:itemId];
             });
 
@@ -174,8 +209,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 EMSRequestManager *const requestManager = [EMSRequestManager mock];
                 [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
 
 
                 [internal trackCartWithCartItems:@[
@@ -227,8 +261,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"
                                                                                               deviceInfo:[EMSDeviceInfo new]];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal trackSearchWithSearchTerm:searchTerm];
             });
 
@@ -279,8 +312,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 EMSRequestManager *const requestManager = [EMSRequestManager mock];
                 [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
 
 
                 [internal trackPurchaseWithOrderId:orderId items:@[
@@ -302,7 +334,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 EMSRequestManager *const requestManager = [EMSRequestManager nullMock];
 
                 EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                                   requestManager:requestManager];
+                                                                                   requestManager:requestManager
+                                                                           requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal clearContact];
             });
         });
@@ -311,17 +344,20 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
+            __block EMSPredictRequestModelBuilderProvider *mockBuilderProvider;
             __block EMSPredictInternal *predictInternal;
 
             beforeEach(^{
                 mockRequestManager = [EMSRequestManager nullMock];
                 mockRequestContext = [PRERequestContext nullMock];
+                mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
                 [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
                 [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
                 [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
 
                 predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
-                                                                      requestManager:mockRequestManager];
+                                                                      requestManager:mockRequestManager
+                                                              requestBuilderProvider:mockBuilderProvider];
             });
 
             void (^assertProducts)(NSString *rawResponse, NSArray<EMSProduct *> *expectedProducts) = ^(NSString *rawResponse, NSArray<EMSProduct *> *expectedProducts) {
@@ -364,20 +400,21 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
 
             it(@"should submit a requestModel into requestManager", ^{
+                EMSRequestModel *mockRequestModel = [EMSRequestModel mock];
+
                 [[mockRequestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                       withArguments:kw_any(), kw_any(), kw_any()];
+                                       withArguments:mockRequestModel, kw_any(), kw_any()];
 
-
-                KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                                                atIndex:0];
-
+                EMSPredictRequestModelBuilder *mockBuilder = [EMSPredictRequestModelBuilder nullMock];
+                [[mockBuilderProvider should] receive:@selector(provideBuilder)
+                                            andReturn:mockBuilder];
+                [[mockBuilder should] receive:@selector(addSearchTerm:)
+                                    andReturn:mockBuilder
+                                withArguments:@"polo shirt"];
+                [[mockBuilder should] receive:@selector(build)
+                                    andReturn:mockRequestModel];
                 [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
                 }];
-
-                EMSRequestModel *capturedModel = spy.argument;
-
-                [[capturedModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/1428C8EE286EC34B/?f=f:SEARCH,l:2,o:0&q=polo%20shirt"];
-                [[capturedModel.method should] equal:@"GET"];
             });
 
             it(@"should receive products", ^{
@@ -536,25 +573,25 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];
 
                 [[NSOperationQueue new] addOperationWithBlock:^{
-                KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                                                atIndex:2];
+                    KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
+                                                                    atIndex:2];
 
 
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    returnedError = error;
-                    returnedThread = [NSThread currentThread];
-                    [expectation fulfill];
-                }];
+                    [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                        returnedError = error;
+                        returnedThread = [NSThread currentThread];
+                        [expectation fulfill];
+                    }];
 
-                CoreErrorBlock errorBlock = spy.argument;
+                    CoreErrorBlock errorBlock = spy.argument;
 
-                errorBlock(@"testRequestId", expectedError);
+                    errorBlock(@"testRequestId", expectedError);
                 }];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:5.0];
                 [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
                 [[expectedError should] equal:returnedError];
-                [[returnedThread should] equal: NSThread.mainThread];
+                [[returnedThread should] equal:NSThread.mainThread];
             });
         });
 
@@ -599,8 +636,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"
                                                                                               deviceInfo:[EMSDeviceInfo new]];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                             requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal trackTag:tag withAttributes:nil];
             });
 
@@ -641,8 +677,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"
                                                                                               deviceInfo:[EMSDeviceInfo new]];
-                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
-                                                                             requestManager:requestManager];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext requestManager:requestManager requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]];
                 [internal trackTag:tag withAttributes:attributes];
             });
 

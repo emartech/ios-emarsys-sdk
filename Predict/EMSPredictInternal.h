@@ -7,13 +7,13 @@
 
 @class PRERequestContext;
 @class EMSRequestManager;
+@class EMSPredictRequestModelBuilderProvider;
 
 #define PREDICT_BASE_URL @"https://recommender.scarabresearch.com"
 
 @interface EMSPredictInternal : NSObject <EMSPredictProtocol, EMSPredictInternalProtocol>
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
-                        requestManager:(EMSRequestManager *)requestManager;
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext requestManager:(EMSRequestManager *)requestManager requestBuilderProvider:(EMSPredictRequestModelBuilderProvider *)requestBuilderProvider;
 
 
 @end
