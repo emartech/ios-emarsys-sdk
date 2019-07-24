@@ -154,10 +154,18 @@
                                       }];
                                       [products addObject:product];
                                   }
-                                  productsBlock(products, nil);
+                                  if (productsBlock) {
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          productsBlock(products, nil);
+                                      });
+                                  }
                               }
                                 errorBlock:^(NSString *requestId, NSError *error) {
-                                    //TODO
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        if (productsBlock) {
+                                            productsBlock(nil, error);
+                                        }
+                                    });
                                 }];
 }
 

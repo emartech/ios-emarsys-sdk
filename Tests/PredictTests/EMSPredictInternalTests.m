@@ -13,6 +13,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSResponseModel.h"
 #import "EMSProduct.h"
+#import "NSError+EMSCore.h"
 
 SPEC_BEGIN(EMSPredictInternalTests)
 
@@ -323,6 +324,35 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                       requestManager:mockRequestManager];
             });
 
+            void (^assertProducts)(NSString *rawResponse, NSArray<EMSProduct *> *expectedProducts) = ^(NSString *rawResponse, NSArray<EMSProduct *> *expectedProducts) {
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+                __block NSArray<EMSProduct *> *returnedProducts = nil;
+                __block NSThread *returnedThread;
+
+                [[NSOperationQueue new] addOperationWithBlock:^{
+                    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                                           headers:@{}
+                                                                                              body:[rawResponse dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                      requestModel:[EMSRequestModel nullMock]
+                                                                                         timestamp:[NSDate date]];
+                    KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
+                                                                    atIndex:1];
+                    [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                        returnedProducts = products;
+                        returnedThread = [NSThread currentThread];
+                        [expectation fulfill];
+                    }];
+                    CoreSuccessBlock successBlock = spy.argument;
+                    successBlock(@"testRequestId", responseModel);
+                }];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:5.0];
+
+                [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
+                [[returnedProducts should] equal:expectedProducts];
+                [[returnedThread should] equal:NSThread.mainThread];
+            };
+
             it(@"should throw exception productBlocks is nil", ^{
                 @try {
                     [[EMSPredictInternal new] recommendProducts:nil];
@@ -348,65 +378,6 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 [[capturedModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/1428C8EE286EC34B/?f=f:SEARCH,l:2,o:0&q=polo%20shirt"];
                 [[capturedModel.method should] equal:@"GET"];
-            });
-
-            it(@"should receive response from requestManager", ^{
-                NSString *rawResponse = @"{\n"
-                                        "           \"cohort\":\"AAAA\",\n"
-                                        "           \"visitor\":\"16BCC0D2745E6B36\",\n"
-                                        "           \"session\":\"24E844D1E58C1C2\",\n"
-                                        "           \"features\":{\n"
-                                        "              \"SEARCH\":{\n"
-                                        "                 \"hasMore\":true,\n"
-                                        "                 \"merchants\":[\n"
-                                        "                    \"1428C8EE286EC34B\"\n"
-                                        "                 ],\n"
-                                        "                 \"items\":[\n"
-                                        "                    {\n"
-                                        "                       \"id\":\"2120\"\n"
-                                        "                    }\n"
-                                        "                 ]\n"
-                                        "              }\n"
-                                        "           },\n"
-                                        "           \"products\":{\n"
-                                        "              \"2120\":{\n"
-                                        "                 \"item\":\"2120\",\n"
-                                        "                 \"title\":\"LSL Men Polo Shirt SE16\",\n"
-                                        "                 \"link\":\"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html\"\n"
-                                        "              }\n"
-                                        "           }\n"
-                                        "        }";
-                EMSProduct *expectedProduct = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-                    [builder setRequiredFieldsWithProductId:@"2120"
-                                                      title:@"LSL Men Polo Shirt SE16"
-                                                    linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]];
-                }];
-
-                EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                       headers:@{}
-                                                                                          body:[rawResponse dataUsingEncoding:NSUTF8StringEncoding]
-                                                                                  requestModel:[EMSRequestModel nullMock]
-                                                                                     timestamp:[NSDate date]];
-                KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                                                atIndex:1];
-
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-
-                __block NSArray<EMSProduct *> *returnedProducts = nil;
-
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    returnedProducts = products;
-                    [expectation fulfill];
-                }];
-
-                CoreSuccessBlock successBlock = spy.argument;
-
-                successBlock(@"testRequestId", responseModel);
-                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:5.0];
-                [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
-                NSArray *expectedProducts = @[expectedProduct];
-                [[returnedProducts should] equal:expectedProducts];
             });
 
             it(@"should receive products", ^{
@@ -548,38 +519,42 @@ SPEC_BEGIN(EMSPredictInternalTests)
                             @"msrp_usd": @"100",
                             @"price_usd": @"100"}];
                 }];
-
                 EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
                     [builder setRequiredFieldsWithProductId:@"2120"
                                                       title:@"LSL Men Polo Shirt LE16"
                                                     linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]];
                 }];
 
-                EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                                       headers:@{}
-                                                                                          body:[rawResponse dataUsingEncoding:NSUTF8StringEncoding]
-                                                                                  requestModel:[EMSRequestModel nullMock]
-                                                                                     timestamp:[NSDate date]];
+                assertProducts(rawResponse, @[expectedProduct1, expectedProduct2]);
+            });
+
+            it(@"should receive error", ^{
+                __block NSError *returnedError = nil;
+                __block NSThread *returnedThread = nil;
+                NSError *expectedError = [NSError errorWithCode:400
+                                           localizedDescription:@"Test Error"];
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];
+
+                [[NSOperationQueue new] addOperationWithBlock:^{
                 KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
-                                                                atIndex:1];
+                                                                atIndex:2];
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-
-                __block NSArray<EMSProduct *> *returnedProducts = nil;
 
                 [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    returnedProducts = products;
+                    returnedError = error;
+                    returnedThread = [NSThread currentThread];
                     [expectation fulfill];
                 }];
 
-                CoreSuccessBlock successBlock = spy.argument;
+                CoreErrorBlock errorBlock = spy.argument;
 
-                successBlock(@"testRequestId", responseModel);
+                errorBlock(@"testRequestId", expectedError);
+                }];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:5.0];
                 [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
-                NSArray *expectedProducts = @[expectedProduct1, expectedProduct2];
-                [[returnedProducts should] equal:expectedProducts];
+                [[expectedError should] equal:returnedError];
+                [[returnedThread should] equal: NSThread.mainThread];
             });
         });
 SPEC_END
