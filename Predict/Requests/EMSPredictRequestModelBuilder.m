@@ -6,11 +6,12 @@
 #import "PRERequestContext.h"
 #import "EMSRequestModel.h"
 #import "EMSDeviceInfo.h"
+#import "EMSLogic.h"
 
 @interface EMSPredictRequestModelBuilder ()
 
 @property(nonatomic, strong) PRERequestContext *requestContext;
-@property(nonatomic, strong) NSString *searchTerm;
+@property(nonatomic, strong) EMSLogic *logic;
 
 @end
 
@@ -25,18 +26,20 @@
     return self;
 }
 
-- (instancetype)addSearchTerm:(NSString *)searchTerm {
-    _searchTerm = searchTerm;
+- (instancetype)addLogic:(EMSLogic *)logic {
+    _logic = logic;
     return self;
 }
 
 
 - (EMSRequestModel *)build {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                if (_searchTerm) {
+                if (self.logic) {
                     [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]
-                    queryParameters:@{@"f": @"f:SEARCH,l:2,o:0",
-                                    @"q": self.searchTerm}];
+                    queryParameters:@{
+                            @"f": [NSString stringWithFormat:@"f:%@,l:2,o:0", self.logic.logic],
+                            @"q": self.logic.data[@"q"]
+                    }];
                 } else {
                     [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]];
                 }

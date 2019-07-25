@@ -6,6 +6,7 @@
 
 @class PRERequestContext;
 @class EMSRequestModel;
+@class EMSLogic;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithContext:(PRERequestContext *)requestContext;
 
-- (instancetype)addSearchTerm:(NSString *)searchTerm;
+- (instancetype)addLogic:(EMSLogic *)logic;
 
 - (EMSRequestModel *)build;
 

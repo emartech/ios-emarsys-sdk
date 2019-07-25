@@ -65,7 +65,8 @@
                                               parameters:nil]);
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock {
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"productsBlock"] = @(productsBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto

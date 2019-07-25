@@ -10,6 +10,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "EMSLogic.h"
 
 @interface EMSPredictRequestModelBuilderTests : XCTestCase
 
@@ -64,7 +65,7 @@
                @"q": searchTerm
        }
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
-              [builder addSearchTerm:searchTerm];
+              [builder addLogic:[EMSLogic searchWithSearchTerm:searchTerm]];
           }];
 }
 

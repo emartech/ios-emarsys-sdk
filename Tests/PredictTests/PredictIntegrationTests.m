@@ -12,6 +12,7 @@
 #import "EMSWaiter.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSLogic.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -229,7 +230,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 [Emarsys.predict recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
                     returnedProducts = products;
                     [expectation fulfill];
-                }];
+                }                        withLogic:[EMSLogic searchWithSearchTerm:@"shirt"]];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);

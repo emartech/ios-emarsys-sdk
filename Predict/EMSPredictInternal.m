@@ -10,6 +10,7 @@
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSPredictRequestModelBuilder.h"
 #import "EMSProductMapper.h"
+#import "EMSLogic.h"
 
 @interface EMSPredictInternal ()
 
@@ -137,9 +138,12 @@
     [self.requestManager submitShard:shard];
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock {
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic {
     NSParameterAssert(productsBlock);
-    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] addSearchTerm:@"polo shirt"] build];
+    NSParameterAssert(logic);
+
+    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] addLogic:logic] build];
 
     __weak typeof(self) weakSelf = self;
     [_requestManager submitRequestModelNow:requestModel

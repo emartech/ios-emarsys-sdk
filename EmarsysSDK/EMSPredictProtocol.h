@@ -5,6 +5,7 @@
 #import "EMSCartItemProtocol.h"
 
 @class EMSProduct;
+@class EMSLogic;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,7 +27,8 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 - (void)trackTag:(NSString *)tag
   withAttributes:(nullable NSDictionary *)attributes;
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock;
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic;
 
 @end
 

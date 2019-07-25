@@ -17,6 +17,7 @@
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSPredictRequestModelBuilder.h"
 #import "EMSProductMapper.h"
+#import "EMSLogic.h"
 
 SPEC_BEGIN(EMSPredictInternalTests)
 
@@ -378,7 +379,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
-        describe(@"recommendProducts:", ^{
+        describe(@"recommendProducts:withLogic:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -403,10 +404,22 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception productBlocks is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] recommendProducts:nil];
+                    [[EMSPredictInternal new] recommendProducts:nil withLogic:EMSLogic.search];
                     fail(@"Expected Exception when productBlocks is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: productsBlock"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception logic is nil", ^{
+                @try {
+                    [[EMSPredictInternal new] recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+
+                    }                                 withLogic:nil];
+                    fail(@"Expected Exception when logic is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: logic"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -420,13 +433,13 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 EMSPredictRequestModelBuilder *mockBuilder = [EMSPredictRequestModelBuilder nullMock];
                 [[mockBuilderProvider should] receive:@selector(provideBuilder)
                                             andReturn:mockBuilder];
-                [[mockBuilder should] receive:@selector(addSearchTerm:)
+                [[mockBuilder should] receive:@selector(addLogic:)
                                     andReturn:mockBuilder
-                                withArguments:@"polo shirt"];
+                                withArguments:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
                 [[mockBuilder should] receive:@selector(build)
                                     andReturn:mockRequestModel];
                 [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                }];
+                }                        withLogic:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
             });
 
             it(@"should receive products", ^{
@@ -451,7 +464,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                         returnedProducts = products;
                         returnedThread = [NSThread currentThread];
                         [expectation fulfill];
-                    }];
+                    }                        withLogic:EMSLogic.search];
 
                     CoreSuccessBlock successBlock = spy.argument;
 
@@ -480,7 +493,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                         returnedError = error;
                         returnedThread = [NSThread currentThread];
                         [expectation fulfill];
-                    }];
+                    }                        withLogic:EMSLogic.search];
 
                     CoreErrorBlock errorBlock = spy.argument;
 
