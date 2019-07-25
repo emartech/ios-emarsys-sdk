@@ -62,6 +62,7 @@
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSPredictRequestModelBuilderProvider.h"
+#import "EMSProductMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -258,7 +259,8 @@
         EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext];
         _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                        requestManager:self.requestManager
-                                               requestBuilderProvider:builderProvider];
+                                               requestBuilderProvider:builderProvider
+                                                        productMapper:[EMSProductMapper new]];
     } else {
         _predict = [EMSLoggingPredictInternal new];
     }
