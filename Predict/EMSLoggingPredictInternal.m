@@ -65,6 +65,16 @@
                                               parameters:nil]);
 }
 
+- (void)trackTag:(NSString *)tag
+  withAttributes:(nullable NSDictionary *)attributes {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"tag"] = tag;
+    parameters[@"attributes"] = attributes;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
+}
+
 - (void)recommendProducts:(EMSProductsBlock)productsBlock
                 withLogic:(EMSLogic *)logic {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
