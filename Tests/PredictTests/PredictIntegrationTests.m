@@ -87,7 +87,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             [MEExperimental enableFeature:EMSInnerFeature.predict];
 
             expectations = @[
-                [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
+                    [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
             dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
                                                                                    expectations:expectations];
             [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
@@ -104,8 +104,8 @@ SPEC_BEGIN(PredictIntegrationTests)
                 NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackCartWithCartItems:@[
-                    [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
                 ]];
 
                 [EMSWaiter waitForExpectations:expectations
@@ -125,12 +125,12 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[
-                                                        [EMSCartItem itemWithItemId:@"2508"
-                                                                              price:200.0
-                                                                           quantity:100.0],
-                                                        [EMSCartItem itemWithItemId:@"2073"
-                                                                              price:201.0
-                                                                           quantity:101.0]
+                                                            [EMSCartItem itemWithItemId:@"2508"
+                                                                                  price:200.0
+                                                                               quantity:100.0],
+                                                            [EMSCartItem itemWithItemId:@"2073"
+                                                                                  price:201.0
+                                                                               quantity:101.0]
                                                     ]];
 
                 [EMSWaiter waitForExpectations:expectations
@@ -223,18 +223,35 @@ SPEC_BEGIN(PredictIntegrationTests)
         });
 
         describe(@"recommendProducts", ^{
-            it(@"should recommend products", ^{
+
+            void (^assertWithLogic)(EMSLogic *logic) = ^(EMSLogic *logic) {
                 __block NSArray *returnedProducts = nil;
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
                 [Emarsys.predict recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
                     returnedProducts = products;
                     [expectation fulfill];
-                }                        withLogic:[EMSLogic searchWithSearchTerm:@"shirt"]];
+                }                        withLogic:logic];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
                 XCTAssertNotNil(returnedProducts);
+            };
+
+            it(@"should recommend products by searchTerm", ^{
+                assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"]);
+            });
+
+            it(@"should recommend products by cartItems", ^{
+                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                                       price:123
+                                                                    quantity:1];
+                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                                       price:456
+                                                                    quantity:2];
+                EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+
+                assertWithLogic(logic);
             });
         });
 

@@ -424,7 +424,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 }
             });
 
-            it(@"should submit a requestModel into requestManager", ^{
+            it(@"should submit a requestModel into requestManager with search logic", ^{
                 EMSRequestModel *mockRequestModel = [EMSRequestModel mock];
 
                 [[mockRequestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)
@@ -440,6 +440,33 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                     andReturn:mockRequestModel];
                 [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
                 }                        withLogic:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
+            });
+
+            it(@"should submit a requestModel into requestManager with cart logic", ^{
+                EMSRequestModel *mockRequestModel = [EMSRequestModel mock];
+
+                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                                       price:123
+                                                                    quantity:1];
+                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                                       price:456
+                                                                    quantity:2];
+
+                EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+
+                [[mockRequestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)
+                                       withArguments:mockRequestModel, kw_any(), kw_any()];
+
+                EMSPredictRequestModelBuilder *mockBuilder = [EMSPredictRequestModelBuilder nullMock];
+                [[mockBuilderProvider should] receive:@selector(provideBuilder)
+                                            andReturn:mockBuilder];
+                [[mockBuilder should] receive:@selector(addLogic:)
+                                    andReturn:mockBuilder
+                                withArguments:logic];
+                [[mockBuilder should] receive:@selector(build)
+                                    andReturn:mockRequestModel];
+                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                }                        withLogic:logic];
             });
 
             it(@"should receive products", ^{

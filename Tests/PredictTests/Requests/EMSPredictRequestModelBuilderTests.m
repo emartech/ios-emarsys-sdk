@@ -11,6 +11,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
 #import "EMSLogic.h"
+#import "EMSCartItem.h"
 
 @interface EMSPredictRequestModelBuilderTests : XCTestCase
 
@@ -69,6 +70,26 @@
           }];
 }
 
+- (void)testAddCart {
+    EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                           price:123
+                                                        quantity:1];
+    EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                           price:456
+                                                        quantity:2];
+    EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:@{
+               @"f": @"f:CART,l:2,o:0",
+               @"cv": @"1",
+               @"ca": @"i:cartItemId1,p:123.0,q:1.0|i:cartItemId2,p:456.0,q:2.0"
+       }
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder addLogic:logic];
+          }];
+}
+
 - (void)assertForUrl:(NSString *)urlString
      queryParameters:(NSDictionary *)queryParameters
         builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
@@ -93,7 +114,23 @@
     }
     EMSRequestModel *returnedRequestModel = [builder build];
 
-    XCTAssertEqualObjects(returnedRequestModel, expectedRequestModel);
+    XCTAssertEqualObjects(returnedRequestModel.requestId, expectedRequestModel.requestId);
+    XCTAssertEqualObjects(returnedRequestModel.timestamp, expectedRequestModel.timestamp);
+    XCTAssertEqual(returnedRequestModel.ttl, expectedRequestModel.ttl);
+    XCTAssertEqualObjects(returnedRequestModel.method, expectedRequestModel.method);
+    XCTAssertEqualObjects(returnedRequestModel.extras, expectedRequestModel.extras);
+    XCTAssertEqualObjects(returnedRequestModel.payload, expectedRequestModel.payload);
+    XCTAssertEqualObjects(returnedRequestModel.headers, expectedRequestModel.headers);
+
+    NSURLComponents *returnedUrlComponents = [NSURLComponents componentsWithURL:returnedRequestModel.url
+                                                        resolvingAgainstBaseURL:NO];
+    NSSet *returnedQueryItems = [NSSet setWithArray:returnedUrlComponents.queryItems];
+
+    NSURLComponents *expectedUrlComponents = [NSURLComponents componentsWithURL:expectedRequestModel.url
+                                                        resolvingAgainstBaseURL:NO];
+    NSSet *expectedQueryItems = [NSSet setWithArray:expectedUrlComponents.queryItems];
+
+    XCTAssertEqualObjects(returnedQueryItems, expectedQueryItems);
 }
 
 @end

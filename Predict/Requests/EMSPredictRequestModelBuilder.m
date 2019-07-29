@@ -35,11 +35,11 @@
 - (EMSRequestModel *)build {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 if (self.logic) {
+                    NSMutableDictionary *logicData = [self.logic.data mutableCopy];
+                    logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:2,o:0", self.logic.logic];
+
                     [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]
-                    queryParameters:@{
-                            @"f": [NSString stringWithFormat:@"f:%@,l:2,o:0", self.logic.logic],
-                            @"q": self.logic.data[@"q"]
-                    }];
+                    queryParameters:[NSDictionary dictionaryWithDictionary:logicData]];
                 } else {
                     [builder setUrl:[NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", self.requestContext.merchantId]];
                 }
