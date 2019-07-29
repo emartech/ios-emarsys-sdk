@@ -17,6 +17,7 @@ class PredictViewController: UIViewController {
     
     //MARK: Variables
     var cartItems = [EMSCartItem]()
+    var logic = EMSLogic.search()
 
     //MARK: ViewController
     override func viewDidLoad() {
@@ -48,6 +49,7 @@ class PredictViewController: UIViewController {
         guard let searchTerm = tfSearchTerm.text, searchTerm.count > 0 else {
             return
         }
+        self.logic = EMSLogic.search(withSearchTerm: searchTerm)
         Emarsys.predict.trackSearch(withSearchTerm: searchTerm)
     }
 
@@ -57,6 +59,7 @@ class PredictViewController: UIViewController {
     }
 
     @IBAction func trackCartItemButtonClicked(_ sender: Any) {
+        self.logic = EMSLogic.cart(withCartItems: cartItems)
         Emarsys.predict.trackCart(withCartItems: cartItems)
     }
 
@@ -68,12 +71,12 @@ class PredictViewController: UIViewController {
     }
 
     @IBAction func recommendProductsButtonClicked(_ sender: Any) {
-        Emarsys.predict.recommendProducts { [unowned self](products, error) in
+        Emarsys.predict.recommendProducts({ (products: [EMSProduct]?, error: Error?) in
             guard let existingProducts = products else {
                 return
             }
             self.tvRecommendation.text = existingProducts.description
-        }
+        }, with:self.logic as! EMSLogic)
     }
     
 
