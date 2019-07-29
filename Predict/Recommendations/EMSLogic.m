@@ -3,6 +3,8 @@
 //
 
 #import "EMSLogic.h"
+#import "EMSCartItemProtocol.h"
+#import "EMSCartItemUtils.h"
 
 @interface EMSLogic ()
 
@@ -30,6 +32,20 @@
 + (id <EMSLogicProtocol>)searchWithSearchTerm:(NSString *)searchTerm {
     return [[EMSLogic alloc] initWithLogic:@"SEARCH"
                                       data:@{@"q": searchTerm}];
+}
+
++ (id <EMSLogicProtocol>)cart {
+    return [[EMSLogic alloc] initWithLogic:@"CART"
+                                      data:nil];
+}
+
++ (id <EMSLogicProtocol>)cartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    data[@"cv"] = @"1";
+    data[@"ca"] = [EMSCartItemUtils queryParamFromCartItems:cartItems];
+
+    return [[EMSLogic alloc] initWithLogic:@"CART"
+                                      data:data];
 }
 
 - (BOOL)isEqual:(id)other {
