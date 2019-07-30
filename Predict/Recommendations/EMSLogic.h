@@ -9,16 +9,16 @@
 
 @interface EMSLogic : NSObject <EMSLogicProtocol>
 
-+ (id<EMSLogicProtocol>)search;
-+ (id<EMSLogicProtocol>)searchWithSearchTerm:(NSString *)searchTerm;
++ (EMSLogic *)search;
 
-+ (id <EMSLogicProtocol>)cart;
-+ (id <EMSLogicProtocol>)cartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
++ (EMSLogic *)searchWithSearchTerm:(nullable NSString *)searchTerm;
 
-- (BOOL)isEqual:(id)other;
++ (EMSLogic *)cart;
 
-- (BOOL)isEqualToLogic:(EMSLogic *)logic;
++ (EMSLogic *)cartWithCartItems:(nullable NSArray<id <EMSCartItemProtocol>> *)cartItems;
 
-- (NSUInteger)hash;
++ (EMSLogic *)related;
+
++ (EMSLogic *)relatedWithViewItemId:(nullable NSString *)itemId;
 
 @end

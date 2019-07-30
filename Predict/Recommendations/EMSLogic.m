@@ -24,28 +24,35 @@
     return self;
 }
 
-+ (id <EMSLogicProtocol>)search {
++ (EMSLogic *)search {
+    return [EMSLogic searchWithSearchTerm:nil];
+}
+
++ (EMSLogic *)searchWithSearchTerm:(NSString *)searchTerm {
     return [[EMSLogic alloc] initWithLogic:@"SEARCH"
-                                      data:nil];
+                                      data:@{@"q": searchTerm ? searchTerm : @""}];
 }
 
-+ (id <EMSLogicProtocol>)searchWithSearchTerm:(NSString *)searchTerm {
-    return [[EMSLogic alloc] initWithLogic:@"SEARCH"
-                                      data:@{@"q": searchTerm}];
++ (EMSLogic *)cart {
+    return [EMSLogic cartWithCartItems:nil];
 }
 
-+ (id <EMSLogicProtocol>)cart {
-    return [[EMSLogic alloc] initWithLogic:@"CART"
-                                      data:nil];
-}
-
-+ (id <EMSLogicProtocol>)cartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
++ (EMSLogic *)cartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     data[@"cv"] = @"1";
     data[@"ca"] = [EMSCartItemUtils queryParamFromCartItems:cartItems];
 
     return [[EMSLogic alloc] initWithLogic:@"CART"
                                       data:data];
+}
+
++ (EMSLogic *)related {
+    return [EMSLogic relatedWithViewItemId:nil];
+}
+
++ (EMSLogic *)relatedWithViewItemId:(NSString *)itemId {
+    return [[EMSLogic alloc] initWithLogic:@"RELATED"
+                                      data:@{@"v": itemId ? [NSString stringWithFormat:@"i:%@", itemId] : @""}];
 }
 
 - (BOOL)isEqual:(id)other {
