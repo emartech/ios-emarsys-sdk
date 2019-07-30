@@ -24,13 +24,80 @@
     }
 }
 
-- (void)testMap {
+- (void)testMapWithSearch {
+    [self assertForProductsWithFeature:@"SEARCH"];
+}
+
+- (void)testMapWithCart {
+    [self assertForProductsWithFeature:@"CART"];
+}
+
+- (void)testMapWithRelated {
+    [self assertForProductsWithFeature:@"RELATED"];
+}
+
+- (void)assertForProductsWithFeature:(NSString *)feature {
+    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                           headers:@{}
+                                                                              body:[self rawResponseDataWithFeature:feature]
+                                                                      requestModel:OCMClassMock([EMSRequestModel class])
+                                                                         timestamp:[NSDate date]];
+
+    EMSProduct *expectedProduct1 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+        [builder setRequiredFieldsWithProductId:@"2119" title:@"LSL Men Polo Shirt SE16"
+                                        linkUrl:[[NSURL alloc]
+                                            initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]];
+        [builder setCategoryPath:@"MEN>Shirts"];
+        [builder setAvailable:@(YES)];
+        [builder setMsrp:@(100.0)];
+        [builder setPrice:@(100.0)];
+        [builder setImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
+        [builder setZoomImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
+        [builder setProductDescription:@"product Description"];
+        [builder setAlbum:@"album"];
+        [builder setActor:@"actor"];
+        [builder setArtist:@"artist"];
+        [builder setAuthor:@"author"];
+        [builder setBrand:@"brand"];
+        [builder setYear:@(2000)];
+        [builder setCustomFields:@{@"msrp_gpb": @"83.2",
+            @"price_gpb": @"83.2",
+            @"msrp_aed": @"100",
+            @"price_aed": @"100",
+            @"msrp_cad": @"100",
+            @"price_cad": @"100",
+            @"msrp_mxn": @"2057.44",
+            @"price_mxn": @"2057.44",
+            @"msrp_pln": @"100",
+            @"price_pln": @"100",
+            @"msrp_rub": @"100",
+            @"price_rub": @"100",
+            @"msrp_sek": @"100",
+            @"price_sek": @"100",
+            @"msrp_try": @"339.95",
+            @"price_try": @"339.95",
+            @"msrp_usd": @"100",
+            @"price_usd": @"100"}];
+    }];
+    EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+        [builder setRequiredFieldsWithProductId:@"2120"
+                                          title:@"LSL Men Polo Shirt LE16"
+                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]];
+    }];
+
+    NSArray *expectedResult = @[expectedProduct1, expectedProduct2];
+
+    NSArray *returnedResult = [[EMSProductMapper new] mapFromResponse:responseModel];
+    XCTAssertEqualObjects(expectedResult, returnedResult);
+}
+
+- (NSData *)rawResponseDataWithFeature:(NSString *)feature {
     NSString *rawResponse = @"{\n"
                             "  \"cohort\": \"AAAA\",\n"
                             "  \"visitor\": \"11730071F07F469F\",\n"
                             "  \"session\": \"28ACE5FD314FCC1A\",\n"
                             "  \"features\": {\n"
-                            "    \"SEARCH\": {\n"
+                            "    \"REPLACE_PLACEHOLDER\": {\n"
                             "      \"hasMore\": true,\n"
                             "      \"merchants\": [\n"
                             "        \"1428C8EE286EC34B\"\n"
@@ -125,59 +192,17 @@
                             "    }\n"
                             "  }\n"
                             "}";
-
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                           headers:@{}
-                                                                              body:[rawResponse dataUsingEncoding:NSUTF8StringEncoding]
-                                                                      requestModel:OCMClassMock([EMSRequestModel class])
-                                                                         timestamp:[NSDate date]];
-
-    EMSProduct *expectedProduct1 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-        [builder setRequiredFieldsWithProductId:@"2119" title:@"LSL Men Polo Shirt SE16"
-                                        linkUrl:[[NSURL alloc]
-                                                initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]];
-        [builder setCategoryPath:@"MEN>Shirts"];
-        [builder setAvailable:@(YES)];
-        [builder setMsrp:@(100.0)];
-        [builder setPrice:@(100.0)];
-        [builder setImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
-        [builder setZoomImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
-        [builder setProductDescription:@"product Description"];
-        [builder setAlbum:@"album"];
-        [builder setActor:@"actor"];
-        [builder setArtist:@"artist"];
-        [builder setAuthor:@"author"];
-        [builder setBrand:@"brand"];
-        [builder setYear:@(2000)];
-        [builder setCustomFields:@{@"msrp_gpb": @"83.2",
-                @"price_gpb": @"83.2",
-                @"msrp_aed": @"100",
-                @"price_aed": @"100",
-                @"msrp_cad": @"100",
-                @"price_cad": @"100",
-                @"msrp_mxn": @"2057.44",
-                @"price_mxn": @"2057.44",
-                @"msrp_pln": @"100",
-                @"price_pln": @"100",
-                @"msrp_rub": @"100",
-                @"price_rub": @"100",
-                @"msrp_sek": @"100",
-                @"price_sek": @"100",
-                @"msrp_try": @"339.95",
-                @"price_try": @"339.95",
-                @"msrp_usd": @"100",
-                @"price_usd": @"100"}];
-    }];
-    EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-        [builder setRequiredFieldsWithProductId:@"2120"
-                                          title:@"LSL Men Polo Shirt LE16"
-                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]];
-    }];
-
-    NSArray *expectedResult = @[expectedProduct1, expectedProduct2];
-
-    NSArray *returnedResult = [[EMSProductMapper new] mapFromResponse:responseModel];
-    XCTAssertEqualObjects(expectedResult, returnedResult);
+    NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:[rawResponse dataUsingEncoding:NSUTF8StringEncoding]
+                                                                 options:NSJSONReadingAllowFragments
+                                                                   error:nil];
+    NSMutableDictionary *mutableResponseDict = [responseDict mutableCopy];
+    NSMutableDictionary *mutableFeaturesDict = [mutableResponseDict[@"features"] mutableCopy];
+    mutableFeaturesDict[feature] = mutableFeaturesDict[@"REPLACE_PLACEHOLDER"];
+    mutableFeaturesDict[@"REPLACE_PLACEHOLDER"] = nil;
+    mutableResponseDict[@"features"] = mutableFeaturesDict;
+    return [NSJSONSerialization dataWithJSONObject:mutableResponseDict
+                                           options:NSJSONWritingPrettyPrinted
+                                             error:nil];
 }
 
 @end

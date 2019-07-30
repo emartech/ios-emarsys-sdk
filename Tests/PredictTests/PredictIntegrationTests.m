@@ -25,8 +25,6 @@
 - (instancetype)initWithConfig:(EMSConfig *)config
                   expectations:(NSArray<XCTestExpectation *> *)expectations;
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                   expectation:(XCTestExpectation *)expectation;
 @end
 
 @implementation PredictIntegrationDependencyContainer
@@ -37,12 +35,6 @@
         _expectations = expectations.mutableCopy;
     }
     return self;
-}
-
-- (instancetype)initWithConfig:(EMSConfig *)config
-                   expectation:(XCTestExpectation *)expectation {
-    return [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
-                                                            expectations:@[expectation]];
 }
 
 - (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
@@ -236,6 +228,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
                 XCTAssertNotNil(returnedProducts);
+                XCTAssertGreaterThan([returnedProducts count], 0);
             };
 
             it(@"should recommend products by searchTerm", ^{
@@ -250,6 +243,12 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                                        price:456
                                                                     quantity:2];
                 EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+
+                assertWithLogic(logic);
+            });
+
+            it(@"should recommend products by viewItemId", ^{
+                EMSLogic *logic = [EMSLogic relatedWithViewItemId:@"2200"];
 
                 assertWithLogic(logic);
             });
