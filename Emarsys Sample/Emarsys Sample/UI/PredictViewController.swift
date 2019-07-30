@@ -35,6 +35,7 @@ class PredictViewController: UIViewController {
         guard let itemId = tfItemId.text, itemId.count > 0 else {
             return
         }
+        self.logic = EMSLogic.related(withViewItemId: itemId)
         Emarsys.predict.trackItemView(withItemId: itemId)
     }
 
