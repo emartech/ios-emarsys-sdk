@@ -55,6 +55,15 @@
                                       data:@{@"v": itemId ? [NSString stringWithFormat:@"i:%@", itemId] : @""}];
 }
 
++ (EMSLogic *)category {
+    return [EMSLogic categoryWithCategoryPath:nil];
+}
+
++ (EMSLogic *)categoryWithCategoryPath:(NSString *)categoryPath {
+    return [[EMSLogic alloc] initWithLogic:@"CATEGORY"
+                                      data:@{@"vc": categoryPath ? categoryPath : @""}];
+}
+
 - (BOOL)isEqual:(id)other {
     if (other == self)
         return YES;

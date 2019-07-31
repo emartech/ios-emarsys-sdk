@@ -21,4 +21,8 @@
 
 + (EMSLogic *)relatedWithViewItemId:(nullable NSString *)itemId;
 
++ (EMSLogic *)category;
+
++ (EMSLogic *)categoryWithCategoryPath:(NSString *)categoryPath;
+
 @end

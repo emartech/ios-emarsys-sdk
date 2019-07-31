@@ -88,4 +88,24 @@
     XCTAssertEqualObjects(logic.data, @{@"v": @""});
 }
 
+- (void)testCategory {
+    EMSLogic *logic = EMSLogic.category;
+
+    XCTAssertEqualObjects(logic.logic, @"CATEGORY");
+}
+
+- (void)testCategoryWithCategoryPath_when_categoryPathIsNil {
+    EMSLogic *logic = [EMSLogic categoryWithCategoryPath:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"CATEGORY");
+    XCTAssertEqualObjects(logic.data, @{@"vc": @""});
+}
+
+- (void)testCategoryWithCategoryPath_when_categoryPathIsNotNil {
+    EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"testCategoryPath"];
+
+    XCTAssertEqualObjects(logic.logic, @"CATEGORY");
+    XCTAssertEqualObjects(logic.data, @{@"vc": @"testCategoryPath"});
+}
+
 @end
