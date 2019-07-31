@@ -64,6 +64,24 @@
                                       data:@{@"vc": categoryPath ? categoryPath : @""}];
 }
 
++ (EMSLogic *)alsoBought {
+    return [EMSLogic alsoBoughtWithViewItemId:nil];
+}
+
++ (EMSLogic *)alsoBoughtWithViewItemId:(NSString *)itemId {
+    return [[EMSLogic alloc] initWithLogic:@"ALSO_BOUGHT"
+                                      data:@{@"v": itemId ? [NSString stringWithFormat:@"i:%@", itemId] : @""}];
+}
+
++ (EMSLogic *)popular {
+    return [EMSLogic popularWithCategoryPath:nil];
+}
+
++ (EMSLogic *)popularWithCategoryPath:(NSString *)categoryPath {
+    return [[EMSLogic alloc] initWithLogic:@"POPULAR"
+                                      data:@{@"vc": categoryPath ? categoryPath : @""}];
+}
+
 - (BOOL)isEqual:(id)other {
     if (other == self)
         return YES;

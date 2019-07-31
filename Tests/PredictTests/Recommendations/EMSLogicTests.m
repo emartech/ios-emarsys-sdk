@@ -108,4 +108,46 @@
     XCTAssertEqualObjects(logic.data, @{@"vc": @"testCategoryPath"});
 }
 
+
+- (void)testAlsoBought {
+    EMSLogic *logic = EMSLogic.alsoBought;
+
+    XCTAssertEqualObjects(logic.logic, @"ALSO_BOUGHT");
+}
+
+- (void)testAlsoBoughtWithViewItemId_when_itemIdIsNil {
+    EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"ALSO_BOUGHT");
+    XCTAssertEqualObjects(logic.data, @{@"v": @""});
+}
+
+- (void)testAlsoBoughtWithViewItemId_when_itemIdIsNotNil {
+    EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"testItemId"];
+
+    XCTAssertEqualObjects(logic.logic, @"ALSO_BOUGHT");
+    XCTAssertEqualObjects(logic.data, @{@"v": @"i:testItemId"});
+}
+
+
+- (void)testPopular {
+    EMSLogic *logic = EMSLogic.popular;
+
+    XCTAssertEqualObjects(logic.logic, @"POPULAR");
+}
+
+- (void)testPopularWithCategoryPath_when_categoryPathIsNil {
+    EMSLogic *logic = [EMSLogic popularWithCategoryPath:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"POPULAR");
+    XCTAssertEqualObjects(logic.data, @{@"vc": @""});
+}
+
+- (void)testPopularWithCategoryPath_when_categoryPathIsNotNil {
+    EMSLogic *logic = [EMSLogic popularWithCategoryPath:@"testCategoryPath"];
+
+    XCTAssertEqualObjects(logic.logic, @"POPULAR");
+    XCTAssertEqualObjects(logic.data, @{@"vc": @"testCategoryPath"});
+}
+
 @end

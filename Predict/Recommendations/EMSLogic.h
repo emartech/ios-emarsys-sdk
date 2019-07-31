@@ -25,4 +25,12 @@
 
 + (EMSLogic *)categoryWithCategoryPath:(NSString *)categoryPath;
 
++ (EMSLogic *)alsoBought;
+
++ (EMSLogic *)alsoBoughtWithViewItemId:(NSString *)itemId;
+
++ (EMSLogic *)popular;
+
++ (EMSLogic *)popularWithCategoryPath:(NSString *)categoryPath;
+
 @end
