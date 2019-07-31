@@ -40,6 +40,14 @@
     [self assertForProductsWithFeature:@"CATEGORY"];
 }
 
+- (void)testMapWithAlsoBought {
+    [self assertForProductsWithFeature:@"ALSO_BOUGHT"];
+}
+
+- (void)testMapWithPopular {
+    [self assertForProductsWithFeature:@"POPULAR"];
+}
+
 - (void)assertForProductsWithFeature:(NSString *)feature {
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                            headers:@{}

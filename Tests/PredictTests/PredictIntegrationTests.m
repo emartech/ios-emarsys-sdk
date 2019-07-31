@@ -231,11 +231,11 @@ SPEC_BEGIN(PredictIntegrationTests)
                 XCTAssertGreaterThan([returnedProducts count], 0);
             };
 
-            it(@"should recommend products by searchTerm", ^{
+            it(@"search should recommend products by searchTerm", ^{
                 assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"]);
             });
 
-            it(@"should recommend products by cartItems", ^{
+            it(@"cart should recommend products by cartItems", ^{
                 EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
                                                                        price:123
                                                                     quantity:1];
@@ -247,14 +247,26 @@ SPEC_BEGIN(PredictIntegrationTests)
                 assertWithLogic(logic);
             });
 
-            it(@"should recommend products by viewItemId", ^{
+            it(@"related should recommend products by viewItemId", ^{
                 EMSLogic *logic = [EMSLogic relatedWithViewItemId:@"2200"];
 
                 assertWithLogic(logic);
             });
 
-            it(@"should recommend products by categoryPath", ^{
+            it(@"category should recommend products by categoryPath", ^{
                 EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"MEN>Shirts"];
+
+                assertWithLogic(logic);
+            });
+
+            it(@"also bought should recommend products by viewItemId", ^{
+                EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"2200"];
+
+                assertWithLogic(logic);
+            });
+
+            it(@"popular should recommend products by categoryPath", ^{
+                EMSLogic *logic = [EMSLogic popularWithCategoryPath:@"MEN>Shirts"];
 
                 assertWithLogic(logic);
             });
