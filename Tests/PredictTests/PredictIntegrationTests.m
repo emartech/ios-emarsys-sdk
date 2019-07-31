@@ -252,6 +252,12 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 assertWithLogic(logic);
             });
+
+            it(@"should recommend products by categoryPath", ^{
+                EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"MEN>Shirts"];
+
+                assertWithLogic(logic);
+            });
         });
 
 SPEC_END

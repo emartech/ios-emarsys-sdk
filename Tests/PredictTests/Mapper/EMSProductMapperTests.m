@@ -36,6 +36,10 @@
     [self assertForProductsWithFeature:@"RELATED"];
 }
 
+- (void)testMapWithCategory {
+    [self assertForProductsWithFeature:@"CATEGORY"];
+}
+
 - (void)assertForProductsWithFeature:(NSString *)feature {
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                            headers:@{}
