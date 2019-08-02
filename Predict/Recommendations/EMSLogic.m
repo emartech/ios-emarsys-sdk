@@ -28,58 +28,73 @@
     return [EMSLogic searchWithSearchTerm:nil];
 }
 
-+ (EMSLogic *)searchWithSearchTerm:(NSString *)searchTerm {
++ (EMSLogic *)searchWithSearchTerm:(nullable NSString *)searchTerm {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    data[@"q"] = searchTerm;
     return [[EMSLogic alloc] initWithLogic:@"SEARCH"
-                                      data:@{@"q": searchTerm ? searchTerm : @""}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 + (EMSLogic *)cart {
     return [EMSLogic cartWithCartItems:nil];
 }
 
-+ (EMSLogic *)cartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
++ (EMSLogic *)cartWithCartItems:(nullable NSArray<id <EMSCartItemProtocol>> *)cartItems {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    data[@"cv"] = @"1";
-    data[@"ca"] = [EMSCartItemUtils queryParamFromCartItems:cartItems];
-
+    if (cartItems) {
+        data[@"cv"] = @"1";
+        data[@"ca"] = [EMSCartItemUtils queryParamFromCartItems:cartItems];
+    }
     return [[EMSLogic alloc] initWithLogic:@"CART"
-                                      data:data];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 + (EMSLogic *)related {
     return [EMSLogic relatedWithViewItemId:nil];
 }
 
-+ (EMSLogic *)relatedWithViewItemId:(NSString *)itemId {
++ (EMSLogic *)relatedWithViewItemId:(nullable NSString *)itemId {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    if (itemId) {
+        data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
+    }
     return [[EMSLogic alloc] initWithLogic:@"RELATED"
-                                      data:@{@"v": itemId ? [NSString stringWithFormat:@"i:%@", itemId] : @""}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 + (EMSLogic *)category {
     return [EMSLogic categoryWithCategoryPath:nil];
 }
 
-+ (EMSLogic *)categoryWithCategoryPath:(NSString *)categoryPath {
++ (EMSLogic *)categoryWithCategoryPath:(nullable NSString *)categoryPath {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    data[@"vc"] = categoryPath;
     return [[EMSLogic alloc] initWithLogic:@"CATEGORY"
-                                      data:@{@"vc": categoryPath ? categoryPath : @""}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 + (EMSLogic *)alsoBought {
     return [EMSLogic alsoBoughtWithViewItemId:nil];
 }
 
-+ (EMSLogic *)alsoBoughtWithViewItemId:(NSString *)itemId {
++ (EMSLogic *)alsoBoughtWithViewItemId:(nullable NSString *)itemId {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    if (itemId) {
+        data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
+    }
     return [[EMSLogic alloc] initWithLogic:@"ALSO_BOUGHT"
-                                      data:@{@"v": itemId ? [NSString stringWithFormat:@"i:%@", itemId] : @""}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 + (EMSLogic *)popular {
     return [EMSLogic popularWithCategoryPath:nil];
 }
 
-+ (EMSLogic *)popularWithCategoryPath:(NSString *)categoryPath {
++ (EMSLogic *)popularWithCategoryPath:(nullable NSString *)categoryPath {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    data[@"vc"] = categoryPath;
     return [[EMSLogic alloc] initWithLogic:@"POPULAR"
-                                      data:@{@"vc": categoryPath ? categoryPath : @""}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 - (BOOL)isEqual:(id)other {

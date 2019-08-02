@@ -29,7 +29,7 @@
     EMSLogic *logic = [EMSLogic searchWithSearchTerm:nil];
 
     XCTAssertEqualObjects(logic.logic, @"SEARCH");
-    XCTAssertEqualObjects(logic.data, @{@"q": @""});
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testCart {
@@ -57,15 +57,10 @@
 }
 
 - (void)testCartWithCartItems_when_cartItemsAreNil {
-    NSDictionary *expectedData = @{
-        @"cv": @"1",
-        @"ca": @""
-    };
-
     EMSLogic *logic = [EMSLogic cartWithCartItems:nil];
 
     XCTAssertEqualObjects(logic.logic, @"CART");
-    XCTAssertEqualObjects(logic.data, expectedData);
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testRelated {
@@ -85,7 +80,7 @@
     EMSLogic *logic = [EMSLogic relatedWithViewItemId:nil];
 
     XCTAssertEqualObjects(logic.logic, @"RELATED");
-    XCTAssertEqualObjects(logic.data, @{@"v": @""});
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testCategory {
@@ -98,7 +93,7 @@
     EMSLogic *logic = [EMSLogic categoryWithCategoryPath:nil];
 
     XCTAssertEqualObjects(logic.logic, @"CATEGORY");
-    XCTAssertEqualObjects(logic.data, @{@"vc": @""});
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testCategoryWithCategoryPath_when_categoryPathIsNotNil {
@@ -119,7 +114,7 @@
     EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:nil];
 
     XCTAssertEqualObjects(logic.logic, @"ALSO_BOUGHT");
-    XCTAssertEqualObjects(logic.data, @{@"v": @""});
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testAlsoBoughtWithViewItemId_when_itemIdIsNotNil {
@@ -140,7 +135,7 @@
     EMSLogic *logic = [EMSLogic popularWithCategoryPath:nil];
 
     XCTAssertEqualObjects(logic.logic, @"POPULAR");
-    XCTAssertEqualObjects(logic.data, @{@"vc": @""});
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 - (void)testPopularWithCategoryPath_when_categoryPathIsNotNil {

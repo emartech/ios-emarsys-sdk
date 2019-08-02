@@ -7,6 +7,8 @@
 
 @protocol EMSCartItemProtocol;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface EMSLogic : NSObject <EMSLogicProtocol>
 
 + (EMSLogic *)search;
@@ -23,14 +25,16 @@
 
 + (EMSLogic *)category;
 
-+ (EMSLogic *)categoryWithCategoryPath:(NSString *)categoryPath;
++ (EMSLogic *)categoryWithCategoryPath:(nullable NSString *)categoryPath;
 
 + (EMSLogic *)alsoBought;
 
-+ (EMSLogic *)alsoBoughtWithViewItemId:(NSString *)itemId;
++ (EMSLogic *)alsoBoughtWithViewItemId:(nullable NSString *)itemId;
 
 + (EMSLogic *)popular;
 
-+ (EMSLogic *)popularWithCategoryPath:(NSString *)categoryPath;
++ (EMSLogic *)popularWithCategoryPath:(nullable NSString *)categoryPath;
 
 @end
+
+NS_ASSUME_NONNULL_END
