@@ -18,6 +18,10 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSPredictRequestModelBuilderProvider *requestBuilderProvider;
 @property(nonatomic, strong) EMSProductMapper *productMapper;
+@property(nonatomic, strong) NSString *lastSearchTerm;
+@property(nonatomic, strong) NSArray<id <EMSCartItemProtocol>> *lastCartItems;
+@property(nonatomic, strong) NSString *lastViewItemId;
+@property(nonatomic, strong) NSString *lastCategoryPath;
 
 @end
 
@@ -53,11 +57,12 @@
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
     NSParameterAssert(categoryPath);
+    _lastCategoryPath = categoryPath;
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_item_category_view"];
-                [builder addPayloadEntryWithKey:@"vc"
-                                          value:categoryPath];
-            }
+            [builder setType:@"predict_item_category_view"];
+            [builder addPayloadEntryWithKey:@"vc"
+                                      value:categoryPath];
+        }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
 
@@ -66,10 +71,11 @@
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
     NSParameterAssert(itemId);
+    _lastViewItemId = itemId;
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_item_view"];
-                [builder addPayloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
-            }
+            [builder setType:@"predict_item_view"];
+            [builder addPayloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
+        }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
 
@@ -78,23 +84,23 @@
 
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
     NSParameterAssert(cartItems);
-
+    _lastCartItems = cartItems;
     [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_cart"];
-                [builder addPayloadEntryWithKey:@"cv" value:@"1"];
-                [builder addPayloadEntryWithKey:@"ca" value:[EMSCartItemUtils queryParamFromCartItems:cartItems]];
-            }
+            [builder setType:@"predict_cart"];
+            [builder addPayloadEntryWithKey:@"cv" value:@"1"];
+            [builder addPayloadEntryWithKey:@"ca" value:[EMSCartItemUtils queryParamFromCartItems:cartItems]];
+        }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
 }
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
     NSParameterAssert(searchTerm);
-
+    _lastSearchTerm = searchTerm;
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_search_term"];
-                [builder addPayloadEntryWithKey:@"q" value:searchTerm];
-            }
+            [builder setType:@"predict_search_term"];
+            [builder addPayloadEntryWithKey:@"q" value:searchTerm];
+        }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
 
@@ -107,12 +113,12 @@
     NSParameterAssert(items);
 
     [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_purchase"];
-                [builder addPayloadEntryWithKey:@"co"
-                                          value:[EMSCartItemUtils queryParamFromCartItems:items]];
-                [builder addPayloadEntryWithKey:@"oi"
-                                          value:orderId];
-            }
+            [builder setType:@"predict_purchase"];
+            [builder addPayloadEntryWithKey:@"co"
+                                      value:[EMSCartItemUtils queryParamFromCartItems:items]];
+            [builder addPayloadEntryWithKey:@"oi"
+                                      value:orderId];
+        }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
 }
@@ -122,16 +128,18 @@
     NSParameterAssert(tag);
 
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                [builder setType:@"predict_tag"];
+            [builder setType:@"predict_tag"];
 
-                if (!attributes) {
-                    [builder addPayloadEntryWithKey:@"t" value:tag];
-                } else {
-                    NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes} options:0 error:nil];
-                    NSString *payload = [[NSString alloc] initWithData:serializedData encoding:NSUTF8StringEncoding];
-                    [builder addPayloadEntryWithKey:@"ta" value:payload];
-                }
+            if (!attributes) {
+                [builder addPayloadEntryWithKey:@"t" value:tag];
+            } else {
+                NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes}
+                                                                         options:0
+                                                                           error:nil];
+                NSString *payload = [[NSString alloc] initWithData:serializedData encoding:NSUTF8StringEncoding];
+                [builder addPayloadEntryWithKey:@"ta" value:payload];
             }
+        }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
 
@@ -143,7 +151,13 @@
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
-    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] withLogic:logic] build];
+    EMSRequestModel *requestModel = [[[[[[[self.requestBuilderProvider provideBuilder]
+        withLogic:logic]
+        withLastSearchTerm:self.lastSearchTerm]
+        withLastCartItems:self.lastCartItems]
+        withLastCategoryPath:self.lastCategoryPath]
+        withLastViewItemId:self.lastViewItemId]
+        build];
 
     __weak typeof(self) weakSelf = self;
     [_requestManager submitRequestModelNow:requestModel
