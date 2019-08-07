@@ -79,7 +79,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             [MEExperimental enableFeature:EMSInnerFeature.predict];
 
             expectations = @[
-                    [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
+                [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
             dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
                                                                                    expectations:expectations];
             [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
@@ -96,8 +96,8 @@ SPEC_BEGIN(PredictIntegrationTests)
                 NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
 
                 [Emarsys.predict trackCartWithCartItems:@[
-                        [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
-                        [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
+                    [EMSCartItem itemWithItemId:@"2508" price:200.0 quantity:100.0],
+                    [EMSCartItem itemWithItemId:@"2073" price:201.0 quantity:101.0]
                 ]];
 
                 [EMSWaiter waitForExpectations:expectations
@@ -117,12 +117,12 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[
-                                                            [EMSCartItem itemWithItemId:@"2508"
-                                                                                  price:200.0
-                                                                               quantity:100.0],
-                                                            [EMSCartItem itemWithItemId:@"2073"
-                                                                                  price:201.0
-                                                                               quantity:101.0]
+                                                        [EMSCartItem itemWithItemId:@"2508"
+                                                                              price:200.0
+                                                                           quantity:100.0],
+                                                        [EMSCartItem itemWithItemId:@"2073"
+                                                                              price:201.0
+                                                                           quantity:101.0]
                                                     ]];
 
                 [EMSWaiter waitForExpectations:expectations
@@ -231,8 +231,25 @@ SPEC_BEGIN(PredictIntegrationTests)
                 XCTAssertGreaterThan([returnedProducts count], 0);
             };
 
-            it(@"search should recommend products by searchTerm", ^{
+            it(@"search should recommend products by searchTerm with searchTerm", ^{
                 assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"]);
+            });
+
+            it(@"search should recommend products by searchTerm", ^{
+                [Emarsys.predict trackSearchWithSearchTerm:@"shirt"];
+                assertWithLogic(EMSLogic.search);
+            });
+
+            it(@"cart should recommend products by cartItems with cartItems", ^{
+                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                                       price:123
+                                                                    quantity:1];
+                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                                       price:456
+                                                                    quantity:2];
+
+                EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+                assertWithLogic(logic);
             });
 
             it(@"cart should recommend products by cartItems", ^{
@@ -242,9 +259,15 @@ SPEC_BEGIN(PredictIntegrationTests)
                 EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
                                                                        price:456
                                                                     quantity:2];
-                EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
 
-                assertWithLogic(logic);
+                [Emarsys.predict trackCartWithCartItems:@[cartItem1, cartItem2]];
+                assertWithLogic(EMSLogic.cart);
+            });
+
+            it(@"related should recommend products by viewItemId with viewItemId", ^{
+                [Emarsys.predict trackItemViewWithItemId:@"2200"];
+
+                assertWithLogic(EMSLogic.related);
             });
 
             it(@"related should recommend products by viewItemId", ^{
@@ -253,22 +276,40 @@ SPEC_BEGIN(PredictIntegrationTests)
                 assertWithLogic(logic);
             });
 
-            it(@"category should recommend products by categoryPath", ^{
+            it(@"category should recommend products by categoryPath with categoryPath", ^{
                 EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"MEN>Shirts"];
 
                 assertWithLogic(logic);
             });
 
-            it(@"also bought should recommend products by viewItemId", ^{
+            it(@"category should recommend products by categoryPath", ^{
+                [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
+
+                assertWithLogic(EMSLogic.category);
+            });
+
+            it(@"also bought should recommend products by viewItemId with viewItemId", ^{
                 EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"2200"];
 
                 assertWithLogic(logic);
             });
 
-            it(@"popular should recommend products by categoryPath", ^{
+            it(@"also bought should recommend products by viewItemId", ^{
+                [Emarsys.predict trackItemViewWithItemId:@"2200"];
+
+                assertWithLogic(EMSLogic.alsoBought);
+            });
+
+            it(@"popular should recommend products by categoryPath with categoryPath", ^{
                 EMSLogic *logic = [EMSLogic popularWithCategoryPath:@"MEN>Shirts"];
 
                 assertWithLogic(logic);
+            });
+
+            it(@"popular should recommend products by categoryPath", ^{
+                [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
+
+                assertWithLogic(EMSLogic.popular);
             });
         });
 
