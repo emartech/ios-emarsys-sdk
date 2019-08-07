@@ -433,7 +433,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 EMSPredictRequestModelBuilder *mockBuilder = [EMSPredictRequestModelBuilder nullMock];
                 [[mockBuilderProvider should] receive:@selector(provideBuilder)
                                             andReturn:mockBuilder];
-                [[mockBuilder should] receive:@selector(addLogic:)
+                [[mockBuilder should] receive:@selector(withLogic:)
                                     andReturn:mockBuilder
                                 withArguments:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
                 [[mockBuilder should] receive:@selector(build)
@@ -460,7 +460,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 EMSPredictRequestModelBuilder *mockBuilder = [EMSPredictRequestModelBuilder nullMock];
                 [[mockBuilderProvider should] receive:@selector(provideBuilder)
                                             andReturn:mockBuilder];
-                [[mockBuilder should] receive:@selector(addLogic:)
+                [[mockBuilder should] receive:@selector(withLogic:)
                                     andReturn:mockBuilder
                                 withArguments:logic];
                 [[mockBuilder should] receive:@selector(build)

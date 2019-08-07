@@ -58,35 +58,107 @@
           builderBlock:nil];
 }
 
-- (void)testAddSearchTerm {
-    NSString *searchTerm = @"jeans";
-    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
-       queryParameters:@{
-               @"f": @"f:SEARCH,l:2,o:0",
-               @"q": searchTerm
-       }
-          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
-              [builder addLogic:[EMSLogic searchWithSearchTerm:searchTerm]];
-          }];
-}
+- (void)testRecommendationLogic {
+    [self assertWithParameterizedSel:@selector(searchWithSearchTerm:)
+                            emptySel:@selector(search)
+                               param:@"testSearchTerm"
+                           lastParam:@"lastTestSearchTerm"
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastSearchTerm:@"lastTestSearchTerm"];
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                        }];
 
-- (void)testAddCart {
     EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
                                                            price:123
                                                         quantity:1];
     EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
                                                            price:456
                                                         quantity:2];
-    EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+    EMSCartItem *cartItem3 = [[EMSCartItem alloc] initWithItemId:@"cartItemId3"
+                                                           price:469
+                                                        quantity:3];
+    EMSCartItem *cartItem4 = [[EMSCartItem alloc] initWithItemId:@"cartItemId4"
+                                                           price:478
+                                                        quantity:4];
+    [self assertWithParameterizedSel:@selector(cartWithCartItems:)
+                            emptySel:@selector(cart)
+                               param:@[cartItem1, cartItem2]
+                           lastParam:@[cartItem3, cartItem4]
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastCartItems:@[cartItem3, cartItem4]];
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                        }];
 
+    [self assertWithParameterizedSel:@selector(relatedWithViewItemId:)
+                            emptySel:@selector(related)
+                               param:@"testViewId"
+                           lastParam:@"lastTestViewId"
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastViewItemId:@"lastTestViewId"];
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                        }];
+    [self assertWithParameterizedSel:@selector(categoryWithCategoryPath:)
+                            emptySel:@selector(category)
+                               param:@"testCategoryPath"
+                           lastParam:@"lastTestCategoryPath"
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                            [builder withLastViewItemId:@"lastTestViewId"];
+                        }];
+    [self assertWithParameterizedSel:@selector(alsoBoughtWithViewItemId:)
+                            emptySel:@selector(alsoBought)
+                               param:@"testViewId"
+                           lastParam:@"lastTestViewId"
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastViewItemId:@"lastTestViewId"];
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                        }];
+    [self assertWithParameterizedSel:@selector(popularWithCategoryPath:)
+                            emptySel:@selector(popular)
+                               param:@"testCategoryPath"
+                           lastParam:@"lastTestCategoryPath"
+                        builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+                            [builder withLastCategoryPath:@"lastTestCategoryPath"];
+                            [builder withLastViewItemId:@"lastViewItemId"];
+                        }];
+}
+
+- (void)assertWithParameterizedSel:(SEL)parameterizedSel
+                          emptySel:(SEL)emptySel
+                             param:(id)param
+                         lastParam:(id)lastParam
+                      builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
+    EMSLogic *logic = [EMSLogic performSelector:emptySel];
+    EMSLogic *logicWithParam = [EMSLogic performSelector:parameterizedSel
+                                              withObject:param];
+    EMSLogic *logicWithLastParam = [EMSLogic performSelector:parameterizedSel
+                                                  withObject:lastParam];
+    [self assertForLogic:logicWithParam
+         withQueryParams:logicWithParam.data
+            builderBlock:nil];
+    [self assertForLogic:logic
+         withQueryParams:logicWithLastParam.data
+            builderBlock:builderBlock];
+    [self assertForLogic:logicWithParam
+         withQueryParams:logicWithParam.data
+            builderBlock:builderBlock];
+    [self assertForLogic:logic
+         withQueryParams:@{}
+            builderBlock:nil];
+}
+
+- (void)assertForLogic:(EMSLogic *)logic
+       withQueryParams:(NSDictionary *)queryParams
+          builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
+    NSMutableDictionary *mutableQueryParams = [queryParams mutableCopy];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:2,o:0", logic.logic];
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
-       queryParameters:@{
-               @"f": @"f:CART,l:2,o:0",
-               @"cv": @"1",
-               @"ca": @"i:cartItemId1,p:123.0,q:1.0|i:cartItemId2,p:456.0,q:2.0"
-       }
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
-              [builder addLogic:logic];
+              [builder withLogic:logic];
+              if (builderBlock) {
+                  builderBlock(builder);
+              }
           }];
 }
 
@@ -94,17 +166,17 @@
      queryParameters:(NSDictionary *)queryParameters
         builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                if (queryParameters) {
-                    [builder setUrl:urlString
-                    queryParameters:queryParameters];
-                } else {
-                    [builder setUrl:urlString];
-                }
-                [builder setMethod:HTTPMethodGET];
-                [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
-                                                                                self.mockContext.deviceInfo.osVersion,
-                                                                                self.mockContext.deviceInfo.systemName]}];
+            if (queryParameters) {
+                [builder setUrl:urlString
+                queryParameters:queryParameters];
+            } else {
+                [builder setUrl:urlString];
             }
+            [builder setMethod:HTTPMethodGET];
+            [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
+                                                                            self.mockContext.deviceInfo.osVersion,
+                                                                            self.mockContext.deviceInfo.systemName]}];
+        }
                                                            timestampProvider:self.mockTimestampProvider
                                                                 uuidProvider:self.mockUuidProvider];
 

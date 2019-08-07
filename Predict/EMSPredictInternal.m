@@ -143,7 +143,7 @@
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
-    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] addLogic:logic] build];
+    EMSRequestModel *requestModel = [[[self.requestBuilderProvider provideBuilder] withLogic:logic] build];
 
     __weak typeof(self) weakSelf = self;
     [_requestManager submitRequestModelNow:requestModel
