@@ -10,6 +10,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "MEEndpoints.h"
+#import "NSError+EMSCore.h"
 
 @interface EMSMobileEngageRefreshTokenCompletionProxyTests : XCTestCase
 
@@ -17,7 +18,7 @@
 @property(nonatomic, strong) id <EMSRESTClientCompletionProxyProtocol> mockCompletionProxy;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *mockResponseHandler;
-@property(nonatomic, strong) NSError *mockError;
+@property(nonatomic, strong) NSError *error;
 @property(nonatomic, strong) EMSMobileEngageRefreshTokenCompletionProxy *refreshCompletionProxy;
 
 @end
@@ -29,18 +30,12 @@
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
-    NSError *error = [NSError new];
-    _mockError = OCMPartialMock(error);
-
+    _error = [NSError errorWithCode:500
+               localizedDescription:@"customError"];
     _refreshCompletionProxy = [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
                                                                                                restClient:self.mockRestClient
                                                                                            requestFactory:self.mockRequestFactory
                                                                                    contactResponseHandler:self.mockResponseHandler];
-}
-
-- (void)tearDown {
-    [(id) self.mockError stopMocking];
-    [super tearDown];
 }
 
 - (void)testInit_completionProxy_mustNotBeNil {
@@ -106,14 +101,14 @@
         [expectation fulfill];
     });
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:2];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(returnedRequestModel, requestModel);
     XCTAssertEqualObjects(returnedResponseModel, responseModel);
-    XCTAssertEqualObjects(returnedError, self.mockError);
+    XCTAssertEqualObjects(returnedError, self.error);
 }
 
 - (void)testCompletionBlock_delegateToCompletionProxy_when_statusCode401_andNotV3 {
@@ -127,7 +122,7 @@
         [expectation fulfill];
     });
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:2];
@@ -141,7 +136,7 @@
 
     OCMStub([self.mockRequestFactory createRefreshTokenRequestModel]).andReturn(requestModelForRefresh);
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     OCMVerify([self.mockRequestFactory createRefreshTokenRequestModel]);
     OCMVerify([self.mockRestClient executeWithRequestModel:requestModelForRefresh
@@ -156,7 +151,7 @@
 
     self.refreshCompletionProxy.originalRequestModel = mockOriginalRequestModel;
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     OCMVerify([self.mockResponseHandler processResponse:responseModel]);
     OCMVerify([self.mockRestClient executeWithRequestModel:mockOriginalRequestModel
@@ -175,7 +170,7 @@
         [expectation fulfill];
     });
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.mockError);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:2];
