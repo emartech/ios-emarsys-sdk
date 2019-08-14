@@ -79,6 +79,19 @@
                 withLogic:(EMSLogic *)logic {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
+}
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"limit"] = limit;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters]);
