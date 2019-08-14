@@ -221,14 +221,15 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
                 [Emarsys.predict recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    returnedProducts = products;
-                    [expectation fulfill];
-                }                        withLogic:logic];
+                        returnedProducts = products;
+                        [expectation fulfill];
+                    }                    withLogic:logic
+                                         withLimit:@2];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
                 XCTAssertNotNil(returnedProducts);
-                XCTAssertGreaterThan([returnedProducts count], 0);
+                XCTAssertEqual([returnedProducts count], 2);
             };
 
             it(@"search should recommend products by searchTerm with searchTerm", ^{
