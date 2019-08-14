@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)withLastCategoryPath:(NSString *)categoryPath;
 
+- (instancetype)withLimit:(NSNumber *)limit;
+
 - (EMSRequestModel *)build;
 
 @end

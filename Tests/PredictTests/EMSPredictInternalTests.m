@@ -397,6 +397,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
                 [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
                 [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
 
                 mockProductMapper = [EMSProductMapper nullMock];
                 [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
@@ -573,6 +574,51 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
                 [[expectedError should] equal:returnedError];
                 [[returnedThread should] equal:NSThread.mainThread];
+            });
+        });
+
+        describe(@"recommendProducts:withLogic:withLimit:", ^{
+
+            __block EMSRequestManager *mockRequestManager;
+            __block PRERequestContext *mockRequestContext;
+            __block EMSPredictRequestModelBuilderProvider *mockBuilderProvider;
+            __block EMSProductMapper *mockProductMapper;
+            __block EMSPredictInternal *predictInternal;
+            __block EMSPredictRequestModelBuilder *mockBuilder;
+
+            beforeEach(^{
+                mockRequestManager = [EMSRequestManager nullMock];
+                mockRequestContext = [PRERequestContext nullMock];
+                mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
+                mockBuilder = [EMSPredictRequestModelBuilder nullMock];
+                [mockBuilderProvider stub:@selector(provideBuilder) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLogic:) andReturn:mockBuilder];
+
+                mockProductMapper = [EMSProductMapper nullMock];
+                [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
+
+                predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
+                                                                      requestManager:mockRequestManager
+                                                              requestBuilderProvider:mockBuilderProvider
+                                                                       productMapper:mockProductMapper];
+            });
+
+            it(@"should pass limit to requestModelBuilder", ^{
+                [[mockBuilder should] receive:@selector(withLimit:)
+                                    andReturn:mockBuilder
+                                withArguments:@123];
+
+                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                    }
+                                         withLogic:EMSLogic.search
+                                         withLimit:@123];
             });
         });
 

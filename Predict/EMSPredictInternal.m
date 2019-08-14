@@ -148,11 +148,20 @@
 
 - (void)recommendProducts:(EMSProductsBlock)productsBlock
                 withLogic:(EMSLogic *)logic {
+    [self recommendProducts:productsBlock
+                  withLogic:logic
+                  withLimit:nil];
+}
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit {
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
-    EMSRequestModel *requestModel = [[[[[[[self.requestBuilderProvider provideBuilder]
+    EMSRequestModel *requestModel = [[[[[[[[self.requestBuilderProvider provideBuilder]
         withLogic:logic]
+        withLimit:limit]
         withLastSearchTerm:self.lastSearchTerm]
         withLastCartItems:self.lastCartItems]
         withLastCategoryPath:self.lastCategoryPath]
@@ -176,6 +185,7 @@
                                         }
                                     });
                                 }];
+
 }
 
 @end

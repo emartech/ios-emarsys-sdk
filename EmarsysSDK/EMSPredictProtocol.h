@@ -30,6 +30,10 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 - (void)recommendProducts:(EMSProductsBlock)productsBlock
                 withLogic:(EMSLogic *)logic;
 
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit;
+
 @end
 
 NS_ASSUME_NONNULL_END
