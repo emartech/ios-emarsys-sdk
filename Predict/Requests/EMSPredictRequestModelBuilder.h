@@ -11,6 +11,8 @@
 
 #define PREDICT_URL(merchantId) [NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", merchantId]
 
+#define DEFAULT_LIMIT @5
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSPredictRequestModelBuilder : NSObject
@@ -27,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)withLastCategoryPath:(NSString *)categoryPath;
 
-- (instancetype)withLimit:(NSNumber *)limit;
+- (instancetype)withLimit:(nullable NSNumber *)limit;
 
 - (EMSRequestModel *)build;
 

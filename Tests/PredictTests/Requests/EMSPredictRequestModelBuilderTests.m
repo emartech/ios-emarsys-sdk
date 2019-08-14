@@ -58,6 +58,54 @@
           builderBlock:nil];
 }
 
+- (void)testLimit_defaultValue_whenNil {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withLimit:nil];
+          }];
+}
+
+- (void)testLimit_defaultValue_whenLimitIsZero {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withLimit:@0];
+          }];
+}
+
+- (void)testLimit_defaultValue_whenLimitIsNegative {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withLimit:@-321];
+          }];
+}
+
+- (void)testLimit {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:123,o:0", logic.logic];
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withLimit:@123];
+          }];
+}
+
 - (void)testRecommendationLogic {
     [self assertWithParameterizedSel:@selector(searchWithSearchTerm:)
                             emptySel:@selector(search)
@@ -151,7 +199,7 @@
        withQueryParams:(NSDictionary *)queryParams
           builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
     NSMutableDictionary *mutableQueryParams = [queryParams mutableCopy];
-    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:2,o:0", logic.logic];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
