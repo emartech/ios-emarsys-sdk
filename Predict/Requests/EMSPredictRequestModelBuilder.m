@@ -8,6 +8,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSLogic.h"
 #import "EMSCartItemProtocol.h"
+#import "EMSRecommendationFilterProtocol.h"
 
 @interface EMSPredictRequestModelBuilder ()
 
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) NSString *lastViewItemId;
 @property(nonatomic, strong) NSString *lastCategoryPath;
 @property(nonatomic, strong) NSNumber *limit;
+@property(nonatomic, strong) NSArray<id <EMSRecommendationFilterProtocol>> *filter;
 
 @end
 
@@ -61,6 +63,11 @@
     return self;
 }
 
+- (instancetype)withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
+    _filter = filter;
+    return self;
+}
+
 - (EMSRequestModel *)build {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             if (self.logic) {
@@ -91,6 +98,9 @@
 - (NSMutableDictionary *)createQueryParameters {
     NSMutableDictionary *logicData = [self.logic.data mutableCopy];
     logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
+    if (self.filter) {
+        logicData[@"ex"] = [self filterQueryValue];
+    }
     if (!self.logic.data || [self.logic.data count] == 0) {
         if ([self.logic.logic isEqualToString:@"SEARCH"]) {
             [logicData addEntriesFromDictionary:[EMSLogic searchWithSearchTerm:self.lastSearchTerm].data];
@@ -103,6 +113,33 @@
         }
     }
     return logicData;
+}
+
+- (NSString *)filterQueryValue {
+    NSMutableArray *mutableFilterValues = [NSMutableArray array];
+    for (id <EMSRecommendationFilterProtocol> recommendationFilter in self.filter) {
+        NSMutableDictionary *mutableFilterValue = [NSMutableDictionary dictionary];
+        mutableFilterValue[@"f"] = recommendationFilter.field;
+        mutableFilterValue[@"r"] = recommendationFilter.comparison;
+        mutableFilterValue[@"v"] = [self recommendationFilterExpectationsStringRepresentation:recommendationFilter.expectations];
+        mutableFilterValue[@"n"] = [recommendationFilter.type isEqualToString:@"EXCLUDE"] ? @NO : @YES;
+        [mutableFilterValues addObject:[NSDictionary dictionaryWithDictionary:mutableFilterValue]];
+    }
+    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[NSArray arrayWithArray:mutableFilterValues]
+                                                                          options:NSJSONWritingPrettyPrinted
+                                                                            error:nil]
+                                 encoding:NSUTF8StringEncoding];
+}
+
+- (NSString *)recommendationFilterExpectationsStringRepresentation:(NSArray<NSString *> *)expectations {
+    NSMutableString *mutableExpectationsStringRepresentation = [NSMutableString string];
+    for (NSUInteger i = 0; i < expectations.count; ++i) {
+        if (i > 0) {
+            [mutableExpectationsStringRepresentation appendString:@"|"];
+        }
+        [mutableExpectationsStringRepresentation appendString:expectations[i]];
+    }
+    return [NSString stringWithString:mutableExpectationsStringRepresentation];
 }
 
 @end

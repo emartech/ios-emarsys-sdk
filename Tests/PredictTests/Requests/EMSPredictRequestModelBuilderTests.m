@@ -12,6 +12,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSLogic.h"
 #import "EMSCartItem.h"
+#import "EMSRecommendationFilter.h"
 
 @interface EMSPredictRequestModelBuilderTests : XCTestCase
 
@@ -103,6 +104,93 @@
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
               [builder withLogic:logic];
               [builder withLimit:@123];
+          }];
+}
+
+
+- (void)testFilter {
+    NSArray<NSDictionary<NSString *, NSString *> *> *expectedFilterQueryRawValue = @[
+        @{
+            @"f": @"testField1",
+            @"r": @"HAS",
+            @"v": @"testValue1",
+            @"n": @NO
+        },
+        @{
+            @"f": @"testField2",
+            @"r": @"IS",
+            @"v": @"testValue2",
+            @"n": @NO
+        },
+        @{
+            @"f": @"testField3",
+            @"r": @"IN",
+            @"v": @"testValue31|testValue32",
+            @"n": @NO
+        },
+        @{
+            @"f": @"testField4",
+            @"r": @"OVERLAPS",
+            @"v": @"testValue41|testValue42",
+            @"n": @NO
+        },
+        @{
+            @"f": @"testField5",
+            @"r": @"HAS",
+            @"v": @"testValue5",
+            @"n": @YES
+        },
+        @{
+            @"f": @"testField6",
+            @"r": @"IS",
+            @"v": @"testValue6",
+            @"n": @YES
+        },
+        @{
+            @"f": @"testField7",
+            @"r": @"IN",
+            @"v": @"testValue71|testValue72",
+            @"n": @YES
+        },
+        @{
+            @"f": @"testField8",
+            @"r": @"OVERLAPS",
+            @"v": @"testValue81|testValue82",
+            @"n": @YES
+        }
+    ];
+
+    NSString *expectedFilterQueryValue = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:expectedFilterQueryRawValue
+                                                                                                        options:NSJSONWritingPrettyPrinted
+                                                                                                          error:nil]
+                                                               encoding:NSUTF8StringEncoding];
+
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"ex"] = expectedFilterQueryValue;
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withFilter:@[
+                  [EMSRecommendationFilter excludeWithField:@"testField1"
+                                             hasExpectation:@"testValue1"],
+                  [EMSRecommendationFilter excludeWithField:@"testField2"
+                                              isExpectation:@"testValue2"],
+                  [EMSRecommendationFilter excludeWithField:@"testField3"
+                                             inExpectations:@[@"testValue31", @"testValue32"]],
+                  [EMSRecommendationFilter excludeWithField:@"testField4"
+                                       overlapsExpectations:@[@"testValue41", @"testValue42"]],
+                  [EMSRecommendationFilter includeWithField:@"testField5"
+                                             hasExpectation:@"testValue5"],
+                  [EMSRecommendationFilter includeWithField:@"testField6"
+                                              isExpectation:@"testValue6"],
+                  [EMSRecommendationFilter includeWithField:@"testField7"
+                                             inExpectations:@[@"testValue71", @"testValue72"]],
+                  [EMSRecommendationFilter includeWithField:@"testField8"
+                                       overlapsExpectations:@[@"testValue81", @"testValue82"]]
+              ]];
           }];
 }
 
