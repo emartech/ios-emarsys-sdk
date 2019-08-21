@@ -13,6 +13,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSLogic.h"
+#import "../../Emarsys Sample/Pods/EmarsysSDK/Predict/Recommendations/EMSRecommendationFilter.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -224,7 +225,10 @@ SPEC_BEGIN(PredictIntegrationTests)
                         returnedProducts = products;
                         [expectation fulfill];
                     }                    withLogic:logic
-                                         withLimit:@2];
+                                         withLimit:@2
+                                        withFilter:@[[EMSRecommendationFilter excludeWithField:@"price"
+                                                                                 isExpectation:@""]]
+                ];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
