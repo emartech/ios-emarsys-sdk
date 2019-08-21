@@ -6,6 +6,7 @@
 
 @class EMSProduct;
 @class EMSLogic;
+@protocol EMSRecommendationFilterProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,6 +34,15 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 - (void)recommendProducts:(EMSProductsBlock)productsBlock
                 withLogic:(EMSLogic *)logic
                 withLimit:(nullable NSNumber *)limit;
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
 
 @end
 

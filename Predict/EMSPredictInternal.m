@@ -150,18 +150,39 @@
                 withLogic:(EMSLogic *)logic {
     [self recommendProducts:productsBlock
                   withLogic:logic
-                  withLimit:nil];
+                  withLimit:nil
+                 withFilter:nil];
 }
 
 - (void)recommendProducts:(EMSProductsBlock)productsBlock
                 withLogic:(EMSLogic *)logic
                 withLimit:(nullable NSNumber *)limit {
+    [self recommendProducts:productsBlock
+                  withLogic:logic
+                  withLimit:limit
+                 withFilter:nil];
+}
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
+    [self recommendProducts:productsBlock
+                  withLogic:logic
+                  withLimit:nil
+                 withFilter:filter];
+}
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
-    EMSRequestModel *requestModel = [[[[[[[[self.requestBuilderProvider provideBuilder]
+    EMSRequestModel *requestModel = [[[[[[[[[self.requestBuilderProvider provideBuilder]
         withLogic:logic]
         withLimit:limit]
+        withFilter:filter]
         withLastSearchTerm:self.lastSearchTerm]
         withLastCartItems:self.lastCartItems]
         withLastCategoryPath:self.lastCategoryPath]
@@ -185,7 +206,6 @@
                                         }
                                     });
                                 }];
-
 }
 
 @end

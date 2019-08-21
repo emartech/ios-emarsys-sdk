@@ -8,6 +8,7 @@
 @class EMSRequestModel;
 @class EMSLogic;
 @protocol EMSCartItemProtocol;
+@protocol EMSRecommendationFilterProtocol;
 
 #define PREDICT_URL(merchantId) [NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", merchantId]
 
@@ -30,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)withLastCategoryPath:(NSString *)categoryPath;
 
 - (instancetype)withLimit:(nullable NSNumber *)limit;
+
+- (instancetype)withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
 
 - (EMSRequestModel *)build;
 
