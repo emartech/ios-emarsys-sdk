@@ -32,8 +32,8 @@
                                            isExpectation:(NSString *)expectation {
     NSParameterAssert(field);
     NSParameterAssert(expectation);
-    return [[EMSRecommendationFilter alloc] initWithType:@"exclude"
-                                          withComparison:@"is"
+    return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
+                                          withComparison:@"IS"
                                                withField:field
                                         withExpectations:@[expectation]];
 }
@@ -42,8 +42,8 @@
                                           inExpectations:(NSArray <NSString *> *)expectations {
     NSParameterAssert(field);
     NSParameterAssert(expectations);
-    return [[EMSRecommendationFilter alloc] initWithType:@"exclude"
-                                          withComparison:@"in"
+    return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
+                                          withComparison:@"IN"
                                                withField:field
                                         withExpectations:expectations];
 }
@@ -52,8 +52,8 @@
                                           hasExpectation:(NSString *)expectation {
     NSParameterAssert(field);
     NSParameterAssert(expectation);
-    return [[EMSRecommendationFilter alloc] initWithType:@"exclude"
-                                          withComparison:@"has"
+    return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
+                                          withComparison:@"HAS"
                                                withField:field
                                         withExpectations:@[expectation]];
 }
@@ -62,8 +62,8 @@
                                     overlapsExpectations:(NSArray <NSString *> *)expectations {
     NSParameterAssert(field);
     NSParameterAssert(expectations);
-    return [[EMSRecommendationFilter alloc] initWithType:@"exclude"
-                                          withComparison:@"overlaps"
+    return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
+                                          withComparison:@"OVERLAPS"
                                                withField:field
                                         withExpectations:expectations];
 }
@@ -72,8 +72,8 @@
                                            isExpectation:(NSString *)expectation {
     NSParameterAssert(field);
     NSParameterAssert(expectation);
-    return [[EMSRecommendationFilter alloc] initWithType:@"include"
-                                          withComparison:@"is"
+    return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
+                                          withComparison:@"IS"
                                                withField:field
                                         withExpectations:@[expectation]];
 }
@@ -82,8 +82,8 @@
                                           inExpectations:(NSArray <NSString *> *)expectations {
     NSParameterAssert(field);
     NSParameterAssert(expectations);
-    return [[EMSRecommendationFilter alloc] initWithType:@"include"
-                                          withComparison:@"in"
+    return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
+                                          withComparison:@"IN"
                                                withField:field
                                         withExpectations:expectations];
 }
@@ -92,8 +92,8 @@
                                           hasExpectation:(NSString *)expectation {
     NSParameterAssert(field);
     NSParameterAssert(expectation);
-    return [[EMSRecommendationFilter alloc] initWithType:@"include"
-                                          withComparison:@"has"
+    return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
+                                          withComparison:@"HAS"
                                                withField:field
                                         withExpectations:@[expectation]];
 }
@@ -102,8 +102,8 @@
                                     overlapsExpectations:(NSArray <NSString *> *)expectations {
     NSParameterAssert(field);
     NSParameterAssert(expectations);
-    return [[EMSRecommendationFilter alloc] initWithType:@"include"
-                                          withComparison:@"overlaps"
+    return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
+                                          withComparison:@"OVERLAPS"
                                                withField:field
                                         withExpectations:expectations];
 }

@@ -32,9 +32,9 @@
 }
 
 - (void)testExcludeWithFieldIsExpectation {
-    NSString *expectedType = @"exclude";
+    NSString *expectedType = @"EXCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"is";
+    NSString *expectedComparison = @"IS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
@@ -67,9 +67,9 @@
 }
 
 - (void)testExcludeWithFieldInExpectations {
-    NSString *expectedType = @"exclude";
+    NSString *expectedType = @"EXCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"in";
+    NSString *expectedComparison = @"IN";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
@@ -102,9 +102,9 @@
 }
 
 - (void)testExcludeWithFieldHasExpectation {
-    NSString *expectedType = @"exclude";
+    NSString *expectedType = @"EXCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"has";
+    NSString *expectedComparison = @"HAS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
@@ -137,9 +137,9 @@
 }
 
 - (void)testExcludeWithFieldOverlapsExpectations {
-    NSString *expectedType = @"exclude";
+    NSString *expectedType = @"EXCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"overlaps";
+    NSString *expectedComparison = @"OVERLAPS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
@@ -172,9 +172,9 @@
 }
 
 - (void)testIncludeWithFieldIsExpectation {
-    NSString *expectedType = @"include";
+    NSString *expectedType = @"INCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"is";
+    NSString *expectedComparison = @"IS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
@@ -207,9 +207,9 @@
 }
 
 - (void)testIncludeWithFieldInExpectations {
-    NSString *expectedType = @"include";
+    NSString *expectedType = @"INCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"in";
+    NSString *expectedComparison = @"IN";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
@@ -242,9 +242,9 @@
 }
 
 - (void)testIncludeWithFieldHasExpectations {
-    NSString *expectedType = @"include";
+    NSString *expectedType = @"INCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"has";
+    NSString *expectedComparison = @"HAS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
@@ -277,9 +277,9 @@
 }
 
 - (void)testIncludeWithFieldOverlapsExpectations {
-    NSString *expectedType = @"include";
+    NSString *expectedType = @"INCLUDE";
     NSString *expectedField = @"testField";
-    NSString *expectedComparison = @"overlaps";
+    NSString *expectedComparison = @"OVERLAPS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
     EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
