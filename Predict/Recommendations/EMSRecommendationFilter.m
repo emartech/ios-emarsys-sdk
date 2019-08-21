@@ -108,4 +108,47 @@
                                         withExpectations:expectations];
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![[other class] isEqual:[self class]])
+        return NO;
+
+    return [self isEqualToFilter:other];
+}
+
+- (BOOL)isEqualToFilter:(EMSRecommendationFilter *)filter {
+    if (self == filter)
+        return YES;
+    if (filter == nil)
+        return NO;
+    if (self.type != filter.type && ![self.type isEqualToString:filter.type])
+        return NO;
+    if (self.comparison != filter.comparison && ![self.comparison isEqualToString:filter.comparison])
+        return NO;
+    if (self.field != filter.field && ![self.field isEqualToString:filter.field])
+        return NO;
+    if (self.expectations != filter.expectations && ![self.expectations isEqualToArray:filter.expectations])
+        return NO;
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash = [self.type hash];
+    hash = hash * 31u + [self.comparison hash];
+    hash = hash * 31u + [self.field hash];
+    hash = hash * 31u + [self.expectations hash];
+    return hash;
+}
+
+- (NSString *)description {
+    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ", NSStringFromClass([self class])];
+    [description appendFormat:@"self.type=%@", self.type];
+    [description appendFormat:@", self.comparison=%@", self.comparison];
+    [description appendFormat:@", self.field=%@", self.field];
+    [description appendFormat:@", self.expectations=%@", self.expectations];
+    [description appendString:@">"];
+    return description;
+}
+
 @end

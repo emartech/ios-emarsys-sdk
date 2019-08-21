@@ -97,4 +97,30 @@
                                               parameters:parameters]);
 }
 
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"filter"] = [filter description];
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
+}
+
+- (void)recommendProducts:(EMSProductsBlock)productsBlock
+                withLogic:(EMSLogic *)logic
+                withLimit:(nullable NSNumber *)limit
+               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"limit"] = limit;
+    parameters[@"filter"] = [filter description];
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
+}
+
 @end
