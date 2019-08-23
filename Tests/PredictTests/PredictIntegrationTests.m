@@ -13,7 +13,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSLogic.h"
-#import "../../Emarsys Sample/Pods/EmarsysSDK/Predict/Recommendations/EMSRecommendationFilter.h"
+#import "EMSRecommendationFilter.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
