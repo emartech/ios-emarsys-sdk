@@ -11,6 +11,7 @@
 #import "EMSPredictRequestModelBuilder.h"
 #import "EMSProductMapper.h"
 #import "EMSLogic.h"
+#import "EMSProduct.h"
 
 @interface EMSPredictInternal ()
 
@@ -75,6 +76,22 @@
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
             [builder setType:@"predict_item_view"];
             [builder addPayloadEntryWithKey:@"v" value:[NSString stringWithFormat:@"i:%@", itemId]];
+        }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
+}
+
+- (void)trackItemViewWithProduct:(EMSProduct *)product {
+    NSParameterAssert(product);
+    _lastViewItemId = product.productId;
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+            [builder setType:@"predict_item_view"];
+            [builder addPayloadEntryWithKey:@"v"
+                                      value:[NSString stringWithFormat:@"i:%@,t:%@",
+                                                                       product.productId,
+                                                                       product.feature]];
         }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];

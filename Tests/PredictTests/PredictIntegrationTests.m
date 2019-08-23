@@ -14,6 +14,8 @@
 #import "EMSInnerFeature.h"
 #import "EMSLogic.h"
 #import "EMSRecommendationFilter.h"
+#import "EMSProductBuilder.h"
+#import "EMSProduct.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -156,6 +158,28 @@ SPEC_BEGIN(PredictIntegrationTests)
                 NSString *expectedQueryParams = @"v=i%3A2508";
 
                 [Emarsys.predict trackItemViewWithItemId:@"2508"];
+
+                [EMSWaiter waitForExpectations:expectations
+                                       timeout:10];
+
+                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+            });
+        });
+
+        describe(@"trackItemViewWithProduct:", ^{
+
+            it(@"should send request with product", ^{
+                EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                    [builder setRequiredFieldsWithProductId:@"2508"
+                                                      title:@"testTitle"
+                                                    linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                                    feature:@"testFeature"];
+                }];
+
+                NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature";
+
+                [Emarsys.predict trackItemViewWithProduct:product];
 
                 [EMSWaiter waitForExpectations:expectations
                                        timeout:10];

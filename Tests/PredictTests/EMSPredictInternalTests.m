@@ -205,6 +205,63 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
         });
 
+        describe(@"trackItemViewWithProduct:", ^{
+
+            it(@"should throw exception when product is nil", ^{
+                @try {
+                    [[EMSPredictInternal new] trackItemViewWithProduct:nil];
+                    fail(@"Expected Exception when product is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: product"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should submit shard to requestManager", ^{
+                EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                    [builder setRequiredFieldsWithProductId:@"testItemId"
+                                                      title:@"testTitle"
+                                                    linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                                    feature:@"testFeature"];
+                }];
+                NSDate *timestamp = [NSDate date];
+
+                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
+                EMSUUIDProvider *uuidProvider = [EMSUUIDProvider mock];
+                [[uuidProvider should] receive:@selector(provideUUIDString)
+                                     andReturn:product.productId
+                                     withCount:2];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp
+                                          withCount:2];
+
+                EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+                        [builder setType:@"predict_item_view"];
+                        [builder addPayloadEntryWithKey:@"v"
+                                                  value:[NSString stringWithFormat:@"i:%@,t:%@",
+                                                                                   product.productId,
+                                                                                   product.feature]];
+                    }
+                                                  timestampProvider:timestampProvider
+                                                       uuidProvider:uuidProvider];
+
+                EMSRequestManager *requestManager = [EMSRequestManager mock];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
+
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:[EMSDeviceInfo new]];
+                EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
+                                                                                   requestManager:requestManager
+                                                                           requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
+                                                                                    productMapper:[EMSProductMapper mock]];
+                [internal trackItemViewWithProduct:product];
+            });
+
+        });
+
         describe(@"trackCartWithCartItems:", ^{
 
             it(@"should throw exception when cartItems is nil", ^{
