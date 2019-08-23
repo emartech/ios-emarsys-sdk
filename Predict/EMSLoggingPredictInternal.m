@@ -4,6 +4,7 @@
 #import "EMSLoggingPredictInternal.h"
 #import "EMSMacros.h"
 #import "EMSMethodNotAllowed.h"
+#import "EMSProduct.h"
 
 #define proto @protocol(EMSPredictProtocol)
 
@@ -38,6 +39,14 @@
 - (void)trackItemViewWithItemId:(NSString *)itemId {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"itemId"] = itemId;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters]);
+}
+
+- (void)trackItemViewWithProduct:(EMSProduct *)product {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"product"] = product.description;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters]);

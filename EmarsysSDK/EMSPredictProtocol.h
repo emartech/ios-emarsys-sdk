@@ -23,6 +23,8 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 
 - (void)trackItemViewWithItemId:(NSString *)itemId;
 
+- (void)trackItemViewWithProduct:(EMSProduct *)product;
+
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
 
 - (void)trackTag:(NSString *)tag
