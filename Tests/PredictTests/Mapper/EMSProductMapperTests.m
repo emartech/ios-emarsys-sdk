@@ -56,9 +56,11 @@
                                                                          timestamp:[NSDate date]];
 
     EMSProduct *expectedProduct1 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-        [builder setRequiredFieldsWithProductId:@"2119" title:@"LSL Men Polo Shirt SE16"
+        [builder setRequiredFieldsWithProductId:@"2119"
+                                          title:@"LSL Men Polo Shirt SE16"
                                         linkUrl:[[NSURL alloc]
-                                            initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]];
+                                            initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]
+                                        feature:feature];
         [builder setCategoryPath:@"MEN>Shirts"];
         [builder setAvailable:@(YES)];
         [builder setMsrp:@(100.0)];
@@ -94,7 +96,8 @@
     EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
         [builder setRequiredFieldsWithProductId:@"2120"
                                           title:@"LSL Men Polo Shirt LE16"
-                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]];
+                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]
+                                        feature:feature];
     }];
 
     NSArray *expectedResult = @[expectedProduct1, expectedProduct2];

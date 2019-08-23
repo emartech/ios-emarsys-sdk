@@ -518,7 +518,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 EMSProduct *expectedProduct = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
                     [builder setRequiredFieldsWithProductId:@"2120"
                                                       title:@"LSL Men Polo Shirt LE16"
-                                                    linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]];
+                                                    linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]
+                                                    feature:@"RELATED"];
                 }];
                 __block NSThread *returnedThread = nil;
                 __block NSArray<EMSProduct *> *returnedProducts = nil;

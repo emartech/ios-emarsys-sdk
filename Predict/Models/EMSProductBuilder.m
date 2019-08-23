@@ -7,10 +7,12 @@
 
 - (instancetype)setRequiredFieldsWithProductId:(NSString *)productId
                                          title:(NSString *)title
-                                       linkUrl:(NSURL *)linkUrl {
+                                       linkUrl:(NSURL *)linkUrl
+                                       feature:(NSString *)feature {
     _productId = productId;
     _title = title;
     _linkUrl = linkUrl;
+    _feature = feature;
     _customFields = @{};
     return self;
 }

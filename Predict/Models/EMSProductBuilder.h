@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *title;
 @property(nonatomic, readonly) NSURL *linkUrl;
 @property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *customFields;
+@property(nonatomic, readonly) NSString *feature;
 @property(nonatomic, readonly, nullable) NSURL *imageUrl;
 @property(nonatomic, readonly, nullable) NSURL *zoomImageUrl;
 @property(nonatomic, readonly, nullable) NSString *categoryPath;
@@ -27,7 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)setRequiredFieldsWithProductId:(NSString *)productId
                                          title:(NSString *)title
-                                       linkUrl:(NSURL *)linkUrl;
+                                       linkUrl:(NSURL *)linkUrl
+                                       feature:(NSString *)feature;
 
 - (instancetype)setCustomFields:(NSDictionary<NSString *, NSString *> *)customFields;
 
