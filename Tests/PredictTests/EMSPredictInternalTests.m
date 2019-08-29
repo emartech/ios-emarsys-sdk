@@ -573,6 +573,55 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 }                        withLogic:logic];
             });
 
+            it(@"should submit a requestModel into requestManager with logic and last values with product", ^{
+                EMSLogic *logic = [EMSLogic searchWithSearchTerm:@"polo shirt"];
+                NSString *lastSearchTerm = @"lastSearchTerm";
+                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                                       price:123
+                                                                    quantity:1];
+                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                                       price:456
+                                                                    quantity:2];
+                NSArray *lastCartItems = @[cartItem1, cartItem2];
+                NSString *lastViewItemId = @"lastViewItemId";
+                NSString *lastCategoryPath = @"lastCategoryPath";
+
+                EMSRequestModel *mockRequestModel = [EMSRequestModel mock];
+
+                [[mockRequestManager should] receive:@selector(submitRequestModelNow:successBlock:errorBlock:)
+                                       withArguments:mockRequestModel, kw_any(), kw_any()];
+                [[mockBuilder should] receive:@selector(withLogic:)
+                                    andReturn:mockBuilder
+                                withArguments:logic];
+                [[mockBuilder should] receive:@selector(withLastSearchTerm:)
+                                    andReturn:mockBuilder
+                                withArguments:lastSearchTerm];
+                [[mockBuilder should] receive:@selector(withLastCartItems:)
+                                    andReturn:mockBuilder
+                                withArguments:lastCartItems];
+                [[mockBuilder should] receive:@selector(withLastViewItemId:)
+                                    andReturn:mockBuilder
+                                withArguments:lastViewItemId];
+                [[mockBuilder should] receive:@selector(withLastCategoryPath:)
+                                    andReturn:mockBuilder
+                                withArguments:lastCategoryPath];
+                [[mockBuilder should] receive:@selector(build)
+                                    andReturn:mockRequestModel];
+
+                [predictInternal trackSearchWithSearchTerm:lastSearchTerm];
+                [predictInternal trackCartWithCartItems:lastCartItems];
+                [predictInternal trackItemViewWithProduct:[EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                    [builder setRequiredFieldsWithProductId:@"lastViewItemId"
+                                                      title:@"testTitle"
+                                                    linkUrl:[NSURL URLWithString:@"https://www.emarsys.com"]
+                                                    feature:@"testFeature"
+                                                     cohort:@"testCohort"];
+                }]];
+                [predictInternal trackCategoryViewWithCategoryPath:lastCategoryPath];
+                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
+                }                        withLogic:logic];
+            });
+
             it(@"should receive products", ^{
                 EMSProduct *expectedProduct = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
                     [builder setRequiredFieldsWithProductId:@"2120"
