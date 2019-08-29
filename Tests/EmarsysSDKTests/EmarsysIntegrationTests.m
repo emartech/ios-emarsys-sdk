@@ -90,6 +90,25 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
     }];
 }
 
+- (void)testTrackDeepLinkWithUserActivitySourceHandler {
+    NSString *expectedSource = @"https://github.com/emartech/android-emarsys-sdk/wiki?ems_dl=210268110_ZVwwYrYUFR_1_100302293_1_2000000";
+    NSString *activityType = [NSString stringWithFormat:@"%@", NSUserActivityTypeBrowsingWeb];
+    NSURL *url = [[NSURL alloc] initWithString:expectedSource];
+    NSUserActivity *userActivity = OCMClassMock([NSUserActivity class]);
+
+    OCMStub([userActivity activityType]).andReturn(activityType);
+    OCMStub([userActivity webpageURL]).andReturn(url);
+
+    [self integrationTestWithExecutionBlock:^(EMSCompletionBlock completionBlock) {
+        id target = EMSDependencyInjection.dependencyContainer.deepLink;
+        SEL selector = @selector(trackDeepLinkWith:sourceHandler:withCompletionBlock:);
+
+        typedef BOOL (*MethodType)(id, SEL, id, id, id);
+        MethodType methodToCall = (MethodType) [target methodForSelector:selector];
+
+        methodToCall(target, selector, userActivity, nil, completionBlock);
+    }];
+}
 
 - (void)integrationTestWithExecutionBlock:(ExecutionBlock)executionBlock {
     __block NSError *returnedError = [NSError new];
