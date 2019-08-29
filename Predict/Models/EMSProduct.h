@@ -15,6 +15,7 @@ typedef void(^EMSProductBuilderBlock)(EMSProductBuilder *builder);
 @property(nonatomic, readonly) NSURL *linkUrl;
 @property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *customFields;
 @property(nonatomic, readonly) NSString *feature;
+@property(nonatomic, readonly) NSString *cohort;
 @property(nonatomic, readonly, nullable) NSURL *imageUrl;
 @property(nonatomic, readonly, nullable) NSURL *zoomImageUrl;
 @property(nonatomic, readonly, nullable) NSString *categoryPath;

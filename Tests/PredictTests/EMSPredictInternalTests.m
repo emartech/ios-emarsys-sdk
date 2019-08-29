@@ -222,7 +222,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                     [builder setRequiredFieldsWithProductId:@"testItemId"
                                                       title:@"testTitle"
                                                     linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                    feature:@"testFeature"];
+                                                    feature:@"testFeature"
+                                                     cohort:@"testCohort"];
                 }];
                 NSDate *timestamp = [NSDate date];
 
@@ -576,7 +577,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                     [builder setRequiredFieldsWithProductId:@"2120"
                                                       title:@"LSL Men Polo Shirt LE16"
                                                     linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]
-                                                    feature:@"RELATED"];
+                                                    feature:@"RELATED"
+                                                     cohort:@"testCohort"];
                 }];
                 __block NSThread *returnedThread = nil;
                 __block NSArray<EMSProduct *> *returnedProducts = nil;

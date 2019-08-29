@@ -26,7 +26,8 @@
             [builder setRequiredFieldsWithProductId:nil
                                               title:@"testTitle"
                                             linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                            feature:@"testFeature"];
+                                            feature:@"testFeature"
+                                             cohort:@"testCohort"];
         }];
         XCTFail(@"Expected Exception when productId is nil!");
     } @catch (NSException *exception) {
@@ -40,7 +41,8 @@
             [builder setRequiredFieldsWithProductId:@"testProductId"
                                               title:nil
                                             linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                            feature:@"testFeature"];
+                                            feature:@"testFeature"
+                                             cohort:@"testCohort"];
         }];
         XCTFail(@"Expected Exception when title is nil!");
     } @catch (NSException *exception) {
@@ -54,7 +56,8 @@
             [builder setRequiredFieldsWithProductId:@"testProductId"
                                               title:@"testTitle"
                                             linkUrl:nil
-                                            feature:@"testFeature"];
+                                            feature:@"testFeature"
+                                             cohort:@"testCohort"];
         }];
         XCTFail(@"Expected Exception when linkUrl is nil!");
     } @catch (NSException *exception) {
@@ -68,11 +71,27 @@
             [builder setRequiredFieldsWithProductId:@"testProductId"
                                               title:@"testTitle"
                                             linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                            feature:nil];
+                                            feature:nil
+                                             cohort:@"testCohort"];
         }];
         XCTFail(@"Expected Exception when feature is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: feature");
+    }
+}
+
+- (void)testMakeWithBuilder_cohort_mustNotBeNil {
+    @try {
+        [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+            [builder setRequiredFieldsWithProductId:@"testProductId"
+                                              title:@"testTitle"
+                                            linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                            feature:@"testFeature"
+                                             cohort:nil];
+        }];
+        XCTFail(@"Expected Exception when cohort is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: cohort");
     }
 }
 
@@ -81,13 +100,15 @@
         [builder setRequiredFieldsWithProductId:@"testProductId"
                                           title:@"testTitle"
                                         linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                        feature:@"testFeature"];
+                                        feature:@"testFeature"
+                                         cohort:@"testCohort"];
     }];
     XCTAssertEqualObjects(@{}, product.customFields);
     XCTAssertEqualObjects(@"testProductId", product.productId);
     XCTAssertEqualObjects(@"testTitle", product.title);
     XCTAssertEqualObjects([[NSURL alloc] initWithString:@"https://www.emarsys.com"], product.linkUrl);
     XCTAssertEqualObjects(@"testFeature", product.feature);
+    XCTAssertEqualObjects(@"testCohort", product.cohort);
 }
 
 - (void)testMakeWithBuilder_allFields {
@@ -95,7 +116,8 @@
         [builder setRequiredFieldsWithProductId:@"testProductId"
                                           title:@"testTitle"
                                         linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                        feature:@"testFeature"];
+                                        feature:@"testFeature"
+                                         cohort:@"testCohort"];
         [builder setCustomFields:@{@"key": @"value"}];
         [builder setImageUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com/testImageUrl"]];
         [builder setZoomImageUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com/testZoomImageUrl"]];
@@ -115,6 +137,7 @@
     XCTAssertEqualObjects(@"testTitle", product.title);
     XCTAssertEqualObjects([[NSURL alloc] initWithString:@"https://www.emarsys.com"], product.linkUrl);
     XCTAssertEqualObjects(@"testFeature", product.feature);
+    XCTAssertEqualObjects(@"testCohort", product.cohort);
     XCTAssertEqualObjects(@{@"key": @"value"}, product.customFields);
     XCTAssertEqualObjects([[NSURL alloc] initWithString:@"https://www.emarsys.com/testImageUrl"], product.imageUrl);
     XCTAssertEqualObjects([[NSURL alloc] initWithString:@"https://www.emarsys.com/testZoomImageUrl"], product.zoomImageUrl);

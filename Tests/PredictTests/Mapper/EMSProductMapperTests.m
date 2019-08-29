@@ -60,7 +60,8 @@
                                           title:@"LSL Men Polo Shirt SE16"
                                         linkUrl:[[NSURL alloc]
                                             initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]
-                                        feature:feature];
+                                        feature:feature
+                                         cohort:@"AAAA"];
         [builder setCategoryPath:@"MEN>Shirts"];
         [builder setAvailable:@(YES)];
         [builder setMsrp:@(100.0)];
@@ -97,7 +98,8 @@
         [builder setRequiredFieldsWithProductId:@"2120"
                                           title:@"LSL Men Polo Shirt LE16"
                                         linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]
-                                        feature:feature];
+                                        feature:feature
+                                         cohort:@"AAAA"];
     }];
 
     NSArray *expectedResult = @[expectedProduct1, expectedProduct2];

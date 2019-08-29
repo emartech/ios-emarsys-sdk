@@ -174,7 +174,8 @@ SPEC_BEGIN(PredictIntegrationTests)
                     [builder setRequiredFieldsWithProductId:@"2508"
                                                       title:@"testTitle"
                                                     linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                    feature:@"testFeature"];
+                                                    feature:@"testFeature"
+                                                     cohort:@"testCohort"];
                 }];
 
                 NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature";

@@ -22,7 +22,8 @@
                 [builder setRequiredFieldsWithProductId:[productData takeValueForKey:@"item"]
                                                   title:[productData takeValueForKey:@"title"]
                                                 linkUrl:[[NSURL alloc] initWithString:[productData takeValueForKey:@"link"]]
-                                                feature:featureName];
+                                                feature:featureName
+                                                 cohort:responseData[@"cohort"]];
 
                 [builder setCategoryPath:[productData takeValueForKey:@"category"]];
                 [builder setAvailable:[productData takeValueForKey:@"available"]];

@@ -13,6 +13,7 @@
                                            title:builder.title
                                          linkUrl:builder.linkUrl
                                          feature:builder.feature
+                                          cohort:builder.cohort
                                     customFields:builder.customFields
                                         imageUrl:builder.imageUrl
                                     zoomImageUrl:builder.zoomImageUrl
@@ -33,6 +34,7 @@
                             title:(NSString *)title
                           linkUrl:(NSURL *)linkUrl
                           feature:(NSString *)feature
+                           cohort:(NSString *)cohort
                      customFields:(NSDictionary<NSString *, NSString *> *)customFields
                          imageUrl:(NSURL *)imageUrl
                      zoomImageUrl:(NSURL *)zoomImageUrl
@@ -51,12 +53,14 @@
     NSParameterAssert(title);
     NSParameterAssert(linkUrl);
     NSParameterAssert(feature);
+    NSParameterAssert(cohort);
     NSParameterAssert(customFields);
     if (self = [super init]) {
         _productId = productId;
         _title = title;
         _linkUrl = linkUrl;
         _feature = feature;
+        _cohort = cohort;
         _customFields = customFields;
         _imageUrl = imageUrl;
         _zoomImageUrl = zoomImageUrl;
@@ -82,6 +86,7 @@
     [description appendFormat:@", self.linkUrl=%@", self.linkUrl];
     [description appendFormat:@", self.customFields=%@", self.customFields];
     [description appendFormat:@", self.feature=%@", self.feature];
+    [description appendFormat:@", self.cohort=%@", self.cohort];
     [description appendFormat:@", self.imageUrl=%@", self.imageUrl];
     [description appendFormat:@", self.zoomImageUrl=%@", self.zoomImageUrl];
     [description appendFormat:@", self.categoryPath=%@", self.categoryPath];
@@ -123,6 +128,8 @@
         return NO;
     if (self.feature != product.feature && ![self.feature isEqualToString:product.feature])
         return NO;
+    if (self.cohort != product.cohort && ![self.cohort isEqualToString:product.cohort])
+        return NO;
     if (self.imageUrl != product.imageUrl && ![self.imageUrl isEqual:product.imageUrl])
         return NO;
     if (self.zoomImageUrl != product.zoomImageUrl && ![self.zoomImageUrl isEqual:product.zoomImageUrl])
@@ -158,6 +165,7 @@
     hash = hash * 31u + [self.linkUrl hash];
     hash = hash * 31u + [self.customFields hash];
     hash = hash * 31u + [self.feature hash];
+    hash = hash * 31u + [self.cohort hash];
     hash = hash * 31u + [self.imageUrl hash];
     hash = hash * 31u + [self.zoomImageUrl hash];
     hash = hash * 31u + [self.categoryPath hash];
