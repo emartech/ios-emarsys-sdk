@@ -5,7 +5,7 @@
 import Foundation
 import EmarsysSDK
 
-class PredictViewController: UIViewController {
+class PredictViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     //MARK: Outlets
     @IBOutlet weak var tfItemId: UITextField!
@@ -13,21 +13,63 @@ class PredictViewController: UIViewController {
     @IBOutlet weak var tfSearchTerm: UITextField!
     @IBOutlet weak var tvCartItems: UITextView!
     @IBOutlet weak var tfOrderId: UITextField!
-    @IBOutlet weak var tvRecommendation: UITextView!
+    @IBOutlet weak var cvProducts: UICollectionView!
     
     //MARK: Variables
     var cartItems = [EMSCartItem]()
     var logic = EMSLogic.search()
+    var products = [EMSProduct]()
 
     //MARK: ViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped))
+        tapGestureRecognizer.numberOfTapsRequired = 1
+        tapGestureRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tapGestureRecognizer)
-
+        
         cartItems.append(generateCartItem())
         cartItems.append(generateCartItem())
         tvCartItems.text = cartItems.description
+    }
+    
+    //MARK: CollectionView
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return products.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell: ProductCell = collectionView.dequeueReusableCell(withReuseIdentifier: "productCellId", for: indexPath) as? ProductCell else {
+            return UICollectionViewCell()
+        }
+
+        let product = self.products[indexPath.item]
+        
+        cell.lbTitle.text = product.title
+        cell.lbFeature.text = product.feature
+        
+        guard let rawImageUrl = product.imageUrl else {
+            return cell
+        }
+        let imageUrlString = rawImageUrl.absoluteString
+        let correctedImageUrlString = imageUrlString.replacingOccurrences(of: "http:", with: "https:")
+        
+        guard let imageUrl = URL(string: correctedImageUrlString) else {
+            return cell
+        }
+        
+        URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+            DispatchQueue.main.async {
+                cell.ivProduct.image = data != nil ? UIImage(data: data!) : #imageLiteral(resourceName: "placeholder")
+            }
+            }.resume()
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let product = self.products[indexPath.item]
+        Emarsys.predict.trackItemView(with: product)
     }
 
     //MARK: Actions
@@ -76,10 +118,11 @@ class PredictViewController: UIViewController {
             guard let existingProducts = products else {
                 return
             }
-            self.tvRecommendation.text = existingProducts.description
-        }, with:self.logic as! EMSLogic)
+            self.products = existingProducts
+            self.cvProducts.reloadData()
+        }, with:self.logic)
     }
-    
+
 
     //MARK: Privates
     private func generateCartItem() -> EMSCartItem {

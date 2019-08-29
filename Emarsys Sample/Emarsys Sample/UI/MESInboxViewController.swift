@@ -73,7 +73,7 @@ class MESInboxViewController: UIViewController, UITableViewDataSource, UITableVi
         
         cell.imageView?.image = #imageLiteral(resourceName: "placeholder")
         
-        guard let imageUrlString = notification.customData["image"]  else {
+        guard let imageUrlString = notification.customData["image_url"]  else {
             return cell
         }
         
