@@ -178,7 +178,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                      cohort:@"testCohort"];
                 }];
 
-                NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature";
+                NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature%2Cc%3AtestCohort";
 
                 [Emarsys.predict trackItemViewWithProduct:product];
 

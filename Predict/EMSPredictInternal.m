@@ -89,9 +89,10 @@
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
             [builder setType:@"predict_item_view"];
             [builder addPayloadEntryWithKey:@"v"
-                                      value:[NSString stringWithFormat:@"i:%@,t:%@",
+                                      value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
                                                                        product.productId,
-                                                                       product.feature]];
+                                                                       product.feature,
+                                                                       product.cohort]];
         }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
