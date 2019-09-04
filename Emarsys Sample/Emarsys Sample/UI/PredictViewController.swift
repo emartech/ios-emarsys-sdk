@@ -69,7 +69,7 @@ class PredictViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = self.products[indexPath.item]
-        Emarsys.predict.trackItemView(with: product)
+        Emarsys.predict.trackRecommendationClick(product)
     }
 
     //MARK: Actions
@@ -114,15 +114,14 @@ class PredictViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     @IBAction func recommendProductsButtonClicked(_ sender: Any) {
-        Emarsys.predict.recommendProducts({ (products: [EMSProduct]?, error: Error?) in
+        Emarsys.predict.recommendProducts(with: self.logic) { products, error in
             guard let existingProducts = products else {
                 return
             }
             self.products = existingProducts
             self.cvProducts.reloadData()
-        }, with:self.logic)
+        }
     }
-
 
     //MARK: Privates
     private func generateCartItem() -> EMSCartItem {
