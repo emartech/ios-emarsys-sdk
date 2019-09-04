@@ -13,21 +13,21 @@
 
 - (void)testExcludeWithFieldIsExpectation_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:nil
-                                    isExpectation:@"testExpectation"];
+        [EMSRecommendationFilter excludeFilterWithField:nil
+                                                isValue:@"testExpectation"];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testExcludeWithFieldIsExpectation_expectation_mustNotBeNil {
+- (void)testExcludeWithFieldIsExpectation_value_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:@"testField"
-                                    isExpectation:nil];
-        XCTFail(@"Expected Exception when expectation is nil!");
+        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                isValue:nil];
+        XCTFail(@"Expected Exception when value is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectation");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: value");
     }
 }
 
@@ -37,8 +37,8 @@
     NSString *expectedComparison = @"IS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
-                                                                  isExpectation:@"testExpectation"];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                              isValue:@"testExpectation"];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -48,21 +48,21 @@
 
 - (void)testExcludeWithFieldInExpectations_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:nil
-                                   inExpectations:@[@"testExpectation1", @"testExpectation2"]];
+        [EMSRecommendationFilter excludeFilterWithField:nil
+                                               inValues:@[@"testExpectation1", @"testExpectation2"]];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testExcludeWithFieldInExpectations_expectations_mustNotBeNil {
+- (void)testExcludeWithFieldInExpectations_values_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:@"testField"
-                                   inExpectations:nil];
-        XCTFail(@"Expected Exception when expectations is nil!");
+        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                               inValues:nil];
+        XCTFail(@"Expected Exception when values is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectations");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: values");
     }
 }
 
@@ -72,8 +72,8 @@
     NSString *expectedComparison = @"IN";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
-                                                                 inExpectations:@[@"testExpectation1", @"testExpectation2"]];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                             inValues:@[@"testExpectation1", @"testExpectation2"]];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -83,21 +83,21 @@
 
 - (void)testExcludeWithFieldHasExpectation_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:nil
-                                   hasExpectation:@"testExpectation"];
+        [EMSRecommendationFilter excludeFilterWithField:nil
+                                               hasValue:@"testExpectation"];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testExcludeWithFieldHasExpectation_expectation_mustNotBeNil {
+- (void)testExcludeWithFieldHasExpectation_value_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:@"testField"
-                                   hasExpectation:nil];
-        XCTFail(@"Expected Exception when expectation is nil!");
+        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                               hasValue:nil];
+        XCTFail(@"Expected Exception when value is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectation");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: value");
     }
 }
 
@@ -107,8 +107,8 @@
     NSString *expectedComparison = @"HAS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
-                                                                 hasExpectation:@"testExpectation"];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                             hasValue:@"testExpectation"];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -118,21 +118,21 @@
 
 - (void)testExcludeWithFieldOverlapsExpectations_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:nil
-                             overlapsExpectations:@[@"testExpectation1", @"testExpectation2"]];
+        [EMSRecommendationFilter excludeFilterWithField:nil
+                                         overlapsValues:@[@"testExpectation1", @"testExpectation2"]];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testExcludeWithFieldOverlapsExpectations_expectations_mustNotBeNil {
+- (void)testExcludeWithFieldOverlapsExpectations_values_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter excludeWithField:@"testField"
-                             overlapsExpectations:nil];
-        XCTFail(@"Expected Exception when expectations is nil!");
+        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                         overlapsValues:nil];
+        XCTFail(@"Expected Exception when values is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectations");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: values");
     }
 }
 
@@ -142,8 +142,8 @@
     NSString *expectedComparison = @"OVERLAPS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeWithField:@"testField"
-                                                           overlapsExpectations:@[@"testExpectation1", @"testExpectation2"]];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                       overlapsValues:@[@"testExpectation1", @"testExpectation2"]];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -153,21 +153,21 @@
 
 - (void)testIncludeWithFieldIsExpectation_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:nil
-                                    isExpectation:@"testExpectation"];
+        [EMSRecommendationFilter includeFilterWithField:nil
+                                                isValue:@"testExpectation"];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testIncludeWithFieldIsExpectation_expectation_mustNotBeNil {
+- (void)testIncludeWithFieldIsExpectation_value_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:@"testField"
-                                    isExpectation:nil];
-        XCTFail(@"Expected Exception when expectation is nil!");
+        [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                                isValue:nil];
+        XCTFail(@"Expected Exception when value is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectation");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: value");
     }
 }
 
@@ -177,8 +177,8 @@
     NSString *expectedComparison = @"IS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
-                                                                  isExpectation:@"testExpectation"];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                                                              isValue:@"testExpectation"];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -188,21 +188,21 @@
 
 - (void)testIncludeWithFieldInExpectations_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:nil
-                                   inExpectations:@[@"testExpectation1", @"testExpectation2"]];
+        [EMSRecommendationFilter includeFilterWithField:nil
+                                               inValues:@[@"testExpectation1", @"testExpectation2"]];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testIncludeWithFieldInExpectations_expectations_mustNotBeNil {
+- (void)testIncludeWithFieldInExpectations_values_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:@"testField"
-                                   inExpectations:nil];
-        XCTFail(@"Expected Exception when expectations is nil!");
+        [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                               inValues:nil];
+        XCTFail(@"Expected Exception when values is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectations");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: values");
     }
 }
 
@@ -212,8 +212,8 @@
     NSString *expectedComparison = @"IN";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
-                                                                 inExpectations:@[@"testExpectation1", @"testExpectation2"]];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                                                             inValues:@[@"testExpectation1", @"testExpectation2"]];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -223,21 +223,21 @@
 
 - (void)testIncludeWithFieldHasExpectation_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:nil
-                                   hasExpectation:@"testExpectation"];
+        [EMSRecommendationFilter includeFilterWithField:nil
+                                               hasValue:@"testExpectation"];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testIncludeWithFieldHasExpectation_expectation_mustNotBeNil {
+- (void)testIncludeWithFieldHasExpectation_value_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:@"testField"
-                                   hasExpectation:nil];
-        XCTFail(@"Expected Exception when expectation is nil!");
+        [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                               hasValue:nil];
+        XCTFail(@"Expected Exception when value is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectation");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: value");
     }
 }
 
@@ -247,8 +247,8 @@
     NSString *expectedComparison = @"HAS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
-                                                                 hasExpectation:@"testExpectation1"];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                                                             hasValue:@"testExpectation1"];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);
@@ -258,21 +258,21 @@
 
 - (void)testIncludeWithFieldOverlapsExpectations_field_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:nil
-                             overlapsExpectations:@[@"testExpectation1", @"testExpectation2"]];
+        [EMSRecommendationFilter includeFilterWithField:nil
+                                         overlapsValues:@[@"testExpectation1", @"testExpectation2"]];
         XCTFail(@"Expected Exception when field is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: field");
     }
 }
 
-- (void)testIncludeWithFieldOverlapsExpectation_expectations_mustNotBeNil {
+- (void)testIncludeWithFieldOverlapsExpectation_values_mustNotBeNil {
     @try {
-        [EMSRecommendationFilter includeWithField:@"testField"
-                             overlapsExpectations:nil];
-        XCTFail(@"Expected Exception when expectations is nil!");
+        [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                         overlapsValues:nil];
+        XCTFail(@"Expected Exception when values is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: expectations");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: values");
     }
 }
 
@@ -282,8 +282,8 @@
     NSString *expectedComparison = @"OVERLAPS";
     NSArray<NSString *> *expectedExpectations = @[@"testExpectation1", @"testExpectation2"];
 
-    EMSRecommendationFilter *result = [EMSRecommendationFilter includeWithField:@"testField"
-                                                           overlapsExpectations:@[@"testExpectation1", @"testExpectation2"]];
+    EMSRecommendationFilter *result = [EMSRecommendationFilter includeFilterWithField:@"testField"
+                                                                       overlapsValues:@[@"testExpectation1", @"testExpectation2"]];
 
     XCTAssertEqualObjects(result.type, expectedType);
     XCTAssertEqualObjects(result.field, expectedField);

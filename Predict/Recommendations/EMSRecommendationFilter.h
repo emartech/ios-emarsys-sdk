@@ -8,29 +8,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSRecommendationFilter : NSObject <EMSRecommendationFilterProtocol>
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                           isExpectation:(NSString *)expectation;
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                       isValue:(NSString *)value;
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                          inExpectations:(NSArray <NSString *> *)expectations;
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                      inValues:(NSArray <NSString *> *)values;
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                          hasExpectation:(NSString *)expectation;
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                      hasValue:(NSString *)value;
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                    overlapsExpectations:(NSArray <NSString *> *)expectations;
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                overlapsValues:(NSArray <NSString *> *)values;
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                           isExpectation:(NSString *)expectation;
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                       isValue:(NSString *)value;
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                          inExpectations:(NSArray <NSString *> *)expectations;
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                      inValues:(NSArray <NSString *> *)values;
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                          hasExpectation:(NSString *)expectation;
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                      hasValue:(NSString *)value;
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                    overlapsExpectations:(NSArray <NSString *> *)expectations;
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                overlapsValues:(NSArray <NSString *> *)values;
 
 @end
 

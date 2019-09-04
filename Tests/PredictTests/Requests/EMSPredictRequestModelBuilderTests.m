@@ -174,22 +174,22 @@
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
               [builder withLogic:logic];
               [builder withFilter:@[
-                  [EMSRecommendationFilter excludeWithField:@"testField1"
-                                             hasExpectation:@"testValue1"],
-                  [EMSRecommendationFilter excludeWithField:@"testField2"
-                                              isExpectation:@"testValue2"],
-                  [EMSRecommendationFilter excludeWithField:@"testField3"
-                                             inExpectations:@[@"testValue31", @"testValue32"]],
-                  [EMSRecommendationFilter excludeWithField:@"testField4"
-                                       overlapsExpectations:@[@"testValue41", @"testValue42"]],
-                  [EMSRecommendationFilter includeWithField:@"testField5"
-                                             hasExpectation:@"testValue5"],
-                  [EMSRecommendationFilter includeWithField:@"testField6"
-                                              isExpectation:@"testValue6"],
-                  [EMSRecommendationFilter includeWithField:@"testField7"
-                                             inExpectations:@[@"testValue71", @"testValue72"]],
-                  [EMSRecommendationFilter includeWithField:@"testField8"
-                                       overlapsExpectations:@[@"testValue81", @"testValue82"]]
+                  [EMSRecommendationFilter excludeFilterWithField:@"testField1"
+                                                         hasValue:@"testValue1"],
+                  [EMSRecommendationFilter excludeFilterWithField:@"testField2"
+                                                          isValue:@"testValue2"],
+                  [EMSRecommendationFilter excludeFilterWithField:@"testField3"
+                                                         inValues:@[@"testValue31", @"testValue32"]],
+                  [EMSRecommendationFilter excludeFilterWithField:@"testField4"
+                                                   overlapsValues:@[@"testValue41", @"testValue42"]],
+                  [EMSRecommendationFilter includeFilterWithField:@"testField5"
+                                                         hasValue:@"testValue5"],
+                  [EMSRecommendationFilter includeFilterWithField:@"testField6"
+                                                          isValue:@"testValue6"],
+                  [EMSRecommendationFilter includeFilterWithField:@"testField7"
+                                                         inValues:@[@"testValue71", @"testValue72"]],
+                  [EMSRecommendationFilter includeFilterWithField:@"testField8"
+                                                   overlapsValues:@[@"testValue81", @"testValue82"]]
               ]];
           }];
 }

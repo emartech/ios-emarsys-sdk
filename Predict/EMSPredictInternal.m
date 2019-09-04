@@ -83,23 +83,6 @@
     [self.requestManager submitShard:shard];
 }
 
-- (void)trackItemViewWithProduct:(EMSProduct *)product {
-    NSParameterAssert(product);
-    _lastViewItemId = product.productId;
-    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-            [builder setType:@"predict_item_view"];
-            [builder addPayloadEntryWithKey:@"v"
-                                      value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
-                                                                       product.productId,
-                                                                       product.feature,
-                                                                       product.cohort]];
-        }
-                              timestampProvider:[self.requestContext timestampProvider]
-                                   uuidProvider:[self.requestContext uuidProvider]];
-
-    [self.requestManager submitShard:shard];
-}
-
 - (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems {
     NSParameterAssert(cartItems);
     _lastCartItems = cartItems;
@@ -164,36 +147,26 @@
     [self.requestManager submitShard:shard];
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic {
-    [self recommendProducts:productsBlock
-                  withLogic:logic
-                  withLimit:nil
-                 withFilter:nil];
+- (void)recommendProductsWithLogic:(EMSLogic *)logic productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic filter:nil limit:nil productsBlock:productsBlock];
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-                withLimit:(nullable NSNumber *)limit {
-    [self recommendProducts:productsBlock
-                  withLogic:logic
-                  withLimit:limit
-                 withFilter:nil];
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                             limit:(nullable NSNumber *)limit
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic filter:nil limit:limit productsBlock:productsBlock];
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
-    [self recommendProducts:productsBlock
-                  withLogic:logic
-                  withLimit:nil
-                 withFilter:filter];
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic filter:filter limit:nil productsBlock:productsBlock];
 }
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-                withLimit:(nullable NSNumber *)limit
-               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                             limit:(nullable NSNumber *)limit
+                     productsBlock:(EMSProductsBlock)productsBlock {
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
@@ -224,6 +197,23 @@
                                         }
                                     });
                                 }];
+}
+
+- (void)trackRecommendationClick:(EMSProduct *)product {
+    NSParameterAssert(product);
+    _lastViewItemId = product.productId;
+    EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+            [builder setType:@"predict_item_view"];
+            [builder addPayloadEntryWithKey:@"v"
+                                      value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
+                                                                       product.productId,
+                                                                       product.feature,
+                                                                       product.cohort]];
+        }
+                              timestampProvider:[self.requestContext timestampProvider]
+                                   uuidProvider:[self.requestContext uuidProvider]];
+
+    [self.requestManager submitShard:shard];
 }
 
 @end

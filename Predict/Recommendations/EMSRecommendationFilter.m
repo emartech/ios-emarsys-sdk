@@ -28,84 +28,84 @@
     return self;
 }
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                           isExpectation:(NSString *)expectation {
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                       isValue:(NSString *)value {
     NSParameterAssert(field);
-    NSParameterAssert(expectation);
+    NSParameterAssert(value);
     return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
                                           withComparison:@"IS"
                                                withField:field
-                                        withExpectations:@[expectation]];
+                                        withExpectations:@[value]];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                          inExpectations:(NSArray <NSString *> *)expectations {
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                      inValues:(NSArray <NSString *> *)values {
     NSParameterAssert(field);
-    NSParameterAssert(expectations);
+    NSParameterAssert(values);
     return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
                                           withComparison:@"IN"
                                                withField:field
-                                        withExpectations:expectations];
+                                        withExpectations:values];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                          hasExpectation:(NSString *)expectation {
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                      hasValue:(NSString *)value {
     NSParameterAssert(field);
-    NSParameterAssert(expectation);
+    NSParameterAssert(value);
     return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
                                           withComparison:@"HAS"
                                                withField:field
-                                        withExpectations:@[expectation]];
+                                        withExpectations:@[value]];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)excludeWithField:(NSString *)field
-                                    overlapsExpectations:(NSArray <NSString *> *)expectations {
++ (id <EMSRecommendationFilterProtocol>)excludeFilterWithField:(NSString *)field
+                                                overlapsValues:(NSArray <NSString *> *)values {
     NSParameterAssert(field);
-    NSParameterAssert(expectations);
+    NSParameterAssert(values);
     return [[EMSRecommendationFilter alloc] initWithType:@"EXCLUDE"
                                           withComparison:@"OVERLAPS"
                                                withField:field
-                                        withExpectations:expectations];
+                                        withExpectations:values];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                           isExpectation:(NSString *)expectation {
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                       isValue:(NSString *)value {
     NSParameterAssert(field);
-    NSParameterAssert(expectation);
+    NSParameterAssert(value);
     return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
                                           withComparison:@"IS"
                                                withField:field
-                                        withExpectations:@[expectation]];
+                                        withExpectations:@[value]];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                          inExpectations:(NSArray <NSString *> *)expectations {
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                      inValues:(NSArray <NSString *> *)values {
     NSParameterAssert(field);
-    NSParameterAssert(expectations);
+    NSParameterAssert(values);
     return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
                                           withComparison:@"IN"
                                                withField:field
-                                        withExpectations:expectations];
+                                        withExpectations:values];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                          hasExpectation:(NSString *)expectation {
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                      hasValue:(NSString *)value {
     NSParameterAssert(field);
-    NSParameterAssert(expectation);
+    NSParameterAssert(value);
     return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
                                           withComparison:@"HAS"
                                                withField:field
-                                        withExpectations:@[expectation]];
+                                        withExpectations:@[value]];
 }
 
-+ (id <EMSRecommendationFilterProtocol>)includeWithField:(NSString *)field
-                                    overlapsExpectations:(NSArray <NSString *> *)expectations {
++ (id <EMSRecommendationFilterProtocol>)includeFilterWithField:(NSString *)field
+                                                overlapsValues:(NSArray <NSString *> *)values {
     NSParameterAssert(field);
-    NSParameterAssert(expectations);
+    NSParameterAssert(values);
     return [[EMSRecommendationFilter alloc] initWithType:@"INCLUDE"
                                           withComparison:@"OVERLAPS"
                                                withField:field
-                                        withExpectations:expectations];
+                                        withExpectations:values];
 }
 
 - (BOOL)isEqual:(id)other {

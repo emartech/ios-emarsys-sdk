@@ -167,7 +167,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
         });
 
-        describe(@"trackItemViewWithProduct:", ^{
+        describe(@"trackRecommendationClick:", ^{
 
             it(@"should send request with product", ^{
                 EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
@@ -180,7 +180,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature%2Cc%3AtestCohort";
 
-                [Emarsys.predict trackItemViewWithProduct:product];
+                [Emarsys.predict trackRecommendationClick:product];
 
                 [EMSWaiter waitForExpectations:expectations
                                        timeout:10];
@@ -246,14 +246,14 @@ SPEC_BEGIN(PredictIntegrationTests)
                 __block NSArray *returnedProducts = nil;
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-                [Emarsys.predict recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                        returnedProducts = products;
-                        [expectation fulfill];
-                    }                    withLogic:logic
-                                         withLimit:@2
-                                        withFilter:@[[EMSRecommendationFilter excludeWithField:@"price"
-                                                                                 isExpectation:@""]]
-                ];
+                [Emarsys.predict recommendProductsWithLogic:logic
+                                                     filter:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                                      isValue:@""]]
+                                                      limit:@2
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                  returnedProducts = products;
+                                                  [expectation fulfill];
+                                              }];
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);

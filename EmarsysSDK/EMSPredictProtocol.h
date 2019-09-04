@@ -23,28 +23,28 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 
 - (void)trackItemViewWithItemId:(NSString *)itemId;
 
-- (void)trackItemViewWithProduct:(EMSProduct *)product;
-
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
 
 - (void)trackTag:(NSString *)tag
   withAttributes:(nullable NSDictionary *)attributes;
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic;
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                     productsBlock:(EMSProductsBlock)productsBlock;
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-                withLimit:(nullable NSNumber *)limit;
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                             limit:(nullable NSNumber *)limit
+                     productsBlock:(EMSProductsBlock)productsBlock;
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                     productsBlock:(EMSProductsBlock)productsBlock;
 
-- (void)recommendProducts:(EMSProductsBlock)productsBlock
-                withLogic:(EMSLogic *)logic
-                withLimit:(nullable NSNumber *)limit
-               withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                             limit:(nullable NSNumber *)limit
+                     productsBlock:(EMSProductsBlock)productsBlock;
+
+- (void)trackRecommendationClick:(EMSProduct *)product;
 
 @end
 

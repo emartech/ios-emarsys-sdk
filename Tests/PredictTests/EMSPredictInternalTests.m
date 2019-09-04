@@ -205,11 +205,11 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
         });
 
-        describe(@"trackItemViewWithProduct:", ^{
+        describe(@"trackRecommendationClick:", ^{
 
             it(@"should throw exception when product is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] trackItemViewWithProduct:nil];
+                    [[EMSPredictInternal new] trackRecommendationClick:nil];
                     fail(@"Expected Exception when product is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: product"];
@@ -259,7 +259,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                    requestManager:requestManager
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
-                [internal trackItemViewWithProduct:product];
+                [internal trackRecommendationClick:product];
             });
 
         });
@@ -438,7 +438,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
-        describe(@"recommendProducts:withLogic:", ^{
+        describe(@"recommendProductsWithLogic:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -473,8 +473,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception productBlocks is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] recommendProducts:nil
-                                                      withLogic:EMSLogic.search];
+                    [[EMSPredictInternal new] recommendProductsWithLogic:EMSLogic.search productsBlock:nil];
                     fail(@"Expected Exception when productBlocks is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: productsBlock"];
@@ -484,8 +483,9 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception logic is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    }                                 withLogic:nil];
+                    [[EMSPredictInternal new] recommendProductsWithLogic:nil
+                                                           productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                           }];
                     fail(@"Expected Exception when logic is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: logic"];
@@ -503,8 +503,9 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                 withArguments:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
                 [[mockBuilder should] receive:@selector(build)
                                     andReturn:mockRequestModel];
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                }                        withLogic:[EMSLogic searchWithSearchTerm:@"polo shirt"]];
+                [predictInternal recommendProductsWithLogic:[EMSLogic searchWithSearchTerm:@"polo shirt"]
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
 
             it(@"should submit a requestModel into requestManager with cart logic", ^{
@@ -526,8 +527,9 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                 withArguments:logic];
                 [[mockBuilder should] receive:@selector(build)
                                     andReturn:mockRequestModel];
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                }                        withLogic:logic];
+                [predictInternal recommendProductsWithLogic:logic
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
 
             it(@"should submit a requestModel into requestManager with logic and last values", ^{
@@ -569,8 +571,9 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 [predictInternal trackCartWithCartItems:lastCartItems];
                 [predictInternal trackItemViewWithItemId:lastViewItemId];
                 [predictInternal trackCategoryViewWithCategoryPath:lastCategoryPath];
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                }                        withLogic:logic];
+                [predictInternal recommendProductsWithLogic:logic
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
 
             it(@"should submit a requestModel into requestManager with logic and last values with product", ^{
@@ -610,7 +613,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 [predictInternal trackSearchWithSearchTerm:lastSearchTerm];
                 [predictInternal trackCartWithCartItems:lastCartItems];
-                [predictInternal trackItemViewWithProduct:[EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                [predictInternal trackRecommendationClick:[EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
                     [builder setRequiredFieldsWithProductId:@"lastViewItemId"
                                                       title:@"testTitle"
                                                     linkUrl:[NSURL URLWithString:@"https://www.emarsys.com"]
@@ -618,8 +621,9 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                      cohort:@"testCohort"];
                 }]];
                 [predictInternal trackCategoryViewWithCategoryPath:lastCategoryPath];
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                }                        withLogic:logic];
+                [predictInternal recommendProductsWithLogic:logic
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
 
             it(@"should receive products", ^{
@@ -642,11 +646,12 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                     atIndex:1];
 
 
-                    [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                        returnedProducts = products;
-                        returnedThread = [NSThread currentThread];
-                        [expectation fulfill];
-                    }                        withLogic:EMSLogic.search];
+                    [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                  productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                      returnedProducts = products;
+                                                      returnedThread = [NSThread currentThread];
+                                                      [expectation fulfill];
+                                                  }];
 
                     CoreSuccessBlock successBlock = spy.argument;
 
@@ -671,11 +676,12 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                     atIndex:2];
 
 
-                    [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                        returnedError = error;
-                        returnedThread = [NSThread currentThread];
-                        [expectation fulfill];
-                    }                        withLogic:EMSLogic.search];
+                    [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                  productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                      returnedError = error;
+                                                      returnedThread = [NSThread currentThread];
+                                                      [expectation fulfill];
+                                                  }];
 
                     CoreErrorBlock errorBlock = spy.argument;
 
@@ -689,7 +695,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
-        describe(@"recommendProducts:withLogic:withLimit:", ^{
+        describe(@"recommendProductsWithLogic:limit:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -728,14 +734,14 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                     andReturn:mockBuilder
                                 withArguments:@123];
 
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    }
-                                         withLogic:EMSLogic.search
-                                         withLimit:@123];
+                [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                      limit:@123
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
         });
 
-        describe(@"recommendProducts:withLogic:withFilter:", ^{
+        describe(@"recommendProductsWithLogic:filter:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -771,23 +777,23 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should pass filter to requestModelBuilder", ^{
                 NSArray<id <EMSRecommendationFilterProtocol>> *filters = @[
-                    [EMSRecommendationFilter excludeWithField:@"testField"
-                                                isExpectation:@"testFieldValue"],
-                    [EMSRecommendationFilter excludeWithField:@"testField2"
-                                               hasExpectation:@"testFieldValue2"]];
+                    [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                            isValue:@"testFieldValue"],
+                    [EMSRecommendationFilter excludeFilterWithField:@"testField2"
+                                                           hasValue:@"testFieldValue2"]];
 
                 [[mockBuilder should] receive:@selector(withFilter:)
                                     andReturn:mockBuilder
                                 withArguments:filters];
 
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    }
-                                         withLogic:EMSLogic.search
-                                        withFilter:filters];
+                [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                     filter:filters
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
         });
 
-        describe(@"recommendProducts:withLogic:withLimit:withFilter:", ^{
+        describe(@"recommendProductsWithLogic:filter:limit:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -823,10 +829,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should pass filter to requestModelBuilder", ^{
                 NSArray<id <EMSRecommendationFilterProtocol>> *filters = @[
-                    [EMSRecommendationFilter excludeWithField:@"testField"
-                                                isExpectation:@"testFieldValue"],
-                    [EMSRecommendationFilter excludeWithField:@"testField2"
-                                               hasExpectation:@"testFieldValue2"]];
+                    [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                            isValue:@"testFieldValue"],
+                    [EMSRecommendationFilter excludeFilterWithField:@"testField2"
+                                                           hasValue:@"testFieldValue2"]];
 
                 [[mockBuilder should] receive:@selector(withFilter:)
                                     andReturn:mockBuilder
@@ -835,11 +841,11 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                     andReturn:mockBuilder
                                 withArguments:@123];
 
-                [predictInternal recommendProducts:^(NSArray<EMSProduct *> *products, NSError *error) {
-                    }
-                                         withLogic:EMSLogic.search
-                                         withLimit:@123
-                                        withFilter:filters];
+                [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                     filter:filters
+                                                      limit:@123
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
             });
         });
 
