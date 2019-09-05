@@ -4,6 +4,7 @@
 
 #import "EMSProductMapper.h"
 #import "EMSProduct.h"
+#import "EMSProduct+Emarsys.h"
 #import "EMSResponseModel.h"
 #import "NSMutableDictionary+EMSCore.h"
 

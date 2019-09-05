@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "EMSProduct.h"
+#import "EMSProduct+Emarsys.h"
 
 @interface EMSProductTests : XCTestCase
 

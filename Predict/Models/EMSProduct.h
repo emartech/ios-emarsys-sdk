@@ -2,11 +2,8 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "EMSProductBuilder.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef void(^EMSProductBuilderBlock)(EMSProductBuilder *builder);
 
 @interface EMSProduct : NSObject
 
@@ -29,8 +26,6 @@ typedef void(^EMSProductBuilderBlock)(EMSProductBuilder *builder);
 @property(nonatomic, readonly, nullable) NSString *author;
 @property(nonatomic, readonly, nullable) NSString *brand;
 @property(nonatomic, readonly, nullable) NSNumber *year;
-
-+ (instancetype)makeWithBuilder:(EMSProductBuilderBlock)builderBlock;
 
 @end
 

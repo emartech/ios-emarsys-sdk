@@ -26,7 +26,6 @@ Pod::Spec.new do |spec|
 			'Predict/Models/EMSCartItemProtocol.h',
             'Predict/Models/EMSCartItem.h',
             'Predict/Models/EMSProduct.h',
-            'Predict/Models/EMSProductBuilder.h',
             'Predict/Recommendations/EMSLogicProtocol.h',
             'Predict/Recommendations/EMSLogic.h',
             'Predict/Recommendations/EMSRecommendationFilter.h',

@@ -6,8 +6,8 @@
 #import <OCMock/OCMock.h>
 #import "EMSResponseModel.h"
 #import "EMSProductMapper.h"
-#import "EMSProductBuilder.h"
 #import "EMSProduct.h"
+#import "EMSProduct+Emarsys.h"
 
 @interface EMSProductMapperTests : XCTestCase
 

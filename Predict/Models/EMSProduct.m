@@ -2,6 +2,7 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import "EMSProduct.h"
+#import "EMSProduct+Emarsys.h"
 
 @implementation EMSProduct
 

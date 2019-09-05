@@ -13,6 +13,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSResponseModel.h"
 #import "EMSProduct.h"
+#import "EMSProduct+Emarsys.h"
 #import "NSError+EMSCore.h"
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSPredictRequestModelBuilder.h"
