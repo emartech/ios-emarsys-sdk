@@ -741,7 +741,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
-        describe(@"recommendProductsWithLogic:filter:productsBlock:", ^{
+        describe(@"recommendProductsWithLogic:filters:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -787,13 +787,13 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                 withArguments:filters];
 
                 [predictInternal recommendProductsWithLogic:EMSLogic.search
-                                                     filter:filters
+                                                    filters:filters
                                               productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
                                               }];
             });
         });
 
-        describe(@"recommendProductsWithLogic:filter:limit:productsBlock:", ^{
+        describe(@"recommendProductsWithLogic:filters:limit:productsBlock:", ^{
 
             __block EMSRequestManager *mockRequestManager;
             __block PRERequestContext *mockRequestContext;
@@ -842,7 +842,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                 withArguments:@123];
 
                 [predictInternal recommendProductsWithLogic:EMSLogic.search
-                                                     filter:filters
+                                                    filters:filters
                                                       limit:@123
                                               productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
                                               }];

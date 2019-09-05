@@ -247,7 +247,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
                 [Emarsys.predict recommendProductsWithLogic:logic
-                                                     filter:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
                                                                                                       isValue:@""]]
                                                       limit:@2
                                               productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {

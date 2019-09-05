@@ -67,7 +67,7 @@
 }
 
 - (void)trackTag:(NSString *)tag
-  withAttributes:(nullable NSDictionary *)attributes {
+  withAttributes:(nullable NSDictionary<NSString *, NSString *> *)attributes {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"tag"] = tag;
     parameters[@"attributes"] = attributes;
@@ -98,19 +98,19 @@
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"productsBlock"] = @(productsBlock != nil);
     parameters[@"logic"] = logic;
-    parameters[@"filter"] = [filter description];
+    parameters[@"filter"] = [filters description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters]);
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];

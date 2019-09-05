@@ -26,7 +26,7 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm;
 
 - (void)trackTag:(NSString *)tag
-  withAttributes:(nullable NSDictionary *)attributes;
+  withAttributes:(nullable NSDictionary<NSString *, NSString *> *)attributes;
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
                      productsBlock:(EMSProductsBlock)productsBlock;
@@ -36,11 +36,11 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
                      productsBlock:(EMSProductsBlock)productsBlock;
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock;
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock;
 

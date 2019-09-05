@@ -29,6 +29,8 @@ Pod::Spec.new do |spec|
             'Predict/Models/EMSProductBuilder.h',
             'Predict/Recommendations/EMSLogicProtocol.h',
             'Predict/Recommendations/EMSLogic.h',
+            'Predict/Recommendations/EMSRecommendationFilter.h',
+            'Predict/Recommendations/EMSRecommendationFilterProtocol.h',
 			'MobileEngage/IAM/EMSEventHandler.h',
 			'MobileEngage/Inbox/EMSNotification.h',
 			'MobileEngage/Inbox/EMSNotificationInboxStatus.h',

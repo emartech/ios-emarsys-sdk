@@ -125,7 +125,7 @@
 }
 
 - (void)trackTag:(NSString *)tag
-  withAttributes:(NSDictionary *)attributes {
+  withAttributes:(nullable NSDictionary<NSString *, NSString *> *)attributes {
     NSParameterAssert(tag);
 
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
@@ -148,23 +148,23 @@
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic productsBlock:(EMSProductsBlock)productsBlock {
-    [self recommendProductsWithLogic:logic filter:nil limit:nil productsBlock:productsBlock];
+    [self recommendProductsWithLogic:logic filters:nil limit:nil productsBlock:productsBlock];
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
-    [self recommendProductsWithLogic:logic filter:nil limit:limit productsBlock:productsBlock];
+    [self recommendProductsWithLogic:logic filters:nil limit:limit productsBlock:productsBlock];
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock {
-    [self recommendProductsWithLogic:logic filter:filter limit:nil productsBlock:productsBlock];
+    [self recommendProductsWithLogic:logic filters:filters limit:nil productsBlock:productsBlock];
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                            filter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSParameterAssert(productsBlock);
