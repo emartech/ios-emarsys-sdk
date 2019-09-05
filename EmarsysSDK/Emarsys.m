@@ -101,7 +101,7 @@
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDeviceInfoEventBlock]
                                forNotification:UIApplicationDidBecomeActiveNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
-                               forNotification:UIApplicationDidBecomeActiveNotification];
+                               forNotification:UIApplicationDidFinishLaunchingNotification];
 }
 
 + (id <EMSPushNotificationProtocol>)push {

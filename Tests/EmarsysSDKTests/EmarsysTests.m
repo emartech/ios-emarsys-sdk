@@ -258,7 +258,7 @@ SPEC_BEGIN(EmarsysTests)
                                                   withArguments:requestManager, requestFactory, deviceInfo];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock,
-                                                                        UIApplicationDidBecomeActiveNotification];
+                                                                        UIApplicationDidFinishLaunchingNotification];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock2,
                                                                         UIApplicationDidBecomeActiveNotification];
