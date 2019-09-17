@@ -16,6 +16,7 @@
 #import "EMSMobileEngageProtocol.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSConfigProtocol.h"
 
 @implementation Emarsys
 
@@ -126,6 +127,10 @@
 
 + (EMSSQLiteHelper *)sqliteHelper {
     return EMSDependencyInjection.dependencyContainer.dbHelper;
+}
+
++ (id<EMSConfigProtocol>)config {
+    return EMSDependencyInjection.dependencyContainer.config;
 }
 
 @end

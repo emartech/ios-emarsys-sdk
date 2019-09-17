@@ -11,6 +11,8 @@
 #import "EMSPredictProtocol.h"
 #import "EMSUserNotificationCenterDelegate.h"
 
+@protocol EMSConfigProtocol;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Emarsys : NSObject
@@ -20,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
 @property(class, nonatomic, readonly) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
+@property(class, nonatomic, readonly) id <EMSConfigProtocol> config;
 
 + (void)setupWithConfig:(EMSConfig *)config;
 

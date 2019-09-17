@@ -28,6 +28,7 @@
 @protocol EMSUserNotificationCenterDelegate;
 @protocol EMSInAppProtocol;
 @protocol MEIAMProtocol;
+@protocol EMSConfigProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -46,6 +47,8 @@
 - (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
 
 - (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
+
+- (id <EMSConfigProtocol>)config;
 
 - (id <EMSRequestModelRepositoryProtocol>)requestRepository;
 

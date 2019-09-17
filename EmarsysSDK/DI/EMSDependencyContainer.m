@@ -63,6 +63,8 @@
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSProductMapper.h"
+#import "EMSConfigProtocol.h"
+#import "EMSConfigInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -80,6 +82,7 @@
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
 @property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> iam;
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> predict;
+@property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
@@ -294,6 +297,11 @@
         _inbox = [EMSLoggingInbox new];
         _notificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
     }
+
+    _config = [[EMSConfigInternal alloc] initWithConfig:config
+                                         requestContext:self.requestContext
+                                       deviceInfoClient:self.deviceInfoClient
+                                           mobileEngage:self.mobileEngage];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

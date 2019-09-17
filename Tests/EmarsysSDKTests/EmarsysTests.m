@@ -123,6 +123,12 @@ SPEC_BEGIN(EmarsysTests)
                     [[(NSObject *) [Emarsys notificationCenterDelegate] shouldNot] beNil];
                 });
 
+                it(@"should set config", ^{
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                       withDependencyContainer:nil];
+                    [[(NSObject *) [Emarsys config] shouldNot] beNil];
+                });
+
                 it(@"register triggers_when_PredictTurnedOn", ^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
