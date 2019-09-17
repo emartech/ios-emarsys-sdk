@@ -3,6 +3,9 @@
 //
 
 #import "EMSConfigInternal.h"
+#import "EMSDeviceInfoV3ClientInternal.h"
+#import "EMSMobileEngageV3Internal.h"
+#import "MERequestContext.h"
 
 @interface EMSConfigInternal ()
 
@@ -14,8 +17,15 @@
 
 @implementation EMSConfigInternal
 
-- (instancetype)initWithConfig:(EMSConfig *)config {
+- (instancetype)initWithConfig:(EMSConfig *)config
+                requestContext:(MERequestContext *)requestContext
+              deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient
+                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage {
     NSParameterAssert(config);
+    NSParameterAssert(requestContext);
+    NSParameterAssert(deviceInfoClient);
+    NSParameterAssert(mobileEngage);
+
     if (self = [super init]) {
         _applicationCode = config.applicationCode;
         _merchantId = config.merchantId;

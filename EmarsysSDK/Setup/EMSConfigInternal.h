@@ -6,8 +6,15 @@
 #import "EMSConfigProtocol.h"
 #import "EMSConfig.h"
 
-@interface EMSConfigInternal : NSObject<EMSConfigProtocol>
+@class EMSDeviceInfoV3ClientInternal;
+@class EMSMobileEngageV3Internal;
+@class MERequestContext;
 
-- (instancetype)initWithConfig:(EMSConfig *)config;
+@interface EMSConfigInternal : NSObject <EMSConfigProtocol>
+
+- (instancetype)initWithConfig:(EMSConfig *)config
+                requestContext:(MERequestContext *)requestContext
+              deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient
+                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage;
 
 @end
