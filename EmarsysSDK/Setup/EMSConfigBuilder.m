@@ -12,7 +12,7 @@
     return self;
 }
 
-- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<EMSFlipperFeature> *)features {
+- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<id<EMSFlipperFeature>> *)features {
     _experimentalFeatures = features;
     return self;
 }

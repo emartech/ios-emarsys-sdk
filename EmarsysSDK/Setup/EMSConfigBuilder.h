@@ -12,13 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSConfigBuilder : NSObject
 
 @property(nonatomic, readonly) NSString *applicationCode;
-@property(nonatomic, readonly) NSArray<EMSFlipperFeature> *experimentalFeatures;
+@property(nonatomic, readonly) NSArray<id<EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
 
 - (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode;
 
-- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<EMSFlipperFeature> *)features;
+- (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<id<EMSFlipperFeature>> *)features;
 
 - (EMSConfigBuilder *)setMerchantId:(NSString *)merchantId;
 
