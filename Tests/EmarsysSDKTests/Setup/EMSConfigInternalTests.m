@@ -362,20 +362,4 @@
     XCTAssertEqualObjects(self.contactFieldId, self.configInternal.contactFieldId);
 }
 
-- (void)testSetContactFieldId {
-    NSNumber *newContactFieldId = @5;
-    [self.configInternal setContactFieldId:newContactFieldId];
-
-    XCTAssertEqualObjects(newContactFieldId, self.configInternal.contactFieldId);
-}
-
-- (void)testSetContactFieldId_contactFieldId_mustNotBeNil {
-    @try {
-        [self.configInternal setContactFieldId:nil];
-        XCTFail(@"Expected Exception when contactFieldId is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldId");
-    }
-}
-
 @end
