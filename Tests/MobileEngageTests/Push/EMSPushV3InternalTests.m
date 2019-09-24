@@ -108,7 +108,7 @@
     [partialMockPush stopMocking];
 }
 
-- (void)testSetPushToken_withDeviceToken {
+- (void)testSetPushToken_andClearPushToken_withDeviceToken {
     NSData *token = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
     [self.push setPushToken:token completionBlock:nil];
 
@@ -118,7 +118,6 @@
 
     XCTAssertNil(self.push.deviceToken);
 }
-
 
 - (void)testSetPushTokenCompletionBlock_requestFactory_calledWithProperPushToken {
     [self.push setPushToken:self.mockPushTokenData

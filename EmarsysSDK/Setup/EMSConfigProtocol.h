@@ -7,10 +7,12 @@
 
 @protocol EMSFlipperFeature;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSConfigProtocol <NSObject>
 
 - (void)changeApplicationCode:(NSString *)applicationCode
-            completionHandler:(EMSCompletionBlock)completionHandler;
+              completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
 
 - (NSString *) applicationCode;
 
@@ -23,3 +25,5 @@
 - (NSNumber *)contactFieldId;
 
 @end
+
+NS_ASSUME_NONNULL_END

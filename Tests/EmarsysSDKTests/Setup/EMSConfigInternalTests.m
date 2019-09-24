@@ -108,14 +108,53 @@
     XCTAssertEqualObjects(self.applicationCode, self.configInternal.applicationCode);
 }
 
-- (void)testChangeApplicationCode_completionHandler_mustNotBeNil {
-    @try {
-        [self.configInternal changeApplicationCode:@"newApplicationCode"
-                                 completionHandler:nil];
-        XCTFail(@"Expected Exception when completionHandler is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionHandler");
-    }
+- (void)testChangeApplicationCode_completionHandler_isNil {
+    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
+
+    _configInternal = [[EMSConfigInternal alloc] initWithConfig:self.testConfig
+                                                 requestContext:self.mockRequestContext
+                                                   mobileEngage:strictMockMobileEngage
+                                                   pushInternal:strictMockPushInternal];
+
+    OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
+    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal setPushToken:self.deviceToken
+                                 completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                    completionBlock:[OCMArg invokeBlock]]);
+
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                               completionBlock:nil];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    [strictMockMobileEngage setExpectationOrderMatters:YES];
+    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    [strictMockPushInternal setExpectationOrderMatters:YES];
+    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+                                   completionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                      completionBlock:[OCMArg any]]);
+
+    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+                                   completionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                      completionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
 }
 
 - (void)testChangeApplicationCode_shouldCallMethodsInOrder {
@@ -139,10 +178,10 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:5];
@@ -158,7 +197,6 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
-
 
 - (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
@@ -182,10 +220,10 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:5];
@@ -206,10 +244,10 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:6];
@@ -244,10 +282,10 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:5];
@@ -270,10 +308,10 @@
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
     
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:6];
@@ -293,10 +331,10 @@
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
-                             completionHandler:^(NSError *error) {
-                                 returnedError = error;
-                                 [expectation fulfill];
-                             }];
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
     
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:6];
@@ -307,7 +345,6 @@
     XCTAssertEqual(returnedError.code, 1408);
     XCTAssertEqualObjects(returnedError.localizedDescription, @"Waiter timeout error.");
 }
-
 
 - (void)testMerchantId {
     XCTAssertEqualObjects(self.merchantId, self.configInternal.merchantId);
@@ -339,8 +376,6 @@
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldId");
     }
-
-
 }
 
 @end

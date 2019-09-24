@@ -22,7 +22,10 @@
 
 @implementation EMSConfigInternal
 
-- (instancetype)initWithConfig:(EMSConfig *)config requestContext:(MERequestContext *)requestContext mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage pushInternal:(EMSPushV3Internal *)pushInternal {
+- (instancetype)initWithConfig:(EMSConfig *)config
+                requestContext:(MERequestContext *)requestContext
+                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
+                  pushInternal:(EMSPushV3Internal *)pushInternal {
     NSParameterAssert(config);
     NSParameterAssert(requestContext);
     NSParameterAssert(mobileEngage);
@@ -41,32 +44,39 @@
 }
 
 - (void)changeApplicationCode:(NSString *)applicationCode
-            completionHandler:(EMSCompletionBlock)completionHandler {
-    NSParameterAssert(completionHandler);
-
+              completionBlock:(_Nullable EMSCompletionBlock)completionBlock; {
     NSError *resultError = nil;
-    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 5.0 * NSEC_PER_SEC);
+    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC);
     
     resultError = [self clearContactWithTimeout:timeout
-                                completionBlock:completionHandler];
+                                completionBlock:completionBlock];
 
-    if(resultError == nil) {
-        _applicationCode = applicationCode;
-    } else {
+    if(resultError) {
         return;
+    } else {
+        _applicationCode = applicationCode;
     }
 
     resultError = [self setPushTokenWithTimeout:timeout
-                                completionBlock:completionHandler];
+                                completionBlock:completionBlock];
     
     if(resultError){
         return;
     }
     
     resultError = [self setContactWithTimeout:timeout
-                              completionBlock:completionHandler];
+                              completionBlock:completionBlock];
     
-    completionHandler(resultError);
+    [self callCompletionBlock:completionBlock
+                    withError:resultError];
+
+}
+
+- (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
+                  withError:(NSError *)error{
+    if (completionBlock) {
+        completionBlock(error);
+    }
 }
 
 - (void)changeMerchantId:(NSString *)merchantId {
@@ -97,7 +107,8 @@
     }
     
     if (resultError) {
-        completionBlock(resultError);
+        [self callCompletionBlock:completionBlock
+                        withError:resultError];
     }
     
     return resultError;
@@ -123,7 +134,8 @@
     }
     
     if (resultError) {
-        completionBlock(resultError);
+        [self callCompletionBlock:completionBlock
+                        withError:resultError];
     }
     
     return resultError;
@@ -146,8 +158,10 @@
         resultError = [NSError errorWithCode:1408
                         localizedDescription:@"Waiter timeout error."];
     }
-    if(resultError){
-        completionBlock(resultError);
+    
+    if (resultError) {
+        [self callCompletionBlock:completionBlock
+                        withError:resultError];
     }
     
     return resultError;
