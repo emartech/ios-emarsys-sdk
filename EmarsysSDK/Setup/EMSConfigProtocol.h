@@ -18,8 +18,6 @@
 
 - (NSString *)merchantId;
 
-- (NSArray<id <EMSFlipperFeature>> *)experimentalFeatures;
-
 - (void)setContactFieldId:(NSNumber *)contactFieldId;
 
 - (NSNumber *)contactFieldId;

@@ -45,7 +45,8 @@
 
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(EMSCompletionBlock)completionBlock {
-    NSString *deviceToken = [pushToken deviceTokenString];
+    _deviceToken = pushToken;
+    NSString *deviceToken = [self.deviceToken deviceTokenString];
     EMSRequestModel *requestModel;
     if (deviceToken && [deviceToken length] > 0) {
         requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:deviceToken];
@@ -59,6 +60,7 @@
 }
 
 - (void)clearPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    _deviceToken = nil;
     EMSRequestModel *requestModel = [self.requestFactory createClearPushTokenRequestModel];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];

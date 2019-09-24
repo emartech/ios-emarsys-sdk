@@ -11,6 +11,8 @@
 
 @interface EMSPushV3Internal : NSObject <EMSPushNotificationProtocol>
 
+@property (nonatomic, readonly) NSData *deviceToken;
+
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      notificationCache:(EMSNotificationCache*) notificationCache

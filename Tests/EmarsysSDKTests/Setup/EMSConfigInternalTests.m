@@ -5,20 +5,23 @@
 #import <OCMock/OCMock.h>
 #import "EMSConfigInternal.h"
 #import "MERequestContext.h"
-#import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSMobileEngageV3Internal.h"
+#import "NSError+EMSCore.h"
+#import "EMSPushV3Internal.h"
 
 @interface EMSConfigInternalTests : XCTestCase
 
-@property(nonatomic, strong) EMSConfigInternal *testConfigInternal;
+@property(nonatomic, strong) EMSConfigInternal *configInternal;
 @property(nonatomic, strong) NSString *applicationCode;
 @property(nonatomic, strong) NSString *merchantId;
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSConfig *testConfig;
 @property(nonatomic, strong) NSArray<id <EMSFlipperFeature>> *features;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
-@property(nonatomic, strong) EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient;
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mockMobileEngage;
+@property(nonatomic, strong) EMSPushV3Internal *mockPushInternal;
+@property(nonatomic, strong) NSString *contactFieldValue;
+@property(nonatomic, strong) NSData *deviceToken;
 
 @end
 
@@ -28,12 +31,17 @@
     _applicationCode = @"testApplicationCode";
     _merchantId = @"testMerchantId";
     _contactFieldId = @3;
+    _contactFieldValue = @"testContactFieldValue";
+    _deviceToken = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
     id <EMSFlipperFeature> feature = OCMProtocolMock(@protocol(EMSFlipperFeature));
     _features = @[feature];
 
     _mockRequestContext = OCMClassMock([MERequestContext class]);
-    _mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     _mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    _mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
+
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
+    OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
 
     _testConfig = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
         [builder setMobileEngageApplicationCode:self.applicationCode];
@@ -42,18 +50,18 @@
         [builder setExperimentalFeatures:self.features];
     }];
 
-    _testConfigInternal = [[EMSConfigInternal alloc] initWithConfig:self.testConfig
-                                                     requestContext:self.mockRequestContext
-                                                   deviceInfoClient:self.mockDeviceInfoClient
-                                                       mobileEngage:self.mockMobileEngage];
+    _configInternal = [[EMSConfigInternal alloc] initWithConfig:self.testConfig
+                                                 requestContext:self.mockRequestContext
+                                                   mobileEngage:self.mockMobileEngage
+                                                   pushInternal:self.mockPushInternal];
 }
 
 - (void)testInit_config_mustNotBeNil {
     @try {
         [[EMSConfigInternal alloc] initWithConfig:nil
                                    requestContext:self.mockRequestContext
-                                 deviceInfoClient:self.mockDeviceInfoClient
-                                     mobileEngage:self.mockMobileEngage];
+                                     mobileEngage:self.mockMobileEngage
+                                     pushInternal:self.mockPushInternal];
         XCTFail(@"Expected Exception when config is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: config");
@@ -64,23 +72,11 @@
     @try {
         [[EMSConfigInternal alloc] initWithConfig:self.testConfig
                                    requestContext:nil
-                                 deviceInfoClient:self.mockDeviceInfoClient
-                                     mobileEngage:self.mockMobileEngage];
+                                     mobileEngage:self.mockMobileEngage
+                                     pushInternal:self.mockPushInternal];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
-    }
-}
-
-- (void)testInit_deviceInfoClient_mustNotBeNil {
-    @try {
-        [[EMSConfigInternal alloc] initWithConfig:self.testConfig
-                                   requestContext:self.mockRequestContext
-                                 deviceInfoClient:nil
-                                     mobileEngage:self.mockMobileEngage];
-        XCTFail(@"Expected Exception when deviceInfoClient is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
     }
 }
 
@@ -88,73 +84,149 @@
     @try {
         [[EMSConfigInternal alloc] initWithConfig:self.testConfig
                                    requestContext:self.mockRequestContext
-                                 deviceInfoClient:self.mockDeviceInfoClient
-                                     mobileEngage:nil];
+                                     mobileEngage:nil
+                                     pushInternal:self.mockPushInternal];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
     }
 }
 
+- (void)testInit_pushInternal_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithConfig:self.testConfig
+                                   requestContext:self.mockRequestContext
+                                     mobileEngage:self.mockMobileEngage
+                                     pushInternal:nil];
+        XCTFail(@"Expected Exception when pushInternal is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
+    }
+}
+
 - (void)testApplicationCode {
-    XCTAssertEqualObjects(self.applicationCode, self.testConfigInternal.applicationCode);
+    XCTAssertEqualObjects(self.applicationCode, self.configInternal.applicationCode);
 }
 
 - (void)testChangeApplicationCode {
     NSString *changedAppCode = @"changedApplicationCode";
 
-    [self.testConfigInternal changeApplicationCode:changedAppCode
-                                 completionHandler:^(NSError *error) {
-                                 }];
+    [self.configInternal changeApplicationCode:changedAppCode
+                             completionHandler:^(NSError *error) {
+                             }];
 
-    XCTAssertEqualObjects(changedAppCode, self.testConfigInternal.applicationCode);
+    XCTAssertEqualObjects(changedAppCode, self.configInternal.applicationCode);
 }
 
 - (void)testChangeApplicationCode_completionHandler_mustNotBeNil {
     @try {
-        [self.testConfigInternal changeApplicationCode:@"newApplicationCode"
-                                     completionHandler:nil];
+        [self.configInternal changeApplicationCode:@"newApplicationCode"
+                                 completionHandler:nil];
         XCTFail(@"Expected Exception when completionHandler is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionHandler");
     }
 }
 
+- (void)testChangeApplicationCode_clearContact {
+    OCMStub([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                             completionHandler:^(NSError *error) {
+                                 returnedError = error;
+                                 [expectation fulfill];
+                             }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    OCMVerify([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
+- (void)testChangeApplicationCode_shouldCallSetContact {
+    OCMStub([self.mockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                   completionBlock:[OCMArg invokeBlock]]);
+
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                             completionHandler:^(NSError *error) {
+                                 returnedError = error;
+                                 [expectation fulfill];
+                             }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    OCMVerify([self.mockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                     completionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
+- (void)testChangeApplicationCode_shouldCallSetPushToken {
+    OCMStub([self.mockPushInternal setPushToken:self.deviceToken
+                                completionBlock:[OCMArg invokeBlock]]);
+
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                             completionHandler:^(NSError *error) {
+                                 returnedError = error;
+                                 [expectation fulfill];
+                             }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    OCMVerify([self.mockPushInternal setPushToken:self.deviceToken
+                                  completionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
 - (void)testMerchantId {
-    XCTAssertEqualObjects(self.merchantId, self.testConfigInternal.merchantId);
+    XCTAssertEqualObjects(self.merchantId, self.configInternal.merchantId);
 }
 
 - (void)testChangeMerchantId {
     NSString *newMerchantId = @"newMerchantId";
 
-    [self.testConfigInternal changeMerchantId:newMerchantId];
+    [self.configInternal changeMerchantId:newMerchantId];
 
-    XCTAssertEqualObjects(newMerchantId, self.testConfigInternal.merchantId);
+    XCTAssertEqualObjects(newMerchantId, self.configInternal.merchantId);
 }
 
 - (void)testContactFieldId {
-    XCTAssertEqualObjects(self.contactFieldId, self.testConfigInternal.contactFieldId);
+    XCTAssertEqualObjects(self.contactFieldId, self.configInternal.contactFieldId);
 }
 
 - (void)testSetContactFieldId {
     NSNumber *newContactFieldId = @5;
-    [self.testConfigInternal setContactFieldId:newContactFieldId];
+    [self.configInternal setContactFieldId:newContactFieldId];
 
-    XCTAssertEqualObjects(newContactFieldId, self.testConfigInternal.contactFieldId);
+    XCTAssertEqualObjects(newContactFieldId, self.configInternal.contactFieldId);
 }
 
 - (void)testSetContactFieldId_contactFieldId_mustNotBeNil {
     @try {
-        [self.testConfigInternal setContactFieldId:nil];
+        [self.configInternal setContactFieldId:nil];
         XCTFail(@"Expected Exception when contactFieldId is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactFieldId");
     }
-}
 
-- (void)testExperimentalFeatures {
-    XCTAssertEqualObjects(self.features, self.testConfigInternal.experimentalFeatures);
-}
 
+}
 
 @end

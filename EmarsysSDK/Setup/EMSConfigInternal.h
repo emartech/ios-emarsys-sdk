@@ -9,12 +9,13 @@
 @class EMSDeviceInfoV3ClientInternal;
 @class EMSMobileEngageV3Internal;
 @class MERequestContext;
+@class EMSPushV3Internal;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
 - (instancetype)initWithConfig:(EMSConfig *)config
                 requestContext:(MERequestContext *)requestContext
-              deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient
-                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage;
+                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
+                  pushInternal:(EMSPushV3Internal *)pushInternal;
 
 @end

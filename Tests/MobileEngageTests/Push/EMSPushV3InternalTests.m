@@ -108,6 +108,18 @@
     [partialMockPush stopMocking];
 }
 
+- (void)testSetPushToken_withDeviceToken {
+    NSData *token = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
+    [self.push setPushToken:token completionBlock:nil];
+
+    XCTAssertEqualObjects(self.push.deviceToken, token);
+
+    [self.push clearPushTokenWithCompletionBlock:nil];
+
+    XCTAssertNil(self.push.deviceToken);
+}
+
+
 - (void)testSetPushTokenCompletionBlock_requestFactory_calledWithProperPushToken {
     [self.push setPushToken:self.mockPushTokenData
             completionBlock:nil];
@@ -217,8 +229,8 @@
     NSString *messageId = @"testMessageId";
     NSString *eventName = @"push:click";
     NSDictionary *eventAttributes = @{
-        @"origin": @"main",
-        @"sid": messageId
+            @"origin": @"main",
+            @"sid": messageId
     };
 
     id mockRequestModel = OCMClassMock([EMSRequestModel class]);
@@ -260,7 +272,7 @@
 
 - (void)testTrackMessageOpenWithUserInfoCompletionBlock_cachesInboxNotifications {
     NSDictionary *userInfo = @{
-        @"inbox": @(1)
+            @"inbox": @(1)
     };
     NSDate *date = [NSDate date];
 
