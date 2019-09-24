@@ -6,6 +6,7 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
+#import "NSError+EMSCore.h"
 
 @interface EMSConfigInternal ()
 
@@ -43,21 +44,29 @@
             completionHandler:(EMSCompletionBlock)completionHandler {
     NSParameterAssert(completionHandler);
 
-    [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
-        completionHandler(error);
-    }];
+    NSError *resultError = nil;
+    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 5.0 * NSEC_PER_SEC);
+    
+    resultError = [self clearContactWithTimeout:timeout
+                                completionBlock:completionHandler];
 
-    _applicationCode = applicationCode;
+    if(resultError == nil) {
+        _applicationCode = applicationCode;
+    } else {
+        return;
+    }
 
-    [self.pushInternal setPushToken:self.pushInternal.deviceToken
-                    completionBlock:^(NSError *error) {
-                        completionHandler(error);
-                    }];
-
-    [self.mobileEngage setContactWithContactFieldValue:[self.requestContext contactFieldValue]
-                                       completionBlock:^(NSError *error) {
-                                           completionHandler(error);
-                                       }];
+    resultError = [self setPushTokenWithTimeout:timeout
+                                completionBlock:completionHandler];
+    
+    if(resultError){
+        return;
+    }
+    
+    resultError = [self setContactWithTimeout:timeout
+                              completionBlock:completionHandler];
+    
+    completionHandler(resultError);
 }
 
 - (void)changeMerchantId:(NSString *)merchantId {
@@ -67,6 +76,81 @@
 - (void)setContactFieldId:(NSNumber *)contactFieldId {
     NSParameterAssert(contactFieldId);
     _contactFieldId = contactFieldId;
+}
+
+- (NSError *)clearContactWithTimeout:(dispatch_time_t)timeout
+                     completionBlock:(EMSCompletionBlock)completionBlock {
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    __block NSError *resultError = nil;
+    
+    dispatch_group_enter(dispatchGroup);
+    [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
+        resultError = error;
+        dispatch_group_leave(dispatchGroup);
+    }];
+    
+    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
+
+    if (waiterResult != 0) {
+        resultError = [NSError errorWithCode:1408
+                        localizedDescription:@"Waiter timeout error."];
+    }
+    
+    if (resultError) {
+        completionBlock(resultError);
+    }
+    
+    return resultError;
+}
+
+- (NSError *)setPushTokenWithTimeout:(dispatch_time_t)timeout
+                     completionBlock:(EMSCompletionBlock)completionBlock {
+    __block NSError *resultError = nil;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    
+    dispatch_group_enter(dispatchGroup);
+    [self.pushInternal setPushToken:self.pushInternal.deviceToken
+                    completionBlock:^(NSError *error) {
+                        resultError = error;
+                        dispatch_group_leave(dispatchGroup);
+                    }];
+    
+    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
+
+    if (waiterResult != 0) {
+        resultError = [NSError errorWithCode:1408
+                        localizedDescription:@"Waiter timeout error."];
+    }
+    
+    if (resultError) {
+        completionBlock(resultError);
+    }
+    
+    return resultError;
+}
+
+- (NSError *)setContactWithTimeout:(dispatch_time_t)timeout completionBlock:(EMSCompletionBlock)completionBlock {
+    __block NSError * resultError = nil;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    
+    dispatch_group_enter(dispatchGroup);
+    [self.mobileEngage setContactWithContactFieldValue:[self.requestContext contactFieldValue]
+                                       completionBlock:^(NSError *error) {
+                                           resultError = error;
+                                           dispatch_group_leave(dispatchGroup);
+                                       }];
+
+    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
+
+    if (waiterResult != 0) {
+        resultError = [NSError errorWithCode:1408
+                        localizedDescription:@"Waiter timeout error."];
+    }
+    if(resultError){
+        completionBlock(resultError);
+    }
+    
+    return resultError;
 }
 
 

@@ -567,6 +567,8 @@
 		37460F34043A699280509CD5 /* EMSCompletionMiddlewareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460F89F6C6CFDDD762FFF5 /* EMSCompletionMiddlewareTests.m */; };
 		37460F7845FFAD99F2380D2E /* EMSCompletionMiddlewareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460F89F6C6CFDDD762FFF5 /* EMSCompletionMiddlewareTests.m */; };
 		37460FE8E5129D15F541D35F /* PRERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC10842C0A13863CF72 /* PRERequestContextTests.m */; };
+		568FEB0B233A0FF100901332 /* EMSWaiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460D89D66C18EBF3590970 /* EMSWaiter.m */; };
+		568FEB0C233A0FF400901332 /* EMSWaiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460D89D66C18EBF3590970 /* EMSWaiter.m */; };
 		598A8766A449BA213B9A5B40 /* libPods-EmarsysSDKTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CF78FDCA6AC4D650FCA8A6 /* libPods-EmarsysSDKTests.a */; };
 		5C0058C8BB648FB3CBFE3D72 /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6960BBEF071FC005BC54BE7 /* libPods-Tests.a */; };
 		642590A2729A4946FFFCDD17 /* EMSLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642594C044516E53D2877760 /* EMSLogicTests.m */; };
@@ -3096,7 +3098,7 @@
 		32C6FAA19703DD99CB977427 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = Emarsys;
 				TargetAttributes = {
 					8A102D1A2112F3B50046BAFB = {
@@ -3142,6 +3144,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -3803,6 +3806,7 @@
 				8AFCA45321393D640052FEFA /* EMSPredictInternalTests.m in Sources */,
 				3746040B57B6915407E90A2F /* PRERequestContextTests.m in Sources */,
 				32C6F83174C95B401D781E65 /* EMSPredictMapperTests.m in Sources */,
+				568FEB0B233A0FF100901332 /* EMSWaiter.m in Sources */,
 				37460C601B1894A1121EFE72 /* EMSCartItemUtilsTests.m in Sources */,
 				32C6F0ADEA69B7A57D035E08 /* EMSVisitorIdResponseHandlerTests.m in Sources */,
 				32C6F1CD1BC123CFA8E577C6 /* EmarsysTestUtils.m in Sources */,
@@ -3831,6 +3835,7 @@
 				32C6FA4B6B0C6DD3E48DBE02 /* EMSConfigTests.m in Sources */,
 				32C6F5823F1513EDC643867D /* EMSInnerFeatureTests.m in Sources */,
 				642597B861824706E26C3E6C /* EMSConfigInternalTests.m in Sources */,
+				568FEB0C233A0FF400901332 /* EMSWaiter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3893,6 +3898,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -3939,7 +3945,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "arm64 arm64e";
+				VALID_ARCHS = "x86_64 arm64e arm64";
 			};
 			name = Release;
 		};
@@ -3947,6 +3953,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -3999,7 +4006,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				VALID_ARCHS = "arm64 arm64e";
+				VALID_ARCHS = "x86_64 arm64e arm64";
 			};
 			name = Debug;
 		};
