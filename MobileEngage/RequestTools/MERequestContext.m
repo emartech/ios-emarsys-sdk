@@ -8,19 +8,20 @@
 
 @implementation MERequestContext
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                  uuidProvider:(EMSUUIDProvider *)uuidProvider
-             timestampProvider:(EMSTimestampProvider *)timestampProvider
-                    deviceInfo:(EMSDeviceInfo *)deviceInfo {
+- (instancetype)initWithApplicationCode:(NSString *)applicationCode
+                         contactFieldId:(NSNumber *)contactFieldId
+                           uuidProvider:(EMSUUIDProvider *)uuidProvider
+                      timestampProvider:(EMSTimestampProvider *)timestampProvider
+                             deviceInfo:(EMSDeviceInfo *)deviceInfo {
     NSParameterAssert(uuidProvider);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(deviceInfo);
     if (self = [super init]) {
-        _config = config;
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _deviceInfo = deviceInfo;
-        _contactFieldId = config.contactFieldId;
+        _contactFieldId = contactFieldId;
+        _applicationCode = applicationCode;
         _clientState = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCLIENT_STATE];
         _contactToken = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_TOKEN];
         _refreshToken = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kREFRESH_TOKEN];

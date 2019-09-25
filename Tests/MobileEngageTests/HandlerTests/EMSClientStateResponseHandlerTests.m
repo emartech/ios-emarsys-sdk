@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <Kiwi/NSObject+KiwiStubAdditions.h>
-#import <AVFoundation/AVFoundation.h>
 #import "EMSClientStateResponseHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
 #import "EMSUUIDProvider.h"
@@ -15,16 +14,22 @@
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSClientStateResponseHandler *responseHandler;
+@property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSNumber *contactFieldId;
 
 @end
 
 @implementation EMSClientStateResponseHandlerTests
 
 - (void)setUp {
-    _requestContext = [[MERequestContext alloc] initWithConfig:OCMClassMock([EMSConfig class])
-                                                  uuidProvider:OCMClassMock([EMSUUIDProvider class])
-                                             timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                    deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+    _applicationCode = @"testApplicationCode";
+    _contactFieldId = @3;
+    _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
+                                                         contactFieldId:self.contactFieldId
+                                                           uuidProvider:OCMClassMock([EMSUUIDProvider class])
+                                                      timestampProvider:OCMClassMock([EMSTimestampProvider class])
+                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+
     _responseHandler = [[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext];
 }
 

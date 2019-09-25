@@ -14,16 +14,21 @@
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRefreshTokenResponseHandler *responseHandler;
+@property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSNumber *contactFieldId;
 
 @end
 
 @implementation EMSRefreshTokenResponseHandlerTests
 
 - (void)setUp {
-    _requestContext = [[MERequestContext alloc] initWithConfig:OCMClassMock([EMSConfig class])
-                                                  uuidProvider:OCMClassMock([EMSUUIDProvider class])
-                                             timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                    deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+    _applicationCode = @"testApplicationCode";
+    _contactFieldId = @3;
+    _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
+                                                         contactFieldId:self.contactFieldId
+                                                           uuidProvider:OCMClassMock([EMSUUIDProvider class])
+                                                      timestampProvider:OCMClassMock([EMSTimestampProvider class])
+                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])];
     _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
 }
 
@@ -95,8 +100,8 @@
                                                                                                           options:NSJSONWritingPrettyPrinted
                                                                                                             error:nil] : nil
                                                 requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                                                        [builder setUrl:url];
-                                                    }
+                                                            [builder setUrl:url];
+                                                        }
                                                                             timestampProvider:[EMSTimestampProvider new]
                                                                                  uuidProvider:[EMSUUIDProvider new]]
                                                    timestamp:[[EMSTimestampProvider new] provideTimestamp]];

@@ -8,6 +8,6 @@
 
 @interface MEDefaultHeaders : NSObject
 
-+ (NSDictionary *)additionalHeadersWithConfig:(EMSConfig *)config;
++ (NSDictionary *)additionalHeaders;
 
 @end

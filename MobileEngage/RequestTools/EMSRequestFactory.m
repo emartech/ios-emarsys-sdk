@@ -25,7 +25,7 @@
     NSParameterAssert(requestContext);
     if (self = [super init]) {
         _requestContext = requestContext;
-        _applicationCode = requestContext.config.applicationCode;
+        _applicationCode = requestContext.applicationCode;
         _deviceInfo = requestContext.deviceInfo;
     }
     return self;
@@ -145,7 +145,7 @@
             [builder setMethod:HTTPMethodPOST];
 
             NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-            payload[@"application_id"] = self.requestContext.config.applicationCode;
+            payload[@"application_id"] = self.requestContext.applicationCode;
             payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
             payload[@"sid"] = notification.sid;
             payload[@"source"] = @"inbox";
@@ -156,7 +156,7 @@
             }
 
             [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
-            [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.config.applicationCode]}];
+            [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.applicationCode]}];
         }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];

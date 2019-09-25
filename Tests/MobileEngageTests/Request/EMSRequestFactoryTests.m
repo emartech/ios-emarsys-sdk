@@ -22,7 +22,6 @@
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *mockUUIDProvider;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
-@property(nonatomic, strong) EMSConfig *mockConfig;
 
 @property(nonatomic, strong) NSDate *timestamp;
 
@@ -35,22 +34,20 @@
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
-    _mockConfig = OCMClassMock([EMSConfig class]);
 
     _timestamp = [NSDate date];
 
     OCMStub(self.mockRequestContext.timestampProvider).andReturn(self.mockTimestampProvider);
     OCMStub(self.mockRequestContext.deviceInfo).andReturn(self.mockDeviceInfo);
-    OCMStub(self.mockRequestContext.config).andReturn(self.mockConfig);
     OCMStub(self.mockRequestContext.uuidProvider).andReturn(self.mockUUIDProvider);
     OCMStub(self.mockRequestContext.refreshToken).andReturn(@"testRefreshToken");
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
     OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
     OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
-    OCMStub(self.mockConfig.applicationCode).andReturn(@"testApplicationCode");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
 }

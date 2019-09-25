@@ -104,10 +104,6 @@
     }
 }
 
-- (void)testApplicationCode {
-    XCTAssertEqualObjects(self.applicationCode, self.configInternal.applicationCode);
-}
-
 - (void)testChangeApplicationCode_completionHandler_isNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
@@ -356,10 +352,6 @@
     [self.configInternal changeMerchantId:newMerchantId];
 
     XCTAssertEqualObjects(newMerchantId, self.configInternal.merchantId);
-}
-
-- (void)testContactFieldId {
-    XCTAssertEqualObjects(self.contactFieldId, self.configInternal.contactFieldId);
 }
 
 @end

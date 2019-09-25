@@ -38,21 +38,21 @@ SPEC_BEGIN(MEInboxTests)
 
         id (^inboxWithParameters)(EMSRequestManager *requestManager, BOOL withContactFieldValue) = ^id(EMSRequestManager *requestManager, BOOL withContactFieldValue) {
             notificationCache = [EMSNotificationCache new];
-            MERequestContext *context = [[MERequestContext alloc] initWithConfig:config
-                                                                    uuidProvider:uuidProvider
-                                                               timestampProvider:timestampProvider
-                                                                      deviceInfo:deviceInfo];
+            MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                           contactFieldId:contactFieldId
+                                                                             uuidProvider:uuidProvider
+                                                                        timestampProvider:timestampProvider
+                                                                               deviceInfo:deviceInfo];
             if (withContactFieldValue) {
                 [context setContactFieldValue:contactFieldValue];
             } else {
                 [context setContactFieldValue:nil];
             }
 
-            MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
-                                              requestContext:context
-                                           notificationCache:notificationCache
-                                              requestManager:requestManager
-                                              requestFactory:[EMSRequestFactory mock]];
+            MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:context
+                                                   notificationCache:notificationCache
+                                                      requestManager:requestManager
+                                                      requestFactory:[EMSRequestFactory mock]];
             return inbox;
         };
 
@@ -61,22 +61,15 @@ SPEC_BEGIN(MEInboxTests)
 
         MEInbox *(^createInbox)(void) = ^id() {
             requestManagerMock = [EMSRequestManager nullMock];
-            requestContext = [[MERequestContext alloc] initWithConfig:config
-                                                         uuidProvider:uuidProvider
-                                                    timestampProvider:timestampProvider
-                                                           deviceInfo:deviceInfo];
+            requestContext = [[MERequestContext alloc] initWithApplicationCode:nil contactFieldId:nil uuidProvider:uuidProvider timestampProvider:timestampProvider deviceInfo:deviceInfo];
             notificationCache = [EMSNotificationCache new];
 
-            MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
-                                              requestContext:requestContext
-                                           notificationCache:notificationCache
-                                              requestManager:requestManagerMock
-                                              requestFactory:[EMSRequestFactory mock]];
+            MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:requestContext notificationCache:notificationCache requestManager:requestManagerMock requestFactory:[EMSRequestFactory mock]];
             return inbox;
         };
 
         id (^expectedHeaders)(void) = ^id() {
-            NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:config];
+            NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeaders];
             NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
             mutableHeaders[@"x-ems-me-hardware-id"] = deviceInfo.hardwareId;
             mutableHeaders[@"x-ems-me-application-code"] = config.applicationCode;
@@ -90,29 +83,14 @@ SPEC_BEGIN(MEInboxTests)
             [MEExperimental reset];
         });
 
-        describe(@"initWithConfig:requestContext:notificationCache:requestManager:requestFactory:", ^{
-
-            it(@"should throw exception when config is nil", ^{
-                @try {
-                    [[MEInbox alloc] initWithConfig:nil
-                                     requestContext:[MERequestContext mock]
-                                  notificationCache:[EMSNotificationCache mock]
-                                     requestManager:[EMSRequestManager mock]
-                                     requestFactory:[EMSRequestFactory mock]];
-                    fail(@"Expected Exception when config is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+        describe(@"initWithRequestContext:notificationCache:requestManager:requestFactory:", ^{
 
             it(@"should throw exception when requestContext is nil", ^{
                 @try {
-                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
-                                     requestContext:nil
-                                  notificationCache:[EMSNotificationCache mock]
-                                     requestManager:[EMSRequestManager mock]
-                                     requestFactory:[EMSRequestFactory mock]];
+                    [[MEInbox alloc] initWithRequestContext:nil
+                                          notificationCache:[EMSNotificationCache mock]
+                                             requestManager:[EMSRequestManager mock]
+                                             requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -122,11 +100,10 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should throw exception when notificationCache is nil", ^{
                 @try {
-                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
-                                     requestContext:[MERequestContext mock]
-                                  notificationCache:nil
-                                     requestManager:[EMSRequestManager mock]
-                                     requestFactory:[EMSRequestFactory mock]];
+                    [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
+                                          notificationCache:nil
+                                             requestManager:[EMSRequestManager mock]
+                                             requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCache"];
@@ -136,11 +113,10 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should throw exception when requestManager is nil", ^{
                 @try {
-                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
-                                     requestContext:[MERequestContext mock]
-                                  notificationCache:[EMSNotificationCache mock]
-                                     requestManager:nil
-                                     requestFactory:[EMSRequestFactory mock]];
+                    [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
+                                          notificationCache:[EMSNotificationCache mock]
+                                             requestManager:nil
+                                             requestFactory:[EMSRequestFactory mock]];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
@@ -150,11 +126,10 @@ SPEC_BEGIN(MEInboxTests)
 
             it(@"should throw exception when requestFactory is nil", ^{
                 @try {
-                    [[MEInbox alloc] initWithConfig:[EMSConfig mock]
-                                     requestContext:[MERequestContext mock]
-                                  notificationCache:[EMSNotificationCache mock]
-                                     requestManager:[EMSRequestManager mock]
-                                     requestFactory:nil];
+                    [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
+                                          notificationCache:[EMSNotificationCache mock]
+                                             requestManager:[EMSRequestManager mock]
+                                             requestFactory:nil];
                     fail(@"Expected Exception when requestFactory is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestFactory"];
@@ -202,13 +177,13 @@ SPEC_BEGIN(MEInboxTests)
                 }];
 
                 NSDictionary *jsonResponse = @{@"notifications": @[
-                    @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
-                    @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
-                    @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
-                    @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
-                    @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
-                    @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
-                    @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)},
+                        @{@"id": @"id1", @"title": @"title1", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678129)},
+                        @{@"id": @"id2", @"title": @"title2", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678128)},
+                        @{@"id": @"id3", @"title": @"title3", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678127)},
+                        @{@"id": @"id4", @"title": @"title4", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678126)},
+                        @{@"id": @"id5", @"title": @"title5", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678125)},
+                        @{@"id": @"id6", @"title": @"title6", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678124)},
+                        @{@"id": @"id7", @"title": @"title7", @"custom_data": @{}, @"root_params": @{}, @"expiration_time": @7200, @"received_at": @(12345678123)},
                 ]};
 
                 NSMutableArray<EMSNotification *> *notifications = [NSMutableArray array];
@@ -296,10 +271,10 @@ SPEC_BEGIN(MEInboxTests)
             it(@"should invoke requestManager with the correct requestModel", ^{
                 EMSRequestManager *requestManager = [EMSRequestManager mock];
                 EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setUrl:@"https://me-inbox.eservice.emarsys.net/api/reset-badge-count"];
-                        [builder setHeaders:expectedHeaders()];
-                    }
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setUrl:@"https://me-inbox.eservice.emarsys.net/api/reset-badge-count"];
+                            [builder setHeaders:expectedHeaders()];
+                        }
                                                                        timestampProvider:[EMSTimestampProvider new]
                                                                             uuidProvider:[EMSUUIDProvider new]];
 
@@ -610,11 +585,10 @@ SPEC_BEGIN(MEInboxTests)
                 [[requestManagerMock should] receive:@selector(submitRequestModel:withCompletionBlock:)
                                        withArguments:requestModel, completionBlock];
 
-                MEInbox *inbox = [[MEInbox alloc] initWithConfig:config
-                                                  requestContext:[MERequestContext nullMock]
-                                               notificationCache:notificationCache
-                                                  requestManager:requestManagerMock
-                                                  requestFactory:mockRequestFactory];
+                MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:[MERequestContext nullMock]
+                                                       notificationCache:notificationCache
+                                                          requestManager:requestManagerMock
+                                                          requestFactory:mockRequestFactory];
 
                 [inbox trackNotificationOpenWithNotification:notification
                                              completionBlock:completionBlock];

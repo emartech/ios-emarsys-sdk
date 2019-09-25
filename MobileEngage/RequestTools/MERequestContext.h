@@ -21,7 +21,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@property(nonatomic, strong, nullable) EMSConfig *config;
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong, nullable) EMSDeviceInfo *deviceInfo;
@@ -30,11 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSString *clientState;
 @property(nonatomic, strong, nullable) NSString *contactToken;
 @property(nonatomic, strong, nullable) NSString *refreshToken;
+@property(nonatomic, strong, nullable) NSString *applicationCode;
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                  uuidProvider:(EMSUUIDProvider *)uuidProvider
-             timestampProvider:(EMSTimestampProvider *)timestampProvider
-                    deviceInfo:(EMSDeviceInfo *)deviceInfo;
+- (instancetype)initWithApplicationCode:(NSString *)applicationCode
+                         contactFieldId:(NSNumber *)contactFieldId
+                           uuidProvider:(EMSUUIDProvider *)uuidProvider
+                      timestampProvider:(EMSTimestampProvider *)timestampProvider
+                             deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
 - (void)reset;
 

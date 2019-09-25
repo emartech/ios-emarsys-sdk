@@ -10,9 +10,7 @@
 
 @interface EMSConfigInternal ()
 
-@property(nonatomic, strong) NSString *applicationCode;
 @property(nonatomic, strong) NSString *merchantId;
-@property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mobileEngage;
 @property(nonatomic, strong) MERequestContext *requestContext;
@@ -32,9 +30,7 @@
     NSParameterAssert(pushInternal);
 
     if (self = [super init]) {
-        _applicationCode = config.applicationCode;
         _merchantId = config.merchantId;
-        _contactFieldId = config.contactFieldId;
         _experimentalFeatures = config.experimentalFeatures;
         _mobileEngage = mobileEngage;
         _requestContext = requestContext;
@@ -54,7 +50,7 @@
     if(resultError) {
         return;
     } else {
-        _applicationCode = applicationCode;
+        self.requestContext.applicationCode = applicationCode;
     }
 
     resultError = [self setPushTokenWithTimeout:timeout
@@ -85,7 +81,7 @@
 
 - (void)setContactFieldId:(NSNumber *)contactFieldId {
     NSParameterAssert(contactFieldId);
-    _contactFieldId = contactFieldId;
+    self.requestContext.contactFieldId = contactFieldId;
 }
 
 - (NSError *)clearContactWithTimeout:(dispatch_time_t)timeout

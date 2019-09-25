@@ -114,10 +114,11 @@
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
 
-    _requestContext = [[MERequestContext alloc] initWithConfig:config
-                                                  uuidProvider:uuidProvider
-                                             timestampProvider:timestampProvider
-                                                    deviceInfo:deviceInfo];
+    _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
+                                                         contactFieldId:config.contactFieldId
+                                                           uuidProvider:uuidProvider
+                                                      timestampProvider:timestampProvider
+                                                             deviceInfo:deviceInfo];
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:uuidProvider
                                                                        merchantId:config.merchantId
@@ -186,7 +187,7 @@
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.operationQueue
                                        timestampProvider:timestampProvider
-                                       additionalHeaders:[MEDefaultHeaders additionalHeadersWithConfig:config]
+                                       additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
                                              [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext],
                                              [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext]]
@@ -278,11 +279,7 @@
                                                    requestManager:self.requestManager
                                                 notificationCache:self.notificationCache
                                                 timestampProvider:timestampProvider];
-        _inbox = [[MEInbox alloc] initWithConfig:config
-                                  requestContext:self.requestContext
-                               notificationCache:self.notificationCache
-                                  requestManager:self.requestManager
-                                  requestFactory:self.requestFactory];
+        _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext notificationCache:self.notificationCache requestManager:self.requestManager requestFactory:self.requestFactory];
         _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                          mobileEngageInternal:self.mobileEngage
                                                                                         inApp:self.iam

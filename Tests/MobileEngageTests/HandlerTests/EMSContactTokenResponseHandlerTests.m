@@ -14,15 +14,20 @@
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *responseHandler;
+@property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSNumber *contactFieldId;
 @end
 
 @implementation EMSContactTokenResponseHandlerTests
 
 - (void)setUp {
-    _requestContext = [[MERequestContext alloc] initWithConfig:OCMClassMock([EMSConfig class])
-                                                  uuidProvider:OCMClassMock([EMSUUIDProvider class])
-                                             timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                    deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+    _applicationCode = @"testApplicationCode";
+    _contactFieldId = @3;
+    _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
+                                                         contactFieldId:self.contactFieldId
+                                                           uuidProvider:OCMClassMock([EMSUUIDProvider class])
+                                                      timestampProvider:OCMClassMock([EMSTimestampProvider class])
+                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])];
     _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
 }
 

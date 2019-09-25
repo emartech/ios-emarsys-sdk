@@ -35,33 +35,35 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         __block EMSUUIDProvider *uuidProvider;
         __block EMSDeviceInfo *deviceInfo;
         __block MERequestContext *requestContext;
+        __block NSString *applicationCode;
+        __block NSNumber *contactFieldId;
 
         registerMatchers(@"EMS");
 
         id (^customEventRequestModel)(NSString *eventName, NSDictionary *eventAttributes, MERequestContext *requestContext) = ^id(NSString *eventName, NSDictionary *eventAttributes, MERequestContext *requestContext) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                    NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:@{
-                        @"type": @"custom",
-                        @"name": eventName,
-                        @"timestamp": [[timestampProvider provideTimestamp] numberValueInMillis]}];
+                        NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:@{
+                                @"type": @"custom",
+                                @"name": eventName,
+                                @"timestamp": [[timestampProvider provideTimestamp] numberValueInMillis]}];
 
-                    if (eventAttributes) {
-                        event[@"attributes"] = eventAttributes;
+                        if (eventAttributes) {
+                            event[@"attributes"] = eventAttributes;
+                        }
+
+                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
+                        [builder setMethod:HTTPMethodPOST];
+                        [builder setPayload:@{@"events": @[event]}];
                     }
-
-                    [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
-                    [builder setMethod:HTTPMethodPOST];
-                    [builder setPayload:@{@"events": @[event]}];
-                }
                                   timestampProvider:timestampProvider
                                        uuidProvider:uuidProvider];
         };
 
         id (^normalRequestModel)(NSString *url, MERequestContext *requestContext) = ^id(NSString *url, MERequestContext *requestContext) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                    [builder setUrl:url];
-                    [builder setMethod:HTTPMethodGET];
-                }
+                        [builder setUrl:url];
+                        [builder setMethod:HTTPMethodGET];
+                    }
                                   timestampProvider:timestampProvider
                                        uuidProvider:uuidProvider];
         };
@@ -75,9 +77,9 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             FakeRequestRepository *fakeRequestRepository = [FakeRequestRepository new];
             fakeRequestRepository.queryResponseMapping = @{
-                NSStringFromClass([selectFirstSpecification class]): nextRequest,
-                NSStringFromClass([filterCustomEventsSpecification class]): allCustomEvents,
-                NSStringFromClass([selectAllRequestsSpecification class]): AllRequests};
+                    NSStringFromClass([selectFirstSpecification class]): nextRequest,
+                    NSStringFromClass([filterCustomEventsSpecification class]): allCustomEvents,
+                    NSStringFromClass([selectAllRequestsSpecification class]): AllRequests};
 
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:fakeRequestRepository
                                                                                          buttonClickRepository:buttonClickRepository
@@ -95,14 +97,13 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             displayedRepository = [MEDisplayedIAMRepository nullMock];
             buttonClickRepository = [MEButtonClickRepository nullMock];
             requestModelRepository = [EMSRequestModelRepository mock];
-            requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMerchantId:@"merchantId"];
-                [builder setContactFieldId:@3];
-                [builder setMobileEngageApplicationCode:@"testAppplicationCode"];
-                }]
-                                                         uuidProvider:uuidProvider
-                                                    timestampProvider:timestampProvider
-                                                           deviceInfo:deviceInfo];
+            applicationCode = @"testApplicationCode";
+            contactFieldId = @3;
+            requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                contactFieldId:contactFieldId
+                                                                  uuidProvider:uuidProvider
+                                                             timestampProvider:timestampProvider
+                                                                    deviceInfo:deviceInfo];
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:requestModelRepository
                                                                                          buttonClickRepository:buttonClickRepository
                                                                                         displayedIAMRepository:displayedRepository
@@ -209,12 +210,12 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             it(@"should add buttonClicks on the custom event requests", ^{
                 NSArray<MEButtonClick *> *clicks = @[
-                    [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
-                                                     buttonId:@"buttonID"
-                                                    timestamp:[NSDate date]],
-                    [[MEButtonClick alloc] initWithCampaignId:@"campaignID2"
-                                                     buttonId:@"buttonID2"
-                                                    timestamp:[NSDate date]]
+                        [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
+                                                         buttonId:@"buttonID"
+                                                        timestamp:[NSDate date]],
+                        [[MEButtonClick alloc] initWithCampaignId:@"campaignID2"
+                                                         buttonId:@"buttonID2"
+                                                        timestamp:[NSDate date]]
                 ];
 
                 [[buttonClickRepository should] receive:@selector(query:) andReturn:clicks];
@@ -225,15 +226,15 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"clicks"] should] equal:@[
-                    @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
-                    @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
+                        @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
+                        @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
                 ]];
             });
 
             it(@"should add viewedMessages on the custom event requests", ^{
                 NSArray<MEDisplayedIAM *> *viewedMessages = @[
-                    [[MEDisplayedIAM alloc] initWithCampaignId:@"123" timestamp:[NSDate date]],
-                    [[MEDisplayedIAM alloc] initWithCampaignId:@"42" timestamp:[NSDate date]]
+                        [[MEDisplayedIAM alloc] initWithCampaignId:@"123" timestamp:[NSDate date]],
+                        [[MEDisplayedIAM alloc] initWithCampaignId:@"42" timestamp:[NSDate date]]
                 ];
 
                 [[displayedRepository should] receive:@selector(query:) andReturn:viewedMessages];
@@ -244,16 +245,16 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
                 NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
                 [[[result[0] payload][@"viewedMessages"] should] equal:@[
-                    @{@"campaignId": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
-                    @{@"campaignId": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
+                        @{@"campaignId": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
+                        @{@"campaignId": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
                 ]];
             });
 
             it(@"should add the element to the requestModelRepository", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://www.url.com"];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:@"https://www.url.com"];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 [[requestModelRepository should] receive:@selector(add:) withArguments:model];
@@ -300,22 +301,22 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 EMSRequestModel *modelCustomEvent3 = customEventRequestModel(@"event3", @{@"star": @"wars"}, requestContext);
 
                 EMSCompositeRequestModel *compositeModel = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setPayload:@{
-                            @"hardware_id": deviceInfo.hardwareId,
-                            @"viewedMessages": @[],
-                            @"clicks": @[],
-                            @"events": @[
-                                [modelCustomEvent1.payload[@"events"] firstObject],
-                                [modelCustomEvent2.payload[@"events"] firstObject],
-                                [modelCustomEvent3.payload[@"events"] firstObject]
-                            ],
-                            @"language": deviceInfo.languageCode,
-                            @"ems_sdk": EMARSYS_SDK_VERSION,
-                            @"application_version": deviceInfo.applicationVersion
-                        }];
-                    }
+                            [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setPayload:@{
+                                    @"hardware_id": deviceInfo.hardwareId,
+                                    @"viewedMessages": @[],
+                                    @"clicks": @[],
+                                    @"events": @[
+                                            [modelCustomEvent1.payload[@"events"] firstObject],
+                                            [modelCustomEvent2.payload[@"events"] firstObject],
+                                            [modelCustomEvent3.payload[@"events"] firstObject]
+                                    ],
+                                    @"language": deviceInfo.languageCode,
+                                    @"ems_sdk": EMARSYS_SDK_VERSION,
+                                    @"application_version": deviceInfo.applicationVersion
+                            }];
+                        }
                                                                                    timestampProvider:requestContext.timestampProvider
                                                                                         uuidProvider:requestContext.uuidProvider];
                 compositeModel.originalRequests = @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3];
@@ -335,22 +336,22 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 EMSRequestModel *modelCustomEvent3 = customEventRequestModel(@"event3", @{@"star": @"wars"}, requestContext);
 
                 EMSCompositeRequestModel *compositeModel = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setPayload:@{
-                            @"hardware_id": deviceInfo.hardwareId,
-                            @"viewedMessages": @[],
-                            @"clicks": @[],
-                            @"events": @[
-                                [modelCustomEvent1.payload[@"events"] firstObject],
-                                [modelCustomEvent2.payload[@"events"] firstObject],
-                                [modelCustomEvent3.payload[@"events"] firstObject]
-                            ],
-                            @"language": deviceInfo.languageCode,
-                            @"ems_sdk": EMARSYS_SDK_VERSION,
-                            @"application_version": deviceInfo.applicationVersion
-                        }];
-                    }
+                            [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setPayload:@{
+                                    @"hardware_id": deviceInfo.hardwareId,
+                                    @"viewedMessages": @[],
+                                    @"clicks": @[],
+                                    @"events": @[
+                                            [modelCustomEvent1.payload[@"events"] firstObject],
+                                            [modelCustomEvent2.payload[@"events"] firstObject],
+                                            [modelCustomEvent3.payload[@"events"] firstObject]
+                                    ],
+                                    @"language": deviceInfo.languageCode,
+                                    @"ems_sdk": EMARSYS_SDK_VERSION,
+                                    @"application_version": deviceInfo.applicationVersion
+                            }];
+                        }
                                                                                    timestampProvider:requestContext.timestampProvider
                                                                                         uuidProvider:requestContext.uuidProvider];
                 compositeModel.originalRequests = @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3];

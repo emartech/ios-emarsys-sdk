@@ -14,10 +14,9 @@
 
 @interface MEInbox : NSObject <EMSInboxProtocol>
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                requestContext:(MERequestContext *)requestContext
-             notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager
-                requestFactory:(EMSRequestFactory *)requestFactory;
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                     notificationCache:(EMSNotificationCache *)notificationCache
+                        requestManager:(EMSRequestManager *)requestManager
+                        requestFactory:(EMSRequestFactory *)requestFactory;
 
 @end

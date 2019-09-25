@@ -17,7 +17,6 @@
 
 @interface MEInbox ()
 
-@property(nonatomic, strong) EMSConfig *config;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
@@ -29,18 +28,15 @@
 
 #pragma mark - Init
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                requestContext:(MERequestContext *)requestContext
-             notificationCache:(EMSNotificationCache *)notificationCache
-                requestManager:(EMSRequestManager *)requestManager
-                requestFactory:(EMSRequestFactory *)requestFactory {
-    NSParameterAssert(config);
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                     notificationCache:(EMSNotificationCache *)notificationCache
+                        requestManager:(EMSRequestManager *)requestManager
+                        requestFactory:(EMSRequestFactory *)requestFactory {
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
     if (self = [super init]) {
-        _config = config;
         _requestContext = requestContext;
         _notificationCache = notificationCache;
         _requestManager = requestManager;
@@ -147,14 +143,14 @@
 #pragma mark - Private methods
 
 - (NSDictionary<NSString *, NSString *> *)createNotificationsFetchingHeaders {
-    NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeadersWithConfig:self.config];
+    NSDictionary *defaultHeaders = [MEDefaultHeaders additionalHeaders];
     NSMutableDictionary *mutableFetchingHeaders = [NSMutableDictionary dictionaryWithDictionary:defaultHeaders];
     mutableFetchingHeaders[@"x-ems-me-hardware-id"] = self.requestContext.deviceInfo.hardwareId;
-    mutableFetchingHeaders[@"x-ems-me-application-code"] = self.config.applicationCode;
+    mutableFetchingHeaders[@"x-ems-me-application-code"] = self.requestContext.applicationCode;
     mutableFetchingHeaders[@"x-ems-me-contact-field-id"] = [NSString stringWithFormat:@"%@",
                                                                                       self.requestContext.contactFieldId];
     mutableFetchingHeaders[@"x-ems-me-contact-field-value"] = self.requestContext.contactFieldValue;
-    mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.config.applicationCode];
+    mutableFetchingHeaders[@"Authorization"] = [EMSAuthentication createBasicAuthWithUsername:self.requestContext.applicationCode];
     return [NSDictionary dictionaryWithDictionary:mutableFetchingHeaders];
 }
 

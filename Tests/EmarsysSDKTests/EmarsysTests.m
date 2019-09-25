@@ -410,6 +410,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"setContactWithContactFieldValue is not called by predict when predict is disabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -422,6 +423,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"setContactWithContactFieldValue is called by predict when predict is enabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMerchantId:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -434,6 +436,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"setContactWithContactFieldValue is not called by mobileEngage when mobileEngage is disabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMerchantId:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -446,6 +449,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"setContactWithContactFieldValue is called by mobileEngage when mobileEngage is enabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -476,6 +480,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"clearContact is not called by predict when predict is disabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -488,6 +493,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"clearContact is called by predict when predict is enabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMerchantId:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -500,6 +506,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"clearContact is not called by mobileEngage when mobileEngage is disabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMerchantId:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];
@@ -512,6 +519,7 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"clearContact is called by mobileEngage when mobileEngage is enabled", ^{
                     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                         [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                        [builder setContactFieldId:@3];
                     }];
                     [EmarsysTestUtils setupEmarsysWithConfig:config
                                          dependencyContainer:dependencyContainer];

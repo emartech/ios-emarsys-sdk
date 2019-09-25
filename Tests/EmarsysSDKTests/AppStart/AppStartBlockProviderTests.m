@@ -21,6 +21,8 @@
 @property(nonatomic, strong) id mockDeviceInfoClient;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) MEHandlerBlock appStartEventBlock;
+@property(nonatomic, strong) NSString *applicationCode;
+@property(nonatomic, strong) NSNumber *contactFieldId;
 
 @end
 
@@ -28,17 +30,17 @@
 
 
 - (void)setUp {
+    _applicationCode = @"testApplicationCode";
+    _contactFieldId = @3;
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockDeviceInfoClient = OCMProtocolMock(@protocol(EMSDeviceInfoClientProtocol));
     _mockRequestContext = OCMClassMock([MERequestContext class]);
-    _requestContext = [[MERequestContext alloc] initWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-            [builder setMerchantId:@"testMerchantId"];
-            [builder setContactFieldId:@3];
-        }]                                        uuidProvider:[EMSUUIDProvider new]
-                                             timestampProvider:[EMSTimestampProvider new]
-                                                    deviceInfo:[EMSDeviceInfo new]];
+    _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
+                                                         contactFieldId:self.contactFieldId
+                                                           uuidProvider:[EMSUUIDProvider new]
+                                                      timestampProvider:[EMSTimestampProvider new]
+                                                             deviceInfo:[EMSDeviceInfo new]];
 
     [self.requestContext setContactToken:nil];
 
