@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol EMSConfigProtocol <NSObject>
 
-- (void)changeApplicationCode:(NSString *)applicationCode
+- (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
 
 - (NSString *)applicationCode;

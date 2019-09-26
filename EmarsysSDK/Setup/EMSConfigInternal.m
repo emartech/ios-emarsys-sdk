@@ -6,7 +6,6 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
-#import "NSError+EMSCore.h"
 
 @interface EMSConfigInternal ()
 
@@ -15,6 +14,7 @@
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mobileEngage;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
+@property(nonatomic, strong) NSString *contactFieldValue;
 
 @end
 
@@ -39,37 +39,28 @@
     return self;
 }
 
-- (void)changeApplicationCode:(NSString *)applicationCode
+- (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionBlock; {
-    NSError *resultError = nil;
-    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC);
-    
-    resultError = [self clearContactWithTimeout:timeout
-                                completionBlock:completionBlock];
+    _contactFieldValue = [self.requestContext contactFieldValue];
 
-    if(resultError) {
-        return;
-    } else {
-        self.requestContext.applicationCode = applicationCode;
-    }
+    __weak typeof(self) weakSelf = self;
+    [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
+        if (error) {
+            [weakSelf callCompletionBlock:completionBlock
+                                withError:error];
+        } else {
+            weakSelf.requestContext.applicationCode = applicationCode;
+            [weakSelf setPushTokenWithCompletionBlock:completionBlock];
+        }
+    }];
+}
 
-    resultError = [self setPushTokenWithTimeout:timeout
-                                completionBlock:completionBlock];
-    
-    if(resultError){
-        return;
-    }
-    
-    resultError = [self setContactWithTimeout:timeout
-                              completionBlock:completionBlock];
-    
-    [self callCompletionBlock:completionBlock
-                    withError:resultError];
-
+- (NSString *)applicationCode {
+    return self.requestContext.applicationCode;
 }
 
 - (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
-                  withError:(NSError *)error{
+                  withError:(NSError *)error {
     if (completionBlock) {
         completionBlock(error);
     }
@@ -84,84 +75,30 @@
     self.requestContext.contactFieldId = contactFieldId;
 }
 
-- (NSError *)clearContactWithTimeout:(dispatch_time_t)timeout
-                     completionBlock:(EMSCompletionBlock)completionBlock {
-    dispatch_group_t dispatchGroup = dispatch_group_create();
-    __block NSError *resultError = nil;
-    
-    dispatch_group_enter(dispatchGroup);
-    [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
-        resultError = error;
-        dispatch_group_leave(dispatchGroup);
-    }];
-    
-    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
-
-    if (waiterResult != 0) {
-        resultError = [NSError errorWithCode:1408
-                        localizedDescription:@"Waiter timeout error."];
+- (void)setPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    __weak typeof(self) weakSelf = self;
+    if (self.pushInternal.deviceToken) {
+        [self.pushInternal setPushToken:self.pushInternal.deviceToken
+                        completionBlock:^(NSError *error) {
+                            if (error) {
+                                [weakSelf callCompletionBlock:completionBlock
+                                                    withError:error];
+                            } else {
+                                [weakSelf setContactWithCompletionBlock:completionBlock];
+                            }
+                        }];
+    } else {
+        [self setContactWithCompletionBlock:completionBlock];
     }
-    
-    if (resultError) {
-        [self callCompletionBlock:completionBlock
-                        withError:resultError];
-    }
-    
-    return resultError;
 }
 
-- (NSError *)setPushTokenWithTimeout:(dispatch_time_t)timeout
-                     completionBlock:(EMSCompletionBlock)completionBlock {
-    __block NSError *resultError = nil;
-    dispatch_group_t dispatchGroup = dispatch_group_create();
-    
-    dispatch_group_enter(dispatchGroup);
-    [self.pushInternal setPushToken:self.pushInternal.deviceToken
-                    completionBlock:^(NSError *error) {
-                        resultError = error;
-                        dispatch_group_leave(dispatchGroup);
-                    }];
-    
-    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
-
-    if (waiterResult != 0) {
-        resultError = [NSError errorWithCode:1408
-                        localizedDescription:@"Waiter timeout error."];
-    }
-    
-    if (resultError) {
-        [self callCompletionBlock:completionBlock
-                        withError:resultError];
-    }
-    
-    return resultError;
-}
-
-- (NSError *)setContactWithTimeout:(dispatch_time_t)timeout completionBlock:(EMSCompletionBlock)completionBlock {
-    __block NSError * resultError = nil;
-    dispatch_group_t dispatchGroup = dispatch_group_create();
-    
-    dispatch_group_enter(dispatchGroup);
-    [self.mobileEngage setContactWithContactFieldValue:[self.requestContext contactFieldValue]
+- (void)setContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    __weak typeof(self) weakSelf = self;
+    [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                        completionBlock:^(NSError *error) {
-                                           resultError = error;
-                                           dispatch_group_leave(dispatchGroup);
+                                           [weakSelf callCompletionBlock:completionBlock
+                                                               withError:error];
                                        }];
-
-    long waiterResult = dispatch_group_wait(dispatchGroup, timeout);
-
-    if (waiterResult != 0) {
-        resultError = [NSError errorWithCode:1408
-                        localizedDescription:@"Waiter timeout error."];
-    }
-    
-    if (resultError) {
-        [self callCompletionBlock:completionBlock
-                        withError:resultError];
-    }
-    
-    return resultError;
 }
-
 
 @end

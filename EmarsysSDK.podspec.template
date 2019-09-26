@@ -23,6 +23,7 @@ Pod::Spec.new do |spec|
         'EmarsysSDK/EMSBlocks.h',
         'EmarsysSDK/Setup/EMSConfig.h',
         'EmarsysSDK/Setup/EMSConfigBuilder.h',
+        'EmarsysSDK/Setup/EMSConfigProtocol.h',
         'Predict/Models/EMSCartItemProtocol.h',
         'Predict/Models/EMSCartItem.h',
         'Predict/Models/EMSProduct.h',

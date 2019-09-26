@@ -9,9 +9,8 @@
 #import "EMSInboxProtocol.h"
 #import "EMSInAppProtocol.h"
 #import "EMSPredictProtocol.h"
+#import "EMSConfigProtocol.h"
 #import "EMSUserNotificationCenterDelegate.h"
-
-@protocol EMSConfigProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 

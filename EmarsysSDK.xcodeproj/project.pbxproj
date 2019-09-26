@@ -591,7 +591,9 @@
 		642598A9C92F6D84378BD336 /* EMSProductMapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259878FE1E0FD0F0D1A321 /* EMSProductMapperTests.m */; };
 		642598B4969F286387564D7D /* EMSConfigInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259B5A9B3820E8016FC3C9 /* EMSConfigInternalTests.m */; };
 		642599BF8F83B69AF1B1BAB8 /* EMSPredictRequestModelBuilderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259C7DB15ED101C980F8DD /* EMSPredictRequestModelBuilderTests.m */; };
+		64259AE37467E0BBE17347C8 /* EmarsysConfigIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */; };
 		64259C1A815A4917EDAB7135 /* EMSConfigInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 642593CA75291572F4CFFCFC /* EMSConfigInternal.h */; };
+		64259D465AE667FAF6812392 /* EmarsysConfigIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */; };
 		64259D7EBA9719BFF1779B53 /* EMSProductMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 642599F428A2D86E1A2605F3 /* EMSProductMapper.m */; };
 		64259DBDB46B404CB439D72C /* EMSLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642594C044516E53D2877760 /* EMSLogicTests.m */; };
 		64259DCC8159AACF0C74E0EC /* EMSConfigInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 642597796393E8C90383F51C /* EMSConfigInternal.m */; };
@@ -1141,6 +1143,7 @@
 		64259774CA9280F20883436B /* EMSProductMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSProductMapper.h; sourceTree = "<group>"; };
 		642597796393E8C90383F51C /* EMSConfigInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSConfigInternal.m; sourceTree = "<group>"; };
 		64259878FE1E0FD0F0D1A321 /* EMSProductMapperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSProductMapperTests.m; sourceTree = "<group>"; };
+		642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysConfigIntegrationTests.m; sourceTree = "<group>"; };
 		642598EB234B57E6ECF3ECEC /* EMSPredictRequestModelBuilderProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSPredictRequestModelBuilderProvider.h; sourceTree = "<group>"; };
 		642599F428A2D86E1A2605F3 /* EMSProductMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSProductMapper.m; sourceTree = "<group>"; };
 		64259AB52F961EF964E854A0 /* EMSPredictRequestModelBuilderProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictRequestModelBuilderProvider.m; sourceTree = "<group>"; };
@@ -2302,6 +2305,14 @@
 			path = Requests;
 			sourceTree = "<group>";
 		};
+		642591D8F460F4E5F4B0C106 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		642591FD48BCA87A683EA33C /* Requests */ = {
 			isa = PBXGroup;
 			children = (
@@ -2751,6 +2762,7 @@
 				32C6F65FC7D8480A73B0BB15 /* DeepLink */,
 				32C6F17CE01E15EC34771D3E /* Setup */,
 				32C6FF34A82E738E5A4FFF02 /* FlipperFeatures */,
+				642591D8F460F4E5F4B0C106 /* Config */,
 			);
 			path = EmarsysSDKTests;
 			sourceTree = "<group>";
@@ -3631,6 +3643,7 @@
 				64259DBDB46B404CB439D72C /* EMSLogicTests.m in Sources */,
 				32C6FD38908AE4E58E052AFF /* EMSRecommendationFilterTests.m in Sources */,
 				642598B4969F286387564D7D /* EMSConfigInternalTests.m in Sources */,
+				64259AE37467E0BBE17347C8 /* EmarsysConfigIntegrationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3836,6 +3849,7 @@
 				32C6F5823F1513EDC643867D /* EMSInnerFeatureTests.m in Sources */,
 				642597B861824706E26C3E6C /* EMSConfigInternalTests.m in Sources */,
 				568FEB0C233A0FF400901332 /* EMSWaiter.m in Sources */,
+				64259D465AE667FAF6812392 /* EmarsysConfigIntegrationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
