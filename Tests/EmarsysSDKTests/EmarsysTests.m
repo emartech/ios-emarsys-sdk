@@ -649,13 +649,13 @@ SPEC_BEGIN(EmarsysTests)
 
                 describe(@"mobileEngage", ^{
                     it(@"should be EMSLoggingMobileEngageInternal", ^{
-                        [[((NSObject *) EMSDependencyInjection.dependencyContainer.mobileEngage) should] beKindOfClass:[EMSLoggingMobileEngageInternal class]];
+                        [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSLoggingMobileEngageInternal class]];
                     });
                 });
 
                 describe(@"deepLink", ^{
                     it(@"should be EMSDeepLinkInternal", ^{
-                        [[((NSObject *) EMSDependencyInjection.dependencyContainer.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
+                        [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
                     });
                 });
             });

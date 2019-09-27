@@ -27,4 +27,18 @@
     XCTAssertFalse([MEExperimental isFeatureEnabled:feature]);
 }
 
+- (void)testIsFeatureEnabled_disableFeature {
+    FakeFlipperFeature *feature = [FakeFlipperFeature new];
+
+    XCTAssertFalse([MEExperimental isFeatureEnabled:feature]);
+
+    [MEExperimental enableFeature:feature];
+
+    XCTAssertTrue([MEExperimental isFeatureEnabled:feature]);
+
+    [MEExperimental disableFeature:feature];
+
+    XCTAssertFalse([MEExperimental isFeatureEnabled:feature]);
+}
+
 @end

@@ -5,6 +5,8 @@
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
 #import "EMSDeviceInfo.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @implementation MERequestContext
 
@@ -60,6 +62,15 @@
     [userDefaults setObject:contactFieldValue
                      forKey:kCONTACT_FIELD_VALUE];
     [userDefaults synchronize];
+}
+
+- (void)setApplicationCode:(NSString *)applicationCode {
+    _applicationCode = applicationCode;
+    if (applicationCode) {
+        [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+    } else {
+        [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
+    }
 }
 
 - (void)reset {

@@ -19,6 +19,10 @@ static NSMutableSet * _enabledFeatures;
     [_enabledFeatures addObject:feature];
 }
 
++ (void)disableFeature:(id <EMSFlipperFeature>)feature {
+    [_enabledFeatures removeObject:feature];
+}
+
 + (void)reset {
     _enabledFeatures = nil;
 }

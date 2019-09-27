@@ -16,7 +16,6 @@
 #import "EMSMobileEngageProtocol.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
-#import "EMSConfigProtocol.h"
 
 @implementation Emarsys
 
@@ -106,23 +105,23 @@
 }
 
 + (id <EMSPushNotificationProtocol>)push {
-    return EMSDependencyInjection.dependencyContainer.push;
+    return EMSDependencyInjection.push;
 }
 
 + (id <EMSInboxProtocol>)inbox {
-    return EMSDependencyInjection.dependencyContainer.inbox;
+    return EMSDependencyInjection.inbox;
 }
 
 + (id <EMSInAppProtocol>)inApp {
-    return EMSDependencyInjection.dependencyContainer.iam;
+    return EMSDependencyInjection.iam;
 }
 
 + (id <EMSPredictProtocol>)predict {
-    return EMSDependencyInjection.dependencyContainer.predict;
+    return EMSDependencyInjection.predict;
 }
 
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
-    return EMSDependencyInjection.dependencyContainer.notificationCenterDelegate;
+    return EMSDependencyInjection.notificationCenterDelegate;
 }
 
 + (EMSSQLiteHelper *)sqliteHelper {

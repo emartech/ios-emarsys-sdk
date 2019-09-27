@@ -6,6 +6,8 @@
 #import "Emarsys.h"
 #import "EmarsysTestUtils.h"
 #import "NSError+EMSCore.h"
+#import "EMSDependencyInjection.h"
+#import "EMSLoggingMobileEngageInternal.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -72,6 +74,50 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(Emarsys.config.applicationCode, expectedApplicationCode);
     XCTAssertNil(returnedError);
+}
+
+- (void)testConfig_changeApplicationCode_forInvalidApplicationCode {
+    [EmarsysTestUtils waitForSetPushToken];
+    [EmarsysTestUtils waitForSetCustomer];
+
+    XCTAssertEqualObjects(Emarsys.config.applicationCode, @"EMS11-C3FD3");
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    [Emarsys.config changeApplicationCode:@"testInvalidApplicationCode"
+                          completionBlock:^(NSError *error) {
+                              returnedError = error;
+                              [expectation fulfill];
+                          }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNotNil(returnedError);
+}
+
+- (void)testConfig_changeApplicationCode_whenApplicationCodeIsNil {
+    [EmarsysTestUtils waitForSetPushToken];
+    [EmarsysTestUtils waitForSetCustomer];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    [Emarsys.config changeApplicationCode:nil
+                          completionBlock:^(NSError *error) {
+                              returnedError = error;
+                              [expectation fulfill];
+                          }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNotNil(returnedError);
 }
 
 @end

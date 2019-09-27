@@ -46,6 +46,7 @@
     __weak typeof(self) weakSelf = self;
     [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
         if (error) {
+            weakSelf.requestContext.applicationCode = nil;
             [weakSelf callCompletionBlock:completionBlock
                                 withError:error];
         } else {
@@ -81,6 +82,7 @@
         [self.pushInternal setPushToken:self.pushInternal.deviceToken
                         completionBlock:^(NSError *error) {
                             if (error) {
+                                weakSelf.requestContext.applicationCode = nil;
                                 [weakSelf callCompletionBlock:completionBlock
                                                     withError:error];
                             } else {
@@ -96,6 +98,9 @@
     __weak typeof(self) weakSelf = self;
     [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                        completionBlock:^(NSError *error) {
+                                           if (error) {
+                                               weakSelf.requestContext.applicationCode = nil;
+                                           }
                                            [weakSelf callCompletionBlock:completionBlock
                                                                withError:error];
                                        }];

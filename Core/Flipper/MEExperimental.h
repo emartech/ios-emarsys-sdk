@@ -11,4 +11,6 @@
 
 + (void)enableFeature:(id <EMSFlipperFeature>)feature;
 
++ (void)disableFeature:(id <EMSFlipperFeature>)feature;
+
 @end

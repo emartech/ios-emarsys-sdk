@@ -12,4 +12,18 @@
 
 + (void)tearDown;
 
++ (id <EMSMobileEngageProtocol>)mobileEngage;
+
++ (id <EMSPushNotificationProtocol>)push;
+
++ (id <EMSDeepLinkProtocol>)deepLink;
+
++ (id <EMSInboxProtocol>)inbox;
+
++ (id <EMSInAppProtocol, MEIAMProtocol>)iam;
+
++ (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
+
++ (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
+
 @end

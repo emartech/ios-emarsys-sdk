@@ -36,17 +36,31 @@
 
 - (id <EMSMobileEngageProtocol>)mobileEngage;
 
+- (id <EMSMobileEngageProtocol>)loggingMobileEngage;
+
 - (id <EMSDeepLinkProtocol>)deepLink;
+
+- (id <EMSDeepLinkProtocol>)loggingDeepLink;
 
 - (id <EMSPushNotificationProtocol>)push;
 
+- (id <EMSPushNotificationProtocol>)loggingPush;
+
 - (id <EMSInboxProtocol>)inbox;
+
+- (id <EMSInboxProtocol>)loggingInbox;
 
 - (id <EMSInAppProtocol, MEIAMProtocol>)iam;
 
+- (id <EMSInAppProtocol, MEIAMProtocol>)loggingIam;
+
 - (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
 
+- (id <EMSPredictProtocol, EMSPredictInternalProtocol>)loggingPredict;
+
 - (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
+
+- (id <EMSUserNotificationCenterDelegate>)loggingNotificationCenterDelegate;
 
 - (id <EMSConfigProtocol>)config;
 

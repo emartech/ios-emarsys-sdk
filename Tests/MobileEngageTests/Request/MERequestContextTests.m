@@ -2,6 +2,8 @@
 #import "MERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 SPEC_BEGIN(MERequestContextTests)
 
@@ -231,6 +233,31 @@ SPEC_BEGIN(MERequestContextTests)
 
         });
 
+        describe(@"setApplicationCode", ^{
+
+            it(@"should disable mobileEngage feature when appCode is set to nil", ^{
+                MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                               contactFieldId:contactFieldId
+                                                                                 uuidProvider:uuidProvider
+                                                                            timestampProvider:timestampProvider
+                                                                                   deviceInfo:deviceInfo];
+
+                [context setApplicationCode:nil];
+                [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beNo];
+            });
+
+            it(@"should enable mobileEngage feature when appCode is set", ^{
+                MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                               contactFieldId:contactFieldId
+                                                                                 uuidProvider:uuidProvider
+                                                                            timestampProvider:timestampProvider
+                                                                                   deviceInfo:deviceInfo];
+
+                [context setApplicationCode:@"EMS11-C3FD3"];
+                [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beYes];
+            });
+        });
+
         describe(@"reset", ^{
 
             it(@"should clear contactFieldValue, contactToken, refreshToken", ^{
@@ -255,5 +282,4 @@ SPEC_BEGIN(MERequestContextTests)
                 [[userDefaults stringForKey:kREFRESH_TOKEN] shouldBeNil];
             });
         });
-
 SPEC_END
