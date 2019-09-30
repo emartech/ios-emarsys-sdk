@@ -6,6 +6,8 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @implementation PRERequestContext
 
@@ -44,5 +46,13 @@
     [userDefaults synchronize];
 }
 
+- (void)setMerchantId:(NSString *)merchantId {
+    _merchantId = merchantId;
+    if (merchantId) {
+        [MEExperimental enableFeature:EMSInnerFeature.predict];
+    } else {
+        [MEExperimental disableFeature:EMSInnerFeature.predict];
+    }
+}
 
 @end

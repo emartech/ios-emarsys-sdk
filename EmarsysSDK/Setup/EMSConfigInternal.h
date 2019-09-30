@@ -10,12 +10,13 @@
 @class EMSMobileEngageV3Internal;
 @class MERequestContext;
 @class EMSPushV3Internal;
+@class PRERequestContext;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                requestContext:(MERequestContext *)requestContext
-                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                  pushInternal:(EMSPushV3Internal *)pushInternal;
+- (instancetype)initWithMeRequestContext:(MERequestContext *)meRequestContext
+                       preRequestContext:(PRERequestContext *)preRequestContext
+                            mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
+                            pushInternal:(EMSPushV3Internal *)pushInternal;
 
 @end

@@ -6,13 +6,13 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
+#import "PRERequestContext.h"
 
 @interface EMSConfigInternal ()
 
-@property(nonatomic, strong) NSString *merchantId;
-@property(nonatomic, strong) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mobileEngage;
-@property(nonatomic, strong) MERequestContext *requestContext;
+@property(nonatomic, strong) MERequestContext *meRequestContext;
+@property(nonatomic, strong) PRERequestContext *preRequestContext;
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
 @property(nonatomic, strong) NSString *contactFieldValue;
 
@@ -20,20 +20,19 @@
 
 @implementation EMSConfigInternal
 
-- (instancetype)initWithConfig:(EMSConfig *)config
-                requestContext:(MERequestContext *)requestContext
-                  mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                  pushInternal:(EMSPushV3Internal *)pushInternal {
-    NSParameterAssert(config);
-    NSParameterAssert(requestContext);
+- (instancetype)initWithMeRequestContext:(MERequestContext *)meRequestContext
+                       preRequestContext:(PRERequestContext *)preRequestContext
+                            mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
+                            pushInternal:(EMSPushV3Internal *)pushInternal {
+    NSParameterAssert(meRequestContext);
+    NSParameterAssert(preRequestContext);
     NSParameterAssert(mobileEngage);
     NSParameterAssert(pushInternal);
 
     if (self = [super init]) {
-        _merchantId = config.merchantId;
-        _experimentalFeatures = config.experimentalFeatures;
         _mobileEngage = mobileEngage;
-        _requestContext = requestContext;
+        _meRequestContext = meRequestContext;
+        _preRequestContext = preRequestContext;
         _pushInternal = pushInternal;
     }
     return self;
@@ -41,39 +40,39 @@
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionBlock; {
-    _contactFieldValue = [self.requestContext contactFieldValue];
+    _contactFieldValue = [self.meRequestContext contactFieldValue];
 
     __weak typeof(self) weakSelf = self;
     [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
         if (error) {
-            weakSelf.requestContext.applicationCode = nil;
             [weakSelf callCompletionBlock:completionBlock
                                 withError:error];
         } else {
-            weakSelf.requestContext.applicationCode = applicationCode;
+            weakSelf.meRequestContext.applicationCode = applicationCode;
             [weakSelf setPushTokenWithCompletionBlock:completionBlock];
         }
     }];
 }
 
 - (NSString *)applicationCode {
-    return self.requestContext.applicationCode;
+    return self.meRequestContext.applicationCode;
 }
 
-- (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
-                  withError:(NSError *)error {
-    if (completionBlock) {
-        completionBlock(error);
-    }
+- (void)changeMerchantId:(nullable NSString *)merchantId {
+    self.preRequestContext.merchantId = merchantId;
 }
 
-- (void)changeMerchantId:(NSString *)merchantId {
-    _merchantId = merchantId;
+- (NSString *)merchantId {
+    return self.preRequestContext.merchantId;
+}
+
+- (NSNumber *)contactFieldId {
+    return self.meRequestContext.contactFieldId;
 }
 
 - (void)setContactFieldId:(NSNumber *)contactFieldId {
     NSParameterAssert(contactFieldId);
-    self.requestContext.contactFieldId = contactFieldId;
+    self.meRequestContext.contactFieldId = contactFieldId;
 }
 
 - (void)setPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
@@ -82,7 +81,6 @@
         [self.pushInternal setPushToken:self.pushInternal.deviceToken
                         completionBlock:^(NSError *error) {
                             if (error) {
-                                weakSelf.requestContext.applicationCode = nil;
                                 [weakSelf callCompletionBlock:completionBlock
                                                     withError:error];
                             } else {
@@ -98,12 +96,19 @@
     __weak typeof(self) weakSelf = self;
     [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                        completionBlock:^(NSError *error) {
-                                           if (error) {
-                                               weakSelf.requestContext.applicationCode = nil;
-                                           }
                                            [weakSelf callCompletionBlock:completionBlock
                                                                withError:error];
                                        }];
+}
+
+- (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
+                  withError:(NSError *)error {
+    if (error) {
+        self.meRequestContext.applicationCode = nil;
+    }
+    if (completionBlock) {
+        completionBlock(error);
+    }
 }
 
 @end

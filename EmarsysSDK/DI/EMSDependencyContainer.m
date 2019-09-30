@@ -296,10 +296,10 @@
     _loggingInbox = [EMSLoggingInbox new];
     _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
 
-    _config = [[EMSConfigInternal alloc] initWithConfig:config
-                                         requestContext:self.requestContext
-                                           mobileEngage:self.mobileEngage
-                                           pushInternal:self.push];
+    _config = [[EMSConfigInternal alloc] initWithMeRequestContext:self.requestContext
+                                                preRequestContext:self.predictRequestContext
+                                                     mobileEngage:self.mobileEngage
+                                                     pushInternal:self.push];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

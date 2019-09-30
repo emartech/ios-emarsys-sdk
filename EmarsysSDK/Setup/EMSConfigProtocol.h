@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)applicationCode;
 
-- (void)changeMerchantId:(NSString *)merchantId;
+- (void)changeMerchantId:(nullable NSString *)merchantId;
 
 - (NSString *)merchantId;
 

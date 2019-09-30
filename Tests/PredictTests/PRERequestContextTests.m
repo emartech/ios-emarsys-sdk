@@ -7,6 +7,8 @@
 #import "EMSUUIDProvider.h"
 #import "EMSTimestampProvider.h"
 #import "EMSDeviceInfo.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 SPEC_BEGIN(PRERequestContextTests)
 
@@ -95,6 +97,32 @@ SPEC_BEGIN(PRERequestContextTests)
                                                            uuidProvider:uuidProvider
                                                              merchantId:@"merchantId"
                                                              deviceInfo:deviceInfo] visitorId] should] equal:visitorId];
+            });
+        });
+
+        describe(@"predictInnerFeature", ^{
+            it(@"should enable predictInnerFeature when merchantId is set", ^{
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:deviceInfo];
+                [MEExperimental disableFeature:EMSInnerFeature.predict];
+
+                [requestContext setMerchantId:@"merchantId"];
+
+                [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) should] beYes];
+            });
+
+            it(@"should disable predictInnerFeature when merchantId is set to nil", ^{
+                PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                                                            uuidProvider:uuidProvider
+                                                                                              merchantId:@"merchantId"
+                                                                                              deviceInfo:deviceInfo];
+                [MEExperimental enableFeature:EMSInnerFeature.predict];
+
+                [requestContext setMerchantId:nil];
+
+                [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) should] beNo];
             });
         });
 

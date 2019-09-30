@@ -8,6 +8,10 @@
 #import "NSError+EMSCore.h"
 #import "EMSDependencyInjection.h"
 #import "EMSLoggingMobileEngageInternal.h"
+#import "EMSPredictInternal.h"
+#import "EMSLoggingPredictInternal.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -18,6 +22,7 @@
 - (void)setUp {
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+            [builder setMerchantId:@"1428C8EE286EC34B"];
             [builder setContactFieldId:@3];
         }]
                          dependencyContainer:nil];
@@ -118,6 +123,29 @@
     XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNotNil(returnedError);
+}
+
+- (void)testConfig_changeMerchantId_whenNil {
+    [EmarsysTestUtils waitForSetPushToken];
+    [EmarsysTestUtils waitForSetCustomer];
+
+    XCTAssertEqualObjects([Emarsys.predict class], [EMSPredictInternal class]);
+
+    [Emarsys.config changeMerchantId:nil];
+
+    XCTAssertEqualObjects([Emarsys.predict class], [EMSLoggingPredictInternal class]);
+}
+
+- (void)testConfig_changeMerchantId_whenHasValue {
+    [EmarsysTestUtils waitForSetPushToken];
+    [EmarsysTestUtils waitForSetCustomer];
+    [MEExperimental disableFeature:EMSInnerFeature.predict];
+
+    XCTAssertEqualObjects([Emarsys.predict class], [EMSLoggingPredictInternal class]);
+
+    [Emarsys.config changeMerchantId:@"1428C8EE286EC34B"];
+
+    XCTAssertEqualObjects([Emarsys.predict class], [EMSPredictInternal class]);
 }
 
 @end
