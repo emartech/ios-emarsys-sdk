@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSDictionary *)dictionaryWithData:(NSData *)data;
 
+- (nullable id)valueForInsensitiveKey:(NSString *)key;
+
 @end
 
 NS_ASSUME_NONNULL_END

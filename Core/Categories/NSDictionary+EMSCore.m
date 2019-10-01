@@ -2,6 +2,7 @@
 // Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
+#import <OCMArg.h>
 #import "NSDictionary+EMSCore.h"
 
 
@@ -63,6 +64,18 @@
 
 + (NSDictionary *)dictionaryWithData:(NSData *)data {
     return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+}
+
+- (nullable id)valueForInsensitiveKey:(NSString *)key {
+    id result = nil;
+    for (id dictKey in self.allKeys) {
+        BOOL isString = [dictKey isKindOfClass:[NSString class]];
+        if (isString && [[dictKey lowercaseString] isEqualToString:[key lowercaseString]]) {
+            result = self[dictKey];
+            break;
+        }
+    }
+    return result;
 }
 
 @end

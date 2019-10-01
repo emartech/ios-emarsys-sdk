@@ -27,5 +27,4 @@
     [self.requestContext setClientState:clientState];
 }
 
-
 @end
