@@ -69,9 +69,9 @@
                                                          if (!error && [responseModel isSuccess]) {
                                                              EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel
                                                                                                             endDate:networkingStartTime]);
-                                                             EMSLog([[EMSNetworkingTime alloc] initWithResponseModel:responseModel
-                                                                                                           startDate:networkingStartTime]);
                                                          }
+                                                         EMSLog([[EMSNetworkingTime alloc] initWithResponseModel:responseModel
+                                                                                                       startDate:networkingStartTime]);
                                                          if (completionProxy.completionBlock) {
                                                              completionProxy.completionBlock(requestModel, responseModel, runtimeError);
                                                          }
