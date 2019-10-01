@@ -3,6 +3,7 @@
 //
 #import "EMSClientStateResponseHandler.h"
 #import "MEEndpoints.h"
+#import "NSDictionary+EMSCore.h"
 
 @implementation EMSClientStateResponseHandler
 
@@ -16,14 +17,14 @@
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] && [response.headers.allKeys containsObject:CLIENT_STATE]) {
+    if ([response.requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] && [response.headers valueForInsensitiveKey:CLIENT_STATE]) {
         result = YES;
     }
     return result;
 }
 
 - (void)handleResponse:(EMSResponseModel *)response {
-    NSString *clientState = response.headers[CLIENT_STATE];
+    NSString *clientState = [response.headers valueForInsensitiveKey:CLIENT_STATE];
     [self.requestContext setClientState:clientState];
 }
 

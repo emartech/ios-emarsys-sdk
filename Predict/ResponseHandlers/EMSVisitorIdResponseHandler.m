@@ -24,5 +24,4 @@
     [self.requestContext setVisitorId:response.cookies[COOKIE_KEY_CDV].value];
 }
 
-
 @end

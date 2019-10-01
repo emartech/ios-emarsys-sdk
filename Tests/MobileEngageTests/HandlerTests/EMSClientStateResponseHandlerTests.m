@@ -48,6 +48,12 @@
     XCTAssertTrue(shouldHandle);
 }
 
+- (void)testShouldHandleResponse_withDifferentHeaderCases {
+    BOOL shouldHandle = [self.responseHandler shouldHandleResponse:[self createResponseModelWithHeaders:@{@"x-CLIent-STAtE": @"TEST-CLIENT-STATE-VALUE"}]];
+
+    XCTAssertTrue(shouldHandle);
+}
+
 - (void)testShouldHandleResponse_shouldReturnFalse_whenRequestIsNotMobileEngage {
     BOOL shouldHandle = [self.responseHandler shouldHandleResponse:[self createResponseModelWithHeaders:@{@"X-Client-State": @"TEST-CLIENT-STATE-VALUE"}
                                                                                                     url:[[NSURL alloc] initWithString:@"https://not-ems-me-client.herokuapp.com/"]]];
@@ -69,6 +75,12 @@
 
 - (void)testHandleResponse {
     [self.responseHandler handleResponse:[self createResponseModelWithHeaders:@{@"X-Client-State": @"TEST-CLIENT-STATE-VALUE"}]];
+
+    XCTAssertEqualObjects(self.requestContext.clientState, @"TEST-CLIENT-STATE-VALUE");
+}
+
+- (void)testHandleResponse_withDifferentHeaderCase {
+    [self.responseHandler handleResponse:[self createResponseModelWithHeaders:@{@"x-CLIent-STAtE": @"TEST-CLIENT-STATE-VALUE"}]];
 
     XCTAssertEqualObjects(self.requestContext.clientState, @"TEST-CLIENT-STATE-VALUE");
 }
