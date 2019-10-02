@@ -14,19 +14,18 @@
 
 - (instancetype)initWithException:(NSException *)exception {
     NSParameterAssert(exception);
+    NSMutableDictionary *crashInfos = [NSMutableDictionary dictionary];
     if (self = [super init]) {
-        NSMutableDictionary *crashInfos = [@{
-            @"exception": exception.name,
-            @"stack_trace": exception.callStackSymbols
-        } mutableCopy];
-        if (exception.reason) {
-            crashInfos[@"reason"] = exception.reason;
-        }
-        if (exception.userInfo) {
-            crashInfos[@"user_info"] = exception.userInfo;
-        }
-        _data = [NSDictionary dictionaryWithDictionary:crashInfos];
+        crashInfos[@"exception"] = exception.name;
+        crashInfos[@"stack_trace"] = exception.callStackSymbols;
     }
+    if (exception.reason) {
+        crashInfos[@"reason"] = exception.reason;
+    }
+    if (exception.userInfo) {
+        crashInfos[@"user_info"] = exception.userInfo;
+    }
+    _data = [NSDictionary dictionaryWithDictionary:crashInfos];
     return self;
 }
 

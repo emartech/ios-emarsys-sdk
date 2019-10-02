@@ -17,13 +17,15 @@
                              endDate:(NSDate *)endDate {
     if (self = [super init]) {
         NSDate *start = [requestModel timestamp];
-        _data = @{
-                @"request_id": [requestModel requestId],
-                @"start": [start numberValueInMillis],
-                @"end": [endDate numberValueInMillis],
-                @"duration": [endDate numberValueInMillisFromDate:start],
-                @"url": [[requestModel url] absoluteString]
-        };
+        NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
+
+        mutableData[@"request_id"] = [requestModel requestId];
+        mutableData[@"start"] = [start numberValueInMillis];
+        mutableData[@"end"] = [endDate numberValueInMillis];
+        mutableData[@"duration"] = [endDate numberValueInMillisFromDate:start];
+        mutableData[@"url"] = [[requestModel url] absoluteString];
+
+        _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
     return self;
 }

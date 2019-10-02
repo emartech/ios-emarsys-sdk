@@ -21,12 +21,11 @@
     NSParameterAssert(timestampProvider);
     if (self = [super init]) {
         NSDate *endTimeStamp = [timestampProvider provideTimestamp];
-        NSMutableDictionary *dict = [@{
-                @"campaign_id": message.campaignId,
-                @"start": [showTimestamp numberValueInMillis],
-                @"end": [endTimeStamp numberValueInMillis],
-                @"duration": [endTimeStamp numberValueInMillisFromDate:showTimestamp]
-        } mutableCopy];
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        dict[@"campaign_id"] = message.campaignId;
+        dict[@"start"] = [showTimestamp numberValueInMillis];
+        dict[@"end"] = [endTimeStamp numberValueInMillis];
+        dict[@"duration"] = [endTimeStamp numberValueInMillisFromDate:showTimestamp];
         if (message.response) {
             dict[@"source"] = @"customEvent";
             dict[@"request_id"] = message.response.requestModel.requestId;

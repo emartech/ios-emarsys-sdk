@@ -6,7 +6,7 @@
 #import "EMSResponseModel.h"
 #import "NSDate+EMSCore.h"
 
-@interface EMSNetworkingTime()
+@interface EMSNetworkingTime ()
 
 @property(nonatomic, strong) NSDictionary<NSString *, id> *data;
 
@@ -17,14 +17,14 @@
 - (instancetype)initWithResponseModel:(EMSResponseModel *)responseModel
                             startDate:(NSDate *)startDate {
     if (self = [super init]) {
-        _data = @{
-                @"request_id": [responseModel.requestModel requestId],
-                @"start": [startDate numberValueInMillis],
-                @"end": [responseModel.timestamp numberValueInMillis],
-                @"duration": [responseModel.timestamp numberValueInMillisFromDate:startDate],
-                @"url": [[responseModel.requestModel url] absoluteString],
-                @"status_code": @([responseModel statusCode])
-        };
+        NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
+        mutableData[@"request_id"] = [responseModel.requestModel requestId];
+        mutableData[@"start"] = [startDate numberValueInMillis];
+        mutableData[@"end"] = [responseModel.timestamp numberValueInMillis];
+        mutableData[@"duration"] = [responseModel.timestamp numberValueInMillisFromDate:startDate];
+        mutableData[@"url"] = [[responseModel.requestModel url] absoluteString];
+        mutableData[@"status_code"] = @([responseModel statusCode]);
+        _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
     return self;
 }
