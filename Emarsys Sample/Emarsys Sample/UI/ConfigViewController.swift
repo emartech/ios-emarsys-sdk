@@ -12,12 +12,15 @@ class ConfigViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        handleKeybordDismiss()
+        
         applicationCodeValue.text = Emarsys.config.applicationCode()
         merchantIdValue.text = Emarsys.config.merchantId()
     }
 
     @IBAction func changeApplicationCodeButtonClicked(_ sender: Any) {
-        Emarsys.config.changeApplicationCode(applicationCodeValue.text) { error in
+        Emarsys.config.changeApplicationCode(applicationCodeValue.text) { [unowned self] error in
+            self.applicationCodeValue.text = Emarsys.config.applicationCode()
             if error != nil {
                 print(error!)
             }

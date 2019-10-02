@@ -167,7 +167,4 @@ class PredictViewController: UIViewController, UICollectionViewDelegate, UIColle
         return EMSCartItem(itemId: itemIds[Int.random(in: 0..<itemIds.count)], price: price, quantity: quantity)
     }
 
-    @objc func backgroundTapped() {
-        self.view.endEditing(true)
-    }
 }

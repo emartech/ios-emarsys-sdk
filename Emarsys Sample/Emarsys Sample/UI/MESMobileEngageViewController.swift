@@ -109,10 +109,6 @@ class MESMobileEngageViewController: UIViewController {
         }
     }
 
-    @objc func backgroundTapped() {
-        self.view.endEditing(true)
-    }
-
     @IBAction func showPushTokenButtonClicked(_ sender: Any) {
         var message: String = ""
         if (self.pushToken != nil) {
