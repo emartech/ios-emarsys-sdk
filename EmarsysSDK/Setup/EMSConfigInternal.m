@@ -43,15 +43,20 @@
     _contactFieldValue = [self.meRequestContext contactFieldValue];
 
     __weak typeof(self) weakSelf = self;
-    [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
-        if (error) {
-            [weakSelf callCompletionBlock:completionBlock
-                                withError:error];
-        } else {
-            weakSelf.meRequestContext.applicationCode = applicationCode;
-            [weakSelf setPushTokenWithCompletionBlock:completionBlock];
-        }
-    }];
+    if (self.meRequestContext.applicationCode) {
+        [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
+            if (error) {
+                [weakSelf callCompletionBlock:completionBlock
+                                    withError:error];
+            } else {
+                [weakSelf callSetPushToken:applicationCode
+                           completionBlock:completionBlock];
+            }
+        }];
+    } else {
+        [self callSetPushToken:applicationCode
+               completionBlock:completionBlock];
+    }
 }
 
 - (NSString *)applicationCode {
@@ -99,6 +104,12 @@
                                            [weakSelf callCompletionBlock:completionBlock
                                                                withError:error];
                                        }];
+}
+
+- (void)callSetPushToken:(NSString *)applicationCode
+         completionBlock:(EMSCompletionBlock)completionBlock {
+    self.meRequestContext.applicationCode = applicationCode;
+    [self setPushTokenWithCompletionBlock:completionBlock];
 }
 
 - (void)callCompletionBlock:(EMSCompletionBlock)completionBlock

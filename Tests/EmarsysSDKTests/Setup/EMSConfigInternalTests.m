@@ -202,7 +202,7 @@
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
     NSError *inputError = [NSError errorWithCode:1400
-                                       localizedDescription:@"testError"];
+                            localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
 
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
@@ -211,6 +211,7 @@
                                                              pushInternal:strictMockPushInternal];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError, nil])]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
@@ -243,7 +244,7 @@
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
     NSError *inputError = [NSError errorWithCode:1400
-                                       localizedDescription:@"testError"];
+                            localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
 
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
@@ -315,6 +316,85 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
+
+- (void)testChangeApplicationCode_shouldCallSetPushTokenImmediately_whenApplicationCodeIsNil {
+    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
+
+    __block NSError *returnedError = nil;
+
+    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
+                                                        preRequestContext:self.mockPreRequestContext
+                                                             mobileEngage:strictMockMobileEngage
+                                                             pushInternal:mockPushInternal];
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
+    OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
+    OCMStub([mockPushInternal setPushToken:self.deviceToken
+                           completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                    completionBlock:[OCMArg invokeBlock]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+
+    OCMExpect([mockPushInternal setPushToken:self.deviceToken
+                             completionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                      completionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
+- (void)testChangeApplicationCode_shouldCallSetContactImmediately_whenPushTokenIsNil {
+    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
+
+    __block NSError *returnedError = nil;
+
+    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
+                                                        preRequestContext:self.mockPreRequestContext
+                                                             mobileEngage:strictMockMobileEngage
+                                                             pushInternal:mockPushInternal];
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
+    OCMStub([mockPushInternal deviceToken]).andReturn(nil);
+    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                    completionBlock:[OCMArg invokeBlock]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [self.configInternal changeApplicationCode:@"newApplicationCode"
+                               completionBlock:^(NSError *error) {
+                                   returnedError = error;
+                                   [expectation fulfill];
+                               }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+
+    OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+
+    OCMReject([mockPushInternal setPushToken:self.deviceToken
+                             completionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                                      completionBlock:[OCMArg any]]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
 
 - (void)testChangeMerchantId_shouldSetMerchantId_inPRERequestContext {
     NSString *newMerchantId = @"newMerchantId";
