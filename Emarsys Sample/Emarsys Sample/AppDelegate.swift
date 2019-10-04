@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
         }
         Emarsys.setup(with: config)
         Emarsys.inApp.eventHandler = self
+        Emarsys.notificationCenterDelegate.eventHandler = self
+        UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
 
         application.registerForRemoteNotifications()
 
@@ -37,8 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, EMSEventHandler {
         UNUserNotificationCenter.current().requestAuthorization(options: options) { [unowned self] granted, error in
             print(granted, error ?? "no error")
             if (granted) {
-                Emarsys.notificationCenterDelegate.eventHandler = self
-                UNUserNotificationCenter.current().delegate = Emarsys.notificationCenterDelegate
             }
         }
 
