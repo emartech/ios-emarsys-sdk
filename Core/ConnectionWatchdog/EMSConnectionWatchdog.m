@@ -36,7 +36,7 @@
 }
 
 - (BOOL)isConnected {
-    int state = [self connectionState];
+    EMSNetworkStatus state = [self connectionState];
     BOOL result = state == ReachableViaWiFi || state == ReachableViaWWAN;
     return result;
 }
