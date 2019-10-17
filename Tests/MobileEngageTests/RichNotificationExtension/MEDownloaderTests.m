@@ -64,20 +64,6 @@ SPEC_BEGIN(MEDownloaderTests)
                 waitUntilNextFinishedDownload(@"");
             });
 
-            it(@"should give error, when url not supported", ^{
-                __block NSError *resultError;
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://www.google.com"]
-                                 completionHandler:^(NSURL *destinationUrl, NSError *error) {
-                                     resultError = error;
-                                     [exp fulfill];
-                                 }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
-
-                [[resultError shouldNot] beNil];
-            });
-
             it(@"should not crash when url doesn't supported and completionHandler doesn't exist", ^{
                 [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://www.google.com"]
                                  completionHandler:nil];
@@ -98,7 +84,7 @@ SPEC_BEGIN(MEDownloaderTests)
 
                 [[result shouldNot] beNil];
                 [[[result scheme] should] equal:@"file"];
-                [[[[result pathComponents] lastObject] should] equal:@"Emarsys.png"];
+                [[theValue([[[result pathComponents] lastObject] hasSuffix:@".png"]) should] beYes];
             });
 
             it(@"should not crash when download successfully finished and completionHandler doesn't exist", ^{

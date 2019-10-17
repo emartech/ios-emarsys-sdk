@@ -84,7 +84,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
                                        timeout:30];
 
                 [[result shouldNot] beNil];
-                [[[[result firstObject] identifier] should] equal:@"Emarsys.png"];
+                [[theValue([[[result firstObject] identifier] hasSuffix:@".png"]) should] beYes];
             });
 
             it(@"should not crash when content contains image url and completionHandler is nil", ^{
