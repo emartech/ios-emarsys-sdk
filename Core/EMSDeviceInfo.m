@@ -89,6 +89,8 @@
 - (NSDictionary *)pushSettings {
     NSMutableDictionary *pushSettings = [NSMutableDictionary dictionary];
     __weak typeof(self) weakSelf = self;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    dispatch_group_enter(dispatchGroup);
     [self.notificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *settings) {
         pushSettings[@"authorizationStatus"] = [weakSelf authorizationStatusStringRepresentation:settings.authorizationStatus];
         pushSettings[@"soundSetting"] = [weakSelf notificationSettingStringRepresentation:settings.soundSetting];
@@ -103,7 +105,9 @@
             pushSettings[@"criticalAlertSetting"] = [weakSelf notificationSettingStringRepresentation:settings.criticalAlertSetting];
             pushSettings[@"providesAppNotificationSettings"] = @(settings.providesAppNotificationSettings);
         }
+        dispatch_group_leave(dispatchGroup);
     }];
+    dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
     return pushSettings;
 }
 
