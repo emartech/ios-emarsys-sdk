@@ -296,7 +296,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 [[checkableError shouldNotEventually] beNil];
             });
 
-            it(@"should do networking with the gained EMSRequestModel and return success in completion block", ^{
+            it(@"should not do networking with the gained EMSRequestModel and return with expected error", ^{
                 NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
 
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -315,7 +315,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 __block NSError *returnedError = nil;
-                [core submitRequestModel:model withCompletionBlock:^(NSError *error) {
+                [core submitRequestModel:model
+                     withCompletionBlock:^(NSError *error) {
                     returnedError = error;
                     [exp fulfill];
                 }];

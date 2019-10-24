@@ -12,7 +12,6 @@
 #import "EMSSchemaContract.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModel+RequestIds.h"
-#import "EMSOperationQueue.h"
 #import "NSError+EMSCore.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue);
@@ -37,7 +36,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 @implementation EMSCoreCompletionHandlerMiddlewareTests
 
 - (void)setUp {
-    _operationQueue = [EMSOperationQueue new];
+    _operationQueue = [NSOperationQueue new];
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockWorker = OCMProtocolMock(@protocol(EMSWorkerProtocol));
     _mockRepository = OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol));
@@ -58,7 +57,6 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 - (void)tearDown {
     [self.operationQueue waitUntilAllOperationsAreFinished];
 }
-
 
 - (void)testInit_completionHandler_mustNotBeNull {
     @try {
@@ -215,6 +213,16 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 
 - (void)testCompletionBlock_shouldNotRemoveRequestFromRepository_whenStatusCodeIs408 {
     OCMStub([self.mockResponseModel statusCode]).andReturn(408);
+    OCMReject([self.mockRepository remove:[OCMArg any]]);
+
+    [self runCompletionBlockWithRequestModel:self.mockRequestModel
+                               responseModel:self.mockResponseModel
+                                       error:self.error
+                              assertionBlock:nil];
+}
+
+- (void)testCompletionBlock_shouldNotRemoveRequestFromRepository_whenStatusCodeIs429 {
+    OCMStub([self.mockResponseModel statusCode]).andReturn(429);
     OCMReject([self.mockRepository remove:[OCMArg any]]);
 
     [self runCompletionBlockWithRequestModel:self.mockRequestModel

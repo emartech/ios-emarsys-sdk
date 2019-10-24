@@ -49,7 +49,8 @@
     };
 }
 
-- (BOOL)shouldContinueWorkerWithResponseModel:(EMSResponseModel *)responseModel error:(NSError *)error {
+- (BOOL)shouldContinueWorkerWithResponseModel:(EMSResponseModel *)responseModel
+                                        error:(NSError *)error {
     return [self isNonRetriableStatus:responseModel.statusCode] || responseModel.isSuccess || [self isNonRetriableError:error.code];
 }
 
@@ -58,7 +59,7 @@
 }
 
 - (BOOL)isNonRetriableStatus:(NSInteger)statusCode {
-    return statusCode >= 400 && statusCode < 500 && statusCode != 408;
+    return statusCode >= 400 && statusCode < 500 && statusCode != 408 && statusCode != 429;
 }
 
 - (BOOL)isEqual:(id)other {
