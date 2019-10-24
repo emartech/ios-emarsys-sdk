@@ -5,6 +5,7 @@
 #import <UserNotifications/UNNotification.h>
 #import <UserNotifications/UNNotificationContent.h>
 #import <UserNotifications/UNNotificationRequest.h>
+#import <UserNotifications/UNNotificationResponse.h>
 #import "EMSDictionaryValidator.h"
 #import "MEInAppMessage.h"
 #import "MEInApp.h"
