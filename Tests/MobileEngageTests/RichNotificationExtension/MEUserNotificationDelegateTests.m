@@ -1,7 +1,5 @@
 #import "Kiwi.h"
-#import <UserNotifications/UNNotification.h>
-#import <UserNotifications/UNNotificationRequest.h>
-#import <UserNotifications/UNNotificationContent.h>
+#import <UserNotifications/UserNotifications.h>
 #import "MEUserNotificationDelegate.h"
 #import "MEInAppMessage.h"
 #import "EMSWaiter.h"
