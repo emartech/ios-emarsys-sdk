@@ -2,10 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "MEUserNotificationDelegate.h"
-#import <UserNotifications/UNNotification.h>
-#import <UserNotifications/UNNotificationContent.h>
-#import <UserNotifications/UNNotificationRequest.h>
-#import <UserNotifications/UNNotificationResponse.h>
+#import <UserNotifications/UserNotifications.h>
 #import "EMSDictionaryValidator.h"
 #import "MEInAppMessage.h"
 #import "MEInApp.h"
