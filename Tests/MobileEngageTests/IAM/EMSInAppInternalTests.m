@@ -9,6 +9,7 @@
 #import "EMSRequestFactory.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "MEInAppMessage.h"
 
 @interface EMSInAppInternalTests : XCTestCase
 
@@ -59,13 +60,51 @@
     EMSRequestModel *requestModel = [self createRequestModel];
     NSString *campaignId = @"testCampaignId";
     NSString *eventName = @"inapp:viewed";
-    NSDictionary *eventAttributes = @{@"message_id": campaignId};
+    NSDictionary *eventAttributes = @{
+        @"message_id": campaignId,
+        @"sid": @"testSid",
+        @"url": @"https://www.test.com"
+    };
+
+    MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
+                                                                     sid:@"testSid"
+                                                                     url:@"https://www.test.com"
+                                                                    html:@"</HTML>"
+                                                       responseTimestamp:[NSDate date]];
 
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:eventName
                                                           eventAttributes:eventAttributes
                                                                 eventType:EventTypeInternal]).andReturn(requestModel);
 
-    [self.internal trackInAppDisplay:campaignId];
+    [self.internal trackInAppDisplay:message];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:eventName
+                                                            eventAttributes:eventAttributes
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:nil]);
+}
+
+
+- (void)testTrackInAppDisplay_whenOnlyMessageIdIsAvailable {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSString *campaignId = @"testCampaignId";
+    NSString *eventName = @"inapp:viewed";
+    NSDictionary *eventAttributes = @{
+        @"message_id": campaignId
+    };
+
+    MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
+                                                                     sid:nil
+                                                                     url:nil
+                                                                    html:@"</HTML>"
+                                                       responseTimestamp:[NSDate date]];
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:eventName
+                                                          eventAttributes:eventAttributes
+                                                                eventType:EventTypeInternal]).andReturn(requestModel);
+
+    [self.internal trackInAppDisplay:message];
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:eventName
                                                             eventAttributes:eventAttributes
@@ -93,16 +132,56 @@
     NSString *campaignId = @"testCampaignId";
     NSString *buttonId = @"testButtonId";
     NSString *eventName = @"inapp:click";
+
     NSDictionary *eventAttributes = @{
-            @"message_id": campaignId,
-            @"button_id": buttonId
+        @"message_id": campaignId,
+        @"sid": @"testSid",
+        @"url": @"https://www.test.com",
+        @"button_id": buttonId
     };
+
+    MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
+                                                                     sid:@"testSid"
+                                                                     url:@"https://www.test.com"
+                                                                    html:@"</HTML>"
+                                                       responseTimestamp:[NSDate date]];
 
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:eventName
                                                           eventAttributes:eventAttributes
                                                                 eventType:EventTypeInternal]).andReturn(requestModel);
 
-    [self.internal trackInAppClick:campaignId
+    [self.internal trackInAppClick:message
+                          buttonId:buttonId];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:eventName
+                                                            eventAttributes:eventAttributes
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:nil]);
+}
+
+- (void)testTrackInAppClickButtonId_whenOnlyMessageIdIsAvailable {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSString *campaignId = @"testCampaignId";
+    NSString *buttonId = @"testButtonId";
+    NSString *eventName = @"inapp:click";
+
+    NSDictionary *eventAttributes = @{
+        @"message_id": campaignId,
+        @"button_id": buttonId
+    };
+
+    MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
+                                                                     sid:nil
+                                                                     url:nil
+                                                                    html:@"</HTML>"
+                                                       responseTimestamp:[NSDate date]];
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:eventName
+                                                          eventAttributes:eventAttributes
+                                                                eventType:EventTypeInternal]).andReturn(requestModel);
+
+    [self.internal trackInAppClick:message
                           buttonId:buttonId];
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:eventName
@@ -130,6 +209,12 @@
 - (void)testTrackInAppClickButtonId_shouldNotCallRequestFactory_andRequestManager_whenButtonId_isNil {
     EMSRequestModel *requestModel = [self createRequestModel];
 
+    MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
+                                                                     sid:@"testSid"
+                                                                     url:@"https://www.test.com"
+                                                                    html:@"</HTML>"
+                                                       responseTimestamp:[NSDate date]];
+
     OCMReject([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
                                                             eventAttributes:[OCMArg any]
                                                                   eventType:EventTypeInternal]);
@@ -138,7 +223,7 @@
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
                                                           eventAttributes:[OCMArg any]
                                                                 eventType:EventTypeInternal]).andReturn(requestModel);
-    [self.internal trackInAppClick:@"testCampaignId"
+    [self.internal trackInAppClick:message
                           buttonId:nil];
 }
 

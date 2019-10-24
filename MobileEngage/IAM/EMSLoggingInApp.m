@@ -50,7 +50,7 @@
     return nil;
 }
 
-- (NSString *)currentCampaignId {
+- (MEInAppMessage *)currentInAppMessage {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:nil]);

@@ -2,7 +2,6 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "MEUserNotificationDelegate.h"
-#import <UserNotifications/UNNotificationResponse.h>
 #import <UserNotifications/UNNotification.h>
 #import <UserNotifications/UNNotificationContent.h>
 #import <UserNotifications/UNNotificationRequest.h>
@@ -95,6 +94,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             NSString *html = [[NSString alloc] initWithData:inApp[@"inAppData"]
                                                    encoding:NSUTF8StringEncoding];
             [self.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
+                                                                           sid:[userInfo messageId]
+                                                                           url:inApp[@"url"]
                                                                           html:html
                                                              responseTimestamp:responseTimestamp]
                   completionHandler:nil];

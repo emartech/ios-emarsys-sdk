@@ -23,6 +23,8 @@
 - (void)testInit_shouldNotAccept_nilCampaignId {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:nil
+                                               sid:@"testSid"
+                                               url:@"testUrl"
                                               html:@""
                                  responseTimestamp:[NSDate date]];
         XCTFail(@"Expected Exception when threshold is less then campaignId!");
@@ -34,6 +36,8 @@
 - (void)testInit_shouldNotAccept_nilHtml {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:@"campaignId"
+                                               sid:@"testSid"
+                                               url:@"testUrl"
                                               html:nil
                                  responseTimestamp:[NSDate date]];
         XCTFail(@"Expected Exception when threshold is less then html!");
@@ -45,6 +49,8 @@
 - (void)testInit_shouldNotAccept_nilResponseTimestamp {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:@"campaignId"
+                                               sid:@"testSid"
+                                               url:@"testUrl"
                                               html:@"html"
                                  responseTimestamp:nil];
         XCTFail(@"Expected Exception when threshold is less then responseTimestamp!");

@@ -27,6 +27,8 @@
     OCMStub(timestampProvider.provideTimestamp).andReturn(self.timestamp);
 
     [[MEInAppMessage alloc] initWithCampaignId:@"campaignId456"
+                                           sid:nil
+                                           url:nil
                                           html:@"<HTML></HTML>"
                              responseTimestamp:[NSDate date]];
 
@@ -99,6 +101,8 @@
 
 - (void)testData_when_requestIdNotAvailable {
     _onScreenTime = [[EMSInAppOnScreenTime alloc] initWithInAppMessage:[[MEInAppMessage alloc] initWithCampaignId:@"campaignId456"
+                                                                                                              sid:nil
+                                                                                                              url:nil
                                                                                                              html:@"<HTML></HTML>"
                                                                                                 responseTimestamp:[NSDate date]]
                                                          showTimestamp:self.showTimestamp

@@ -7,7 +7,7 @@
 
 @interface FakeInAppTracker : NSObject <MEInAppTrackingProtocol>
 
-@property(nonatomic, strong) NSString *campaignId;
+@property(nonatomic, strong) MEInAppMessage *inAppMessage;
 @property(nonatomic, strong) NSString *buttonId;
 
 - (instancetype)initWithDisplayExpectation:(XCTestExpectation *)displayExpectation

@@ -19,14 +19,13 @@
 
 @interface MEInApp () <MEIAMProtocol>
 
-@property(nonatomic, weak) NSString *currentCampaignId;
+@property(nonatomic, weak) MEInAppMessage *currentInAppMessage;
 
 @property(nonatomic, strong, nullable) UIWindow *iamWindow;
 @property(nonatomic, strong) NSDate *onScreenShowTimestamp;
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
-@property(nonatomic, strong) MEInAppMessage *inAppMessage;
 
 @property(nonatomic, assign) BOOL paused;
 
@@ -74,8 +73,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.iamWindow) {
             self.iamWindow = [self.windowProvider provideWindow];
-            self.currentCampaignId = message.campaignId;
-            self.inAppMessage = message;
+            self.currentInAppMessage = message;
             MEIAMViewController *meiamViewController = [self.iamViewControllerProvider provideViewController];
             __weak typeof(self) weakSelf = self;
             [meiamViewController loadMessage:message.html
@@ -112,15 +110,15 @@
 - (void)trackIAMDisplay:(MEInAppMessage *)message {
     [self.displayedIamRepository add:[[MEDisplayedIAM alloc] initWithCampaignId:message.campaignId
                                                                       timestamp:[self.timestampProvider provideTimestamp]]];
-    [self.inAppTracker trackInAppDisplay:message.campaignId];
+    [self.inAppTracker trackInAppDisplay:message];
 }
 
 - (void)closeInAppMessageWithCompletionBlock:(MECompletionHandler)completionHandler {
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                           completion:^{
-                                                              if (weakSelf.currentCampaignId && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
-                                                                  EMSLog([[EMSInAppOnScreenTime alloc] initWithInAppMessage:weakSelf.inAppMessage
+                                                              if (weakSelf.currentInAppMessage && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
+                                                                  EMSLog([[EMSInAppOnScreenTime alloc] initWithInAppMessage:weakSelf.currentInAppMessage
                                                                                                               showTimestamp:weakSelf.onScreenShowTimestamp
                                                                                                           timestampProvider:weakSelf.timestampProvider]);
                                                               }

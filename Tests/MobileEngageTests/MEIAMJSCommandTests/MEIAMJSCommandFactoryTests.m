@@ -5,21 +5,24 @@
 #import "MEIAMClose.h"
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMButtonClicked.h"
-#import "MEIAMViewController.h"
 #import "MEIAMTriggerMEEvent.h"
+#import "MEInAppMessage.h"
 
 MEIAMJSCommandFactory *_factory;
 
 SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
-        __block NSString *currentCampaignId;
+        __block MEInAppMessage *currentInAppMessage;
         __block id _meiam;
 
         beforeEach(^{
-            currentCampaignId = @"123";
+            currentInAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
+                                                                         sid:@"testSid"
+                                                                         url:@"https://www.test.com"
+                                                                        html:@"</HTML>"
+                                                           responseTimestamp:[NSDate date]];
             _meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
-            [_meiam stub:@selector(currentCampaignId) andReturn:currentCampaignId];
-            [_meiam stub:@selector(meiamViewController) andReturn:[MEIAMViewController mock]];
+            [_meiam stub:@selector(currentInAppMessage) andReturn:currentInAppMessage];
             [_meiam stub:@selector(inAppTracker) andReturn:[KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)]];
             [_meiam stub:@selector(eventHandler) andReturn:[KWMock mockForProtocol:@protocol(EMSEventHandler)]];
             _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
@@ -64,8 +67,8 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
             it(@"should initialize the MEIAMButtonClicked command", ^{
                 MEIAMButtonClicked *command = [_factory commandByName:@"buttonClicked"];
-                [[command.campaignId shouldNot] beNil];
-                [[command.campaignId should] equal:currentCampaignId];
+                [[command.inAppMessage shouldNot] beNil];
+                [[command.inAppMessage should] equal:currentInAppMessage];
                 [[command.repository shouldNot] beNil];
                 [[(NSObject *) command.inAppTracker shouldNot] beNil];
             });

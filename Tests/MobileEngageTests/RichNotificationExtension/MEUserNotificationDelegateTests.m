@@ -1,6 +1,5 @@
 #import "Kiwi.h"
 #import <UserNotifications/UNNotification.h>
-#import <UserNotifications/UNNotificationResponse.h>
 #import <UserNotifications/UNNotificationRequest.h>
 #import <UserNotifications/UNNotificationContent.h>
 #import "MEUserNotificationDelegate.h"
@@ -260,17 +259,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 userNotification.eventHandler = eventHandlerMock;
 
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"MEAppEvent",
-                                        @"name": eventName,
-                                        @"payload": payload
-                                }
-                        ]},
-                        @"u": @"{\"sid\": \"123456789\"}"
-
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"MEAppEvent",
+                            @"name": eventName,
+                            @"payload": payload
+                        }
+                    ]},
+                    @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -290,16 +288,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 userNotification.eventHandler = eventHandlerMock;
 
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"someStuff",
-                                        @"name": @"testEventName",
-                                        @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
-                                }
-                        ]},
-                        @"u": @"{\"sid\": \"123456789\"}"
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"someStuff",
+                            @"name": @"testEventName",
+                            @"payload": @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"}
+                        }
+                    ]},
+                    @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -317,25 +315,25 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 EMSMobileEngageV3Internal *mobileEngage = [EMSMobileEngageV3Internal nullMock];
 
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc]
-                        initWithApplication:[UIApplication mock]
-                       mobileEngageInternal:mobileEngage
-                                      inApp:[MEInApp nullMock]
-                          timestampProvider:[EMSTimestampProvider nullMock]
-                               pushInternal:pushInternal
-                             requestManager:requestManager
-                             requestFactory:requestFactory];
+                    initWithApplication:[UIApplication mock]
+                   mobileEngageInternal:mobileEngage
+                                  inApp:[MEInApp nullMock]
+                      timestampProvider:[EMSTimestampProvider nullMock]
+                           pushInternal:pushInternal
+                         requestManager:requestManager
+                         requestFactory:requestFactory];
 
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"MECustomEvent",
-                                        @"name": eventName,
-                                        @"payload": payload
-                                }
-                        ]},
-                        @"u": @"{\"sid\": \"123456789\"}"
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"MECustomEvent",
+                            @"name": eventName,
+                            @"payload": payload
+                        }
+                    ]},
+                    @"u": @"{\"sid\": \"123456789\"}"
                 };
                 [[mobileEngage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
                                  withArguments:eventName,
@@ -361,13 +359,13 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"key": @"value"
-                                }
-                        ]}, @"u": @"{\"sid\": \"123456789\"}"
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"key": @"value"
+                        }
+                    ]}, @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 EMSRequestModel *requestModel = [EMSRequestModel mock];
@@ -376,11 +374,11 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        andReturn:requestModel
                                    withArguments:@"push:click",
                                                  @{
-                                                         @"origin": @"button",
-                                                         @"button_id": @"uniqueId",
-                                                         @"sid": @"123456789"
+                                                     @"origin": @"button",
+                                                     @"button_id": @"uniqueId",
+                                                     @"sid": @"123456789"
                                                  },
-                                theValue(EventTypeInternal)];
+                        theValue(EventTypeInternal)];
 
                 [[requestManager should] receive:@selector(submitRequestModel:withCompletionBlock:)
                                    withArguments:requestModel, kw_any()];
@@ -408,20 +406,20 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 NSString *eventName = @"eventName";
                 NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                        @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"OpenExternalUrl",
-                                @"url": @"https://www.emarsys.com"
-                        }, @{
-                                @"id": @"uniqueId2",
-                                @"title": @"actionTitle",
-                                @"type": @"MECustomEvent",
-                                @"name": eventName,
-                                @"payload": payload
-                        }
+                    @{
+                        @"id": @"uniqueId",
+                        @"title": @"actionTitle",
+                        @"type": @"OpenExternalUrl",
+                        @"url": @"https://www.emarsys.com"
+                    }, @{
+                        @"id": @"uniqueId2",
+                        @"title": @"actionTitle",
+                        @"type": @"MECustomEvent",
+                        @"name": eventName,
+                        @"payload": payload
+                    }
                 ]},
-                        @"u": @"{\"sid\": \"123456789\"}"
+                    @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
@@ -449,9 +447,9 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                             requestManager:requestManager
                                                                                                             requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"u": @{
-                                @"sid": @"123456789"
-                        }}};
+                    @"u": @{
+                        @"sid": @"123456789"
+                    }}};
                 [[pushInternal should] receive:@selector(trackMessageOpenWithUserInfo:)
                                  withArguments:userInfo];
 
@@ -479,12 +477,12 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{@"actions": @[
-                        @{
-                                @"id": @"uniqueId",
-                                @"title": @"actionTitle",
-                                @"type": @"OpenExternalUrl",
-                                @"url": @"https://www.emarsys.com"
-                        }
+                    @{
+                        @"id": @"uniqueId",
+                        @"title": @"actionTitle",
+                        @"type": @"OpenExternalUrl",
+                        @"url": @"https://www.emarsys.com"
+                    }
                 ]}, @"u": @"{\"sid\": \"123456789\"}"};
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -502,6 +500,8 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
                 [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:responseTimestamp];
                 MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"42"
+                                                                                      sid:@"123456789"
+                                                                                      url:@"https://www.test.com"
                                                                                      html:@"<html/>"
                                                                         responseTimestamp:responseTimestamp];
                 KWCaptureSpy *messageSpy = [inApp captureArgument:@selector(showMessage:completionHandler:) atIndex:0];
@@ -513,10 +513,12 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                             requestManager:requestManager
                                                                                                             requestFactory:requestFactory];
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"inapp": @{
-                                @"campaign_id": @"42",
-                                @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
-                        }}};
+                    @"inapp": @{
+                        @"campaign_id": @"42",
+                        @"url": @"https://www.test.com",
+                        @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+                    }},
+                    @"u": @"{\"sid\": \"123456789\"}"};
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [notificationDelegate userNotificationCenter:nil
@@ -527,13 +529,16 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 [EMSWaiter waitForExpectations:@[exp] timeout:5];
                 MEInAppMessage *message = [messageSpy argument];
                 [[message.campaignId should] equal:@"42"];
+                [[message.sid should] equal:@"123456789"];
+                [[message.url should] equal:@"https://www.test.com"];
                 [[message.html should] equal:@"<html/>"];
                 [[message.responseTimestamp should] equal:responseTimestamp];
             });
 
             it(@"should call mobileEngage with default action", ^{
                 EMSMobileEngageV3Internal *mockMEInternal = [EMSMobileEngageV3Internal nullMock];
-                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock] mobileEngageInternal:mockMEInternal
+                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
+                                                                                                  mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
                                                                                                           pushInternal:pushInternal
@@ -542,21 +547,21 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 NSString *eventName = @"eventName";
                 NSDictionary *defaultAction = @{
-                        @"type": @"MECustomEvent",
-                        @"name": eventName,
-                        @"payload": payload
+                    @"type": @"MECustomEvent",
+                    @"name": eventName,
+                    @"payload": payload
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"default_action": defaultAction,
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"OpenExternalUrl",
-                                        @"url": @"https://www.emarsys.com"
-                                }
-                        ]},
-                        @"u": @"{\"sid\": \"123456789\"}"
+                    @"default_action": defaultAction,
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"OpenExternalUrl",
+                            @"url": @"https://www.emarsys.com"
+                        }
+                    ]},
+                    @"u": @"{\"sid\": \"123456789\"}"
                 };
 
                 [[mockMEInternal should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
@@ -585,22 +590,22 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
                 NSDictionary *expectedAction = @{
-                        @"type": @"MEAppEvent",
-                        @"name": @"nameValue",
-                        @"payload": @{
-                                @"someKey": @"someValue"
-                        }
+                    @"type": @"MEAppEvent",
+                    @"name": @"nameValue",
+                    @"payload": @{
+                        @"someKey": @"someValue"
+                    }
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"default_action": expectedAction,
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"OpenExternalUrl",
-                                        @"url": @"https://www.emarsys.com"
-                                }
-                        ]
+                    @"default_action": expectedAction,
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"OpenExternalUrl",
+                            @"url": @"https://www.emarsys.com"
+                        }
+                    ]
                 }, @"u": @"{\"sid\": \"123456789\"}"};
 
                 NSDictionary *action = [userNotification actionFromResponse:notificationResponseWithUserInfoWithActionId(userInfo, UNNotificationDefaultActionIdentifier)];
@@ -617,22 +622,22 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
                 NSDictionary *expectedAction = @{
-                        @"type": @"MEAppEvent",
-                        @"name": @"nameValue",
-                        @"payload": @{
-                                @"someKey": @"someValue"
-                        }
+                    @"type": @"MEAppEvent",
+                    @"name": @"nameValue",
+                    @"payload": @{
+                        @"someKey": @"someValue"
+                    }
                 };
                 NSDictionary *userInfo = @{@"ems": @{
-                        @"default_action": expectedAction,
-                        @"actions": @[
-                                @{
-                                        @"id": @"uniqueId",
-                                        @"title": @"actionTitle",
-                                        @"type": @"OpenExternalUrl",
-                                        @"url": @"https://www.emarsys.com"
-                                }
-                        ]
+                    @"default_action": expectedAction,
+                    @"actions": @[
+                        @{
+                            @"id": @"uniqueId",
+                            @"title": @"actionTitle",
+                            @"type": @"OpenExternalUrl",
+                            @"url": @"https://www.emarsys.com"
+                        }
+                    ]
                 }, @"u": @"{\"sid\": \"123456789\"}"};
 
                 NSDictionary *action = [userNotification actionFromResponse:notificationResponseWithUserInfoWithActionId(userInfo, UNNotificationDismissActionIdentifier)];

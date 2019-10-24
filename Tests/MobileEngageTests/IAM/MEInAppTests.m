@@ -130,7 +130,7 @@ SPEC_BEGIN(MEInAppTests)
 
         describe(@"showMessage:completionHandler:", ^{
 
-            it(@"it should set currentCampaignId", ^{
+            it(@"it should set currentInAppMessage", ^{
                 NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"testIdForCurrentCampaignId", @"html": @"<html></html>"}}
                                                                options:0
                                                                  error:nil];
@@ -139,13 +139,15 @@ SPEC_BEGIN(MEInAppTests)
                                                                                      body:body
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
+                MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response];
+
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
+                [inApp showMessage:message
                  completionHandler:^{
                      [exp fulfill];
                  }];
                 [EMSWaiter waitForExpectations:@[exp] timeout:10];
-                [[[((id <MEIAMProtocol>) inApp) currentCampaignId] should] equal:@"testIdForCurrentCampaignId"];
+                [[[((id <MEIAMProtocol>) inApp) currentInAppMessage] should] equal:message];
             });
 
             it(@"should call trackInAppDisplay: on inAppTracker", ^{
@@ -157,10 +159,11 @@ SPEC_BEGIN(MEInAppTests)
                                                                                      body:body
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
+                MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response];
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
 
-                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
+                [inApp showMessage:message
                  completionHandler:^{
                      [exp fulfill];
                  }];
@@ -170,7 +173,7 @@ SPEC_BEGIN(MEInAppTests)
                                                                  enforceOrder:YES];
 
                 [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
-                [[inAppTracker.campaignId should] equal:@"testIdForInAppTracker"];
+                [[inAppTracker.inAppMessage should] equal:message];
             });
 
             it(@"should call add on displayedInAppRepository", ^{
@@ -203,6 +206,8 @@ SPEC_BEGIN(MEInAppTests)
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
+                                                                          sid:nil
+                                                                          url:nil
                                                                          html:@"<html></html>"
                                                             responseTimestamp:[NSDate date]]
                  completionHandler:^{
@@ -291,7 +296,7 @@ SPEC_BEGIN(MEInAppTests)
         });
 
         describe(@"campaignId", ^{
-            it(@"should not update campaignId when trying to show another inAppMessage", ^{
+            it(@"should not update currentInAppMessage when trying to show another inAppMessage", ^{
                 NSData *body1 = [NSJSONSerialization dataWithJSONObject:@{@"message": @{@"campaignId": @"campaignId1", @"html": @"<html></html>"}}
                                                                 options:0
                                                                   error:nil];
@@ -308,9 +313,10 @@ SPEC_BEGIN(MEInAppTests)
                                                                                       body:body2
                                                                               requestModel:[EMSRequestModel nullMock]
                                                                                  timestamp:[NSDate date]];
+                MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response1];
 
                 XCTestExpectation *fulfilledExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForFulfill"];
-                [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response1]
+                [inApp showMessage:message
                  completionHandler:^{
                      [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response2]
                       completionHandler:^{
@@ -319,7 +325,7 @@ SPEC_BEGIN(MEInAppTests)
                  }];
                 [EMSWaiter waitForExpectations:@[fulfilledExpectation]];
 
-                [[inApp.currentCampaignId should] equal:@"campaignId1"];
+                [[inApp.currentInAppMessage should] equal:message];
             });
         });
 

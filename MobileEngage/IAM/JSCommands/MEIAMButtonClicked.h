@@ -8,12 +8,12 @@
 
 @interface MEIAMButtonClicked : NSObject <MEIAMJSCommandProtocol>
 
-@property(nonatomic, readonly) NSString *campaignId;
+@property(nonatomic, readonly) MEInAppMessage *inAppMessage;
 @property(nonatomic, readonly) MEButtonClickRepository *repository;
 @property(nonatomic, readonly) id<MEInAppTrackingProtocol> inAppTracker;
 
-- (instancetype)initWithCampaignId:(NSString *)campaignId
-                        repository:(MEButtonClickRepository *)repository
-                      inAppTracker:(id <MEInAppTrackingProtocol>)inAppTracker;
+- (instancetype)initWithInAppMessage:(MEInAppMessage *)inAppMessage
+                          repository:(MEButtonClickRepository *)repository
+                        inAppTracker:(id <MEInAppTrackingProtocol>)inAppTracker;
 
 @end

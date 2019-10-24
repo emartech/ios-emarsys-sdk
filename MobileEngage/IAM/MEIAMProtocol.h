@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) id <MEInAppTrackingProtocol> inAppTracker;
 
 - (_Nullable id <EMSEventHandler>)eventHandler;
-- (NSString *)currentCampaignId;
+
+- (MEInAppMessage *)currentInAppMessage;
 
 - (void)closeInAppMessageWithCompletionBlock:(_Nullable MECompletionHandler)completionHandler;
 

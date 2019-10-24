@@ -4,9 +4,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class MEInAppMessage;
+
 @protocol MEInAppTrackingProtocol <NSObject>
 
-- (void)trackInAppDisplay:(NSString *)campaignId;
-- (void)trackInAppClick:(NSString *)campaignId buttonId:(NSString *)buttonId;
+- (void)trackInAppDisplay:(MEInAppMessage *)inAppMessage;
+
+- (void)trackInAppClick:(MEInAppMessage *)inAppMessage
+               buttonId:(NSString *)buttonId;
 
 @end

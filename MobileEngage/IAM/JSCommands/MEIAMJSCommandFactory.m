@@ -32,9 +32,9 @@
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
         command = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:[self.meIam eventHandler]];
     } else if ([name isEqualToString:MEIAMButtonClicked.commandName]) {
-        command = [[MEIAMButtonClicked alloc] initWithCampaignId:[self.meIam currentCampaignId]
-                                                      repository:self.buttonClickRepository
-                                                    inAppTracker:self.meIam.inAppTracker];
+        command = [[MEIAMButtonClicked alloc] initWithInAppMessage:[self.meIam currentInAppMessage]
+                                                        repository:self.buttonClickRepository
+                                                      inAppTracker:self.meIam.inAppTracker];
     } else if ([name isEqualToString:MEIAMTriggerMEEvent.commandName]) {
         command = [MEIAMTriggerMEEvent new];
     }

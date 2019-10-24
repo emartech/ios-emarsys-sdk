@@ -1,19 +1,26 @@
 #import "Kiwi.h"
 #import "MEIAMButtonClicked.h"
 #import "EMSWaiter.h"
+#import "MEInAppMessage.h"
 
 SPEC_BEGIN(MEIAMButtonClickedTests)
 
-        __block NSString *campaignId;
+        __block MEInAppMessage *inAppMessage;
         __block MEButtonClickRepository *repositoryMock;
         __block id inAppTrackerMock;
         __block MEIAMButtonClicked *meiamButtonClicked;
 
         beforeEach(^{
-            campaignId = @"123";
+            inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
+                                                                  sid:@"testSid"
+                                                                  url:@"https://www.test.com"
+                                                                 html:@"</HTML>"
+                                                    responseTimestamp:[NSDate date]];
             repositoryMock = [MEButtonClickRepository mock];
             inAppTrackerMock = [KWMock nullMockForProtocol:@protocol(MEInAppTrackingProtocol)];
-            meiamButtonClicked = [[MEIAMButtonClicked alloc] initWithCampaignId:campaignId repository:repositoryMock inAppTracker:inAppTrackerMock];
+            meiamButtonClicked = [[MEIAMButtonClicked alloc] initWithInAppMessage:inAppMessage
+                                                                       repository:repositoryMock
+                                                                     inAppTracker:inAppTrackerMock];
         });
 
         describe(@"commandName", ^{
@@ -28,7 +35,7 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
 
             it(@"should not accept missing buttonId", ^{
                 NSDictionary *dictionary = @{
-                        @"id": @"messageId"
+                    @"id": @"messageId"
                 };
                 [[repositoryMock shouldNot] receive:@selector(add:)];
 
@@ -39,8 +46,8 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
 
             it(@"should not accept buttonId with invalid type", ^{
                 NSDictionary *dictionary = @{
-                        @"id": @"messageId",
-                        @"buttonId": @{}
+                    @"id": @"messageId",
+                    @"buttonId": @{}
                 };
                 [[repositoryMock shouldNot] receive:@selector(add:)];
 
@@ -59,11 +66,13 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                 NSString *buttonId = @"789";
 
                 NSDictionary *dictionary = @{
-                        @"buttonId": buttonId,
-                        @"id": @"messageId"
+                    @"buttonId": buttonId,
+                    @"id": @"messageId"
                 };
                 [[repositoryMock should] receive:@selector(add:)];
-                [[inAppTrackerMock should] receive:@selector(trackInAppClick:buttonId:) withArguments:@"123", buttonId];
+                [[inAppTrackerMock should] receive:@selector(trackInAppClick:buttonId:)
+                                     withArguments:inAppMessage,
+                                                   buttonId];
 
                 [meiamButtonClicked handleMessage:dictionary
                                       resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
@@ -75,8 +84,8 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                 NSString *buttonId = @"789";
 
                 NSDictionary *dictionary = @{
-                        @"buttonId": buttonId,
-                        @"id": @"messageId"
+                    @"buttonId": buttonId,
+                    @"id": @"messageId"
                 };
                 KWCaptureSpy *buttonClickSpy = [repositoryMock captureArgument:@selector(add:)
                                                                        atIndex:0];
@@ -91,7 +100,7 @@ SPEC_BEGIN(MEIAMButtonClickedTests)
                 MEButtonClick *buttonClick = buttonClickSpy.argument;
 
                 [[buttonClick.buttonId should] equal:buttonId];
-                [[buttonClick.campaignId should] equal:campaignId];
+                [[buttonClick.campaignId should] equal:inAppMessage.campaignId];
                 [[buttonClick.timestamp should] beBetween:before and:after];
             });
 

@@ -5,6 +5,7 @@
 #import "EMSInAppInternal.h"
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
+#import "MEInAppMessage.h"
 
 @interface EMSInAppInternal ()
 
@@ -26,24 +27,31 @@
     return self;
 }
 
-- (void)trackInAppDisplay:(NSString *)campaignId {
-    if (campaignId) {
+- (void)trackInAppDisplay:(MEInAppMessage *)inAppMessage {
+    if (inAppMessage.campaignId) {
+        NSMutableDictionary *mutableEventAttributes = [NSMutableDictionary dictionary];
+        mutableEventAttributes[@"message_id"] = inAppMessage.campaignId;
+        mutableEventAttributes[@"sid"] = inAppMessage.sid;
+        mutableEventAttributes[@"url"] = inAppMessage.url;
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inapp:viewed"
-                                                                                  eventAttributes:@{@"message_id": campaignId}
+                                                                                  eventAttributes:[NSDictionary dictionaryWithDictionary:mutableEventAttributes]
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:nil];
     }
 }
 
-- (void)trackInAppClick:(NSString *)campaignId
+- (void)trackInAppClick:(MEInAppMessage *)inAppMessage
                buttonId:(NSString *)buttonId {
-    if (campaignId && buttonId) {
+    if (inAppMessage.campaignId && buttonId) {
+        NSMutableDictionary *mutableEventAttributes = [NSMutableDictionary dictionary];
+        mutableEventAttributes[@"message_id"] = inAppMessage.campaignId;
+        mutableEventAttributes[@"button_id"] = buttonId;
+        mutableEventAttributes[@"sid"] = inAppMessage.sid;
+        mutableEventAttributes[@"url"] = inAppMessage.url;
+
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inapp:click"
-                                                                                  eventAttributes:@{
-                                                                                          @"message_id": campaignId,
-                                                                                          @"button_id": buttonId
-                                                                                  }
+                                                                                  eventAttributes:[NSDictionary dictionaryWithDictionary:mutableEventAttributes]
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:nil];

@@ -79,6 +79,8 @@
 
 - (void)testData_when_requestIdNotAvailable {
     _loadingTime = [[EMSInAppLoadingTime alloc] initWithInAppMessage:[[MEInAppMessage alloc] initWithCampaignId:@"campaignId456"
+                                                                                                            sid:nil
+                                                                                                            url:nil
                                                                                                            html:@"<HTML></HTML>"
                                                                                               responseTimestamp:self.responseTimestamp]
                                                    timestampProvider:self.timestampProvider];

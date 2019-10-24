@@ -2,6 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "FakeInAppTracker.h"
+#import "MEInAppMessage.h"
 
 @interface FakeInAppTracker ()
 
@@ -22,17 +23,16 @@
 }
 
 
-- (void)trackInAppDisplay:(NSString *)campaignId {
-    self.campaignId = campaignId;
+- (void)trackInAppDisplay:(MEInAppMessage *)inAppMessage {
+    self.inAppMessage = inAppMessage;
     [self.displayExpectation fulfill];
 }
 
-- (void)trackInAppClick:(NSString *)campaignId
+- (void)trackInAppClick:(MEInAppMessage *)inAppMessage
                buttonId:(NSString *)buttonId {
-    self.campaignId = campaignId;
+    self.inAppMessage = inAppMessage;
     self.buttonId = buttonId;
     [self.clickExpectation fulfill];
 }
-
 
 @end
