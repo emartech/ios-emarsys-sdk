@@ -7,6 +7,7 @@
 
 @class MobileEngageInternal;
 @class EMSTimestampProvider;
+@class EMSUUIDProvider;
 @class EMSRequestManager;
 @class EMSRequestFactory;
 @class MEInApp;
@@ -19,6 +20,7 @@
                mobileEngageInternal:(id <EMSMobileEngageProtocol>)mobileEngage
                               inApp:(MEInApp *)inApp
                   timestampProvider:(EMSTimestampProvider *)timestampProvider
+                       uuidProvider:(EMSUUIDProvider *)uuidProvider
                        pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                      requestManager:(EMSRequestManager *)requestManager
                      requestFactory:(EMSRequestFactory *)requestFactory;

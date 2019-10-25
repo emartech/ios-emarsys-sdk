@@ -287,6 +287,7 @@
                                                                      mobileEngageInternal:self.mobileEngage
                                                                                     inApp:self.iam
                                                                         timestampProvider:timestampProvider
+                                                                             uuidProvider:uuidProvider
                                                                              pushInternal:self.push
                                                                            requestManager:self.requestManager
                                                                            requestFactory:self.requestFactory];

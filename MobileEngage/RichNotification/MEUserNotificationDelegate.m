@@ -21,6 +21,7 @@
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) MEInApp *inApp;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
+@property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> pushInternal;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
@@ -36,6 +37,7 @@
                mobileEngageInternal:(id <EMSMobileEngageProtocol>)mobileEngage
                               inApp:(MEInApp *)inApp
                   timestampProvider:(EMSTimestampProvider *)timestampProvider
+                       uuidProvider:(EMSUUIDProvider *)uuidProvider
                        pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                      requestManager:(EMSRequestManager *)requestManager
                      requestFactory:(EMSRequestFactory *)requestFactory {
@@ -43,6 +45,7 @@
     NSParameterAssert(mobileEngage);
     NSParameterAssert(inApp);
     NSParameterAssert(timestampProvider);
+    NSParameterAssert(uuidProvider);
     NSParameterAssert(pushInternal);
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
@@ -51,6 +54,7 @@
         _mobileEngage = mobileEngage;
         _inApp = inApp;
         _timestampProvider = timestampProvider;
+        _uuidProvider = uuidProvider;
         _pushInternal = pushInternal;
         _requestManager = requestManager;
         _requestFactory = requestFactory;
@@ -97,6 +101,32 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                                                           html:html
                                                              responseTimestamp:responseTimestamp]
                   completionHandler:nil];
+        } else {
+            NSString *url = inApp[@"url"];
+            if (url) {
+                EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:url];
+                        [builder setMethod:HTTPMethodGET];
+                    }
+                                                               timestampProvider:self.timestampProvider
+                                                                    uuidProvider:self.uuidProvider];
+                __weak typeof(self) weakSelf = self;
+                [self.requestManager submitRequestModelNow:requestModel
+                                              successBlock:^(NSString *requestId, EMSResponseModel *responseModel) {
+                                                  NSString *html = [[NSString alloc] initWithData:responseModel.body
+                                                                                         encoding:NSUTF8StringEncoding];
+                                                  if (html) {
+                                                      [weakSelf.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
+                                                                                                                         sid:[userInfo messageId]
+                                                                                                                         url:inApp[@"url"]
+                                                                                                                        html:html
+                                                                                                           responseTimestamp:responseTimestamp]
+                                                                completionHandler:nil];
+                                                  }
+                                              }
+                                                errorBlock:^(NSString *requestId, NSError *error) {
+                                                }];
+            }
         }
     }
 
@@ -104,9 +134,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     if (action && action[@"id"]) {
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                          @"origin": @"button",
-                                                                                          @"button_id": action[@"id"],
-                                                                                          @"sid": [userInfo messageId]
+                                                                                      @"origin": @"button",
+                                                                                      @"button_id": action[@"id"],
+                                                                                      @"sid": [userInfo messageId]
                                                                                   } eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:nil];

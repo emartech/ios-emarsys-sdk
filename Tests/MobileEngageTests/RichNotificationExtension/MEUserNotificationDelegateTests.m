@@ -5,6 +5,7 @@
 #import "EMSWaiter.h"
 #import "MEInApp.h"
 #import "EMSTimestampProvider.h"
+#import "EMSUUIDProvider.h"
 #import "EMSPushNotificationProtocol.h"
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
@@ -38,6 +39,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
         __block id mobileEngageInternal;
         __block id inApp;
         __block id timestampProvider;
+        __block id uuidProvider;
         __block id pushInternal;
         __block id requestManager;
         __block id requestFactory;
@@ -46,7 +48,8 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             application = [UIApplication mock];
             mobileEngageInternal = [EMSMobileEngageV3Internal mock];
             inApp = [MEInApp mock];
-            timestampProvider = [EMSTimestampProvider mock];
+            timestampProvider = [EMSTimestampProvider nullMock];
+            uuidProvider = [EMSUUIDProvider nullMock];
             pushInternal = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
             requestManager = [EMSRequestManager nullMock];
             requestFactory = [EMSRequestFactory nullMock];
@@ -60,6 +63,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:mobileEngageInternal
                                                                       inApp:inApp
                                                           timestampProvider:timestampProvider
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:requestManager
                                                              requestFactory:requestFactory];
@@ -76,6 +80,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:nil
                                                                       inApp:inApp
                                                           timestampProvider:timestampProvider
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:requestManager
                                                              requestFactory:requestFactory];
@@ -92,6 +97,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:mobileEngageInternal
                                                                       inApp:nil
                                                           timestampProvider:timestampProvider
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:requestManager
                                                              requestFactory:requestFactory];
@@ -108,6 +114,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:mobileEngageInternal
                                                                       inApp:inApp
                                                           timestampProvider:nil
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:requestManager
                                                              requestFactory:requestFactory];
@@ -117,12 +124,31 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
+            it(@"should throw an exception when there is no uuidProvider", ^{
+                @try {
+                    [[MEUserNotificationDelegate alloc] initWithApplication:application
+                                                       mobileEngageInternal:mobileEngageInternal
+                                                                      inApp:inApp
+                                                          timestampProvider:timestampProvider
+                                                               uuidProvider:nil
+                                                               pushInternal:pushInternal
+                                                             requestManager:requestManager
+                                                             requestFactory:requestFactory];
+                    fail(@"Expected Exception when uuidProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: uuidProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
             it(@"should throw an exception when there is no pushInternal", ^{
                 @try {
                     [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                        mobileEngageInternal:[EMSMobileEngageV3Internal mock]
                                                                       inApp:[MEInApp mock]
                                                           timestampProvider:[EMSTimestampProvider mock]
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:nil
                                                              requestManager:[EMSRequestManager mock]
                                                              requestFactory:[EMSRequestFactory mock]];
@@ -138,6 +164,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:mobileEngageInternal
                                                                       inApp:inApp
                                                           timestampProvider:timestampProvider
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:nil
                                                              requestFactory:requestFactory];
@@ -153,6 +180,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                        mobileEngageInternal:mobileEngageInternal
                                                                       inApp:inApp
                                                           timestampProvider:timestampProvider
+                                                               uuidProvider:uuidProvider
                                                                pushInternal:pushInternal
                                                              requestManager:requestManager
                                                              requestFactory:nil];
@@ -222,6 +250,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -312,14 +341,14 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
                 EMSMobileEngageV3Internal *mobileEngage = [EMSMobileEngageV3Internal nullMock];
 
-                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc]
-                    initWithApplication:[UIApplication mock]
-                   mobileEngageInternal:mobileEngage
-                                  inApp:[MEInApp nullMock]
-                      timestampProvider:[EMSTimestampProvider nullMock]
-                           pushInternal:pushInternal
-                         requestManager:requestManager
-                         requestFactory:requestFactory];
+                MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
+                                                                                                  mobileEngageInternal:mobileEngage
+                                                                                                                 inApp:[MEInApp nullMock]
+                                                                                                     timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
+                                                                                                          pushInternal:pushInternal
+                                                                                                        requestManager:requestManager
+                                                                                                        requestFactory:requestFactory];
 
                 NSDictionary *userInfo = @{@"ems": @{
                     @"actions": @[
@@ -353,6 +382,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:mobileEngage
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -397,6 +427,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -441,6 +472,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       mobileEngageInternal:mobileEngage
                                                                                                                      inApp:[MEInApp nullMock]
                                                                                                          timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                              uuidProvider:uuidProvider
                                                                                                               pushInternal:pushInternal
                                                                                                             requestManager:requestManager
                                                                                                             requestFactory:requestFactory];
@@ -471,6 +503,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -493,9 +526,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             });
 
             it(@"should call showMessage:completionHandler: on IAM with InAppMessage when didReceiveNotificationResponse:withCompletionHandler: is called with inApp payload", ^{
-                NSObject <MEIAMProtocol> *inApp = [MEInApp mock];
                 NSDate *responseTimestamp = [NSDate date];
-                EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
                 [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:responseTimestamp];
                 MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"42"
                                                                                       sid:@"123456789"
@@ -507,6 +538,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                      inApp:inApp
                                                                                                          timestampProvider:timestampProvider
+                                                                                                              uuidProvider:uuidProvider
                                                                                                               pushInternal:pushInternal
                                                                                                             requestManager:requestManager
                                                                                                             requestFactory:requestFactory];
@@ -533,12 +565,62 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 [[message.responseTimestamp should] equal:responseTimestamp];
             });
 
+            it(@"should download inapp and trigger it when inAppData missing", ^{
+                NSDate *responseTimestamp = [NSDate date];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:responseTimestamp
+                                          withCount:2];
+
+                NSDictionary *userInfo = @{@"ems": @{
+                    @"inapp": @{
+                        @"campaign_id": @"42",
+                        @"url": @"https://www.test.com"
+                    }},
+                    @"u": @"{\"sid\": \"123456789\"}"};
+
+                KWCaptureSpy *spy = [requestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
+                                                            atIndex:1];
+
+                MEUserNotificationDelegate *notificationDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
+                                                                                                      mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
+                                                                                                                     inApp:inApp
+                                                                                                         timestampProvider:timestampProvider
+                                                                                                              uuidProvider:uuidProvider
+                                                                                                              pushInternal:pushInternal
+                                                                                                            requestManager:requestManager
+                                                                                                            requestFactory:requestFactory];
+
+                [notificationDelegate userNotificationCenter:nil
+                              didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
+                                       withCompletionHandler:^{
+                                       }];
+
+                CoreSuccessBlock successBlock = spy.argument;
+
+                EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                                       headers:@{}
+                                                                                          body:[@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                  requestModel:[EMSRequestModel nullMock]
+                                                                                     timestamp:responseTimestamp];
+
+                MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"42"
+                                                                                      sid:@"123456789"
+                                                                                      url:@"https://www.test.com"
+                                                                                     html:@"<html/>"
+                                                                        responseTimestamp:responseTimestamp];
+
+                [[inApp should] receive:@selector(showMessage:completionHandler:) withArguments:inAppMessage, kw_any()];
+
+                successBlock(@"testRequestId", responseModel);
+            });
+
             it(@"should call mobileEngage with default action", ^{
                 EMSMobileEngageV3Internal *mockMEInternal = [EMSMobileEngageV3Internal nullMock];
                 MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication mock]
                                                                                                   mobileEngageInternal:mockMEInternal
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -584,6 +666,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
@@ -616,6 +699,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                   mobileEngageInternal:[EMSMobileEngageV3Internal nullMock]
                                                                                                                  inApp:[MEInApp nullMock]
                                                                                                      timestampProvider:[EMSTimestampProvider nullMock]
+                                                                                                          uuidProvider:uuidProvider
                                                                                                           pushInternal:pushInternal
                                                                                                         requestManager:requestManager
                                                                                                         requestFactory:requestFactory];
