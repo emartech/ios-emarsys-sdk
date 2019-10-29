@@ -97,6 +97,21 @@
                                       data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
++ (EMSLogic *)personal {
+    return [EMSLogic personalWithExtensions:nil];
+}
+
++ (EMSLogic *)personalWithExtensions:(nullable NSArray<NSString *> *)extensions {
+    NSMutableString *mutableLogic = [NSMutableString stringWithString:@"PERSONAL"];
+    if (extensions) {
+        for (NSString *extension in extensions) {
+            [mutableLogic appendString:[NSString stringWithFormat:@"_%@", extension]];
+        }
+    }
+    return [[EMSLogic alloc] initWithLogic:[NSString stringWithString:mutableLogic]
+                                      data:@{}];
+}
+
 - (BOOL)isEqual:(id)other {
     if (other == self)
         return YES;

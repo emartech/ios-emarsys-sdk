@@ -124,7 +124,6 @@
     XCTAssertEqualObjects(logic.data, @{@"v": @"i:testItemId"});
 }
 
-
 - (void)testPopular {
     EMSLogic *logic = EMSLogic.popular;
 
@@ -143,6 +142,26 @@
 
     XCTAssertEqualObjects(logic.logic, @"POPULAR");
     XCTAssertEqualObjects(logic.data, @{@"vc": @"testCategoryPath"});
+}
+
+- (void)testPersonal {
+    EMSLogic *logic = EMSLogic.personal;
+
+    XCTAssertEqualObjects(logic.logic, @"PERSONAL");
+}
+
+- (void)testPersonal_when_thereIsNoExtensions {
+    EMSLogic *logic = [EMSLogic personalWithExtensions:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"PERSONAL");
+    XCTAssertEqualObjects(logic.data, @{});
+}
+
+- (void)testPersonal_when_thereIsExtensions {
+    EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
+
+    XCTAssertEqualObjects(logic.logic, @"PERSONAL_1_2_3");
+    XCTAssertEqualObjects(logic.data, @{});
 }
 
 @end

@@ -35,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (EMSLogic *)popularWithCategoryPath:(nullable NSString *)categoryPath;
 
++ (EMSLogic *)personal;
+
++ (EMSLogic *)personalWithExtensions:(nullable NSArray<NSString *> *)extensions;
+
 @end
 
 NS_ASSUME_NONNULL_END
