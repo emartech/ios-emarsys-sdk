@@ -172,6 +172,26 @@ SPEC_BEGIN(EMSNotificationServiceTests)
                 [[[action title] should] equal:@"buttonTitle"];
             });
 
+            it(@"should return with category that contains Dismiss, when the content contains Dismiss type action", ^{
+                EMSNotificationService *service = [[EMSNotificationService alloc] init];
+                UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+                content.userInfo = @{@"ems": @{
+                        @"actions": @[
+                                @{
+                                        @"id": @"UUID1",
+                                        @"title": @"Dismiss",
+                                        @"type": @"Dismiss",
+                                }
+                        ]
+                }};
+
+                UNNotificationCategory *result = waitUntilNextResult(service, content);
+
+                UNNotificationAction *action = [[result actions] firstObject];
+                [[[action identifier] should] equal:@"UUID1"];
+                [[[action title] should] equal:@"Dismiss"];
+            });
+
             it(@"should not crash when category that contains MEAppEvent, when the content contains MEAppEvent action but completionHandler is nil", ^{
                 EMSNotificationService *service = [[EMSNotificationService alloc] init];
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
@@ -208,6 +228,24 @@ SPEC_BEGIN(EMSNotificationServiceTests)
                 UNNotificationCategory *result = waitUntilNextResult(service, content);
 
                 [[result should] beNil];
+            });
+
+            it(@"should not crash when when the content contains Dismiss action type but there are missing parameters and completionHandler is nil", ^{
+                EMSNotificationService *service = [[EMSNotificationService alloc] init];
+                UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+                content.userInfo = @{@"ems": @{
+                        @"actions": @[
+                                @{
+                                        @"id": @"UUID1",
+                                        @"type": @"Dismiss"
+                                }
+                        ]
+                }};
+
+                [service createCategoryForContent:content
+                                completionHandler:nil];
+
+                waitUntilNextResult(service, content);
             });
 
             it(@"should not crash when when the content contains MEAppEvent action type but there are missing parameters and completionHandler is nil", ^{

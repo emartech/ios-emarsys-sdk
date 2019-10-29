@@ -43,6 +43,8 @@
         [validate valueExistsForKey:@"title" withType:[NSString class]];
         [validate valueExistsForKey:@"type" withType:[NSString class]];
     }];
+    UNNotificationActionOptions option = UNNotificationActionOptionForeground;
+
     if ([commonKeyErrors count] == 0) {
         NSArray *typeSpecificErrors;
         NSString *type = actionDictionary[@"type"];
@@ -63,10 +65,14 @@
                 [validate valueExistsForKey:@"name" withType:[NSString class]];
             }];
         }
+        else if ([type isEqualToString:@"Dismiss"]) {
+            typeSpecificErrors = @[];
+            option = UNNotificationActionOptionDestructive;
+        }
         if (typeSpecificErrors && [typeSpecificErrors count] == 0) {
             result = [UNNotificationAction actionWithIdentifier:actionDictionary[@"id"]
                                                           title:actionDictionary[@"title"]
-                                                        options:UNNotificationActionOptionForeground];
+                                                        options:option];
         }
     }
     return result;
