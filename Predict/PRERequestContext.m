@@ -22,6 +22,7 @@
         NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
         _customerId = [defaults objectForKey:kEMSCustomerId];
         _visitorId = [defaults objectForKey:kEMSVisitorId];
+        _xp = [defaults objectForKey:kEMSXp];
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _deviceInfo = deviceInfo;
@@ -43,6 +44,14 @@
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
     [userDefaults setObject:visitorId
                      forKey:kEMSVisitorId];
+    [userDefaults synchronize];
+}
+
+- (void)setXp:(NSString *)xp {
+    _xp = xp;
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+    [userDefaults setObject:xp
+                     forKey:kEMSXp];
     [userDefaults synchronize];
 }
 

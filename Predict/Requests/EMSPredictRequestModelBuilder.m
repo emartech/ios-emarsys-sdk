@@ -79,7 +79,13 @@
             }
 
             [builder setMethod:HTTPMethodGET];
-            [builder setHeaders:@{@"User-Agent": [self createUserAgent]}];
+
+            NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionary];
+            mutableHeaders[@"User-Agent"] = [self createUserAgent];
+            if (self.requestContext.xp) {
+                mutableHeaders[@"Cookie"] = [NSString stringWithFormat:@"xp=%@", self.requestContext.xp];
+            }
+            [builder setHeaders:[NSDictionary dictionaryWithDictionary:mutableHeaders]];
         }                                          timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
     return requestModel;

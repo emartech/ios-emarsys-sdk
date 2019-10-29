@@ -245,7 +245,7 @@ SPEC_BEGIN(EmarsysTests)
                         [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                            withDependencyContainer:nil];
 
-                        [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(6)];
+                        [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(7)];
                     });
                 });
 

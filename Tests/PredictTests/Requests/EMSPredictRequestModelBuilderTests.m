@@ -41,6 +41,7 @@
     OCMStub([self.mockContext uuidProvider]).andReturn(self.mockUuidProvider);
     OCMStub([self.mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
     OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId");
+    OCMStub([self.mockContext xp]).andReturn(@"testXP");
 }
 
 
@@ -58,6 +59,35 @@
        queryParameters:nil
           builderBlock:nil];
 }
+
+- (void)testCookie {
+    NSDictionary *expectedHeaders = @{
+        @"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
+                                                  self.mockContext.deviceInfo.osVersion,
+                                                  self.mockContext.deviceInfo.systemName]
+    };
+
+    EMSDeviceInfo *mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    EMSTimestampProvider *mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    EMSUUIDProvider *mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    PRERequestContext *mockContext = OCMClassMock([PRERequestContext class]);
+
+    OCMStub([mockDeviceInfo osVersion]).andReturn(@"testOSVersion");
+    OCMStub([mockDeviceInfo systemName]).andReturn(@"testSystemName");
+    OCMStub([mockTimestampProvider provideTimestamp]).andReturn([NSDate date]);
+    OCMStub([mockUuidProvider provideUUIDString]).andReturn(@"testUUUIDString");
+    OCMStub([mockContext timestampProvider]).andReturn(self.mockTimestampProvider);
+    OCMStub([mockContext uuidProvider]).andReturn(self.mockUuidProvider);
+    OCMStub([mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
+    OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
+
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+
+    EMSRequestModel *requestModel = [builder build];
+
+    XCTAssertEqualObjects(requestModel.headers, expectedHeaders);
+}
+
 
 - (void)testLimit_defaultValue_whenNil {
     EMSLogic *logic = EMSLogic.search;
@@ -309,9 +339,12 @@
                 [builder setUrl:urlString];
             }
             [builder setMethod:HTTPMethodGET];
-            [builder setHeaders:@{@"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
-                                                                            self.mockContext.deviceInfo.osVersion,
-                                                                            self.mockContext.deviceInfo.systemName]}];
+            [builder setHeaders:@{
+                @"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
+                                                          self.mockContext.deviceInfo.osVersion,
+                                                          self.mockContext.deviceInfo.systemName],
+                @"Cookie": [NSString stringWithFormat:@"xp=%@", self.mockContext.xp]
+            }];
         }
                                                            timestampProvider:self.mockTimestampProvider
                                                                 uuidProvider:self.mockUuidProvider];

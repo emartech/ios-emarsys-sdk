@@ -100,6 +100,36 @@ SPEC_BEGIN(PRERequestContextTests)
             });
         });
 
+        describe(@"xp:", ^{
+            it(@"should persist the parameter", ^{
+                NSString *const xp = @"xp";
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setXp:xp];
+                [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                           uuidProvider:uuidProvider
+                                                             merchantId:@"merchantId"
+                                                             deviceInfo:deviceInfo] xp] should] equal:xp];
+            });
+
+            it(@"should remove the persisted value when it set to nil", ^{
+                NSString *const xp = @"xp";
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setXp:xp];
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setXp:nil];
+                [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                           uuidProvider:uuidProvider
+                                                             merchantId:@"merchantId"
+                                                             deviceInfo:deviceInfo] xp] should] beNil];
+            });
+        });
+
         describe(@"predictInnerFeature", ^{
             it(@"should enable predictInnerFeature when merchantId is set", ^{
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
