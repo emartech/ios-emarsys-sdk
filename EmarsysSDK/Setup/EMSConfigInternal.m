@@ -7,6 +7,7 @@
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
 #import "PRERequestContext.h"
+#import "EMSDeviceInfo.h"
 
 @interface EMSConfigInternal ()
 
@@ -15,6 +16,7 @@
 @property(nonatomic, strong) PRERequestContext *preRequestContext;
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
 @property(nonatomic, strong) NSString *contactFieldValue;
+@property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 
 @end
 
@@ -23,17 +25,20 @@
 - (instancetype)initWithMeRequestContext:(MERequestContext *)meRequestContext
                        preRequestContext:(PRERequestContext *)preRequestContext
                             mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                            pushInternal:(EMSPushV3Internal *)pushInternal {
+                            pushInternal:(EMSPushV3Internal *)pushInternal
+                              deviceInfo:(EMSDeviceInfo *)deviceInfo {
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
     NSParameterAssert(mobileEngage);
     NSParameterAssert(pushInternal);
+    NSParameterAssert(deviceInfo);
 
     if (self = [super init]) {
         _mobileEngage = mobileEngage;
         _meRequestContext = meRequestContext;
         _preRequestContext = preRequestContext;
         _pushInternal = pushInternal;
+        _deviceInfo = deviceInfo;
     }
     return self;
 }
@@ -104,6 +109,18 @@
                                            [weakSelf callCompletionBlock:completionBlock
                                                                withError:error];
                                        }];
+}
+
+- (NSString *)hardwareId {
+    return [self.deviceInfo hardwareId];
+}
+
+- (NSString *)languageCode {
+    return [self.deviceInfo languageCode];
+}
+
+- (NSDictionary *)pushSettings {
+    return [self.deviceInfo pushSettings];
 }
 
 - (void)callSetPushToken:(NSString *)applicationCode

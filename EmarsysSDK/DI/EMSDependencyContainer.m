@@ -302,7 +302,8 @@
     _config = [[EMSConfigInternal alloc] initWithMeRequestContext:self.requestContext
                                                 preRequestContext:self.predictRequestContext
                                                      mobileEngage:self.mobileEngage
-                                                     pushInternal:self.push];
+                                                     pushInternal:self.push
+                                                       deviceInfo:deviceInfo];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];
