@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
        'Predict/**/*.{h,m}',
        'EmarsysSDK/**/*.{h,m}'
 	]
-	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/*'
+	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/**/*.{h,m}'
 	spec.public_header_files  = [
         'EmarsysSDK/Emarsys.h',
         'EmarsysSDK/EMSInAppProtocol.h',

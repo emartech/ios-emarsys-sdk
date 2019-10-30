@@ -9,8 +9,7 @@ Pod::Spec.new do |spec|
 	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', <COMMIT_REF> }
 	spec.source_files         = [
 	    'MobileEngage/RichNotificationExtension/**/*.{h,m}',
-	    'Core/Categories/NSError*.{h,m}',
-	    'Core/Validators/EMSDictionaryValidator*.{h,m}'
+	    'Core/Categories/NSError*.{h,m}'
 	]
 	spec.public_header_files  = [
         'MobileEngage/RichNotificationExtension/EMSNotificationService.h'

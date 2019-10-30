@@ -1,16 +1,16 @@
 //
-// Copyright (c) 2018 Emarsys. All rights reserved.
+// Copyright (c) 2019 Emarsys. All rights reserved.
 //
+#import "EMSServiceDictionaryValidator.h"
 
-#import "EMSDictionaryValidator.h"
+@interface EMSServiceDictionaryValidator ()
 
-
-@interface EMSDictionaryValidator ()
 @property(nonatomic, strong) NSDictionary *dictionary;
 @property(nonatomic, strong) NSMutableArray *reasons;
+
 @end
 
-@implementation EMSDictionaryValidator
+@implementation EMSServiceDictionaryValidator
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     self = [super init];
@@ -58,7 +58,7 @@
 @implementation NSDictionary (Validator)
 
 - (NSArray *)validate:(ValidatorBlock)validator {
-    EMSDictionaryValidator *dictionaryValidator = [[EMSDictionaryValidator alloc] initWithDictionary:self];
+    EMSServiceDictionaryValidator *dictionaryValidator = [[EMSServiceDictionaryValidator alloc] initWithDictionary:self];
     validator(dictionaryValidator);
     return [dictionaryValidator failureReasons];
 }
