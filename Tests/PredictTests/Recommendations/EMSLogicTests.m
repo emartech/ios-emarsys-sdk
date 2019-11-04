@@ -150,18 +150,22 @@
     XCTAssertEqualObjects(logic.logic, @"PERSONAL");
 }
 
-- (void)testPersonal_when_thereIsNoExtensions {
+- (void)testPersonal_when_thereAreNoExtensions {
     EMSLogic *logic = [EMSLogic personalWithExtensions:nil];
 
     XCTAssertEqualObjects(logic.logic, @"PERSONAL");
     XCTAssertEqualObjects(logic.data, @{});
 }
 
-- (void)testPersonal_when_thereIsExtensions {
+- (void)testPersonal_when_thereAreExtensions {
+    NSDictionary *const expectedData = @{
+        @"extensions": @[@"1", @"2", @"3"]
+    };
+
     EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
 
-    XCTAssertEqualObjects(logic.logic, @"PERSONAL_1_2_3");
-    XCTAssertEqualObjects(logic.data, @{});
+    XCTAssertEqualObjects(logic.logic, @"PERSONAL");
+    XCTAssertEqualObjects(logic.data, expectedData);
 }
 
 @end

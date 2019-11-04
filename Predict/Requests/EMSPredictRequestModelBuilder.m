@@ -103,7 +103,17 @@
 
 - (NSMutableDictionary *)createQueryParameters {
     NSMutableDictionary *logicData = [self.logic.data mutableCopy];
-    logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
+
+    if ([self.logic.logic isEqualToString:@"PERSONAL"] && logicData[@"extensions"] != nil) {
+        NSMutableArray *logicNames = [NSMutableArray array];
+        for (NSString *extension in logicData[@"extensions"]) {
+            [logicNames addObject:[NSString stringWithFormat:@"f:PERSONAL_%@,l:%@,o:0", extension, self.limit]];
+        }
+        logicData[@"f"] = [self recommendationFilterExpectationsStringRepresentation:logicNames];
+        logicData[@"extensions"] = nil;
+    } else {
+        logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
+    }
     if (self.filter) {
         logicData[@"ex"] = [self filterQueryValue];
     }

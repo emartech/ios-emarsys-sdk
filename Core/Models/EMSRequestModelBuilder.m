@@ -55,8 +55,11 @@
                                                    resolvingAgainstBaseURL:YES];
         NSMutableArray *queryItems = [NSMutableArray array];
         for (NSString *name in queryParameters.allKeys) {
-            [queryItems addObject:[[NSURLQueryItem alloc] initWithName:name
-                                                                 value:queryParameters[name]]];
+            NSString *const queryParameterValue = queryParameters[name];
+            if ([queryParameterValue isKindOfClass:[NSString class]]) {
+                [queryItems addObject:[[NSURLQueryItem alloc] initWithName:name
+                                                                     value:queryParameterValue]];
+            }
         }
         [components setQueryItems:queryItems];
         _requestUrl = [components URL];

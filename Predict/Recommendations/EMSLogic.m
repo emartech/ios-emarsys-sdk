@@ -102,14 +102,13 @@
 }
 
 + (EMSLogic *)personalWithExtensions:(nullable NSArray<NSString *> *)extensions {
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
     NSMutableString *mutableLogic = [NSMutableString stringWithString:@"PERSONAL"];
     if (extensions) {
-        for (NSString *extension in extensions) {
-            [mutableLogic appendString:[NSString stringWithFormat:@"_%@", extension]];
-        }
+        data[@"extensions"] = extensions;
     }
     return [[EMSLogic alloc] initWithLogic:[NSString stringWithString:mutableLogic]
-                                      data:@{}];
+                                      data:[NSDictionary dictionaryWithDictionary:data]];
 }
 
 - (BOOL)isEqual:(id)other {

@@ -203,6 +203,27 @@ SPEC_BEGIN(EMSRequestModelTests)
                 }
             });
 
+            it(@"should not crash when query parameters contains array", ^{
+                NSURLComponents *expectedComponents = [[NSURLComponents alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com?queryName1=queryValue1"]
+                                                                   resolvingAgainstBaseURL:YES];
+                EMSRequestModel *returnedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                        [builder setUrl:@"https://www.emarsys.com"
+                        queryParameters:@{
+                            @"queryName1": @"queryValue1",
+                            @"queryName2": @[@"1", @"2"]
+                        }];
+                    }                                                  timestampProvider:[EMSTimestampProvider new]
+                                                                            uuidProvider:[EMSUUIDProvider new]];
+
+                NSURLComponents *componentsFromReturned = [[NSURLComponents alloc] initWithURL:returnedRequestModel.url
+                                                                       resolvingAgainstBaseURL:YES];
+                [[componentsFromReturned.host should] equal:expectedComponents.host];
+                for (NSURLQueryItem *queryItem in expectedComponents.queryItems) {
+                    [[componentsFromReturned.queryItems should] contain:queryItem];
+                }
+                [[theValue(componentsFromReturned.queryItems.count) should] equal:theValue(1)];
+            });
+
         });
 
 SPEC_END

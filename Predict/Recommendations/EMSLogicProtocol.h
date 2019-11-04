@@ -7,6 +7,7 @@
 @protocol EMSLogicProtocol <NSObject>
 
 - (NSString *)logic;
-- (NSDictionary<NSString *, NSString *> *)data;
+
+- (NSDictionary<NSString *, id> *)data;
 
 @end
