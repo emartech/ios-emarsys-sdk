@@ -290,7 +290,7 @@
 }
 
 - (void)testPersonalLogic {
-    EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
+    EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
     EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
     [builder withLogic:logic];

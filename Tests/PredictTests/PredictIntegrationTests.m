@@ -320,7 +320,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
 
             it(@"personal should recommend products", ^{
-                EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
+                EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
                 assertWithLogic(logic, 6);
             });

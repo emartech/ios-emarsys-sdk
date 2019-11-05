@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (EMSLogic *)personal;
 
-+ (EMSLogic *)personalWithExtensions:(nullable NSArray<NSString *> *)extensions;
++ (EMSLogic *)personalWithVariants:(nullable NSArray<NSString *> *)variants;
 
 @end
 

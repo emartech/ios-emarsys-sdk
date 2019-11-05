@@ -8,6 +8,8 @@
 
 - (NSString *)logic;
 
-- (NSDictionary<NSString *, id> *)data;
+- (NSDictionary<NSString *, NSString *> *)data;
+
+- (NSArray <NSString *> *)variants;
 
 @end

@@ -103,14 +103,14 @@
 
 - (NSMutableDictionary *)createQueryParameters {
     NSMutableDictionary *logicData = [self.logic.data mutableCopy];
+    NSArray<NSString *> *const variants = self.logic.variants;
 
-    if ([self.logic.logic isEqualToString:@"PERSONAL"] && logicData[@"extensions"] != nil) {
+    if (variants) {
         NSMutableArray *logicNames = [NSMutableArray array];
-        for (NSString *extension in logicData[@"extensions"]) {
-            [logicNames addObject:[NSString stringWithFormat:@"f:PERSONAL_%@,l:%@,o:0", extension, self.limit]];
+        for (NSString *variant in variants) {
+            [logicNames addObject:[NSString stringWithFormat:@"f:PERSONAL_%@,l:%@,o:0", variant, self.limit]];
         }
         logicData[@"f"] = [logicNames componentsJoinedByString:@"|"];
-        logicData[@"extensions"] = nil;
     } else {
         logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
     }

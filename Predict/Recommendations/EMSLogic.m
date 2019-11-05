@@ -10,16 +10,19 @@
 
 @property(nonatomic, strong) NSString *logic;
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, NSString *> *data;
+@property(nonatomic, strong, nullable) NSArray <NSString *> *variants;
 
 @end
 
 @implementation EMSLogic
 
 - (instancetype)initWithLogic:(NSString *)logic
-                         data:(nullable NSDictionary<NSString *, NSString *> *)data {
+                         data:(nullable NSDictionary<NSString *, NSString *> *)data
+                     variants:(nullable NSArray <NSString *> *)variants {
     if (self = [super init]) {
         _logic = logic;
         _data = data;
+        _variants = variants;
     }
     return self;
 }
@@ -32,7 +35,8 @@
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     data[@"q"] = searchTerm;
     return [[EMSLogic alloc] initWithLogic:@"SEARCH"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)cart {
@@ -46,7 +50,8 @@
         data[@"ca"] = [EMSCartItemUtils queryParamFromCartItems:cartItems];
     }
     return [[EMSLogic alloc] initWithLogic:@"CART"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)related {
@@ -59,7 +64,8 @@
         data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
     }
     return [[EMSLogic alloc] initWithLogic:@"RELATED"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)category {
@@ -70,7 +76,8 @@
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     data[@"vc"] = categoryPath;
     return [[EMSLogic alloc] initWithLogic:@"CATEGORY"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)alsoBought {
@@ -83,7 +90,8 @@
         data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
     }
     return [[EMSLogic alloc] initWithLogic:@"ALSO_BOUGHT"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)popular {
@@ -94,21 +102,18 @@
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     data[@"vc"] = categoryPath;
     return [[EMSLogic alloc] initWithLogic:@"POPULAR"
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
+                                      data:[NSDictionary dictionaryWithDictionary:data]
+                                  variants:nil];
 }
 
 + (EMSLogic *)personal {
-    return [EMSLogic personalWithExtensions:nil];
+    return [EMSLogic personalWithVariants:nil];
 }
 
-+ (EMSLogic *)personalWithExtensions:(nullable NSArray<NSString *> *)extensions {
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    NSMutableString *mutableLogic = [NSMutableString stringWithString:@"PERSONAL"];
-    if (extensions) {
-        data[@"extensions"] = extensions;
-    }
-    return [[EMSLogic alloc] initWithLogic:[NSString stringWithString:mutableLogic]
-                                      data:[NSDictionary dictionaryWithDictionary:data]];
++ (EMSLogic *)personalWithVariants:(nullable NSArray<NSString *> *)variants {
+    return [[EMSLogic alloc] initWithLogic:@"PERSONAL"
+                                      data:@{}
+                                  variants:variants];
 }
 
 - (BOOL)isEqual:(id)other {
@@ -129,13 +134,17 @@
         return NO;
     if (self.data != logic.data && ![self.data isEqualToDictionary:logic.data])
         return NO;
+    if (self.variants != logic.variants && ![self.variants isEqualToArray:logic.variants])
+        return NO;
     return YES;
 }
 
 - (NSUInteger)hash {
     NSUInteger hash = [self.logic hash];
     hash = hash * 31u + [self.data hash];
+    hash = hash * 31u + [self.variants hash];
     return hash;
 }
+
 
 @end
