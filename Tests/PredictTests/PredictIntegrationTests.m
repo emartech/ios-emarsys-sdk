@@ -325,6 +325,18 @@ SPEC_BEGIN(PredictIntegrationTests)
                 assertWithLogic(logic, 6);
             });
 
+            it(@"home should recommend products", ^{
+                EMSLogic *logic = [EMSLogic home];
+
+                assertWithLogic(logic, 2);
+            });
+
+            it(@"home should recommend products", ^{
+                EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+
+                assertWithLogic(logic, 6);
+            });
+
             it(@"category should recommend products by categoryPath", ^{
                 [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
 
