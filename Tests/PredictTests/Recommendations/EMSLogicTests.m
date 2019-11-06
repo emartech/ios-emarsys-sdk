@@ -168,4 +168,28 @@
     XCTAssertNotNil(logic.data);
 }
 
+- (void)testHome {
+    EMSLogic *logic = EMSLogic.home;
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+}
+
+- (void)testHome_when_thereAreNoVariants {
+    EMSLogic *logic = [EMSLogic homeWithVariants:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+    XCTAssertNil(logic.variants);
+    XCTAssertNotNil(logic.data);
+}
+
+- (void)testHome_when_thereAreVariants {
+    NSArray *const expectedVariants = @[@"1", @"2", @"3"];
+
+    EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+    XCTAssertEqualObjects(logic.variants, expectedVariants);
+    XCTAssertNotNil(logic.data);
+}
+
 @end

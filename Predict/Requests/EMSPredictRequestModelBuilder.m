@@ -108,7 +108,10 @@
     if (variants) {
         NSMutableArray *logicNames = [NSMutableArray array];
         for (NSString *variant in variants) {
-            [logicNames addObject:[NSString stringWithFormat:@"f:PERSONAL_%@,l:%@,o:0", variant, self.limit]];
+            [logicNames addObject:[NSString stringWithFormat:@"f:%@_%@,l:%@,o:0",
+                                                             self.logic.logic,
+                                                             variant,
+                                                             self.limit]];
         }
         logicData[@"f"] = [logicNames componentsJoinedByString:@"|"];
     } else {

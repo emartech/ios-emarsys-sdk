@@ -116,6 +116,16 @@
                                   variants:variants];
 }
 
++ (EMSLogic *)home {
+    return [EMSLogic homeWithVariants:nil];
+}
+
++ (EMSLogic *)homeWithVariants:(nullable NSArray<NSString *> *)variants {
+    return [[EMSLogic alloc] initWithLogic:@"HOME"
+                                      data:@{}
+                                  variants:variants];
+}
+
 - (BOOL)isEqual:(id)other {
     if (other == self)
         return YES;

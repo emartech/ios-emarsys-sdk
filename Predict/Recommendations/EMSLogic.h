@@ -39,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (EMSLogic *)personalWithVariants:(nullable NSArray<NSString *> *)variants;
 
++ (EMSLogic *)home;
+
++ (EMSLogic *)homeWithVariants:(nullable NSArray<NSString *> *)variants;
+
 @end
 
 NS_ASSUME_NONNULL_END
