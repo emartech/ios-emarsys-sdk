@@ -61,7 +61,7 @@
     NSString *campaignId = @"testCampaignId";
     NSString *eventName = @"inapp:viewed";
     NSDictionary *eventAttributes = @{
-        @"message_id": campaignId,
+        @"campaignId": campaignId,
         @"sid": @"testSid",
         @"url": @"https://www.test.com"
     };
@@ -91,7 +91,7 @@
     NSString *campaignId = @"testCampaignId";
     NSString *eventName = @"inapp:viewed";
     NSDictionary *eventAttributes = @{
-        @"message_id": campaignId
+        @"campaignId": campaignId
     };
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
@@ -134,10 +134,10 @@
     NSString *eventName = @"inapp:click";
 
     NSDictionary *eventAttributes = @{
-        @"message_id": campaignId,
+        @"campaignId": campaignId,
         @"sid": @"testSid",
         @"url": @"https://www.test.com",
-        @"button_id": buttonId
+        @"buttonId": buttonId
     };
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
@@ -167,8 +167,8 @@
     NSString *eventName = @"inapp:click";
 
     NSDictionary *eventAttributes = @{
-        @"message_id": campaignId,
-        @"button_id": buttonId
+        @"campaignId": campaignId,
+        @"buttonId": buttonId
     };
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId

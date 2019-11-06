@@ -30,7 +30,7 @@
 - (void)trackInAppDisplay:(MEInAppMessage *)inAppMessage {
     if (inAppMessage.campaignId) {
         NSMutableDictionary *mutableEventAttributes = [NSMutableDictionary dictionary];
-        mutableEventAttributes[@"message_id"] = inAppMessage.campaignId;
+        mutableEventAttributes[@"campaignId"] = inAppMessage.campaignId;
         mutableEventAttributes[@"sid"] = inAppMessage.sid;
         mutableEventAttributes[@"url"] = inAppMessage.url;
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inapp:viewed"
@@ -45,8 +45,8 @@
                buttonId:(NSString *)buttonId {
     if (inAppMessage.campaignId && buttonId) {
         NSMutableDictionary *mutableEventAttributes = [NSMutableDictionary dictionary];
-        mutableEventAttributes[@"message_id"] = inAppMessage.campaignId;
-        mutableEventAttributes[@"button_id"] = buttonId;
+        mutableEventAttributes[@"campaignId"] = inAppMessage.campaignId;
+        mutableEventAttributes[@"buttonId"] = buttonId;
         mutableEventAttributes[@"sid"] = inAppMessage.sid;
         mutableEventAttributes[@"url"] = inAppMessage.url;
 
