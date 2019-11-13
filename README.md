@@ -1,5 +1,6 @@
 #### Contents
 - [What is the Emarsys SDK?](#what-is-the-emarsys-sdk "What is EmarsysSDK?")
+- [Sample app](#sample-app "Sample app")
 - [Setup](#setup "Setup")
     - [Installation with CocoaPods](#1-installation-with-cocoapods "CocoaPods")
     - [Requirements](#2-requirements "Requirements")
@@ -16,6 +17,9 @@ The Emarsys SDK enables you to use Mobile Engage and Predict in a very straightf
 The Emarsys SDK is open-sourced to enhance transparency and to remove privacy concerns. This also means that you will always be up-to-date with what we are working on.
 
 Using the SDK is also beneficial from the product aspect: it simply makes it much easier to send push messages through your app. Please always use the latest version of the SDK in your app.
+
+## Sample app
+We created a sample application to help in the integration and give an example. Find instructions for the build process [here](https://github.com/emartech/ios-emarsys-sdk/tree/master/Emarsys%20Sample).
 
 ## Setup
 ### 1. Installation with CocoaPods
