@@ -150,18 +150,46 @@
     XCTAssertEqualObjects(logic.logic, @"PERSONAL");
 }
 
-- (void)testPersonal_when_thereIsNoExtensions {
-    EMSLogic *logic = [EMSLogic personalWithExtensions:nil];
+- (void)testPersonal_when_thereAreNoVariants {
+    EMSLogic *logic = [EMSLogic personalWithVariants:nil];
 
     XCTAssertEqualObjects(logic.logic, @"PERSONAL");
-    XCTAssertEqualObjects(logic.data, @{});
+    XCTAssertNil(logic.variants);
+    XCTAssertNotNil(logic.data);
 }
 
-- (void)testPersonal_when_thereIsExtensions {
-    EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
+- (void)testPersonal_when_thereAreVariants {
+    NSArray *const expectedVariants = @[@"1", @"2", @"3"];
 
-    XCTAssertEqualObjects(logic.logic, @"PERSONAL_1_2_3");
-    XCTAssertEqualObjects(logic.data, @{});
+    EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
+
+    XCTAssertEqualObjects(logic.logic, @"PERSONAL");
+    XCTAssertEqualObjects(logic.variants, expectedVariants);
+    XCTAssertNotNil(logic.data);
+}
+
+- (void)testHome {
+    EMSLogic *logic = EMSLogic.home;
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+}
+
+- (void)testHome_when_thereAreNoVariants {
+    EMSLogic *logic = [EMSLogic homeWithVariants:nil];
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+    XCTAssertNil(logic.variants);
+    XCTAssertNotNil(logic.data);
+}
+
+- (void)testHome_when_thereAreVariants {
+    NSArray *const expectedVariants = @[@"1", @"2", @"3"];
+
+    EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+
+    XCTAssertEqualObjects(logic.logic, @"HOME");
+    XCTAssertEqualObjects(logic.variants, expectedVariants);
+    XCTAssertNotNil(logic.data);
 }
 
 @end

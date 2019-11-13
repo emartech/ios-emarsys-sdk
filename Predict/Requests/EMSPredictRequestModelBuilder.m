@@ -103,7 +103,20 @@
 
 - (NSMutableDictionary *)createQueryParameters {
     NSMutableDictionary *logicData = [self.logic.data mutableCopy];
-    logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
+    NSArray<NSString *> *const variants = self.logic.variants;
+
+    if (variants) {
+        NSMutableArray *logicNames = [NSMutableArray array];
+        for (NSString *variant in variants) {
+            [logicNames addObject:[NSString stringWithFormat:@"f:%@_%@,l:%@,o:0",
+                                                             self.logic.logic,
+                                                             variant,
+                                                             self.limit]];
+        }
+        logicData[@"f"] = [logicNames componentsJoinedByString:@"|"];
+    } else {
+        logicData[@"f"] = [NSString stringWithFormat:@"f:%@,l:%@,o:0", self.logic.logic, self.limit];
+    }
     if (self.filter) {
         logicData[@"ex"] = [self filterQueryValue];
     }
@@ -127,7 +140,7 @@
         NSMutableDictionary *mutableFilterValue = [NSMutableDictionary dictionary];
         mutableFilterValue[@"f"] = recommendationFilter.field;
         mutableFilterValue[@"r"] = recommendationFilter.comparison;
-        mutableFilterValue[@"v"] = [self recommendationFilterExpectationsStringRepresentation:recommendationFilter.expectations];
+        mutableFilterValue[@"v"] = [recommendationFilter.expectations componentsJoinedByString:@"|"];
         mutableFilterValue[@"n"] = [recommendationFilter.type isEqualToString:@"EXCLUDE"] ? @NO : @YES;
         [mutableFilterValues addObject:[NSDictionary dictionaryWithDictionary:mutableFilterValue]];
     }
@@ -135,17 +148,6 @@
                                                                           options:NSJSONWritingPrettyPrinted
                                                                             error:nil]
                                  encoding:NSUTF8StringEncoding];
-}
-
-- (NSString *)recommendationFilterExpectationsStringRepresentation:(NSArray<NSString *> *)expectations {
-    NSMutableString *mutableExpectationsStringRepresentation = [NSMutableString string];
-    for (NSUInteger i = 0; i < expectations.count; ++i) {
-        if (i > 0) {
-            [mutableExpectationsStringRepresentation appendString:@"|"];
-        }
-        [mutableExpectationsStringRepresentation appendString:expectations[i]];
-    }
-    return [NSString stringWithString:mutableExpectationsStringRepresentation];
 }
 
 @end

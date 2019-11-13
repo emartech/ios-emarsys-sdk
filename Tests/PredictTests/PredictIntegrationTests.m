@@ -243,7 +243,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
         describe(@"recommendProducts", ^{
 
-            void (^assertWithLogic)(EMSLogic *logic) = ^(EMSLogic *logic) {
+            void (^assertWithLogic)(EMSLogic *logic, int expectedCount) = ^(EMSLogic *logic, int expectedCount) {
                 __block NSArray *returnedProducts = nil;
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
@@ -259,16 +259,16 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                                       timeout:30];
                 XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
                 XCTAssertNotNil(returnedProducts);
-                XCTAssertEqual([returnedProducts count], 2);
+                XCTAssertEqual([returnedProducts count], expectedCount);
             };
 
             it(@"search should recommend products by searchTerm with searchTerm", ^{
-                assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"]);
+                assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"], 2);
             });
 
             it(@"search should recommend products by searchTerm", ^{
                 [Emarsys.predict trackSearchWithSearchTerm:@"shirt"];
-                assertWithLogic(EMSLogic.search);
+                assertWithLogic(EMSLogic.search, 2);
             });
 
             it(@"cart should recommend products by cartItems with cartItems", ^{
@@ -280,7 +280,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                                     quantity:2];
 
                 EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"cart should recommend products by cartItems", ^{
@@ -292,67 +292,79 @@ SPEC_BEGIN(PredictIntegrationTests)
                                                                     quantity:2];
 
                 [Emarsys.predict trackCartWithCartItems:@[cartItem1, cartItem2]];
-                assertWithLogic(EMSLogic.cart);
+                assertWithLogic(EMSLogic.cart, 2);
             });
 
             it(@"related should recommend products by viewItemId with viewItemId", ^{
                 [Emarsys.predict trackItemViewWithItemId:@"2200"];
 
-                assertWithLogic(EMSLogic.related);
+                assertWithLogic(EMSLogic.related, 2);
             });
 
             it(@"related should recommend products by viewItemId", ^{
                 EMSLogic *logic = [EMSLogic relatedWithViewItemId:@"2200"];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"category should recommend products by categoryPath with categoryPath", ^{
                 EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"MEN>Shirts"];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"personal should recommend products", ^{
                 EMSLogic *logic = [EMSLogic personal];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"personal should recommend products", ^{
-                EMSLogic *logic = [EMSLogic personalWithExtensions:@[@"1", @"2", @"3"]];
+                EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 6);
+            });
+
+            it(@"home should recommend products", ^{
+                EMSLogic *logic = [EMSLogic home];
+
+                assertWithLogic(logic, 2);
+            });
+
+            it(@"home should recommend products", ^{
+                EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+
+                assertWithLogic(logic, 6);
             });
 
             it(@"category should recommend products by categoryPath", ^{
                 [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
 
-                assertWithLogic(EMSLogic.category);
+                assertWithLogic(EMSLogic.category, 2);
             });
 
             it(@"also bought should recommend products by viewItemId with viewItemId", ^{
                 EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"2200"];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"also bought should recommend products by viewItemId", ^{
                 [Emarsys.predict trackItemViewWithItemId:@"2200"];
 
-                assertWithLogic(EMSLogic.alsoBought);
+                assertWithLogic(EMSLogic.alsoBought, 2);
             });
 
             it(@"popular should recommend products by categoryPath with categoryPath", ^{
                 EMSLogic *logic = [EMSLogic popularWithCategoryPath:@"MEN>Shirts"];
 
-                assertWithLogic(logic);
+                assertWithLogic(logic, 2);
             });
 
             it(@"popular should recommend products by categoryPath", ^{
                 [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
 
-                assertWithLogic(EMSLogic.popular);
+                assertWithLogic(EMSLogic.popular, 2);
             });
         });
 

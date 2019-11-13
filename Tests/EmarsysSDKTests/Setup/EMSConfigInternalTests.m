@@ -9,6 +9,7 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "NSError+EMSCore.h"
 #import "EMSPushV3Internal.h"
+#import "EMSDeviceInfo.h"
 
 @interface EMSConfigInternalTests : XCTestCase
 
@@ -21,6 +22,7 @@
 @property(nonatomic, strong) MERequestContext *mockMeRequestContext;
 @property(nonatomic, strong) PRERequestContext *mockPreRequestContext;
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mockMobileEngage;
+@property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSPushV3Internal *mockPushInternal;
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) NSData *deviceToken;
@@ -42,6 +44,7 @@
     _mockPreRequestContext = OCMClassMock([PRERequestContext class]);
     _mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     _mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
+    _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
 
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -56,7 +59,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:self.mockMobileEngage
-                                                             pushInternal:self.mockPushInternal];
+                                                             pushInternal:self.mockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 }
 
 - (void)testInit_meRequestContext_mustNotBeNil {
@@ -64,7 +68,8 @@
         [[EMSConfigInternal alloc] initWithMeRequestContext:nil
                                           preRequestContext:self.mockPreRequestContext
                                                mobileEngage:self.mockMobileEngage
-                                               pushInternal:self.mockPushInternal];
+                                               pushInternal:self.mockPushInternal
+                                                 deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: meRequestContext");
@@ -76,7 +81,8 @@
         [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                           preRequestContext:self.mockPreRequestContext
                                                mobileEngage:nil
-                                               pushInternal:self.mockPushInternal];
+                                               pushInternal:self.mockPushInternal
+                                                 deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
@@ -88,7 +94,8 @@
         [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                           preRequestContext:self.mockPreRequestContext
                                                mobileEngage:self.mockMobileEngage
-                                               pushInternal:nil];
+                                               pushInternal:nil
+                                                 deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when pushInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
@@ -100,10 +107,24 @@
         [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                           preRequestContext:nil
                                                mobileEngage:self.mockMobileEngage
-                                               pushInternal:self.mockPushInternal];
+                                               pushInternal:self.mockPushInternal
+                                                 deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: preRequestContext");
+    }
+}
+
+- (void)testInit_deviceInfo_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
+                                          preRequestContext:self.mockPreRequestContext
+                                               mobileEngage:self.mockMobileEngage
+                                               pushInternal:self.mockPushInternal
+                                                 deviceInfo:nil];
+        XCTFail(@"Expected Exception when deviceInfo is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
     }
 }
 
@@ -114,7 +135,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal];
+                                                             pushInternal:strictMockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -163,7 +185,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal];
+                                                             pushInternal:strictMockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -208,7 +231,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal];
+                                                             pushInternal:strictMockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
@@ -250,7 +274,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal];
+                                                             pushInternal:strictMockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -289,7 +314,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal];
+                                                             pushInternal:strictMockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -326,7 +352,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:mockPushInternal];
+                                                             pushInternal:mockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -366,7 +393,8 @@
     _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
                                                         preRequestContext:self.mockPreRequestContext
                                                              mobileEngage:strictMockMobileEngage
-                                                             pushInternal:mockPushInternal];
+                                                             pushInternal:mockPushInternal
+                                                               deviceInfo:self.mockDeviceInfo];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
@@ -402,6 +430,32 @@
     [self.configInternal changeMerchantId:newMerchantId];
 
     OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
+}
+
+- (void)testHardwareId {
+    OCMStub([self.mockDeviceInfo hardwareId]).andReturn(@"testHardwareId");
+
+    NSString *result = [self.configInternal hardwareId];
+
+    XCTAssertEqualObjects(result, @"testHardwareId");
+}
+
+- (void)testLanguageCode {
+    OCMStub([self.mockDeviceInfo languageCode]).andReturn(@"testLanguageCode");
+
+    NSString *result = [self.configInternal languageCode];
+
+    XCTAssertEqualObjects(result, @"testLanguageCode");
+}
+
+- (void)testPushSettings {
+    NSDictionary *pushSettings = @{@"test": @"pushSettings"};
+
+    OCMStub([self.mockDeviceInfo pushSettings]).andReturn(pushSettings);
+
+    NSDictionary *result = [self.configInternal pushSettings];
+
+    XCTAssertEqualObjects(result, pushSettings);
 }
 
 @end

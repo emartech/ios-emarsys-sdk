@@ -289,6 +289,26 @@
                         }];
 }
 
+- (void)testPersonalLogic {
+    EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
+
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
+    [builder withLogic:logic];
+    EMSRequestModel *requestModel = [builder build];
+
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:PERSONAL_1,l:5,o:0%7Cf:PERSONAL_2,l:5,o:0%7Cf:PERSONAL_3,l:5,o:0");
+}
+
+- (void)testHomeLogic {
+    EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
+    [builder withLogic:logic];
+    EMSRequestModel *requestModel = [builder build];
+
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:HOME_1,l:5,o:0%7Cf:HOME_2,l:5,o:0%7Cf:HOME_3,l:5,o:0");
+}
+
 - (void)assertWithParameterizedSel:(SEL)parameterizedSel
                           emptySel:(SEL)emptySel
                              param:(id)param

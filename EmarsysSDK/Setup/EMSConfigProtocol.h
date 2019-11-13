@@ -22,6 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSNumber *)contactFieldId;
 
+- (NSString *)hardwareId;
+
+- (NSString *)languageCode;
+
+- (NSDictionary *)pushSettings;
+
 @end
 
 NS_ASSUME_NONNULL_END
