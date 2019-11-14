@@ -24,6 +24,7 @@ Pod::Spec.new do |spec|
         'EmarsysSDK/Setup/EMSConfig.h',
         'EmarsysSDK/Setup/EMSConfigBuilder.h',
         'EmarsysSDK/Setup/EMSConfigProtocol.h',
+        'EmarsysSDK/EMSAppDelegate.h'
         'Predict/Models/EMSCartItemProtocol.h',
         'Predict/Models/EMSCartItem.h',
         'Predict/Models/EMSProduct.h',
@@ -35,7 +36,7 @@ Pod::Spec.new do |spec|
         'MobileEngage/Inbox/EMSNotification.h',
         'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
         'Core/Flipper/EMSFlipperFeatures.h',
-        'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h'
+        'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h',
    	]
 	spec.libraries = 'z', 'c++'
 end
