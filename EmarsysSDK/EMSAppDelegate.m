@@ -44,7 +44,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     [Emarsys.push setPushToken:deviceToken];
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
     [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
 }
 

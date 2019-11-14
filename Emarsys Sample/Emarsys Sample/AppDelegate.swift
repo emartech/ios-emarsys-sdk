@@ -8,7 +8,7 @@ import EmarsysSDK
 class AppDelegate: EMSAppDelegate {
 
     override func provideEMSConfig() -> EMSConfig! {
-        EMSConfig.make { builder in
+        return EMSConfig.make { builder in
             builder.setMerchantId("1428C8EE286EC34B")
             builder.setContactFieldId(3)
             #if DEBUG
