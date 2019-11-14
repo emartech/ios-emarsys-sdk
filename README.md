@@ -19,7 +19,7 @@ The Emarsys SDK is open-sourced to enhance transparency and to remove privacy co
 Using the SDK is also beneficial from the product aspect: it simply makes it much easier to send push messages through your app. Please always use the latest version of the SDK in your app.
 
 ## Sample app
-We created a sample application to help in the integration and give an example. Find instructions for the build process [here](https://github.com/emartech/ios-emarsys-sdk/tree/master/Emarsys%20Sample).
+We created a sample application to help in the integration and give an example. Find instructions for the build process [here](https://github.com/emartech/ios-emarsys-sdk/tree/master/Emarsys%20Sample "Sample app").
 
 ## Setup
 ### 1. Installation with CocoaPods
