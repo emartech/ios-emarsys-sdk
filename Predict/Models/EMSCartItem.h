@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSCartItemProtocol.h"
+#import <EmarsysSDK/EMSCartItemProtocol.h>
 
 @interface EMSCartItem : NSObject <EMSCartItemProtocol>
 

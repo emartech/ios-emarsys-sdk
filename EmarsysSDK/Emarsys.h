@@ -3,14 +3,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSBlocks.h"
-#import "EMSConfig.h"
-#import "EMSPushNotificationProtocol.h"
-#import "EMSInboxProtocol.h"
-#import "EMSInAppProtocol.h"
-#import "EMSPredictProtocol.h"
-#import "EMSConfigProtocol.h"
-#import "EMSUserNotificationCenterDelegate.h"
+#import <EmarsysSDK/EMSBlocks.h>
+#import <EmarsysSDK/EMSConfig.h>
+#import <EmarsysSDK/EMSPushNotificationProtocol.h>
+#import <EmarsysSDK/EMSInboxProtocol.h>
+#import <EmarsysSDK/EMSInAppProtocol.h>
+#import <EmarsysSDK/EMSPredictProtocol.h>
+#import <EmarsysSDK/EMSConfigProtocol.h>
+#import <EmarsysSDK/EMSUserNotificationCenterDelegate.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

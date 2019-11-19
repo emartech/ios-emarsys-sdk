@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "EMSEventHandler.h"
+#import <EmarsysSDK/EMSEventHandler.h>
 
 @protocol EMSInAppProtocol <NSObject>
 

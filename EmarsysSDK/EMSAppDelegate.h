@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "EMSEventHandler.h"
+#import <EmarsysSDK/EMSEventHandler.h>
 
 @class EMSConfig;
 

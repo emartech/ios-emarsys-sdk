@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "EMSBlocks.h"
+#import <EmarsysSDK/EMSBlocks.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

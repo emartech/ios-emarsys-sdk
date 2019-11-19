@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSLogicProtocol.h"
+#import <EmarsysSDK/EMSLogicProtocol.h>
 
 @protocol EMSCartItemProtocol;
 

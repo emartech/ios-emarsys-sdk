@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "EMSCartItemProtocol.h"
+#import <EmarsysSDK/EMSCartItemProtocol.h>
 
 @class EMSProduct;
 @class EMSLogic;

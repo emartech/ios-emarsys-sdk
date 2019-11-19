@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSConfigBuilder.h"
+#import <EmarsysSDK/EMSConfigBuilder.h>
 
 @protocol EMSFlipperFeature;
 

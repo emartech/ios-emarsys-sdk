@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSBlocks.h"
+#import <EmarsysSDK/EMSBlocks.h>
 
 @protocol EMSFlipperFeature;
 

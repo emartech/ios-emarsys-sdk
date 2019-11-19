@@ -3,9 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSBlocks.h"
-#import "EMSNotification.h"
-#import "EMSNotificationInboxStatus.h"
+#import <EmarsysSDK/EMSBlocks.h>
+#import <EmarsysSDK/EMSNotification.h>
+#import <EmarsysSDK/EMSNotificationInboxStatus.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
