@@ -69,16 +69,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8ADAA670210773D500B3AC44"
-            BuildableName = "SdkHost.app"
-            BlueprintName = "SdkHost"
-            ReferencedContainer = "container:EmarsysSDK.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <LocationScenarioReference
          identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
          referenceType = "1">
