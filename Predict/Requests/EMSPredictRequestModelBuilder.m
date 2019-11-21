@@ -120,6 +120,9 @@
     if (self.filter) {
         logicData[@"ex"] = [self filterQueryValue];
     }
+    logicData[@"ci"] = [self requestContext].customerId;
+    logicData[@"vi"] = [self requestContext].visitorId;
+
     if (!self.logic.data || [self.logic.data count] == 0) {
         if ([self.logic.logic isEqualToString:@"SEARCH"]) {
             [logicData addEntriesFromDictionary:[EMSLogic searchWithSearchTerm:self.lastSearchTerm].data];

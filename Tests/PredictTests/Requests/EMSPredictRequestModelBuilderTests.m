@@ -90,9 +90,14 @@
 
 
 - (void)testLimit_defaultValue_whenNil {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = @"testVisitorId";
+    mutableQueryParams[@"ci"] = @"testCustomerId";
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -102,9 +107,14 @@
 }
 
 - (void)testLimit_defaultValue_whenLimitIsZero {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = @"testVisitorId";
+    mutableQueryParams[@"ci"] = @"testCustomerId";
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -114,9 +124,14 @@
 }
 
 - (void)testLimit_defaultValue_whenLimitIsNegative {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
+    mutableQueryParams[@"ci"] = self.mockContext.customerId;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -126,14 +141,46 @@
 }
 
 - (void)testLimit {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:123,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
+    mutableQueryParams[@"ci"] = self.mockContext.customerId;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
               [builder withLogic:logic];
               [builder withLimit:@123];
+          }];
+}
+
+- (void)testVisitorId_whenNil {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
+
+
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+          }];
+}
+
+- (void)testCustomerId_whenNil {
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"ci"] = self.mockContext.customerId;
+
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
           }];
 }
 
@@ -290,23 +337,29 @@
 }
 
 - (void)testPersonalLogic {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
     EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
-    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:PERSONAL_1,l:5,o:0%7Cf:PERSONAL_2,l:5,o:0%7Cf:PERSONAL_3,l:5,o:0");
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:PERSONAL_1,l:5,o:0%7Cf:PERSONAL_2,l:5,o:0%7Cf:PERSONAL_3,l:5,o:0&ci=testCustomerId&vi=testVisitorId");
 }
 
 - (void)testHomeLogic {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
 
     EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
-    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:HOME_1,l:5,o:0%7Cf:HOME_2,l:5,o:0%7Cf:HOME_3,l:5,o:0");
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f:HOME_1,l:5,o:0%7Cf:HOME_2,l:5,o:0%7Cf:HOME_3,l:5,o:0&ci=testCustomerId&vi=testVisitorId");
 }
 
 - (void)assertWithParameterizedSel:(SEL)parameterizedSel
@@ -336,8 +389,13 @@
 - (void)assertForLogic:(EMSLogic *)logic
        withQueryParams:(NSDictionary *)queryParams
           builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+
     NSMutableDictionary *mutableQueryParams = [queryParams mutableCopy];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
+    mutableQueryParams[@"ci"] = self.mockContext.customerId;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
