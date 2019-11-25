@@ -25,7 +25,6 @@
 
 @implementation EMSPredictRequestModelBuilderTests
 
-
 - (void)setUp {
     [super setUp];
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
@@ -42,8 +41,8 @@
     OCMStub([self.mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
     OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId");
     OCMStub([self.mockContext xp]).andReturn(@"testXP");
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
 }
-
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
@@ -88,6 +87,65 @@
     XCTAssertEqualObjects(requestModel.headers, expectedHeaders);
 }
 
+- (void)testVisitorId_isNotInCookie_butThereIsXp {
+    NSDictionary *expectedHeaders = @{
+        @"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
+                                                  self.mockContext.deviceInfo.osVersion,
+                                                  self.mockContext.deviceInfo.systemName],
+        @"Cookie": @"xp=testXp;"
+    };
+
+    EMSDeviceInfo *mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    EMSTimestampProvider *mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    EMSUUIDProvider *mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    PRERequestContext *mockContext = OCMClassMock([PRERequestContext class]);
+
+    OCMStub([mockDeviceInfo osVersion]).andReturn(@"testOSVersion");
+    OCMStub([mockDeviceInfo systemName]).andReturn(@"testSystemName");
+    OCMStub([mockTimestampProvider provideTimestamp]).andReturn([NSDate date]);
+    OCMStub([mockUuidProvider provideUUIDString]).andReturn(@"testUUUIDString");
+    OCMStub([mockContext timestampProvider]).andReturn(self.mockTimestampProvider);
+    OCMStub([mockContext uuidProvider]).andReturn(self.mockUuidProvider);
+    OCMStub([mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
+    OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
+    OCMStub([mockContext xp]).andReturn(@"testXp");
+
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+
+    EMSRequestModel *requestModel = [builder build];
+
+    XCTAssertEqualObjects(requestModel.headers, expectedHeaders);
+}
+
+- (void)testVisitorId_isInCookie_butThereIsNotXp {
+    NSDictionary *expectedHeaders = @{
+        @"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
+                                                  self.mockContext.deviceInfo.osVersion,
+                                                  self.mockContext.deviceInfo.systemName],
+        @"Cookie": @"cdv=testVisitorId;"
+    };
+
+    EMSDeviceInfo *mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    EMSTimestampProvider *mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    EMSUUIDProvider *mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    PRERequestContext *mockContext = OCMClassMock([PRERequestContext class]);
+
+    OCMStub([mockDeviceInfo osVersion]).andReturn(@"testOSVersion");
+    OCMStub([mockDeviceInfo systemName]).andReturn(@"testSystemName");
+    OCMStub([mockTimestampProvider provideTimestamp]).andReturn([NSDate date]);
+    OCMStub([mockUuidProvider provideUUIDString]).andReturn(@"testUUUIDString");
+    OCMStub([mockContext timestampProvider]).andReturn(self.mockTimestampProvider);
+    OCMStub([mockContext uuidProvider]).andReturn(self.mockUuidProvider);
+    OCMStub([mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
+    OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
+    OCMStub([mockContext visitorId]).andReturn(@"testVisitorId");
+
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+
+    EMSRequestModel *requestModel = [builder build];
+
+    XCTAssertEqualObjects(requestModel.headers, expectedHeaders);
+}
 
 - (void)testLimit_defaultValue_whenNil {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
@@ -176,6 +234,7 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"ci"] = self.mockContext.customerId;
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
 
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
@@ -183,7 +242,6 @@
               [builder withLogic:logic];
           }];
 }
-
 
 - (void)testFilter {
     NSArray<NSDictionary<NSString *, NSString *> *> *expectedFilterQueryRawValue = @[
@@ -246,6 +304,7 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"ex"] = expectedFilterQueryValue;
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -421,7 +480,7 @@
                 @"User-Agent": [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
                                                           self.mockContext.deviceInfo.osVersion,
                                                           self.mockContext.deviceInfo.systemName],
-                @"Cookie": [NSString stringWithFormat:@"xp=%@", self.mockContext.xp]
+                @"Cookie": [NSString stringWithFormat:@"xp=%@;cdv=%@;", self.mockContext.xp, self.mockContext.visitorId]
             }];
         }
                                                            timestampProvider:self.mockTimestampProvider

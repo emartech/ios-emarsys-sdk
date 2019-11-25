@@ -82,9 +82,7 @@
 
             NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionary];
             mutableHeaders[@"User-Agent"] = [self createUserAgent];
-            if (self.requestContext.xp) {
-                mutableHeaders[@"Cookie"] = [NSString stringWithFormat:@"xp=%@", self.requestContext.xp];
-            }
+            mutableHeaders[@"Cookie"] = [self createCookies];
             [builder setHeaders:[NSDictionary dictionaryWithDictionary:mutableHeaders]];
         }                                          timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
@@ -95,6 +93,21 @@
     return [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@",
                                       self.requestContext.deviceInfo.osVersion,
                                       self.requestContext.deviceInfo.systemName];
+}
+
+- (NSString *)createCookies {
+    NSString *result = nil;
+    NSMutableString *cookies = [NSMutableString string];
+    if (self.requestContext.xp) {
+        [cookies appendFormat:@"xp=%@;", self.requestContext.xp];
+    }
+    if (self.requestContext.visitorId) {
+        [cookies appendFormat:@"cdv=%@;", self.requestContext.visitorId];
+    }
+    if ([cookies length] > 0) {
+        result = [NSString stringWithString:cookies];
+    }
+    return result;
 }
 
 - (void)setupLimit {
