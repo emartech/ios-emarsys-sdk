@@ -10,6 +10,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSPushV3Internal.h"
 #import "EMSDeviceInfo.h"
+#import "EMSRequestManager.h"
+#import "EMSEmarsysRequestFactory.h"
 
 @interface EMSConfigInternalTests : XCTestCase
 
@@ -19,11 +21,13 @@
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSConfig *testConfig;
 @property(nonatomic, strong) NSArray<id <EMSFlipperFeature>> *features;
+@property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) MERequestContext *mockMeRequestContext;
 @property(nonatomic, strong) PRERequestContext *mockPreRequestContext;
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mockMobileEngage;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSPushV3Internal *mockPushInternal;
+@property(nonatomic, strong) EMSEmarsysRequestFactory *mockEmarsysRequestFactory;
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) NSData *deviceToken;
 
@@ -40,11 +44,13 @@
     id <EMSFlipperFeature> feature = OCMProtocolMock(@protocol(EMSFlipperFeature));
     _features = @[feature];
 
+    _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockMeRequestContext = OCMClassMock([MERequestContext class]);
     _mockPreRequestContext = OCMClassMock([PRERequestContext class]);
     _mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     _mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    _mockEmarsysRequestFactory = OCMClassMock([EMSEmarsysRequestFactory class]);
 
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -56,20 +62,39 @@
         [builder setExperimentalFeatures:self.features];
     }];
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:self.mockMobileEngage
-                                                             pushInternal:self.mockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:self.mockMobileEngage
+                                                           pushInternal:self.mockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
+}
+
+- (void)testInit_requestManager_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithRequestManager:nil
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
+        XCTFail(@"Expected Exception when requestManager is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
+    }
 }
 
 - (void)testInit_meRequestContext_mustNotBeNil {
     @try {
-        [[EMSConfigInternal alloc] initWithMeRequestContext:nil
-                                          preRequestContext:self.mockPreRequestContext
-                                               mobileEngage:self.mockMobileEngage
-                                               pushInternal:self.mockPushInternal
-                                                 deviceInfo:self.mockDeviceInfo];
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:nil
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: meRequestContext");
@@ -78,11 +103,13 @@
 
 - (void)testInit_mobileEngage_mustNotBeNil {
     @try {
-        [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                          preRequestContext:self.mockPreRequestContext
-                                               mobileEngage:nil
-                                               pushInternal:self.mockPushInternal
-                                                 deviceInfo:self.mockDeviceInfo];
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:nil
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
@@ -91,11 +118,13 @@
 
 - (void)testInit_pushInternal_mustNotBeNil {
     @try {
-        [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                          preRequestContext:self.mockPreRequestContext
-                                               mobileEngage:self.mockMobileEngage
-                                               pushInternal:nil
-                                                 deviceInfo:self.mockDeviceInfo];
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:nil
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
         XCTFail(@"Expected Exception when pushInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
@@ -104,11 +133,13 @@
 
 - (void)testInit_preRequestContext_mustNotBeNil {
     @try {
-        [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                          preRequestContext:nil
-                                               mobileEngage:self.mockMobileEngage
-                                               pushInternal:self.mockPushInternal
-                                                 deviceInfo:self.mockDeviceInfo];
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:nil
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: preRequestContext");
@@ -117,14 +148,31 @@
 
 - (void)testInit_deviceInfo_mustNotBeNil {
     @try {
-        [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                          preRequestContext:self.mockPreRequestContext
-                                               mobileEngage:self.mockMobileEngage
-                                               pushInternal:self.mockPushInternal
-                                                 deviceInfo:nil];
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:nil
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
+    }
+}
+
+- (void)testInit_emarsysRequestFactory_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:nil];
+        XCTFail(@"Expected Exception when emarsysRequestFactory is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: emarsysRequestFactory");
     }
 }
 
@@ -132,11 +180,13 @@
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:strictMockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -182,11 +232,13 @@
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:strictMockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -228,11 +280,13 @@
                             localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:strictMockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
@@ -271,11 +325,13 @@
                             localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:strictMockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -311,11 +367,13 @@
 
     __block NSError *returnedError = nil;
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:strictMockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:strictMockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -349,11 +407,13 @@
 
     __block NSError *returnedError = nil;
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:mockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:mockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -390,11 +450,13 @@
 
     __block NSError *returnedError = nil;
 
-    _configInternal = [[EMSConfigInternal alloc] initWithMeRequestContext:self.mockMeRequestContext
-                                                        preRequestContext:self.mockPreRequestContext
-                                                             mobileEngage:strictMockMobileEngage
-                                                             pushInternal:mockPushInternal
-                                                               deviceInfo:self.mockDeviceInfo];
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:strictMockMobileEngage
+                                                           pushInternal:mockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
@@ -456,6 +518,18 @@
     NSDictionary *result = [self.configInternal pushSettings];
 
     XCTAssertEqualObjects(result, pushSettings);
+}
+
+- (void)testDownloadConfig {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
+
+    [self.configInternal fetchRemoteConfig];
+
+    OCMVerify([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                                successBlock:[OCMArg any]
+                                                  errorBlock:[OCMArg any]]);
 }
 
 @end

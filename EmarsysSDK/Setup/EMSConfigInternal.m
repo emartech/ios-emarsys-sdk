@@ -2,12 +2,15 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "EMSConfigInternal.h"
 #import "EMSMobileEngageV3Internal.h"
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
 #import "PRERequestContext.h"
 #import "EMSDeviceInfo.h"
+#import "EMSRequestManager.h"
+#import "EMSEmarsysRequestFactory.h"
 
 @interface EMSConfigInternal ()
 
@@ -17,30 +20,49 @@
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSEmarsysRequestFactory *emarsysRequestFactory;
 
 @end
 
 @implementation EMSConfigInternal
 
-- (instancetype)initWithMeRequestContext:(MERequestContext *)meRequestContext
-                       preRequestContext:(PRERequestContext *)preRequestContext
-                            mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                            pushInternal:(EMSPushV3Internal *)pushInternal
-                              deviceInfo:(EMSDeviceInfo *)deviceInfo {
+- (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
+                      meRequestContext:(MERequestContext *)meRequestContext
+                     preRequestContext:(PRERequestContext *)preRequestContext
+                          mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
+                          pushInternal:(EMSPushV3Internal *)pushInternal
+                            deviceInfo:(EMSDeviceInfo *)deviceInfo
+                 emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory {
+    NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
     NSParameterAssert(mobileEngage);
     NSParameterAssert(pushInternal);
     NSParameterAssert(deviceInfo);
+    NSParameterAssert(emarsysRequestFactory);
 
     if (self = [super init]) {
+        _requestManager = requestManager;
         _mobileEngage = mobileEngage;
         _meRequestContext = meRequestContext;
         _preRequestContext = preRequestContext;
         _pushInternal = pushInternal;
         _deviceInfo = deviceInfo;
+        _emarsysRequestFactory = emarsysRequestFactory;
     }
     return self;
+}
+
+- (void)fetchRemoteConfig {
+    EMSRequestModel *requestModel = [self.emarsysRequestFactory createRemoteConfigRequestModel];
+    [self.requestManager submitRequestModelNow:requestModel
+                                  successBlock:^(NSString *requestId, EMSResponseModel *response) {
+
+                                  }
+                                    errorBlock:^(NSString *requestId, NSError *error) {
+
+                                    }];
 }
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode

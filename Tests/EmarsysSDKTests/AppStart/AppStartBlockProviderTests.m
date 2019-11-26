@@ -6,6 +6,7 @@
 #import "Kiwi.h"
 #import "EMSRequestManager.h"
 #import "MERequestContext.h"
+#import "EMSConfigInternal.h"
 #import "AppStartBlockProvider.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "EMSRequestFactory.h"
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
+@property(nonatomic, strong) EMSConfigInternal *mockConfigInternal;
 @property(nonatomic, strong) id mockDeviceInfoClient;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) MEHandlerBlock appStartEventBlock;
@@ -36,6 +38,7 @@
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockDeviceInfoClient = OCMProtocolMock(@protocol(EMSDeviceInfoClientProtocol));
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    _mockConfigInternal = OCMClassMock([EMSConfigInternal class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                          contactFieldId:self.contactFieldId
                                                            uuidProvider:[EMSUUIDProvider new]
@@ -47,7 +50,8 @@
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                                     requestFactory:self.mockRequestFactory
                                                                     requestContext:self.requestContext
-                                                                  deviceInfoClient:self.mockDeviceInfoClient];
+                                                                  deviceInfoClient:self.mockDeviceInfoClient
+                                                                    configInternal:self.mockConfigInternal];
     _appStartEventBlock = [self.appStartBlockProvider createAppStartEventBlock];
 }
 
@@ -60,7 +64,8 @@
         [[AppStartBlockProvider alloc] initWithRequestManager:nil
                                                requestFactory:self.mockRequestFactory
                                                requestContext:self.mockRequestContext
-                                             deviceInfoClient:self.mockDeviceInfoClient];
+                                             deviceInfoClient:self.mockDeviceInfoClient
+                                               configInternal:self.mockConfigInternal];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -72,7 +77,8 @@
         [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                requestFactory:nil
                                                requestContext:self.mockRequestContext
-                                             deviceInfoClient:self.mockDeviceInfoClient];
+                                             deviceInfoClient:self.mockDeviceInfoClient
+                                               configInternal:self.mockConfigInternal];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -84,7 +90,8 @@
         [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                requestFactory:self.mockRequestFactory
                                                requestContext:nil
-                                             deviceInfoClient:self.mockDeviceInfoClient];
+                                             deviceInfoClient:self.mockDeviceInfoClient
+                                               configInternal:self.mockConfigInternal];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -96,10 +103,24 @@
         [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                requestFactory:self.mockRequestFactory
                                                requestContext:self.mockRequestContext
-                                             deviceInfoClient:nil];
+                                             deviceInfoClient:nil
+                                               configInternal:self.mockConfigInternal];
         XCTFail(@"Expected Exception when deviceInfoClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
+    }
+}
+
+- (void)testInit_configInternal_mustNotBeNil {
+    @try {
+        [[AppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                               requestFactory:self.mockRequestFactory
+                                               requestContext:self.mockRequestContext
+                                             deviceInfoClient:self.mockDeviceInfoClient
+                                               configInternal:nil];
+        XCTFail(@"Expected Exception when configInternal is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: configInternal");
     }
 }
 
@@ -135,5 +156,12 @@
     OCMVerify([self.mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:nil];);
 }
 
+- (void)testCreateRemoteConfigEventBlock {
+    _appStartEventBlock = [self.appStartBlockProvider createRemoteConfigEventBlock];
+
+    self.appStartEventBlock();
+
+    OCMVerify([self.mockConfigInternal fetchRemoteConfig]);
+}
 
 @end

@@ -8,16 +8,20 @@
 @class MERequestContext;
 @class EMSRequestFactory;
 @protocol EMSDeviceInfoClientProtocol;
+@class EMSConfigInternal;
 
 @interface AppStartBlockProvider : NSObject
 
-        - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
-                                requestFactory:(EMSRequestFactory *)requestFactory
-                                requestContext:(MERequestContext *)requestContext
-                              deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
+- (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
+                        requestFactory:(EMSRequestFactory *)requestFactory
+                        requestContext:(MERequestContext *)requestContext
+                      deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
+                        configInternal:(EMSConfigInternal *)configInternal;
 
 - (MEHandlerBlock)createAppStartEventBlock;
 
 - (MEHandlerBlock)createDeviceInfoEventBlock;
+
+- (MEHandlerBlock)createRemoteConfigEventBlock;
 
 @end

@@ -66,6 +66,7 @@
 #import "EMSConfigProtocol.h"
 #import "EMSConfigInternal.h"
 #import "EMSXPResponseHandler.h"
+#import "EMSEmarsysRequestFactory.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -260,11 +261,6 @@
                                                                            deviceInfo:deviceInfo
                                                                        requestContext:self.requestContext];
 
-    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
-                                                                    requestFactory:self.requestFactory
-                                                                    requestContext:self.requestContext
-                                                                  deviceInfoClient:self.deviceInfoClient];
-
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext];
     _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                    requestManager:self.requestManager
@@ -299,11 +295,21 @@
     _loggingInbox = [EMSLoggingInbox new];
     _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
 
-    _config = [[EMSConfigInternal alloc] initWithMeRequestContext:self.requestContext
-                                                preRequestContext:self.predictRequestContext
-                                                     mobileEngage:self.mobileEngage
-                                                     pushInternal:self.push
-                                                       deviceInfo:deviceInfo];
+    EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
+                                                                                                     uuidProvider:uuidProvider];
+    _config = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
+                                               meRequestContext:self.requestContext
+                                              preRequestContext:self.predictRequestContext
+                                                   mobileEngage:self.mobileEngage
+                                                   pushInternal:self.push
+                                                     deviceInfo:deviceInfo
+                                          emarsysRequestFactory:emarsysRequestFactory];
+
+    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
+                                                                    requestFactory:self.requestFactory
+                                                                    requestContext:self.requestContext
+                                                                  deviceInfoClient:self.deviceInfoClient
+                                                                    configInternal:self.config];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

@@ -256,18 +256,25 @@ SPEC_BEGIN(EmarsysTests)
                         };
                         void (^appStartBlock2)() = ^{
                         };
+                        void (^appStartBlock3)() = ^{
+                        };
                         [[appStartBlockProvider should] receive:@selector(createAppStartEventBlock)
                                                       andReturn:appStartBlock
                                                   withArguments:requestManager, requestContext];
                         [[appStartBlockProvider should] receive:@selector(createDeviceInfoEventBlock)
                                                       andReturn:appStartBlock2
                                                   withArguments:requestManager, requestFactory, deviceInfo];
+                        [[appStartBlockProvider should] receive:@selector(createRemoteConfigEventBlock)
+                                                      andReturn:appStartBlock3];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock,
                                                                         UIApplicationDidFinishLaunchingNotification];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock2,
                                                                         UIApplicationDidBecomeActiveNotification];
+                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                                                          withArguments:appStartBlock3,
+                                                                        UIApplicationDidFinishLaunchingNotification];
                         [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                            withDependencyContainer:dependencyContainer];
                     });
@@ -550,10 +557,10 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                                [builder setMerchantId:@"1428C8EE286EC34B"];
-                                [builder setContactFieldId:@3];
-                            }]
+                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                            [builder setMerchantId:@"1428C8EE286EC34B"];
+                            [builder setContactFieldId:@3];
+                        }]
                                          dependencyContainer:nil];
                 });
 
@@ -609,7 +616,7 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            }]
+                        }]
                                          dependencyContainer:nil];
                 });
 
