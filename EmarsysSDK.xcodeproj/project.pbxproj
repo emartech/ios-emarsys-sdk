@@ -684,6 +684,22 @@
 		B75FC0362E30B5F95C0FFE21 /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2616713A1BBA13B81E388BC0 /* libPods-MobileEngageTests.a */; };
 		BB2EE54921F0A1EF003F09F5 /* EMSNetworkingTime.h in Headers */ = {isa = PBXBuildFile; fileRef = BB2EE54721F0A1EF003F09F5 /* EMSNetworkingTime.h */; };
 		BB2EE54A21F0A1EF003F09F5 /* EMSNetworkingTime.m in Sources */ = {isa = PBXBuildFile; fileRef = BB2EE54821F0A1EF003F09F5 /* EMSNetworkingTime.m */; };
+		FA956659238D5E7D00D29331 /* EMSNotificationService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F252DE5CF270FBCF5730 /* EMSNotificationService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FA95665A238D5E8E00D29331 /* MEDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F190532067AAA2686548 /* MEDownloader.h */; };
+		FA95665B238D5E9000D29331 /* MEDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F42AFFE0000A083514C8 /* MEDownloader.m */; };
+		FA95665C238D5E9600D29331 /* EMSNotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F62900BAA30719F76C21 /* EMSNotificationService.m */; };
+		FA95665D238D5E9800D29331 /* EMSNotificationService+Actions.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FC0E155016B12F07F1D6 /* EMSNotificationService+Actions.h */; };
+		FA95665E238D5E9A00D29331 /* EMSNotificationService+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FC517D4A7EC6C74925CC /* EMSNotificationService+Actions.m */; };
+		FA95665F238D5E9D00D29331 /* EMSNotificationService+Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F6BBBCA74DC2D6B8B951 /* EMSNotificationService+Attachment.h */; };
+		FA956660238D5E9F00D29331 /* EMSNotificationService+Attachment.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F629A1230F3868F33599 /* EMSNotificationService+Attachment.m */; };
+		FA956661238D5EA100D29331 /* EMSNotificationService+PushToInApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FFB6D9583CE992D47DEB /* EMSNotificationService+PushToInApp.h */; };
+		FA956662238D5EA300D29331 /* EMSNotificationService+PushToInApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F598A540C2160F5A7354 /* EMSNotificationService+PushToInApp.m */; };
+		FA956663238D5EA700D29331 /* EMSServiceDictionaryValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F8EAD3518FDA1D98838A /* EMSServiceDictionaryValidator.m */; };
+		FA956664238D5EAA00D29331 /* EMSServiceDictionaryValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F8AC374A81B668D80303 /* EMSServiceDictionaryValidator.h */; };
+		FA956665238D5EDD00D29331 /* NSError+EMSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F16EC2DF2E5C83611D2A /* NSError+EMSCore.h */; };
+		FA956666238D5EDF00D29331 /* NSError+EMSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F023D34BD66CB5A60B0F /* NSError+EMSCore.m */; };
+		FA95666A238D675500D29331 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA956669238D675500D29331 /* Info.plist */; };
+		FA95666B238D676200D29331 /* EmarsysNotificationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FA956668238D675500D29331 /* EmarsysNotificationService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FAE8D9CE238438B40042779F /* EmarsysSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE8D9CD238438B40042779F /* EmarsysSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -1314,6 +1330,10 @@
 		CF131E5D87BC1CC303B5552D /* libPods-CoreTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoreTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11263AE0CD58801E077B062 /* Pods-PredictTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D9BE762205DFCE98077BAB7B /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		FA956657238D5BD800D29331 /* EmarsysNotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EmarsysNotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA956658238D5BD900D29331 /* EmarsysSDK copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EmarsysSDK copy-Info.plist"; path = "/Users/mikaellechat/Projects/Emarsys.iOS.SDK/EmarsysSDK copy-Info.plist"; sourceTree = "<absolute>"; };
+		FA956668238D675500D29331 /* EmarsysNotificationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmarsysNotificationService.h; sourceTree = "<group>"; };
+		FA956669238D675500D29331 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAE8D9CD238438B40042779F /* EmarsysSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmarsysSDK.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1376,6 +1396,13 @@
 			files = (
 				8AFCA44721393CF60052FEFA /* EmarsysSDK.framework in Frameworks */,
 				598A8766A449BA213B9A5B40 /* libPods-EmarsysSDKTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FA95658D238D5BD800D29331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1578,6 +1605,7 @@
 				8A102E452112F7F90046BAFB /* CoreTests.xctest */,
 				8AFCA42221393CF30052FEFA /* PredictTests.xctest */,
 				8AFCA44D21393CF60052FEFA /* EmarsysSDKTests.xctest */,
+				FA956657238D5BD800D29331 /* EmarsysNotificationService.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1894,6 +1922,7 @@
 				8AB2F98521075A8D0030E659 /* Tests */,
 				8ADAA672210773D500B3AC44 /* SdkHost */,
 				8AEBEC5D210866C200FC6E83 /* EmarsysSDK */,
+				FA956667238D675500D29331 /* EmarsysNotificationService */,
 				32C6F25BFFBBEF479ECB21DC /* Products */,
 				32C6F83DAB1D85E0E1E82F55 /* MobileEngage */,
 				32C6FBBA4A94C3A905400870 /* Core */,
@@ -1905,6 +1934,7 @@
 				32C6F1535D671891FDE38734 /* Predict */,
 				374603FCB581473C4D1E29CE /* EMSCompletionMiddleware.h */,
 				374609501FD77C66DF535AD0 /* EMSCompletionMiddleware.m */,
+				FA956658238D5BD900D29331 /* EmarsysSDK copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2804,6 +2834,15 @@
 			path = EmarsysSDKTests;
 			sourceTree = "<group>";
 		};
+		FA956667238D675500D29331 /* EmarsysNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				FA956668238D675500D29331 /* EmarsysNotificationService.h */,
+				FA956669238D675500D29331 /* Info.plist */,
+			);
+			path = EmarsysNotificationService;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3010,6 +3049,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FA95658E238D5BD800D29331 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA956661238D5EA100D29331 /* EMSNotificationService+PushToInApp.h in Headers */,
+				FA956664238D5EAA00D29331 /* EMSServiceDictionaryValidator.h in Headers */,
+				FA956665238D5EDD00D29331 /* NSError+EMSCore.h in Headers */,
+				FA956659238D5E7D00D29331 /* EMSNotificationService.h in Headers */,
+				FA95665A238D5E8E00D29331 /* MEDownloader.h in Headers */,
+				FA95665F238D5E9D00D29331 /* EMSNotificationService+Attachment.h in Headers */,
+				FA95666B238D676200D29331 /* EmarsysNotificationService.h in Headers */,
+				FA95665D238D5E9800D29331 /* EMSNotificationService+Actions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -3145,6 +3199,24 @@
 			productReference = 8AFCA44D21393CF60052FEFA /* EmarsysSDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		FA9564F4238D5BD800D29331 /* EmarsysNotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FA956654238D5BD800D29331 /* Build configuration list for PBXNativeTarget "EmarsysNotificationService" */;
+			buildPhases = (
+				FA9564F5238D5BD800D29331 /* Sources */,
+				FA95658D238D5BD800D29331 /* Frameworks */,
+				FA95658E238D5BD800D29331 /* Headers */,
+				FA956653238D5BD800D29331 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EmarsysNotificationService;
+			productName = sdk;
+			productReference = FA956657238D5BD800D29331 /* EmarsysNotificationService.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3190,6 +3262,10 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
+					FA9564F4238D5BD800D29331 = {
+						DevelopmentTeam = 7ZFXXDJH82;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 32C6FD939AA598CAB2F34316 /* Build configuration list for PBXProject "EmarsysSDK" */;
@@ -3209,6 +3285,7 @@
 				8AB2F98321075A8D0030E659 /* Tests */,
 				8ADAA670210773D500B3AC44 /* SdkHost */,
 				8AEBEC5B210866C200FC6E83 /* EmarsysSDK */,
+				FA9564F4238D5BD800D29331 /* EmarsysNotificationService */,
 				8A102D1A2112F3B50046BAFB /* MobileEngageTests */,
 				8A102E022112F7F90046BAFB /* CoreTests */,
 				8AFCA3F921393CF30052FEFA /* PredictTests */,
@@ -3236,6 +3313,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA95666A238D675500D29331 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3264,6 +3342,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8AFCA44921393CF60052FEFA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FA956653238D5BD800D29331 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3901,6 +3986,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FA9564F5238D5BD800D29331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA956662238D5EA300D29331 /* EMSNotificationService+PushToInApp.m in Sources */,
+				FA95665E238D5E9A00D29331 /* EMSNotificationService+Actions.m in Sources */,
+				FA95665C238D5E9600D29331 /* EMSNotificationService.m in Sources */,
+				FA95665B238D5E9000D29331 /* MEDownloader.m in Sources */,
+				FA956663238D5EA700D29331 /* EMSServiceDictionaryValidator.m in Sources */,
+				FA956660238D5E9F00D29331 /* EMSNotificationService+Attachment.m in Sources */,
+				FA956666238D5EDF00D29331 /* NSError+EMSCore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -4350,6 +4449,60 @@
 			};
 			name = Release;
 		};
+		FA956655238D5BD800D29331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
+				INFOPLIST_FILE = EmarsysNotificationService/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.notificationservice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		FA956656238D5BD800D29331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
+				INFOPLIST_FILE = EmarsysNotificationService/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.notificationservice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4421,6 +4574,15 @@
 			buildConfigurations = (
 				8AFCA44B21393CF60052FEFA /* Debug */,
 				8AFCA44C21393CF60052FEFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FA956654238D5BD800D29331 /* Build configuration list for PBXNativeTarget "EmarsysNotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FA956655238D5BD800D29331 /* Debug */,
+				FA956656238D5BD800D29331 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
