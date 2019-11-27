@@ -3227,18 +3227,15 @@
 				ORGANIZATIONNAME = Emarsys;
 				TargetAttributes = {
 					8A102D1A2112F3B50046BAFB = {
-						DevelopmentTeam = 7ZFXXDJH82;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
 					8A102E022112F7F90046BAFB = {
-						DevelopmentTeam = 7ZFXXDJH82;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
 					8AB2F98321075A8D0030E659 = {
 						CreatedOnToolsVersion = 9.4.1;
-						DevelopmentTeam = 7ZFXXDJH82;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
@@ -3249,7 +3246,6 @@
 					};
 					8AEBEC5B210866C200FC6E83 = {
 						CreatedOnToolsVersion = 9.4.1;
-						DevelopmentTeam = 7ZFXXDJH82;
 						ProvisioningStyle = Automatic;
 					};
 					8AFCA3F921393CF30052FEFA = {
@@ -3263,7 +3259,6 @@
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
 					FA9564F4238D5BD800D29331 = {
-						DevelopmentTeam = 7ZFXXDJH82;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -4176,7 +4171,7 @@
 			baseConfigurationReference = 49FF37C15761FBE45B2CD9F1 /* Pods-MobileEngageTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/MobileEngageTests.plist;
@@ -4195,7 +4190,7 @@
 			baseConfigurationReference = AADC43E0877E94D892F291BC /* Pods-MobileEngageTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/MobileEngageTests.plist;
@@ -4214,7 +4209,7 @@
 			baseConfigurationReference = 56ABE709A0B437BA62F0B88E /* Pods-CoreTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/CoreTests.plist;
@@ -4233,7 +4228,7 @@
 			baseConfigurationReference = 2C67DE6A8180135ADAD596AF /* Pods-CoreTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/CoreTests.plist;
@@ -4252,7 +4247,7 @@
 			baseConfigurationReference = D9BE762205DFCE98077BAB7B /* Pods-Tests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -4272,7 +4267,7 @@
 			baseConfigurationReference = 9BE5D288FCAD752019B65A30 /* Pods-Tests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -4326,7 +4321,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4353,7 +4348,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4452,11 +4447,12 @@
 		FA956655238D5BD800D29331 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4479,11 +4475,12 @@
 		FA956656238D5BD800D29331 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
