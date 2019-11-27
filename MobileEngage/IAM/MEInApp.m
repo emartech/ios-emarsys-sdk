@@ -16,6 +16,7 @@
 #import "EMSMacros.h"
 #import "EMSInAppLoadingTime.h"
 #import "EMSInAppOnScreenTime.h"
+#import "EMSCompletionBlockProvider.h"
 
 @interface MEInApp () <MEIAMProtocol>
 
@@ -26,6 +27,7 @@
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
+@property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
 
 @property(nonatomic, assign) BOOL paused;
 
@@ -38,15 +40,18 @@
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
     NSParameterAssert(windowProvider);
     NSParameterAssert(mainWindowProvider);
     NSParameterAssert(timestampProvider);
+    NSParameterAssert(completionBlockProvider);
     NSParameterAssert(displayedIamRepository);
     NSParameterAssert(buttonClickRepository);
     if (self = [super init]) {
         _timestampProvider = timestampProvider;
+        _completionBlockProvider = completionBlockProvider;
         _windowProvider = windowProvider;
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
                                                                                                                                                                 buttonClickRepository:buttonClickRepository]]];
@@ -101,10 +106,10 @@
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController presentViewController:meiamViewController
                                                     animated:YES
-                                                  completion:^{
+                                                  completion:[self.completionBlockProvider provideCompletion:^{
                                                       weakSelf.onScreenShowTimestamp = [weakSelf.timestampProvider provideTimestamp];
                                                       [weakSelf trackIAMDisplay:message];
-                                                  }];
+                                                  }]];
 }
 
 - (void)trackIAMDisplay:(MEInAppMessage *)message {
@@ -129,6 +134,5 @@
                                                               }
                                                           }];
 }
-
 
 @end

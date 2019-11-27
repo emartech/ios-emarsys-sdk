@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^EMSSuccessBlock)(void);
+typedef void (^EMSCompletion)(void);
 
 typedef void (^EMSCompletionBlock)(NSError* _Nullable error);
 

@@ -9,6 +9,7 @@
 
 @property(nonatomic, strong) MEInAppMessage *inAppMessage;
 @property(nonatomic, strong) NSString *buttonId;
+@property(nonatomic, strong) NSOperationQueue *displayOperationQueue;
 
 - (instancetype)initWithDisplayExpectation:(XCTestExpectation *)displayExpectation
                           clickExpectation:(XCTestExpectation *)clickExpectation;

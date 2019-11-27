@@ -67,6 +67,7 @@
 #import "EMSConfigInternal.h"
 #import "EMSXPResponseHandler.h"
 #import "EMSEmarsysRequestFactory.h"
+#import "EMSCompletionBlockProvider.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -140,9 +141,15 @@
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
 
+    _operationQueue = [EMSOperationQueue new];
+    _operationQueue.maxConcurrentOperationCount = 1;
+    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
+    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
+
     _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
                                 mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
                                  timestampProvider:timestampProvider
+                           completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.operationQueue]
                             displayedIamRepository:displayedIAMRepository
                              buttonClickRepository:buttonClickRepository];
     _loggingIam = [EMSLoggingInApp new];
@@ -156,11 +163,6 @@
                                                                                                 displayedIAMRepository:displayedIAMRepository];
 
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
-
-    _operationQueue = [EMSOperationQueue new];
-    _operationQueue.maxConcurrentOperationCount = 1;
-    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
-    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
 
     _logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                           opertaionQueue:self.operationQueue

@@ -11,6 +11,7 @@
 #import "MEDisplayedIAMRepository.h"
 #import "FakeInAppTracker.h"
 #import "EMSViewControllerProvider.h"
+#import "EMSCompletionBlockProvider.h"
 
 SPEC_BEGIN(MEInAppTests)
 
@@ -24,6 +25,7 @@ SPEC_BEGIN(MEInAppTests)
         __block NSDate *secondTimestamp;
         __block NSDate *thirdTimestamp;
         __block MEDisplayedIAMRepository *displayedIAMRepository;
+        __block NSOperationQueue *operationQueue;
 
         beforeEach(^{
             NSDate *renderEndTime = [NSDate dateWithTimeIntervalSince1970:103];
@@ -47,9 +49,13 @@ SPEC_BEGIN(MEInAppTests)
                        andReturn:[[[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider] provideWindow]];
             displayedIAMRepository = [MEDisplayedIAMRepository nullMock];
 
+            operationQueue = [NSOperationQueue new];
+            operationQueue.name = @"operationQueueForTest";
+
             inApp = [[MEInApp alloc] initWithWindowProvider:windowProvider
                                          mainWindowProvider:[EMSMainWindowProvider nullMock]
                                           timestampProvider:timestampProvider
+                                    completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:operationQueue]
                                      displayedIamRepository:displayedIAMRepository
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
             [inApp setInAppTracker:inAppTracker];
@@ -62,6 +68,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:nil
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when windowProvider is nil!");
@@ -76,6 +83,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:nil
                                           timestampProvider:[EMSTimestampProvider mock]
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when mainWindowProvider is nil!");
@@ -90,6 +98,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:nil
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when timestampProvider is nil!");
@@ -99,11 +108,27 @@ SPEC_BEGIN(MEInAppTests)
                 }
             });
 
+            it(@"should throw exception when completionBlockProvider is nil", ^{
+                @try {
+                    [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
+                                         mainWindowProvider:[EMSMainWindowProvider mock]
+                                          timestampProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:nil
+                                     displayedIamRepository:[MEDisplayedIAMRepository mock]
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                    fail(@"Expected Exception when completionBlockProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: completionBlockProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
             it(@"should throw exception when displayedIamRepository is nil", ^{
                 @try {
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:nil
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]];
                     fail(@"Expected Exception when displayedIamRepository is nil!");
@@ -118,6 +143,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:nil];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
@@ -199,6 +225,8 @@ SPEC_BEGIN(MEInAppTests)
 
                 [EMSWaiter waitForExpectations:@[exp, displayExpectation]
                                        timeout:10];
+
+                [[inAppTracker.displayOperationQueue should] equal:operationQueue];
             });
 
             it(@"should use windowProvider to create iamWindow", ^{

@@ -22,9 +22,9 @@
     return self;
 }
 
-
 - (void)trackInAppDisplay:(MEInAppMessage *)inAppMessage {
     self.inAppMessage = inAppMessage;
+    self.displayOperationQueue = [NSOperationQueue currentQueue];
     [self.displayExpectation fulfill];
 }
 
