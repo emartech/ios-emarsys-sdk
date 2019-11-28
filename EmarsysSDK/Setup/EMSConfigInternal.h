@@ -14,6 +14,7 @@
 @class EMSDeviceInfo;
 @class EMSRequestManager;
 @class EMSEmarsysRequestFactory;
+@class EMSRemoteConfigResponseMapper;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
@@ -23,7 +24,8 @@
                           mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
                           pushInternal:(EMSPushV3Internal *)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
-                 emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory;
+                 emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
+            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper;
 
 - (void)fetchRemoteConfig;
 

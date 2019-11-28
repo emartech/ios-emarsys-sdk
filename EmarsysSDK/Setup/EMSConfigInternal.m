@@ -11,6 +11,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSRequestManager.h"
 #import "EMSEmarsysRequestFactory.h"
+#import "EMSRemoteConfigResponseMapper.h"
 
 @interface EMSConfigInternal ()
 
@@ -33,7 +34,8 @@
                           mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
                           pushInternal:(EMSPushV3Internal *)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
-                 emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory {
+                 emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
+            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
@@ -41,6 +43,7 @@
     NSParameterAssert(pushInternal);
     NSParameterAssert(deviceInfo);
     NSParameterAssert(emarsysRequestFactory);
+    NSParameterAssert(remoteConfigResponseMapper);
 
     if (self = [super init]) {
         _requestManager = requestManager;

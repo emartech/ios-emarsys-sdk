@@ -68,6 +68,7 @@
 #import "EMSXPResponseHandler.h"
 #import "EMSEmarsysRequestFactory.h"
 #import "EMSCompletionBlockProvider.h"
+#import "EMSRemoteConfigResponseMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -305,7 +306,8 @@
                                                    mobileEngage:self.mobileEngage
                                                    pushInternal:self.push
                                                      deviceInfo:deviceInfo
-                                          emarsysRequestFactory:emarsysRequestFactory];
+                                          emarsysRequestFactory:emarsysRequestFactory
+                                     remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]];
 
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                     requestFactory:self.requestFactory
