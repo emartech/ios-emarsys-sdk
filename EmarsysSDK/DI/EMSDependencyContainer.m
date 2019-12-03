@@ -287,7 +287,8 @@
                                                                            deviceInfo:deviceInfo
                                                                        requestContext:self.requestContext];
 
-    EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext];
+    EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
+                                                                                                                          endpoint:endpoint];
     _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                    requestManager:self.requestManager
                                            requestBuilderProvider:builderProvider

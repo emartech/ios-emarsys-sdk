@@ -9,8 +9,7 @@
 @class EMSLogic;
 @protocol EMSCartItemProtocol;
 @protocol EMSRecommendationFilterProtocol;
-
-#define PREDICT_URL(merchantId) [NSString stringWithFormat:@"https://recommender.scarabresearch.com/merchants/%@/", merchantId]
+@class EMSEndpoint;
 
 #define DEFAULT_LIMIT @5
 
@@ -18,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSPredictRequestModelBuilder : NSObject
 
-- (instancetype)initWithContext:(PRERequestContext *)requestContext;
+- (instancetype)initWithContext:(PRERequestContext *)requestContext
+                       endpoint:(EMSEndpoint *)endpoint;
 
 - (instancetype)withLogic:(EMSLogic *)logic;
 

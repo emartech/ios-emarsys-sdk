@@ -6,11 +6,13 @@
 
 @class EMSPredictRequestModelBuilder;
 @class PRERequestContext;
+@class EMSEndpoint;
 
 
 @interface EMSPredictRequestModelBuilderProvider : NSObject
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext;
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint;
 
 - (EMSPredictRequestModelBuilder *)provideBuilder;
 @end

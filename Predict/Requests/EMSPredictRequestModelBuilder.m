@@ -9,6 +9,7 @@
 #import "EMSLogic.h"
 #import "EMSCartItemProtocol.h"
 #import "EMSRecommendationFilterProtocol.h"
+#import "EMSEndpoint.h"
 
 @interface EMSPredictRequestModelBuilder ()
 
@@ -20,15 +21,19 @@
 @property(nonatomic, strong) NSString *lastCategoryPath;
 @property(nonatomic, strong) NSNumber *limit;
 @property(nonatomic, strong) NSArray<id <EMSRecommendationFilterProtocol>> *filter;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
 @implementation EMSPredictRequestModelBuilder
 
-- (instancetype)initWithContext:(PRERequestContext *)requestContext {
+- (instancetype)initWithContext:(PRERequestContext *)requestContext
+                       endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
@@ -72,10 +77,14 @@
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             if (self.logic) {
                 [self setupLimit];
-                [builder setUrl:PREDICT_URL(self.requestContext.merchantId)
+                [builder setUrl:[NSString stringWithFormat:@"%@/merchants/%@/",
+                                                           [self.endpoint predictUrl],
+                                                           self.requestContext.merchantId]
                 queryParameters:[NSDictionary dictionaryWithDictionary:[self createQueryParameters]]];
             } else {
-                [builder setUrl:PREDICT_URL(self.requestContext.merchantId)];
+                [builder setUrl:[NSString stringWithFormat:@"%@/merchants/%@/",
+                                                           [self.endpoint predictUrl],
+                                                           self.requestContext.merchantId]];
             }
 
             [builder setMethod:HTTPMethodGET];

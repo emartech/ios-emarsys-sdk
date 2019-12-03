@@ -13,6 +13,7 @@
 #import "EMSLogic.h"
 #import "EMSCartItem.h"
 #import "EMSRecommendationFilter.h"
+#import "EMSEndpoint.h"
 
 @interface EMSPredictRequestModelBuilderTests : XCTestCase
 
@@ -20,6 +21,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *mockUuidProvider;
 @property(nonatomic, strong) PRERequestContext *mockContext;
+@property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 
 @end
 
@@ -31,6 +33,7 @@
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockContext = OCMClassMock([PRERequestContext class]);
+    _mockEndpoint = OCMClassMock([EMSEndpoint class]);
 
     OCMStub([self.mockDeviceInfo osVersion]).andReturn(@"testOSVersion");
     OCMStub([self.mockDeviceInfo systemName]).andReturn(@"testSystemName");
@@ -42,14 +45,26 @@
     OCMStub([self.mockContext merchantId]).andReturn(@"testMerchantId");
     OCMStub([self.mockContext xp]).andReturn(@"testXP");
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+    OCMStub([self.mockEndpoint predictUrl]).andReturn(@"https://recommender.scarabresearch.com");
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [[EMSPredictRequestModelBuilder alloc] initWithContext:nil];
+        [[EMSPredictRequestModelBuilder alloc] initWithContext:nil
+                                                      endpoint:self.mockEndpoint];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNil {
+    @try {
+        [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext
+                                                      endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 
@@ -80,7 +95,8 @@
     OCMStub([mockContext deviceInfo]).andReturn(self.mockDeviceInfo);
     OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext
+                                                                                           endpoint:self.mockEndpoint];
 
     EMSRequestModel *requestModel = [builder build];
 
@@ -110,7 +126,8 @@
     OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
     OCMStub([mockContext xp]).andReturn(@"testXp");
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext
+                                                                                           endpoint:self.mockEndpoint];
 
     EMSRequestModel *requestModel = [builder build];
 
@@ -140,7 +157,8 @@
     OCMStub([mockContext merchantId]).andReturn(@"testMerchantId");
     OCMStub([mockContext visitorId]).andReturn(@"testVisitorId");
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:mockContext
+                                                                                           endpoint:self.mockEndpoint];
 
     EMSRequestModel *requestModel = [builder build];
 
@@ -401,7 +419,8 @@
 
     EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext
+                                                                                           endpoint:self.mockEndpoint];
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
@@ -414,7 +433,8 @@
 
     EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext
+                                                                                           endpoint:self.mockEndpoint];
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
@@ -486,7 +506,8 @@
                                                            timestampProvider:self.mockTimestampProvider
                                                                 uuidProvider:self.mockUuidProvider];
 
-    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext];
+    EMSPredictRequestModelBuilder *builder = [[EMSPredictRequestModelBuilder alloc] initWithContext:self.mockContext
+                                                                                           endpoint:self.mockEndpoint];
     if (builderBlock) {
         builderBlock(builder);
     }
