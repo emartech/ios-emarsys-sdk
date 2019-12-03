@@ -40,7 +40,10 @@
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
-                                                   predictUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                                   predictUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                  deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
+                                            v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
     _refreshCompletionProxy = [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
                                                                                                restClient:self.mockRestClient

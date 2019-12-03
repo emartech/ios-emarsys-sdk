@@ -128,9 +128,18 @@
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
     EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
                                                                                  valueKey:@"PREDICT_URL"];
+    EMSValueProvider *deeplinkUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://deep-link.eservice.emarsys.net/api/clicks"
+                                                                                  valueKey:@"DEEPLINK_URL"];
+    EMSValueProvider *v2EventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
+                                                                                        valueKey:@"V2_EVENT_SERVICE_URL"];
+    EMSValueProvider *inboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net/api/"
+                                                                               valueKey:@"INBOX_URL"];
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
-                                                               predictUrlProvider:predictUrlProvider];
+                                                               predictUrlProvider:predictUrlProvider
+                                                              deeplinkUrlProvider:deeplinkUrlProvider
+                                                        v2EventServiceUrlProvider:v2EventServiceUrlProvider
+                                                                 inboxUrlProvider:inboxUrlProvider];
 
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];

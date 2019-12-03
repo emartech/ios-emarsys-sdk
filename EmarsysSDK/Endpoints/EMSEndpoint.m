@@ -9,6 +9,9 @@
 @property(nonatomic, strong) EMSValueProvider *clientServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *eventServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *predictUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *deeplinkUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *v2EventServiceUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *inboxUrlProvider;
 
 @end
 
@@ -16,15 +19,24 @@
 
 - (instancetype)initWithClientServiceUrlProvider:(EMSValueProvider *)clientServiceUrlProvider
                          eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider
-                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider {
+                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider
+                             deeplinkUrlProvider:(EMSValueProvider *)deeplinkUrlProvider
+                       v2EventServiceUrlProvider:(EMSValueProvider *)v2EventServiceUrlProvider
+                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider {
     NSParameterAssert(clientServiceUrlProvider);
     NSParameterAssert(eventServiceUrlProvider);
     NSParameterAssert(predictUrlProvider);
+    NSParameterAssert(deeplinkUrlProvider);
+    NSParameterAssert(v2EventServiceUrlProvider);
+    NSParameterAssert(inboxUrlProvider);
 
     if (self = [super init]) {
         _clientServiceUrlProvider = clientServiceUrlProvider;
         _eventServiceUrlProvider = eventServiceUrlProvider;
         _predictUrlProvider = predictUrlProvider;
+        _deeplinkUrlProvider = deeplinkUrlProvider;
+        _v2EventServiceUrlProvider = v2EventServiceUrlProvider;
+        _inboxUrlProvider = inboxUrlProvider;
     }
     return self;
 }
@@ -64,15 +76,15 @@
 }
 
 - (NSString *)deeplinkUrl {
-    return @"https://deep-link.eservice.emarsys.net/api/clicks";
+    return [self.deeplinkUrlProvider provideValue];
 }
 
 - (NSString *)v2EventServiceUrl {
-    return @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
+    return [self.v2EventServiceUrlProvider provideValue];
 }
 
 - (NSString *)inboxUrl {
-    return @"https://me-inbox.eservice.emarsys.net/api/";
+    return [self.inboxUrlProvider provideValue];
 }
 
 - (BOOL)isV3url:(NSString *)url {

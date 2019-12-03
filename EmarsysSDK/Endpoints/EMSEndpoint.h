@@ -9,7 +9,10 @@
 
 - (instancetype)initWithClientServiceUrlProvider:(EMSValueProvider *)clientServiceUrlProvider
                          eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider
-                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider;
+                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider
+                             deeplinkUrlProvider:(EMSValueProvider *)deeplinkUrlProvider
+                       v2EventServiceUrlProvider:(EMSValueProvider *)v2EventServiceUrlProvider
+                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider;
 
 - (NSString *)clientServiceUrl;
 

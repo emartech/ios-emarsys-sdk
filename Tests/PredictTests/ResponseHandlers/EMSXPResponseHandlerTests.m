@@ -33,7 +33,10 @@
                                                                                  valueKey:@"PREDICT_URL"];
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
-                                                               predictUrlProvider:predictUrlProvider];
+                                                               predictUrlProvider:predictUrlProvider
+                                                              deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                        v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                                 inboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
     _responseHandler = [[EMSXPResponseHandler alloc] initWithRequestContext:self.mockRequestContext
                                                                    endpoint:endpoint]; 

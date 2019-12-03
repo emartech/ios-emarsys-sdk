@@ -41,9 +41,17 @@
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
+    EMSValueProvider *deeplinkUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://deep-link.eservice.emarsys.net/api/clicks"
+                                                                                  valueKey:@"DEEPLINK_URL"];
+    EMSValueProvider *v2EventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
+                                                                                        valueKey:@"V2_EVENT_SERVICE_URL"];
+
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
-                                                   predictUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                                   predictUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                  deeplinkUrlProvider:deeplinkUrlProvider
+                                            v2EventServiceUrlProvider:v2EventServiceUrlProvider
+                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
     _timestamp = [NSDate date];
 
