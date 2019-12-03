@@ -6,11 +6,14 @@
 #import "EMSAbstractResponseHandler.h"
 
 @class MERequestContext;
+@class EMSEndpoint;
 
 @interface EMSRefreshTokenResponseHandler : EMSAbstractResponseHandler
 
 @property(nonatomic, readonly) MERequestContext *requestContext;
+@property(nonatomic, readonly) EMSEndpoint *endpoint;
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext;
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint;
 
 @end

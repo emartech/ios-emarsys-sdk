@@ -8,6 +8,8 @@
 #import "MERequestContext.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 #import "EMSAbstractResponseHandler+Private.h"
 
 @interface EMSContactTokenResponseHandlerTests : XCTestCase
@@ -21,6 +23,14 @@
 @implementation EMSContactTokenResponseHandlerTests
 
 - (void)setUp {
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                                          eventServiceUrlProvider:eventServiceUrlProvider];
+
+
     _applicationCode = @"testApplicationCode";
     _contactFieldId = @3;
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
@@ -28,15 +38,27 @@
                                                            uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                       timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                              deviceInfo:OCMClassMock([EMSDeviceInfo class])];
-    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
+    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                                             endpoint:endpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [[EMSContactTokenResponseHandler alloc] initWithRequestContext:nil];
+        [[EMSContactTokenResponseHandler alloc] initWithRequestContext:nil
+                                                              endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNil {
+    @try {
+        [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                              endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 
@@ -80,7 +102,8 @@
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"contactToken": @"token"}];
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
-    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];
+    _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:mockRequestContext
+                                                                             endpoint:OCMClassMock([EMSEndpoint class])];
 
     [self.responseHandler handleResponse:mockResponseModel];
 

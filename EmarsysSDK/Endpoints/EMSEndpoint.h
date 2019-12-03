@@ -24,4 +24,6 @@
 
 - (NSString *)eventUrlWithApplicationCode:(NSString *)applicationCode;
 
+- (BOOL)isV3url:(NSString *)url;
+
 @end

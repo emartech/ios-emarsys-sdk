@@ -6,7 +6,7 @@
 @interface FakeDependencyContainer ()
 
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
-@property(nonatomic, strong) MobileEngageInternal *mobileEngage;
+@property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
 @property(nonatomic, strong) id <EMSInboxProtocol> inbox;
@@ -29,7 +29,7 @@
 @implementation FakeDependencyContainer
 
 - (instancetype)initWithDbHelper:(EMSSQLiteHelper *)dbHelper
-                    mobileEngage:(MobileEngageInternal *)mobileEngage
+                    mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
                         deepLink:(id <EMSDeepLinkProtocol>)deepLink
                             push:(id <EMSPushNotificationProtocol>)push
                            inbox:(id <EMSInboxProtocol>)inbox

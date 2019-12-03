@@ -17,6 +17,7 @@
                         defaultErrorBlock:(CoreErrorBlock)defaultErrorBlock
                                restClient:(EMSRESTClient *)restClient
                            requestFactory:(EMSRequestFactory *)requestFactory
-                   contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler;
+                   contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
+                                 endpoint:(EMSEndpoint *)endpoint;
 
 @end

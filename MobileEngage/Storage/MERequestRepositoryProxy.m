@@ -14,7 +14,7 @@
 #import "MEInApp.h"
 #import "MERequestContext.h"
 #import "EMSSchemaContract.h"
-#import "MEEndpoints.h"
+#import "EMSEndpoint.h"
 
 @implementation MERequestRepositoryProxy
 
@@ -22,18 +22,21 @@
                          buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                         displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                                          inApp:(MEInApp *)inApp
-                                requestContext:(MERequestContext *)requestContext {
+                                requestContext:(MERequestContext *)requestContext
+                                      endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestModelRepository);
     NSParameterAssert(buttonClickRepository);
     NSParameterAssert(displayedIAMRepository);
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestModelRepository = requestModelRepository;
         _clickRepository = buttonClickRepository;
         _displayedIAMRepository = displayedIAMRepository;
         _inApp = inApp;
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
@@ -66,7 +69,8 @@
 }
 
 - (EMSRequestModel *)createCompositeRequestModel:(EMSRequestModel *)requestModel {
-    EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:[NSString stringWithFormat:@"%%%@%%/events", EVENT_SERVICE_URL]
+    EMSFilterByTypeSpecification *filterCustomEventsSpecification = [[EMSFilterByTypeSpecification alloc] initWitType:[NSString stringWithFormat:@"%%%@%%/events",
+                                                                                                                                                 self.endpoint.eventServiceUrl]
                                                                                                                column:REQUEST_COLUMN_NAME_URL];
     NSArray *allCustomEvents = [self.requestModelRepository query:filterCustomEventsSpecification];
 
@@ -84,7 +88,7 @@
             payload[@"events"] = [self eventRepresentations:allCustomEvents];
 
             payload[@"language"] = self.requestContext.deviceInfo.languageCode;
-                payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
+            payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
 
             NSString *appVersion = self.requestContext.deviceInfo.applicationVersion;
             if (appVersion) {

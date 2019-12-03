@@ -3,7 +3,6 @@
 //
 #import <Foundation/Foundation.h>
 
-@class MobileEngageInternal;
 @class MEInApp;
 @class EMSPredictInternal;
 @class EMSSQLiteHelper;
@@ -29,6 +28,7 @@
 @protocol EMSInAppProtocol;
 @protocol MEIAMProtocol;
 @protocol EMSConfigProtocol;
+@class EMSValueProvider;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -89,5 +89,9 @@
 - (id <EMSDBTriggerProtocol>)loggerTrigger;
 
 - (id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
+
+- (EMSValueProvider *)clientServiceUrlProvider;
+
+- (EMSValueProvider *)eventServiceUrlProvider;
 
 @end

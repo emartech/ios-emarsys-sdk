@@ -7,6 +7,7 @@
 #import "EMSCompletionProxyFactory.h"
 #import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSContactTokenResponseHandler.h"
+#import "EMSEndpoint.h"
 
 @interface EMSCompletionProxyFactoryTests : XCTestCase
 
@@ -29,10 +30,13 @@
         [[EMSCompletionProxyFactory alloc] initWithRequestRepository:OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol))
                                                       operationQueue:OCMClassMock([NSOperationQueue class])
                                                  defaultSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                 } defaultErrorBlock:^(NSString *requestId, NSError *error) {
-                }                                         restClient:nil
+                                                 }
+                                                   defaultErrorBlock:^(NSString *requestId, NSError *error) {
+                                                   }
+                                                          restClient:nil
                                                       requestFactory:self.mockRequestFactory
-                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])];
+                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
+                                                            endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when restClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: restClient");
@@ -44,10 +48,13 @@
         [[EMSCompletionProxyFactory alloc] initWithRequestRepository:OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol))
                                                       operationQueue:OCMClassMock([NSOperationQueue class])
                                                  defaultSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                 } defaultErrorBlock:^(NSString *requestId, NSError *error) {
-                }                                         restClient:self.mockRestClient
+                                                 }
+                                                   defaultErrorBlock:^(NSString *requestId, NSError *error) {
+                                                   }
+                                                          restClient:self.mockRestClient
                                                       requestFactory:nil
-                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])];
+                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
+                                                            endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -59,13 +66,34 @@
         [[EMSCompletionProxyFactory alloc] initWithRequestRepository:OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol))
                                                       operationQueue:OCMClassMock([NSOperationQueue class])
                                                  defaultSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                 } defaultErrorBlock:^(NSString *requestId, NSError *error) {
-                }                                         restClient:self.mockRestClient
+                                                 }
+                                                   defaultErrorBlock:^(NSString *requestId, NSError *error) {
+                                                   }
+                                                          restClient:self.mockRestClient
                                                       requestFactory:self.mockRequestFactory
-                                              contactResponseHandler:nil];
+                                              contactResponseHandler:nil
+                                                            endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when contactResponseHandler is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactResponseHandler");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNil {
+    @try {
+        [[EMSCompletionProxyFactory alloc] initWithRequestRepository:OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol))
+                                                      operationQueue:OCMClassMock([NSOperationQueue class])
+                                                 defaultSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                 }
+                                                   defaultErrorBlock:^(NSString *requestId, NSError *error) {
+                                                   }
+                                                          restClient:self.mockRestClient
+                                                      requestFactory:self.mockRequestFactory
+                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
+                                                            endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 
@@ -78,7 +106,14 @@
     void (^errorBlock)(NSString *, NSError *) = ^(NSString *requestId, NSError *error) {
     };
 
-    EMSCompletionProxyFactory *factory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:repository operationQueue:operationQueue defaultSuccessBlock:successBlock defaultErrorBlock:errorBlock restClient:self.mockRestClient requestFactory:self.mockRequestFactory contactResponseHandler:self.mockContactTokenResponseHandler];
+    EMSCompletionProxyFactory *factory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:repository
+                                                                                       operationQueue:operationQueue
+                                                                                  defaultSuccessBlock:successBlock
+                                                                                    defaultErrorBlock:errorBlock
+                                                                                           restClient:self.mockRestClient
+                                                                                       requestFactory:self.mockRequestFactory
+                                                                               contactResponseHandler:self.mockContactTokenResponseHandler
+                                                                                             endpoint:OCMClassMock([EMSEndpoint class])];
     EMSRESTClientCompletionProxyFactory *parentFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:repository
                                                                                                                  operationQueue:operationQueue
                                                                                                             defaultSuccessBlock:successBlock

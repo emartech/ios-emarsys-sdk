@@ -29,7 +29,7 @@ SPEC_BEGIN(EMSVisitorIdResponseHandlerTests)
                                                            timestamp:[timestampProvider provideTimestamp]];
         };
 
-        describe(@"initWithRequestContext:", ^{
+        describe(@"initWithRequestContext:endpoint:", ^{
 
             it(@"should throw exception when requestContext is nil", ^{
                 @try {

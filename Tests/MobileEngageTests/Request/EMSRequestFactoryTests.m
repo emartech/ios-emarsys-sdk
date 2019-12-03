@@ -14,6 +14,8 @@
 #import "EmarsysSDKVersion.h"
 #import "EMSAuthentication.h"
 #import "EMSNotification.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 
@@ -22,6 +24,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *mockUUIDProvider;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @property(nonatomic, strong) NSDate *timestamp;
 
@@ -34,6 +37,12 @@
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                              eventServiceUrlProvider:eventServiceUrlProvider];
 
     _timestamp = [NSDate date];
 
@@ -49,15 +58,27 @@
     OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
 
-    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext];
+    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                               endpoint:self.endpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [[EMSRequestFactory alloc] initWithRequestContext:nil];
+        [[EMSRequestFactory alloc] initWithRequestContext:nil
+                                                 endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNil {
+    @try {
+        [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                 endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
     }
 }
 
@@ -276,7 +297,7 @@
                                                                                    @"contact_field_value": @"testContactFieldValue"
                                                                                }
                                                                                headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}
-                                                                               extras:nil];
+                                                                                extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createMessageOpenWithNotification:notification];
 

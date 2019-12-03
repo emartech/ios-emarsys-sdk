@@ -8,6 +8,7 @@
 #import "EMSRequestModel.h"
 #import "EMSDeviceInfo.h"
 #import "NSDate+EMSCore.h"
+#import "EMSEndpoint.h"
 
 @interface EMSV3MapperTests : XCTestCase
 
@@ -23,6 +24,7 @@
 @property(nonatomic, strong) NSString *clientState;
 @property(nonatomic, strong) NSDate *requestOrderTimestamp;
 @property(nonatomic, strong) NSString *hardwareId;
+@property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 
 @end
 
@@ -45,21 +47,34 @@
     EMSTimestampProvider *mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     EMSDeviceInfo *mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    _mockEndpoint = OCMClassMock([EMSEndpoint class]);
 
     OCMStub([self.mockRequestContext timestampProvider]).andReturn(mockTimestampProvider);
     OCMStub([self.mockRequestContext deviceInfo]).andReturn(mockDeviceInfo);
     OCMStub([mockTimestampProvider provideTimestamp]).andReturn(self.requestOrderTimestamp);
     OCMStub([mockDeviceInfo hardwareId]).andReturn(self.hardwareId);
+    OCMStub([self.mockEndpoint clientServiceUrl]).andReturn(@"https://me-client.eservice.emarsys.net");
+    OCMStub([self.mockEndpoint eventServiceUrl]).andReturn(@"https://mobile-events.eservice.emarsys.net");
 
-    _mapper = [[EMSV3Mapper alloc] initWithRequestContext:self.mockRequestContext];
+    _mapper = [[EMSV3Mapper alloc] initWithRequestContext:self.mockRequestContext endpoint:self.mockEndpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNull {
     @try {
-        [[EMSV3Mapper alloc] initWithRequestContext:nil];
+        [[EMSV3Mapper alloc] initWithRequestContext:nil endpoint:self.mockEndpoint];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNull {
+    @try {
+        [[EMSV3Mapper alloc] initWithRequestContext:self.mockRequestContext
+                                           endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 

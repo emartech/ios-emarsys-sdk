@@ -5,26 +5,30 @@
 #import "EMSRequestModel.h"
 #import "NSDate+EMSCore.h"
 #import "EMSDeviceInfo.h"
-#import "MEEndpoints.h"
+#import "EMSEndpoint.h"
 
 @interface EMSV3Mapper ()
 
 @property(nonatomic, strong) MERequestContext *requestContext;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
 @implementation EMSV3Mapper
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return [requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] || [requestModel.url.absoluteString hasPrefix:EVENT_SERVICE_URL];
+    return [requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] || [requestModel.url.absoluteString hasPrefix:[self.endpoint eventServiceUrl]];
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

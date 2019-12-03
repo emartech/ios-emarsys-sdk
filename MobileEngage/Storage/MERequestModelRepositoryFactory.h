@@ -10,6 +10,7 @@
 @class MERequestContext;
 @class MEButtonClickRepository;
 @class MEDisplayedIAMRepository;
+@class EMSEndpoint;
 
 @interface MERequestModelRepositoryFactory : NSObject
 
@@ -18,8 +19,14 @@
 @property(nonatomic, readonly) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, readonly) MEDisplayedIAMRepository *displayedIAMRepository;
 @property(nonatomic, readonly) EMSSQLiteHelper *dbHelper;
+@property(nonatomic, readonly) EMSEndpoint *endpoint;
 
-- (instancetype)initWithInApp:(MEInApp *)inApp requestContext:(MERequestContext *)requestContext dbHelper:(EMSSQLiteHelper *)dbHelper buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository;
+- (instancetype)initWithInApp:(MEInApp *)inApp
+               requestContext:(MERequestContext *)requestContext
+                     dbHelper:(EMSSQLiteHelper *)dbHelper
+        buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+       displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
+                     endpoint:(EMSEndpoint *)endpoint;
 
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing;
 

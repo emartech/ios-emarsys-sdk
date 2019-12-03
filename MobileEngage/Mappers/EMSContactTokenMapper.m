@@ -4,14 +4,16 @@
 #import "EMSContactTokenMapper.h"
 #import "MERequestContext.h"
 #import "EMSRequestModel.h"
-#import "MEEndpoints.h"
+#import "EMSEndpoint.h"
 
 @implementation EMSContactTokenMapper
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
@@ -19,7 +21,7 @@
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
     return ![url hasSuffix:@"/client/contact-token"] &&
-        ([requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] || [requestModel.url.absoluteString hasPrefix:EVENT_SERVICE_URL]);
+        ([requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] || [requestModel.url.absoluteString hasPrefix:[self.endpoint eventServiceUrl]]);
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

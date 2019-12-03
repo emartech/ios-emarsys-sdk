@@ -2,22 +2,25 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import "EMSClientStateResponseHandler.h"
-#import "MEEndpoints.h"
+#import "EMSEndpoint.h"
 #import "NSDictionary+EMSCore.h"
 
 @implementation EMSClientStateResponseHandler
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:CLIENT_SERVICE_URL] && [response.headers valueForInsensitiveKey:CLIENT_STATE]) {
+    if ([response.requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] && [response.headers valueForInsensitiveKey:CLIENT_STATE]) {
         result = YES;
     }
     return result;

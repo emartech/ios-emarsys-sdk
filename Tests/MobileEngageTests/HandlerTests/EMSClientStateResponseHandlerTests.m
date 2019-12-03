@@ -9,6 +9,8 @@
 #import "EMSAbstractResponseHandler+Private.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 
 @interface EMSClientStateResponseHandlerTests : XCTestCase
 
@@ -30,15 +32,34 @@
                                                       timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                              deviceInfo:OCMClassMock([EMSDeviceInfo class])];
 
-    _responseHandler = [[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext];
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                                          eventServiceUrlProvider:eventServiceUrlProvider];
+
+    _responseHandler = [[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                                            endpoint:endpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNull {
     @try {
-        [[EMSClientStateResponseHandler alloc] initWithRequestContext:nil];
+        [[EMSClientStateResponseHandler alloc] initWithRequestContext:nil
+                                                             endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNull {
+    @try {
+        [[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                             endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 

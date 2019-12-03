@@ -17,12 +17,14 @@
 @property(nonatomic, readonly) EMSRESTClient *restClient;
 @property(nonatomic, readonly) EMSRequestFactory *requestFactory;
 @property(nonatomic, readonly) EMSContactTokenResponseHandler *contactResponseHandler;
+@property(nonatomic, readonly) EMSEndpoint *endpoint;
 
 @property(nonatomic, strong) EMSRequestModel *originalRequestModel;
 
 - (instancetype)initWithCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy
                              restClient:(EMSRESTClient *)restClient
                          requestFactory:(EMSRequestFactory *)requestFactory
-                 contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler;
+                 contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
+                               endpoint:(EMSEndpoint *)endpoint;
 
 @end

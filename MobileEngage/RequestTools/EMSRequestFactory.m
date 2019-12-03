@@ -4,7 +4,7 @@
 #import "EMSRequestFactory.h"
 #import "EMSRequestModel.h"
 #import "MERequestContext.h"
-#import "MEEndpoints.h"
+#import "EMSEndpoint.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
 #import "EmarsysSDKVersion.h"
@@ -15,16 +15,20 @@
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
 @implementation EMSRequestFactory
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
         _deviceInfo = requestContext.deviceInfo;
+        _endpoint = endpoint;
     }
     return self;
 }
@@ -32,7 +36,7 @@
 - (EMSRequestModel *)createDeviceInfoRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:CLIENT_URL(weakSelf.requestContext.applicationCode)];
+            [builder setUrl:[self.endpoint clientUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:[weakSelf.deviceInfo clientPayload]];
         }
@@ -43,7 +47,7 @@
 - (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:PUSH_TOKEN_URL(weakSelf.requestContext.applicationCode)];
+            [builder setUrl:[self.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
             [builder setMethod:HTTPMethodPUT];
             [builder setPayload:@{@"pushToken": pushToken}];
         }
@@ -54,7 +58,7 @@
 - (EMSRequestModel *)createClearPushTokenRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:PUSH_TOKEN_URL(weakSelf.requestContext.applicationCode)];
+            [builder setUrl:[self.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
             [builder setMethod:HTTPMethodDELETE];
             [builder setPayload:@{}];
         }
@@ -76,7 +80,7 @@
             } else {
                 anonymousLogin = YES;
             }
-            [builder setUrl:CONTACT_URL(weakSelf.requestContext.applicationCode)
+            [builder setUrl:[self.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
             queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
             [builder setPayload:payload];
         }
@@ -90,7 +94,7 @@
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
-            [builder setUrl:EVENT_URL(weakSelf.requestContext.applicationCode)];
+            [builder setUrl:[self.endpoint eventUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
 
             NSMutableDictionary *mutableEvent = [NSMutableDictionary dictionary];
             mutableEvent[@"type"] = [weakSelf eventTypeStringRepresentationFromEventType:eventType];
@@ -114,7 +118,7 @@
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
-            [builder setUrl:CONTACT_TOKEN_URL(weakSelf.requestContext.applicationCode)];
+            [builder setUrl:[self.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
             NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
             mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
             [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];

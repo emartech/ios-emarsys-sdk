@@ -8,10 +8,13 @@
 #import "MERequestContext.h"
 #import "EMSRequestModel.h"
 #import "EMSUUIDProvider.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 
 @interface EMSContactTokenMapperTests : XCTestCase
 
 @property(nonatomic, readonly) MERequestContext *mockRequestContext;
+@property(nonatomic, readonly) EMSContactTokenMapper *contactTokenMapper;
 
 @end
 
@@ -19,43 +22,60 @@
 
 - (void)setUp {
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                                          eventServiceUrlProvider:eventServiceUrlProvider];
+
+    _contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext
+                                                                       endpoint:endpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNull {
     @try {
-        [[EMSContactTokenMapper alloc] initWithRequestContext:nil];
+        [[EMSContactTokenMapper alloc] initWithRequestContext:nil
+                                                     endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
     }
 }
 
+- (void)testInit_endpoint_mustNotBeNull {
+    @try {
+        [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext
+                                                     endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
+    }
+}
+
 - (void)testShouldHandleWithRequestModel_true_whenRequestIsMobileEngage_clientService {
-    EMSContactTokenMapper *contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext];
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net"]);
 
-    BOOL result = [contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
+    BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
     XCTAssertTrue(result);
 }
 
 - (void)testShouldHandleWithRequestModel_true_whenRequestIsMobileEngage_eventService {
-    EMSContactTokenMapper *contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext];
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net"]);
 
-    BOOL result = [contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
+    BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
     XCTAssertTrue(result);
 }
 
 - (void)testShouldHandleWithRequestModel_false_whenRequestIsContactToken {
-    EMSContactTokenMapper *contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext];
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v3/12345/client/contact-token"]);
 
-    BOOL result = [contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
+    BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
     XCTAssertFalse(result);
 }
@@ -75,8 +95,6 @@
     OCMStub([self.mockRequestContext timestampProvider]).andReturn(mockTimestampProvider);
     OCMStub([self.mockRequestContext uuidProvider]).andReturn(mockUUIDProvider);
     OCMStub([self.mockRequestContext uuidProvider]).andReturn(mockUUIDProvider);
-
-    EMSContactTokenMapper *contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext];
 
     EMSRequestModel *inputRequestModel = [[EMSRequestModel alloc] initWithRequestId:requestId
                                                                           timestamp:timestamp
@@ -98,7 +116,7 @@
                                                                                }
                                                                                 extras:nil];
 
-    EMSRequestModel *returnedModel = [contactTokenMapper modelFromModel:inputRequestModel];
+    EMSRequestModel *returnedModel = [self.contactTokenMapper modelFromModel:inputRequestModel];
 
     XCTAssertEqualObjects(returnedModel, expectedRequestModel);
 }

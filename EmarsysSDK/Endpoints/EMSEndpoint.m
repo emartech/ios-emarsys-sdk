@@ -59,4 +59,8 @@
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client", serviceUrl, applicationCode];
 }
 
+- (BOOL)isV3url:(NSString *)url {
+    return [url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]];
+}
+
 @end

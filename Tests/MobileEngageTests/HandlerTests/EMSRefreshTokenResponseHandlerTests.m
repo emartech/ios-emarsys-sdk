@@ -9,6 +9,8 @@
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfo.h"
 #import "EMSAbstractResponseHandler+Private.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 
 @interface EMSRefreshTokenResponseHandlerTests : XCTestCase
 
@@ -29,15 +31,35 @@
                                                            uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                       timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                              deviceInfo:OCMClassMock([EMSDeviceInfo class])];
-    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext];
+
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                                          eventServiceUrlProvider:eventServiceUrlProvider];
+
+    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                                             endpoint:endpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
-        [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:nil];
+        [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:nil
+                                                              endpoint:OCMClassMock([EMSEndpoint class])];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_endpoint_mustNotBeNil {
+    @try {
+        [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                              endpoint:nil];
+        XCTFail(@"Expected Exception when endpoint is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
     }
 }
 
@@ -81,7 +103,8 @@
     EMSResponseModel *mockResponseModel = [self createResponseModelWithUrl:@"https://me-client.eservice.emarsys.net"
                                                                 parsedBody:@{@"refreshToken": @"token"}];
     id mockRequestContext = OCMClassMock([MERequestContext class]);
-    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:mockRequestContext];
+    _responseHandler = [[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:mockRequestContext
+                                                                             endpoint:OCMClassMock([EMSEndpoint class])];
 
     [self.responseHandler handleResponse:mockResponseModel];
 
@@ -100,8 +123,8 @@
                                                                                                           options:NSJSONWritingPrettyPrinted
                                                                                                             error:nil] : nil
                                                 requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                                                            [builder setUrl:url];
-                                                        }
+                                                        [builder setUrl:url];
+                                                    }
                                                                             timestampProvider:[EMSTimestampProvider new]
                                                                                  uuidProvider:[EMSUUIDProvider new]]
                                                    timestamp:[[EMSTimestampProvider new] provideTimestamp]];

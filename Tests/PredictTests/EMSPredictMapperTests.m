@@ -50,7 +50,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
         });
 
-        describe(@"initWithRequestContext:", ^{
+        describe(@"initWithRequestContext:endpoint:", ^{
             it(@"should throw exception when requestContext is nil", ^{
                 @try {
                     [[EMSPredictMapper alloc] initWithRequestContext:nil];
