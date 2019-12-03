@@ -29,4 +29,8 @@
 
 - (NSString *)predictUrl;
 
+- (NSString *)deeplinkUrl;
+
+- (NSString *)v2EventServiceUrl;
+
 @end

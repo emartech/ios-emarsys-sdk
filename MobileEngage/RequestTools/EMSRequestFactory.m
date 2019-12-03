@@ -133,7 +133,7 @@
                                                      self.requestContext.deviceInfo.osVersion];
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
-            [builder setUrl:@"https://deep-link.eservice.emarsys.net/api/clicks"];
+            [builder setUrl:[self.endpoint deeplinkUrl]];
             [builder setHeaders:@{@"User-Agent": userAgent}];
             [builder setPayload:@{@"ems_dl": trackingId}];
         }
@@ -143,7 +143,7 @@
 
 - (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"];
+            [builder setUrl:[self.endpoint v2EventServiceUrl]];
             [builder setMethod:HTTPMethodPOST];
 
             NSMutableDictionary *payload = [NSMutableDictionary dictionary];

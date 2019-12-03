@@ -63,6 +63,14 @@
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client", serviceUrl, applicationCode];
 }
 
+- (NSString *)deeplinkUrl {
+    return @"https://deep-link.eservice.emarsys.net/api/clicks";
+}
+
+- (NSString *)v2EventServiceUrl {
+    return @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
+}
+
 - (BOOL)isV3url:(NSString *)url {
     return [url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]];
 }

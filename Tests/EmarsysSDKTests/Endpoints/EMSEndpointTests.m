@@ -150,6 +150,22 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, expectedUrl);
 }
 
+- (void)testDeeplinkUrl {
+    NSString *expectedUrl = @"https://deep-link.eservice.emarsys.net/api/clicks";
+
+    NSString *result = [self.endpoint deeplinkUrl];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
+- (void)testV2EventServiceUrl {
+    NSString *expectedUrl = @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
+
+    NSString *result = [self.endpoint v2EventServiceUrl];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
 - (NSString *)clientBaseUrl {
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client", kClientServiceUrl, kApplicationCode];
 }
