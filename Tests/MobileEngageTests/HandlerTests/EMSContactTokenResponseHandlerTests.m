@@ -28,7 +28,8 @@
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
-                                                          eventServiceUrlProvider:eventServiceUrlProvider];
+                                                          eventServiceUrlProvider:eventServiceUrlProvider
+                                                               predictUrlProvider:OCMClassMock([EMSValueProvider class])];
 
 
     _applicationCode = @"testApplicationCode";

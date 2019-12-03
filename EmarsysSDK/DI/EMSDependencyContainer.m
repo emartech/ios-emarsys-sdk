@@ -107,8 +107,6 @@
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
-@property(nonatomic, strong) EMSValueProvider *clientServiceUrlProvider;
-@property(nonatomic, strong) EMSValueProvider *eventServiceUrlProvider;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -124,12 +122,15 @@
 }
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config {
-    _clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
-                                                                      valueKey:@"CLIENT_SERVICE_URL"];
-    _eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
-                                                                     valueKey:@"EVENT_SERVICE_URL"];
-    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.clientServiceUrlProvider
-                                                          eventServiceUrlProvider:self.eventServiceUrlProvider];
+    EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
+                                                                                       valueKey:@"CLIENT_SERVICE_URL"];
+    EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
+                                                                                      valueKey:@"EVENT_SERVICE_URL"];
+    EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
+                                                                                 valueKey:@"PREDICT_URL"];
+    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+                                                          eventServiceUrlProvider:eventServiceUrlProvider
+                                                               predictUrlProvider:predictUrlProvider];
 
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
@@ -201,8 +202,10 @@
         [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
                                                       displayIamRepository:displayedIAMRepository]]
     ];
-    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
-    [responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext]];
+    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
+                                                                                   endpoint:endpoint]];
+    [responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext
+                                                                            endpoint:endpoint]];
     [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                      endpoint:endpoint]];
     [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
@@ -250,7 +253,8 @@
         _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                                 specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
                                                                                                                          column:SHARD_COLUMN_NAME_TYPE]
-                                                                       mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext]
+                                                                       mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext
+                                                                                                                      endpoint:endpoint]
                                                                       chunker:[[EMSListChunker alloc] initWithChunkSize:1]
                                                                     predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
                                                                requestManager:self.requestManager

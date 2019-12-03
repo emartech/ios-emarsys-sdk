@@ -9,6 +9,7 @@
 
 static NSString *const kClientServiceUrl = @"testClientServiceUrl";
 static NSString *const kEventServiceUrl = @"testEventServiceUrl";
+static NSString *const kPredictUrl = @"testPredictUrl";
 static NSString *const kApplicationCode = @"testApplicationCode";
 
 @interface EMSEndpointTests : XCTestCase
@@ -16,6 +17,7 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) EMSValueProvider *mockClientServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *mockEventServiceUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *mockPredictUrlProvider;
 
 @end
 
@@ -24,18 +26,22 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 - (void)setUp {
     _mockClientServiceUrlProvider = OCMClassMock([EMSValueProvider class]);
     _mockEventServiceUrlProvider = OCMClassMock([EMSValueProvider class]);
+    _mockPredictUrlProvider = OCMClassMock([EMSValueProvider class]);
 
     OCMStub([self.mockClientServiceUrlProvider provideValue]).andReturn(kClientServiceUrl);
     OCMStub([self.mockEventServiceUrlProvider provideValue]).andReturn(kEventServiceUrl);
+    OCMStub([self.mockPredictUrlProvider provideValue]).andReturn(kPredictUrl);
 
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
-                                              eventServiceUrlProvider:self.mockEventServiceUrlProvider];
+                                              eventServiceUrlProvider:self.mockEventServiceUrlProvider
+                                                   predictUrlProvider:self.mockPredictUrlProvider];
 }
 
 - (void)testInit_clientServiceUrlProvider_mustNotBeNil {
     @try {
         [[EMSEndpoint alloc] initWithClientServiceUrlProvider:nil
-                                      eventServiceUrlProvider:self.mockEventServiceUrlProvider];
+                                      eventServiceUrlProvider:self.mockEventServiceUrlProvider
+                                           predictUrlProvider:self.mockPredictUrlProvider];
         XCTFail(@"Expected Exception when clientServiceUrlProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: clientServiceUrlProvider");
@@ -45,10 +51,22 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 - (void)testInit_eventServiceUrlProvider_mustNotBeNil {
     @try {
         [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
-                                      eventServiceUrlProvider:nil];
+                                      eventServiceUrlProvider:nil
+                                           predictUrlProvider:self.mockPredictUrlProvider];
         XCTFail(@"Expected Exception when eventServiceUrlProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: eventServiceUrlProvider");
+    }
+}
+
+- (void)testInit_predictUrlProvider_mustNotBeNil {
+    @try {
+        [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
+                                      eventServiceUrlProvider:self.mockEventServiceUrlProvider
+                                           predictUrlProvider:nil];
+        XCTFail(@"Expected Exception when predictUrlProvider is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: predictUrlProvider");
     }
 }
 
@@ -122,6 +140,14 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     NSString *url = [self.endpoint eventUrlWithApplicationCode:@"testApplicationCode"];
 
     XCTAssertTrue([self.endpoint isV3url:url]);
+}
+
+- (void)testPredictUrl {
+    NSString *expectedUrl = @"testPredictUrl";
+
+    NSString *result = [self.endpoint predictUrl];
+
+    XCTAssertEqualObjects(result, expectedUrl);
 }
 
 - (NSString *)clientBaseUrl {

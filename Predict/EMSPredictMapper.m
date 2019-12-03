@@ -10,17 +10,20 @@
 #import "EMSShard.h"
 #import "EMSPredictInternal.h"
 #import "EMSDeviceInfo.h"
+#import "EMSEndpoint.h"
 
 @implementation EMSPredictMapper
 
-- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext {
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _endpoint = endpoint;
     }
     return self;
 }
-
 
 - (EMSRequestModel *)requestFromShards:(NSArray<EMSShard *> *)shards {
     NSParameterAssert(shards);
@@ -33,7 +36,8 @@
             queryParameters[@"ci"] = self.requestContext.customerId;
             queryParameters[@"vi"] = self.requestContext.visitorId;
             [queryParameters addEntriesFromDictionary:shard.data];
-            [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"%@/merchants/%@", PREDICT_BASE_URL,
+            [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"%@/merchants/%@",
+                                                                              [self.endpoint predictUrl],
                                                                               self.requestContext.merchantId]
                                    queryParameters:queryParameters] absoluteString]];
             [builder setExpiry:[[NSDate dateWithTimeInterval:shard.ttl

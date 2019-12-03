@@ -10,6 +10,8 @@
 #import "EMSUUIDProvider.h"
 #import "PRERequestContext.h"
 #import "EMSDeviceInfo.h"
+#import "EMSEndpoint.h"
+#import "EMSValueProvider.h"
 
 #define USER_AGENT [NSString stringWithFormat:@"EmarsysSDK|osversion:%@|platform:%@", [[EMSDeviceInfo new] osVersion], [[EMSDeviceInfo new] systemName]]
 
@@ -20,6 +22,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
         __block EMSUUIDProvider *uuidProvider;
         __block PRERequestContext *requestContext;
         __block EMSDeviceInfo *deviceInfo;
+        __block EMSEndpoint *endpoint;
 
         NSDate *timestamp = [NSDate date];
         NSString *uuidString = @"uuidString";
@@ -47,13 +50,21 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                        merchantId:merchantId
                                                                        deviceInfo:deviceInfo];
             [requestContext setCustomerId:customerId];
-            mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+
+            EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
+                                                                                         valueKey:@"PREDICT_URL"];
+            endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:[EMSValueProvider mock]
+                                                     eventServiceUrlProvider:[EMSValueProvider mock]
+                                                          predictUrlProvider:predictUrlProvider];
+            mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
+                                                             endpoint:endpoint];
         });
 
         describe(@"initWithRequestContext:endpoint:", ^{
             it(@"should throw exception when requestContext is nil", ^{
                 @try {
-                    [[EMSPredictMapper alloc] initWithRequestContext:nil];
+                    [[EMSPredictMapper alloc] initWithRequestContext:nil
+                                                            endpoint:[EMSEndpoint mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -61,6 +72,16 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 }
             });
 
+            it(@"should throw exception when endpoint is nil", ^{
+                @try {
+                    [[EMSPredictMapper alloc] initWithRequestContext:[PRERequestContext mock]
+                                                            endpoint:nil];
+                    fail(@"Expected Exception when endpoint is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: endpoint"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
         });
 
         describe(@"requestFromShards:", ^{
@@ -159,7 +180,8 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                             extras:nil];
 
                 requestContext.visitorId = nil;
-                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
+                                                                 endpoint:endpoint];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel should] equal:expectedRequestModel];
@@ -182,7 +204,8 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                             extras:nil];
 
                 requestContext.visitorId = @"visitorId";
-                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
+                                                                 endpoint:endpoint];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel should] equal:expectedRequestModel];
@@ -206,7 +229,8 @@ SPEC_BEGIN(EMSPredictMapperTests)
 
                 requestContext.visitorId = nil;
                 requestContext.customerId = nil;
-                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext];
+                mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
+                                                                 endpoint:endpoint];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];
 
                 [[requestModel should] equal:expectedRequestModel];

@@ -8,7 +8,8 @@
 @interface EMSEndpoint : NSObject
 
 - (instancetype)initWithClientServiceUrlProvider:(EMSValueProvider *)clientServiceUrlProvider
-                         eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider;
+                         eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider
+                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider;
 
 - (NSString *)clientServiceUrl;
 
@@ -25,5 +26,7 @@
 - (NSString *)eventUrlWithApplicationCode:(NSString *)applicationCode;
 
 - (BOOL)isV3url:(NSString *)url;
+
+- (NSString *)predictUrl;
 
 @end

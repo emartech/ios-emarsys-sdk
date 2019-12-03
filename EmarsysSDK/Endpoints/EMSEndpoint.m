@@ -8,19 +8,23 @@
 
 @property(nonatomic, strong) EMSValueProvider *clientServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *eventServiceUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *predictUrlProvider;
 
 @end
 
 @implementation EMSEndpoint
 
 - (instancetype)initWithClientServiceUrlProvider:(EMSValueProvider *)clientServiceUrlProvider
-                         eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider {
+                         eventServiceUrlProvider:(EMSValueProvider *)eventServiceUrlProvider
+                              predictUrlProvider:(EMSValueProvider *)predictUrlProvider {
     NSParameterAssert(clientServiceUrlProvider);
     NSParameterAssert(eventServiceUrlProvider);
+    NSParameterAssert(predictUrlProvider);
 
     if (self = [super init]) {
         _clientServiceUrlProvider = clientServiceUrlProvider;
         _eventServiceUrlProvider = eventServiceUrlProvider;
+        _predictUrlProvider = predictUrlProvider;
     }
     return self;
 }
@@ -61,6 +65,10 @@
 
 - (BOOL)isV3url:(NSString *)url {
     return [url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]];
+}
+
+- (NSString *)predictUrl {
+    return [self.predictUrlProvider provideValue];
 }
 
 @end

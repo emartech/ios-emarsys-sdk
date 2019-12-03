@@ -90,8 +90,4 @@
 
 - (id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
-- (EMSValueProvider *)clientServiceUrlProvider;
-
-- (EMSValueProvider *)eventServiceUrlProvider;
-
 @end
