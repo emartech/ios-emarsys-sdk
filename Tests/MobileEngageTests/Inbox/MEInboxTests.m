@@ -13,6 +13,7 @@
 #import "EMSWaiter.h"
 #import "Emarsys.h"
 #import "EMSRequestFactory.h"
+#import "EMSEndpoint.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -49,10 +50,14 @@ SPEC_BEGIN(MEInboxTests)
                 [context setContactFieldValue:nil];
             }
 
+            EMSEndpoint *endpoint = [EMSEndpoint mock];
+            [endpoint stub:@selector(inboxUrl) andReturn:@"https://me-inbox.eservice.emarsys.net/api/"];
+
             MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:context
                                                    notificationCache:notificationCache
                                                       requestManager:requestManager
-                                                      requestFactory:[EMSRequestFactory mock]];
+                                                      requestFactory:[EMSRequestFactory mock]
+                                                            endpoint:endpoint];
             return inbox;
         };
 
@@ -64,7 +69,14 @@ SPEC_BEGIN(MEInboxTests)
             requestContext = [[MERequestContext alloc] initWithApplicationCode:nil contactFieldId:nil uuidProvider:uuidProvider timestampProvider:timestampProvider deviceInfo:deviceInfo];
             notificationCache = [EMSNotificationCache new];
 
-            MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:requestContext notificationCache:notificationCache requestManager:requestManagerMock requestFactory:[EMSRequestFactory mock]];
+            EMSEndpoint *endpoint = [EMSEndpoint mock];
+            [endpoint stub:@selector(inboxUrl) andReturn:@"https://me-inbox.eservice.emarsys.net/api/"];
+
+            MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:requestContext
+                                                   notificationCache:notificationCache
+                                                      requestManager:requestManagerMock
+                                                      requestFactory:[EMSRequestFactory mock]
+                                                            endpoint:endpoint];
             return inbox;
         };
 
@@ -83,14 +95,15 @@ SPEC_BEGIN(MEInboxTests)
             [MEExperimental reset];
         });
 
-        describe(@"initWithRequestContext:notificationCache:requestManager:requestFactory:", ^{
+        describe(@"initWithRequestContext:notificationCache:requestManager:requestFactory:endpoint:", ^{
 
             it(@"should throw exception when requestContext is nil", ^{
                 @try {
                     [[MEInbox alloc] initWithRequestContext:nil
                                           notificationCache:[EMSNotificationCache mock]
                                              requestManager:[EMSRequestManager mock]
-                                             requestFactory:[EMSRequestFactory mock]];
+                                             requestFactory:[EMSRequestFactory mock]
+                                                   endpoint:[EMSEndpoint mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -103,7 +116,8 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
                                           notificationCache:nil
                                              requestManager:[EMSRequestManager mock]
-                                             requestFactory:[EMSRequestFactory mock]];
+                                             requestFactory:[EMSRequestFactory mock]
+                                                   endpoint:[EMSEndpoint mock]];
                     fail(@"Expected Exception when notificationCache is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: notificationCache"];
@@ -116,7 +130,8 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
                                           notificationCache:[EMSNotificationCache mock]
                                              requestManager:nil
-                                             requestFactory:[EMSRequestFactory mock]];
+                                             requestFactory:[EMSRequestFactory mock]
+                                                   endpoint:[EMSEndpoint mock]];
                     fail(@"Expected Exception when requestManager is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestManager"];
@@ -129,10 +144,25 @@ SPEC_BEGIN(MEInboxTests)
                     [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
                                           notificationCache:[EMSNotificationCache mock]
                                              requestManager:[EMSRequestManager mock]
-                                             requestFactory:nil];
+                                             requestFactory:nil
+                                                   endpoint:[EMSEndpoint mock]];
                     fail(@"Expected Exception when requestFactory is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestFactory"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when endpoint is nil", ^{
+                @try {
+                    [[MEInbox alloc] initWithRequestContext:[MERequestContext mock]
+                                          notificationCache:[EMSNotificationCache mock]
+                                             requestManager:[EMSRequestManager mock]
+                                             requestFactory:[EMSRequestFactory mock]
+                                                   endpoint:nil];
+                    fail(@"Expected Exception when endpoint is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: endpoint"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -588,7 +618,8 @@ SPEC_BEGIN(MEInboxTests)
                 MEInbox *inbox = [[MEInbox alloc] initWithRequestContext:[MERequestContext nullMock]
                                                        notificationCache:notificationCache
                                                           requestManager:requestManagerMock
-                                                          requestFactory:mockRequestFactory];
+                                                          requestFactory:mockRequestFactory
+                                                                endpoint:[EMSEndpoint mock]];
 
                 [inbox trackNotificationOpenWithNotification:notification
                                              completionBlock:completionBlock];

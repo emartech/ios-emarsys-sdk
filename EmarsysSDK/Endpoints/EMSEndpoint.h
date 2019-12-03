@@ -33,4 +33,6 @@
 
 - (NSString *)v2EventServiceUrl;
 
+- (NSString *)inboxUrl;
+
 @end

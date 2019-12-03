@@ -14,6 +14,7 @@
 #import "EMSRequestManager.h"
 #import "EMSNotificationCache.h"
 #import "EMSRequestFactory.h"
+#import "EMSEndpoint.h"
 
 @interface MEInbox ()
 
@@ -21,6 +22,7 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
@@ -31,16 +33,19 @@
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
                      notificationCache:(EMSNotificationCache *)notificationCache
                         requestManager:(EMSRequestManager *)requestManager
-                        requestFactory:(EMSRequestFactory *)requestFactory {
+                        requestFactory:(EMSRequestFactory *)requestFactory
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
     NSParameterAssert(notificationCache);
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _requestContext = requestContext;
         _notificationCache = notificationCache;
         _requestManager = requestManager;
         _requestFactory = requestFactory;
+        _endpoint = endpoint;
     }
     return self;
 }
@@ -53,7 +58,8 @@
         __weak typeof(self) weakSelf = self;
         EMSRequestModel *request = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 NSDictionary *headers = [weakSelf createNotificationsFetchingHeaders];
-                [[[builder setMethod:HTTPMethodGET] setHeaders:headers] setUrl:@"https://me-inbox.eservice.emarsys.net/api/notifications"];
+                [[[builder setMethod:HTTPMethodGET] setHeaders:headers] setUrl:[NSString stringWithFormat:@"%@notifications",
+                                                                                                          [self.endpoint inboxUrl]]];
             }
                                                   timestampProvider:self.requestContext.timestampProvider
                                                        uuidProvider:self.requestContext.uuidProvider];
@@ -95,7 +101,7 @@
 - (void)resetBadgeCountWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     if ([self hasLoginParameters]) {
         EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://me-inbox.eservice.emarsys.net/api/reset-badge-count"];
+                [builder setUrl:[NSString stringWithFormat:@"%@reset-badge-count", [self.endpoint inboxUrl]]];
                 [builder setMethod:HTTPMethodPOST];
                 [builder setHeaders:[self createNotificationsFetchingHeaders]];
             }

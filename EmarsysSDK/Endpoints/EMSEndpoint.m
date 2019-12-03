@@ -71,6 +71,10 @@
     return @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
 }
 
+- (NSString *)inboxUrl {
+    return @"https://me-inbox.eservice.emarsys.net/api/";
+}
+
 - (BOOL)isV3url:(NSString *)url {
     return [url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]];
 }

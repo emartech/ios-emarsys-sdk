@@ -166,6 +166,14 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, expectedUrl);
 }
 
+- (void)testInboxUrl {
+    NSString *expectedUrl = @"https://me-inbox.eservice.emarsys.net/api/";
+
+    NSString *result = [self.endpoint inboxUrl];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
 - (NSString *)clientBaseUrl {
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client", kClientServiceUrl, kApplicationCode];
 }

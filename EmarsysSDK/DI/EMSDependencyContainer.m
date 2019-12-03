@@ -307,7 +307,8 @@
     _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext
                                    notificationCache:self.notificationCache
                                       requestManager:self.requestManager
-                                      requestFactory:self.requestFactory];
+                                      requestFactory:self.requestFactory
+                                            endpoint:endpoint];
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
                                                                      mobileEngageInternal:self.mobileEngage
                                                                                     inApp:self.iam
