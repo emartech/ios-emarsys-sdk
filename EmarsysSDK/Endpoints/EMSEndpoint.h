@@ -4,6 +4,7 @@
 #import <Foundation/Foundation.h>
 
 @class EMSValueProvider;
+@class EMSRemoteConfig;
 
 @interface EMSEndpoint : NSObject
 
@@ -37,5 +38,9 @@
 - (NSString *)v2EventServiceUrl;
 
 - (NSString *)inboxUrl;
+
+- (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig;
+
+- (void)reset;
 
 @end

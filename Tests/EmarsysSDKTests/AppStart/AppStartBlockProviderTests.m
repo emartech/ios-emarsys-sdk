@@ -161,7 +161,7 @@
 
     self.appStartEventBlock();
 
-    OCMVerify([self.mockConfigInternal fetchRemoteConfig]);
+    OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfig]);
 }
 
 @end

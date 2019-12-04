@@ -3,6 +3,7 @@
 //
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
+#import "EMSRemoteConfig.h"
 
 @interface EMSEndpoint ()
 
@@ -85,6 +86,24 @@
 
 - (NSString *)inboxUrl {
     return [self.inboxUrlProvider provideValue];
+}
+
+- (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {
+    [self.clientServiceUrlProvider updateValue:remoteConfig.clientService];
+    [self.eventServiceUrlProvider updateValue:remoteConfig.eventService];
+    [self.predictUrlProvider updateValue:remoteConfig.predictService];
+    [self.v2EventServiceUrlProvider updateValue:remoteConfig.mobileEngageV2Service];
+    [self.deeplinkUrlProvider updateValue:remoteConfig.deepLinkService];
+    [self.inboxUrlProvider updateValue:remoteConfig.inboxService];
+}
+
+- (void)reset {
+    [self.clientServiceUrlProvider updateValue:nil];
+    [self.eventServiceUrlProvider updateValue:nil];
+    [self.predictUrlProvider updateValue:nil];
+    [self.v2EventServiceUrlProvider updateValue:nil];
+    [self.deeplinkUrlProvider updateValue:nil];
+    [self.inboxUrlProvider updateValue:nil];
 }
 
 - (BOOL)isV3url:(NSString *)url {

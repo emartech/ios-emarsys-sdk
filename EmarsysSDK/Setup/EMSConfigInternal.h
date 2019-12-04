@@ -15,6 +15,7 @@
 @class EMSRequestManager;
 @class EMSEmarsysRequestFactory;
 @class EMSRemoteConfigResponseMapper;
+@class EMSEndpoint;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
@@ -25,8 +26,9 @@
                           pushInternal:(EMSPushV3Internal *)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
-            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper;
+            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
+                              endpoint:(EMSEndpoint *)endpoint;
 
-- (void)fetchRemoteConfig;
+- (void)refreshConfigFromRemoteConfig;
 
 @end

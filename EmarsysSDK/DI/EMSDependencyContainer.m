@@ -341,7 +341,8 @@
                                                    pushInternal:self.push
                                                      deviceInfo:deviceInfo
                                           emarsysRequestFactory:emarsysRequestFactory
-                                     remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]];
+                                     remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
+                                                       endpoint:endpoint];
 
     _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                     requestFactory:self.requestFactory

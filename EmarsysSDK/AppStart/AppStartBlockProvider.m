@@ -64,7 +64,7 @@
 - (MEHandlerBlock)createRemoteConfigEventBlock {
     __weak typeof(self) weakSelf = self;
     return ^{
-        [weakSelf.configInternal fetchRemoteConfig];
+        [weakSelf.configInternal refreshConfigFromRemoteConfig];
     };
 }
 

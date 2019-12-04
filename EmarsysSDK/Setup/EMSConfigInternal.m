@@ -12,6 +12,7 @@
 #import "EMSRequestManager.h"
 #import "EMSEmarsysRequestFactory.h"
 #import "EMSRemoteConfigResponseMapper.h"
+#import "EMSEndpoint.h"
 
 @interface EMSConfigInternal ()
 
@@ -23,6 +24,8 @@
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSEmarsysRequestFactory *emarsysRequestFactory;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
 
 @end
 
@@ -35,7 +38,8 @@
                           pushInternal:(EMSPushV3Internal *)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
-            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper {
+            remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
+                              endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
@@ -44,6 +48,7 @@
     NSParameterAssert(deviceInfo);
     NSParameterAssert(emarsysRequestFactory);
     NSParameterAssert(remoteConfigResponseMapper);
+    NSParameterAssert(endpoint);
 
     if (self = [super init]) {
         _requestManager = requestManager;
@@ -53,18 +58,25 @@
         _pushInternal = pushInternal;
         _deviceInfo = deviceInfo;
         _emarsysRequestFactory = emarsysRequestFactory;
+        _remoteConfigResponseMapper = remoteConfigResponseMapper;
+        _endpoint = endpoint;
     }
     return self;
 }
 
-- (void)fetchRemoteConfig {
+- (void)refreshConfigFromRemoteConfig {
     EMSRequestModel *requestModel = [self.emarsysRequestFactory createRemoteConfigRequestModel];
     [self.requestManager submitRequestModelNow:requestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
-
+                                      if (response) {
+                                          EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
+                                          [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
+                                      }
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
-
+                                        if (error) {
+                                            [self.endpoint reset];
+                                        }
                                     }];
 }
 

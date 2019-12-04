@@ -6,6 +6,7 @@
 #import <OCMock/OCMock.h>
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
+#import "EMSRemoteConfig.h"
 
 static NSString *const kClientServiceUrl = @"testClientServiceUrl";
 static NSString *const kEventServiceUrl = @"testEventServiceUrl";
@@ -232,6 +233,41 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     NSString *result = [self.endpoint inboxUrl];
 
     XCTAssertEqualObjects(result, kInboxUrl);
+}
+
+- (void)testUpdateUrlsWithRemoteConfig {
+    NSString *const eventServiceUrl = @"newEventServiceUrl";
+    NSString *const clientServiceUrl = @"newClientServiceUrl";
+    NSString *const predictServiceUrl = @"newPredictServiceUrl";
+    NSString *const v2ServiceUrl = @"newV2ServiceUrl";
+    NSString *const deeplinkServiceUrl = @"newDeeplinkServiceUrl";
+    NSString *const inboxServiceUrl = @"newInboxServiceUrl";
+    EMSRemoteConfig *remoteConfig = [[EMSRemoteConfig alloc] initWithEventService:eventServiceUrl
+                                                                    clientService:clientServiceUrl
+                                                                   predictService:predictServiceUrl
+                                                            mobileEngageV2Service:v2ServiceUrl
+                                                                  deepLinkService:deeplinkServiceUrl
+                                                                     inboxService:inboxServiceUrl];
+
+    [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
+
+    OCMVerify([self.mockEventServiceUrlProvider updateValue:eventServiceUrl]);
+    OCMVerify([self.mockClientServiceUrlProvider updateValue:clientServiceUrl]);
+    OCMVerify([self.mockPredictUrlProvider updateValue:predictServiceUrl]);
+    OCMVerify([self.mockV2EventServiceUrlProvider updateValue:v2ServiceUrl]);
+    OCMVerify([self.mockDeeplinkUrlProvider updateValue:deeplinkServiceUrl]);
+    OCMVerify([self.mockInboxUrlProvider updateValue:inboxServiceUrl]);
+}
+
+- (void)testReset {
+    [self.endpoint reset];
+
+    OCMVerify([self.mockInboxUrlProvider updateValue:nil]);
+    OCMVerify([self.mockV2EventServiceUrlProvider updateValue:nil]);
+    OCMVerify([self.mockDeeplinkUrlProvider updateValue:nil]);
+    OCMVerify([self.mockPredictUrlProvider updateValue:nil]);
+    OCMVerify([self.mockClientServiceUrlProvider updateValue:nil]);
+    OCMVerify([self.mockEventServiceUrlProvider updateValue:nil]);
 }
 
 - (NSString *)clientBaseUrl {
