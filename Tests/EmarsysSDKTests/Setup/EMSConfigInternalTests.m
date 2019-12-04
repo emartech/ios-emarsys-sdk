@@ -19,6 +19,13 @@
 #import "EMSResponseModel.h"
 #import "EMSRemoteConfig.h"
 
+@interface EMSConfigInternal (Tests)
+
+- (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
+                  withError:(NSError *)error;
+
+@end
+
 @interface EMSConfigInternalTests : XCTestCase
 
 @property(nonatomic, strong) EMSConfigInternal *configInternal;
@@ -559,6 +566,35 @@
     XCTAssertNil(returnedError);
 }
 
+- (void)testCallCompletionBlockWithError_whenThereIsNoError {
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+
+    [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
+        }
+                                         withError:nil];
+
+    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
+}
+
+- (void)testCallCompletionBlockWithError_whenThereIsError {
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+    NSError *error = [NSError errorWithCode:1401
+                       localizedDescription:@"testError"];
+
+    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfig]);
+
+    [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
+        }
+                                         withError:error];
+}
+
+- (void)testChangeMerchantId_shouldRefresh {
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+
+    [partialMockConfigInternal changeMerchantId:@"testMerchantId"];
+
+    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
+}
 
 - (void)testChangeMerchantId_shouldSetMerchantId_inPRERequestContext {
     NSString *newMerchantId = @"newMerchantId";
@@ -594,7 +630,7 @@
     XCTAssertEqualObjects(result, pushSettings);
 }
 
-- (void)testFetchConfig {
+- (void)testRefreshConfig {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
 
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
