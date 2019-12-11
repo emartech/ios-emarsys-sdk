@@ -15,7 +15,6 @@
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
 #import "FakeRequestManager.h"
-#import "NSError+EMSCore.h"
 #import "EMSResponseModel.h"
 #import "EMSRemoteConfig.h"
 
@@ -568,12 +567,11 @@
 
 - (void)testCallCompletionBlockWithError_whenThereIsNoError {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 
     [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
         }
                                          withError:nil];
-
-    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 }
 
 - (void)testCallCompletionBlockWithError_whenThereIsError {
@@ -591,9 +589,9 @@
 - (void)testChangeMerchantId_shouldRefresh {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
-    [partialMockConfigInternal changeMerchantId:@"testMerchantId"];
+    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 
-    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
+    [partialMockConfigInternal changeMerchantId:@"testMerchantId"];
 }
 
 - (void)testChangeMerchantId_shouldSetMerchantId_inPRERequestContext {

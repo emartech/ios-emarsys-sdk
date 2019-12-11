@@ -264,7 +264,7 @@ SPEC_BEGIN(EmarsysTests)
                         [[appStartBlockProvider should] receive:@selector(createDeviceInfoEventBlock)
                                                       andReturn:appStartBlock2
                                                   withArguments:requestManager, requestFactory, deviceInfo];
-                        [[appStartBlockProvider should] receive:@selector(createRemoteConfigEventBlock)
+                        [[appStartBlockProvider shouldNot] receive:@selector(createRemoteConfigEventBlock)
                                                       andReturn:appStartBlock3];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock,
@@ -272,7 +272,7 @@ SPEC_BEGIN(EmarsysTests)
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock2,
                                                                         UIApplicationDidBecomeActiveNotification];
-                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                        [[notificationCenterManagerMock shouldNot] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock3,
                                                                         UIApplicationDidFinishLaunchingNotification];
                         [EmarsysTestUtils setupEmarsysWithFeatures:@[]

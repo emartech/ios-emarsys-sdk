@@ -107,7 +107,6 @@
 
 - (void)changeMerchantId:(nullable NSString *)merchantId {
     self.preRequestContext.merchantId = merchantId;
-    [self refreshConfigFromRemoteConfig];
 }
 
 - (NSString *)merchantId {
@@ -172,7 +171,7 @@
     if (error) {
         self.meRequestContext.applicationCode = nil;
     } else {
-        [self refreshConfigFromRemoteConfig];
+        ;
     }
     if (completionBlock) {
         completionBlock(error);

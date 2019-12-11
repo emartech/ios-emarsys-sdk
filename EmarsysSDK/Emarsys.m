@@ -102,8 +102,6 @@
                                forNotification:UIApplicationDidBecomeActiveNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
                                forNotification:UIApplicationDidFinishLaunchingNotification];
-    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createRemoteConfigEventBlock]
-                               forNotification:UIApplicationDidFinishLaunchingNotification];
 }
 
 + (id <EMSPushNotificationProtocol>)push {
