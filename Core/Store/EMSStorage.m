@@ -2,6 +2,8 @@
 // Copyright (c) 2020 Emarsys. All rights reserved.
 //
 #import "EMSStorage.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
 
 #define kEMSSuiteName @"com.emarsys.core"
 
@@ -38,7 +40,17 @@
         if (status == errSecDuplicateItem) {
             SecItemDelete((__bridge CFDictionaryRef) query);
             SecItemAdd((__bridge CFDictionaryRef) query, NULL);
-        } else if (status != errSecSuccess) {;
+        } else if (status != errSecSuccess) {
+            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+            parameters[@"data"] = data;
+            parameters[@"key"] = key;
+            NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+            statusDict[@"osStatus"] = @(status);
+            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                     sel:_cmd
+                                                              parameters:parameters
+                                                                  status:statusDict];
+            EMSLog(logEntry);
         }
     }];
 }
