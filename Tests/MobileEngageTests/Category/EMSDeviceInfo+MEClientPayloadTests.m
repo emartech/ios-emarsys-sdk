@@ -5,7 +5,9 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <UserNotifications/UserNotifications.h>
+#import <AdSupport/AdSupport.h>
 #import "EMSDeviceInfo+MEClientPayload.h"
+#import "EMSStorage.h"
 
 @interface EMSDeviceInfo_MEClientPayloadTests : XCTestCase
 
@@ -15,7 +17,9 @@
 
 - (void)testClientPayload {
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSDKVersion"
-                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]]
+                                                        identifierManager:[ASIdentifierManager sharedManager]];
 
     EMSDeviceInfo *partialMockDeviceInfo = OCMPartialMock(deviceInfo);
 

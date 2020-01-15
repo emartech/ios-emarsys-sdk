@@ -2,6 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <UIKit/UIKit.h>
+#import <AdSupport/AdSupport.h>
 #import "EMSDependencyContainer.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
@@ -71,6 +72,7 @@
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSValueProvider.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -143,8 +145,15 @@
 
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+    _operationQueue = [EMSOperationQueue new];
+    _operationQueue.maxConcurrentOperationCount = 1;
+    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
+    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
+
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
-                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:self.operationQueue]
+                                                        identifierManager:[ASIdentifierManager sharedManager]];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
                                                          contactFieldId:config.contactFieldId
@@ -163,11 +172,6 @@
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
-
-    _operationQueue = [EMSOperationQueue new];
-    _operationQueue.maxConcurrentOperationCount = 1;
-    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
-    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
 
     _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]]
                                 mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]

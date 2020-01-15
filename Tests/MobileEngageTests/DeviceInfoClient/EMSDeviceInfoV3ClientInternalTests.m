@@ -5,11 +5,13 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <UserNotifications/UserNotifications.h>
+#import <AdSupport/AdSupport.h>
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
 #import "MERequestContext.h"
+#import "EMSStorage.h"
 
 @interface EMSDeviceInfoV3ClientInternalTests : XCTestCase
 
@@ -113,7 +115,9 @@
     OCMStub(self.mockRequestContext.clientState).andReturn(@"testClientState");
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
-                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]]
+                                                        identifierManager:[ASIdentifierManager sharedManager]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo
@@ -138,7 +142,9 @@
     OCMStub(self.mockRequestContext.clientState).andReturn(nil);
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
-                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]];
+                                                       notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]]
+                                                        identifierManager:[ASIdentifierManager sharedManager]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo

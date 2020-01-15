@@ -3,6 +3,7 @@
 //
 
 #import "EMSDeviceInfo.h"
+#import "EMSStorage.h"
 #import <sys/utsname.h>
 #import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
@@ -18,12 +19,18 @@
 #define kEMSSuiteName @"com.emarsys.core"
 
 - (instancetype)initWithSDKVersion:(NSString *)sdkVersion
-                notificationCenter:(UNUserNotificationCenter *)notificationCenter {
+                notificationCenter:(UNUserNotificationCenter *)notificationCenter
+                           storage:(EMSStorage *)storage
+                 identifierManager:(ASIdentifierManager *)identifierManager {
     NSParameterAssert(sdkVersion);
     NSParameterAssert(notificationCenter);
+    NSParameterAssert(storage);
+    NSParameterAssert(identifierManager);
     if (self = [super init]) {
         _sdkVersion = sdkVersion;
         _notificationCenter = notificationCenter;
+        _storage = storage;
+        _identifierManager = identifierManager;
     }
     return self;
 }
@@ -74,15 +81,19 @@
 }
 
 - (NSString *)hardwareId {
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    NSString *hardwareId = [userDefaults objectForKey:kEMSHardwareIdKey];
+    NSString *hardwareId = [self.storage stringForKey:kEMSHardwareIdKey];
 
     if (!hardwareId) {
-        hardwareId = [self getNewHardwareId];
-        [userDefaults setObject:hardwareId forKey:kEMSHardwareIdKey];
-        [userDefaults synchronize];
+        NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+        hardwareId = [userDefaults objectForKey:kEMSHardwareIdKey];
+        if (!hardwareId) {
+            hardwareId = [self getNewHardwareId];
+        } else {
+            [userDefaults removeObjectForKey:kEMSHardwareIdKey];
+        }
+        [self.storage setString:hardwareId
+                         forKey:kEMSHardwareIdKey];
     }
-
     return hardwareId;
 }
 
@@ -179,8 +190,8 @@
 }
 
 - (NSString *)getNewHardwareId {
-    if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
-        return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    if ([self.identifierManager isAdvertisingTrackingEnabled]) {
+        return [[self.identifierManager advertisingIdentifier] UUIDString];
     }
     return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 }
