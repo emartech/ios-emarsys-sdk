@@ -1,27 +1,69 @@
 #import "Kiwi.h"
 #import "EMSWindowProvider.h"
+#import "EMSSceneProvider.h"
 #import "EMSViewControllerProvider.h"
 
 SPEC_BEGIN(EMSWindowProviderTests)
 
         __block EMSWindowProvider *windowProvider;
+        __block EMSSceneProvider *mockSceneProvider;
         __block EMSViewControllerProvider *viewControllerProvider;
 
         beforeEach(^{
             viewControllerProvider = [EMSViewControllerProvider nullMock];
-            windowProvider = [[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider];
+            mockSceneProvider = [EMSSceneProvider nullMock];
+            windowProvider = [[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider
+                                                                         sceneProvider:mockSceneProvider];
         });
 
         describe(@"initWithViewControllerProvider", ^{
             it(@"iamViewControllerProvider must not be null", ^{
                 @try {
-                    [[EMSWindowProvider alloc] initWithViewControllerProvider:nil];
+                    [[EMSWindowProvider alloc] initWithViewControllerProvider:nil
+                                                                sceneProvider:mockSceneProvider];
                     fail(@"Expected Exception when iamViewControllerProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: viewControllerProvider"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
+            it(@"sceneProvider must not be null", ^{
+                @try {
+                    [[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider
+                                                                sceneProvider:nil];
+                    fail(@"Expected Exception when sceneProvider is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: sceneProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+        });
+
+        describe(@"window check", ^{
+
+            if (@available(iOS 13.0, *)) {
+
+                it(@"should use sceneProvider for window creating", ^{
+                    [[mockSceneProvider should] receive:@selector(provideScene)];
+
+                    UIWindow *result = [windowProvider provideWindow];
+
+                    [[result shouldNot] beNil];
+                });
+
+            } else {
+
+                it(@"should not use sceneProvider for window creating", ^{
+                    [[mockSceneProvider shouldNot] receive:@selector(provideScene)];
+
+                    UIWindow *result = [windowProvider provideWindow];
+
+                    [[result shouldNot] beNil];
+                });
+
+            }
+
         });
 
         describe(@"provideWindow", ^{
@@ -32,11 +74,15 @@ SPEC_BEGIN(EMSWindowProviderTests)
                 [[window shouldNot] beNil];
             });
 
-            it(@"should have a screen size", ^{
-                UIWindow *window = [windowProvider provideWindow];
+            if (!@available(iOS 13.0, *)) {
 
-                [[theValue(window.frame) should] equal:theValue(UIScreen.mainScreen.bounds)];
-            });
+                it(@"should have a screen size", ^{
+                    UIWindow *window = [windowProvider provideWindow];
+
+                    [[theValue(window.frame) should] equal:theValue(UIScreen.mainScreen.bounds)];
+                });
+
+            }
 
             it(@"should have clear backgroundColor", ^{
                 UIWindow *window = [windowProvider provideWindow];
@@ -49,6 +95,7 @@ SPEC_BEGIN(EMSWindowProviderTests)
 
                 [[theValue(window.windowLevel) should] equal:theValue(UIWindowLevelAlert)];
             });
+
             it(@"should have rootViewController set", ^{
                 UIViewController *viewController = [UIViewController new];
                 [[viewControllerProvider should] receive:@selector(provideViewController) andReturn:viewController];

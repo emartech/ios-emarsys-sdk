@@ -276,6 +276,7 @@
 		32C6F006101EE9F4F30F43DA /* EMSDependencyInjection.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F98312C2E47E910BF423 /* EMSDependencyInjection.m */; };
 		32C6F01B5AC66D072D5D9EBC /* DependencyInjectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F9D95866503F93256683 /* DependencyInjectionTests.m */; };
 		32C6F02A0FCE0C885640DA34 /* EMSCompletionBlockProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F823261C753235FAE3DA /* EMSCompletionBlockProviderTests.m */; };
+		32C6F02AF1D6370BE804EE84 /* EMSSceneProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA09FCC106E4358D6510 /* EMSSceneProviderTests.m */; };
 		32C6F03FDDD5DF2DCCC5B117 /* EMSSchedulerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7982201CA45DDF53142 /* EMSSchedulerTests.m */; };
 		32C6F06860513B40090EA1D7 /* EmarsysPushIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F3A27AB8FF0A862262F0 /* EmarsysPushIntegrationTests.m */; };
 		32C6F068FAD015D8FF72BD0D /* EMSMainWindowProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F0485873B30B3EB7206B /* EMSMainWindowProvider.h */; };
@@ -353,6 +354,7 @@
 		32C6F3FE0FB0A2C9CA6E8AFA /* EMSFilterByNothingSpecification.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCAA8B531C1228C95C5E /* EMSFilterByNothingSpecification.m */; };
 		32C6F400431144680A33697B /* EMSCoreCompletionHandlerMiddlewareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F4D3C711179181C4EF7F /* EMSCoreCompletionHandlerMiddlewareTests.m */; };
 		32C6F41C31B351C9BC4BDAD8 /* EMSPredictMapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7F84FA87276905E5DAC /* EMSPredictMapperTests.m */; };
+		32C6F4231B9CFE5B4D346E58 /* EMSSceneProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F4655D83A8D5FC54751F /* EMSSceneProvider.m */; };
 		32C6F4350166357A98A0E8C3 /* EMSSQLStatementFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F758108667E2960DC8D4 /* EMSSQLStatementFactory.m */; };
 		32C6F4696A8BC804DAED289B /* EMSAbstractResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FFC9084FF971BA9FE571 /* EMSAbstractResponseHandler.h */; };
 		32C6F4697A1135B756761D1E /* EMSShardRepositoryProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F9794B5554DDE9BC034E /* EMSShardRepositoryProtocol.h */; };
@@ -457,6 +459,7 @@
 		32C6F96A5B626E1A1EAC95DD /* EMSResponseModel+EMSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F007AA460F127ECD2D77 /* EMSResponseModel+EMSCore.h */; };
 		32C6F96D6785B37E44CF012C /* EMSCrashLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA0BF51D58070ECE25C0 /* EMSCrashLog.m */; };
 		32C6F9847AF4AD81CAC44AB9 /* EMSBatchingShardTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA9769DE84F519CD9570 /* EMSBatchingShardTrigger.m */; };
+		32C6F986F5525C6B19F7F121 /* EMSSceneProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F498ABCAFE8DBA3BE61B /* EMSSceneProvider.h */; };
 		32C6F9A1C70D78B3074CFE80 /* EMSProduct.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6FBD82278648922A0EE35 /* EMSProduct.h */; };
 		32C6F9B43228785EDCA08628 /* EMSProductBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F489210E9B3C9A980B2D /* EMSProductBuilder.h */; };
 		32C6F9B7EC90D3FA8CB0B3F6 /* EMSPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FBBFE9F0E9315E6D2165 /* EMSPredicate.m */; };
@@ -555,6 +558,7 @@
 		32C6FE34EA821E1D4AE88935 /* EMSCompletionBlockProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F823261C753235FAE3DA /* EMSCompletionBlockProviderTests.m */; };
 		32C6FE3608252CEDF8AFD591 /* EMSLoggingInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F063EB9AA33CD9D6C5C0 /* EMSLoggingInbox.h */; };
 		32C6FE53A4FFDE2E1E9E2B90 /* EMSOfflineQueueSizeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FDFF82B9DFE883AA4CD2 /* EMSOfflineQueueSizeTests.m */; };
+		32C6FE5E599219BEAC5B2038 /* EMSSceneProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FA09FCC106E4358D6510 /* EMSSceneProviderTests.m */; };
 		32C6FE672A034B17361C7D6D /* MEIAMViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F45B5044A6E1F6CACB53 /* MEIAMViewControllerTests.m */; };
 		32C6FE76B564F926BE52157B /* EMSOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F5BDC108D8153C742A00 /* EMSOperationQueue.m */; };
 		32C6FE76ED48DB47D1640467 /* EMSDeviceInfoV3ClientInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F20677987A2D66F9264D /* EMSDeviceInfoV3ClientInternalTests.m */; };
@@ -910,6 +914,7 @@
 		32C6F45B0A63B975DD443A20 /* FakeDBTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeDBTrigger.h; sourceTree = "<group>"; };
 		32C6F45B5044A6E1F6CACB53 /* MEIAMViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMViewControllerTests.m; sourceTree = "<group>"; };
 		32C6F4604AB09449A184CED2 /* EMSRequestModelRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRequestModelRepository.h; sourceTree = "<group>"; };
+		32C6F4655D83A8D5FC54751F /* EMSSceneProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSSceneProvider.m; sourceTree = "<group>"; };
 		32C6F474448F404A1E0320FB /* EMSShardRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSShardRepository.h; sourceTree = "<group>"; };
 		32C6F475B3FA7AA44D0D8B3A /* EMSCountMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCountMapper.m; sourceTree = "<group>"; };
 		32C6F476118620389B7C9536 /* EMSDeepLinkInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeepLinkInternalTests.m; sourceTree = "<group>"; };
@@ -919,6 +924,7 @@
 		32C6F489210E9B3C9A980B2D /* EMSProductBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSProductBuilder.h; sourceTree = "<group>"; };
 		32C6F492F5F9F9550BC0B708 /* EMSSQLStatementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSSQLStatementFactory.h; sourceTree = "<group>"; };
 		32C6F4945BDC3F7177979552 /* EMSMobileEngageV3InternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageV3InternalTests.m; sourceTree = "<group>"; };
+		32C6F498ABCAFE8DBA3BE61B /* EMSSceneProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSSceneProvider.h; sourceTree = "<group>"; };
 		32C6F4A3248295BC86668A96 /* MEIAMResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMResponseHandler.h; sourceTree = "<group>"; };
 		32C6F4A3D2BFC8D646137F19 /* EMSXPResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSXPResponseHandler.h; sourceTree = "<group>"; };
 		32C6F4A66D30DA3FD8E3FEE5 /* EMSStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSStorage.m; sourceTree = "<group>"; };
@@ -1048,6 +1054,7 @@
 		32C6F9FA1D67408EE20AC917 /* EMSClientStateResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSClientStateResponseHandler.m; sourceTree = "<group>"; };
 		32C6F9FE40B51289C4E7D797 /* EMSSQLiteHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSSQLiteHelper.h; sourceTree = "<group>"; };
 		32C6FA05C2D6A326B78B0C0D /* NSURLRequest+EMSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+EMSCore.h"; sourceTree = "<group>"; };
+		32C6FA09FCC106E4358D6510 /* EMSSceneProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSSceneProviderTests.m; sourceTree = "<group>"; };
 		32C6FA0BF51D58070ECE25C0 /* EMSCrashLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCrashLog.m; sourceTree = "<group>"; };
 		32C6FA0FEA3C2A1A694E6549 /* EMSStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSStorage.h; sourceTree = "<group>"; };
 		32C6FA1DB0324C3ED5E04770 /* MEJSBridgeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEJSBridgeTests.m; sourceTree = "<group>"; };
@@ -1781,6 +1788,7 @@
 				32C6F9BDD8C7679447A345FE /* EMSViewControllerProviderTests.m */,
 				32C6FEDD96C09FF98C2B367B /* EMSIAMViewControllerProviderTests.m */,
 				32C6F71DDE7C2122FB3DE23A /* EMSMainWindowProviderTests.m */,
+				32C6FA09FCC106E4358D6510 /* EMSSceneProviderTests.m */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -2232,6 +2240,8 @@
 				32C6FF530D137900F2402086 /* EMSViewControllerProvider.h */,
 				32C6F6739239DC1E0B08B9B9 /* EMSMainWindowProvider.m */,
 				32C6F0485873B30B3EB7206B /* EMSMainWindowProvider.h */,
+				32C6F4655D83A8D5FC54751F /* EMSSceneProvider.m */,
+				32C6F498ABCAFE8DBA3BE61B /* EMSSceneProvider.h */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -3126,6 +3136,7 @@
 				32C6F08CD5593777DF4BF3FC /* EMSEndpoint.h in Headers */,
 				32C6FFC836D527E24E846BF5 /* EMSStorage.h in Headers */,
 				32C6FD90C4891DF7B621ECB7 /* EMSStatusLog.h in Headers */,
+				32C6F986F5525C6B19F7F121 /* EMSSceneProvider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3581,6 +3592,7 @@
 				32C6F76EA6F83F7ACDC48222 /* NSData+MobileEngageTest.m in Sources */,
 				32C6FF59896131D4E6A20040 /* NSDictionary+MobileEngageTests.m in Sources */,
 				32C6FA34FE053A3D3CE416A1 /* EMSServiceDictionaryValidatorTests.m in Sources */,
+				32C6F02AF1D6370BE804EE84 /* EMSSceneProviderTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3816,6 +3828,7 @@
 				32C6F83F3F920D72A7F9BB24 /* FakeRequestManager.m in Sources */,
 				32C6FB16A7C3645DB1EA3CB0 /* EMSStorageTests.m in Sources */,
 				32C6F6ADCF498D49CC1FFFB1 /* EMSStatusLogTests.m in Sources */,
+				32C6FE5E599219BEAC5B2038 /* EMSSceneProviderTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3991,6 +4004,7 @@
 				32C6FD857C8BB4C57440288B /* EMSEndpoint.m in Sources */,
 				32C6FFDAE2B63643C04B7A72 /* EMSStorage.m in Sources */,
 				32C6F9332F27540514931C70 /* EMSStatusLog.m in Sources */,
+				32C6F4231B9CFE5B4D346E58 /* EMSSceneProvider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

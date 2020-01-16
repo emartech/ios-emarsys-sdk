@@ -5,9 +5,12 @@
 #import <UIKit/UIKit.h>
 
 @class EMSViewControllerProvider;
+@class EMSSceneProvider;
 
 @interface EMSWindowProvider : NSObject
-- (instancetype)initWithViewControllerProvider:(EMSViewControllerProvider *)viewControllerProvider;
+
+- (instancetype)initWithViewControllerProvider:(EMSViewControllerProvider *)viewControllerProvider
+                                 sceneProvider:(EMSSceneProvider *)sceneProvider;
 
 - (UIWindow *)provideWindow;
 

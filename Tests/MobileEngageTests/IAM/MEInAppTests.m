@@ -12,6 +12,7 @@
 #import "FakeInAppTracker.h"
 #import "EMSViewControllerProvider.h"
 #import "EMSCompletionBlockProvider.h"
+#import "EMSSceneProvider.h"
 
 SPEC_BEGIN(MEInAppTests)
 
@@ -46,7 +47,8 @@ SPEC_BEGIN(MEInAppTests)
             [viewControllerProvider stub:@selector(provideViewController)
                                andReturn:[[[EMSViewControllerProvider alloc] init] provideViewController]];
             [windowProvider stub:@selector(provideWindow)
-                       andReturn:[[[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider] provideWindow]];
+                       andReturn:[[[EMSWindowProvider alloc] initWithViewControllerProvider:viewControllerProvider
+                                                                              sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]] provideWindow]];
             displayedIAMRepository = [MEDisplayedIAMRepository nullMock];
 
             operationQueue = [NSOperationQueue new];
