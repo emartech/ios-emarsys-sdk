@@ -1,25 +1,34 @@
 //
 // Copyright (c) 2020 Emarsys. All rights reserved.
 //
+#import <OCMArg.h>
 #import "EMSStorage.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
 
-#define kEMSSuiteName @"com.emarsys.core"
-
 @interface EMSStorage ()
 
-@property(nonatomic, strong) NSUserDefaults *userDefaults;
+@property(nonatomic, strong) NSArray <NSUserDefaults *> *userDefaultsArray;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
 @implementation EMSStorage
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue {
+- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
+                            suiteNames:(NSArray<NSString *> *)suiteNames {
+    NSParameterAssert(operationQueue);
+    NSParameterAssert(suiteNames);
+
     if (self = [super init]) {
         _operationQueue = operationQueue;
-        _userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+        NSMutableArray <NSUserDefaults *> *mutableUserDefaults = [NSMutableArray new];
+        for (NSString *suiteName in suiteNames) {
+
+            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
+            [mutableUserDefaults addObject:userDefaults];
+        }
+        _userDefaultsArray = [NSArray arrayWithArray:mutableUserDefaults];
     }
     return self;
 }
@@ -91,11 +100,43 @@
     if (status == errSecSuccess) {
         NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
         result = resultDict[(id) kSecValueData];
+    } else if (status != errSecItemNotFound) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"key"] = key;
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"osStatus"] = @(status);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:parameters
+                                                              status:statusDict];
+        EMSLog(logEntry);
     }
 
     if (resultRef) {
         CFRelease(resultRef);
     }
+
+    if (!result) {
+        for (NSUserDefaults *userDefaults in self.userDefaultsArray) {
+            id userDefaultsValue = [userDefaults objectForKey:key];
+
+            if ([userDefaultsValue isKindOfClass:[NSString class]]) {
+                userDefaultsValue = [userDefaultsValue dataUsingEncoding:NSUTF8StringEncoding];
+            } else if ([userDefaultsValue isKindOfClass:[NSNumber class]]) {
+                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue];
+            } else if ([userDefaultsValue isKindOfClass:[NSDictionary class]]) {
+                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue];
+            }
+            if (userDefaultsValue) {
+                [userDefaults removeObjectForKey:key];
+                [self setData:userDefaultsValue
+                       forKey:key];
+                result = userDefaultsValue;
+                break;
+            }
+        }
+    }
+
     return result;
 }
 
@@ -114,16 +155,6 @@
 - (nullable NSDictionary *)dictionaryForKey:(NSString *)key {
     NSData *data = [self dataForKey:key];
     return [NSKeyedUnarchiver unarchiveObjectWithData:data];
-}
-
-- (void)setDataInUserDefaults:(nullable NSData *)data
-                       forKey:(NSString *)key {
-    [self.userDefaults setObject:data
-                          forKey:key];
-}
-
-- (nullable NSData *)dataInUserDefaultsForKey:(NSString *)key {
-    return [self.userDefaults dataForKey:key];
 }
 
 - (NSData *)objectForKeyedSubscript:(NSString *)key {

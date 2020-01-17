@@ -5,6 +5,7 @@
 #import "Kiwi.h"
 #import "EMSDeviceInfo.h"
 #import "EMSStorage.h"
+#import "OCMock.h"
 #import <AdSupport/AdSupport.h>
 #import <UserNotifications/UserNotifications.h>
 
@@ -406,20 +407,6 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 NSString *result = [deviceInfo hardwareId];
 
                 [[result should] equal:kHwId];
-            });
-
-            it(@"should store hwid in storage and delete from userdefaults when it's available in userdefaults", ^{
-                NSString *const kHwId = @"testHWID";
-
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-                [userDefaults setObject:kHwId forKey:kEMSHardwareIdKey];
-
-                [[mockStorage should] receive:@selector(setString:forKey:) withArguments:kHwId, kEMSHardwareIdKey];
-
-                NSString *result = [deviceInfo hardwareId];
-
-                [[result should] equal:kHwId];
-                [[userDefaults dataForKey:kEMSHardwareIdKey] shouldBeNil];
             });
 
             it(@"should store new hwid in storage when hwid isn't available in userDefaults neither in storage", ^{

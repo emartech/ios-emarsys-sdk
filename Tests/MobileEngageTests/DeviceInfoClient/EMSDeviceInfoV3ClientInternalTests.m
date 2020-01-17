@@ -20,6 +20,7 @@
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
+@property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 
 @end
 
@@ -35,6 +36,8 @@
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:self.mockDeviceInfo
                                                                          requestContext:self.mockRequestContext];
+
+    _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -94,8 +97,8 @@
     [userDefaults synchronize];
 
     NSDictionary *expectedDeviceInfoDict = @{
-        @"testPayloadKey": @"testPayloadValue",
-        @"testPayloadKey2": @"testPayloadValue2"
+            @"testPayloadKey": @"testPayloadValue",
+            @"testPayloadKey2": @"testPayloadValue2"
     };
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
 
@@ -116,8 +119,11 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]]
+                                                                  storage:[[EMSStorage alloc]
+                                                                          initWithOperationQueue:[NSOperationQueue new]
+                                                                                      suiteNames:self.suiteNames]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
+
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo
@@ -143,7 +149,8 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]
+                                                                                                          suiteNames:self.suiteNames]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory

@@ -110,6 +110,7 @@
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
+@property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -150,10 +151,13 @@
     _operationQueue.maxConcurrentOperationCount = 1;
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
+    _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
+
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:self.operationQueue]
+                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:self.operationQueue
+                                                                                                          suiteNames:self.suiteNames]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
@@ -213,9 +217,9 @@
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                      displayIamRepository:displayedIAMRepository]]
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                          displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                    endpoint:endpoint]];
@@ -233,10 +237,10 @@
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
-                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                      endpoint:endpoint],
-                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                            endpoint:endpoint]]
+                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                                                          endpoint:endpoint],
+                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
+                                                                                endpoint:endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository

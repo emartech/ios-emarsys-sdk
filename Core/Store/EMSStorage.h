@@ -11,7 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)new NS_UNAVAILABLE;
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue;
+- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
+                            suiteNames:(NSArray<NSString *> *)suiteNames;
 
 - (void)setData:(nullable NSData *)data
          forKey:(NSString *)key;
@@ -33,16 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSDictionary *)dictionaryForKey:(NSString *)key;
 
-- (void)setDataInUserDefaults:(nullable NSData *)data
-                       forKey:(NSString *)key;
-
-- (nullable NSData *)dataInUserDefaultsForKey:(NSString *)key;
-
 - (NSData *)objectForKeyedSubscript:(NSString *)key;
 
 - (void)setObject:(NSData *)obj
 forKeyedSubscript:(NSString *)key;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -84,13 +84,7 @@
     NSString *hardwareId = [self.storage stringForKey:kEMSHardwareIdKey];
 
     if (!hardwareId) {
-        NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-        hardwareId = [userDefaults objectForKey:kEMSHardwareIdKey];
-        if (!hardwareId) {
-            hardwareId = [self getNewHardwareId];
-        } else {
-            [userDefaults removeObjectForKey:kEMSHardwareIdKey];
-        }
+        hardwareId = [self getNewHardwareId];
         [self.storage setString:hardwareId
                          forKey:kEMSHardwareIdKey];
     }

@@ -19,8 +19,8 @@ static NSString *const kTestValue2String = @"testValue2";
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSOperationQueue *mockQueue;
 @property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 
-@property(nonatomic, strong) NSUserDefaults *userDefaults;
 @end
 
 @implementation EMSStorageTests
@@ -31,35 +31,62 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.queue setMaxConcurrentOperationCount:1];
     _mockQueue = OCMPartialMock(self.queue);
 
-    _userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
     _testValue1 = [kTestValue1String dataUsingEncoding:NSUTF8StringEncoding];
     _testValue2 = [kTestValue2String dataUsingEncoding:NSUTF8StringEncoding];
     _testNumber = @42;
+    _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
     _testDictionary = @{
-        @"testKey1": @"testValue1",
-        @"testKey2":
-        @{
-            @"testKey3": @"testValue3",
-            @"testKey4": @42
-        },
-        @"testKey5": @YES
+            @"testKey1": @"testValue1",
+            @"testKey2":
+            @{
+                    @"testKey3": @"testValue3",
+                    @"testKey4": @42
+            },
+            @"testKey5": @YES
     };
 
-    _storage = [[EMSStorage alloc] initWithOperationQueue:self.mockQueue];
+    _storage = [[EMSStorage alloc] initWithOperationQueue:self.mockQueue
+                                               suiteNames:self.suiteNames];
 }
 
 - (void)tearDown {
     [super tearDown];
     NSDictionary *deleteQuery = @{
-        (id) kSecClass: (id) kSecClassGenericPassword,
-        (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-        (id) kSecAttrAccount: kTestKey,
-        (id) kSecReturnData: (id) kCFBooleanTrue,
-        (id) kSecReturnAttributes: (id) kCFBooleanTrue
+            (id) kSecClass: (id) kSecClassGenericPassword,
+            (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            (id) kSecAttrAccount: kTestKey,
+            (id) kSecReturnData: (id) kCFBooleanTrue,
+            (id) kSecReturnAttributes: (id) kCFBooleanTrue
     };
 
     SecItemDelete((__bridge CFDictionaryRef) deleteQuery);
-    [self.userDefaults removeObjectForKey:kTestKey];
+
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[0]];
+    [userDefaults removeObjectForKey:kTestKey];
+    userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
+    [userDefaults removeObjectForKey:kTestKey];
+    userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[2]];
+    [userDefaults removeObjectForKey:kTestKey];
+}
+
+- (void)testInit_operationQueue_mustNotBeNil {
+    @try {
+        [[EMSStorage alloc] initWithOperationQueue:nil
+                                        suiteNames:self.suiteNames];
+        XCTFail(@"Expected Exception when operationQueue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: operationQueue");
+    }
+}
+
+- (void)testInit_suiteNames_mustNotBeNil {
+    @try {
+        [[EMSStorage alloc] initWithOperationQueue:self.mockQueue
+                                        suiteNames:nil];
+        XCTFail(@"Expected Exception when suiteNames is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: suiteNames");
+    }
 }
 
 - (void)testSetDataForKey_key_mustNotBeNil {
@@ -81,11 +108,11 @@ static NSString *const kTestValue2String = @"testValue2";
     [self waitForOperation];
 
     NSDictionary *query = @{
-        (id) kSecClass: (id) kSecClassGenericPassword,
-        (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-        (id) kSecAttrAccount: kTestKey,
-        (id) kSecReturnData: (id) kCFBooleanTrue,
-        (id) kSecReturnAttributes: (id) kCFBooleanTrue
+            (id) kSecClass: (id) kSecClassGenericPassword,
+            (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            (id) kSecAttrAccount: kTestKey,
+            (id) kSecReturnData: (id) kCFBooleanTrue,
+            (id) kSecReturnAttributes: (id) kCFBooleanTrue
     };
 
     CFTypeRef resultRef = NULL;
@@ -143,6 +170,62 @@ static NSString *const kTestValue2String = @"testValue2";
     [self waitForOperation];
 
     XCTAssertNil(result);
+}
+
+- (void)testDataForKey_should_returnAndDeleteUserDefaultsValue_when_missingFromKeychain_withString {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
+    EMSStorage *mockStorage = OCMPartialMock(self.storage);
+
+    [userDefaults setObject:kTestValue1String
+                     forKey:kTestKey];
+
+    NSData *result = [mockStorage dataForKey:kTestKey];
+
+    [self waitForOperation];
+
+    NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
+
+    OCMVerify([mockStorage setData:self.testValue1
+                            forKey:kTestKey];);
+    XCTAssertEqualObjects(result, self.testValue1);
+    XCTAssertNil(userDefaultsResult);
+}
+
+- (void)testDataForKey_should_returnAndDeleteUserDefaultsValue_when_missingFromKeychain_withNumber {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
+    EMSStorage *mockStorage = OCMPartialMock(self.storage);
+    NSData *numberData = [NSKeyedArchiver archivedDataWithRootObject:self.testNumber];
+
+    [userDefaults setObject:self.testNumber
+                     forKey:kTestKey];
+
+    NSData *result = [mockStorage dataForKey:kTestKey];
+
+    [self waitForOperation];
+
+    NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
+
+    OCMVerify([mockStorage setData:numberData
+                            forKey:kTestKey];);
+    XCTAssertEqualObjects(result, numberData);
+    XCTAssertNil(userDefaultsResult);
+}
+
+- (void)testDataForKey_should_returnAndDeleteUserDefaultsValue_when_missingFromKeychain_withDictionary {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
+    EMSStorage *mockStorage = OCMPartialMock(self.storage);
+
+    [userDefaults setObject:self.testDictionary
+                     forKey:kTestKey];
+
+    NSDictionary *result = [mockStorage dictionaryForKey:kTestKey];
+
+    [self waitForOperation];
+
+    NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
+
+    XCTAssertEqualObjects(result, self.testDictionary);
+    XCTAssertNil(userDefaultsResult);
 }
 
 - (void)testSetDataForKey_should_UpdateData {
@@ -267,28 +350,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self waitForOperation];
 
     NSData *result = self.storage[kTestKey];
-
-    XCTAssertEqualObjects(result, self.testValue1);
-}
-
-- (void)testSetDataInUserDefaultForKey {
-    [self.storage setDataInUserDefaults:self.testValue1
-                                 forKey:kTestKey];
-
-    [self waitForOperation];
-
-    NSData *result = [self.userDefaults objectForKey:kTestKey];
-
-    XCTAssertEqualObjects(result, self.testValue1);
-}
-
-- (void)testDataInUserDefaultsForKey {
-    [self.userDefaults setObject:self.testValue1
-                          forKey:kTestKey];
-
-    NSData *result = [self.storage dataInUserDefaultsForKey:kTestKey];
-
-    [self waitForOperation];
 
     XCTAssertEqualObjects(result, self.testValue1);
 }
