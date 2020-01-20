@@ -22,10 +22,12 @@
 - (UIScene *)provideScene {
     UIScene *result;
 
-    for (UIScene *scene in self.application.connectedScenes) {
-        if ([scene activationState] == UISceneActivationStateForegroundActive) {
-            result = scene;
-            break;
+    if (@available(iOS 13.0, *)) {
+        for (UIScene *scene in self.application.connectedScenes) {
+            if ([scene activationState] == UISceneActivationStateForegroundActive) {
+                result = scene;
+                break;
+            }
         }
     }
 
