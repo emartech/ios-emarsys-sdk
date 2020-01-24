@@ -105,6 +105,25 @@ SPEC_BEGIN(EmarsysTests)
 
             describe(@"setupWithConfig:", ^{
 
+                it(@"should initialize category for push", ^{
+                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
+
+                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                       withDependencyContainer:nil];
+
+                    __block NSSet *categorySet = nil;
+                    [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
+                        categorySet = categories;
+                        [expectation fulfill];
+                    }];
+
+                    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                                    timeout:5];
+
+                    XCTAssertGreaterThan(categorySet.count, 0);
+                    XCTAssertEqual(result, XCTWaiterResultCompleted);
+                });
+
                 it(@"should set predict", ^{
                     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                        withDependencyContainer:nil];
@@ -132,10 +151,10 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"register triggers_when_PredictTurnedOn", ^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }]
+                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                                [builder setMerchantId:@"1428C8EE286EC34B"];
+                                [builder setContactFieldId:@3];
+                            }]
                                          dependencyContainer:nil];
                     NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
@@ -150,9 +169,9 @@ SPEC_BEGIN(EmarsysTests)
                 it(@"register triggers", ^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setContactFieldId:@3];
-                        }]
+                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                                [builder setContactFieldId:@3];
+                            }]
                                          dependencyContainer:nil];
                     NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
 
@@ -265,7 +284,7 @@ SPEC_BEGIN(EmarsysTests)
                                                       andReturn:appStartBlock2
                                                   withArguments:requestManager, requestFactory, deviceInfo];
                         [[appStartBlockProvider shouldNot] receive:@selector(createRemoteConfigEventBlock)
-                                                      andReturn:appStartBlock3];
+                                                         andReturn:appStartBlock3];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock,
                                                                         UIApplicationDidFinishLaunchingNotification];
@@ -273,8 +292,8 @@ SPEC_BEGIN(EmarsysTests)
                                                           withArguments:appStartBlock2,
                                                                         UIApplicationDidBecomeActiveNotification];
                         [[notificationCenterManagerMock shouldNot] receive:@selector(addHandlerBlock:forNotification:)
-                                                          withArguments:appStartBlock3,
-                                                                        UIApplicationDidFinishLaunchingNotification];
+                                                             withArguments:appStartBlock3,
+                                                                           UIApplicationDidFinishLaunchingNotification];
                         [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                            withDependencyContainer:dependencyContainer];
                     });
@@ -557,10 +576,10 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }]
+                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+                                [builder setMerchantId:@"1428C8EE286EC34B"];
+                                [builder setContactFieldId:@3];
+                            }]
                                          dependencyContainer:nil];
                 });
 
@@ -616,7 +635,7 @@ SPEC_BEGIN(EmarsysTests)
                 beforeEach(^{
                     [EmarsysTestUtils tearDownEmarsys];
                     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        }]
+                            }]
                                          dependencyContainer:nil];
                 });
 

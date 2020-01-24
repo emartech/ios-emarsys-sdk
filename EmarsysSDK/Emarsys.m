@@ -3,6 +3,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 #import "Emarsys.h"
 #import "EMSPredictInternal.h"
 #import "EMSSqliteSchemaHandler.h"
@@ -29,6 +30,8 @@
         [MEExperimental enableFeature:EMSInnerFeature.predict];
     }
 
+    [self initializeDefaultCategory];
+
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
 
     [Emarsys registerAppStartBlock];
@@ -38,6 +41,14 @@
         [container.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
         [container.mobileEngage setContactWithContactFieldValue:nil];
     }
+}
+
++ (void)initializeDefaultCategory {
+    UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:@"EMSDefaultCategory"
+                                                                              actions:@[]
+                                                                    intentIdentifiers:@[]
+                                                                              options:0];
+    [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
