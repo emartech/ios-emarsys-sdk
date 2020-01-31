@@ -15,15 +15,15 @@ extension MESMobileEngageViewController {
     
     func registerForKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(MESMobileEngageViewController.keyboardWasShown),
-                                               name: Notification.Name.UIKeyboardDidShow, object: nil)
+                                               name: UIResponder.keyboardDidShowNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MESMobileEngageViewController.keyboardWillBeHidden),
-                                               name: Notification.Name.UIKeyboardWillHide, object: nil)
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
         
     }
     
     @objc func keyboardWasShown(notification: Notification) {
-        let rect: CGRect = notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as! CGRect
+        let rect: CGRect = notification.userInfo![UIResponder.keyboardFrameBeginUserInfoKey] as! CGRect
         scrollViewBottomConstraint.constant = rect.height;
         self.view.layoutIfNeeded()
         

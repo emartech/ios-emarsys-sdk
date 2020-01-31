@@ -3,7 +3,7 @@
 //
 
 import UIKit
-import EmarsysSDK
+import EmarsysSDKTarget
 
 class MESMobileEngageViewController: UIViewController {
 
@@ -126,7 +126,7 @@ class MESMobileEngageViewController: UIViewController {
 extension Array where Element: Equatable {
 
     mutating func remove(_ element: Element) {
-        guard let elementIndex = self.index(where: { $0 == element }) else {
+        guard let elementIndex = self.firstIndex(where: { $0 == element }) else {
             return
         }
         self.remove(at: elementIndex)

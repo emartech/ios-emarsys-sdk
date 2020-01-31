@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "EmarsysSDKPackage",
+        "repositoryURL": "git@github.com:LasOri/SPMTest.git",
+        "state": {
+          "branch": null,
+          "revision": "44dce73e1bf6f74ac8f751c7df3459f84416b4c8",
+          "version": "1.0.13"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

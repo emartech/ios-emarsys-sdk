@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-import EmarsysSDK
+import EmarsysSDKTarget
 
 class MESInboxViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
