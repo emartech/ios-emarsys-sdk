@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysSDK'
-	spec.version              = '2.3.0'
+	spec.version              = '2.4.0'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
@@ -8,35 +8,35 @@ Pod::Spec.new do |spec|
 	spec.platform             = :ios, '11.0'
 	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
-       'Core/**/*.{h,m}',
-	   'MobileEngage/**/*.{h,m}',
-       'Predict/**/*.{h,m}',
-       'EmarsysSDK/**/*.{h,m}'
+       'Sources/**/*.{h,m}'
 	]
-	spec.exclude_files	  = 'MobileEngage/RichNotificationExtension/**/*.{h,m}'
+    spec.exclude_files	  = [
+        'Sources/include/EMSNotificationService.h',
+        'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
+    ]
 	spec.public_header_files  = [
-        'EmarsysSDK/Emarsys.h',
-        'EmarsysSDK/EMSInAppProtocol.h',
-        'EmarsysSDK/EMSInboxProtocol.h',
-        'EmarsysSDK/EMSPredictProtocol.h',
-        'EmarsysSDK/EMSPushNotificationProtocol.h',
-        'EmarsysSDK/EMSBlocks.h',
-        'EmarsysSDK/Setup/EMSConfig.h',
-        'EmarsysSDK/Setup/EMSConfigBuilder.h',
-        'EmarsysSDK/Setup/EMSConfigProtocol.h',
-        'EmarsysSDK/EMSAppDelegate.h',
-        'Predict/Models/EMSCartItemProtocol.h',
-        'Predict/Models/EMSCartItem.h',
-        'Predict/Models/EMSProduct.h',
-        'Predict/Recommendations/EMSLogicProtocol.h',
-        'Predict/Recommendations/EMSLogic.h',
-        'Predict/Recommendations/EMSRecommendationFilter.h',
-        'Predict/Recommendations/EMSRecommendationFilterProtocol.h',
-        'MobileEngage/IAM/EMSEventHandler.h',
-        'MobileEngage/Inbox/EMSNotification.h',
-        'MobileEngage/Inbox/EMSNotificationInboxStatus.h',
-        'Core/Flipper/EMSFlipperFeatures.h',
-        'MobileEngage/RichNotification/EMSUserNotificationCenterDelegate.h'
+        'Sources/include/Emarsys.h',
+        'Sources/include/EMSInAppProtocol.h',
+        'Sources/include/EMSInboxProtocol.h',
+        'Sources/include/EMSPredictProtocol.h',
+        'Sources/include/EMSPushNotificationProtocol.h',
+        'Sources/include/EMSBlocks.h',
+        'Sources/include/EMSConfig.h',
+        'Sources/include/EMSConfigBuilder.h',
+        'Sources/include/EMSConfigProtocol.h',
+        'Sources/include/EMSAppDelegate.h',
+        'Sources/include/EMSCartItemProtocol.h',
+        'Sources/include/EMSCartItem.h',
+        'Sources/include/EMSProduct.h',
+        'Sources/include/EMSLogicProtocol.h',
+        'Sources/include/EMSLogic.h',
+        'Sources/include/EMSRecommendationFilter.h',
+        'Sources/include/EMSRecommendationFilterProtocol.h',
+        'Sources/include/EMSEventHandler.h',
+        'Sources/include/EMSNotification.h',
+        'Sources/include/EMSNotificationInboxStatus.h',
+        'Sources/include/EMSFlipperFeatures.h',
+        'Sources/include/EMSUserNotificationCenterDelegate.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
