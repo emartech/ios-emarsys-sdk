@@ -155,7 +155,6 @@
 		32C6F17935310941C4279011 /* FakeFlipperFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7C0FA2FCB8E19CEB0FA /* FakeFlipperFeature.m */; };
 		32C6F1AC59D47F1BB574203E /* EMSV3MapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F0E47B3E11939F6B896E /* EMSV3MapperTests.m */; };
 		32C6F1CD1BC123CFA8E577C6 /* EmarsysTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F40774A36CCD6E9A29D0 /* EmarsysTestUtils.m */; };
-		32C6F1D0EA375012A76253CE /* EMSServiceDictionaryValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FB136264DED9E401A6EB /* EMSServiceDictionaryValidatorTests.m */; };
 		32C6F202E97A999902A19624 /* EMSLoggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F331D1E2359DEAF6E59A /* EMSLoggerTests.m */; };
 		32C6F2038AB0CD44C88BA300 /* EMSPushV3InternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F74115776B35252C60DA /* EMSPushV3InternalTests.m */; };
 		32C6F208DB906C2EB16DAF94 /* EMSBatchingShardTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F8CC18B6F5CA7ED41916 /* EMSBatchingShardTriggerTests.m */; };
@@ -229,7 +228,6 @@
 		32C6F9BC239103829EEB2960 /* EMSValueProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F45231072468EE3DD99F /* EMSValueProviderTests.m */; };
 		32C6FA0B1B1CD42B77603C15 /* FakeRequestModelMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FB32AB6C6B73D21B6708 /* FakeRequestModelMapper.m */; };
 		32C6FA1F0B2342FB70614F36 /* BuilderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FCD812B833D07335DADD /* BuilderTests.m */; };
-		32C6FA34FE053A3D3CE416A1 /* EMSServiceDictionaryValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FB136264DED9E401A6EB /* EMSServiceDictionaryValidatorTests.m */; };
 		32C6FA47D2454E0F863BA06D /* EMSRequestFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F7D65ABE46FC87CFC348 /* EMSRequestFactoryTests.m */; };
 		32C6FA4B6B0C6DD3E48DBE02 /* EMSConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FEFBA98BDFB20709EEAE /* EMSConfigTests.m */; };
 		32C6FA587A66908549B10838 /* EMSIAMViewControllerProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FEDD96C09FF98C2B367B /* EMSIAMViewControllerProviderTests.m */; };
@@ -845,7 +843,6 @@
 		32C6FA1DB0324C3ED5E04770 /* MEJSBridgeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEJSBridgeTests.m; sourceTree = "<group>"; };
 		32C6FAC35370984F8E193A52 /* FakeInAppTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeInAppTracker.h; sourceTree = "<group>"; };
 		32C6FAC7687365D2848D5DBE /* EMSRemoteConfigResponseMapperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRemoteConfigResponseMapperTests.m; sourceTree = "<group>"; };
-		32C6FB136264DED9E401A6EB /* EMSServiceDictionaryValidatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSServiceDictionaryValidatorTests.m; sourceTree = "<group>"; };
 		32C6FB32AB6C6B73D21B6708 /* FakeRequestModelMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeRequestModelMapper.m; sourceTree = "<group>"; };
 		32C6FB6ABC5937B793BDE506 /* EmarsysNotificationService.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.podspec; path = EmarsysNotificationService.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		32C6FB92CC4F61E2740734B4 /* EMSDeviceInfoClientV3InternalIntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeviceInfoClientV3InternalIntegrationTests.m; sourceTree = "<group>"; };
@@ -2899,7 +2896,6 @@
 				8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */,
 				8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */,
 				32C6F5702E6FD16CE663CA6D /* EMSNotificationServiceExceptionHandlingTests.m */,
-				32C6FB136264DED9E401A6EB /* EMSServiceDictionaryValidatorTests.m */,
 			);
 			path = RichNotificationExtension;
 			sourceTree = "<group>";
@@ -3619,7 +3615,6 @@
 				32C6F7E241DB3B31D61C7F80 /* BuilderTests.m in Sources */,
 				32C6F76EA6F83F7ACDC48222 /* NSData+MobileEngageTest.m in Sources */,
 				32C6FF59896131D4E6A20040 /* NSDictionary+MobileEngageTests.m in Sources */,
-				32C6FA34FE053A3D3CE416A1 /* EMSServiceDictionaryValidatorTests.m in Sources */,
 				32C6F02AF1D6370BE804EE84 /* EMSSceneProviderTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3847,7 +3842,6 @@
 				642598B4969F286387564D7D /* EMSConfigInternalTests.m in Sources */,
 				64259AE37467E0BBE17347C8 /* EmarsysConfigIntegrationTests.m in Sources */,
 				32C6F36BD67A102AA353D641 /* EMSXPResponseHandlerTests.m in Sources */,
-				32C6F1D0EA375012A76253CE /* EMSServiceDictionaryValidatorTests.m in Sources */,
 				32C6F3906B897C65C0548111 /* EMSEmarsysRequestFactoryTests.m in Sources */,
 				32C6FE34EA821E1D4AE88935 /* EMSCompletionBlockProviderTests.m in Sources */,
 				32C6F73569D237AD054A1642 /* EMSRemoteConfigResponseMapperTests.m in Sources */,
