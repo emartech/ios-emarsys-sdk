@@ -3,14 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		8A09783B2344B99A005BDD07 /* KeyboardDismisser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A09783A2344B99A005BDD07 /* KeyboardDismisser.swift */; };
 		8A1086A72111D88800792D40 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1086A62111D88800792D40 /* AppDelegate.swift */; };
-		8A21891F23E44203005499FA /* EmarsysNotificationExtensionLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 8A21891E23E44203005499FA /* EmarsysNotificationExtensionLibrary */; };
-		8A21892123E44203005499FA /* EmarsysSDKLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 8A21892023E44203005499FA /* EmarsysSDKLibrary */; };
 		8A45E0BE2318085D0078B270 /* ProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A45E0BD2318085D0078B270 /* ProductCell.swift */; };
 		8A467EF62183307E00CEA87C /* PredictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A467EF52183307E00CEA87C /* PredictViewController.swift */; };
 		8A49EF53211AD57D00D08990 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A49EF47211AD57C00D08990 /* NotificationNames.swift */; };
@@ -87,7 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A21892123E44203005499FA /* EmarsysSDKLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +99,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A21891F23E44203005499FA /* EmarsysNotificationExtensionLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +216,6 @@
 			);
 			name = "Emarsys Sample";
 			packageProductDependencies = (
-				8A21892023E44203005499FA /* EmarsysSDKLibrary */,
 			);
 			productName = "Emarsys Sample";
 			productReference = 8A1086A32111D88800792D40 /* Emarsys Sample.app */;
@@ -258,7 +253,6 @@
 			);
 			name = EMSNotificationService;
 			packageProductDependencies = (
-				8A21891E23E44203005499FA /* EmarsysNotificationExtensionLibrary */,
 			);
 			productName = EMSNotificationService;
 			productReference = 8A49EF61211AD61A00D08990 /* EMSNotificationService.appex */;
@@ -309,7 +303,6 @@
 			);
 			mainGroup = 8A10869A2111D88800792D40;
 			packageReferences = (
-				8A21891D23E44203005499FA /* XCRemoteSwiftPackageReference "SPMTest" */,
 			);
 			productRefGroup = 8A1086A42111D88800792D40 /* Products */;
 			projectDirPath = "";
@@ -684,30 +677,6 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		8A21891D23E44203005499FA /* XCRemoteSwiftPackageReference "SPMTest" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:LasOri/SPMTest.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.10;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		8A21891E23E44203005499FA /* EmarsysNotificationExtensionLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8A21891D23E44203005499FA /* XCRemoteSwiftPackageReference "SPMTest" */;
-			productName = EmarsysNotificationExtensionLibrary;
-		};
-		8A21892023E44203005499FA /* EmarsysSDKLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8A21891D23E44203005499FA /* XCRemoteSwiftPackageReference "SPMTest" */;
-			productName = EmarsysSDKLibrary;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8A10869B2111D88800792D40 /* Project object */;
 }
