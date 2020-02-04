@@ -94,7 +94,7 @@
                         connectionStatus:(BOOL)connected {
     if (connected) {
         NSUInteger queueSize = [[self.repository query:[[EMSFilterByNothingSpecification alloc] init]] count];
-        EMSLog([[EMSOfflineQueueSize alloc] initWithQueueSize:queueSize]);
+        EMSLog([[EMSOfflineQueueSize alloc] initWithQueueSize:queueSize], LogLevelDebug);
         [self run];
     }
 }

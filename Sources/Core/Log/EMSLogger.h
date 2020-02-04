@@ -6,6 +6,12 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 
+typedef enum {
+    LogLevelDebug,
+    LogLevelInfo,
+    LogLevelError
+} LogLevel;
+
 @protocol EMSLogEntryProtocol;
 
 @interface EMSLogger : NSObject
@@ -15,6 +21,7 @@
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                            uuidProvider:(EMSUUIDProvider *)uuidProvider;
 
-- (void)log:(id <EMSLogEntryProtocol>)entry;
+- (void)log:(id <EMSLogEntryProtocol>)entry
+      level:(LogLevel)level;
 
 @end

@@ -17,7 +17,7 @@
     parameters[@"sourceHandler"] = @(sourceHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
     return NO;
 }
 
@@ -30,7 +30,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
     return NO;
 }
 

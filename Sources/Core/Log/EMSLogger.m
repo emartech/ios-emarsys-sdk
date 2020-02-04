@@ -36,11 +36,20 @@
     return self;
 }
 
-- (void)log:(id <EMSLogEntryProtocol>)entry {
+- (void)log:(id <EMSLogEntryProtocol>)entry
+      level:(LogLevel)level {
     [self.operationQueue addOperationWithBlock:^{
         [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:[entry topic]];
-                [builder addPayloadEntries:[entry data]];
+                NSMutableDictionary *mutableData = [entry.data mutableCopy];
+                if (level == LogLevelDebug) {
+                    mutableData[@"level"] = @"DEBUG";
+                } else if (level == LogLevelInfo) {
+                    mutableData[@"level"] = @"INFO";
+                } else if (level == LogLevelError) {
+                    mutableData[@"level"] = @"ERROR";
+                }
+                [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
             }
                                           timestampProvider:self.timestampProvider
                                                uuidProvider:self.uuidProvider]];

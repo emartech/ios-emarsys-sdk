@@ -12,7 +12,7 @@
 - (id <EMSEventHandler>)eventHandler {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return nil;
 }
 
@@ -21,39 +21,39 @@
     parameters[@"eventHandler"] = @(eventHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)pause {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (void)resume {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (BOOL)isPaused {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return NO;
 }
 
 - (id <MEInAppTrackingProtocol>)inAppTracker {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return nil;
 }
 
 - (MEInAppMessage *)currentInAppMessage {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return nil;
 }
 
@@ -62,7 +62,7 @@
     parameters[@"completionHandler"] = @(completionHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)setInAppTracker:(id <MEInAppTrackingProtocol>)inAppTracker {
@@ -70,7 +70,7 @@
     parameters[@"inAppTracker"] = [inAppTracker description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 @end

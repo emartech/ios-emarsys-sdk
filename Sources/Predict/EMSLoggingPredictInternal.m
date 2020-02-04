@@ -15,7 +15,7 @@
     parameters[@"cartItems"] = [cartItems description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackPurchaseWithOrderId:(NSString *)orderId
@@ -25,7 +25,7 @@
     parameters[@"cartItems"] = [items description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackCategoryViewWithCategoryPath:(NSString *)categoryPath {
@@ -33,7 +33,7 @@
     parameters[@"categoryPath"] = categoryPath;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackItemViewWithItemId:(NSString *)itemId {
@@ -41,7 +41,7 @@
     parameters[@"itemId"] = itemId;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackSearchWithSearchTerm:(NSString *)searchTerm {
@@ -49,7 +49,7 @@
     parameters[@"searchTerm"] = searchTerm;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
@@ -57,13 +57,13 @@
     parameters[@"customerId"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)clearContact {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (void)trackTag:(NSString *)tag
@@ -73,7 +73,7 @@
     parameters[@"attributes"] = attributes;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic productsBlock:(EMSProductsBlock)productsBlock {
@@ -82,7 +82,7 @@
     parameters[@"logic"] = logic;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
@@ -94,7 +94,7 @@
     parameters[@"limit"] = limit;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
@@ -106,7 +106,7 @@
     parameters[@"filter"] = [filters description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
@@ -120,7 +120,7 @@
     parameters[@"filter"] = [filter description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackRecommendationClick:(EMSProduct *)product {
@@ -128,7 +128,7 @@
     parameters[@"product"] = product.description;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 @end

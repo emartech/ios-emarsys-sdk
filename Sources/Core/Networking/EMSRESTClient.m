@@ -68,10 +68,10 @@
                                                          [weakSelf handleResponse:responseModel];
                                                          if (!error && [responseModel isSuccess]) {
                                                              EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel
-                                                                                                            endDate:networkingStartTime]);
+                                                                                                            endDate:networkingStartTime], LogLevelInfo);
                                                          }
                                                          EMSLog([[EMSNetworkingTime alloc] initWithResponseModel:responseModel
-                                                                                                       startDate:networkingStartTime]);
+                                                                                                       startDate:networkingStartTime], LogLevelInfo);
                                                          if (completionProxy.completionBlock) {
                                                              completionProxy.completionBlock(requestModel, responseModel, runtimeError);
                                                          }

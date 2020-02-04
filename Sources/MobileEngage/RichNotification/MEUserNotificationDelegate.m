@@ -83,7 +83,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     }
     NSDictionary *userInfo = response.notification.request.content.userInfo;
     if (userInfo[@"exception"]) {
-        EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]]);
+        EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
     }
     NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
     if (inApp) {

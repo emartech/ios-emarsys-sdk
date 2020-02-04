@@ -14,13 +14,13 @@
     parameters[@"resultBlock"] = @(resultBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)resetBadgeCount {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (void)resetBadgeCountWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
@@ -28,7 +28,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)notification {
@@ -36,7 +36,7 @@
     parameters[@"notification"] = [notification description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackNotificationOpenWithNotification:(EMSNotification *)notification
@@ -46,7 +46,7 @@
     parameters[@"notification"] = [notification description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 @end

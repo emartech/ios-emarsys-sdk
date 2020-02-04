@@ -12,7 +12,7 @@
         @try {
             block();
         } @catch (NSException *exception) {
-            EMSLog([[EMSCrashLog alloc] initWithException:exception]);
+            EMSLog([[EMSCrashLog alloc] initWithException:exception], LogLevelError);
         }
     }];
 }

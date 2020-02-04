@@ -13,7 +13,7 @@
 - (void)setPushToken:(NSData *)pushToken {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (void)setPushToken:(NSData *)pushToken
@@ -23,13 +23,13 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)clearPushToken {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
 }
 
 - (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
@@ -37,7 +37,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo {
@@ -45,7 +45,7 @@
     parameters[@"userInfo"] = userInfo;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
@@ -55,7 +55,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 @end

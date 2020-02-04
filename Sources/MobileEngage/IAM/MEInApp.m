@@ -85,7 +85,7 @@
                            completionHandler:^{
                                if (message.response && weakSelf.timestampProvider) {
                                    EMSLog([[EMSInAppLoadingTime alloc] initWithInAppMessage:message
-                                                                          timestampProvider:weakSelf.timestampProvider])
+                                                                          timestampProvider:weakSelf.timestampProvider], LogLevelInfo)
                                }
                                [weakSelf displayInAppViewController:message
                                                      viewController:meiamViewController];
@@ -125,7 +125,7 @@
                                                               if (weakSelf.currentInAppMessage && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
                                                                   EMSLog([[EMSInAppOnScreenTime alloc] initWithInAppMessage:weakSelf.currentInAppMessage
                                                                                                               showTimestamp:weakSelf.onScreenShowTimestamp
-                                                                                                          timestampProvider:weakSelf.timestampProvider]);
+                                                                                                          timestampProvider:weakSelf.timestampProvider], LogLevelInfo);
                                                               }
                                                               [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
                                                               weakSelf.iamWindow = nil;

@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Kiwi.h"
+#import <OCMock/OCMock.h>
 #import "EMSLogger.h"
 #import "EMSShard.h"
 #import "FakeShardRepository.h"
@@ -11,14 +11,13 @@
 
 @interface EMSLoggerTests : XCTestCase
 
-@property(nonatomic, strong) NSString *type;
+@property(nonatomic, strong) NSString *topic;
 @property(nonatomic, strong) NSDictionary<NSString *, id> *data;
 @property(nonatomic, strong) NSDate *timestamp;
 @property(nonatomic, strong) NSString *shardId;
-@property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
-@property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
-@property(nonatomic, strong) EMSShard *shard;
-@property(nonatomic, strong) id logEntry;
+@property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
+@property(nonatomic, strong) EMSUUIDProvider *mockUuidProvider;
+@property(nonatomic, strong) id mockLogEntry;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
@@ -26,42 +25,35 @@
 @implementation EMSLoggerTests
 
 - (void)setUp {
-    _type = @"general_topic";
+    _topic = @"general_topic";
     _data = @{@"key1": @"value1"};
     _timestamp = [NSDate date];
     _shardId = @"shardId";
 
-    _shard = [[EMSShard alloc] initWithShardId:self.shardId
-                                          type:self.type
-                                          data:self.data
-                                     timestamp:self.timestamp
-                                           ttl:FLT_MAX];
+    _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.timestamp);
+    _mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    OCMStub([self.mockUuidProvider provideUUIDString]).andReturn(self.shardId);
 
-    _timestampProvider = [EMSTimestampProvider mock];
-    [[self.timestampProvider should] receive:@selector(provideTimestamp)
-                                   andReturn:self.timestamp];
-    _uuidProvider = [EMSUUIDProvider mock];
-    [[self.uuidProvider should] receive:@selector(provideUUIDString)
-                              andReturn:self.shardId];
+    id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
 
-    _logEntry = [KWMock mockForProtocol:@protocol(EMSLogEntryProtocol)];
-    [[self.logEntry should] receive:@selector(topic)
-                          andReturn:self.type];
-    [[self.logEntry should] receive:@selector(data)
-                          andReturn:self.data];
+    OCMStub([logEntry data]).andReturn(self.data);
+    OCMStub([logEntry topic]).andReturn(self.topic);
+
+    _mockLogEntry = logEntry;
+
     _operationQueue = [NSOperationQueue new];
     self.operationQueue.name = @"operationQueueForTesting";
 }
 
 - (void)tearDown {
-    _type = nil;
+    _topic = nil;
     _data = nil;
     _timestamp = nil;
     _shardId = nil;
-    _shard = nil;
-    _timestampProvider = nil;
-    _uuidProvider = nil;
-    _logEntry = nil;
+    _mockTimestampProvider = nil;
+    _mockUuidProvider = nil;
+    _mockLogEntry = nil;
     _operationQueue = nil;
 }
 
@@ -69,8 +61,8 @@
     @try {
         [[EMSLogger alloc] initWithShardRepository:nil
                                     opertaionQueue:self.operationQueue
-                                 timestampProvider:self.timestampProvider
-                                      uuidProvider:self.uuidProvider];
+                                 timestampProvider:self.mockTimestampProvider
+                                      uuidProvider:self.mockUuidProvider];
         XCTFail(@"Expected Exception when shardRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: shardRepository"]);
@@ -79,10 +71,10 @@
 
 - (void)testInitShouldThrowExceptionWhenOperationQueueIsNil {
     @try {
-        [[EMSLogger alloc] initWithShardRepository:[EMSShardRepository mock]
+        [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:nil
-                                 timestampProvider:self.timestampProvider
-                                      uuidProvider:self.uuidProvider];
+                                 timestampProvider:self.mockTimestampProvider
+                                      uuidProvider:self.mockUuidProvider];
         XCTFail(@"Expected Exception when operationQueue is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: operationQueue"]);
@@ -91,10 +83,10 @@
 
 - (void)testInitShouldThrowExceptionWhenTimestampProviderIsNil {
     @try {
-        [[EMSLogger alloc] initWithShardRepository:[EMSShardRepository mock]
+        [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:self.operationQueue
                                  timestampProvider:nil
-                                      uuidProvider:self.uuidProvider];
+                                      uuidProvider:self.mockUuidProvider];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: timestampProvider"]);
@@ -103,9 +95,9 @@
 
 - (void)testInitShouldThrowExceptionWhenUuidProviderIsNil {
     @try {
-        [[EMSLogger alloc] initWithShardRepository:[EMSShardRepository mock]
+        [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:self.operationQueue
-                                 timestampProvider:self.timestampProvider
+                                 timestampProvider:self.mockTimestampProvider
                                       uuidProvider:nil];
         XCTFail(@"Expected Exception when uuidProvider is nil!");
     } @catch (NSException *exception) {
@@ -114,17 +106,27 @@
 }
 
 - (void)testLogShouldInsertEntryToShardRepository {
-    EMSShardRepository *shardRepository = [EMSShardRepository mock];
-    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
                                                     opertaionQueue:self.operationQueue
-                                                 timestampProvider:self.timestampProvider
-                                                      uuidProvider:self.uuidProvider];
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider];
 
-    [[shardRepository should] receive:@selector(add:)
-                            withCount:1
-                            arguments:self.shard];
+    [logger log:self.mockLogEntry
+          level:LogLevelError];
 
-    [logger log:self.logEntry];
+    [EMSWaiter waitForExpectations:@[expectation]];
+
+    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError]]);
+
+
 }
 
 - (void)testLogShouldCallRepositoryOnTheGivenOperationQueue {
@@ -138,15 +140,32 @@
 
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                                     opertaionQueue:self.operationQueue
-                                                 timestampProvider:self.timestampProvider
-                                                      uuidProvider:self.uuidProvider];
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider];
 
-    [logger log:self.logEntry];
+    [logger log:self.mockLogEntry
+          level:LogLevelError];
 
     [EMSWaiter waitForExpectations:@[expectation]];
 
     XCTAssertNotNil(returnedOperationQueue);
     XCTAssertEqual(returnedOperationQueue, self.operationQueue);
+}
+
+- (EMSShard *)shardWithLogLevel:(LogLevel)level {
+    NSMutableDictionary *mutableData = [self.data mutableCopy];
+    if (level == LogLevelDebug) {
+        mutableData[@"level"] = @"DEBUG";
+    } else if (level == LogLevelInfo) {
+        mutableData[@"level"] = @"INFO";
+    } else if (level == LogLevelError) {
+        mutableData[@"level"] = @"ERROR";
+    }
+    return [[EMSShard alloc] initWithShardId:self.shardId
+                                        type:self.topic
+                                        data:[NSDictionary dictionaryWithDictionary:mutableData]
+                                   timestamp:self.timestamp
+                                         ttl:FLT_MAX];
 }
 
 @end

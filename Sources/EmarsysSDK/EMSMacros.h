@@ -7,4 +7,4 @@
 #import "EMSDependencyContainer.h"
 #import "EMSLogger.h"
 
-#define EMSLog(logEntry) [EMSDependencyInjection.dependencyContainer.logger log:logEntry];
+#define EMSLog(logEntry, logLevel) [EMSDependencyInjection.dependencyContainer.logger log:logEntry level:logLevel];

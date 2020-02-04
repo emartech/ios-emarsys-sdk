@@ -12,7 +12,7 @@
 - (id <UNUserNotificationCenterDelegate>)delegate {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return nil;
 }
 
@@ -21,13 +21,13 @@
     parameters[@"delegate"] = @(delegate != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 - (id <EMSEventHandler>)eventHandler {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:nil]);
+                                              parameters:nil], LogLevelDebug);
     return nil;
 }
 
@@ -36,7 +36,7 @@
     parameters[@"eventHandler"] = @(eventHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
-                                              parameters:parameters]);
+                                              parameters:parameters], LogLevelDebug);
 }
 
 @end

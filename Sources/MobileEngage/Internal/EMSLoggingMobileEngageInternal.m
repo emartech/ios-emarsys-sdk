@@ -15,7 +15,7 @@
     parameters[@"contactFieldValue"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
 }
 
 - (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue
@@ -26,13 +26,13 @@
 
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
 }
 
 - (void)clearContact {
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:nil]);
+                                           parameters:nil], LogLevelDebug);
 }
 
 - (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
@@ -40,7 +40,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName
@@ -50,7 +50,7 @@
     parameters[@"eventAttributes"] = eventAttributes;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName
@@ -62,7 +62,7 @@
     parameters[@"completionBlock"] = @(completionBlock != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
-                                           parameters:parameters]);
+                                           parameters:parameters], LogLevelDebug);
 }
 
 
