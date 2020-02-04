@@ -8,11 +8,10 @@
 #import "EMSResponseModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSMacros.h"
-#import "EMSInDatabaseTime.h"
-#import "EMSNetworkingTime.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModelMapperProtocol.h"
 #import "EMSAbstractResponseHandler.h"
+#import "EMSRequestLog.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -66,12 +65,8 @@
                                                                                                                                 requestModel:requestModel
                                                                                                                                    timestamp:[weakSelf.timestampProvider provideTimestamp]];
                                                          [weakSelf handleResponse:responseModel];
-                                                         if (!error && [responseModel isSuccess]) {
-                                                             EMSLog([[EMSInDatabaseTime alloc] initWithRequestModel:requestModel
-                                                                                                            endDate:networkingStartTime], LogLevelInfo);
-                                                         }
-                                                         EMSLog([[EMSNetworkingTime alloc] initWithResponseModel:responseModel
-                                                                                                       startDate:networkingStartTime], LogLevelInfo);
+                                                         EMSLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
+                                                                                         networkingStartTime:networkingStartTime], LogLevelInfo);
                                                          if (completionProxy.completionBlock) {
                                                              completionProxy.completionBlock(requestModel, responseModel, runtimeError);
                                                          }

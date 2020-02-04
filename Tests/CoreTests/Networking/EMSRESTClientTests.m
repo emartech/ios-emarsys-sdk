@@ -260,6 +260,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     EMSAbstractResponseHandler *mockResponseHandler1 = OCMClassMock([EMSAbstractResponseHandler class]);
     EMSAbstractResponseHandler *mockResponseHandler2 = OCMClassMock([EMSAbstractResponseHandler class]);
 
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn([NSDate date]);
     OCMStub([self.mockSession dataTaskWithRequest:self.request
                                 completionHandler:([OCMArg invokeBlockWithArgs:self.data,
                                                                                self.response,
