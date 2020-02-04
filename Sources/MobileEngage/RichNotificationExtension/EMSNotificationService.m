@@ -21,7 +21,7 @@ typedef void(^ContentHandler)(UNNotificationContent *contentToDeliver);
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request
                    withContentHandler:(void (^)(UNNotificationContent *_Nonnull))contentHandler {
     self.contentHandler = contentHandler;
-    _bestAttemptContent = (UNMutableNotificationContent *) [request.content mutableCopy];
+    self.bestAttemptContent = (UNMutableNotificationContent *) [request.content mutableCopy];
 
     if (!self.bestAttemptContent) {
         contentHandler(request.content);
