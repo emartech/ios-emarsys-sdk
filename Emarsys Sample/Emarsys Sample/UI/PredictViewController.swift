@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-import EmarsysSDKTarget
+import EmarsysSDK
 
 class PredictViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 

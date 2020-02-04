@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import EmarsysSDKTarget
+import EmarsysSDK
 
 class ConfigViewController: UIViewController {
 

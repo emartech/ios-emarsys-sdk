@@ -3,7 +3,7 @@
 //
 
 import UserNotifications
-import EmarsysSDKTarget
+import EmarsysNotificationService
 
 class NotificationService: EMSNotificationService {
 }

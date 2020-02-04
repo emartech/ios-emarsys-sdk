@@ -3,7 +3,7 @@
 //
 
 import UIKit
-import EmarsysSDKTarget
+import EmarsysSDK
 
 class MESMobileEngageViewController: UIViewController {
 

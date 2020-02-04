@@ -2,7 +2,7 @@
 //  Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-import EmarsysSDKTarget
+import EmarsysSDK
 
 @UIApplicationMain
 class AppDelegate: EMSAppDelegate {
