@@ -1,14 +1,16 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import "AppStartBlockProvider.h"
+#import "EMSAppStartBlockProvider.h"
 #import "EMSRequestManager.h"
 #import "MERequestContext.h"
 #import "EMSRequestFactory.h"
 #import "EMSDeviceInfoClientProtocol.h"
 #import "EMSConfigInternal.h"
+#import "EMSMacros.h"
+#import "EMSAppEventLog.h"
 
-@interface AppStartBlockProvider ()
+@interface EMSAppStartBlockProvider ()
 
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
@@ -18,7 +20,7 @@
 
 @end
 
-@implementation AppStartBlockProvider
+@implementation EMSAppStartBlockProvider
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestFactory:(EMSRequestFactory *)requestFactory
@@ -43,6 +45,8 @@
 - (MEHandlerBlock)createAppStartEventBlock {
     __weak typeof(self) weakSelf = self;
     return ^{
+        EMSLog([[EMSAppEventLog alloc] initWithEventName:@"app:start"
+                                              attributes:nil], LogLevelInfo);
         if (weakSelf.requestContext.contactToken) {
             EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"app:start"
                                                                                           eventAttributes:nil

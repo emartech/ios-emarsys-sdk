@@ -13,7 +13,7 @@
 @protocol EMSInboxProtocol;
 @class MENotificationCenterManager;
 @class MERequestContext;
-@class AppStartBlockProvider;
+@class EMSAppStartBlockProvider;
 @class MEUserNotificationDelegate;
 @class EMSLogger;
 @protocol EMSDBTriggerProtocol;
@@ -80,7 +80,7 @@
 
 - (EMSRequestFactory *)requestFactory;
 
-- (AppStartBlockProvider *)appStartBlockProvider;
+- (EMSAppStartBlockProvider *)appStartBlockProvider;
 
 - (EMSLogger *)logger;
 

@@ -17,7 +17,7 @@
 #import "EMSDependencyInjection.h"
 #import "MENotificationCenterManager.h"
 #import "FakeDependencyContainer.h"
-#import "AppStartBlockProvider.h"
+#import "EMSAppStartBlockProvider.h"
 #import "MERequestContext.h"
 #import "EMSDeviceInfo.h"
 #import "EMSRequestFactory.h"
@@ -53,7 +53,7 @@ SPEC_BEGIN(EmarsysTests)
             __block EMSRequestFactory *requestFactory;
             __block EMSRequestManager *requestManager;
             __block MENotificationCenterManager *notificationCenterManagerMock;
-            __block AppStartBlockProvider *appStartBlockProvider;
+            __block EMSAppStartBlockProvider *appStartBlockProvider;
             __block id deviceInfoClient;
 
             __block EMSConfig *baseConfig;
@@ -73,7 +73,7 @@ SPEC_BEGIN(EmarsysTests)
                 requestFactory = [EMSRequestFactory nullMock];
                 requestManager = [EMSRequestManager nullMock];
                 notificationCenterManagerMock = [MENotificationCenterManager nullMock];
-                appStartBlockProvider = [AppStartBlockProvider nullMock];
+                appStartBlockProvider = [EMSAppStartBlockProvider nullMock];
                 deviceInfoClient = [KWMock nullMockForProtocol:@protocol(EMSDeviceInfoClientProtocol)];
 
                 dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil

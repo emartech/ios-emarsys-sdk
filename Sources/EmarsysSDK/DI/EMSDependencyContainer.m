@@ -23,7 +23,7 @@
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
 #import "MEDefaultHeaders.h"
-#import "AppStartBlockProvider.h"
+#import "EMSAppStartBlockProvider.h"
 #import "EMSWindowProvider.h"
 #import "EMSMainWindowProvider.h"
 #import "EMSViewControllerProvider.h"
@@ -105,7 +105,7 @@
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
-@property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
+@property(nonatomic, strong) EMSAppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> predictTrigger;
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
@@ -354,11 +354,11 @@
                                      remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
                                                        endpoint:endpoint];
 
-    _appStartBlockProvider = [[AppStartBlockProvider alloc] initWithRequestManager:self.requestManager
-                                                                    requestFactory:self.requestFactory
-                                                                    requestContext:self.requestContext
-                                                                  deviceInfoClient:self.deviceInfoClient
-                                                                    configInternal:self.config];
+    _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
+                                                                       requestFactory:self.requestFactory
+                                                                       requestContext:self.requestContext
+                                                                     deviceInfoClient:self.deviceInfoClient
+                                                                       configInternal:self.config];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

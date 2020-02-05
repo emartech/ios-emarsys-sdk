@@ -20,7 +20,7 @@
 @property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
-@property(nonatomic, strong) AppStartBlockProvider *appStartBlockProvider;
+@property(nonatomic, strong) EMSAppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) EMSLogger *logger;
 
@@ -32,20 +32,20 @@
                     mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
                         deepLink:(id <EMSDeepLinkProtocol>)deepLink
                             push:(id <EMSPushNotificationProtocol>)push
-                           inbox:(id <EMSInboxProtocol>)inbox
-                             iam:(MEInApp *)iam
-                         predict:(EMSPredictInternal *)predict
-                  requestContext:(MERequestContext *)requestContext
-                  requestFactory:(EMSRequestFactory *)requestFactory
-               requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
-               notificationCache:(EMSNotificationCache *)notificationCache
-                responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers
-                  requestManager:(EMSRequestManager *)requestManager
-                  operationQueue:(NSOperationQueue *)operationQueue
-       notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
-           appStartBlockProvider:(AppStartBlockProvider *)appStartBlockProvider
-                deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
-                          logger:(EMSLogger *)logger {
+                    inbox:(id <EMSInboxProtocol>)inbox
+                      iam:(MEInApp *)iam
+                  predict:(EMSPredictInternal *)predict
+           requestContext:(MERequestContext *)requestContext
+           requestFactory:(EMSRequestFactory *)requestFactory
+        requestRepository:(id <EMSRequestModelRepositoryProtocol>)requestRepository
+        notificationCache:(EMSNotificationCache *)notificationCache
+         responseHandlers:(NSArray<EMSAbstractResponseHandler *> *)responseHandlers
+           requestManager:(EMSRequestManager *)requestManager
+           operationQueue:(NSOperationQueue *)operationQueue
+notificationCenterManager:(MENotificationCenterManager *)notificationCenterManager
+    appStartBlockProvider:(EMSAppStartBlockProvider *)appStartBlockProvider
+         deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
+                   logger:(EMSLogger *)logger {
     if (self = [super init]) {
         _dbHelper = dbHelper;
         _mobileEngage = mobileEngage;

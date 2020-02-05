@@ -10,7 +10,7 @@
 @protocol EMSDeviceInfoClientProtocol;
 @class EMSConfigInternal;
 
-@interface AppStartBlockProvider : NSObject
+@interface EMSAppStartBlockProvider : NSObject
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                         requestFactory:(EMSRequestFactory *)requestFactory
