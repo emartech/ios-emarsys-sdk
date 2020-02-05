@@ -152,6 +152,36 @@
     XCTAssertEqual(returnedOperationQueue, self.operationQueue);
 }
 
+
+- (void)testLog_shouldNotLogLog_whenURLIsLogDealerAndTopicIsLogRequest {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    OCMReject([partialMockRepository add:[OCMArg any]]);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider];
+
+
+    id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
+
+    OCMStub([logEntry data]).andReturn(@{@"url": @"https://log-dealer.eservice.emarsys.net/v1/log"});
+    OCMStub([logEntry topic]).andReturn(@"log_request");
+
+    [logger log:logEntry
+          level:LogLevelInfo];
+
+    [XCTWaiter waitForExpectations:@[expectation]
+                           timeout:1];
+}
+
 - (EMSShard *)shardWithLogLevel:(LogLevel)level {
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     if (level == LogLevelDebug) {

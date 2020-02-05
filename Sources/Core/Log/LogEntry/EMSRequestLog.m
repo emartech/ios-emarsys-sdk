@@ -21,7 +21,7 @@
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
 
         mutableData[@"request_id"] = responseModel.requestModel.requestId;
-        mutableData[@"url"] = responseModel.requestModel.url;
+        mutableData[@"url"] = [responseModel.requestModel.url absoluteString];
         mutableData[@"status_code"] = @(responseModel.statusCode);
         mutableData[@"in_db_start"] = [responseModel.requestModel.timestamp numberValueInMillis];
         mutableData[@"in_db_end"] = [networkingStartTime numberValueInMillis];

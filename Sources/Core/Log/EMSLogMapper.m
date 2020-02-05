@@ -5,6 +5,7 @@
 #import "EMSRequestModel.h"
 #import "EMSShard.h"
 #import "EMSDeviceInfo.h"
+#import "EMSLogEndpoints.h"
 
 @interface EMSLogMapper ()
 @property(nonatomic, strong) MERequestContext *requestContext;
@@ -50,7 +51,7 @@
 
                 [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
             }
-            [builder setUrl:@"https://log-dealer.eservice.emarsys.net/v1/log"];
+            [builder setUrl:EMSLogEndpoint];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:@{@"logs": [NSArray arrayWithArray:logs]}];
         }
