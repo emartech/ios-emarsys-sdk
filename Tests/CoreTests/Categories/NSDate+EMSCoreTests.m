@@ -36,4 +36,10 @@ SPEC_BEGIN(NSDateEMSCoreTests)
             });
         });
 
+        describe(@"utcDateFormatter", ^{
+            it(@"should use gregorian calendar", ^{
+                [[theValue([NSDate utcDateFormatter].calendar.calendarIdentifier) should] equal:theValue(NSCalendarIdentifierGregorian)];
+            });
+        });
+
 SPEC_END

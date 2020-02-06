@@ -11,4 +11,6 @@
 
 - (NSString *)stringValueInUTC;
 
++ (NSDateFormatter *)utcDateFormatter;
+
 @end
