@@ -49,9 +49,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 - (void)         application:(UIApplication *)application
 didReceiveRemoteNotification:(NSDictionary *)userInfo
       fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-    [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
-    NSNumber *badge = userInfo[@"aps"][@"badge"];
-    application.applicationIconBadgeNumber = [badge integerValue];
+    [Emarsys.push handleMessageWithUserInfo:userInfo];
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
