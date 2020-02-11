@@ -217,9 +217,9 @@
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                      displayIamRepository:displayedIAMRepository]]
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                          displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                    endpoint:endpoint]];
@@ -237,10 +237,10 @@
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
-                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                      endpoint:endpoint],
-                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                            endpoint:endpoint]]
+                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                                                          endpoint:endpoint],
+                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
+                                                                                endpoint:endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
@@ -306,6 +306,8 @@
                                                                            deviceInfo:deviceInfo
                                                                        requestContext:self.requestContext];
 
+    UIApplication *application = [UIApplication sharedApplication];
+
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
                                                                                                                           endpoint:endpoint];
     _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
@@ -322,13 +324,14 @@
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                requestManager:self.requestManager
                                             notificationCache:self.notificationCache
-                                            timestampProvider:timestampProvider];
+                                            timestampProvider:timestampProvider
+                                                  application:application];
     _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext
                                    notificationCache:self.notificationCache
                                       requestManager:self.requestManager
                                       requestFactory:self.requestFactory
                                             endpoint:endpoint];
-    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:[UIApplication sharedApplication]
+    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:application
                                                                      mobileEngageInternal:self.mobileEngage
                                                                                     inApp:self.iam
                                                                         timestampProvider:timestampProvider

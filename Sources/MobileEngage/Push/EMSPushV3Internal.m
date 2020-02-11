@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
+#import <UIKit/UIKit.h>
 #import "EMSPushV3Internal.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
@@ -16,6 +17,7 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
+@property(nonatomic, strong) UIApplication *application;
 
 @end
 
@@ -24,16 +26,19 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      notificationCache:(EMSNotificationCache *)notificationCache
-                     timestampProvider:(EMSTimestampProvider *)timestampProvider {
+                     timestampProvider:(EMSTimestampProvider *)timestampProvider
+                           application:(UIApplication *)application {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(notificationCache);
     NSParameterAssert(timestampProvider);
+    NSParameterAssert(application);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
         _notificationCache = notificationCache;
         _timestampProvider = timestampProvider;
+        _application = application;
     }
     return self;
 }
@@ -96,6 +101,21 @@
             completionBlock([NSError errorWithCode:1400
                               localizedDescription:@"No messageId found!"]);
         });
+    }
+}
+
+- (void)handleMessageWithUserInfo:(NSDictionary *)userInfo {
+    NSArray<NSDictionary *> *actions = userInfo[@"ems"][@"actions"];
+    for (NSDictionary *action in actions) {
+        if([action[@"type"] isEqualToString:@"badge"]) {
+            NSInteger value = [action[@"value"] integerValue];
+            if ([[action[@"method"] lowercaseString] isEqualToString:@"add"]) {
+                NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
+                [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
+            } else {
+                [self.application setApplicationIconBadgeNumber:value];
+            }
+        }
     }
 }
 

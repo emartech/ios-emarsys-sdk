@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
+- (void)handleMessageWithUserInfo:(NSDictionary *)userInfo;
+
 @end
 
 NS_ASSUME_NONNULL_END

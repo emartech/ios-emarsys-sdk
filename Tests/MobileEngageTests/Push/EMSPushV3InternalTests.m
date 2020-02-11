@@ -22,6 +22,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) NSString *pushToken;
 @property(nonatomic, strong) id mockPushTokenData;
+@property(nonatomic, strong) id mockApplication;
 
 @end
 
@@ -33,6 +34,10 @@
     _mockNotificationCache = OCMClassMock([EMSNotificationCache class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
 
+    UIApplication *application = [UIApplication sharedApplication];
+    application.applicationIconBadgeNumber = 3;
+    _mockApplication = OCMPartialMock(application);
+
     _pushToken = @"pushTokenString";
     NSData *data = [NSData new];
     _mockPushTokenData = OCMPartialMock(data);
@@ -41,11 +46,13 @@
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                requestManager:self.mockRequestManager
                                             notificationCache:self.mockNotificationCache
-                                            timestampProvider:self.mockTimestampProvider];
+                                            timestampProvider:self.mockTimestampProvider
+                                                  application:self.mockApplication];
 }
 
 - (void)tearDown {
     [self.mockPushTokenData stopMocking];
+    [self.mockApplication stopMocking];
     [super tearDown];
 }
 
@@ -54,7 +61,8 @@
         [[EMSPushV3Internal alloc] initWithRequestFactory:nil
                                            requestManager:self.mockRequestManager
                                         notificationCache:self.mockNotificationCache
-                                        timestampProvider:self.mockTimestampProvider];
+                                        timestampProvider:self.mockTimestampProvider
+                                              application:self.mockApplication];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -66,7 +74,8 @@
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:nil
                                         notificationCache:self.mockNotificationCache
-                                        timestampProvider:self.mockTimestampProvider];
+                                        timestampProvider:self.mockTimestampProvider
+                                              application:self.mockApplication];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -78,7 +87,8 @@
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
                                         notificationCache:nil
-                                        timestampProvider:self.mockTimestampProvider];
+                                        timestampProvider:self.mockTimestampProvider
+                                              application:self.mockApplication];
         XCTFail(@"Expected Exception when notificationCache is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: notificationCache");
@@ -90,10 +100,24 @@
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
                                         notificationCache:self.mockNotificationCache
-                                        timestampProvider:nil];
+                                        timestampProvider:nil
+                                              application:self.mockApplication];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
+    }
+}
+
+- (void)testInit_application_mustNotBeNil {
+    @try {
+        [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
+                                           requestManager:self.mockRequestManager
+                                        notificationCache:self.mockNotificationCache
+                                        timestampProvider:self.mockTimestampProvider
+                                              application:nil];
+        XCTFail(@"Expected Exception when application is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: application");
     }
 }
 
@@ -293,6 +317,116 @@
 
     [self.push trackMessageOpenWithUserInfo:userInfo
                             completionBlock:nil];
+}
+
+- (void)testHandleMessageWithUserInfo_withoutMethod {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"type": @"badge",
+                                    @"value": @123
+                            }
+                    ]
+            }};
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:123]);
+}
+
+- (void)testHandleMessageWithUserInfo_shouldNotSetBadgeNumberWhenTheTypeIsNotBadge {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"value": @456
+                            }
+                    ]
+            }};
+
+    OCMReject([self.mockApplication setApplicationIconBadgeNumber:456]);
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+}
+
+- (void)testHandleMessageWithUserInfo_shouldSetBadgeNumberWhenMultipleActionsAreAvailable {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"type": @"testType",
+                                    @"value": @123
+                            },
+                            @{
+                                    @"type": @"badge",
+                                    @"value": @456
+                            }
+                    ]
+            }};
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:456]);
+
+}
+
+- (void)testHandleMessageWithUserInfo_shouldSetBadgeNumberWhenMultipleBadgeActionsAreAvailable {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"type": @"badge",
+                                    @"value": @123
+                            },
+                            @{
+                                    @"type": @"badge",
+                                    @"value": @456
+                            }
+                    ]
+            }};
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:123]);
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:456]);
+}
+
+- (void)testHandleMessageWithUserInfo_shouldSetBadgeNumberCorrectly_whenMethodIsAdd {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"type": @"badge",
+                                    @"method": @"ADD",
+                                    @"value": @2
+                            }
+                    ]
+            }};
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:5]);
+    XCTAssertEqual([self.mockApplication applicationIconBadgeNumber], 5);
+}
+
+- (void)testHandleMessageWithUserInfo_shouldSetBadgeNumberCorrectly_whenMethodIsAdd_withNegativeValue {
+    NSDictionary *userInfo = @{
+            @"ems": @{
+                    @"actions": @[
+                            @{
+                                    @"type": @"badge",
+                                    @"method": @"ADD",
+                                    @"value": @-2
+                            }
+                    ]
+            }};
+
+    [self.push handleMessageWithUserInfo:userInfo];
+
+    OCMVerify([self.mockApplication setApplicationIconBadgeNumber:1]);
+    XCTAssertEqual([self.mockApplication applicationIconBadgeNumber], 1);
 }
 
 @end

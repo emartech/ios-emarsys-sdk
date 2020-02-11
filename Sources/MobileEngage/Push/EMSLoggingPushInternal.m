@@ -58,4 +58,12 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
+- (void)handleMessageWithUserInfo:(NSDictionary *)userInfo {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"userInfo"] = userInfo;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
 @end

@@ -16,6 +16,7 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      notificationCache:(EMSNotificationCache *)notificationCache
-                     timestampProvider:(EMSTimestampProvider *)timestampProvider;
+                     timestampProvider:(EMSTimestampProvider *)timestampProvider
+                           application:(UIApplication *)application;
 
 @end
