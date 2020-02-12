@@ -92,8 +92,8 @@
     if (sid) {
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                      @"origin": @"main",
-                                                                                      @"sid": sid
+                                                                                          @"origin": @"main",
+                                                                                          @"sid": sid
                                                                                   }
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
@@ -110,15 +110,7 @@
 - (void)handleMessageWithUserInfo:(NSDictionary *)userInfo {
     NSArray<NSDictionary *> *actions = userInfo[@"ems"][@"actions"];
     for (NSDictionary *action in actions) {
-        if([action[@"type"] isEqualToString:@"badge"]) {
-            NSInteger value = [action[@"value"] integerValue];
-            if ([[action[@"method"] lowercaseString] isEqualToString:@"add"]) {
-                NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
-                [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
-            } else {
-                [self.application setApplicationIconBadgeNumber:value];
-            }
-        } else if ([action[@"type"] isEqualToString:@"MEAppEvent"]) {
+        if ([action[@"type"] isEqualToString:@"MEAppEvent"]) {
             [self.silentMessageEventHandler handleEvent:action[@"name"] payload:action[@"payload"]];
         }
     }

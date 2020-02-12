@@ -1,0 +1,54 @@
+//
+// Copyright (c) 2020 Emarsys. All rights reserved.
+//
+
+#import <KiwiConfiguration.h>
+#import "EMSActionFactory.h"
+#import "EMSActionProtocol.h"
+#import "EMSDictionaryValidator.h"
+#import "EMSBadgeCountAction.h"
+#import "EMSAppEventAction.h"
+#import "EMSOpenExternalEventAction.h"
+#import "EMSCustomEventAction.h"
+
+@interface EMSActionFactory ()
+
+@end
+
+@implementation EMSActionFactory
+
+- (id <EMSActionProtocol>)createActionWithActionDictionary:(NSDictionary<NSString *, id> *)action {
+    NSObject <EMSActionProtocol> *result = nil;
+    NSArray *errors = [action validate:^(EMSDictionaryValidator *validate) {
+        [validate valueExistsForKey:@"type" withType:[NSString class]];
+    }];
+
+    if ([errors count] == 0) {
+        NSString *actionType = action[@"type"];
+        if ([actionType isEqualToString:@"badgeCount"]) {
+            NSArray *badgeErrors = [action validate:^(EMSDictionaryValidator *validate) {
+                [validate valueExistsForKey:@"method" withType:[NSString class]];
+                [validate valueExistsForKey:@"value" withType:[NSNumber class]];
+            }];
+            result = [badgeErrors count] == 0 ? [[EMSBadgeCountAction alloc] init] : nil;
+        } else if ([actionType isEqualToString:@"MEAppEvent"]) {
+            NSArray *appEventErrors = [action validate:^(EMSDictionaryValidator *validate) {
+                [validate valueExistsForKey:@"name" withType:[NSString class]];
+            }];
+            result = [appEventErrors count] == 0 ? [[EMSAppEventAction alloc] init] : nil;
+        } else if ([actionType isEqualToString:@"OpenExternalEvent"]) {
+            NSArray *openUrlErrors = [action validate:^(EMSDictionaryValidator *validate) {
+                [validate valueExistsForKey:@"url" withType:[NSString class]];
+            }];
+            result = [openUrlErrors count] == 0 ? [[EMSOpenExternalEventAction alloc] init] : nil;
+        } else if ([actionType isEqualToString:@"MECustomEvent"]) {
+            NSArray *customEventErrors = [action validate:^(EMSDictionaryValidator *validate) {
+                [validate valueExistsForKey:@"name" withType:[NSString class]];
+            }];
+            result = [customEventErrors count] == 0 ? [[EMSCustomEventAction alloc] init] : nil;
+        }
+    }
+    return result;
+}
+
+@end
