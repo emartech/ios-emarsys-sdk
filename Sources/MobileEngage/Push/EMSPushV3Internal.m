@@ -10,6 +10,7 @@
 #import "NSError+EMSCore.h"
 #import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
+#import "EMSEventHandler.h"
 
 @interface EMSPushV3Internal ()
 
@@ -22,6 +23,8 @@
 @end
 
 @implementation EMSPushV3Internal
+
+@synthesize silentMessageEventHandler = _silentMessageEventHandler;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
@@ -115,6 +118,8 @@
             } else {
                 [self.application setApplicationIconBadgeNumber:value];
             }
+        } else if ([action[@"type"] isEqualToString:@"MEAppEvent"]) {
+            [self.silentMessageEventHandler handleEvent:action[@"name"] payload:action[@"payload"]];
         }
     }
 }
