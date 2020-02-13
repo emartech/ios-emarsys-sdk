@@ -6,4 +6,8 @@
 #import "EMSActionProtocol.h"
 
 @interface EMSOpenExternalEventAction : NSObject <EMSActionProtocol>
+
+- (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
+                             application:(UIApplication *)application;
+
 @end
