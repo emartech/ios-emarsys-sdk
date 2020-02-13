@@ -11,6 +11,8 @@
 
 @property(nonatomic, weak) id <EMSEventHandler> eventHandler;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
                             eventHandler:(id <EMSEventHandler>)eventHandler;
 @end

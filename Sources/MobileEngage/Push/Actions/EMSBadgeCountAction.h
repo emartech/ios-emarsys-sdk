@@ -8,6 +8,8 @@
 
 @interface EMSBadgeCountAction : NSObject<EMSActionProtocol>
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
                              application:(UIApplication *)application;
 

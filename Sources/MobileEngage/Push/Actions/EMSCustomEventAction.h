@@ -10,6 +10,8 @@
 
 @interface EMSCustomEventAction : NSObject <EMSActionProtocol>
 
+- (instancetype)init NS_UNAVAILABLE;
+
 -(instancetype) initWithAction:(NSDictionary *)action
                   mobileEngage:(id<EMSMobileEngageProtocol>)mobileEngage;
 

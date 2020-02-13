@@ -10,6 +10,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
+#import "EMSActionFactory.h"
+#import "EMSActionProtocol.h"
 
 @interface EMSPushV3Internal ()
 
@@ -17,7 +19,7 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
-@property(nonatomic, strong) UIApplication *application;
+@property(nonatomic, strong) EMSActionFactory *actionFactory;
 
 @end
 
@@ -29,18 +31,18 @@
                         requestManager:(EMSRequestManager *)requestManager
                      notificationCache:(EMSNotificationCache *)notificationCache
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-                           application:(UIApplication *)application {
+                         actionFactory:(EMSActionFactory *)actionFactory {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(notificationCache);
     NSParameterAssert(timestampProvider);
-    NSParameterAssert(application);
+    NSParameterAssert(actionFactory);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
         _notificationCache = notificationCache;
         _timestampProvider = timestampProvider;
-        _application = application;
+        _actionFactory = actionFactory;
     }
     return self;
 }
@@ -108,8 +110,10 @@
 
 - (void)handleMessageWithUserInfo:(NSDictionary *)userInfo {
     NSArray<NSDictionary *> *actions = userInfo[@"ems"][@"actions"];
-    for (NSDictionary *action in actions) {
-
+    [self.actionFactory setEventHandler:self.silentMessageEventHandler];
+    for (NSDictionary *actionDict in actions) {
+        id<EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
+        [action execute];
     }
 }
 

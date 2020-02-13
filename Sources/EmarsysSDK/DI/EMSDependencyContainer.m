@@ -74,6 +74,7 @@
 #import "EMSEndpoint.h"
 #import "EMSStorage.h"
 #import "EMSSceneProvider.h"
+#import "EMSActionFactory.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -319,13 +320,17 @@
     _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                requestManager:self.requestManager
                                                                requestContext:self.requestContext];
+
+    EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
+                                                                       mobileEngage:self.mobileEngage];
+
     _deepLink = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
                                                      requestFactory:self.requestFactory];
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                requestManager:self.requestManager
                                             notificationCache:self.notificationCache
                                             timestampProvider:timestampProvider
-                                                  application:application];
+                                                actionFactory:actionFactory];
     _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext
                                    notificationCache:self.notificationCache
                                       requestManager:self.requestManager
