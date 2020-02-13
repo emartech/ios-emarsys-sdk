@@ -10,7 +10,6 @@
 #import "NSError+EMSCore.h"
 #import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
-#import "EMSEventHandler.h"
 
 @interface EMSPushV3Internal ()
 
@@ -110,9 +109,7 @@
 - (void)handleMessageWithUserInfo:(NSDictionary *)userInfo {
     NSArray<NSDictionary *> *actions = userInfo[@"ems"][@"actions"];
     for (NSDictionary *action in actions) {
-        if ([action[@"type"] isEqualToString:@"MEAppEvent"]) {
-            [self.silentMessageEventHandler handleEvent:action[@"name"] payload:action[@"payload"]];
-        }
+
     }
 }
 

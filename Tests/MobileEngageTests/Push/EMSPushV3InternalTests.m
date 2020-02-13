@@ -12,7 +12,6 @@
 #import "NSError+EMSCore.h"
 #import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
-#import "EMSEventHandler.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
 
@@ -318,54 +317,6 @@
 
     [self.push trackMessageOpenWithUserInfo:userInfo
                             completionBlock:nil];
-}
-
-- (void)testHandleMessageWithUserInfo_shouldCallEventHandler {
-    id mockEventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
-
-    [self.push setSilentMessageEventHandler:mockEventHandler];
-
-    NSDictionary *expectedPayload = @{
-            @"testPayloadKey1": @"testPayloadValue1",
-            @"testPayloadKey2": @{
-                    @"payloadTestKeyLevel2": @"payloadTestValueLevel2"
-            }
-    };
-
-    NSDictionary *userInfo = @{
-            @"ems": @{
-                    @"actions": @[
-                            @{
-                                    @"type": @"MEAppEvent",
-                                    @"name": @"testName",
-                                    @"payload": expectedPayload
-                            }
-                    ]
-            }};
-
-    [self.push handleMessageWithUserInfo:userInfo];
-
-    OCMVerify([mockEventHandler handleEvent:@"testName" payload:expectedPayload]);
-}
-
-- (void)testHandleMessageWithUserInfo_shouldHandleAppEventWithEventHandler_whenPayloadIsNil {
-    id mockEventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
-
-    [self.push setSilentMessageEventHandler:mockEventHandler];
-
-    NSDictionary *userInfo = @{
-            @"ems": @{
-                    @"actions": @[
-                            @{
-                                    @"type": @"MEAppEvent",
-                                    @"name": @"testName"
-                            }
-                    ]
-            }};
-
-    [self.push handleMessageWithUserInfo:userInfo];
-
-    OCMVerify([mockEventHandler handleEvent:@"testName" payload:nil]);
 }
 
 @end
