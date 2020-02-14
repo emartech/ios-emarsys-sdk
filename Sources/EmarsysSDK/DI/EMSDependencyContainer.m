@@ -218,9 +218,9 @@
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository]]
+        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                      displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                    endpoint:endpoint]];
@@ -238,10 +238,10 @@
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
-                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                          endpoint:endpoint],
-                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                                endpoint:endpoint]]
+                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                                                      endpoint:endpoint],
+                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
+                                                                            endpoint:endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
@@ -336,14 +336,13 @@
                                       requestManager:self.requestManager
                                       requestFactory:self.requestFactory
                                             endpoint:endpoint];
-    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithApplication:application
-                                                                     mobileEngageInternal:self.mobileEngage
-                                                                                    inApp:self.iam
-                                                                        timestampProvider:timestampProvider
-                                                                             uuidProvider:uuidProvider
-                                                                             pushInternal:self.push
-                                                                           requestManager:self.requestManager
-                                                                           requestFactory:self.requestFactory];
+    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
+                                                                                      inApp:self.iam
+                                                                          timestampProvider:timestampProvider
+                                                                               uuidProvider:uuidProvider
+                                                                               pushInternal:self.push
+                                                                             requestManager:self.requestManager
+                                                                             requestFactory:self.requestFactory];
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
     _loggingPush = [EMSLoggingPushInternal new];

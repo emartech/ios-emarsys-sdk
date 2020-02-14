@@ -14,11 +14,12 @@
 #import "EMSRequestManager.h"
 #import "EMSPushNotificationProtocol.h"
 #import "EMSMobileEngageProtocol.h"
+#import "EMSActionFactory.h"
+#import "EMSActionProtocol.h"
 
 @interface MEUserNotificationDelegate ()
 
-@property(nonatomic, strong) UIApplication *application;
-@property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
+@property(nonatomic, strong) EMSActionFactory *actionFactory;
 @property(nonatomic, strong) MEInApp *inApp;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
@@ -33,16 +34,14 @@
 @synthesize delegate = _delegate;
 @synthesize eventHandler = _eventHandler;
 
-- (instancetype)initWithApplication:(UIApplication *)application
-               mobileEngageInternal:(id <EMSMobileEngageProtocol>)mobileEngage
-                              inApp:(MEInApp *)inApp
-                  timestampProvider:(EMSTimestampProvider *)timestampProvider
-                       uuidProvider:(EMSUUIDProvider *)uuidProvider
-                       pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
-                     requestManager:(EMSRequestManager *)requestManager
-                     requestFactory:(EMSRequestFactory *)requestFactory {
-    NSParameterAssert(application);
-    NSParameterAssert(mobileEngage);
+- (instancetype)initWithActionFactory:(EMSActionFactory *)actionFactory
+                                inApp:(MEInApp *)inApp
+                    timestampProvider:(EMSTimestampProvider *)timestampProvider
+                         uuidProvider:(EMSUUIDProvider *)uuidProvider
+                         pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
+                       requestManager:(EMSRequestManager *)requestManager
+                       requestFactory:(EMSRequestFactory *)requestFactory {
+    NSParameterAssert(actionFactory);
     NSParameterAssert(inApp);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(uuidProvider);
@@ -50,8 +49,7 @@
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
     if (self = [super init]) {
-        _application = application;
-        _mobileEngage = mobileEngage;
+        _actionFactory = actionFactory;
         _inApp = inApp;
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
@@ -110,20 +108,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     completionHandler();
 }
 
-- (void)handleAction:(NSDictionary *)action {
-    NSString *type = action[@"type"];
-    if ([type isEqualToString:@"MEAppEvent"]) {
-        [self.eventHandler handleEvent:action[@"name"]
-                               payload:action[@"payload"]];
-    } else if ([type isEqualToString:@"OpenExternalUrl"]) {
-        [self.application openURL:[NSURL URLWithString:action[@"url"]]
-                          options:@{}
-                completionHandler:nil];
-    } else if ([type isEqualToString:@"MECustomEvent"]) {
-        [self.mobileEngage trackCustomEventWithName:action[@"name"]
-                                    eventAttributes:action[@"payload"]
-                                    completionBlock:nil];
-    }
+- (void)handleAction:(NSDictionary *)actionDict {
+    [self.actionFactory setEventHandler:self.eventHandler];
+    id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
+    [action execute];
 }
 
 - (void)handleInApp:(NSDictionary *)userInfo

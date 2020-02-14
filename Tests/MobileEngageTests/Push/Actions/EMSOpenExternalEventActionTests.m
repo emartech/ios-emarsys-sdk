@@ -15,8 +15,7 @@
 @implementation EMSOpenExternalEventActionTests
 
 - (void)setUp {
-    UIApplication *application = [UIApplication sharedApplication];
-    _mockApplication = OCMPartialMock(application);
+    _mockApplication = OCMClassMock([UIApplication class]);
 }
 
 - (void)tearDown {
@@ -46,11 +45,11 @@
 
 - (void)testExecute {
     EMSOpenExternalEventAction *action = [[EMSOpenExternalEventAction alloc] initWithActionDictionary:@{
-                    @"id": @"uniqueId",
-                    @"title": @"actionTitle",
-                    @"type": @"OpenExternalUrl",
-                    @"url": @"https://www.emarsys.com"
-            }
+            @"id": @"uniqueId",
+            @"title": @"actionTitle",
+            @"type": @"OpenExternalUrl",
+            @"url": @"https://www.emarsys.com"
+        }
                                                                                           application:self.mockApplication];
 
     [action execute];
@@ -66,10 +65,10 @@
                           completionHandler:nil]);
 
     EMSOpenExternalEventAction *action = [[EMSOpenExternalEventAction alloc] initWithActionDictionary:@{
-                    @"id": @"uniqueId",
-                    @"title": @"actionTitle",
-                    @"type": @"OpenExternalUrl"
-            }
+            @"id": @"uniqueId",
+            @"title": @"actionTitle",
+            @"type": @"OpenExternalUrl"
+        }
                                                                                           application:self.mockApplication];
 
     [action execute];
