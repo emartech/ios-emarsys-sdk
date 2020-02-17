@@ -30,6 +30,11 @@
     [self.factory setEventHandler:self.mockEventHandler];
 }
 
+- (void)tearDown {
+    [self.mockApplication stopMocking];
+    [super tearDown];
+}
+
 - (void)testInit_application_mustNotBeNil {
     @try {
         [[EMSActionFactory alloc] initWithApplication:nil
