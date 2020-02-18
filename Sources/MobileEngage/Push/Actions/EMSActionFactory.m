@@ -39,7 +39,7 @@
 
     if ([errors count] == 0) {
         NSString *actionType = action[@"type"];
-        if ([actionType isEqualToString:@"badgeCount"]) {
+        if ([actionType isEqualToString:@"BadgeCount"]) {
             NSArray *badgeErrors = [action validate:^(EMSDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"method" withType:[NSString class]];
                 [validate valueExistsForKey:@"value" withType:[NSNumber class]];

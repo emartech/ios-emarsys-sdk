@@ -324,7 +324,7 @@
             @"url": @"https://www.emarsys.com"
     };
     NSDictionary *badgeCountAction = @{
-            @"type": @"badgeCount",
+            @"type": @"BadgeCount",
             @"method": @"ADD",
             @"value": @12
     };

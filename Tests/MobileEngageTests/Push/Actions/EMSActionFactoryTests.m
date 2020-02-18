@@ -57,7 +57,7 @@
 
 - (void)testCreateActionWithActionDictionary_shouldNotCreateBadgeCountAction_whenTypeIsBadgeCount_necessaryFieldsAreMissing {
     NSDictionary *actionDictionary = @{
-            @"type": @"badgeCount"
+            @"type": @"BadgeCount"
     };
 
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
@@ -67,7 +67,7 @@
 
 - (void)testCreateActionWithActionDictionary_shouldCreateBadgeCountAction_whenMethodAndValueIsAvailable {
     NSDictionary *actionDictionary = @{
-            @"type": @"badgeCount",
+            @"type": @"BadgeCount",
             @"method": @"SET",
             @"value": @123
     };

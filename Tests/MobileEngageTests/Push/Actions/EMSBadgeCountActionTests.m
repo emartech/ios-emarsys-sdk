@@ -61,7 +61,7 @@
 
 - (void)testExecute_shouldSetBadgeNumberCorrectly_whenMethodIsAdd {
     NSDictionary *actionDictionary = @{
-            @"type": @"badgeCount",
+            @"type": @"BadgeCount",
             @"method": @"ADD",
             @"value": @2
     };
@@ -78,7 +78,7 @@
 
 - (void)testHandleMessageWithUserInfo_shouldSetBadgeNumberCorrectly_whenMethodIsAdd_withNegativeValue {
     NSDictionary *actionDictionary = @{
-            @"type": @"badgeCount",
+            @"type": @"BadgeCount",
             @"method": @"ADD",
             @"value": @-2
     };
