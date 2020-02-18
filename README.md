@@ -45,10 +45,26 @@ end
 #### 1.3 Install Pods
 After creating the Podfile, you need to execute the command below to download dependencies:
 `pod install`
-### 2. Requirements
+
+### 2. Installation with Swift Package Manager
+#### 2.1 Add package in XCode
+Select project and under Swift Packages add the package repository url: https://github.com/emartech/ios-emarsys-sdk.git
+
+Select the desired version of the EmarsysSDK.
+
+
+On the next page select the libraries you want to use and add them to the correct target, for example (based on our SampleApp):
+
+
+EmarsysSDKLibrary and add to target EmarsysSample
+
+EmarsysNotificationExtensionLibrary and add to target EMSNotificationService
+
+### 3. Requirements
 * The iOS target should be iOS 11 or higher.
 * In order to be able to send push messages to your app, you need to have certifications from Apple Push Notification service (APNs).
 
 > `Note`
 >
 > For further information about how to use our SDK please visit our [Documentation](https://github.com/emartech/ios-emarsys-sdk/wiki "Wiki")
+
