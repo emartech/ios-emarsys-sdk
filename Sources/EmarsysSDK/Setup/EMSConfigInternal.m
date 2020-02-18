@@ -26,6 +26,8 @@
 @property(nonatomic, strong) EMSEmarsysRequestFactory *emarsysRequestFactory;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
+@property(nonatomic, strong) NSNumber *updatedContactFieldId;
+@property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
 
 @end
 
@@ -81,25 +83,40 @@
 }
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
-              completionBlock:(_Nullable EMSCompletionBlock)completionBlock; {
+              completionBlock:(_Nullable EMSCompletionBlock)completionHandler; {
+    [self changeApplicationCode:applicationCode
+                 contactFieldId:[self.meRequestContext contactFieldId]
+                completionBlock:completionHandler];
+}
+
+- (void)changeApplicationCode:(nullable NSString *)applicationCode
+               contactFieldId:(NSNumber *)contactFieldId
+              completionBlock:(_Nullable EMSCompletionBlock)completionHandler {
     _contactFieldValue = [self.meRequestContext contactFieldValue];
+
+    if (![contactFieldId isEqualToNumber:self.meRequestContext.contactFieldId]) {
+        _contactFieldIdHasBeenChanged = YES;
+        _updatedContactFieldId = self.meRequestContext.contactFieldId;
+        [self.meRequestContext setContactFieldId:contactFieldId];
+    }
 
     __weak typeof(self) weakSelf = self;
     if (self.meRequestContext.applicationCode) {
         [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
             if (error) {
-                [weakSelf callCompletionBlock:completionBlock
+                [weakSelf callCompletionBlock:completionHandler
                                     withError:error];
             } else {
                 [weakSelf callSetPushToken:applicationCode
-                           completionBlock:completionBlock];
+                           completionBlock:completionHandler];
             }
         }];
     } else {
         [self callSetPushToken:applicationCode
-               completionBlock:completionBlock];
+               completionBlock:completionHandler];
     }
 }
+
 
 - (NSString *)applicationCode {
     return self.meRequestContext.applicationCode;
@@ -141,11 +158,16 @@
 
 - (void)setContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
-    [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                       completionBlock:^(NSError *error) {
-                                           [weakSelf callCompletionBlock:completionBlock
-                                                               withError:error];
-                                       }];
+    if (!self.contactFieldIdHasBeenChanged) {
+        [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
+                                           completionBlock:^(NSError *error) {
+                                               [weakSelf callCompletionBlock:completionBlock
+                                                                   withError:error];
+                                           }];
+    } else {
+        [self callCompletionBlock:completionBlock
+                        withError:nil];
+    }
 }
 
 - (NSString *)hardwareId {
@@ -170,8 +192,10 @@
                   withError:(NSError *)error {
     if (error) {
         self.meRequestContext.applicationCode = nil;
-    } else {;
+        self.meRequestContext.contactFieldId = self.updatedContactFieldId;
     }
+    self.updatedContactFieldId = nil;
+    self.contactFieldIdHasBeenChanged = NO;
     if (completionBlock) {
         completionBlock(error);
     }

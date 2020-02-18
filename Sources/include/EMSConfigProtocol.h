@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
 
+- (void)changeApplicationCode:(nullable NSString *)applicationCode
+               contactFieldId:(NSNumber *)contactFieldId
+              completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
+
 - (NSString *)applicationCode;
 
 - (void)changeMerchantId:(nullable NSString *)merchantId;
