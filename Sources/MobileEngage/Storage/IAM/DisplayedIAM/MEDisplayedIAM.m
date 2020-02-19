@@ -5,9 +5,9 @@
 #import "MEDisplayedIAM.h"
 #import "NSDate+EMSCore.h"
 
-@implementation MEDisplayedIAM {
+@implementation MEDisplayedIAM
 
-}
+
 - (instancetype)initWithCampaignId:(NSString *)campaignId timestamp:(NSDate *)timestamp {
     self = [super init];
     if (self) {
@@ -45,7 +45,6 @@
     return hash;
 }
 
-
 - (NSString *)description {
     NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ", NSStringFromClass([self class])];
     [description appendFormat:@"self.campaignId=%@", self.campaignId];
@@ -55,10 +54,10 @@
 }
 
 - (NSDictionary *)dictionaryRepresentation {
-    return @{
-        @"campaignId": self.campaignId,
-        @"timestamp": [self.timestamp stringValueInUTC]
-    };
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    result[@"campaignId"] = self.campaignId;
+    result[@"timestamp"] = [self.timestamp stringValueInUTC];
+    return [NSDictionary dictionaryWithDictionary:result];
 }
 
 @end
