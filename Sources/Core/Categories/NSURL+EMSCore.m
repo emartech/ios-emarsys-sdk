@@ -13,7 +13,7 @@
     NSParameterAssert(url.scheme);
     NSParameterAssert(url.host);
 
-    NSCharacterSet *allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"`;/?:^%#@&=$+{}<>,| "] invertedSet];
+    NSCharacterSet *allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"`;/?:^%#@&=$+{}<>,| \\"] invertedSet];
     NSMutableString *fullUrl = [NSMutableString stringWithFormat:@"%@?", urlString];
     [queryParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [fullUrl appendFormat:@"%@=%@&",
