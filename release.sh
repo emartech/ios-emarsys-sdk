@@ -33,7 +33,7 @@ function release {
   NSPODSPEC="${NSPODSPEC/<COMMIT_REF>/:tag => spec.version}"
   printf "$NSPODSPEC" > EmarsysNotificationService.podspec
 
-  git add EmarsysSDK/EmarsysSDKVersion.h
+  git add Sources/EmarsysSDK/EmarsysSDKVersion.h
   git add EmarsysNotificationService.podspec
   git add EmarsysSDK.podspec
   git commit -m "chore(release): version set to $VERSION_NUMBER"
