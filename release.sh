@@ -21,7 +21,7 @@ function release {
 
   printf "Releasing version $VERSION_NUMBER\n";
 
-  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > EmarsysSDK/EmarsysSDKVersion.h
+  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > Sources/EmarsysSDK/EmarsysSDKVersion.h
 
   TEMPLATE="`cat EmarsysSDK.podspec.template`"
   PODSPEC="${TEMPLATE/<VERSION_NUMBER>/$VERSION_NUMBER}"
