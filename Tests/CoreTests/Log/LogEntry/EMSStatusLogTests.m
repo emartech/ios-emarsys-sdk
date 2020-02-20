@@ -45,8 +45,8 @@
 
 - (void)testData {
     NSDictionary *expectedDataDictionary = @{
-        @"class_name": @"NSObject",
-        @"method_name": @"testData",
+        @"className": @"NSObject",
+        @"methodName": @"testData",
         @"parameters": @{@"param1": @"value1"},
         @"status": @{@"status1": @"statusValue1"}
     };

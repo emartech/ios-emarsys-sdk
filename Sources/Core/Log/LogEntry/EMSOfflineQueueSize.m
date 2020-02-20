@@ -15,7 +15,7 @@
 - (instancetype)initWithQueueSize:(NSUInteger)queueSize {
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
-        mutableData[@"offline_queue_size"] = @(queueSize);
+        mutableData[@"offlineQueueSize"] = @(queueSize);
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
     return self;

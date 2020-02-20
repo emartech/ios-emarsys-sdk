@@ -105,13 +105,13 @@
 - (void)testRequestFromShards_shouldReturnWithRequestModel {
     NSDictionary *expectedDeviceInfo = @{
             @"platform": @"ios",
-            @"app_version": @"applicationVersion",
-            @"sdk_version": @"sdkVersion",
-            @"os_version": @"osVersion",
+            @"appVersion": @"applicationVersion",
+            @"sdkVersion": @"sdkVersion",
+            @"osVersion": @"osVersion",
             @"model": @"deviceModel",
-            @"hw_id": @"hardwareId",
-            @"application_code": _applicationCode,
-            @"merchant_id": _merchantId,
+            @"hwId": @"hardwareId",
+            @"applicationCode": _applicationCode,
+            @"merchantId": _merchantId,
     };
 
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -122,27 +122,27 @@
                                 @{
                                         @"type": @"type1",
                                         @"shardData1Key": @"shardData1Value",
-                                        @"device_info": expectedDeviceInfo
+                                        @"deviceInfo": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type2",
                                         @"shardData2Key": @"shardData2Value",
-                                        @"device_info": expectedDeviceInfo
+                                        @"deviceInfo": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type3",
                                         @"shardData3Key": @"shardData3Value",
-                                        @"device_info": expectedDeviceInfo
+                                        @"deviceInfo": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type4",
                                         @"shardData4Key": @"shardData4Value",
-                                        @"device_info": expectedDeviceInfo
+                                        @"deviceInfo": expectedDeviceInfo
                                 },
                                 @{
                                         @"type": @"type5",
                                         @"shardData5Key": @"shardData5Value",
-                                        @"device_info": expectedDeviceInfo
+                                        @"deviceInfo": expectedDeviceInfo
                                 }
                         ]
                 }];
@@ -158,19 +158,19 @@
 - (void)testRequestFromShards_shouldReturnWithRequestModelWithoutMerchantId_when_merchantIdIsNil {
     NSDictionary *expectedDeviceInfo = @{
             @"platform": @"ios",
-            @"app_version": @"applicationVersion",
-            @"sdk_version": @"sdkVersion",
-            @"os_version": @"osVersion",
+            @"appVersion": @"applicationVersion",
+            @"sdkVersion": @"sdkVersion",
+            @"osVersion": @"osVersion",
             @"model": @"deviceModel",
-            @"hw_id": @"hardwareId",
-            @"application_code": _applicationCode,
+            @"hwId": @"hardwareId",
+            @"applicationCode": _applicationCode,
     };
 
     EMSLogMapper *logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:self.applicationCode merchantId:nil];
 
     EMSRequestModel *returnedRequestModel = [logMapper requestFromShards:self.shards];
 
-    XCTAssertTrue([returnedRequestModel.payload[@"logs"][0][@"device_info"] isEqual:expectedDeviceInfo]);
+    XCTAssertTrue([returnedRequestModel.payload[@"logs"][0][@"deviceInfo"] isEqual:expectedDeviceInfo]);
 }
 
 @end

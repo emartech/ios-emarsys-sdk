@@ -40,14 +40,14 @@
 
                 NSMutableDictionary *mutableDeviceInfoDictionary = [NSMutableDictionary dictionary];
                 mutableDeviceInfoDictionary[@"platform"] = deviceInfo.platform;
-                mutableDeviceInfoDictionary[@"app_version"] = deviceInfo.applicationVersion;
-                mutableDeviceInfoDictionary[@"sdk_version"] = deviceInfo.sdkVersion;
-                mutableDeviceInfoDictionary[@"os_version"] = deviceInfo.osVersion;
+                mutableDeviceInfoDictionary[@"appVersion"] = deviceInfo.applicationVersion;
+                mutableDeviceInfoDictionary[@"sdkVersion"] = deviceInfo.sdkVersion;
+                mutableDeviceInfoDictionary[@"osVersion"] = deviceInfo.osVersion;
                 mutableDeviceInfoDictionary[@"model"] = deviceInfo.deviceModel;
-                mutableDeviceInfoDictionary[@"hw_id"] = deviceInfo.hardwareId;
-                mutableDeviceInfoDictionary[@"application_code"] = weakSelf.applicationCode;
-                mutableDeviceInfoDictionary[@"merchant_id"] = weakSelf.merchantId;
-                shardData[@"device_info"] = [NSDictionary dictionaryWithDictionary:mutableDeviceInfoDictionary];
+                mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.hardwareId;
+                mutableDeviceInfoDictionary[@"applicationCode"] = weakSelf.applicationCode;
+                mutableDeviceInfoDictionary[@"merchantId"] = weakSelf.merchantId;
+                shardData[@"deviceInfo"] = [NSDictionary dictionaryWithDictionary:mutableDeviceInfoDictionary];
 
                 [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
             }

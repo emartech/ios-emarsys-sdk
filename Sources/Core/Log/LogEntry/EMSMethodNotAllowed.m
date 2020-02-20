@@ -40,8 +40,8 @@
                        parameters:(nullable NSDictionary<NSString *, id> *)parameters {
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
-        mutableData[@"class_name"] = className;
-        mutableData[@"method_name"] = NSStringFromSelector(sel);
+        mutableData[@"className"] = className;
+        mutableData[@"methodName"] = NSStringFromSelector(sel);
         mutableData[@"parameters"] = parameters;
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
         NSLog(@"Feature disabled, Class: %@ method: %@ not allowed. Please check your config.", className, NSStringFromSelector(sel));

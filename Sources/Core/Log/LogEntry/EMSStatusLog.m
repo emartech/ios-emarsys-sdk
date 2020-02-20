@@ -19,8 +19,8 @@
     NSParameterAssert(sel);
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
-        mutableData[@"class_name"] = NSStringFromClass(klass);
-        mutableData[@"method_name"] = NSStringFromSelector(sel);
+        mutableData[@"className"] = NSStringFromClass(klass);
+        mutableData[@"methodName"] = NSStringFromSelector(sel);
         mutableData[@"parameters"] = parameters;
         mutableData[@"status"] = status;
         _data = [NSDictionary dictionaryWithDictionary:mutableData];

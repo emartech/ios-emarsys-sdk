@@ -41,8 +41,8 @@
     NSDictionary *expectedData = @{
         @"exception": @"exceptionName",
         @"reason": @"reasonOfTheException",
-        @"stack_trace": @[@"stack1", @"stack2", @"stack3"],
-        @"user_info": @{
+        @"stackTrace": @[@"stack1", @"stack2", @"stack3"],
+        @"userInfo": @{
             @"userInfoKey": @"userInfoValue"
         }
     };

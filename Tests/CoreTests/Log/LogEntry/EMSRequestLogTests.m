@@ -67,15 +67,15 @@
 
 - (void)testData {
     NSDictionary *expectedData = @{
-        @"request_id": self.responseModel.requestModel.requestId,
+        @"requestId": self.responseModel.requestModel.requestId,
         @"url": [self.responseModel.requestModel.url absoluteString],
-        @"status_code": @(self.responseModel.statusCode),
-        @"in_db_start": [self.responseModel.requestModel.timestamp numberValueInMillis],
-        @"in_db_end": [self.timestamp numberValueInMillis],
-        @"in_db_duration": [self.timestamp numberValueInMillisFromDate:self.responseModel.requestModel.timestamp],
-        @"networking_start": [self.timestamp numberValueInMillis],
-        @"networking_end": [self.responseModel.timestamp numberValueInMillis],
-        @"networking_duration": [self.responseModel.timestamp numberValueInMillisFromDate:self.timestamp]
+        @"statusCode": @(self.responseModel.statusCode),
+        @"inDbStart": [self.responseModel.requestModel.timestamp numberValueInMillis],
+        @"inDbEnd": [self.timestamp numberValueInMillis],
+        @"inDbDuration": [self.timestamp numberValueInMillisFromDate:self.responseModel.requestModel.timestamp],
+        @"networkingStart": [self.timestamp numberValueInMillis],
+        @"networkingEnd": [self.responseModel.timestamp numberValueInMillis],
+        @"networkingDuration": [self.responseModel.timestamp numberValueInMillisFromDate:self.timestamp]
     };
 
     XCTAssertEqualObjects(self.requestLog.data, expectedData);

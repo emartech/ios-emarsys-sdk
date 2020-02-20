@@ -17,13 +17,13 @@
     NSMutableDictionary *crashInfos = [NSMutableDictionary dictionary];
     if (self = [super init]) {
         crashInfos[@"exception"] = exception.name;
-        crashInfos[@"stack_trace"] = exception.callStackSymbols;
+        crashInfos[@"stackTrace"] = exception.callStackSymbols;
     }
     if (exception.reason) {
         crashInfos[@"reason"] = exception.reason;
     }
     if (exception.userInfo) {
-        crashInfos[@"user_info"] = exception.userInfo;
+        crashInfos[@"userInfo"] = exception.userInfo;
     }
     _data = [NSDictionary dictionaryWithDictionary:crashInfos];
     return self;

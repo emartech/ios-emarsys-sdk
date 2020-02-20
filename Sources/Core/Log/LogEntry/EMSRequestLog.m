@@ -20,15 +20,15 @@
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
 
-        mutableData[@"request_id"] = responseModel.requestModel.requestId;
+        mutableData[@"requestId"] = responseModel.requestModel.requestId;
         mutableData[@"url"] = [responseModel.requestModel.url absoluteString];
-        mutableData[@"status_code"] = @(responseModel.statusCode);
-        mutableData[@"in_db_start"] = [responseModel.requestModel.timestamp numberValueInMillis];
-        mutableData[@"in_db_end"] = [networkingStartTime numberValueInMillis];
-        mutableData[@"in_db_duration"] = [networkingStartTime numberValueInMillisFromDate:responseModel.requestModel.timestamp];
-        mutableData[@"networking_start"] = [networkingStartTime numberValueInMillis];
-        mutableData[@"networking_end"] = [responseModel.timestamp numberValueInMillis];
-        mutableData[@"networking_duration"] = [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime];
+        mutableData[@"statusCode"] = @(responseModel.statusCode);
+        mutableData[@"inDbStart"] = [responseModel.requestModel.timestamp numberValueInMillis];
+        mutableData[@"inDbEnd"] = [networkingStartTime numberValueInMillis];
+        mutableData[@"inDbDuration"] = [networkingStartTime numberValueInMillisFromDate:responseModel.requestModel.timestamp];
+        mutableData[@"networkingStart"] = [networkingStartTime numberValueInMillis];
+        mutableData[@"networkingEnd"] = [responseModel.timestamp numberValueInMillis];
+        mutableData[@"networkingDuration"] = [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime];
 
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
