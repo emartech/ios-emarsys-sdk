@@ -3,7 +3,8 @@
 //
 
 #import "NSDictionary+EMSCore.h"
-
+#import "EMSStatusLog.h"
+#import "EMSMacros.h"
 
 @implementation NSDictionary (EMSCore)
 
@@ -28,7 +29,22 @@
 }
 
 - (NSData *)archive {
-    return [NSKeyedArchiver archivedDataWithRootObject:self];
+    NSError *error;
+    NSData *result = [NSKeyedArchiver archivedDataWithRootObject:self
+                                           requiringSecureCoding:NO
+                                                           error:&error];
+
+    if (error) {
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"error"] = error.localizedDescription;
+
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:nil
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelInfo);
+    }
+    return result;
 }
 
 - (nullable id)valueForKey:(id)key
@@ -62,7 +78,21 @@
 }
 
 + (NSDictionary *)dictionaryWithData:(NSData *)data {
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSError *error;
+    NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
+                                                               fromData:data
+                                                                  error:&error];
+    if (error) {
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"error"] = error.localizedDescription;
+
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:nil
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelInfo);
+    }
+    return result;
 }
 
 - (nullable id)valueForInsensitiveKey:(NSString *)key {
