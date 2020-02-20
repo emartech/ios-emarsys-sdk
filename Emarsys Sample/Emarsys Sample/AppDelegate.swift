@@ -21,6 +21,12 @@ class AppDelegate: EMSAppDelegate {
 
     override func handleEvent(_ eventName: String, payload: [String: NSObject]?) {
         super.handleEvent(eventName, payload: payload)
+        let alertController = UIAlertController(title: eventName, message: "\(String(describing: payload))", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Close", style: .destructive, handler: { (action) in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
         print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
     }
 

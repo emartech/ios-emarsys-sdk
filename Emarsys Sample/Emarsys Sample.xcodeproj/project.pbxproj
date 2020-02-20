@@ -22,8 +22,8 @@
 		8A49EF64211AD61A00D08990 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A49EF63211AD61A00D08990 /* NotificationService.swift */; };
 		8AF0506823E43BF100D20DA9 /* EMSNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8A49EF61211AD61A00D08990 /* EMSNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8AFDEA2023438B3800F7F364 /* ConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFDEA1F23438B3800F7F364 /* ConfigViewController.swift */; };
-		C4D91AE9EFCFC600E49346F7 /* Pods_EMSNotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC420FBABCCCEF9F037464B9 /* Pods_EMSNotificationService.framework */; };
-		E4D2C0B8CF02421A95243C5B /* Pods_Emarsys_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5DCA2C2B816EAE643AAA1A1 /* Pods_Emarsys_Sample.framework */; };
+		A5EA7C6E78E2D01337869D2A /* Pods_EMSNotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 656090FC64A67FDB04981CF3 /* Pods_EMSNotificationService.framework */; };
+		BD6B6375B0CEED26B6B3CD5E /* Pods_Emarsys_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09D704798D6F4E06C02B0699 /* Pods_Emarsys_Sample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,10 +58,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		09D704798D6F4E06C02B0699 /* Pods_Emarsys_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Emarsys_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32C6FB631CFCA67B45F2B45E /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		37683A57ECED79E68EABE366 /* Pods-EMSNotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EMSNotificationService.release.xcconfig"; path = "Target Support Files/Pods-EMSNotificationService/Pods-EMSNotificationService.release.xcconfig"; sourceTree = "<group>"; };
-		79950101B05192DFCAC6A869 /* Pods-EMSNotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EMSNotificationService.debug.xcconfig"; path = "Target Support Files/Pods-EMSNotificationService/Pods-EMSNotificationService.debug.xcconfig"; sourceTree = "<group>"; };
-		8627619E3C02BC7DC85F576F /* Pods-Emarsys Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample.release.xcconfig"; sourceTree = "<group>"; };
+		656090FC64A67FDB04981CF3 /* Pods_EMSNotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EMSNotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7266DF8ED96DE99A3DBF7D58 /* Pods-EMSNotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EMSNotificationService.debug.xcconfig"; path = "Target Support Files/Pods-EMSNotificationService/Pods-EMSNotificationService.debug.xcconfig"; sourceTree = "<group>"; };
+		7D2A8508CB307BC8792CB119 /* Pods-EMSNotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EMSNotificationService.release.xcconfig"; path = "Target Support Files/Pods-EMSNotificationService/Pods-EMSNotificationService.release.xcconfig"; sourceTree = "<group>"; };
 		8A09783A2344B99A005BDD07 /* KeyboardDismisser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDismisser.swift; sourceTree = "<group>"; };
 		8A1086A32111D88800792D40 /* Emarsys Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Emarsys Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A1086A62111D88800792D40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,9 +84,8 @@
 		8A49EF65211AD61A00D08990 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AE30E8F2179CA3A008C2490 /* Emarsys Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Emarsys Sample.entitlements"; sourceTree = "<group>"; };
 		8AFDEA1F23438B3800F7F364 /* ConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigViewController.swift; sourceTree = "<group>"; };
-		C5DCA2C2B816EAE643AAA1A1 /* Pods_Emarsys_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Emarsys_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D974B041D5E9ED704EEAFD82 /* Pods-Emarsys Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys Sample.debug.xcconfig"; path = "Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample.debug.xcconfig"; sourceTree = "<group>"; };
-		EC420FBABCCCEF9F037464B9 /* Pods_EMSNotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EMSNotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8472F9C1823E4437C03E517 /* Pods-Emarsys Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample.release.xcconfig"; sourceTree = "<group>"; };
+		F0CAAFA3B90F1BC3EBBCB901 /* Pods-Emarsys Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys Sample.debug.xcconfig"; path = "Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4D2C0B8CF02421A95243C5B /* Pods_Emarsys_Sample.framework in Frameworks */,
+				BD6B6375B0CEED26B6B3CD5E /* Pods_Emarsys_Sample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C4D91AE9EFCFC600E49346F7 /* Pods_EMSNotificationService.framework in Frameworks */,
+				A5EA7C6E78E2D01337869D2A /* Pods_EMSNotificationService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,7 +124,7 @@
 				8A1086A42111D88800792D40 /* Products */,
 				32C6FB631CFCA67B45F2B45E /* Podfile */,
 				F4706341651620DCDF8527D8 /* Pods */,
-				DFB361A372431FD50501AA11 /* Frameworks */,
+				CCE1F82C32DDD76C53BA783E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -193,11 +193,11 @@
 			path = EMSNotificationService;
 			sourceTree = "<group>";
 		};
-		DFB361A372431FD50501AA11 /* Frameworks */ = {
+		CCE1F82C32DDD76C53BA783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EC420FBABCCCEF9F037464B9 /* Pods_EMSNotificationService.framework */,
-				C5DCA2C2B816EAE643AAA1A1 /* Pods_Emarsys_Sample.framework */,
+				656090FC64A67FDB04981CF3 /* Pods_EMSNotificationService.framework */,
+				09D704798D6F4E06C02B0699 /* Pods_Emarsys_Sample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -205,10 +205,10 @@
 		F4706341651620DCDF8527D8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				79950101B05192DFCAC6A869 /* Pods-EMSNotificationService.debug.xcconfig */,
-				37683A57ECED79E68EABE366 /* Pods-EMSNotificationService.release.xcconfig */,
-				D974B041D5E9ED704EEAFD82 /* Pods-Emarsys Sample.debug.xcconfig */,
-				8627619E3C02BC7DC85F576F /* Pods-Emarsys Sample.release.xcconfig */,
+				7266DF8ED96DE99A3DBF7D58 /* Pods-EMSNotificationService.debug.xcconfig */,
+				7D2A8508CB307BC8792CB119 /* Pods-EMSNotificationService.release.xcconfig */,
+				F0CAAFA3B90F1BC3EBBCB901 /* Pods-Emarsys Sample.debug.xcconfig */,
+				D8472F9C1823E4437C03E517 /* Pods-Emarsys Sample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -220,12 +220,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A1086C02111D88900792D40 /* Build configuration list for PBXNativeTarget "Emarsys Sample" */;
 			buildPhases = (
-				2051B82867B15ED36954A952 /* [CP] Check Pods Manifest.lock */,
+				0013CB3BFB805E22A99FDEFC /* [CP] Check Pods Manifest.lock */,
 				8A10869F2111D88800792D40 /* Sources */,
 				8A1086A02111D88800792D40 /* Frameworks */,
 				8A1086A12111D88800792D40 /* Resources */,
 				8AF0506B23E43BF200D20DA9 /* Embed App Extensions */,
-				15A22DB724A8DFBFF2C61629 /* [CP] Embed Pods Frameworks */,
+				F4ED6E4903AC3A9DCF92843B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -259,7 +259,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A49EF69211AD61A00D08990 /* Build configuration list for PBXNativeTarget "EMSNotificationService" */;
 			buildPhases = (
-				36FC33601FF4A12759B5FB63 /* [CP] Check Pods Manifest.lock */,
+				D027DFD9D0D6E41268604CEB /* [CP] Check Pods Manifest.lock */,
 				8A49EF5D211AD61A00D08990 /* Sources */,
 				8A49EF5E211AD61A00D08990 /* Frameworks */,
 				8A49EF5F211AD61A00D08990 /* Resources */,
@@ -356,24 +356,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		15A22DB724A8DFBFF2C61629 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2051B82867B15ED36954A952 /* [CP] Check Pods Manifest.lock */ = {
+		0013CB3BFB805E22A99FDEFC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -395,7 +378,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		36FC33601FF4A12759B5FB63 /* [CP] Check Pods Manifest.lock */ = {
+		D027DFD9D0D6E41268604CEB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -415,6 +398,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F4ED6E4903AC3A9DCF92843B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys Sample/Pods-Emarsys Sample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -588,7 +588,7 @@
 		};
 		8A1086C12111D88900792D40 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D974B041D5E9ED704EEAFD82 /* Pods-Emarsys Sample.debug.xcconfig */;
+			baseConfigurationReference = F0CAAFA3B90F1BC3EBBCB901 /* Pods-Emarsys Sample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Emarsys Sample/Emarsys Sample.entitlements";
@@ -611,7 +611,7 @@
 		};
 		8A1086C22111D88900792D40 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8627619E3C02BC7DC85F576F /* Pods-Emarsys Sample.release.xcconfig */;
+			baseConfigurationReference = D8472F9C1823E4437C03E517 /* Pods-Emarsys Sample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Emarsys Sample/Emarsys Sample.entitlements";
@@ -674,7 +674,7 @@
 		};
 		8A49EF6A211AD61A00D08990 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 79950101B05192DFCAC6A869 /* Pods-EMSNotificationService.debug.xcconfig */;
+			baseConfigurationReference = 7266DF8ED96DE99A3DBF7D58 /* Pods-EMSNotificationService.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
@@ -697,7 +697,7 @@
 		};
 		8A49EF6B211AD61A00D08990 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 37683A57ECED79E68EABE366 /* Pods-EMSNotificationService.release.xcconfig */;
+			baseConfigurationReference = 7D2A8508CB307BC8792CB119 /* Pods-EMSNotificationService.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
