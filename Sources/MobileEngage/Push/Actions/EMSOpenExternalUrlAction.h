@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #import "EMSActionProtocol.h"
 
-@interface EMSOpenExternalEventAction : NSObject <EMSActionProtocol>
+@interface EMSOpenExternalUrlAction : NSObject <EMSActionProtocol>
 
 - (instancetype)init NS_UNAVAILABLE;
 

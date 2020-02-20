@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSOpenExternalEventAction.h"
+#import "EMSOpenExternalUrlAction.h"
 
 @interface EMSOpenExternalEventActionTests : XCTestCase
 
@@ -25,8 +25,8 @@
 
 - (void)testInit_action_mustNotBeNil {
     @try {
-        [[EMSOpenExternalEventAction alloc] initWithActionDictionary:nil
-                                                         application:self.mockApplication];
+        [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:nil
+                                                       application:self.mockApplication];
         XCTFail(@"Expected Exception when action is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: action");
@@ -35,8 +35,8 @@
 
 - (void)testInit_application_mustNotBeNil {
     @try {
-        [[EMSOpenExternalEventAction alloc] initWithActionDictionary:@{}
-                                                         application:nil];
+        [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:@{}
+                                                       application:nil];
         XCTFail(@"Expected Exception when application is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: application");
@@ -44,13 +44,13 @@
 }
 
 - (void)testExecute {
-    EMSOpenExternalEventAction *action = [[EMSOpenExternalEventAction alloc] initWithActionDictionary:@{
+    EMSOpenExternalUrlAction *action = [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:@{
             @"id": @"uniqueId",
             @"title": @"actionTitle",
             @"type": @"OpenExternalUrl",
             @"url": @"https://www.emarsys.com"
         }
-                                                                                          application:self.mockApplication];
+                                                                                      application:self.mockApplication];
 
     [action execute];
 
@@ -64,12 +64,12 @@
                                     options:@{}
                           completionHandler:nil]);
 
-    EMSOpenExternalEventAction *action = [[EMSOpenExternalEventAction alloc] initWithActionDictionary:@{
+    EMSOpenExternalUrlAction *action = [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:@{
             @"id": @"uniqueId",
             @"title": @"actionTitle",
             @"type": @"OpenExternalUrl"
         }
-                                                                                          application:self.mockApplication];
+                                                                                      application:self.mockApplication];
 
     [action execute];
 }

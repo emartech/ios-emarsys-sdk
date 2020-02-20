@@ -7,7 +7,7 @@
 #import "EMSActionFactory.h"
 #import "EMSBadgeCountAction.h"
 #import "EMSAppEventAction.h"
-#import "EMSOpenExternalEventAction.h"
+#import "EMSOpenExternalUrlAction.h"
 #import "EMSCustomEventAction.h"
 
 @interface EMSActionFactoryTests : XCTestCase
@@ -27,7 +27,6 @@
     _mockEventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
     _factory = [[EMSActionFactory alloc] initWithApplication:self.mockApplication
                                                 mobileEngage:self.mockMobileEngage];
-    [self.factory setEventHandler:self.mockEventHandler];
 }
 
 - (void)tearDown {
@@ -82,12 +81,13 @@
             @"type": @"MEAppEvent"
     };
 
+    [self.factory setEventHandler:self.mockEventHandler];
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
 
     XCTAssertNil(action);
 }
 
-- (void)testCreateActionWithActionDictionary_shouldCreateAppEventAction_whenNameIsAvailable {
+- (void)testCreateActionWithActionDictionary_shouldNotCreateAppEventAction_whenEventHandlerIsMissing {
     NSDictionary *actionDictionary = @{
             @"type": @"MEAppEvent",
             @"name": @"testName"
@@ -95,12 +95,24 @@
 
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
 
+    XCTAssertNil(action);
+}
+
+- (void)testCreateActionWithActionDictionary_shouldCreateAppEventAction_whenNameAndEventHandlerAreAvailable {
+    NSDictionary *actionDictionary = @{
+            @"type": @"MEAppEvent",
+            @"name": @"testName"
+    };
+
+    [self.factory setEventHandler:self.mockEventHandler];
+    id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
+
     XCTAssertTrue([action isKindOfClass:[EMSAppEventAction class]]);
 }
 
 - (void)testCreateActionWithActionDictionary_shouldNotCreateOpenExternalEventAction_whenTypeIsOpenExternalUrl_necessaryFieldsAreMissing {
     NSDictionary *actionDictionary = @{
-            @"type": @"OpenExternalEvent"
+            @"type": @"OpenExternalUrl"
     };
 
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
@@ -110,13 +122,13 @@
 
 - (void)testCreateActionWithActionDictionary_shouldCreateOpenExternalEventAction_whenUrlIsAvailable {
     NSDictionary *actionDictionary = @{
-            @"type": @"OpenExternalEvent",
+            @"type": @"OpenExternalUrl",
             @"url": @"https://www.emarsys.com"
     };
 
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
 
-    XCTAssertTrue([action isKindOfClass:[EMSOpenExternalEventAction class]]);
+    XCTAssertTrue([action isKindOfClass:[EMSOpenExternalUrlAction class]]);
 }
 
 - (void)testCreateActionWithActionDictionary_shouldNotCreateEMSCustomEventAction_whenTypeIsMECustomEvent_necessaryFieldsAreMissing {

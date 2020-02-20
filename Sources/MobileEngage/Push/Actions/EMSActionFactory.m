@@ -7,7 +7,7 @@
 #import "EMSDictionaryValidator.h"
 #import "EMSBadgeCountAction.h"
 #import "EMSAppEventAction.h"
-#import "EMSOpenExternalEventAction.h"
+#import "EMSOpenExternalUrlAction.h"
 #import "EMSMobileEngageProtocol.h"
 #import "EMSCustomEventAction.h"
 
@@ -50,14 +50,14 @@
             NSArray *appEventErrors = [action validate:^(EMSDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"name" withType:[NSString class]];
             }];
-            result = [appEventErrors count] == 0 ? [[EMSAppEventAction alloc] initWithActionDictionary:action
-                                                                                          eventHandler:self.eventHandler] : nil;
-        } else if ([actionType isEqualToString:@"OpenExternalEvent"]) {
+            result = [appEventErrors count] == 0 && self.eventHandler ? [[EMSAppEventAction alloc] initWithActionDictionary:action
+                                                                                                               eventHandler:self.eventHandler] : nil;
+        } else if ([actionType isEqualToString:@"OpenExternalUrl"]) {
             NSArray *openUrlErrors = [action validate:^(EMSDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"url" withType:[NSString class]];
             }];
-            result = [openUrlErrors count] == 0 ? [[EMSOpenExternalEventAction alloc] initWithActionDictionary:action
-                                                                                                   application:self.application] : nil;
+            result = [openUrlErrors count] == 0 ? [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:action
+                                                                                                 application:self.application] : nil;
         } else if ([actionType isEqualToString:@"MECustomEvent"]) {
             NSArray *customEventErrors = [action validate:^(EMSDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"name" withType:[NSString class]];

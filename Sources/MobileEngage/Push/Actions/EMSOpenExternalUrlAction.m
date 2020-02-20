@@ -3,16 +3,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EMSOpenExternalEventAction.h"
+#import "EMSOpenExternalUrlAction.h"
 
-@interface EMSOpenExternalEventAction ()
+@interface EMSOpenExternalUrlAction ()
 
 @property(nonatomic, strong) UIApplication *application;
 @property(nonatomic, strong) NSDictionary *action;
 
 @end
 
-@implementation EMSOpenExternalEventAction
+@implementation EMSOpenExternalUrlAction
 
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
                              application:(UIApplication *)application {
