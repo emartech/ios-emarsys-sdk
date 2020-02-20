@@ -3,7 +3,7 @@
 //
 #import "EMSNotificationService.h"
 #import "EMSNotificationService+Actions.h"
-#import "EMSDictionaryValidator.h"
+#import "EMSServiceDictionaryValidator.h"
 
 @implementation EMSNotificationService (Actions)
 
@@ -38,7 +38,7 @@
 
 - (UNNotificationAction *)createActionFromActionDictionary:(NSDictionary *)actionDictionary {
     UNNotificationAction *result;
-    NSArray *commonKeyErrors = [actionDictionary validate:^(EMSDictionaryValidator *validate) {
+    NSArray *commonKeyErrors = [actionDictionary validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
         [validate valueExistsForKey:@"id" withType:[NSString class]];
         [validate valueExistsForKey:@"title" withType:[NSString class]];
         [validate valueExistsForKey:@"type" withType:[NSString class]];
@@ -49,11 +49,11 @@
         NSArray *typeSpecificErrors;
         NSString *type = actionDictionary[@"type"];
         if ([type isEqualToString:@"MEAppEvent"]) {
-            typeSpecificErrors = [actionDictionary validate:^(EMSDictionaryValidator *validate) {
+            typeSpecificErrors = [actionDictionary validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"name" withType:[NSString class]];
             }];
         } else if ([type isEqualToString:@"OpenExternalUrl"]) {
-            typeSpecificErrors = [actionDictionary validate:^(EMSDictionaryValidator *validate) {
+            typeSpecificErrors = [actionDictionary validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"url" withType:[NSString class]];
             }];
             NSString *const urlString = actionDictionary[@"url"];
@@ -61,7 +61,7 @@
                 typeSpecificErrors = @[[NSString stringWithFormat:@"Invalid URL: %@", urlString]];
             }
         } else if ([type isEqualToString:@"MECustomEvent"]) {
-            typeSpecificErrors = [actionDictionary validate:^(EMSDictionaryValidator *validate) {
+            typeSpecificErrors = [actionDictionary validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"name" withType:[NSString class]];
             }];
         } else if ([type isEqualToString:@"Dismiss"]) {
@@ -79,13 +79,13 @@
 
 - (NSArray *)extractActionsFromContent:(UNMutableNotificationContent *)content {
     NSArray *actions;
-    NSArray *emsErrors = [content.userInfo validate:^(EMSDictionaryValidator *validate) {
+    NSArray *emsErrors = [content.userInfo validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
         [validate valueExistsForKey:@"ems"
                            withType:[NSDictionary class]];
     }];
     if ([emsErrors count] == 0) {
         NSDictionary *ems = content.userInfo[@"ems"];
-        NSArray *actionsErrors = [ems validate:^(EMSDictionaryValidator *validate) {
+        NSArray *actionsErrors = [ems validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
             [validate valueExistsForKey:@"actions"
                                withType:[NSArray class]];
         }];

@@ -21,6 +21,6 @@ typedef void (^ValidatorBlock)(EMSServiceDictionaryValidator *validate);
 
 @interface NSDictionary (Validator)
 
-- (NSArray *)validate:(ValidatorBlock)validator;
+- (NSArray *)validateWithBlock:(ValidatorBlock)validator;
 
 @end

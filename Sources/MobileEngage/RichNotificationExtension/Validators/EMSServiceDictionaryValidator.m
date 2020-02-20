@@ -57,7 +57,7 @@
 
 @implementation NSDictionary (Validator)
 
-- (NSArray *)validate:(ValidatorBlock)validator {
+- (NSArray *)validateWithBlock:(ValidatorBlock)validator {
     EMSServiceDictionaryValidator *dictionaryValidator = [[EMSServiceDictionaryValidator alloc] initWithDictionary:self];
     validator(dictionaryValidator);
     return [dictionaryValidator failureReasons];

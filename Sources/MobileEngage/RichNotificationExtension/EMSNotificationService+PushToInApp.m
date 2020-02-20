@@ -3,7 +3,7 @@
 //
 #import "EMSNotificationService.h"
 #import "EMSNotificationService+PushToInApp.h"
-#import "EMSDictionaryValidator.h"
+#import "EMSServiceDictionaryValidator.h"
 
 @implementation EMSNotificationService (PushToInApp)
 
@@ -53,19 +53,19 @@
 
 - (NSDictionary *)extractPushToInAppFromContent:(UNMutableNotificationContent *)content {
     NSDictionary *result;
-    NSArray *emsErrors = [content.userInfo validate:^(EMSDictionaryValidator *validate) {
+    NSArray *emsErrors = [content.userInfo validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
         [validate valueExistsForKey:@"ems"
                            withType:[NSDictionary class]];
     }];
     if ([emsErrors count] == 0) {
         NSDictionary *ems = content.userInfo[@"ems"];
-        NSArray *pushToInAppErrors = [ems validate:^(EMSDictionaryValidator *validate) {
+        NSArray *pushToInAppErrors = [ems validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
             [validate valueExistsForKey:@"inapp"
                                withType:[NSDictionary class]];
         }];
         if ([pushToInAppErrors count] == 0) {
             NSDictionary *inApp = ems[@"inapp"];
-            NSArray *inAppErrors = [inApp validate:^(EMSDictionaryValidator *validate) {
+            NSArray *inAppErrors = [inApp validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"campaign_id"
                                    withType:[NSString class]];
                 [validate valueExistsForKey:@"url"
