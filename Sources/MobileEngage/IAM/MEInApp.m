@@ -76,18 +76,18 @@
 
 - (void)showMessage:(MEInAppMessage *)message
   completionHandler:(MECompletionHandler)completionHandler {
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.iamWindow) {
-            _inAppLog = nil;
-            self.iamWindow = [self.windowProvider provideWindow];
-            self.currentInAppMessage = message;
-            MEIAMViewController *meiamViewController = [self.iamViewControllerProvider provideViewController];
-            __weak typeof(self) weakSelf = self;
+        if (!weakSelf.iamWindow) {
+            weakSelf.inAppLog = nil;
+            weakSelf.iamWindow = [weakSelf.windowProvider provideWindow];
+            weakSelf.currentInAppMessage = message;
+            MEIAMViewController *meiamViewController = [weakSelf.iamViewControllerProvider provideViewController];
             [meiamViewController loadMessage:message.html
                            completionHandler:^{
                                if (message.response && weakSelf.timestampProvider) {
-                                   _inAppLog = [[EMSInAppLog alloc] initWithMessage:message
-                                                                     loadingTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
+                                   weakSelf.inAppLog = [[EMSInAppLog alloc] initWithMessage:message
+                                                                             loadingTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
                                }
                                [weakSelf displayInAppViewController:message
                                                      viewController:meiamViewController];

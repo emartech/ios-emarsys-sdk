@@ -10,6 +10,8 @@
 
 @implementation EMSLoggingPushInternal
 
+@synthesize silentMessageEventHandler = _silentMessageEventHandler;
+
 - (void)setPushToken:(NSData *)pushToken {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
