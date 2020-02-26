@@ -2,7 +2,6 @@
 // Copyright (c) 2020 Emarsys. All rights reserved.
 //
 
-#import <KWValue.h>
 #import "EMSGeofenceMapper.h"
 #import "EMSResponseModel.h"
 #import "EMSGeofenceResponse.h"
