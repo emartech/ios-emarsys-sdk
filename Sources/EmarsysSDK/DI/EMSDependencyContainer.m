@@ -75,6 +75,8 @@
 #import "EMSStorage.h"
 #import "EMSSceneProvider.h"
 #import "EMSActionFactory.h"
+#import "EMSGeofenceInternal.h"
+#import "EMSGeofenceResponseMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -100,6 +102,9 @@
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> loggingPredict;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> loggingNotificationCenterDelegate;
+
+@property(nonatomic, strong) EMSGeofenceInternal *geofenceInternal;
+
 @property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
@@ -151,7 +156,8 @@
     _operationQueue = [EMSOperationQueue new];
     _operationQueue.maxConcurrentOperationCount = 1;
     _operationQueue.qualityOfService = NSQualityOfServiceUtility;
-    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@", [uuidProvider provideUUIDString]];
+    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
+                                                      [uuidProvider provideUUIDString]];
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
 
 
@@ -218,9 +224,9 @@
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
-        [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                      displayIamRepository:displayedIAMRepository]]
+            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+                                                          displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                    endpoint:endpoint]];
@@ -238,10 +244,10 @@
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
-                                         [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                      endpoint:endpoint],
-                                         [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                            endpoint:endpoint]]
+                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                                                          endpoint:endpoint],
+                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
+                                                                                endpoint:endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
@@ -343,6 +349,10 @@
                                                                                pushInternal:self.push
                                                                              requestManager:self.requestManager
                                                                              requestFactory:self.requestFactory];
+    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
+                                                             requestManager:self.requestManager
+                                                             responseMapper:[[EMSGeofenceResponseMapper alloc] init]];
+
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
     _loggingPush = [EMSLoggingPushInternal new];
@@ -365,7 +375,8 @@
                                                                        requestFactory:self.requestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
-                                                                       configInternal:self.config];
+                                                                       configInternal:self.config
+                                                                     geofenceInternal:self.geofenceInternal];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

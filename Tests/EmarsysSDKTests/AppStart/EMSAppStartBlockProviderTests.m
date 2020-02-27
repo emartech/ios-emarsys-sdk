@@ -12,8 +12,9 @@
 #import "EMSRequestFactory.h"
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfoClientProtocol.h"
+#import "EMSGeofenceInternal.h"
 
-@interface AppStartBlockProviderTests : XCTestCase
+@interface EMSAppStartBlockProviderTests : XCTestCase
 
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
@@ -25,10 +26,11 @@
 @property(nonatomic, strong) MEHandlerBlock appStartEventBlock;
 @property(nonatomic, strong) NSString *applicationCode;
 @property(nonatomic, strong) NSNumber *contactFieldId;
+@property(nonatomic, strong) EMSGeofenceInternal *mockGeofenceInternal;
 
 @end
 
-@implementation AppStartBlockProviderTests
+@implementation EMSAppStartBlockProviderTests
 
 
 - (void)setUp {
@@ -39,6 +41,7 @@
     _mockDeviceInfoClient = OCMProtocolMock(@protocol(EMSDeviceInfoClientProtocol));
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _mockConfigInternal = OCMClassMock([EMSConfigInternal class]);
+    _mockGeofenceInternal = OCMClassMock([EMSGeofenceInternal class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                          contactFieldId:self.contactFieldId
                                                            uuidProvider:[EMSUUIDProvider new]
@@ -51,7 +54,8 @@
                                                                        requestFactory:self.mockRequestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.mockDeviceInfoClient
-                                                                       configInternal:self.mockConfigInternal];
+                                                                       configInternal:self.mockConfigInternal
+                                                                     geofenceInternal:self.mockGeofenceInternal];
     _appStartEventBlock = [self.appStartBlockProvider createAppStartEventBlock];
 }
 
@@ -65,7 +69,8 @@
                                                   requestFactory:self.mockRequestFactory
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
-                                                  configInternal:self.mockConfigInternal];
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -78,7 +83,8 @@
                                                   requestFactory:nil
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
-                                                  configInternal:self.mockConfigInternal];
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -91,7 +97,8 @@
                                                   requestFactory:self.mockRequestFactory
                                                   requestContext:nil
                                                 deviceInfoClient:self.mockDeviceInfoClient
-                                                  configInternal:self.mockConfigInternal];
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -104,7 +111,8 @@
                                                   requestFactory:self.mockRequestFactory
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:nil
-                                                  configInternal:self.mockConfigInternal];
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal];
         XCTFail(@"Expected Exception when deviceInfoClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
@@ -117,10 +125,25 @@
                                                   requestFactory:self.mockRequestFactory
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
-                                                  configInternal:nil];
+                                                  configInternal:nil
+                                                geofenceInternal:self.mockGeofenceInternal];
         XCTFail(@"Expected Exception when configInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: configInternal");
+    }
+}
+
+- (void)testInit_geofenceInternal_mustNotBeNil {
+    @try {
+        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                  requestFactory:self.mockRequestFactory
+                                                  requestContext:self.mockRequestContext
+                                                deviceInfoClient:self.mockDeviceInfoClient
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:nil];
+        XCTFail(@"Expected Exception when geofenceInternal is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: geofenceInternal");
     }
 }
 
@@ -162,6 +185,14 @@
     self.appStartEventBlock();
 
     OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfig]);
+}
+
+- (void)testCreateFetchGeofenceEventBlock {
+    _appStartEventBlock = [self.appStartBlockProvider createFetchGeofenceEventBlock];
+
+    self.appStartEventBlock();
+
+    OCMVerify([self.mockGeofenceInternal fetchGeofences]);
 }
 
 @end
