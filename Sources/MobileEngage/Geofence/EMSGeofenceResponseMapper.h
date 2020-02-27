@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EMSGeofenceMapper : NSObject
+@interface EMSGeofenceResponseMapper : NSObject
 
 - (nullable EMSGeofenceResponse *)mapFromResponseModel:(EMSResponseModel *)responseModel;
 

@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSGeofenceMapper.h"
+#import "EMSGeofenceResponseMapper.h"
 #import "EMSRequestModel.h"
 #import "EMSResponseModel.h"
 #import "EMSGeofenceResponse.h"
@@ -14,7 +14,7 @@
 
 @interface EMSGeofenceMapperTests : XCTestCase
 
-@property(nonatomic, strong) EMSGeofenceMapper *mapper;
+@property(nonatomic, strong) EMSGeofenceResponseMapper *mapper;
 
 @property(nonatomic, copy) NSString *jsonString;
 @end
@@ -22,7 +22,7 @@
 @implementation EMSGeofenceMapperTests
 
 - (void)setUp {
-    _mapper = [[EMSGeofenceMapper alloc] init];
+    _mapper = [[EMSGeofenceResponseMapper alloc] init];
     _jsonString = [self createJSONStringFromDict:[self createGeofenceDict]];
 }
 

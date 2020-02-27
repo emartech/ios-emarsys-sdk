@@ -2,7 +2,7 @@
 // Copyright (c) 2020 Emarsys. All rights reserved.
 //
 
-#import "EMSGeofenceMapper.h"
+#import "EMSGeofenceResponseMapper.h"
 #import "EMSResponseModel.h"
 #import "EMSGeofenceResponse.h"
 #import "EMSDictionaryValidator.h"
@@ -10,7 +10,7 @@
 #import "EMSGeofence.h"
 #import "EMSGeofenceGroup.h"
 
-@implementation EMSGeofenceMapper
+@implementation EMSGeofenceResponseMapper
 
 - (nullable EMSGeofenceResponse *)mapFromResponseModel:(EMSResponseModel *)responseModel {
     EMSGeofenceResponse *result = nil;
