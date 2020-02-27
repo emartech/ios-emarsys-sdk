@@ -322,6 +322,8 @@
 		642592D4DFE35F4AD8E27021 /* EMSPredictRequestModelBuilderProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425911CF939578C073D902E /* EMSPredictRequestModelBuilderProviderTests.m */; };
 		64259366BF718A4EAF5EDCDB /* EMSBadgeCountActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425994B7E126330FD10663E /* EMSBadgeCountActionTests.m */; };
 		64259383C6859B59230039CD /* EMSAppEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259B9AFE68A274724F14B2 /* EMSAppEventActionTests.m */; };
+		6425946FDA13A072EE6FA6E8 /* EMSGeofenceInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425937474ED3809B1169901 /* EMSGeofenceInternal.m */; };
+		6425949DFB0EDE7CC23DC769 /* EMSGeofenceInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */; };
 		642595A62591A0C73A5D1467 /* NSMutableDicitionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259C87537000FEC9172DA7 /* NSMutableDicitionary+EMSCoreTests.m */; };
 		642596C2D0A52B425744457B /* EMSOpenExternalEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642591C29A568D99A7659383 /* EMSOpenExternalEventActionTests.m */; };
 		642596FDC6F96E1618347A19 /* EMSCustomEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642598822E47A39AD1A3BB79 /* EMSCustomEventActionTests.m */; };
@@ -338,8 +340,10 @@
 		64259AE37467E0BBE17347C8 /* EmarsysConfigIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */; };
 		64259B4F445844B74AC6CF37 /* EMSActionProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6425900619382B0A3A232868 /* EMSActionProtocol.h */; };
 		64259BD976B8C71E9C85A8D6 /* EMSActionFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259C638B3EE319AE69F9A4 /* EMSActionFactoryTests.m */; };
+		64259BFC85DA9FF9CD724045 /* EMSGeofenceInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */; };
 		64259C1859FAFFE15E78D0D1 /* EMSAppEventAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 642597A99D66445442FFBE11 /* EMSAppEventAction.m */; };
 		64259CAB30951B76543054B4 /* EMSOpenExternalUrlAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259F636A22A38E65A4037F /* EMSOpenExternalUrlAction.m */; };
+		64259CC38D5008984B2BAC84 /* EMSGeofenceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */; };
 		64259D04A213AC01250B5D13 /* EMSBadgeCountAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425949671A069F932FF8E7F /* EMSBadgeCountAction.m */; };
 		64259D465AE667FAF6812392 /* EmarsysConfigIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642598CA510253D8E2A26EF5 /* EmarsysConfigIntegrationTests.m */; };
 		64259D9A58333E08C77EA67C /* EMSActionFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 642590E5232C5AA69A374A5E /* EMSActionFactory.m */; };
@@ -931,12 +935,14 @@
 		5A476B71AD62A6BF9838F9CF /* libPods-EmarsysSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EmarsysSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8BF739BBCE630020109971 /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6425900619382B0A3A232868 /* EMSActionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionProtocol.h; sourceTree = "<group>"; };
+		642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceInternal.h; sourceTree = "<group>"; };
 		642590C47F45DCCB47E7BC0A /* EMSCustomEventAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCustomEventAction.m; sourceTree = "<group>"; };
 		642590E5232C5AA69A374A5E /* EMSActionFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSActionFactory.m; sourceTree = "<group>"; };
 		6425911CF939578C073D902E /* EMSPredictRequestModelBuilderProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictRequestModelBuilderProviderTests.m; sourceTree = "<group>"; };
 		642591C29A568D99A7659383 /* EMSOpenExternalEventActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSOpenExternalEventActionTests.m; sourceTree = "<group>"; };
 		6425921264B5E58D77B6ECC0 /* EMSOpenExternalUrlAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSOpenExternalUrlAction.h; sourceTree = "<group>"; };
 		642592C425E5BA41A9A0977F /* EMSBadgeCountAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSBadgeCountAction.h; sourceTree = "<group>"; };
+		6425937474ED3809B1169901 /* EMSGeofenceInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofenceInternal.m; sourceTree = "<group>"; };
 		6425949671A069F932FF8E7F /* EMSBadgeCountAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSBadgeCountAction.m; sourceTree = "<group>"; };
 		642594C044516E53D2877760 /* EMSLogicTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLogicTests.m; sourceTree = "<group>"; };
 		642594C59C5EFF459584A660 /* EMSActionFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionFactory.h; sourceTree = "<group>"; };
@@ -952,6 +958,7 @@
 		64259C638B3EE319AE69F9A4 /* EMSActionFactoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSActionFactoryTests.m; sourceTree = "<group>"; };
 		64259C7DB15ED101C980F8DD /* EMSPredictRequestModelBuilderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictRequestModelBuilderTests.m; sourceTree = "<group>"; };
 		64259C87537000FEC9172DA7 /* NSMutableDicitionary+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDicitionary+EMSCoreTests.m"; sourceTree = "<group>"; };
+		64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofenceInternalTests.m; sourceTree = "<group>"; };
 		64259F636A22A38E65A4037F /* EMSOpenExternalUrlAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSOpenExternalUrlAction.m; sourceTree = "<group>"; };
 		7BCF7C6A513D266F6B52AF4E /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		87EF4E1F0C4597D993AADBE3 /* libPods-MobileEngageTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileEngageTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1616,6 +1623,8 @@
 				32C6FF4EC8455C992239DFF6 /* Models */,
 				32C6F5F93AF4DACE41D2E01D /* EMSGeofenceMapper.m */,
 				32C6F3A7A6D9296DD84B9274 /* EMSGeofenceMapper.h */,
+				6425937474ED3809B1169901 /* EMSGeofenceInternal.m */,
+				642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */,
 			);
 			path = Geofence;
 			sourceTree = "<group>";
@@ -1667,6 +1676,7 @@
 			isa = PBXGroup;
 			children = (
 				32C6F07497E64BF576DFD792 /* EMSGeofenceMapperTests.m */,
+				64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */,
 			);
 			path = Geofence;
 			sourceTree = "<group>";
@@ -3294,6 +3304,7 @@
 				32C6F6E1403DB142C7357274 /* EMSGeofence.h in Headers */,
 				32C6FA8F0FC0524FC647E916 /* EMSGeofenceTrigger.h in Headers */,
 				32C6F9B42C12B269BB77B1A0 /* EMSGeofenceMapper.h in Headers */,
+				64259CC38D5008984B2BAC84 /* EMSGeofenceInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3753,6 +3764,7 @@
 				6425912B90AE9C1B9F8D2D2C /* EMSCustomEventActionTests.m in Sources */,
 				642596C2D0A52B425744457B /* EMSOpenExternalEventActionTests.m in Sources */,
 				32C6FE8CF1A1BEA5454BC27D /* EMSGeofenceMapperTests.m in Sources */,
+				6425949DFB0EDE7CC23DC769 /* EMSGeofenceInternalTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3992,6 +4004,7 @@
 				642596FDC6F96E1618347A19 /* EMSCustomEventActionTests.m in Sources */,
 				6425979E07A7AB18987CB8BF /* EMSOpenExternalEventActionTests.m in Sources */,
 				32C6F8ED43AE0A3ABD0A9EA7 /* EMSGeofenceMapperTests.m in Sources */,
+				64259BFC85DA9FF9CD724045 /* EMSGeofenceInternalTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4177,6 +4190,7 @@
 				32C6F2D3CE6A54FA637B2413 /* EMSGeofence.m in Sources */,
 				32C6F5299747026E3169381C /* EMSGeofenceTrigger.m in Sources */,
 				32C6F52B070ED90661588DFF /* EMSGeofenceMapper.m in Sources */,
+				6425946FDA13A072EE6FA6E8 /* EMSGeofenceInternal.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

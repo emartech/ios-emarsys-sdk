@@ -313,4 +313,20 @@
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
 
+- (void)testCreateGeofenceRequestModel {
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-mobile-development.s3-eu-west-1.amazonaws.com/geofenceTest.json"]
+                                                                                method:@"GET"
+                                                                               payload:nil
+                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}
+                                                                                extras:nil];
+
+    EMSRequestModel *result = [self.requestFactory createGeofenceRequestModel];
+
+    XCTAssertEqualObjects(result, expectedRequestModel);
+}
+
+
 @end

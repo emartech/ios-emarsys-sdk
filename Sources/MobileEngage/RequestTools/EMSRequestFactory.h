@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification;
 
+- (EMSRequestModel *)createGeofenceRequestModel;
+
 @end
 
 NS_ASSUME_NONNULL_END

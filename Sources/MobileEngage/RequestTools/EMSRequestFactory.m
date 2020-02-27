@@ -165,6 +165,16 @@
     return requestModel;
 }
 
+- (EMSRequestModel *)createGeofenceRequestModel {
+    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setUrl:@"https://ems-mobile-development.s3-eu-west-1.amazonaws.com/geofenceTest.json"];
+                [builder setMethod:HTTPMethodGET];
+                [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.applicationCode]}];
+            }
+                                                   timestampProvider:self.requestContext.timestampProvider
+                                                        uuidProvider:self.requestContext.uuidProvider];
+    return requestModel;
+}
 
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
     NSString *result = @"custom";
