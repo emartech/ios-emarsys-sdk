@@ -131,7 +131,7 @@ SPEC_BEGIN(PRERequestContextTests)
         });
 
         describe(@"predictInnerFeature", ^{
-            it(@"should enable predictInnerFeature when merchantId is set", ^{
+            it(@"should enableWithCompletionBlock: predictInnerFeature when merchantId is set", ^{
                 PRERequestContext *requestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                                             uuidProvider:uuidProvider
                                                                                               merchantId:@"merchantId"

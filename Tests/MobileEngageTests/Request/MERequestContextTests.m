@@ -246,7 +246,7 @@ SPEC_BEGIN(MERequestContextTests)
                 [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beNo];
             });
 
-            it(@"should enable mobileEngage feature when appCode is set", ^{
+            it(@"should enableWithCompletionBlock: mobileEngage feature when appCode is set", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                                contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider

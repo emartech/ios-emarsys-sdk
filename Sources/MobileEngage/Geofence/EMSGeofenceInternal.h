@@ -3,17 +3,28 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
+#import "EMSGeofenceProtocol.h"
+#import "EMSEventHandler.h"
 
 @class EMSRequestManager;
 @class EMSRequestFactory;
 @class EMSGeofenceResponseMapper;
+@class CLLocationManager;
 
-@interface EMSGeofenceInternal : NSObject
+NS_ASSUME_NONNULL_BEGIN
+
+@interface EMSGeofenceInternal : NSObject <EMSGeofenceProtocol, CLLocationManagerDelegate>
+
+@property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                        responseMapper:(EMSGeofenceResponseMapper *)responseMapper;
+                        responseMapper:(EMSGeofenceResponseMapper *)responseMapper
+                       locationManager:(CLLocationManager *)locationManager;
 
 - (void)fetchGeofences;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -2,6 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import <AdSupport/AdSupport.h>
 #import "EMSDependencyContainer.h"
 #import "MERequestContext.h"
@@ -351,7 +352,8 @@
                                                                              requestFactory:self.requestFactory];
     _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
                                                              requestManager:self.requestManager
-                                                             responseMapper:[[EMSGeofenceResponseMapper alloc] init]];
+                                                             responseMapper:[[EMSGeofenceResponseMapper alloc] init]
+                                                            locationManager:[[CLLocationManager alloc] init]];
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
