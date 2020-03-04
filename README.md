@@ -40,7 +40,7 @@ target "<TargetName>" do
 	pod ‘EmarsysSDK’, '~> ‹latest_released_version_of_emarsys-sdk›’
 end
 ```
-> Wherever you see <TargetName> or anything similar in <> brackets, you should change those according to your own naming convention.
+> Wherever you see <TargetName> or anything similar in <> brackets, you should change those according to your own naming convention or add a value valid for the context.
 
 #### 1.3 Install Pods
 After creating the Podfile, you need to execute the command below to download dependencies:
