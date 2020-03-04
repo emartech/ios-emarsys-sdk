@@ -15,12 +15,15 @@
 #import "EMSGeofenceGroup.h"
 #import "EMSGeofence.h"
 #import "EMSGeofenceTrigger.h"
+#import "EMSActionFactory.h"
+#import "EMSActionProtocol.h"
 
 @interface EMSGeofenceInternalTests : XCTestCase
 
 @property(nonatomic, strong) EMSGeofenceInternal *geofenceInternal;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
+@property(nonatomic, strong) EMSActionFactory *mockActionFactory;
 @property(nonatomic, strong) EMSGeofenceResponseMapper *mockResponseMapper;
 @property(nonatomic, strong) EMSRequestModel *mockRequestModel;
 @property(nonatomic, strong) EMSResponseModel *mockResponseModel;
@@ -37,6 +40,7 @@
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _mockResponseModel = OCMClassMock([EMSResponseModel class]);
     _mockResponseMapper = OCMClassMock([EMSGeofenceResponseMapper class]);
+    _mockActionFactory = OCMClassMock([EMSActionFactory class]);
 
     _mockLocationManager = OCMClassMock([CLLocationManager class]);
 
@@ -45,7 +49,8 @@
     _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                                              requestManager:self.mockRequestManager
                                                              responseMapper:self.mockResponseMapper
-                                                            locationManager:self.mockLocationManager];
+                                                            locationManager:self.mockLocationManager
+                                                              actionFactory:self.mockActionFactory];
     _refreshRadiusRatio = 0.3;
 }
 
@@ -58,7 +63,8 @@
         [[EMSGeofenceInternal alloc] initWithRequestFactory:nil
                                              requestManager:self.mockRequestManager
                                              responseMapper:self.mockResponseMapper
-                                            locationManager:self.mockLocationManager];
+                                            locationManager:self.mockLocationManager
+                                              actionFactory:self.mockActionFactory];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -70,7 +76,8 @@
         [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                              requestManager:nil
                                              responseMapper:self.mockResponseMapper
-                                            locationManager:self.mockLocationManager];
+                                            locationManager:self.mockLocationManager
+                                              actionFactory:self.mockActionFactory];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -82,7 +89,8 @@
         [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                              requestManager:self.mockRequestManager
                                              responseMapper:nil
-                                            locationManager:self.mockLocationManager];
+                                            locationManager:self.mockLocationManager
+                                              actionFactory:self.mockActionFactory];
         XCTFail(@"Expected Exception when responseMapper is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: responseMapper");
@@ -94,10 +102,24 @@
         [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                              requestManager:self.mockRequestManager
                                              responseMapper:self.mockResponseMapper
-                                            locationManager:nil];
+                                            locationManager:nil
+                                              actionFactory:self.mockActionFactory];
         XCTFail(@"Expected Exception when locationManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: locationManager");
+    }
+}
+
+- (void)testInit_actionFactory_mustNotBeNil {
+    @try {
+        [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                             requestManager:self.mockRequestManager
+                                             responseMapper:self.mockResponseMapper
+                                            locationManager:self.mockLocationManager
+                                              actionFactory:nil];
+        XCTFail(@"Expected Exception when actionFactory is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: actionFactory");
     }
 }
 
@@ -124,6 +146,10 @@
 
 - (void)testGeofenceLimit {
     XCTAssertEqual([self.geofenceInternal geofenceLimit], 20);
+}
+
+- (void)testRegisteredGeofences {
+    XCTAssertNotNil(self.geofenceInternal.registeredGeofences);
 }
 
 - (void)testEnable {
@@ -296,6 +322,46 @@
     OCMVerify([self.mockLocationManager startMonitoringForRegion:regionArea]);
 }
 
+- (void)testDidEnter_triggerMobileEngageInternalEvent {
+    id mockAction = OCMProtocolMock(@protocol(EMSActionProtocol));
+    OCMStub([self.mockActionFactory createActionWithActionDictionary:(@{
+            @"id": @"testActionId1",
+            @"title": @"Custom event",
+            @"type": @"MECustomEvent",
+            @"name": @"nameValue",
+            @"payload": @{
+                    @"someKey": @"someValue"
+            }})]).andReturn(mockAction);
+
+    OCMReject([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
+            @"type": @"BadgeCount",
+            @"method": @"add",
+            @"value": @1
+    })]);
+
+    EMSGeofence *geofence = [self createGeofenceWithId:@"geofenceId"
+                                                   lat:12.34
+                                                   lon:56.78
+                                                     r:12];
+    CLCircularRegion *enteringRegion = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(12.34, 56.78)
+                                                                         radius:12
+                                                                     identifier:@"geofenceId"];
+    [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
+
+    [self.geofenceInternal locationManager:self.mockLocationManager
+                            didEnterRegion:enteringRegion];
+
+    OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{
+            @"id": @"testActionId1",
+            @"title": @"Custom event",
+            @"type": @"MECustomEvent",
+            @"name": @"nameValue",
+            @"payload": @{
+                    @"someKey": @"someValue"
+            }})]);
+    OCMVerify([mockAction execute]);
+}
+
 - (EMSGeofenceResponse *)createExpectedResponse {
     return [[EMSGeofenceResponse alloc] initWithGroups:@[
                     [[EMSGeofenceGroup alloc] initWithId:@"geoGroupId1"
@@ -347,7 +413,15 @@
                                                                                      @"name": @"nameValue",
                                                                                      @"payload": @{
                                                                                              @"someKey": @"someValue"
-                                                                                     }}]
+                                                                                     }}],
+                                          [[EMSGeofenceTrigger alloc] initWithId:@"triggerId2"
+                                                                            type:@"EXIT"
+                                                                  loiteringDelay:7
+                                                                          action:@{@"id": @"testActionId2",
+                                                                                  @"type": @"BadgeCount",
+                                                                                  @"method": @"add",
+                                                                                  @"value": @1
+                                                                          }]
                                   ]];
 }
 

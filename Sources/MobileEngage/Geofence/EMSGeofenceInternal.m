@@ -10,6 +10,9 @@
 #import "EMSGeofenceResponse.h"
 #import "EMSGeofenceGroup.h"
 #import "EMSGeofence.h"
+#import "EMSGeofenceTrigger.h"
+#import "EMSActionFactory.h"
+#import "EMSActionProtocol.h"
 
 @interface EMSGeofenceInternal ()
 
@@ -17,6 +20,7 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSGeofenceResponseMapper *responseMapper;
 @property(nonatomic, strong) CLLocationManager *locationManager;
+@property(nonatomic, strong) EMSActionFactory *actionFactory;
 
 @end
 
@@ -25,17 +29,21 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
-                       locationManager:(CLLocationManager *)locationManager {
+                       locationManager:(CLLocationManager *)locationManager
+                         actionFactory:(EMSActionFactory *)actionFactory {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(responseMapper);
     NSParameterAssert(locationManager);
+    NSParameterAssert(actionFactory);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
         _responseMapper = responseMapper;
         _locationManager = locationManager;
+        _actionFactory = actionFactory;
         _geofenceLimit = 20;
+        _registeredGeofences = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -90,7 +98,14 @@
 
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region {
+    EMSGeofence *geofence = self.registeredGeofences[region.identifier];
 
+    for (EMSGeofenceTrigger *trigger in geofence.triggers) {
+        if ([trigger.type.lowercaseString isEqualToString:@"enter"]) {
+            id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:trigger.action];
+            [action execute];
+        }
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager

@@ -353,7 +353,8 @@
     _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
                                                              requestManager:self.requestManager
                                                              responseMapper:[[EMSGeofenceResponseMapper alloc] init]
-                                                            locationManager:[[CLLocationManager alloc] init]];
+                                                            locationManager:[[CLLocationManager alloc] init]
+                                                              actionFactory:actionFactory];
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
