@@ -37,7 +37,7 @@ platform :ios, '11.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
 target "<TargetName>" do
-	pod ‘EmarsysSDK’, '~> 2.3.0’
+	pod ‘EmarsysSDK’, '~> ‹latest_released_version_of_emarsys-sdk›’
 end
 ```
 > Wherever you see <TargetName> or anything similar in <> brackets, you should change those according to your own naming convention.
