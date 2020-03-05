@@ -63,7 +63,8 @@
 }
 
 - (void)registerGeofences {
-    if (self.currentLocation && self.geofenceResponse) {
+    if (self.currentLocation && self.geofenceResponse && self.recalculateable) {
+        self.recalculateable = NO;
         NSDictionary<NSNumber *, CLCircularRegion *> *distanceRegionsDict = [self createDistanceRegionDictionary];
         NSArray *sortedDistances = [distanceRegionsDict.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSNumber *obj1, NSNumber *obj2) {
             return [obj1 compare:obj2];
@@ -100,17 +101,21 @@
          didEnterRegion:(CLRegion *)region {
     EMSGeofence *geofence = self.registeredGeofences[region.identifier];
 
-    for (EMSGeofenceTrigger *trigger in geofence.triggers) {
-        if ([trigger.type.lowercaseString isEqualToString:@"enter"]) {
-            id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:trigger.action];
-            [action execute];
-        }
-    }
+    [self handleActionWithTriggers:geofence.triggers
+                              type:@"enter"];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
           didExitRegion:(CLRegion *)region {
+    EMSGeofence *geofence = self.registeredGeofences[region.identifier];
 
+    if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
+        self.recalculateable = YES;
+        [self registerGeofences];
+    } else {
+        [self handleActionWithTriggers:geofence.triggers
+                                  type:@"exit"];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -128,6 +133,7 @@
 
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     if (CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
+        self.recalculateable = YES;
         [self.locationManager startUpdatingLocation];
         if (completionBlock) {
             completionBlock(nil);
@@ -142,7 +148,17 @@
 }
 
 - (void)disable {
+    self.recalculateable = NO;
+}
 
+- (void)handleActionWithTriggers:(NSArray<EMSGeofenceTrigger *> *)triggers
+                            type:(NSString *)type {
+    for (EMSGeofenceTrigger *trigger in triggers) {
+        if ([trigger.type.lowercaseString isEqualToString:type]) {
+            id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:trigger.action];
+            [action execute];
+        }
+    }
 }
 
 - (CLCircularRegion *)createRegionFromGeofence:(EMSGeofence *)geofence {

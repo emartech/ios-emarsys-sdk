@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) CLLocation *currentLocation;
 @property(nonatomic, strong) NSMutableDictionary *registeredGeofences;
 @property(nonatomic, assign) int geofenceLimit;
+@property(nonatomic, assign) BOOL recalculateable;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
