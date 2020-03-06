@@ -20,8 +20,13 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>AlwaysUsage is a must have for region monitoring</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>AlwaysUsage is a must have for region monitoring</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>location</string>
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>

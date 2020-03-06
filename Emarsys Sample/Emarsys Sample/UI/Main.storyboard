@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aDg-AU-mwu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aDg-AU-mwu">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -74,7 +74,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xql-19-3Ni" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-418.125" y="509.15492957746477"/>
+            <point key="canvasLocation" x="-419" y="-275"/>
         </scene>
         <!--Config-->
         <scene sceneID="zco-gt-1gB">
@@ -139,7 +139,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5QH-f6-7jO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="577" y="509"/>
+            <point key="canvasLocation" x="-419" y="509"/>
         </scene>
         <!--Predict-->
         <scene sceneID="Wy1-ab-INp">
@@ -412,6 +412,59 @@
             </objects>
             <point key="canvasLocation" x="-418.84057971014494" y="1317.8571428571429"/>
         </scene>
+        <!--Geofence-->
+        <scene sceneID="HYV-T3-DzI">
+            <objects>
+                <viewController id="UdX-75-jKB" customClass="GeofenceViewController" customModule="Emarsys_Sample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="oll-cJ-rV5"/>
+                        <viewControllerLayoutGuide type="bottom" id="nJm-b0-G6l"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="XAS-pB-p8k">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gkA-JX-UP6">
+                                <rect key="frame" x="60" y="124" width="294" height="30"/>
+                                <state key="normal" title="Request Authorization"/>
+                                <connections>
+                                    <action selector="requestAuthorizationButtonClicked:" destination="UdX-75-jKB" eventType="touchUpInside" id="Ve3-tU-feU"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wpd-xO-xTn">
+                                <rect key="frame" x="60" y="184" width="294" height="30"/>
+                                <state key="normal" title="Enable"/>
+                                <connections>
+                                    <action selector="enableButtonClicked:" destination="UdX-75-jKB" eventType="touchUpInside" id="SGc-fC-OCu"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MAj-Y1-plj">
+                                <rect key="frame" x="60" y="244" width="294" height="30"/>
+                                <state key="normal" title="Disable"/>
+                                <connections>
+                                    <action selector="disableButtonClicked:" destination="UdX-75-jKB" eventType="touchUpInside" id="zfb-gA-Ppd"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="wpd-xO-xTn" firstAttribute="leading" secondItem="gkA-JX-UP6" secondAttribute="leading" id="8Td-dv-30A"/>
+                            <constraint firstItem="gkA-JX-UP6" firstAttribute="leading" secondItem="XAS-pB-p8k" secondAttribute="leadingMargin" constant="40" id="D30-kK-4iG"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gkA-JX-UP6" secondAttribute="trailing" constant="40" id="I2t-ft-IHf"/>
+                            <constraint firstItem="MAj-Y1-plj" firstAttribute="top" secondItem="wpd-xO-xTn" secondAttribute="bottom" constant="30" id="RKN-E0-4qA"/>
+                            <constraint firstItem="MAj-Y1-plj" firstAttribute="leading" secondItem="gkA-JX-UP6" secondAttribute="leading" id="bp7-Sh-T6y"/>
+                            <constraint firstItem="wpd-xO-xTn" firstAttribute="top" secondItem="gkA-JX-UP6" secondAttribute="bottom" constant="30" id="qkS-SV-TYH"/>
+                            <constraint firstItem="wpd-xO-xTn" firstAttribute="trailing" secondItem="gkA-JX-UP6" secondAttribute="trailing" id="qwq-hb-QiS"/>
+                            <constraint firstItem="MAj-Y1-plj" firstAttribute="trailing" secondItem="gkA-JX-UP6" secondAttribute="trailing" id="rwq-hH-ATE"/>
+                            <constraint firstItem="gkA-JX-UP6" firstAttribute="top" secondItem="oll-cJ-rV5" secondAttribute="bottom" constant="80" id="xLS-k0-33w"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Geofence" image="mappin.circle" catalog="system" selectedImage="mappin.circle" id="NoS-zc-mbb"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="58b-tL-yUq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1414" y="1318"/>
+        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="IrL-jo-wOB">
             <objects>
@@ -426,6 +479,7 @@
                         <segue destination="KQA-zT-TXc" kind="relationship" relationship="viewControllers" id="gFY-nK-Car"/>
                         <segue destination="ZXG-vM-0qI" kind="relationship" relationship="viewControllers" id="d7n-ci-egg"/>
                         <segue destination="y0H-pP-D5z" kind="relationship" relationship="viewControllers" id="b1a-zp-kyy"/>
+                        <segue destination="UdX-75-jKB" kind="relationship" relationship="viewControllers" id="lQ3-p5-dtc"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pSf-av-06R" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -643,13 +697,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-418" y="-297"/>
+            <point key="canvasLocation" x="-1414" y="-275"/>
         </scene>
     </scenes>
     <resources>
-        <image name="gear" catalog="system" width="64" height="60"/>
+        <image name="gear" catalog="system" width="64" height="58"/>
         <image name="inbox" width="29" height="29"/>
         <image name="logo" width="29" height="29"/>
+        <image name="mappin.circle" catalog="system" width="64" height="60"/>
         <image name="placeholder" width="420" height="420"/>
         <image name="predict" width="51" height="51"/>
     </resources>

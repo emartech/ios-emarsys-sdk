@@ -10,9 +10,8 @@
 #import "EMSInAppProtocol.h"
 #import "EMSPredictProtocol.h"
 #import "EMSConfigProtocol.h"
+#import "EMSGeofenceProtocol.h"
 #import "EMSUserNotificationCenterDelegate.h"
-
-@protocol EMSGeofenceProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
