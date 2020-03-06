@@ -17,6 +17,7 @@
 #import "EMSMobileEngageProtocol.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSGeofenceProtocol.h"
 
 @implementation Emarsys
 
@@ -61,7 +62,7 @@
     NSParameterAssert(contactFieldValue);
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
-        (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
+            (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
         [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldValue:contactFieldValue
                                                                                  completionBlock:completionBlock];
     }
@@ -77,7 +78,7 @@
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
-        (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
+            (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
         [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
     }
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
@@ -127,6 +128,10 @@
 
 + (id <EMSInAppProtocol>)inApp {
     return EMSDependencyInjection.iam;
+}
+
++ (id)geofence {
+    return EMSDependencyInjection.geofence;
 }
 
 + (id <EMSPredictProtocol>)predict {

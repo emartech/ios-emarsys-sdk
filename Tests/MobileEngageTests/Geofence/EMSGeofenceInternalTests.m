@@ -213,9 +213,22 @@
 }
 
 - (void)testDisable {
+    CLCircularRegion *region2 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.493812, 19.058537)
+                                                                  radius:10
+                                                              identifier:@"2"];
+    CLCircularRegion *region3 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.492292, 19.056440)
+                                                                  radius:10
+                                                              identifier:@"3"];
+    NSSet *regions = [NSSet setWithArray:@[region2, region3]];
+    OCMStub([self.mockLocationManager monitoredRegions]).andReturn(regions);
+
     self.geofenceInternal.recalculateable = YES;
 
     [self.geofenceInternal disable];
+
+    OCMVerify([self.mockLocationManager stopUpdatingLocation]);
+    OCMVerify([self.mockLocationManager stopMonitoringForRegion:region2]);
+    OCMVerify([self.mockLocationManager stopMonitoringForRegion:region3]);
 
     XCTAssertEqual(self.geofenceInternal.recalculateable, NO);
 }
@@ -374,6 +387,8 @@
 }
 
 - (void)testDidEnter_triggerMobileEngageInternalEvent {
+    id <EMSEventHandler> handler = OCMProtocolMock(@protocol(EMSEventHandler));
+
     id mockAction = OCMProtocolMock(@protocol(EMSActionProtocol));
     OCMStub([self.mockActionFactory createActionWithActionDictionary:(@{
             @"id": @"testActionId1",
@@ -398,10 +413,12 @@
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
     [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
+    [self.geofenceInternal setEventHandler:handler];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
                             didEnterRegion:enteringRegion];
 
+    OCMVerify([self.mockActionFactory setEventHandler:handler]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{
             @"id": @"testActionId1",
             @"title": @"Custom event",
@@ -414,6 +431,7 @@
 }
 
 - (void)testDidExit_triggerBadgeCountEvent {
+    id <EMSEventHandler> handler = OCMProtocolMock(@protocol(EMSEventHandler));
     id mockAction = OCMProtocolMock(@protocol(EMSActionProtocol));
     OCMStub([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
             @"type": @"BadgeCount",
@@ -438,10 +456,12 @@
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
     [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
+    [self.geofenceInternal setEventHandler:handler];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
                              didExitRegion:enteringRegion];
 
+    OCMVerify([self.mockActionFactory setEventHandler:handler]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
             @"type": @"BadgeCount",
             @"method": @"add",

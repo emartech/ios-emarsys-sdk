@@ -78,6 +78,7 @@
 #import "EMSActionFactory.h"
 #import "EMSGeofenceInternal.h"
 #import "EMSGeofenceResponseMapper.h"
+#import "EMSLoggingGeofenceInternal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -101,10 +102,10 @@
 @property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> loggingIam;
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> predict;
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> loggingPredict;
+@property(nonatomic, strong) id <EMSGeofenceProtocol> geofence;
+@property(nonatomic, strong) id <EMSGeofenceProtocol> loggingGeofence;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> loggingNotificationCenterDelegate;
-
-@property(nonatomic, strong) EMSGeofenceInternal *geofenceInternal;
 
 @property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
@@ -350,17 +351,18 @@
                                                                                pushInternal:self.push
                                                                              requestManager:self.requestManager
                                                                              requestFactory:self.requestFactory];
-    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
-                                                             requestManager:self.requestManager
-                                                             responseMapper:[[EMSGeofenceResponseMapper alloc] init]
-                                                            locationManager:[[CLLocationManager alloc] init]
-                                                              actionFactory:actionFactory];
+    _geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
+                                                     requestManager:self.requestManager
+                                                     responseMapper:[[EMSGeofenceResponseMapper alloc] init]
+                                                    locationManager:[[CLLocationManager alloc] init]
+                                                      actionFactory:actionFactory];
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
     _loggingPush = [EMSLoggingPushInternal new];
     _loggingInbox = [EMSLoggingInbox new];
     _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
+    _loggingGeofence = [EMSLoggingGeofenceInternal new];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:uuidProvider];
@@ -379,7 +381,7 @@
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
                                                                        configInternal:self.config
-                                                                     geofenceInternal:self.geofenceInternal];
+                                                                     geofenceInternal:self.geofence];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

@@ -20,6 +20,8 @@
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSPredictInternal.h"
+#import "EMSLoggingGeofenceInternal.h"
+#import "EMSGeofenceInternal.h"
 
 @interface EMSDependencyInjection ()
 
@@ -27,7 +29,7 @@
 
 @end
 
-SPEC_BEGIN(DependencyInjectionTests)
+SPEC_BEGIN(EMSDependencyInjectionTests)
 
         beforeEach(^{
             [EMSDependencyInjection setDependencyContainer:nil];
@@ -72,7 +74,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSLoggingMobileEngageInternal class]];
@@ -80,8 +82,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return mobileEngage when it's enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSMobileEngageV3Internal class]];
@@ -95,7 +97,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.push) should] beKindOfClass:[EMSLoggingPushInternal class]];
@@ -103,8 +105,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.push) should] beKindOfClass:[EMSPushV3Internal class]];
@@ -118,7 +120,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
@@ -126,8 +128,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSDeepLinkInternal class]];
@@ -141,7 +143,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[EMSLoggingInbox class]];
@@ -149,8 +151,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[MEInbox class]];
@@ -164,7 +166,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[EMSLoggingUserNotificationDelegate class]];
@@ -172,8 +174,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[MEUserNotificationDelegate class]];
@@ -187,7 +189,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when mobileEngage is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.iam) should] beKindOfClass:[EMSLoggingInApp class]];
@@ -195,8 +197,8 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                    }]
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.iam) should] beKindOfClass:[MEInApp class]];
@@ -210,7 +212,7 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return with logging instance when predict is not enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }]
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.predict) should] beKindOfClass:[EMSLoggingPredictInternal class]];
@@ -218,12 +220,37 @@ SPEC_BEGIN(DependencyInjectionTests)
 
             it(@"should return real instance when predict is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setContactFieldId:@3];
-                        [builder setMerchantId:@"1428C8EE286EC34B"];
-                    }]
+                            [builder setContactFieldId:@3];
+                            [builder setMerchantId:@"1428C8EE286EC34B"];
+                        }]
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.predict) should] beKindOfClass:[EMSPredictInternal class]];
+            });
+        });
+
+        describe(@"geofence", ^{
+            afterEach(^{
+                [EmarsysTestUtils tearDownEmarsys];
+            });
+
+            it(@"should return with logging instance when mobileEngage is not enabled", ^{
+                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        }]
+                                     dependencyContainer:nil];
+
+                [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
+            });
+
+            it(@"should return real instance when mobileEngage is enabled", ^{
+                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                            [builder setContactFieldId:@3];
+                            [builder setMerchantId:@"1428C8EE286EC34B"];
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
+                                     dependencyContainer:nil];
+
+                [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
             });
         });
 

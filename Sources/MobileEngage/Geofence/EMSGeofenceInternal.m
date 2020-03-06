@@ -149,12 +149,17 @@
 
 - (void)disable {
     self.recalculateable = NO;
+    [self.locationManager stopUpdatingLocation];
+    for (CLCircularRegion *region in self.locationManager.monitoredRegions) {
+        [self.locationManager stopMonitoringForRegion:region];
+    }
 }
 
 - (void)handleActionWithTriggers:(NSArray<EMSGeofenceTrigger *> *)triggers
                             type:(NSString *)type {
     for (EMSGeofenceTrigger *trigger in triggers) {
         if ([trigger.type.lowercaseString isEqualToString:type]) {
+            [self.actionFactory setEventHandler:self.eventHandler];
             id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:trigger.action];
             [action execute];
         }

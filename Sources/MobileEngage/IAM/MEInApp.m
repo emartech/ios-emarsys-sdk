@@ -16,6 +16,7 @@
 #import "EMSMacros.h"
 #import "EMSCompletionBlockProvider.h"
 #import "EMSInAppLog.h"
+#import "EMSGeofenceProtocol.h"
 
 @interface MEInApp () <MEIAMProtocol>
 

@@ -26,4 +26,6 @@
 
 + (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
 
++ (id <EMSGeofenceProtocol>)geofence;
+
 @end

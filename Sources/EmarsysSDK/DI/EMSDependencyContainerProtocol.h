@@ -29,6 +29,7 @@
 @protocol MEIAMProtocol;
 @protocol EMSConfigProtocol;
 @class EMSValueProvider;
+@protocol EMSGeofenceProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -61,6 +62,10 @@
 - (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
 
 - (id <EMSUserNotificationCenterDelegate>)loggingNotificationCenterDelegate;
+
+- (id <EMSGeofenceProtocol>)geofence;
+
+- (id <EMSGeofenceProtocol>)loggingGeofence;
 
 - (id <EMSConfigProtocol>)config;
 

@@ -12,6 +12,8 @@
 #import "EMSConfigProtocol.h"
 #import "EMSUserNotificationCenterDelegate.h"
 
+@protocol EMSGeofenceProtocol;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Emarsys : NSObject
@@ -19,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
 @property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
+@property(class, nonatomic, readonly) id <EMSGeofenceProtocol> geofence;
 @property(class, nonatomic, readonly) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
 @property(class, nonatomic, readonly) id <EMSConfigProtocol> config;

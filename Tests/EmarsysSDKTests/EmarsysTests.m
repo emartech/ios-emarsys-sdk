@@ -37,6 +37,8 @@
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
+#import "EMSGeofenceInternal.h"
+#import "EMSLoggingGeofenceInternal.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -68,8 +70,10 @@ SPEC_BEGIN(EmarsysTests)
                 predict = [EMSPredictInternal nullMock];
                 requestContext = [MERequestContext nullMock];
                 deviceInfo = [EMSDeviceInfo nullMock];
-                [requestContext stub:@selector(meId) andReturn:@"fakeMeId"];
-                [requestContext stub:@selector(deviceInfo) andReturn:deviceInfo];
+                [requestContext stub:@selector(meId)
+                           andReturn:@"fakeMeId"];
+                [requestContext stub:@selector(deviceInfo)
+                           andReturn:deviceInfo];
                 requestFactory = [EMSRequestFactory nullMock];
                 requestManager = [EMSRequestManager nullMock];
                 notificationCenterManagerMock = [MENotificationCenterManager nullMock];
@@ -195,7 +199,8 @@ SPEC_BEGIN(EmarsysTests)
                 context(@"ResponseHandlers", ^{
 
                     it(@"should register MEIAMResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                           withDependencyContainer:nil];
 
                         BOOL registered = NO;
                         for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -208,7 +213,8 @@ SPEC_BEGIN(EmarsysTests)
                     });
 
                     it(@"should register MEIAMCleanupResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                           withDependencyContainer:nil];
 
                         BOOL registered = NO;
                         for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -221,7 +227,8 @@ SPEC_BEGIN(EmarsysTests)
                     });
 
                     it(@"should register EMSVisitorIdResponseHandler if no features are turned on", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                           withDependencyContainer:nil];
 
                         NSUInteger registerCount = 0;
                         for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -234,7 +241,8 @@ SPEC_BEGIN(EmarsysTests)
                     });
 
                     it(@"should register EMSVisitorIdResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                                           withDependencyContainer:nil];
 
                         NSUInteger registerCount = 0;
                         for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
@@ -279,10 +287,13 @@ SPEC_BEGIN(EmarsysTests)
                         };
                         [[appStartBlockProvider should] receive:@selector(createAppStartEventBlock)
                                                       andReturn:appStartBlock
-                                                  withArguments:requestManager, requestContext];
+                                                  withArguments:requestManager,
+                                                                requestContext];
                         [[appStartBlockProvider should] receive:@selector(createDeviceInfoEventBlock)
                                                       andReturn:appStartBlock2
-                                                  withArguments:requestManager, requestFactory, deviceInfo];
+                                                  withArguments:requestManager,
+                                                                requestFactory,
+                                                                deviceInfo];
                         [[appStartBlockProvider shouldNot] receive:@selector(createRemoteConfigEventBlock)
                                                          andReturn:appStartBlock3];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
@@ -370,7 +381,8 @@ SPEC_BEGIN(EmarsysTests)
                     };
 
                     [[deepLink should] receive:@selector(trackDeepLinkWith:sourceHandler:)
-                                 withArguments:userActivity, sourceHandler];
+                                 withArguments:userActivity,
+                                               sourceHandler];
 
                     [Emarsys trackDeepLinkWithUserActivity:userActivity
                                              sourceHandler:sourceHandler];
@@ -384,7 +396,8 @@ SPEC_BEGIN(EmarsysTests)
                     NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
 
                     [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
-                               withArguments:eventName, eventAttributes, kw_any()];
+                               withArguments:eventName,
+                                             eventAttributes, kw_any()];
 
                     [Emarsys trackCustomEventWithName:eventName
                                       eventAttributes:eventAttributes];
@@ -397,7 +410,9 @@ SPEC_BEGIN(EmarsysTests)
                     };
 
                     [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
-                               withArguments:eventName, eventAttributes, completionBlock];
+                               withArguments:eventName,
+                                             eventAttributes,
+                                             completionBlock];
 
                     [Emarsys trackCustomEventWithName:eventName
                                       eventAttributes:eventAttributes
@@ -421,7 +436,8 @@ SPEC_BEGIN(EmarsysTests)
                     };
 
                     [[push should] receive:@selector(trackMessageOpenWithUserInfo:completionBlock:)
-                             withArguments:userInfo, completionBlock];
+                             withArguments:userInfo,
+                                           completionBlock];
 
                     [Emarsys.push trackMessageOpenWithUserInfo:userInfo
                                                completionBlock:completionBlock];
@@ -628,6 +644,12 @@ SPEC_BEGIN(EmarsysTests)
                         [[((NSObject *) EMSDependencyInjection.dependencyContainer.deepLink) should] beKindOfClass:[EMSDeepLinkInternal class]];
                     });
                 });
+
+                describe(@"geofence", ^{
+                    it(@"should be EMSGeofenceInternal", ^{
+                        [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
+                    });
+                });
             });
 
             describe(@"mobileEngage and predict is turned off", ^{
@@ -680,8 +702,14 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 describe(@"deepLink", ^{
-                    it(@"should be EMSDeepLinkInternal", ^{
+                    it(@"should be EMSLoggingDeepLinkInternal", ^{
                         [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
+                    });
+                });
+
+                describe(@"geofence", ^{
+                    it(@"should be EMSLoggingGeofenceInternal", ^{
+                        [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
                     });
                 });
             });
