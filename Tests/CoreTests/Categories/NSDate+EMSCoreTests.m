@@ -24,12 +24,25 @@ SPEC_BEGIN(NSDateEMSCoreTests)
         });
 
         describe(@"stringValueInUTC", ^{
-            it(@"should return with the correct formatted dateString", ^{
-                NSString *expected = @"2017-12-07T10:46:09.100Z";
+            it(@"should return with the correct formatted dateString pm", ^{
+                NSString *expected = @"2017-12-07T15:46:09.100Z";
 
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
                 [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
                 [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+                [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
+                NSDate *date = [dateFormatter dateFromString:expected];
+
+                [[[date stringValueInUTC] should] equal:expected];
+            });
+
+            it(@"should return with the correct formatted dateString am", ^{
+                NSString *expected = @"2017-12-07T09:46:09.100Z";
+
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
+                [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+                [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
                 NSDate *date = [dateFormatter dateFromString:expected];
 
                 [[[date stringValueInUTC] should] equal:expected];
