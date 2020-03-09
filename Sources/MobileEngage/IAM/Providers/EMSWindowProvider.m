@@ -30,6 +30,9 @@
     UIWindow *window;
     if (@available(iOS 13.0, *)) {
         window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *) [self.sceneProvider provideScene]];
+        if (window.frame.size.width == 0 && window.frame.size.height == 0) {
+            window.frame = [UIScreen mainScreen].bounds;
+        }
     } else {
         window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     }
