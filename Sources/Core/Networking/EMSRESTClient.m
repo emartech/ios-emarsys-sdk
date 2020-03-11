@@ -8,10 +8,10 @@
 #import "EMSResponseModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSMacros.h"
-#import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModelMapperProtocol.h"
 #import "EMSAbstractResponseHandler.h"
 #import "EMSRequestLog.h"
+#import "EMSStatusLog.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -67,6 +67,16 @@
                                                          [weakSelf handleResponse:responseModel];
                                                          EMSLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
                                                                                          networkingStartTime:networkingStartTime], LogLevelInfo);
+                                                         if (error) {
+                                                             NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+                                                             parameters[@"requestModel"] = requestModel.description;
+                                                             NSMutableDictionary *status = [NSMutableDictionary dictionary];
+                                                             status[@"error"] = error.localizedDescription;
+                                                             EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
+                                                                                                    sel:_cmd
+                                                                                             parameters:parameters
+                                                                                                 status:status], LogLevelDebug)
+                                                         }
                                                          if (completionProxy.completionBlock) {
                                                              completionProxy.completionBlock(requestModel, responseModel, runtimeError);
                                                          }

@@ -82,9 +82,11 @@
     NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
                                                                fromData:data
                                                                   error:&error];
-    if (error) {
+    if (error && data) {
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"error"] = error.localizedDescription;
+        statusDict[@"data"] = [[NSString alloc] initWithData:data
+                                                    encoding:NSUTF8StringEncoding];
 
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
