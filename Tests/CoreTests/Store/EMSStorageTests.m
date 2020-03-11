@@ -53,7 +53,7 @@ static NSString *const kTestValue2String = @"testValue2";
     [super tearDown];
     NSDictionary *deleteQuery = @{
             (id) kSecClass: (id) kSecClassGenericPassword,
-            (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            (id) kSecAttrAccessible: (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
             (id) kSecAttrAccount: kTestKey,
             (id) kSecReturnData: (id) kCFBooleanTrue,
             (id) kSecReturnAttributes: (id) kCFBooleanTrue
@@ -109,7 +109,7 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSDictionary *query = @{
             (id) kSecClass: (id) kSecClassGenericPassword,
-            (id) kSecAttrAccessible: (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            (id) kSecAttrAccessible: (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
             (id) kSecAttrAccount: kTestKey,
             (id) kSecReturnData: (id) kCFBooleanTrue,
             (id) kSecReturnAttributes: (id) kCFBooleanTrue

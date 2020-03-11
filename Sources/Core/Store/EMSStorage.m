@@ -39,7 +39,7 @@
         NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
         mutableQuery[(id) kSecAttrAccount] = key;
         mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-        mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
+        mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
         mutableQuery[(id) kSecValueData] = data;
 
         NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
@@ -87,7 +87,7 @@
     NSData *result;
     NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
     mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
+    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
     mutableQuery[(id) kSecAttrAccount] = key;
     mutableQuery[(id) kSecReturnData] = (id) kCFBooleanTrue;
     mutableQuery[(id) kSecReturnAttributes] = (id) kCFBooleanTrue;
