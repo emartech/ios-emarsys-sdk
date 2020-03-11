@@ -67,7 +67,7 @@
                                                          [weakSelf handleResponse:responseModel];
                                                          EMSLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
                                                                                          networkingStartTime:networkingStartTime], LogLevelInfo);
-                                                         if (error) {
+                                                         if (error && requestModel) {
                                                              NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                                                              parameters[@"requestModel"] = requestModel.description;
                                                              NSMutableDictionary *status = [NSMutableDictionary dictionary];

@@ -158,7 +158,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 }
 
 - (void)testExecute_shouldGiveError_whenErrorIsAvailable {
-    NSError *expectedError = [[NSError alloc] init];
+    NSError *expectedError = [NSError errorWithCode:-42
+                               localizedDescription:@"TestError for Test."];
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:nil
                                                                                            data:nil
                                                                                    requestModel:self.requestModel
@@ -264,7 +265,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     OCMStub([self.mockSession dataTaskWithRequest:self.request
                                 completionHandler:([OCMArg invokeBlockWithArgs:self.data,
                                                                                self.response,
-                                                                               [NSError new],
+                                                                               [NSError errorWithCode:-42
+                                                                                 localizedDescription:@"TestError for Test."],
                                                                                nil])]);
 
     _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
@@ -294,9 +296,9 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 
 - (EMSRequestModel *)generateRequestModel {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://www.emarsys.com"];
-            [builder setMethod:HTTPMethodPOST];
-        }
+                [builder setUrl:@"https://www.emarsys.com"];
+                [builder setMethod:HTTPMethodPOST];
+            }
                           timestampProvider:[EMSTimestampProvider new]
                                uuidProvider:[EMSUUIDProvider new]];
 }
