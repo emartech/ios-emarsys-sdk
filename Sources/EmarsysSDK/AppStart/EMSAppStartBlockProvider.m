@@ -35,7 +35,8 @@
     NSParameterAssert(requestContext);
     NSParameterAssert(deviceInfoClient);
     NSParameterAssert(configInternal);
-    NSParameterAssert(geofenceInternal);
+    //TODO: Geofence
+//    NSParameterAssert(geofenceInternal);
     if (self = [super init]) {
         _requestManager = requestManager;
         _requestFactory = requestFactory;

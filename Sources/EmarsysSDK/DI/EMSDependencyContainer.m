@@ -351,11 +351,14 @@
                                                                                pushInternal:self.push
                                                                              requestManager:self.requestManager
                                                                              requestFactory:self.requestFactory];
-    _geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
-                                                     requestManager:self.requestManager
-                                                     responseMapper:[[EMSGeofenceResponseMapper alloc] init]
-                                                    locationManager:[[CLLocationManager alloc] init]
-                                                      actionFactory:actionFactory];
+    //TODO: geofence
+//    _geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
+//                                                     requestManager:self.requestManager
+//                                                     responseMapper:[[EMSGeofenceResponseMapper alloc] init]
+//                                                    locationManager:[[CLLocationManager alloc] init]
+//                                                      actionFactory:actionFactory];
+
+    _geofence = [EMSLoggingGeofenceInternal new];
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
@@ -376,12 +379,13 @@
                                      remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
                                                        endpoint:endpoint];
 
+    //TODO: Geofence
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
                                                                        configInternal:self.config
-                                                                     geofenceInternal:self.geofence];
+                                                                     geofenceInternal:nil];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

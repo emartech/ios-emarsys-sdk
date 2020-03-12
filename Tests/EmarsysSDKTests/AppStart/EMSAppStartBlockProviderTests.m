@@ -133,19 +133,20 @@
     }
 }
 
-- (void)testInit_geofenceInternal_mustNotBeNil {
-    @try {
-        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
-                                                  requestFactory:self.mockRequestFactory
-                                                  requestContext:self.mockRequestContext
-                                                deviceInfoClient:self.mockDeviceInfoClient
-                                                  configInternal:self.mockConfigInternal
-                                                geofenceInternal:nil];
-        XCTFail(@"Expected Exception when geofenceInternal is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: geofenceInternal");
-    }
-}
+//TODO: Geofence
+//- (void)testInit_geofenceInternal_mustNotBeNil {
+//    @try {
+//        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+//                                                  requestFactory:self.mockRequestFactory
+//                                                  requestContext:self.mockRequestContext
+//                                                deviceInfoClient:self.mockDeviceInfoClient
+//                                                  configInternal:self.mockConfigInternal
+//                                                geofenceInternal:nil];
+//        XCTFail(@"Expected Exception when geofenceInternal is nil!");
+//    } @catch (NSException *exception) {
+//        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: geofenceInternal");
+//    }
+//}
 
 - (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock {
     [self.requestContext setContactToken:@"testContactToken"];
