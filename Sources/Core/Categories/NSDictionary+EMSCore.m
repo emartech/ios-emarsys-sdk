@@ -33,14 +33,14 @@
     NSData *result = [NSKeyedArchiver archivedDataWithRootObject:self
                                            requiringSecureCoding:NO
                                                            error:&error];
-
     if (error) {
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"error"] = error.localizedDescription;
-
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        parametersDict[@"self"] = [NSDictionary dictionaryWithDictionary:self];
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
-                                                          parameters:nil
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelInfo);
     }
@@ -85,12 +85,13 @@
     if (error && data) {
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"error"] = error.localizedDescription;
-        statusDict[@"data"] = [[NSString alloc] initWithData:data
-                                                    encoding:NSUTF8StringEncoding];
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        parametersDict[@"data"] = [[NSString alloc] initWithData:data
+                                                        encoding:NSUTF8StringEncoding];
 
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
-                                                          parameters:nil
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelInfo);
     }
