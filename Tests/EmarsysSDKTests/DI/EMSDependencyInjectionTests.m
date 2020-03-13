@@ -242,8 +242,7 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                 [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
             });
 
-            //TODO: geofence
-            xit(@"should return real instance when mobileEngage is enabled", ^{
+            it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                             [builder setContactFieldId:@3];
                             [builder setMerchantId:@"1428C8EE286EC34B"];

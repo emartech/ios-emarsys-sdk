@@ -646,8 +646,7 @@ SPEC_BEGIN(EmarsysTests)
                 });
 
                 describe(@"geofence", ^{
-                    //TODO: geofence
-                    xit(@"should be EMSGeofenceInternal", ^{
+                    it(@"should be EMSGeofenceInternal", ^{
                         [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
                     });
                 });

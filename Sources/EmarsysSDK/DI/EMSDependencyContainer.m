@@ -351,21 +351,12 @@
                                                                                pushInternal:self.push
                                                                              requestManager:self.requestManager
                                                                              requestFactory:self.requestFactory];
-    //TODO: geofence
-//    _geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
-//                                                     requestManager:self.requestManager
-//                                                     responseMapper:[[EMSGeofenceResponseMapper alloc] init]
-//                                                    locationManager:[[CLLocationManager alloc] init]
-//                                                      actionFactory:actionFactory];
 
-    _geofence = [EMSLoggingGeofenceInternal new];
-
-    _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
-    _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
-    _loggingPush = [EMSLoggingPushInternal new];
-    _loggingInbox = [EMSLoggingInbox new];
-    _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
-    _loggingGeofence = [EMSLoggingGeofenceInternal new];
+    EMSGeofenceInternal *geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
+                                                                                 requestManager:self.requestManager
+                                                                                 responseMapper:[[EMSGeofenceResponseMapper alloc] init]
+                                                                                locationManager:[[CLLocationManager alloc] init]
+                                                                                  actionFactory:actionFactory];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:uuidProvider];
@@ -379,13 +370,20 @@
                                      remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
                                                        endpoint:endpoint];
 
-    //TODO: Geofence
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
                                                                        configInternal:self.config
-                                                                     geofenceInternal:nil];
+                                                                     geofenceInternal:geofenceInternal];
+    _geofence = geofenceInternal;
+
+    _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
+    _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
+    _loggingPush = [EMSLoggingPushInternal new];
+    _loggingInbox = [EMSLoggingInbox new];
+    _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
+    _loggingGeofence = [EMSLoggingGeofenceInternal new];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];
