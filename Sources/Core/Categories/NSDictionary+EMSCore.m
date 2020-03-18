@@ -42,7 +42,7 @@
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
-        EMSLog(logEntry, LogLevelInfo);
+        EMSLog(logEntry, LogLevelDebug);
     }
     return result;
 }
@@ -93,7 +93,7 @@
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
-        EMSLog(logEntry, LogLevelInfo);
+        EMSLog(logEntry, LogLevelDebug);
     }
     return result;
 }

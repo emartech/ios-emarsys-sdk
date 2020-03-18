@@ -58,7 +58,7 @@
                                                                      sel:_cmd
                                                               parameters:parameters
                                                                   status:statusDict];
-            EMSLog(logEntry, LogLevelInfo);
+            EMSLog(logEntry, LogLevelDebug);
         }
     }];
 }
@@ -108,7 +108,7 @@
                                                                  sel:_cmd
                                                           parameters:parameters
                                                               status:statusDict];
-        EMSLog(logEntry, LogLevelInfo);
+        EMSLog(logEntry, LogLevelDebug);
     }
 
     if (resultRef) {
