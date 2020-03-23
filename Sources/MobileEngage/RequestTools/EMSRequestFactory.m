@@ -176,6 +176,16 @@
     return requestModel;
 }
 
+- (EMSRequestModel *)createMessageInboxRequestModel {
+    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setUrl:@"https://inbox"];
+            }
+                                                   timestampProvider:self.requestContext.timestampProvider
+                                                        uuidProvider:self.requestContext.uuidProvider];
+    return requestModel;
+}
+
+
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
     NSString *result = @"custom";
     if (eventType == EventTypeInternal) {

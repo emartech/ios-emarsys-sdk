@@ -3,6 +3,8 @@
 //
 #import <Foundation/Foundation.h>
 
+@class EMSInboxResult;
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^EMSCompletion)(void);
@@ -10,5 +12,7 @@ typedef void (^EMSCompletion)(void);
 typedef void (^EMSCompletionBlock)(NSError *_Nullable error);
 
 typedef void (^EMSSourceHandler)(NSString *source);
+
+typedef void (^EMSInboxMessageResultBlock)(EMSInboxResult *_Nullable inboxResult, NSError *_Nullable error);
 
 NS_ASSUME_NONNULL_END
