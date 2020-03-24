@@ -13,7 +13,8 @@
                               predictUrlProvider:(EMSValueProvider *)predictUrlProvider
                              deeplinkUrlProvider:(EMSValueProvider *)deeplinkUrlProvider
                        v2EventServiceUrlProvider:(EMSValueProvider *)v2EventServiceUrlProvider
-                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider;
+                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider
+                       v3MessageInboxUrlProvider:(EMSValueProvider *)v3MessageInboxUrlProvider;
 
 - (NSString *)clientServiceUrl;
 
@@ -38,6 +39,8 @@
 - (NSString *)v2EventServiceUrl;
 
 - (NSString *)inboxUrl;
+
+- (NSString *)v3MessageInboxUrlApplicationCode:(NSString *)applicationCode;
 
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig;
 

@@ -2,7 +2,6 @@
 // Copyright (c) 2020 Emarsys. All rights reserved.
 //
 
-#import <KWMatcherFactory.h>
 #import "EMSInboxV3.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"

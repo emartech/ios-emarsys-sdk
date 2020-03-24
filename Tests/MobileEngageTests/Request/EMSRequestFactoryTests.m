@@ -51,7 +51,8 @@
                                                    predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                   deeplinkUrlProvider:deeplinkUrlProvider
                                             v2EventServiceUrlProvider:v2EventServiceUrlProvider
-                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])
+                                            v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
     _timestamp = [NSDate date];
 

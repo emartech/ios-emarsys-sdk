@@ -36,7 +36,8 @@
                                                                predictUrlProvider:predictUrlProvider
                                                               deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
                                                         v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                                 inboxUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                                                 inboxUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                        v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
     _responseHandler = [[EMSXPResponseHandler alloc] initWithRequestContext:self.mockRequestContext
                                                                    endpoint:endpoint]; 

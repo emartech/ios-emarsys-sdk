@@ -146,12 +146,15 @@
                                                                                         valueKey:@"V2_EVENT_SERVICE_URL"];
     EMSValueProvider *inboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net/api/"
                                                                                valueKey:@"INBOX_URL"];
+    EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
+                                                                               valueKey:@"V3_MESSAGE_INBOX_URL"];
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
                                                                predictUrlProvider:predictUrlProvider
                                                               deeplinkUrlProvider:deeplinkUrlProvider
                                                         v2EventServiceUrlProvider:v2EventServiceUrlProvider
-                                                                 inboxUrlProvider:inboxUrlProvider];
+                                                                 inboxUrlProvider:inboxUrlProvider
+                                                        v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
 
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
     EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];

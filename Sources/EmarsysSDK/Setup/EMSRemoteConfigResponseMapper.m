@@ -15,7 +15,8 @@
                                           predictService:serviceUrls[@"predictService"]
                                    mobileEngageV2Service:serviceUrls[@"mobileEngageV2Service"]
                                          deepLinkService:serviceUrls[@"deepLinkService"]
-                                            inboxService:serviceUrls[@"inboxService"]];
+                                            inboxService:serviceUrls[@"inboxService"]
+                                   v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]];
 }
 
 @end

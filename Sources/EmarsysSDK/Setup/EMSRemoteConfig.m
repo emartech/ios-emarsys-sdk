@@ -10,7 +10,8 @@
                       predictService:(NSString *)predictService
                mobileEngageV2Service:(NSString *)mobileEngageV2Service
                      deepLinkService:(NSString *)deepLinkService
-                        inboxService:(NSString *)inboxService {
+                        inboxService:(NSString *)inboxService
+               v3MessageInboxService:(NSString *)v3MessageInboxService {
     if (self = [super init]) {
         _eventService = eventService;
         _clientService = clientService;
@@ -18,6 +19,7 @@
         _mobileEngageV2Service = mobileEngageV2Service;
         _deepLinkService = deepLinkService;
         _inboxService = inboxService;
+        _v3MessageInboxService = v3MessageInboxService;
     }
     return self;
 }
@@ -48,6 +50,8 @@
         return NO;
     if (self.inboxService != config.inboxService && ![self.inboxService isEqualToString:config.inboxService])
         return NO;
+    if (self.v3MessageInboxService != config.v3MessageInboxService && ![self.v3MessageInboxService isEqualToString:config.v3MessageInboxService])
+        return NO;
     return YES;
 }
 
@@ -58,6 +62,7 @@
     hash = hash * 31u + [self.mobileEngageV2Service hash];
     hash = hash * 31u + [self.deepLinkService hash];
     hash = hash * 31u + [self.inboxService hash];
+    hash = hash * 31u + [self.v3MessageInboxService hash];
     return hash;
 }
 

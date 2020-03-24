@@ -58,7 +58,8 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                           predictUrlProvider:predictUrlProvider
                                                          deeplinkUrlProvider:[EMSValueProvider mock]
                                                    v2EventServiceUrlProvider:[EMSValueProvider mock]
-                                                            inboxUrlProvider:[EMSValueProvider mock]];
+                                                            inboxUrlProvider:[EMSValueProvider mock]
+                                                   v3MessageInboxUrlProvider:[EMSValueProvider mock]];
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
                                                              endpoint:endpoint];
         });

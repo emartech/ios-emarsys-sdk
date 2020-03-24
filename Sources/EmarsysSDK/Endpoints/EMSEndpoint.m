@@ -13,6 +13,7 @@
 @property(nonatomic, strong) EMSValueProvider *deeplinkUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *v2EventServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *inboxUrlProvider;
+@property(nonatomic, strong) EMSValueProvider *v3MessageInboxUrlProvider;
 
 @end
 
@@ -23,13 +24,15 @@
                               predictUrlProvider:(EMSValueProvider *)predictUrlProvider
                              deeplinkUrlProvider:(EMSValueProvider *)deeplinkUrlProvider
                        v2EventServiceUrlProvider:(EMSValueProvider *)v2EventServiceUrlProvider
-                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider {
+                                inboxUrlProvider:(EMSValueProvider *)inboxUrlProvider
+                       v3MessageInboxUrlProvider:(EMSValueProvider *)v3MessageInboxUrlProvider {
     NSParameterAssert(clientServiceUrlProvider);
     NSParameterAssert(eventServiceUrlProvider);
     NSParameterAssert(predictUrlProvider);
     NSParameterAssert(deeplinkUrlProvider);
     NSParameterAssert(v2EventServiceUrlProvider);
     NSParameterAssert(inboxUrlProvider);
+    NSParameterAssert(v3MessageInboxUrlProvider);
 
     if (self = [super init]) {
         _clientServiceUrlProvider = clientServiceUrlProvider;
@@ -38,6 +41,7 @@
         _deeplinkUrlProvider = deeplinkUrlProvider;
         _v2EventServiceUrlProvider = v2EventServiceUrlProvider;
         _inboxUrlProvider = inboxUrlProvider;
+        _v3MessageInboxUrlProvider = v3MessageInboxUrlProvider;
     }
     return self;
 }
@@ -48,6 +52,10 @@
 
 - (NSString *)eventServiceUrl {
     return [self.eventServiceUrlProvider provideValue];
+}
+
+- (NSString *)v3MessageInboxServiceUrl {
+    return [self.v3MessageInboxUrlProvider provideValue];
 }
 
 - (NSString *)clientUrlWithApplicationCode:(NSString *)applicationCode {
@@ -88,6 +96,10 @@
     return [self.inboxUrlProvider provideValue];
 }
 
+- (NSString *)v3MessageInboxUrlApplicationCode:(NSString *)applicationCode{
+    return [NSString stringWithFormat:@"%@/v3/apps/%@/inbox", self.v3MessageInboxServiceUrl, applicationCode];
+}
+
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {
     [self.clientServiceUrlProvider updateValue:remoteConfig.clientService];
     [self.eventServiceUrlProvider updateValue:remoteConfig.eventService];
@@ -95,6 +107,7 @@
     [self.v2EventServiceUrlProvider updateValue:remoteConfig.mobileEngageV2Service];
     [self.deeplinkUrlProvider updateValue:remoteConfig.deepLinkService];
     [self.inboxUrlProvider updateValue:remoteConfig.inboxService];
+    [self.v3MessageInboxUrlProvider updateValue:remoteConfig.v3MessageInboxService];
 }
 
 - (void)reset {
@@ -104,6 +117,7 @@
     [self.v2EventServiceUrlProvider updateValue:nil];
     [self.deeplinkUrlProvider updateValue:nil];
     [self.inboxUrlProvider updateValue:nil];
+    [self.v3MessageInboxUrlProvider updateValue:nil];
 }
 
 - (BOOL)isV3url:(NSString *)url {

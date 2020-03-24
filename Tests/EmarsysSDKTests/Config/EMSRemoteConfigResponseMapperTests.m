@@ -23,7 +23,8 @@
                                 "                \"predictService\":\"https://testPredictService.url\",\n"
                                 "                \"mobileEngageV2Service\":\"https://testMobileEngageV2Service.url\",\n"
                                 "                \"deepLinkService\":\"https://testDeepLinkService.url\",\n"
-                                "                \"inboxService\":\"https://testinboxService.url\"\n"
+                                "                \"inboxService\":\"https://testinboxService.url\",\n"
+                                "                \"v3MessageInboxService\":\"https://testv3MessageInboxService.url\"\n"
                                 "        }\n"
                                 "    }";
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
@@ -38,7 +39,8 @@
                                                                      predictService:@"https://testPredictService.url"
                                                               mobileEngageV2Service:@"https://testMobileEngageV2Service.url"
                                                                     deepLinkService:@"https://testDeepLinkService.url"
-                                                                       inboxService:@"https://testinboxService.url"];
+                                                                       inboxService:@"https://testinboxService.url"
+                                                              v3MessageInboxService:@"https://testv3MessageInboxService.url"];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 

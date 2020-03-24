@@ -11,12 +11,14 @@
 @property(nonatomic, strong) NSString *mobileEngageV2Service;
 @property(nonatomic, strong) NSString *deepLinkService;
 @property(nonatomic, strong) NSString *inboxService;
+@property(nonatomic, strong) NSString *v3MessageInboxService;
 
 - (instancetype)initWithEventService:(NSString *)eventService
                        clientService:(NSString *)clientService
                       predictService:(NSString *)predictService
                mobileEngageV2Service:(NSString *)mobileEngageV2Service
                      deepLinkService:(NSString *)deepLinkService
-                        inboxService:(NSString *)inboxService;
+                        inboxService:(NSString *)inboxService
+               v3MessageInboxService:(NSString *)v3MessageInboxService;
 
 @end
