@@ -74,6 +74,7 @@
             [self.locationManager startMonitoringForRegion:distanceRegionsDict[sortedDistances[i]]];
         }
         [self.locationManager startMonitoringForRegion:[self createRefreshAreaRegionWithDistances:sortedDistances
+                                                                               distanceRegionDict:distanceRegionsDict
                                                                                 lastGeofenceIndex:lastGeofenceIndex]];
     }
 }
@@ -83,9 +84,15 @@
 }
 
 - (CLCircularRegion *)createRefreshAreaRegionWithDistances:(NSArray *)distances
+                                        distanceRegionDict:(NSDictionary<NSNumber *, CLCircularRegion *> *)distanceRegionDict
                                          lastGeofenceIndex:(NSUInteger)lastGeofenceIndex {
+    NSNumber *distance = distances[lastGeofenceIndex];
+    double radius = [distance doubleValue] * self.geofenceResponse.refreshRadiusRatio;
+    if ([distance doubleValue] < 0) {
+        radius = ([distance doubleValue] + distanceRegionDict[distance].radius) * self.geofenceResponse.refreshRadiusRatio;
+    }
     return [[CLCircularRegion alloc] initWithCenter:self.currentLocation.coordinate
-                                             radius:[distances[lastGeofenceIndex] doubleValue] * self.geofenceResponse.refreshRadiusRatio
+                                             radius:radius
                                          identifier:@"EMSRefreshArea"];
 }
 
@@ -100,7 +107,6 @@
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region {
     EMSGeofence *geofence = self.registeredGeofences[region.identifier];
-
     [self handleActionWithTriggers:geofence.triggers
                               type:@"enter"];
 }
@@ -134,6 +140,8 @@
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     if (CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
         self.recalculateable = YES;
+        [self.locationManager setDelegate:self];
+        [self.locationManager setDesiredAccuracy:kCLLocationAccuracyNearestTenMeters];
         [self.locationManager startUpdatingLocation];
         if (completionBlock) {
             completionBlock(nil);
@@ -173,9 +181,11 @@
 }
 
 - (NSDictionary<NSNumber *, CLCircularRegion *> *)createDistanceRegionDictionary {
+    [self.registeredGeofences removeAllObjects];
     NSMutableDictionary *regions = [NSMutableDictionary dictionary];
     for (EMSGeofenceGroup *group in self.geofenceResponse.groups) {
         for (EMSGeofence *geofence in group.geofences) {
+            self.registeredGeofences[geofence.id] = geofence;
             CLLocation *location = [[CLLocation alloc] initWithLatitude:geofence.lat
                                                               longitude:geofence.lon];
             CLLocationDistance distance = [self.currentLocation distanceFromLocation:location];

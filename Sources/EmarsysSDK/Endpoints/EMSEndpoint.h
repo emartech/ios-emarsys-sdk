@@ -42,6 +42,8 @@
 
 - (NSString *)v3MessageInboxUrlApplicationCode:(NSString *)applicationCode;
 
+- (NSString *)geofenceUrlWithApplicationCode:(NSString *)applicationCode;
+
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig;
 
 - (void)reset;

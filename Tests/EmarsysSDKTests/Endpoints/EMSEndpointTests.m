@@ -184,7 +184,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testPushTokenUrlWithApplicationCode {
-    NSString *expectedUrl = [NSString stringWithFormat:@"%@/push-token", [self clientBaseUrl]];
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/push-token",
+                                                       [self clientBaseUrl]];
 
     NSString *result = [self.endpoint pushTokenUrlWithApplicationCode:kApplicationCode];
 
@@ -192,7 +193,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testContactUrlWithApplicationCode {
-    NSString *expectedUrl = [NSString stringWithFormat:@"%@/contact", [self clientBaseUrl]];
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/contact",
+                                                       [self clientBaseUrl]];
 
     NSString *result = [self.endpoint contactUrlWithApplicationCode:kApplicationCode];
 
@@ -200,7 +202,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testContactTokenUrlWithApplicationCode {
-    NSString *expectedUrl = [NSString stringWithFormat:@"%@/contact-token", [self clientBaseUrl]];
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/contact-token",
+                                                       [self clientBaseUrl]];
 
     NSString *result = [self.endpoint contactTokenUrlWithApplicationCode:kApplicationCode];
 
@@ -239,6 +242,16 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     NSString *expectedUrl = [self v3MessageInboxUrl];
 
     NSString *result = [self.endpoint v3MessageInboxUrlApplicationCode:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
+- (void)testGeofenceUrlWithApplicationCode {
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/v3/apps/%@/geo-fences",
+                                                       kClientServiceUrl,
+                                                       kApplicationCode];
+
+    NSString *result = [self.endpoint geofenceUrlWithApplicationCode:kApplicationCode];
 
     XCTAssertEqualObjects(result, expectedUrl);
 }

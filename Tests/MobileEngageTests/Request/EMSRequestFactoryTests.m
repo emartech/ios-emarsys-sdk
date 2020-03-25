@@ -318,7 +318,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://ems-mobile-development.s3-eu-west-1.amazonaws.com/geofenceTest.json"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/geo-fences"]
                                                                                 method:@"GET"
                                                                                payload:nil
                                                                                headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}

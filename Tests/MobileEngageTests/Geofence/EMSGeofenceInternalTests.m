@@ -159,6 +159,9 @@
     }];
 
     OCMVerify([self.mockLocationManager startUpdatingLocation]);
+    OCMVerify([self.mockLocationManager setDelegate:self.geofenceInternal]);
+    OCMVerify([self.mockLocationManager setDesiredAccuracy:kCLLocationAccuracyNearestTenMeters];);
+
     XCTAssertEqual(self.geofenceInternal.recalculateable, YES);
 }
 
@@ -227,8 +230,8 @@
     [self.geofenceInternal disable];
 
     OCMVerify([self.mockLocationManager stopUpdatingLocation]);
-    OCMVerify([self.mockLocationManager stopMonitoringForRegion:region2]);
-    OCMVerify([self.mockLocationManager stopMonitoringForRegion:region3]);
+    OCMVerify([self.mockLocationManager stopMonitoringForRegion:[self argForRegion:region2]]);
+    OCMVerify([self.mockLocationManager stopMonitoringForRegion:[self argForRegion:region3]]);
 
     XCTAssertEqual(self.geofenceInternal.recalculateable, NO);
 }
@@ -284,7 +287,7 @@
                                                                   radius:10
                                                               identifier:@"3"];
     CLCircularRegion *regionArea = [[CLCircularRegion alloc] initWithCenter:emarsysLocation
-                                                                     radius:163.598 * self.refreshRadiusRatio
+                                                                     radius:49.0792712800666
                                                                  identifier:@"EMSRefreshArea"];
     CLCircularRegion *region4 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.493827, 19.060715)
                                                                   radius:10
@@ -293,8 +296,8 @@
                                                                   radius:10
                                                               identifier:@"5"];
 
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region4]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region5]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region4]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region5]]);
 
     [self.geofenceInternal setCurrentLocation:currentLocation];
     [self.geofenceInternal setGeofenceResponse:[self createExpectedResponse]];
@@ -303,10 +306,51 @@
 
     [self.geofenceInternal registerGeofences];
 
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region1]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region2]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region3]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:regionArea]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region1]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region2]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region3]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:regionArea]]);
+
+    XCTAssertEqual(self.geofenceInternal.recalculateable, NO);
+}
+
+- (void)testRegisterGeofences_whenFurthestDistanceWithRadiusIsNegative {
+    CLLocationCoordinate2D emarsysLocation = CLLocationCoordinate2DMake(47.493160, 19.058355);
+    CLLocation *currentLocation = [[CLLocation alloc] initWithLatitude:emarsysLocation.latitude
+                                                             longitude:emarsysLocation.longitude];
+    CLCircularRegion *region1 = [[CLCircularRegion alloc] initWithCenter:emarsysLocation
+                                                                  radius:200
+                                                              identifier:@"1"];
+    CLCircularRegion *region2 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.493812, 19.058537)
+                                                                  radius:200
+                                                              identifier:@"2"];
+    CLCircularRegion *region3 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.492292, 19.056440)
+                                                                  radius:200
+                                                              identifier:@"3"];
+    CLCircularRegion *regionArea = [[CLCircularRegion alloc] initWithCenter:emarsysLocation
+                                                                     radius:173.59757093355535 * self.refreshRadiusRatio
+                                                                 identifier:@"EMSRefreshArea"];
+    CLCircularRegion *region4 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.493827, 19.060715)
+                                                                  radius:200
+                                                              identifier:@"4"];
+    CLCircularRegion *region5 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.489680, 19.061230)
+                                                                  radius:200
+                                                              identifier:@"5"];
+
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region4]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region5]]);
+
+    [self.geofenceInternal setCurrentLocation:currentLocation];
+    [self.geofenceInternal setGeofenceResponse:[self createResponseWithBigRadius]];
+    [self.geofenceInternal setGeofenceLimit:4];
+    [self.geofenceInternal setRecalculateable:YES];
+
+    [self.geofenceInternal registerGeofences];
+
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region1]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region2]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region3]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:regionArea]]);
 
     XCTAssertEqual(self.geofenceInternal.recalculateable, NO);
 }
@@ -331,7 +375,7 @@
                                                                   radius:10
                                                               identifier:@"5"];
     CLCircularRegion *regionArea = [[CLCircularRegion alloc] initWithCenter:emarsysLocation
-                                                                     radius:433.431 * self.refreshRadiusRatio
+                                                                     radius:130.02930399457298
                                                                  identifier:@"EMSRefreshArea"];
 
     [self.geofenceInternal setCurrentLocation:currentLocation];
@@ -340,12 +384,12 @@
 
     [self.geofenceInternal registerGeofences];
 
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region1]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region2]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region3]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region4]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:region5]);
-    OCMVerify([self.mockLocationManager startMonitoringForRegion:regionArea]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region1]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region2]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region3]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region4]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region5]]);
+    OCMVerify([self.mockLocationManager startMonitoringForRegion:[self argForRegion:regionArea]]);
 }
 
 - (void)testRegisterGeofences_shouldNotStartMonitoring_whenNotRecalculateable {
@@ -374,12 +418,12 @@
     [self.geofenceInternal setCurrentLocation:currentLocation];
     [self.geofenceInternal setGeofenceResponse:[self createExpectedResponse]];
 
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region1]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region2]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region3]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region4]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:region5]);
-    OCMReject([self.mockLocationManager startMonitoringForRegion:regionArea]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region1]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region2]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region3]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region4]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:region5]]);
+    OCMReject([self.mockLocationManager startMonitoringForRegion:[self argForRegion:regionArea]]);
 
     [self.geofenceInternal setRecalculateable:NO];
 
@@ -524,6 +568,39 @@
                                     refreshRadiusRatio:0.3];
 }
 
+- (EMSGeofenceResponse *)createResponseWithBigRadius {
+    return [[EMSGeofenceResponse alloc] initWithGroups:@[
+                    [[EMSGeofenceGroup alloc] initWithId:@"geoGroupId1"
+                                            waitInterval:20
+                                               geofences:@[
+                                                       [self createGeofenceWithId:@"1"
+                                                                              lat:47.493160
+                                                                              lon:19.058355
+                                                                                r:200],
+                                                       [self createGeofenceWithId:@"2"
+                                                                              lat:47.493812
+                                                                              lon:19.058537
+                                                                                r:200],
+                                                       [self createGeofenceWithId:@"4"
+                                                                              lat:47.493827
+                                                                              lon:19.060715
+                                                                                r:200]
+                                               ]],
+                    [[EMSGeofenceGroup alloc] initWithId:@"geoGroupId2"
+                                            waitInterval:20
+                                               geofences:@[
+                                                       [self createGeofenceWithId:@"5"
+                                                                              lat:47.489680
+                                                                              lon:19.061230
+                                                                                r:200],
+                                                       [self createGeofenceWithId:@"3"
+                                                                              lat:47.492292
+                                                                              lon:19.056440
+                                                                                r:200]
+                                               ]]]
+                                    refreshRadiusRatio:0.3];
+}
+
 - (EMSGeofence *)createGeofenceWithId:(NSString *)id
                                   lat:(double)lat
                                   lon:(double)lon
@@ -552,6 +629,29 @@
                                                                                   @"value": @1
                                                                           }]
                                   ]];
+}
+
+- (OCMArg *)argForRegion:(CLCircularRegion *)expectedRegion {
+    return [OCMArg checkWithBlock:^BOOL(CLCircularRegion *region) {
+        BOOL result = YES;
+        if (expectedRegion.center.latitude != region.center.latitude) {
+            result = NO;
+            return result;
+        }
+        if (expectedRegion.center.longitude != region.center.longitude) {
+            result = NO;
+            return result;
+        }
+        if (expectedRegion.radius != region.radius) {
+            result = NO;
+            return result;
+        }
+        if (![expectedRegion.identifier isEqualToString:region.identifier]) {
+            result = NO;
+            return result;
+        }
+        return result;
+    }];
 }
 
 @end

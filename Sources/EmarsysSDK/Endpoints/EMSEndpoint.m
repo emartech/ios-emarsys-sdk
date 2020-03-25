@@ -100,6 +100,10 @@
     return [NSString stringWithFormat:@"%@/v3/apps/%@/inbox", self.v3MessageInboxServiceUrl, applicationCode];
 }
 
+- (NSString *)geofenceUrlWithApplicationCode:(NSString *)applicationCode {
+    return [NSString stringWithFormat:@"%@/v3/apps/%@/geo-fences", self.clientServiceUrl, applicationCode];
+}
+
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {
     [self.clientServiceUrlProvider updateValue:remoteConfig.clientService];
     [self.eventServiceUrlProvider updateValue:remoteConfig.eventService];
