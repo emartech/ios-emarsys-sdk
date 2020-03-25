@@ -45,6 +45,8 @@
                                                                                   valueKey:@"DEEPLINK_URL"];
     EMSValueProvider *v2EventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
                                                                                         valueKey:@"V2_EVENT_SERVICE_URL"];
+    EMSValueProvider *v3MessageInboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
+                                                                                        valueKey:@"V3_MESSAGE_INBOX_URL"];
 
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
@@ -52,7 +54,7 @@
                                                   deeplinkUrlProvider:deeplinkUrlProvider
                                             v2EventServiceUrlProvider:v2EventServiceUrlProvider
                                                      inboxUrlProvider:OCMClassMock([EMSValueProvider class])
-                                            v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                            v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
 
     _timestamp = [NSDate date];
 
@@ -329,5 +331,19 @@
     XCTAssertEqualObjects(result, expectedRequestModel);
 }
 
+- (void)testCreateMessageInboxRequestModel {
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-inbox.eservice.emarsys.net/v3/apps/testApplicationCode/inbox"]
+                                                                                method:@"GET"
+                                                                               payload:nil
+                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}
+                                                                                extras:nil];
+
+    EMSRequestModel *result = [self.requestFactory createMessageInboxRequestModel];
+
+    XCTAssertEqualObjects(result, expectedRequestModel);
+}
 
 @end

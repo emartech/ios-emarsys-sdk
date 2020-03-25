@@ -7,13 +7,26 @@
 
 @class EMSMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSMessageInboxProtocol <NSObject>
 
 - (void)fetchMessagesWithResultBlock:(EMSInboxMessageResultBlock)resultBlock;
 
-- (void)trackMessageOpenWithMessage:(EMSMessage *)message;
+- (void)addTag:(NSString *)tag
+    forMessage:(NSString *)messageId;
 
-- (void)trackMessageOpenWithMessage:(EMSMessage *)message
-                    completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+- (void) addTag:(NSString *)tag
+     forMessage:(NSString *)messageId
+completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+
+- (void)removeTag:(NSString *)tag
+      fromMessage:(NSString *)messageId;
+
+- (void)removeTag:(NSString *)tag
+      fromMessage:(NSString *)messageId
+  completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -238,7 +238,7 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertTrue([self.endpoint isV3url:url]);
 }
 
-- (void)testC3MessageInboxUrlWithApplicationCode {
+- (void)testV3MessageInboxUrlWithApplicationCode {
     NSString *expectedUrl = [self v3MessageInboxUrl];
 
     NSString *result = [self.endpoint v3MessageInboxUrlApplicationCode:kApplicationCode];

@@ -60,14 +60,205 @@
     @try {
         [[EMSInboxV3 alloc] initWithRequestFactory:self.mockRequestFactory
                                     requestManager:self.mockRequestManager
-                                 inboxResultParser:NULL];
+                                 inboxResultParser:nil];
         XCTFail(@"Expected Exception when inboxResultParser is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: inboxResultParser");
     }
 }
 
+- (void)testFetchMessages_resultBlock_mustNotBeNil {
+    @try {
+        [self.inbox fetchMessagesWithResultBlock:nil];
+        XCTFail(@"Expected Exception when resultBlock is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: resultBlock");
+    }
+}
+
 - (void)testFetchMessagesWithResultBlock_success {
+    EMSInboxResult *expectedResult = [[EMSInboxResult alloc] init];
+    [expectedResult setMessages:@[
+            [self responseMessage]
+    ]];
+
+    [self setupForSuccess];
+
+    __block EMSInboxResult *result = nil;
+    __block NSOperationQueue *returnedOperationQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.inbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
+            result = inboxResult;
+            returnedOperationQueue = [NSOperationQueue currentQueue];
+            [expectation fulfill];
+        }];
+    });
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(result, expectedResult);
+    XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
+}
+
+- (void)testFetchMessagesWithResultBlock_failure {
+    NSError *expectedError = [NSError errorWithCode:1401
+                               localizedDescription:@"testError"];
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+
+    OCMStub([self.mockRequestFactory createMessageInboxRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:[OCMArg any]
+                                                errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestModelId",
+                                                                                        expectedError,
+                                                                                        nil])]);
+
+    __block NSError *result = nil;
+    __block NSOperationQueue *returnedOperationQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.inbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
+            result = error;
+            returnedOperationQueue = [NSOperationQueue currentQueue];
+            [expectation fulfill];
+        }];
+    });
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(result, expectedError);
+    XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
+}
+
+- (void)testAddTag {
+    EMSInboxV3 *partialMockInbox = OCMPartialMock(self.inbox);
+
+    NSString *tag = @"testTag";
+    NSString *messageId = @"testId1";
+
+    [partialMockInbox addTag:tag
+                  forMessage:messageId];
+
+    OCMVerify([partialMockInbox addTag:tag
+                            forMessage:messageId
+                       completionBlock:nil]);
+}
+
+- (void)testAddTag_tag_mustNotBeNil {
+    @try {
+        [self.inbox addTag:nil
+                forMessage:@"testMessageId"];
+        XCTFail(@"Expected Exception when tag is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: tag");
+    }
+}
+
+- (void)testAddTag_messageId_mustNotBeNil {
+    @try {
+        [self.inbox addTag:@"testTag"
+                forMessage:nil];
+        XCTFail(@"Expected Exception when messageId is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: messageId");
+    }
+}
+
+- (void)testAddTagCompletionBlock {
+    NSString *tag = @"testTag";
+    NSString *messageId = @"testId1";
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                          eventAttributes:(@{
+                                                                  @"messageId": messageId,
+                                                                  @"tag": tag
+                                                          })
+                                                                eventType:EventTypeInternal]).andReturn(mockRequestModel);
+
+    [self.inbox addTag:tag
+            forMessage:messageId
+       completionBlock:completionBlock];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": messageId,
+                                                                    @"tag": tag
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:completionBlock]);
+}
+
+- (void)testRemoveTag {
+    EMSInboxV3 *partialMockInbox = OCMPartialMock(self.inbox);
+
+    NSString *tag = @"testTag";
+    NSString *messageId = @"testId1";
+
+    [partialMockInbox removeTag:tag
+                    fromMessage:messageId];
+
+    OCMVerify([partialMockInbox removeTag:tag
+                              fromMessage:messageId
+                          completionBlock:nil]);
+}
+
+- (void)testRemoveTag_tag_mustNotBeNil {
+    @try {
+        [self.inbox removeTag:nil
+                  fromMessage:@"testMessageId"];
+        XCTFail(@"Expected Exception when tag is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: tag");
+    }
+}
+
+- (void)testRemoveTag_messageId_mustNotBeNil {
+    @try {
+        [self.inbox removeTag:@"testTag"
+                  fromMessage:nil];
+        XCTFail(@"Expected Exception when messageId is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: messageId");
+    }
+}
+
+- (void)testRemoveTagCompletionBlock {
+    NSString *tag = @"testTag";
+    NSString *messageId = @"testId1";
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                          eventAttributes:(@{
+                                                                  @"messageId": messageId,
+                                                                  @"tag": tag
+                                                          })
+                                                                eventType:EventTypeInternal]).andReturn(mockRequestModel);
+
+    [self.inbox removeTag:tag
+              fromMessage:messageId
+          completionBlock:completionBlock];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": messageId,
+                                                                    @"tag": tag
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:completionBlock]);
+}
+
+- (EMSResponseModel *)responseModel {
     NSString *bodyString = @"{\n"
                            "  \"count\": 1,\n"
                            "  \"messages\": [\n"
@@ -92,76 +283,49 @@
 
     NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
 
-    EMSInboxResult *expectedResult = [EMSInboxResult alloc];
 
-    [expectedResult setMessages:@[[[EMSMessage alloc] initWithId:@"ef14afa4"
-                                                  multichannelId:@(11)
-                                                      campaignId:@"campaignId"
-                                                           title:@"title"
-                                                            body:@"body"
-                                                        imageUrl:@"https://example.com/image.jpg"
-                                                          action:@"https://example.com/image.jpg"
-                                                      receivedAt:@(142141412515)
-                                                       updatedAt:@(142141412599)
-                                                             ttl:@(50)
-                                                            tags:@[@"tag1", @"tag2"]
-                                                        sourceId:@(12345555)
-                                                     sourceRunId:@"sourceRunId"
-                                                      sourceType:@"sourceType"]]];
-
-    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
-    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
     EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponseModel body]).andReturn(bodyData);
-
-    OCMStub([self.mockInboxResultParser parseFromResponse:mockResponseModel]).andReturn(expectedResult);
-    OCMStub([self.mockRequestFactory createMessageInboxRequestModel]).andReturn(mockRequestModel);
-    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
-                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestModelId",
-                                                                                        mockResponseModel,
-                                                                                        nil])
-                                                errorBlock:[OCMArg any]]);
-
-    __block EMSInboxResult *result = nil;
-
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    [self.inbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
-        result = inboxResult;
-        [expectation fulfill];
-    }];
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
-
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertEqualObjects(result, expectedResult);
+    return mockResponseModel;
 }
 
-- (void)testFetchMessagesWithResultBlock_failure {
-    NSError *expectedError = [NSError errorWithCode:1401
-                               localizedDescription:@"testError"];
-
+- (EMSRequestModel *)requestModel {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    return mockRequestModel;
+}
 
-    OCMStub([self.mockRequestFactory createMessageInboxRequestModel]).andReturn(mockRequestModel);
-    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
-                                              successBlock:[OCMArg any]
-                                                errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestModelId",
-                                                                                        expectedError,
-                                                                                        nil])]);
+- (EMSMessage *)responseMessage {
+    return [[EMSMessage alloc] initWithId:@"ef14afa4"
+                           multichannelId:@(11)
+                               campaignId:@"campaignId"
+                                    title:@"title"
+                                     body:@"body"
+                                 imageUrl:@"https://example.com/image.jpg"
+                                   action:@"https://example.com/image.jpg"
+                               receivedAt:@(142141412515)
+                                updatedAt:@(142141412599)
+                                      ttl:@(50)
+                                     tags:@[@"tag1", @"tag2"]
+                                 sourceId:@(12345555)
+                              sourceRunId:@"sourceRunId"
+                               sourceType:@"sourceType"];
+}
 
-    __block NSError *result = nil;
+- (void)setupForSuccess {
+    EMSInboxResult *parsedMessages = [[EMSInboxResult alloc] init];
+    [parsedMessages setMessages:@[[self responseMessage]]];
 
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    [self.inbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
-        result = error;
-        [expectation fulfill];
-    }];
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+    EMSResponseModel *responseModel = [self responseModel];
+    EMSRequestModel *requestModel = [self requestModel];
 
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertEqualObjects(result, expectedError);
+    OCMStub([self.mockInboxResultParser parseFromResponse:responseModel]).andReturn(parsedMessages);
+    OCMStub([self.mockRequestFactory createMessageInboxRequestModel]).andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:requestModel
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestModelId",
+                                                                                        responseModel,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
 }
 
 @end

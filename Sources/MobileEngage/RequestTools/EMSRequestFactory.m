@@ -177,14 +177,16 @@
 }
 
 - (EMSRequestModel *)createMessageInboxRequestModel {
+    __weak typeof(self) weakSelf = self;
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://inbox"];
+                [builder setUrl:[self.endpoint v3MessageInboxUrlApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setMethod:HTTPMethodGET];
+                [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:weakSelf.requestContext.applicationCode]}];
             }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
     return requestModel;
 }
-
 
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
     NSString *result = @"custom";
