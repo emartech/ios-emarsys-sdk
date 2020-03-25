@@ -22,6 +22,8 @@
 #import "EMSPredictInternal.h"
 #import "EMSLoggingGeofenceInternal.h"
 #import "EMSGeofenceInternal.h"
+#import "EMSLoggingInboxV3.h"
+#import "EMSInboxV3.h"
 
 @interface EMSDependencyInjection ()
 
@@ -251,6 +253,31 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                                      dependencyContainer:nil];
 
                 [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
+            });
+        });
+
+        describe(@"messageInbox", ^{
+            afterEach(^{
+                [EmarsysTestUtils tearDownEmarsys];
+            });
+
+            it(@"should return with logging instance when mobileEngage is not enabled", ^{
+                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                        }]
+                                     dependencyContainer:nil];
+
+                [[((NSObject *) EMSDependencyInjection.messageInbox) should] beKindOfClass:[EMSLoggingInboxV3 class]];
+            });
+
+            it(@"should return real instance when mobileEngage is enabled", ^{
+                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+                            [builder setContactFieldId:@3];
+                            [builder setMerchantId:@"1428C8EE286EC34B"];
+                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
+                        }]
+                                     dependencyContainer:nil];
+
+                [[((NSObject *) EMSDependencyInjection.messageInbox) should] beKindOfClass:[EMSInboxV3 class]];
             });
         });
 

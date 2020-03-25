@@ -5,6 +5,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSGeofenceProtocol.h"
+#import "EMSMessageInboxProtocol.h"
 
 
 @implementation EMSDependencyInjection
@@ -105,6 +106,16 @@ static EMSDependencyContainer *_dependencyContainer;
         result = self.dependencyContainer.geofence;
     } else {
         result = self.dependencyContainer.loggingGeofence;
+    }
+    return result;
+}
+
++ (id <EMSMessageInboxProtocol>)messageInbox {
+    id <EMSMessageInboxProtocol> result;
+    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
+        result = self.dependencyContainer.messageInbox;
+    } else {
+        result = self.dependencyContainer.loggingMessageInbox;
     }
     return result;
 }

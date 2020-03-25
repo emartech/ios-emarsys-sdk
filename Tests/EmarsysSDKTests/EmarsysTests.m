@@ -39,6 +39,8 @@
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSGeofenceInternal.h"
 #import "EMSLoggingGeofenceInternal.h"
+#import "EMSInboxV3.h"
+#import "EMSLoggingInboxV3.h"
 
 SPEC_BEGIN(EmarsysTests)
 
@@ -650,6 +652,12 @@ SPEC_BEGIN(EmarsysTests)
                         [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
                     });
                 });
+
+                describe(@"messageInbox", ^{
+                    it(@"should be EMSInboxV3", ^{
+                        [[((NSObject *) Emarsys.messageInbox) should] beKindOfClass:[EMSInboxV3 class]];
+                    });
+                });
             });
 
             describe(@"mobileEngage and predict is turned off", ^{
@@ -710,6 +718,12 @@ SPEC_BEGIN(EmarsysTests)
                 describe(@"geofence", ^{
                     it(@"should be EMSLoggingGeofenceInternal", ^{
                         [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
+                    });
+                });
+
+                describe(@"messageInbox", ^{
+                    it(@"should be EMSLoggingInboxV3", ^{
+                        [[((NSObject *) Emarsys.messageInbox) should] beKindOfClass:[EMSLoggingInboxV3 class]];
                     });
                 });
             });

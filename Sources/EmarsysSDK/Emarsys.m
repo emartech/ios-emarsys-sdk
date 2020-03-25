@@ -149,4 +149,8 @@
     return EMSDependencyInjection.dependencyContainer.config;
 }
 
++ (id <EMSMessageInboxProtocol>)messageInbox {
+    return EMSDependencyInjection.messageInbox;
+}
+
 @end

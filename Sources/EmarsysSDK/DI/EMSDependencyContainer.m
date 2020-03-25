@@ -79,6 +79,9 @@
 #import "EMSGeofenceInternal.h"
 #import "EMSGeofenceResponseMapper.h"
 #import "EMSLoggingGeofenceInternal.h"
+#import "EMSInboxV3.h"
+#import "EMSInboxResultParser.h"
+#import "EMSLoggingInboxV3.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -104,6 +107,8 @@
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> loggingPredict;
 @property(nonatomic, strong) id <EMSGeofenceProtocol> geofence;
 @property(nonatomic, strong) id <EMSGeofenceProtocol> loggingGeofence;
+@property(nonatomic, strong) id <EMSMessageInboxProtocol> messageInbox;
+@property(nonatomic, strong) id <EMSMessageInboxProtocol> loggingMessageInbox;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> loggingNotificationCenterDelegate;
 
@@ -360,6 +365,9 @@
                                                                                  responseMapper:[[EMSGeofenceResponseMapper alloc] init]
                                                                                 locationManager:[[CLLocationManager alloc] init]
                                                                                   actionFactory:actionFactory];
+    _messageInbox = [[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
+                                                requestManager:self.requestManager
+                                             inboxResultParser:[[EMSInboxResultParser alloc] init]];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:uuidProvider];
@@ -387,6 +395,7 @@
     _loggingInbox = [EMSLoggingInbox new];
     _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
     _loggingGeofence = [EMSLoggingGeofenceInternal new];
+    _loggingMessageInbox = [EMSLoggingInboxV3 new];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory]];

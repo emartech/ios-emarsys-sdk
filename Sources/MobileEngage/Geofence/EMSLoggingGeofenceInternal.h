@@ -7,6 +7,4 @@
 
 @interface EMSLoggingGeofenceInternal : NSObject<EMSGeofenceProtocol>
 
-
-
 @end

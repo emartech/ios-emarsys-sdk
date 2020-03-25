@@ -28,4 +28,6 @@
 
 + (id <EMSGeofenceProtocol>)geofence;
 
++ (id <EMSMessageInboxProtocol>)messageInbox;
+
 @end

@@ -30,6 +30,7 @@
 @protocol EMSConfigProtocol;
 @class EMSValueProvider;
 @protocol EMSGeofenceProtocol;
+@protocol EMSMessageInboxProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -66,6 +67,10 @@
 - (id <EMSGeofenceProtocol>)geofence;
 
 - (id <EMSGeofenceProtocol>)loggingGeofence;
+
+- (id <EMSMessageInboxProtocol>)messageInbox;
+
+- (id <EMSMessageInboxProtocol>)loggingMessageInbox;
 
 - (id <EMSConfigProtocol>)config;
 
