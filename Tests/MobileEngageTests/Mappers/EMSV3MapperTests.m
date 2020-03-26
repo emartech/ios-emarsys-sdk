@@ -86,16 +86,14 @@
     XCTAssertFalse([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
 }
 
-- (void)testShouldHandleWithRequestModel_when_V3ClientUrl {
-    _url = [[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net"];
+- (void)testShouldHandleWithRequestMode_whenV3 {
+    _url = [[NSURL alloc] initWithString:@"https://www.realV3url.com"];
 
-    XCTAssertTrue([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
-}
+    OCMStub([self.mockEndpoint isV3url:@"https://www.realV3url.com"]).andReturn(YES);
 
-- (void)testShouldHandleWithRequestModel_when_V3EventUrl {
-    _url = [[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net"];
+    BOOL result = [self.mapper shouldHandleWithRequestModel:[self createRequestModel]];
 
-    XCTAssertTrue([self.mapper shouldHandleWithRequestModel:[self createRequestModel]]);
+    XCTAssertTrue(result);
 }
 
 - (void)testModelFromModel_when_clientStateIsNil {

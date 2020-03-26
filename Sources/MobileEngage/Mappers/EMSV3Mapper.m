@@ -28,7 +28,7 @@
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return [requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] || [requestModel.url.absoluteString hasPrefix:[self.endpoint eventServiceUrl]];
+    return [self.endpoint isV3url:requestModel.url.absoluteString];
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

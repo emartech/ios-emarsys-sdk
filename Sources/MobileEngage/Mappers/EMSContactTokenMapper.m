@@ -20,8 +20,7 @@
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
-    return ![url hasSuffix:@"/client/contact-token"] &&
-        ([requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] || [requestModel.url.absoluteString hasPrefix:[self.endpoint eventServiceUrl]]);
+    return ![url hasSuffix:@"/client/contact-token"] && ([self.endpoint isV3url:url]);
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

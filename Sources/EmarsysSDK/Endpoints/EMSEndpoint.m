@@ -125,7 +125,7 @@
 }
 
 - (BOOL)isV3url:(NSString *)url {
-    return [url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]];
+    return ([url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]] || [url hasPrefix:self.v3MessageInboxServiceUrl]) && !([url isEqualToString:self.inboxUrl]);
 }
 
 - (NSString *)predictUrl {

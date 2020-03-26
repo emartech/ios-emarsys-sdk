@@ -76,6 +76,21 @@
     XCTAssertTrue(result);
 }
 
+- (void)testShouldHandleWithRequestModel_whenV3 {
+    EMSEndpoint *mockEndpoint = OCMClassMock([EMSEndpoint class]);
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([mockRequestModel url]).andReturn([[NSURL alloc] initWithString:@"https://www.realV3url.com"]);
+    OCMStub([mockEndpoint isV3url:@"https://www.realV3url.com"]).andReturn(YES);
+
+    _contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext
+                                                                       endpoint:mockEndpoint];
+
+    BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
+
+    XCTAssertTrue(result);
+}
+
 - (void)testShouldHandleWithRequestModel_false_whenRequestIsContactToken {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v3/12345/client/contact-token"]);

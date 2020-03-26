@@ -8,13 +8,13 @@
 #import "EMSValueProvider.h"
 #import "EMSRemoteConfig.h"
 
-static NSString *const kClientServiceUrl = @"testClientServiceUrl";
-static NSString *const kEventServiceUrl = @"testEventServiceUrl";
-static NSString *const kV3MessageInboxServiceUrl = @"testV3MessageInboxServiceUrl";
-static NSString *const kPredictUrl = @"testPredictUrl";
-static NSString *const kDeeplinkUrl = @"testDeeplinkUrl";
-static NSString *const kV2ServiceUrl = @"testV2ServiceUrl";
-static NSString *const kInboxUrl = @"testInboxUrl";
+static NSString *const kClientServiceUrl = @"https://me-client.eservice.emarsys.netl";
+static NSString *const kEventServiceUrl = @"https://mobile-events.eservice.emarsys.net";
+static NSString *const kV3MessageInboxServiceUrl = @"https://me-inbox.eservice.emarsys.net";
+static NSString *const kPredictUrl = @"https://recommender.scarabresearch.com";
+static NSString *const kDeeplinkUrl = @"https://deep-link.eservice.emarsys.net/api/clicks";
+static NSString *const kV2ServiceUrl = @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
+static NSString *const kInboxUrl = @"https://me-inbox.eservice.emarsys.net/api/";
 static NSString *const kApplicationCode = @"testApplicationCode";
 
 @interface EMSEndpointTests : XCTestCase
@@ -238,6 +238,18 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertTrue([self.endpoint isV3url:url]);
 }
 
+- (void)testIsV3_shouldReturnYes_when_URLInboxV3Url {
+    NSString *url = [self.endpoint v3MessageInboxUrlApplicationCode:@"testApplicationCode"];
+
+    XCTAssertTrue([self.endpoint isV3url:url]);
+}
+
+- (void)testIsV3_shouldReturnNo_when_URLInboxUrl {
+    NSString *url = [self.endpoint inboxUrl];
+
+    XCTAssertFalse([self.endpoint isV3url:url]);
+}
+
 - (void)testV3MessageInboxUrlWithApplicationCode {
     NSString *expectedUrl = [self v3MessageInboxUrl];
 
@@ -257,7 +269,7 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testPredictUrl {
-    NSString *expectedUrl = @"testPredictUrl";
+    NSString *expectedUrl = @"https://recommender.scarabresearch.com";
 
     NSString *result = [self.endpoint predictUrl];
 

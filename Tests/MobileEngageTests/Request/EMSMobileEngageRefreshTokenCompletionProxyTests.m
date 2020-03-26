@@ -38,13 +38,15 @@
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
+    EMSValueProvider *v3MessageInboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
+                                                                                        valueKey:@"V3_MESSAGE_INBOX_URL"];
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
                                                      inboxUrlProvider:OCMClassMock([EMSValueProvider class])
-                                            v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                            v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
 
     _refreshCompletionProxy = [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
                                                                                                restClient:self.mockRestClient
