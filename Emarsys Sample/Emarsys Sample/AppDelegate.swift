@@ -28,6 +28,13 @@ class AppDelegate: EMSAppDelegate {
         
         UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
         print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
+        
+        let content = UNMutableNotificationContent()
+        content.title = eventName
+        content.body = payload!.description
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "notification.id.01", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
     }
 
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
