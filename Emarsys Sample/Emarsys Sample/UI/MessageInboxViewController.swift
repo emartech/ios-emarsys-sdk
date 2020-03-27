@@ -41,20 +41,21 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
         
         cell.imageView?.image = #imageLiteral(resourceName: "placeholder")
         
-        guard let imageUrlString = message.imageUrl  else {
-            return cell
-        }
-        
-        guard let imageUrl = URL(string: imageUrlString) else {
-            return cell
-        }
-        
-        URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
-            DispatchQueue.main.async {
-                cell.imageView?.image = data != nil ? UIImage(data: data!) : #imageLiteral(resourceName: "placeholder")
-            }
-        }.resume()
-        
+    
+//        guard let imageUrlString = message.imageUrl as? String  else {
+//            return cell
+//        }
+//        
+//        guard let imageUrl = URL(string: imageUrlString) else {
+//            return cell
+//        }
+//        
+//        URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+//            DispatchQueue.main.async {
+//                cell.imageView?.image = data != nil ? UIImage(data: data!) : #imageLiteral(resourceName: "placeholder")
+//            }
+//        }.resume()
+//        
         return cell
     }
     
