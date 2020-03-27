@@ -9,9 +9,7 @@
 #import "EMSRequestManager.h"
 #import "NSError+EMSCore.h"
 #import "EMSResponseModel.h"
-#import "EMSInboxResult.h"
 #import "EMSInboxResultParser.h"
-#import "EMSMessage.h"
 
 @interface EMSInboxV3Tests : XCTestCase
 
@@ -264,19 +262,16 @@
                            "  \"messages\": [\n"
                            "    {\n"
                            "        \"initWithId\": \"ef14afa4\",\n"
-                           "        \"multichannelId\": 11,\n"
-                           "        \"campaignId\": \"campaignId\",\n"
                            "        \"title\": \"title\",\n"
                            "        \"body\": \"body\",\n"
                            "        \"imageUrl\": \"https://example.com/image.jpg\",\n"
-                           "        \"action\": \"https://example.com/image.jpg\",\n"
                            "        \"receivedAt\": 142141412515,\n"
                            "        \"updatedAt\": 142141412599,\n"
                            "        \"ttl\": 50,\n"
                            "        \"tags\": [\"tag1\", \"tag2\"],\n"
-                           "        \"sourceId\": 12345555,\n"
-                           "        \"sourceRunId\": \"sourceRunId\",\n"
-                           "        \"sourceType\": \"sourceType\",\n"
+                           "        \"properties\": {"
+                           "            \"key1\": \"value1\","
+                           "            \"key2\": \"value2\"}"
                            "    }\n"
                            "  ]\n"
                            "}";
@@ -297,19 +292,16 @@
 
 - (EMSMessage *)responseMessage {
     return [[EMSMessage alloc] initWithId:@"ef14afa4"
-                           multichannelId:@(11)
-                               campaignId:@"campaignId"
                                     title:@"title"
                                      body:@"body"
                                  imageUrl:@"https://example.com/image.jpg"
-                                   action:@"https://example.com/image.jpg"
                                receivedAt:@(142141412515)
                                 updatedAt:@(142141412599)
                                       ttl:@(50)
                                      tags:@[@"tag1", @"tag2"]
-                                 sourceId:@(12345555)
-                              sourceRunId:@"sourceRunId"
-                               sourceType:@"sourceType"];
+                               properties:@{
+                                       @"key1": @"value1",
+                                       @"key2": @"value2"}];
 }
 
 - (void)setupForSuccess {

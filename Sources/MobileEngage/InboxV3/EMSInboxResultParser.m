@@ -6,7 +6,6 @@
 #import "EMSResponseModel.h"
 #import "EMSInboxResult.h"
 #import "EMSServiceDictionaryValidator.h"
-#import "EMSMessage.h"
 
 @implementation EMSInboxResultParser
 
@@ -31,26 +30,17 @@
                                        withType:[NSString class]];
                     [validate valueExistsForKey:@"receivedAt"
                                        withType:[NSNumber class]];
-                    [validate valueExistsForKey:@"sourceType"
-                                       withType:[NSString class]];
-                    [validate valueExistsForKey:@"sourceId"
-                                       withType:[NSNumber class]];
                 }];
                 if ([messageErrors count] == 0) {
                     EMSMessage *message = [[EMSMessage alloc] initWithId:messageDict[@"id"]
-                                                          multichannelId:messageDict[@"multichannelId"]
-                                                              campaignId:messageDict[@"campaignId"]
                                                                    title:messageDict[@"title"]
                                                                     body:messageDict[@"body"]
                                                                 imageUrl:messageDict[@"imageUrl"]
-                                                                  action:messageDict[@"action"]
                                                               receivedAt:messageDict[@"receivedAt"]
                                                                updatedAt:messageDict[@"updatedAt"]
                                                                      ttl:messageDict[@"ttl"]
                                                                     tags:messageDict[@"tags"]
-                                                                sourceId:messageDict[@"sourceId"]
-                                                             sourceRunId:messageDict[@"sourceRunId"]
-                                                              sourceType:messageDict[@"sourceType"]];
+                                                              properties:messageDict[@"properties"]];
                     [resultMessages addObject:message];
                 }
             }
