@@ -6,6 +6,7 @@
 #import "EMSResponseModel.h"
 #import "EMSInboxResult.h"
 #import "EMSServiceDictionaryValidator.h"
+#import "NSDictionary+EMSCore.h"
 
 @implementation EMSInboxResultParser
 
@@ -32,15 +33,15 @@
                                        withType:[NSNumber class]];
                 }];
                 if ([messageErrors count] == 0) {
-                    EMSMessage *message = [[EMSMessage alloc] initWithId:messageDict[@"id"]
-                                                                   title:messageDict[@"title"]
-                                                                    body:messageDict[@"body"]
-                                                                imageUrl:messageDict[@"imageUrl"]
-                                                              receivedAt:messageDict[@"receivedAt"]
-                                                               updatedAt:messageDict[@"updatedAt"]
-                                                                     ttl:messageDict[@"ttl"]
-                                                                    tags:messageDict[@"tags"]
-                                                              properties:messageDict[@"properties"]];
+                    EMSMessage *message = [[EMSMessage alloc] initWithId:[messageDict nullSafeValueForKey:@"id"]
+                                                                   title:[messageDict nullSafeValueForKey:@"title"]
+                                                                    body:[messageDict nullSafeValueForKey:@"body"]
+                                                                imageUrl:[messageDict nullSafeValueForKey:@"imageUrl"]
+                                                              receivedAt:[messageDict nullSafeValueForKey:@"receivedAt"]
+                                                               updatedAt:[messageDict nullSafeValueForKey:@"updatedAt"]
+                                                                     ttl:[messageDict nullSafeValueForKey:@"ttl"]
+                                                                    tags:[messageDict nullSafeValueForKey:@"tags"]
+                                                              properties:[messageDict nullSafeValueForKey:@"properties"]];
                     [resultMessages addObject:message];
                 }
             }

@@ -203,4 +203,23 @@ SPEC_BEGIN(NSDictionaryCoreTests)
             });
         });
 
+        describe(@"NSDictionary+EMSCore nullSafeValueForKey:", ^{
+
+            it(@"should return nil when value is NSNull", ^{
+                NSDictionary *dictionary = @{@"key": [NSNull null]};
+
+                id result = [dictionary nullSafeValueForKey:@"key"];
+
+                [[result should] beNil];
+            });
+
+            it(@"should return value when value is not NSNull", ^{
+                NSDictionary *dictionary = @{@"key": @"value"};
+
+                id result = [dictionary nullSafeValueForKey:@"key"];
+
+                [[result should] equal:@"value"];
+            });
+        });
+
 SPEC_END

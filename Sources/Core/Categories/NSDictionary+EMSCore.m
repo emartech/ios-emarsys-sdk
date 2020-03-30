@@ -110,4 +110,12 @@
     return result;
 }
 
+- (nullable id)nullSafeValueForKey:(NSString *)key {
+    id result = self[key];
+    if ([result isKindOfClass:[NSNull class]]) {
+        result = nil;
+    }
+    return result;
+}
+
 @end

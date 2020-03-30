@@ -50,7 +50,17 @@
                            "        \"properties\": {"
                            "            \"key3\": \"value3\","
                            "            \"key4\": \"value4\"}"
-                           "    }\n"
+                           "    },\n"
+                           "    {\n"
+                           "        \"id\": \"testId3\",\n"
+                           "        \"title\": \"title3\",\n"
+                           "        \"body\": \"body3\",\n"
+                           "        \"imageUrl\": null,\n"
+                           "        \"receivedAt\": 2222,\n"
+                           "        \"updatedAt\": null,\n"
+                           "        \"ttl\": null,\n"
+                           "        \"tags\": null,\n"
+                           "        \"properties\": null}\n"
                            "  ]\n"
                            "}";
 
@@ -88,7 +98,16 @@
                                                properties:@{
                                                        @"key3": @"value3",
                                                        @"key4": @"value4"}];
-    [expectedResult setMessages:@[message1, message2]];
+    EMSMessage *message3 = [[EMSMessage alloc] initWithId:@"testId3"
+                                                    title:@"title3"
+                                                     body:@"body3"
+                                                 imageUrl:nil
+                                               receivedAt:@(2222)
+                                                updatedAt:nil
+                                                      ttl:nil
+                                                     tags:nil
+                                               properties:nil];
+    [expectedResult setMessages:@[message1, message2, message3]];
 
     EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
 
