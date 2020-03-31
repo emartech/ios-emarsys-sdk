@@ -79,9 +79,24 @@
 
 + (NSDictionary *)dictionaryWithData:(NSData *)data {
     NSError *error;
-    NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
-                                                               fromData:data
-                                                                  error:&error];
+    NSDictionary *result = nil;
+    @try {
+        result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
+                                                     fromData:data
+                                                        error:&error];
+    } @catch (NSException *exception) {
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"error"] = exception.reason;
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        parametersDict[@"data"] = [[NSString alloc] initWithData:data
+                                                        encoding:NSUTF8StringEncoding];
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelError);
+    }
+
     if (error && data) {
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"error"] = error.localizedDescription;
