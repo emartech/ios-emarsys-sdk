@@ -395,6 +395,49 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 [[result[2] should] beSimilarWithRequest:model2];
             });
 
+            it(@"should query composite RequestModels from RequestRepository when select all and should not crash when events is empty", ^{
+                EMSRequestModel *model1 = normalRequestModel(@"https://www.google.com", requestContext);
+                EMSRequestModel *modelCustomEvent1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                            [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setPayload:@{@"events": @[]}];
+                        }
+                                                                    timestampProvider:timestampProvider
+                                                                         uuidProvider:uuidProvider];
+                EMSRequestModel *modelCustomEvent2 = customEventRequestModel(@"event2", @{@"key1": @"value1", @"key2": @"value2"}, requestContext);
+                EMSRequestModel *model2 = normalRequestModel(@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events456", requestContext);
+                EMSRequestModel *modelCustomEvent3 = customEventRequestModel(@"event3", @{@"star": @"wars"}, requestContext);
+
+                EMSCompositeRequestModel *compositeModel = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                            [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setPayload:@{
+                                    @"hardware_id": deviceInfo.hardwareId,
+                                    @"viewedMessages": @[],
+                                    @"clicks": @[],
+                                    @"events": @[
+                                            [modelCustomEvent2.payload[@"events"] firstObject],
+                                            [modelCustomEvent3.payload[@"events"] firstObject]
+                                    ],
+                                    @"language": deviceInfo.languageCode,
+                                    @"ems_sdk": EMARSYS_SDK_VERSION,
+                                    @"application_version": deviceInfo.applicationVersion
+                            }];
+                        }
+                                                                                   timestampProvider:requestContext.timestampProvider
+                                                                                        uuidProvider:requestContext.uuidProvider];
+                compositeModel.originalRequests = @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3];
+
+
+                createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1, modelCustomEvent2, modelCustomEvent3], @[model1, modelCustomEvent1, modelCustomEvent2, model2, modelCustomEvent3], [MEInApp new], requestContext);
+
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
+                [[theValue([result count]) should] equal:theValue(3)];
+                [[result[0] should] beSimilarWithRequest:model1];
+                [[result[1] should] beSimilarWithRequest:compositeModel];
+                [[result[2] should] beSimilarWithRequest:model2];
+            });
+
             it(@"should return NO if request requestModelRepository is NOT empty", ^{
                 [[requestModelRepository should] receive:@selector(isEmpty) andReturn:theValue(NO)];
                 [[theValue([compositeRequestModelRepository isEmpty]) should] beNo];

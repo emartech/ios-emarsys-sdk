@@ -75,27 +75,27 @@
     NSArray *allCustomEvents = [self.requestModelRepository query:filterCustomEventsSpecification];
 
     EMSCompositeRequestModel *composite = [EMSCompositeRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setHeaders:requestModel.headers];
-            [builder setUrl:[[requestModel url] absoluteString]];
+                [builder setHeaders:requestModel.headers];
+                [builder setUrl:[[requestModel url] absoluteString]];
 
-            NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-            payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
-            payload[@"viewedMessages"] = [self displayRepresentations];
-            payload[@"clicks"] = [self clickRepresentations];
-            if ([self.inApp isPaused]) {
-                payload[@"dnd"] = @([self.inApp isPaused]);
+                NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+                payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
+                payload[@"viewedMessages"] = [self displayRepresentations];
+                payload[@"clicks"] = [self clickRepresentations];
+                if ([self.inApp isPaused]) {
+                    payload[@"dnd"] = @([self.inApp isPaused]);
+                }
+                payload[@"events"] = [self eventRepresentations:allCustomEvents];
+
+                payload[@"language"] = self.requestContext.deviceInfo.languageCode;
+                payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
+
+                NSString *appVersion = self.requestContext.deviceInfo.applicationVersion;
+                if (appVersion) {
+                    payload[@"application_version"] = appVersion;
+                }
+                [builder setPayload:payload];
             }
-            payload[@"events"] = [self eventRepresentations:allCustomEvents];
-
-            payload[@"language"] = self.requestContext.deviceInfo.languageCode;
-            payload[@"ems_sdk"] = EMARSYS_SDK_VERSION;
-
-            NSString *appVersion = self.requestContext.deviceInfo.applicationVersion;
-            if (appVersion) {
-                payload[@"application_version"] = appVersion;
-            }
-            [builder setPayload:payload];
-        }
                                                                   timestampProvider:self.requestContext.timestampProvider
                                                                        uuidProvider:self.requestContext.uuidProvider];
     composite.originalRequests = allCustomEvents;
@@ -105,7 +105,9 @@
 - (NSArray *)eventRepresentations:(NSArray *)allCustomEvents {
     NSMutableArray *events = [NSMutableArray new];
     for (EMSRequestModel *model in allCustomEvents) {
-        [events addObject:[model.payload[@"events"] firstObject]];
+        if ([model.payload[@"events"] count] > 0) {
+            [events addObject:[model.payload[@"events"] firstObject]];
+        }
     }
     return [NSArray arrayWithArray:events];
 }
