@@ -5,7 +5,7 @@
 #import "EMSInboxResultParser.h"
 #import "EMSResponseModel.h"
 #import "EMSInboxResult.h"
-#import "EMSServiceDictionaryValidator.h"
+#import "EMSDictionaryValidator.h"
 #import "NSDictionary+EMSCore.h"
 
 @implementation EMSInboxResultParser
@@ -14,7 +14,7 @@
     NSDictionary *body = response.parsedBody;
     EMSInboxResult *result = [EMSInboxResult new];
     if (body) {
-        NSArray *errors = [body validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
+        NSArray *errors = [body validate:^(EMSDictionaryValidator *validate) {
             [validate valueExistsForKey:@"messages"
                                withType:[NSArray class]];
         }];
@@ -22,7 +22,7 @@
             NSArray *messages = body[@"messages"];
             NSMutableArray *resultMessages = [NSMutableArray new];
             for (NSDictionary *messageDict in messages) {
-                NSArray *messageErrors = [messageDict validateWithBlock:^(EMSServiceDictionaryValidator *validate) {
+                NSArray *messageErrors = [messageDict validate:^(EMSDictionaryValidator *validate) {
                     [validate valueExistsForKey:@"id"
                                        withType:[NSString class]];
                     [validate valueExistsForKey:@"title"
