@@ -124,6 +124,7 @@
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
+@property(nonatomic, strong) EMSStorage *storage;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -152,7 +153,7 @@
     EMSValueProvider *inboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net/api/"
                                                                                valueKey:@"INBOX_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
-                                                                               valueKey:@"V3_MESSAGE_INBOX_URL"];
+                                                                                        valueKey:@"V3_MESSAGE_INBOX_URL"];
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
                                                                predictUrlProvider:predictUrlProvider
@@ -169,12 +170,12 @@
     _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
                                                       [uuidProvider provideUUIDString]];
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
-
+    _storage = [[EMSStorage alloc] initWithOperationQueue:self.operationQueue
+                                               suiteNames:self.suiteNames];
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:self.operationQueue
-                                                                                                          suiteNames:self.suiteNames]
+                                                                  storage:self.storage
                                                         identifierManager:[ASIdentifierManager sharedManager]];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
@@ -364,7 +365,8 @@
                                                                                  requestManager:self.requestManager
                                                                                  responseMapper:[[EMSGeofenceResponseMapper alloc] init]
                                                                                 locationManager:[[CLLocationManager alloc] init]
-                                                                                  actionFactory:actionFactory];
+                                                                                  actionFactory:actionFactory
+                                                                                        storage:self.storage];
     _messageInbox = [[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
                                                 requestManager:self.requestManager
                                              inboxResultParser:[[EMSInboxResultParser alloc] init]];

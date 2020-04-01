@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enable;
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 - (void)disable;
+- (BOOL)isEnabled;
 
 @end
 

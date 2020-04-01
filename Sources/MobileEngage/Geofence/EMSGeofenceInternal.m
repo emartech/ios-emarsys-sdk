@@ -13,6 +13,7 @@
 #import "EMSGeofenceTrigger.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
+#import "EMSStorage.h"
 
 @interface EMSGeofenceInternal ()
 
@@ -21,6 +22,9 @@
 @property(nonatomic, strong) EMSGeofenceResponseMapper *responseMapper;
 @property(nonatomic, strong) CLLocationManager *locationManager;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
+@property(nonatomic, strong) EMSStorage *storage;
+
+@property(nonatomic, assign) BOOL enabled;
 
 @end
 
@@ -30,36 +34,45 @@
                         requestManager:(EMSRequestManager *)requestManager
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
                        locationManager:(CLLocationManager *)locationManager
-                         actionFactory:(EMSActionFactory *)actionFactory {
+                         actionFactory:(EMSActionFactory *)actionFactory
+                               storage:(EMSStorage *)storage {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(responseMapper);
     NSParameterAssert(locationManager);
     NSParameterAssert(actionFactory);
+    NSParameterAssert(storage);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
         _responseMapper = responseMapper;
         _locationManager = locationManager;
         _actionFactory = actionFactory;
+        _storage = storage;
         _geofenceLimit = 20;
         _registeredGeofences = [NSMutableDictionary dictionary];
+        _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue];
+        if (self.isEnabled) {
+            [self fetchGeofences];
+        }
     }
     return self;
 }
 
 - (void)fetchGeofences {
-    EMSRequestModel *requestModel = [self.requestFactory createGeofenceRequestModel];
-    __weak typeof(self) weakSelf = self;
-    [self.requestManager submitRequestModelNow:requestModel
-                                  successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                      EMSGeofenceResponse *geofenceResponse = [self.responseMapper mapFromResponseModel:response];
-                                      weakSelf.geofenceResponse = geofenceResponse;
-                                      [weakSelf registerGeofences];
-                                  }
-                                    errorBlock:^(NSString *requestId, NSError *error) {
+    if (self.isEnabled) {
+        EMSRequestModel *requestModel = [self.requestFactory createGeofenceRequestModel];
+        __weak typeof(self) weakSelf = self;
+        [self.requestManager submitRequestModelNow:requestModel
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                          EMSGeofenceResponse *geofenceResponse = [self.responseMapper mapFromResponseModel:response];
+                                          weakSelf.geofenceResponse = geofenceResponse;
+                                          [weakSelf registerGeofences];
+                                      }
+                                        errorBlock:^(NSString *requestId, NSError *error) {
 
-                                    }];
+                                        }];
+    }
 }
 
 - (void)registerGeofences {
@@ -117,6 +130,7 @@
 
     if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
         self.recalculateable = YES;
+        [self stopRegionMonitoring];
         [self registerGeofences];
     } else {
         [self handleActionWithTriggers:geofence.triggers
@@ -143,6 +157,10 @@
         [self.locationManager setDelegate:self];
         [self.locationManager setDesiredAccuracy:kCLLocationAccuracyNearestTenMeters];
         [self.locationManager startUpdatingLocation];
+        if (!self.enabled) {
+            self.enabled = true;
+            [self fetchGeofences];
+        }
         if (completionBlock) {
             completionBlock(nil);
         }
@@ -156,8 +174,23 @@
 }
 
 - (void)disable {
+    self.enabled = NO;
     self.recalculateable = NO;
     [self.locationManager stopUpdatingLocation];
+    [self stopRegionMonitoring];
+}
+
+- (BOOL)isEnabled {
+    return self.enabled;
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    [self.storage setNumber:@(enabled)
+                     forKey:kIsGeofenceEnabled];
+    _enabled = enabled;
+}
+
+- (void)stopRegionMonitoring {
     for (CLCircularRegion *region in self.locationManager.monitoredRegions) {
         [self.locationManager stopMonitoringForRegion:region];
     }

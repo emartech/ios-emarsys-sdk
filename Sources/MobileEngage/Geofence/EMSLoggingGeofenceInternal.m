@@ -51,4 +51,11 @@
                                               parameters:nil], LogLevelDebug);
 }
 
+- (BOOL)isEnabled {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return NO;
+}
+
 @end

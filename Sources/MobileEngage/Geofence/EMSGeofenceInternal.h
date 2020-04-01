@@ -7,12 +7,15 @@
 #import "EMSGeofenceProtocol.h"
 #import "EMSEventHandler.h"
 
+#define kIsGeofenceEnabled @"isGeofenceEnabled"
+
 @class EMSRequestManager;
 @class EMSRequestFactory;
 @class EMSGeofenceResponseMapper;
 @class CLLocationManager;
 @class EMSGeofenceResponse;
 @class EMSActionFactory;
+@class EMSStorage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,7 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
                         requestManager:(EMSRequestManager *)requestManager
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
                        locationManager:(CLLocationManager *)locationManager
-                         actionFactory:(EMSActionFactory *)actionFactory;
+                         actionFactory:(EMSActionFactory *)actionFactory
+                               storage:(EMSStorage *)storage;
 
 - (void)fetchGeofences;
 - (void)registerGeofences;
