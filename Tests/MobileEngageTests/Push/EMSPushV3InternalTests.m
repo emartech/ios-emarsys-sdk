@@ -15,6 +15,7 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSEventHandler.h"
+#import "EMSStorage.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
 
@@ -26,6 +27,7 @@
 @property(nonatomic, strong) EMSActionFactory *mockActionFactory;
 @property(nonatomic, strong) NSString *pushToken;
 @property(nonatomic, strong) id mockPushTokenData;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 
 @end
 
@@ -37,6 +39,7 @@
     _mockNotificationCache = OCMClassMock([EMSNotificationCache class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockActionFactory = OCMClassMock([EMSActionFactory class]);
+    _mockStorage = OCMClassMock([EMSStorage class]);
 
     _pushToken = @"pushTokenString";
     NSData *data = [NSData new];
@@ -47,7 +50,8 @@
                                                requestManager:self.mockRequestManager
                                             notificationCache:self.mockNotificationCache
                                             timestampProvider:self.mockTimestampProvider
-                                                actionFactory:self.mockActionFactory];
+                                                actionFactory:self.mockActionFactory
+                                                      storage:self.mockStorage];
 }
 
 - (void)tearDown {
@@ -61,7 +65,8 @@
                                            requestManager:self.mockRequestManager
                                         notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
-                                            actionFactory:self.mockActionFactory];
+                                            actionFactory:self.mockActionFactory
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -74,7 +79,8 @@
                                            requestManager:nil
                                         notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
-                                            actionFactory:self.mockActionFactory];
+                                            actionFactory:self.mockActionFactory
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -87,7 +93,8 @@
                                            requestManager:self.mockRequestManager
                                         notificationCache:nil
                                         timestampProvider:self.mockTimestampProvider
-                                            actionFactory:self.mockActionFactory];
+                                            actionFactory:self.mockActionFactory
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when notificationCache is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: notificationCache");
@@ -100,7 +107,8 @@
                                            requestManager:self.mockRequestManager
                                         notificationCache:self.mockNotificationCache
                                         timestampProvider:nil
-                                            actionFactory:self.mockActionFactory];
+                                            actionFactory:self.mockActionFactory
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
@@ -113,10 +121,25 @@
                                            requestManager:self.mockRequestManager
                                         notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
-                                            actionFactory:nil];
+                                            actionFactory:nil
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when actionFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: actionFactory");
+    }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
+                                           requestManager:self.mockRequestManager
+                                        notificationCache:self.mockNotificationCache
+                                        timestampProvider:self.mockTimestampProvider
+                                            actionFactory:self.mockActionFactory
+                                                  storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: storage");
     }
 }
 
@@ -133,7 +156,8 @@
 
 - (void)testSetPushToken_andClearPushToken_withDeviceToken {
     NSData *token = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
-    [self.push setPushToken:token completionBlock:nil];
+    [self.push setPushToken:token
+            completionBlock:nil];
 
     XCTAssertEqualObjects(self.push.deviceToken, token);
 
@@ -187,7 +211,46 @@
             completionBlock:completionBlock];
 
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
-                                      withCompletionBlock:completionBlock]);
+                                      withCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testSetPushToken_shouldStoreToken_afterSuccessRequestSending {
+    OCMStub([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                    withCompletionBlock:([OCMArg invokeBlock])]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.push setPushToken:self.mockPushTokenData
+            completionBlock:^(NSError *error) {
+                [expectation fulfill];
+            }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    OCMVerify([self.mockStorage setData:self.mockPushTokenData
+                                 forKey:@"EMSPushTokenKey"]);
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testSetPushToken_shouldNotStoreToken_afterFailedRequestSending {
+    OCMStub([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                    withCompletionBlock:([OCMArg invokeBlockWithArgs:[NSError errorWithCode:-123
+                                                                                       localizedDescription:@"testError"],
+                                                                                     nil])]);
+    OCMReject([self.mockStorage setData:[OCMArg any]
+                                 forKey:@"EMSPushTokenKey"]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.push setPushToken:self.mockPushTokenData
+            completionBlock:^(NSError *error) {
+                [expectation fulfill];
+            }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)testClearPushToken {
@@ -262,7 +325,8 @@
                                                           eventAttributes:eventAttributes
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
 
-    [self.push trackMessageOpenWithUserInfo:mockUserInfo completionBlock:nil];
+    [self.push trackMessageOpenWithUserInfo:mockUserInfo
+                            completionBlock:nil];
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:eventName
                                                             eventAttributes:eventAttributes

@@ -347,7 +347,8 @@
                                                requestManager:self.requestManager
                                             notificationCache:self.notificationCache
                                             timestampProvider:timestampProvider
-                                                actionFactory:actionFactory];
+                                                actionFactory:actionFactory
+                                                      storage:self.storage];
     _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext
                                    notificationCache:self.notificationCache
                                       requestManager:self.requestManager

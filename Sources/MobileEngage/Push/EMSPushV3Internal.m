@@ -12,6 +12,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
+#import "EMSStorage.h"
 
 @interface EMSPushV3Internal ()
 
@@ -20,6 +21,7 @@
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
+@property(nonatomic, strong) EMSStorage *storage;
 
 @end
 
@@ -31,18 +33,21 @@
                         requestManager:(EMSRequestManager *)requestManager
                      notificationCache:(EMSNotificationCache *)notificationCache
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-                         actionFactory:(EMSActionFactory *)actionFactory {
+                         actionFactory:(EMSActionFactory *)actionFactory
+                               storage:(EMSStorage *)storage {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(notificationCache);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(actionFactory);
+    NSParameterAssert(storage);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
         _notificationCache = notificationCache;
         _timestampProvider = timestampProvider;
         _actionFactory = actionFactory;
+        _storage = storage;
     }
     return self;
 }
@@ -60,7 +65,15 @@
     if (deviceToken && [deviceToken length] > 0) {
         requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:deviceToken];
         [self.requestManager submitRequestModel:requestModel
-                            withCompletionBlock:completionBlock];
+                            withCompletionBlock:^(NSError *error) {
+                                if (!error) {
+                                    [self.storage setData:pushToken
+                                                   forKey:@"EMSPushTokenKey"];
+                                }
+                                if (completionBlock) {
+                                    completionBlock(error);
+                                }
+                            }];
     }
 }
 
@@ -112,7 +125,7 @@
     NSArray<NSDictionary *> *actions = userInfo[@"ems"][@"actions"];
     [self.actionFactory setEventHandler:self.silentMessageEventHandler];
     for (NSDictionary *actionDict in actions) {
-        id<EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
+        id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
         [action execute];
     }
 }

@@ -95,14 +95,11 @@
 }
 
 + (void)waitForSetPushToken {
-    NSData *mockDeviceToken = [NSData mock];
-
-    [mockDeviceToken stub:@selector(deviceTokenString)
-                andReturn:@"test_pushToken_for_iOS_integrationTest"];
+    NSData *deviceToken = [@"<1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd>" dataUsingEncoding:NSUTF8StringEncoding];
 
     __block NSError *returnedError = [NSError new];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
-    [Emarsys.push setPushToken:mockDeviceToken
+    [Emarsys.push setPushToken:deviceToken
                completionBlock:^(NSError *error) {
                    returnedError = error;
                    [expectation fulfill];
