@@ -59,7 +59,7 @@
 
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(EMSCompletionBlock)completionBlock {
-    NSData *storedToken = [self.storage dataForKey:@"EMSPushTokenKey"];
+    NSData *storedToken = [self.storage dataForKey:kEMSPushTokenKey];
     if (storedToken && storedToken == pushToken) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completionBlock) {
@@ -76,7 +76,7 @@
                                 withCompletionBlock:^(NSError *error) {
                                     if (!error) {
                                         [self.storage setData:pushToken
-                                                       forKey:@"EMSPushTokenKey"];
+                                                       forKey:kEMSPushTokenKey];
                                     }
                                     if (completionBlock) {
                                         completionBlock(error);
@@ -92,6 +92,8 @@
 
 - (void)clearPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     _deviceToken = nil;
+    [self.storage setData:nil
+                   forKey:kEMSPushTokenKey];
     EMSRequestModel *requestModel = [self.requestFactory createClearPushTokenRequestModel];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:completionBlock];

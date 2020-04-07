@@ -294,6 +294,8 @@
 
     [self.push clearPushTokenWithCompletionBlock:completionBlock];
 
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
     OCMVerify([self.mockRequestFactory createClearPushTokenRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:completionBlock]);

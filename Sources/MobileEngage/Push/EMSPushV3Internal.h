@@ -4,6 +4,8 @@
 #import <Foundation/Foundation.h>
 #import "EMSPushNotificationProtocol.h"
 
+static NSString *const kEMSPushTokenKey = @"EMSPushTokenKey";
+
 @class EMSRequestFactory;
 @class EMSRequestManager;
 @class EMSNotificationCache;
