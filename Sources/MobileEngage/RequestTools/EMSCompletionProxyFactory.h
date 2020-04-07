@@ -8,6 +8,7 @@
 #import "EMSRequestFactory.h"
 
 @class EMSContactTokenResponseHandler;
+@class EMSStorage;
 
 @interface EMSCompletionProxyFactory : EMSRESTClientCompletionProxyFactory
 
@@ -18,6 +19,7 @@
                                restClient:(EMSRESTClient *)restClient
                            requestFactory:(EMSRequestFactory *)requestFactory
                    contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
-                                 endpoint:(EMSEndpoint *)endpoint;
+                                 endpoint:(EMSEndpoint *)endpoint
+                                  storage:(EMSStorage *)storage;
 
 @end

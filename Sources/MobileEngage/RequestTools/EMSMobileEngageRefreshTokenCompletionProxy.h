@@ -10,6 +10,7 @@
 @class EMSRESTClient;
 @class EMSRequestFactory;
 @class EMSContactTokenResponseHandler;
+@class EMSStorage;
 
 @interface EMSMobileEngageRefreshTokenCompletionProxy : NSObject <EMSRESTClientCompletionProxyProtocol>
 
@@ -18,6 +19,7 @@
 @property(nonatomic, readonly) EMSRequestFactory *requestFactory;
 @property(nonatomic, readonly) EMSContactTokenResponseHandler *contactResponseHandler;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
+@property(nonatomic, readonly) EMSStorage *storage;
 
 @property(nonatomic, strong) EMSRequestModel *originalRequestModel;
 
@@ -25,6 +27,7 @@
                              restClient:(EMSRESTClient *)restClient
                          requestFactory:(EMSRequestFactory *)requestFactory
                  contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
-                               endpoint:(EMSEndpoint *)endpoint;
+                               endpoint:(EMSEndpoint *)endpoint
+                                storage:(EMSStorage *)storage;
 
 @end

@@ -268,7 +268,8 @@
                                                                                                           restClient:self.restClient
                                                                                                       requestFactory:self.requestFactory
                                                                                               contactResponseHandler:contactTokenResponseHandler
-                                                                                                            endpoint:endpoint];
+                                                                                                            endpoint:endpoint
+                                                                                                             storage:self.storage];
 
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.operationQueue

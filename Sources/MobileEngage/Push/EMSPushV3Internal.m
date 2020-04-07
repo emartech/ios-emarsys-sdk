@@ -14,6 +14,8 @@
 #import "EMSActionProtocol.h"
 #import "EMSStorage.h"
 
+#define kEMSPushTokenKey @"EMSPushTokenKey"
+
 @interface EMSPushV3Internal ()
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;

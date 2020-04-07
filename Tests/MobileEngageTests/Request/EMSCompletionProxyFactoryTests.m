@@ -8,12 +8,14 @@
 #import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 @interface EMSCompletionProxyFactoryTests : XCTestCase
 
 @property(nonatomic, strong) EMSRESTClient *mockRestClient;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *mockContactTokenResponseHandler;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 
 @end
 
@@ -23,6 +25,7 @@
     _mockRestClient = OCMClassMock([EMSRESTClient class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockContactTokenResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
+    _mockStorage = OCMClassMock([EMSStorage class]);
 }
 
 - (void)testInit_restClient_mustNotBeNil {
@@ -36,7 +39,8 @@
                                                           restClient:nil
                                                       requestFactory:self.mockRequestFactory
                                               contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
-                                                            endpoint:OCMClassMock([EMSEndpoint class])];
+                                                            endpoint:OCMClassMock([EMSEndpoint class])
+                                                             storage:self.mockStorage];
         XCTFail(@"Expected Exception when restClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: restClient");
@@ -54,7 +58,8 @@
                                                           restClient:self.mockRestClient
                                                       requestFactory:nil
                                               contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
-                                                            endpoint:OCMClassMock([EMSEndpoint class])];
+                                                            endpoint:OCMClassMock([EMSEndpoint class])
+                                                             storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -72,7 +77,8 @@
                                                           restClient:self.mockRestClient
                                                       requestFactory:self.mockRequestFactory
                                               contactResponseHandler:nil
-                                                            endpoint:OCMClassMock([EMSEndpoint class])];
+                                                            endpoint:OCMClassMock([EMSEndpoint class])
+                                                             storage:self.mockStorage];
         XCTFail(@"Expected Exception when contactResponseHandler is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactResponseHandler");
@@ -90,10 +96,30 @@
                                                           restClient:self.mockRestClient
                                                       requestFactory:self.mockRequestFactory
                                               contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
-                                                            endpoint:nil];
+                                                            endpoint:nil
+                                                             storage:self.mockStorage];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
+    }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSCompletionProxyFactory alloc] initWithRequestRepository:OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol))
+                                                      operationQueue:OCMClassMock([NSOperationQueue class])
+                                                 defaultSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                 }
+                                                   defaultErrorBlock:^(NSString *requestId, NSError *error) {
+                                                   }
+                                                          restClient:self.mockRestClient
+                                                      requestFactory:self.mockRequestFactory
+                                              contactResponseHandler:OCMClassMock([EMSContactTokenResponseHandler class])
+                                                            endpoint:OCMClassMock([EMSEndpoint class])
+                                                             storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: storage");
     }
 }
 
@@ -113,7 +139,8 @@
                                                                                            restClient:self.mockRestClient
                                                                                        requestFactory:self.mockRequestFactory
                                                                                contactResponseHandler:self.mockContactTokenResponseHandler
-                                                                                             endpoint:OCMClassMock([EMSEndpoint class])];
+                                                                                             endpoint:OCMClassMock([EMSEndpoint class])
+                                                                                              storage:self.mockStorage];
     EMSRESTClientCompletionProxyFactory *parentFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:repository
                                                                                                                  operationQueue:operationQueue
                                                                                                             defaultSuccessBlock:successBlock

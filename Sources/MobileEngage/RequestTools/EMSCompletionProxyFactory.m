@@ -5,6 +5,7 @@
 #import "EMSCompletionProxyFactory.h"
 #import "EMSMobileEngageRefreshTokenCompletionProxy.h"
 #import "EMSContactTokenResponseHandler.h"
+#import "EMSStorage.h"
 
 @interface EMSCompletionProxyFactory ()
 
@@ -12,6 +13,7 @@
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *contactResponseHandler;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) EMSStorage *storage;
 
 @end
 
@@ -24,11 +26,13 @@
                                restClient:(EMSRESTClient *)restClient
                            requestFactory:(EMSRequestFactory *)requestFactory
                    contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
-                                 endpoint:(EMSEndpoint *)endpoint {
+                                 endpoint:(EMSEndpoint *)endpoint
+                                  storage:(EMSStorage *)storage {
     NSParameterAssert(restClient);
     NSParameterAssert(requestFactory);
     NSParameterAssert(contactResponseHandler);
     NSParameterAssert(endpoint);
+    NSParameterAssert(storage);
     if (self = [super initWithRequestRepository:requestRepository
                                  operationQueue:operationQueue
                             defaultSuccessBlock:defaultSuccessBlock
@@ -37,6 +41,7 @@
         _requestFactory = requestFactory;
         _contactResponseHandler = contactResponseHandler;
         _endpoint = endpoint;
+        _storage = storage;
     }
     return self;
 }
@@ -51,7 +56,8 @@
                                                                             restClient:self.restClient
                                                                         requestFactory:self.requestFactory
                                                                 contactResponseHandler:self.contactResponseHandler
-                                                                              endpoint:self.endpoint];
+                                                                              endpoint:self.endpoint
+                                                                               storage:self.storage];
 }
 
 @end

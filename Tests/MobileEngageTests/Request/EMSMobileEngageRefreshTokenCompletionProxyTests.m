@@ -12,6 +12,7 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "NSError+EMSCore.h"
+#import "EMSStorage.h"
 
 @interface EMSMobileEngageRefreshTokenCompletionProxyTests : XCTestCase
 
@@ -22,6 +23,7 @@
 @property(nonatomic, strong) NSError *error;
 @property(nonatomic, strong) EMSMobileEngageRefreshTokenCompletionProxy *refreshCompletionProxy;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 
 @end
 
@@ -31,6 +33,7 @@
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockResponseHandler = OCMClassMock([EMSContactTokenResponseHandler class]);
+    _mockStorage = OCMClassMock([EMSStorage class]);
     _error = [NSError errorWithCode:500
                localizedDescription:@"customError"];
 
@@ -52,7 +55,8 @@
                                                                                                restClient:self.mockRestClient
                                                                                            requestFactory:self.mockRequestFactory
                                                                                    contactResponseHandler:self.mockResponseHandler
-                                                                                                 endpoint:self.endpoint];
+                                                                                                 endpoint:self.endpoint
+                                                                                                  storage:self.mockStorage];
 }
 
 - (void)testInit_completionProxy_mustNotBeNil {
@@ -61,7 +65,8 @@
                                                                          restClient:self.mockRestClient
                                                                      requestFactory:self.mockRequestFactory
                                                              contactResponseHandler:self.mockResponseHandler
-                                                                           endpoint:OCMClassMock([EMSEndpoint class])];
+                                                                           endpoint:OCMClassMock([EMSEndpoint class])
+                                                                            storage:self.mockStorage];
         XCTFail(@"Expected Exception when completionProxy is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: completionProxy"]);
@@ -74,7 +79,8 @@
                                                                          restClient:nil
                                                                      requestFactory:self.mockRequestFactory
                                                              contactResponseHandler:self.mockResponseHandler
-                                                                           endpoint:OCMClassMock([EMSEndpoint class])];
+                                                                           endpoint:OCMClassMock([EMSEndpoint class])
+                                                                            storage:self.mockStorage];
         XCTFail(@"Expected Exception when restClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: restClient"]);
@@ -87,7 +93,8 @@
                                                                          restClient:self.mockRestClient
                                                                      requestFactory:nil
                                                              contactResponseHandler:self.mockResponseHandler
-                                                                           endpoint:OCMClassMock([EMSEndpoint class])];
+                                                                           endpoint:OCMClassMock([EMSEndpoint class])
+                                                                            storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestFactory"]);
@@ -100,7 +107,8 @@
                                                                          restClient:self.mockRestClient
                                                                      requestFactory:self.mockRequestFactory
                                                              contactResponseHandler:nil
-                                                                           endpoint:OCMClassMock([EMSEndpoint class])];
+                                                                           endpoint:OCMClassMock([EMSEndpoint class])
+                                                                            storage:self.mockStorage];
         XCTFail(@"Expected Exception when contactResponseHandler is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: contactResponseHandler"]);
@@ -113,10 +121,25 @@
                                                                          restClient:self.mockRestClient
                                                                      requestFactory:self.mockRequestFactory
                                                              contactResponseHandler:self.mockResponseHandler
-                                                                           endpoint:nil];
+                                                                           endpoint:nil
+                                                                            storage:self.mockStorage];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
+    }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSMobileEngageRefreshTokenCompletionProxy alloc] initWithCompletionProxy:self.mockCompletionProxy
+                                                                         restClient:self.mockRestClient
+                                                                     requestFactory:self.mockRequestFactory
+                                                             contactResponseHandler:self.mockResponseHandler
+                                                                           endpoint:OCMClassMock([EMSEndpoint class])
+                                                                            storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: storage"]);
     }
 }
 
@@ -175,6 +198,8 @@
     OCMVerify([self.mockRequestFactory createRefreshTokenRequestModel]);
     OCMVerify([self.mockRestClient executeWithRequestModel:requestModelForRefresh
                                        coreCompletionProxy:self.refreshCompletionProxy]);
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
     XCTAssertEqualObjects(self.refreshCompletionProxy.originalRequestModel, requestModel);
 }
 
@@ -217,10 +242,10 @@
 
 - (EMSRequestModel *)generateRequestModelWithUrlString:(NSString *)url {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:url];
-            [builder setMethod:HTTPMethodPOST];
-            [builder setPayload:@{@"payloadKey": @"payloadValue"}];
-        }
+                [builder setUrl:url];
+                [builder setMethod:HTTPMethodPOST];
+                [builder setPayload:@{@"payloadKey": @"payloadValue"}];
+            }
                           timestampProvider:[EMSTimestampProvider new]
                                uuidProvider:[EMSUUIDProvider new]];
 }
