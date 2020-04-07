@@ -59,21 +59,30 @@
 
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(EMSCompletionBlock)completionBlock {
-    _deviceToken = pushToken;
-    NSString *deviceToken = [self.deviceToken deviceTokenString];
-    EMSRequestModel *requestModel;
-    if (deviceToken && [deviceToken length] > 0) {
-        requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:deviceToken];
-        [self.requestManager submitRequestModel:requestModel
-                            withCompletionBlock:^(NSError *error) {
-                                if (!error) {
-                                    [self.storage setData:pushToken
-                                                   forKey:@"EMSPushTokenKey"];
-                                }
-                                if (completionBlock) {
-                                    completionBlock(error);
-                                }
-                            }];
+    NSData *storedToken = [self.storage dataForKey:@"EMSPushTokenKey"];
+    if (storedToken && storedToken == pushToken) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completionBlock) {
+                completionBlock(nil);
+            }
+        });
+    } else {
+        _deviceToken = pushToken;
+        NSString *deviceToken = [self.deviceToken deviceTokenString];
+        EMSRequestModel *requestModel;
+        if (deviceToken && [deviceToken length] > 0) {
+            requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:deviceToken];
+            [self.requestManager submitRequestModel:requestModel
+                                withCompletionBlock:^(NSError *error) {
+                                    if (!error) {
+                                        [self.storage setData:pushToken
+                                                       forKey:@"EMSPushTokenKey"];
+                                    }
+                                    if (completionBlock) {
+                                        completionBlock(error);
+                                    }
+                                }];
+        }
     }
 }
 

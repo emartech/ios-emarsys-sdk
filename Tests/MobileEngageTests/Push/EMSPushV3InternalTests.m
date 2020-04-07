@@ -253,6 +253,28 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
+- (void)testSetPushToken_shouldNotSendRequest_whenTokenAlreadyStored_callbackOnMainQueue {
+    NSData *pushToken = [@"testPushTokenData" dataUsingEncoding:NSUTF8StringEncoding];
+
+    OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                      withCompletionBlock:[OCMArg any]]);
+
+    OCMStub([self.mockStorage dataForKey:@"EMSPushTokenKey"]).andReturn(pushToken);
+
+    __block NSOperationQueue *returnedQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.push setPushToken:pushToken
+            completionBlock:^(NSError *error) {
+                returnedQueue = [NSOperationQueue currentQueue];
+                [expectation fulfill];
+            }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedQueue, [NSOperationQueue mainQueue]);
+}
+
 - (void)testClearPushToken {
     id partialMockPush = OCMPartialMock(self.push);
 
