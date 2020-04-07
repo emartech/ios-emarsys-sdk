@@ -337,7 +337,8 @@
 
     _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                requestManager:self.requestManager
-                                                               requestContext:self.requestContext];
+                                                               requestContext:self.requestContext
+                                                                      storage:self.storage];
 
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                        mobileEngage:self.mobileEngage];

@@ -7,11 +7,13 @@
 @class EMSRequestFactory;
 @class EMSRequestManager;
 @class MERequestContext;
+@class EMSStorage;
 
 @interface EMSMobileEngageV3Internal : NSObject <EMSMobileEngageProtocol>
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                        requestContext:(MERequestContext *)requestContext;
+                        requestContext:(MERequestContext *)requestContext
+                               storage:(EMSStorage *)storage;
 
 @end

@@ -10,6 +10,7 @@
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
+#import "EMSStorage.h"
 
 @interface EMSMobileEngageV3InternalTests : XCTestCase
 
@@ -17,6 +18,7 @@
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
@@ -35,7 +37,7 @@
     _contactFieldValue = @"testContactFieldValue";
     _eventName = @"testEventName";
     _eventAttributes = @{
-        @"TestKey": @"TestValue"
+            @"TestKey": @"TestValue"
     };
     _completionBlock = ^(NSError *error) {
     };
@@ -43,17 +45,20 @@
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    _mockStorage = OCMClassMock([EMSStorage class]);
 
     _internal = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                            requestManager:self.mockRequestManager
-                                                           requestContext:self.mockRequestContext];
+                                                           requestContext:self.mockRequestContext
+                                                                  storage:self.mockStorage];
 }
 
 - (void)testInit_requestFactory_mustNotBeNil {
     @try {
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:nil
                                                    requestManager:self.mockRequestManager
-                                                   requestContext:self.mockRequestContext];
+                                                   requestContext:self.mockRequestContext
+                                                          storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -64,22 +69,35 @@
     @try {
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                    requestManager:nil
-                                                   requestContext:self.mockRequestContext];
+                                                   requestContext:self.mockRequestContext
+                                                          storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
     }
 }
 
-
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                    requestManager:self.mockRequestManager
-                                                   requestContext:nil];
+                                                   requestContext:nil
+                                                          storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
+    }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                   requestManager:self.mockRequestManager
+                                                   requestContext:self.mockRequestContext
+                                                          storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: storage");
     }
 }
 
@@ -127,6 +145,8 @@
 
     [partialMockInternal clearContactWithCompletionBlock:self.completionBlock];
 
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
     OCMVerify([partialMockInternal setContactWithContactFieldValue:nil
                                                    completionBlock:self.completionBlock]);
 }
@@ -183,8 +203,9 @@
 
 - (EMSRequestModel *)createRequestModel {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://www.emarsys.com"];
-        }                 timestampProvider:self.timestampProvider
+                [builder setUrl:@"https://www.emarsys.com"];
+            }
+                          timestampProvider:self.timestampProvider
                                uuidProvider:self.uuidProvider];
 }
 
