@@ -244,6 +244,33 @@
     XCTAssertEqual(self.logger.logLevel, LogLevelError);
 }
 
+- (void)testShouldNotLog_whenLogLevelOfLogEntry_isBelowOfLogLevel {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    OCMReject([partialMockRepository add:[self shardWithLogLevel:LogLevelInfo]]);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
+
+    [logger setLogLevel:LogLevelWarn];
+
+    [logger log:self.mockLogEntry
+          level:LogLevelInfo];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:0.5];
+    XCTAssertEqual(waiterResult, XCTWaiterResultTimedOut);
+}
+
 - (EMSShard *)shardWithLogLevel:(LogLevel)level {
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     if (level == LogLevelDebug) {
