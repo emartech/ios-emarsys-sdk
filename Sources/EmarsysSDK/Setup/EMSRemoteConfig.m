@@ -11,7 +11,8 @@
                mobileEngageV2Service:(NSString *)mobileEngageV2Service
                      deepLinkService:(NSString *)deepLinkService
                         inboxService:(NSString *)inboxService
-               v3MessageInboxService:(NSString *)v3MessageInboxService {
+               v3MessageInboxService:(NSString *)v3MessageInboxService
+                            logLevel:(NSString *)logLevel {
     if (self = [super init]) {
         _eventService = eventService;
         _clientService = clientService;
@@ -20,6 +21,7 @@
         _deepLinkService = deepLinkService;
         _inboxService = inboxService;
         _v3MessageInboxService = v3MessageInboxService;
+        _logLevel = logLevel;
     }
     return self;
 }
@@ -52,6 +54,8 @@
         return NO;
     if (self.v3MessageInboxService != config.v3MessageInboxService && ![self.v3MessageInboxService isEqualToString:config.v3MessageInboxService])
         return NO;
+    if (self.logLevel != config.logLevel && ![self.logLevel isEqualToString:config.logLevel])
+        return NO;
     return YES;
 }
 
@@ -63,6 +67,7 @@
     hash = hash * 31u + [self.deepLinkService hash];
     hash = hash * 31u + [self.inboxService hash];
     hash = hash * 31u + [self.v3MessageInboxService hash];
+    hash = hash * 31u + [self.logLevel hash];
     return hash;
 }
 

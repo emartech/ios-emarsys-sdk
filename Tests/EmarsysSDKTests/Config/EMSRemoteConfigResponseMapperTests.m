@@ -25,7 +25,8 @@
                                 "                \"deepLinkService\":\"https://testDeepLinkService.url\",\n"
                                 "                \"inboxService\":\"https://testinboxService.url\",\n"
                                 "                \"v3MessageInboxService\":\"https://testv3MessageInboxService.url\"\n"
-                                "        }\n"
+                                "        },\n"
+                                "        \"logLevel\":\"verbose\"\n"
                                 "    }";
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
                                                                                                                     statusCode:200
@@ -40,7 +41,8 @@
                                                               mobileEngageV2Service:@"https://testMobileEngageV2Service.url"
                                                                     deepLinkService:@"https://testDeepLinkService.url"
                                                                        inboxService:@"https://testinboxService.url"
-                                                              v3MessageInboxService:@"https://testv3MessageInboxService.url"];
+                                                              v3MessageInboxService:@"https://testv3MessageInboxService.url"
+                                                                           logLevel:@"verbose"];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 

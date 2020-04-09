@@ -8,7 +8,8 @@
 @implementation EMSRemoteConfigResponseMapper
 
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
-    NSDictionary *serviceUrls = [responseModel parsedBody][@"serviceUrls"];
+    NSDictionary *parsedBody = [responseModel parsedBody];
+    NSDictionary *serviceUrls = parsedBody[@"serviceUrls"];
 
     return [[EMSRemoteConfig alloc] initWithEventService:serviceUrls[@"eventService"]
                                            clientService:serviceUrls[@"clientService"]
@@ -16,7 +17,8 @@
                                    mobileEngageV2Service:serviceUrls[@"mobileEngageV2Service"]
                                          deepLinkService:serviceUrls[@"deepLinkService"]
                                             inboxService:serviceUrls[@"inboxService"]
-                                   v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]];
+                                   v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]
+                                                logLevel:parsedBody[@"logLevel"]];
 }
 
 @end
