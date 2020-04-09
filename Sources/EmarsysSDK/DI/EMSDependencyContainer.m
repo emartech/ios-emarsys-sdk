@@ -219,7 +219,8 @@
     _logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                           opertaionQueue:self.operationQueue
                                        timestampProvider:timestampProvider
-                                            uuidProvider:uuidProvider];
+                                            uuidProvider:uuidProvider
+                                                 storage:NULL];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
 

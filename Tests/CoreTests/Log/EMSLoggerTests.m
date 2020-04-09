@@ -8,6 +8,8 @@
 #import "EMSShard.h"
 #import "FakeShardRepository.h"
 #import "EMSWaiter.h"
+#import "EMSStorage.h"
+#import "EMSRemoteConfig.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -17,8 +19,10 @@
 @property(nonatomic, strong) NSString *shardId;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *mockUuidProvider;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) id mockLogEntry;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
+@property(nonatomic, strong) EMSLogger *logger;
 
 @end
 
@@ -34,6 +38,8 @@
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.timestamp);
     _mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
     OCMStub([self.mockUuidProvider provideUUIDString]).andReturn(self.shardId);
+    _mockStorage = OCMClassMock([EMSStorage class]);
+    OCMStub([self.mockStorage numberForKey:@"EMSLogLevelKey"]).andReturn(@(LogLevelDebug));
 
     id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
 
@@ -44,6 +50,12 @@
 
     _operationQueue = [NSOperationQueue new];
     self.operationQueue.name = @"operationQueueForTesting";
+
+    _logger = [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
+                                          opertaionQueue:self.operationQueue
+                                       timestampProvider:self.mockTimestampProvider
+                                            uuidProvider:self.mockUuidProvider
+                                                 storage:self.mockStorage];
 }
 
 - (void)tearDown {
@@ -54,6 +66,7 @@
     _mockTimestampProvider = nil;
     _mockUuidProvider = nil;
     _mockLogEntry = nil;
+    _mockStorage = nil;
     _operationQueue = nil;
 }
 
@@ -62,7 +75,8 @@
         [[EMSLogger alloc] initWithShardRepository:nil
                                     opertaionQueue:self.operationQueue
                                  timestampProvider:self.mockTimestampProvider
-                                      uuidProvider:self.mockUuidProvider];
+                                      uuidProvider:self.mockUuidProvider
+                                           storage:self.mockStorage];
         XCTFail(@"Expected Exception when shardRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: shardRepository"]);
@@ -74,7 +88,8 @@
         [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:nil
                                  timestampProvider:self.mockTimestampProvider
-                                      uuidProvider:self.mockUuidProvider];
+                                      uuidProvider:self.mockUuidProvider
+                                           storage:self.mockStorage];
         XCTFail(@"Expected Exception when operationQueue is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: operationQueue"]);
@@ -86,7 +101,8 @@
         [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:self.operationQueue
                                  timestampProvider:nil
-                                      uuidProvider:self.mockUuidProvider];
+                                      uuidProvider:self.mockUuidProvider
+                                           storage:self.mockStorage];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: timestampProvider"]);
@@ -98,11 +114,29 @@
         [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                     opertaionQueue:self.operationQueue
                                  timestampProvider:self.mockTimestampProvider
-                                      uuidProvider:nil];
+                                      uuidProvider:nil
+                                           storage:self.mockStorage];
         XCTFail(@"Expected Exception when uuidProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: uuidProvider"]);
     }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
+                                    opertaionQueue:self.operationQueue
+                                 timestampProvider:self.mockTimestampProvider
+                                      uuidProvider:self.mockUuidProvider
+                                           storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: storage"]);
+    }
+}
+
+- (void)testInit_shouldSetStoredLogLevel {
+    XCTAssertEqual(self.logger.logLevel, LogLevelDebug);
 }
 
 - (void)testLogShouldInsertEntryToShardRepository {
@@ -117,7 +151,8 @@
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
                                                     opertaionQueue:self.operationQueue
                                                  timestampProvider:self.mockTimestampProvider
-                                                      uuidProvider:self.mockUuidProvider];
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
 
     [logger log:self.mockLogEntry
           level:LogLevelError];
@@ -141,7 +176,8 @@
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                                     opertaionQueue:self.operationQueue
                                                  timestampProvider:self.mockTimestampProvider
-                                                      uuidProvider:self.mockUuidProvider];
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
 
     [logger log:self.mockLogEntry
           level:LogLevelError];
@@ -167,7 +203,8 @@
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
                                                     opertaionQueue:self.operationQueue
                                                  timestampProvider:self.mockTimestampProvider
-                                                      uuidProvider:self.mockUuidProvider];
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
 
 
     id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
@@ -180,6 +217,31 @@
 
     [XCTWaiter waitForExpectations:@[expectation]
                            timeout:1];
+}
+
+- (void)testUpdate {
+    EMSRemoteConfig *remoteConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
+                                                                    clientService:nil
+                                                                   predictService:nil
+                                                            mobileEngageV2Service:nil
+                                                                  deepLinkService:nil
+                                                                     inboxService:nil
+                                                            v3MessageInboxService:nil
+                                                                         logLevel:LogLevelDebug];
+
+    [self.logger updateWithRemoteConfig:remoteConfig];
+
+    OCMVerify([self.mockStorage setNumber:@(LogLevelDebug)
+                                   forKey:@"EMSLogLevelKey"]);
+    XCTAssertEqual(self.logger.logLevel, LogLevelDebug);
+}
+
+- (void)testReset {
+    [self.logger reset];
+
+    OCMVerify([self.mockStorage setNumber:nil
+                                   forKey:@"EMSLogLevelKey"]);
+    XCTAssertEqual(self.logger.logLevel, LogLevelError);
 }
 
 - (EMSShard *)shardWithLogLevel:(LogLevel)level {
