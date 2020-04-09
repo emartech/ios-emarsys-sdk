@@ -18,7 +18,23 @@
                                          deepLinkService:serviceUrls[@"deepLinkService"]
                                             inboxService:serviceUrls[@"inboxService"]
                                    v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]
-                                                logLevel:parsedBody[@"logLevel"]];
+                                                logLevel:[self logLevelFromRawLogLevel:parsedBody[@"logLevel"]]];
+}
+
+- (LogLevel)logLevelFromRawLogLevel:(NSString *)rawLogLevel {
+    LogLevel result = LogLevelError;
+    if ([rawLogLevel.lowercaseString isEqualToString:@"trace"]) {
+        result = LogLevelTrace;
+    } else if ([rawLogLevel.lowercaseString isEqualToString:@"debug"]) {
+        result = LogLevelDebug;
+    } else if ([rawLogLevel.lowercaseString isEqualToString:@"info"]) {
+        result = LogLevelInfo;
+    } else if ([rawLogLevel.lowercaseString isEqualToString:@"warn"]) {
+        result = LogLevelWarn;
+    } else if ([rawLogLevel.lowercaseString isEqualToString:@"error"]) {
+        result = LogLevelError;
+    }
+    return result;
 }
 
 @end

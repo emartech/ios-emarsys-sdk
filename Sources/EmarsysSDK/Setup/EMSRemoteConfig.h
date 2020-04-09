@@ -2,6 +2,7 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+#import "EMSLogger.h"
 
 @interface EMSRemoteConfig : NSObject
 
@@ -12,7 +13,7 @@
 @property(nonatomic, strong) NSString *deepLinkService;
 @property(nonatomic, strong) NSString *inboxService;
 @property(nonatomic, strong) NSString *v3MessageInboxService;
-@property(nonatomic, strong) NSString *logLevel;
+@property(nonatomic, assign) LogLevel logLevel;
 
 - (instancetype)initWithEventService:(NSString *)eventService
                        clientService:(NSString *)clientService
@@ -21,6 +22,6 @@
                      deepLinkService:(NSString *)deepLinkService
                         inboxService:(NSString *)inboxService
                v3MessageInboxService:(NSString *)v3MessageInboxService
-                            logLevel:(NSString *)logLevel;
+                            logLevel:(LogLevel)logLevel;
 
 @end

@@ -7,8 +7,10 @@
 #import "EMSUUIDProvider.h"
 
 typedef enum {
+    LogLevelTrace,
     LogLevelDebug,
     LogLevelInfo,
+    LogLevelWarn,
     LogLevelError
 } LogLevel;
 

@@ -42,7 +42,45 @@
                                                                     deepLinkService:@"https://testDeepLinkService.url"
                                                                        inboxService:@"https://testinboxService.url"
                                                               v3MessageInboxService:@"https://testv3MessageInboxService.url"
-                                                                           logLevel:@"verbose"];
+                                                                           logLevel:LogLevelError];
+
+    EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
+
+    XCTAssertEqualObjects(remoteConfig, expectedConfig);
+}
+
+- (void)testMap_logLevel {
+    NSArray *logLevels = @[@"trace", @"Debug", @"inFO", @"warN", @"ERROR"];
+    NSArray *expectedLogLevels = @[@(LogLevelTrace), @(LogLevelDebug), @(LogLevelInfo), @(LogLevelWarn), @(LogLevelError)];
+
+    for (NSUInteger i = 0; i < [logLevels count]; i++) {
+        [self assertForRawLogLevel:logLevels[i]
+                          logLevel:(LogLevel) [expectedLogLevels[i] intValue]];
+    }
+}
+
+- (void)assertForRawLogLevel:(NSString *)rawLogLevel
+                    logLevel:(LogLevel)logLevel {
+    EMSRemoteConfigResponseMapper *mapper = [EMSRemoteConfigResponseMapper new];
+    NSString *responseRawJson = [NSString stringWithFormat:@"{\n"
+                                                           "        \"logLevel\":\"%@\"\n"
+                                                           "    }",
+                                                           rawLogLevel];
+    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                                                                                                    statusCode:200
+                                                                                                                   HTTPVersion:nil
+                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
+                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
+                                                                           requestModel:OCMClassMock([EMSRequestModel class])
+                                                                              timestamp:[NSDate date]];
+    EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
+                                                                      clientService:nil
+                                                                     predictService:nil
+                                                              mobileEngageV2Service:nil
+                                                                    deepLinkService:nil
+                                                                       inboxService:nil
+                                                              v3MessageInboxService:nil
+                                                                           logLevel:logLevel];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 

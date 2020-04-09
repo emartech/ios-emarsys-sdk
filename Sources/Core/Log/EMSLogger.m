@@ -43,17 +43,21 @@
     if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint])) {
         [self.operationQueue addOperationWithBlock:^{
             [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                    [builder setType:[entry topic]];
-                    NSMutableDictionary *mutableData = [entry.data mutableCopy];
-                    if (level == LogLevelDebug) {
-                        mutableData[@"level"] = @"DEBUG";
-                    } else if (level == LogLevelInfo) {
-                        mutableData[@"level"] = @"INFO";
-                    } else if (level == LogLevelError) {
-                        mutableData[@"level"] = @"ERROR";
+                        [builder setType:[entry topic]];
+                        NSMutableDictionary *mutableData = [entry.data mutableCopy];
+                        if (level == LogLevelTrace) {
+                            mutableData[@"level"] = @"TRACE";
+                        } else if (level == LogLevelDebug) {
+                            mutableData[@"level"] = @"DEBUG";
+                        } else if (level == LogLevelInfo) {
+                            mutableData[@"level"] = @"INFO";
+                        } else if (level == LogLevelWarn) {
+                            mutableData[@"level"] = @"WARN";
+                        } else if (level == LogLevelError) {
+                            mutableData[@"level"] = @"ERROR";
+                        }
+                        [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
                     }
-                    [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
-                }
                                               timestampProvider:self.timestampProvider
                                                    uuidProvider:self.uuidProvider]];
 
