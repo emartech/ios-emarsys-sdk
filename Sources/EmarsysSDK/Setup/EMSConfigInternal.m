@@ -13,6 +13,7 @@
 #import "EMSEmarsysRequestFactory.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
+#import "EMSLogger.h"
 
 @interface EMSConfigInternal ()
 
@@ -25,6 +26,7 @@
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSEmarsysRequestFactory *emarsysRequestFactory;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
 @property(nonatomic, strong) NSNumber *updatedContactFieldId;
 @property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
@@ -41,7 +43,8 @@
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
-                              endpoint:(EMSEndpoint *)endpoint {
+                              endpoint:(EMSEndpoint *)endpoint
+                                logger:(EMSLogger *)logger {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
@@ -51,6 +54,7 @@
     NSParameterAssert(emarsysRequestFactory);
     NSParameterAssert(remoteConfigResponseMapper);
     NSParameterAssert(endpoint);
+    NSParameterAssert(logger);
 
     if (self = [super init]) {
         _requestManager = requestManager;
@@ -62,6 +66,7 @@
         _emarsysRequestFactory = emarsysRequestFactory;
         _remoteConfigResponseMapper = remoteConfigResponseMapper;
         _endpoint = endpoint;
+        _logger = logger;
     }
     return self;
 }
@@ -73,11 +78,13 @@
                                       if (response) {
                                           EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
                                           [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
+                                          [self.logger updateWithRemoteConfig:remoteConfig];
                                       }
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
                                         if (error) {
                                             [self.endpoint reset];
+                                            [self.logger reset];
                                         }
                                     }];
 }

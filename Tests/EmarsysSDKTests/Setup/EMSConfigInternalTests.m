@@ -18,6 +18,7 @@
 #import "EMSResponseModel.h"
 #import "EMSRemoteConfig.h"
 #import "EMSUUIDProvider.h"
+#import "EMSLogger.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -43,6 +44,7 @@
 @property(nonatomic, strong) NSData *deviceToken;
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *mockResponseMapper;
 @property(nonatomic, strong) EMSEndpoint *mockEndpoint;
+@property(nonatomic, strong) EMSLogger *mockLogger;
 
 @end
 
@@ -64,6 +66,7 @@
     _mockEmarsysRequestFactory = OCMClassMock([EMSEmarsysRequestFactory class]);
     _mockResponseMapper = OCMClassMock([EMSRemoteConfigResponseMapper class]);
     _mockEndpoint = OCMClassMock([EMSEndpoint class]);
+    _mockLogger = OCMClassMock([EMSLogger class]);
 
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -76,7 +79,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -89,7 +93,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -106,7 +111,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: meRequestContext");
@@ -123,7 +129,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
@@ -140,7 +147,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when pushInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
@@ -157,7 +165,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: preRequestContext");
@@ -174,7 +183,8 @@
                                                deviceInfo:nil
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
@@ -191,7 +201,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:nil
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when emarsysRequestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: emarsysRequestFactory");
@@ -208,7 +219,8 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:nil
-                                                 endpoint:self.mockEndpoint];
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when remoteConfigResponseMapper is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: remoteConfigResponseMapper");
@@ -225,10 +237,29 @@
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                 endpoint:nil];
+                                                 endpoint:nil
+                                                   logger:self.mockLogger];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
+    }
+}
+
+- (void)testInit_logger_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory
+                               remoteConfigResponseMapper:self.mockResponseMapper
+                                                 endpoint:self.mockEndpoint
+                                                   logger:nil];
+        XCTFail(@"Expected Exception when logger is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: logger");
     }
 }
 
@@ -244,7 +275,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -298,7 +330,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -348,11 +381,13 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError, nil])]);
+    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
+                                                                                                 nil])]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -395,12 +430,14 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
-                                 completionBlock:([OCMArg invokeBlockWithArgs:inputError, nil])]);
+                                 completionBlock:([OCMArg invokeBlockWithArgs:inputError,
+                                                                              nil])]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
 
@@ -456,7 +493,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:nil
@@ -487,7 +525,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -529,7 +568,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -574,7 +614,8 @@
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
-                                                               endpoint:self.mockEndpoint];
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
@@ -686,6 +727,7 @@
     fakeRequestManager.errorBlock(@"testRequestId", error);
 
     OCMVerify([self.mockEndpoint reset]);
+    OCMVerify([self.mockLogger reset]);
 }
 
 - (void)testRefreshConfig_successBlock {
@@ -699,7 +741,7 @@
     OCMVerify([self.mockResponseMapper map:mockResponse]);
 }
 
-- (void)testRefreshConfig_successBlock_callsEndpointUpdate_withNewConfig {
+- (void)testRefreshConfig_successBlock_callsUpdate_withNewConfig {
     EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
@@ -710,6 +752,7 @@
     fakeRequestManager.successBlock(@"testRequestId", mockResponse);
 
     OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
+    OCMVerify([self.mockLogger updateWithRemoteConfig:config]);
 }
 
 - (FakeRequestManager *)setupFakeRequestManagerForFetchRemoteConfig {
@@ -725,7 +768,8 @@
                                                                                deviceInfo:self.mockDeviceInfo
                                                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                                                remoteConfigResponseMapper:self.mockResponseMapper
-                                                                                 endpoint:self.mockEndpoint];
+                                                                                 endpoint:self.mockEndpoint
+                                                                                   logger:self.mockLogger];
     [configInternal refreshConfigFromRemoteConfig];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]

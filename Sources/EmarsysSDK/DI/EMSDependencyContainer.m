@@ -220,7 +220,7 @@
                                           opertaionQueue:self.operationQueue
                                        timestampProvider:timestampProvider
                                             uuidProvider:uuidProvider
-                                                 storage:NULL];
+                                                 storage:self.storage];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
 
@@ -385,7 +385,8 @@
                                                      deviceInfo:deviceInfo
                                           emarsysRequestFactory:emarsysRequestFactory
                                      remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
-                                                       endpoint:endpoint];
+                                                       endpoint:endpoint
+                                                         logger:self.logger];
 
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
