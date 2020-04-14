@@ -4,8 +4,18 @@
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSRemoteConfig.h"
 #import "EMSResponseModel.h"
+#import "EMSRandomProvider.h"
 
 @implementation EMSRemoteConfigResponseMapper
+- (instancetype)initWithRandomProvider:(EMSRandomProvider *)randomProvider {
+    NSParameterAssert(randomProvider);
+
+    if (self = [super init]) {
+        _randomProvider = randomProvider;
+    }
+    return self;
+}
+
 
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
     NSDictionary *parsedBody = [responseModel parsedBody];
@@ -28,8 +38,8 @@
                 withThreshold:(NSNumber *)threshold
             withLuckyLogLevel:(NSString *)luckyLogLevel {
     LogLevel result = [self logLevelFromRawLogLevel:defaultLogLevel];
-    NSNumber *randomValue = @((double) arc4random() / UINT32_MAX);
-    if ([randomValue doubleValue] <= [threshold doubleValue]) {
+    NSNumber *randomValue = [[self randomProvider] provideDoubleUntil:@1];
+    if ([threshold doubleValue] != 0 && [randomValue doubleValue] <= [threshold doubleValue]) {
         result = [self logLevelFromRawLogLevel:luckyLogLevel];
     }
     return result;

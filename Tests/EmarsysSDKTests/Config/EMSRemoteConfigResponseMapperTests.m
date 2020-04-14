@@ -14,6 +14,15 @@
 
 @implementation EMSRemoteConfigResponseMapperTests
 
+- (void)testInit_randomProvider_mustNotBeNil {
+    @try {
+        [[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:nil];
+        XCTFail(@"Expected Exception when randomProvider is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: randomProvider");
+    }
+}
+
 - (void)testMap {
     EMSRemoteConfigResponseMapper *mapper = [EMSRemoteConfigResponseMapper new];
     NSString *responseRawJson = @"{\n"

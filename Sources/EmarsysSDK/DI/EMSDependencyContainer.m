@@ -82,6 +82,7 @@
 #import "EMSInboxV3.h"
 #import "EMSInboxResultParser.h"
 #import "EMSLoggingInboxV3.h"
+#import "EMSRandomProvider.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -377,6 +378,7 @@
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:uuidProvider];
+    EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     _config = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
                                                meRequestContext:self.requestContext
                                               preRequestContext:self.predictRequestContext
@@ -384,7 +386,7 @@
                                                    pushInternal:self.push
                                                      deviceInfo:deviceInfo
                                           emarsysRequestFactory:emarsysRequestFactory
-                                     remoteConfigResponseMapper:[EMSRemoteConfigResponseMapper new]
+                                     remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
                                                        endpoint:endpoint
                                                          logger:self.logger];
 
