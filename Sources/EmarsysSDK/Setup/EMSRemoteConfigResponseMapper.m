@@ -10,6 +10,7 @@
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
     NSDictionary *parsedBody = [responseModel parsedBody];
     NSDictionary *serviceUrls = parsedBody[@"serviceUrls"];
+    NSDictionary *luckyLog = parsedBody[@"luckyLogger"];
 
     return [[EMSRemoteConfig alloc] initWithEventService:serviceUrls[@"eventService"]
                                            clientService:serviceUrls[@"clientService"]
@@ -18,8 +19,22 @@
                                          deepLinkService:serviceUrls[@"deepLinkService"]
                                             inboxService:serviceUrls[@"inboxService"]
                                    v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]
-                                                logLevel:[self logLevelFromRawLogLevel:parsedBody[@"logLevel"]]];
+                                                logLevel:[self calculateLogLevel:parsedBody[@"logLevel"]
+                                                                   withThreshold:luckyLog[@"threshold"]
+                                                               withLuckyLogLevel:luckyLog[@"logLevel"]]];
 }
+
+- (LogLevel)calculateLogLevel:(NSString *)defaultLogLevel
+                withThreshold:(NSNumber *)threshold
+            withLuckyLogLevel:(NSString *)luckyLogLevel {
+    LogLevel result = [self logLevelFromRawLogLevel:defaultLogLevel];
+    NSNumber *randomValue = @((double) arc4random() / UINT32_MAX);
+    if ([randomValue doubleValue] <= [threshold doubleValue]) {
+        result = [self logLevelFromRawLogLevel:luckyLogLevel];
+    }
+    return result;
+}
+
 
 - (LogLevel)logLevelFromRawLogLevel:(NSString *)rawLogLevel {
     LogLevel result = LogLevelError;
