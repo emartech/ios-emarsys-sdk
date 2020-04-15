@@ -7,6 +7,7 @@
 #import "EMSResponseModel.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSRemoteConfig.h"
+#import "EMSRandomProvider.h"
 
 @interface EMSRemoteConfigResponseMapperTests : XCTestCase
 
@@ -59,7 +60,11 @@
 }
 
 - (void)testMap_withAlwaysLuckyLog {
-    EMSRemoteConfigResponseMapper *mapper = [EMSRemoteConfigResponseMapper new];
+    EMSRandomProvider *mockRandomProvider = OCMClassMock([EMSRandomProvider class]);
+    OCMStub([mockRandomProvider provideDoubleUntil:@1]).andReturn(@1);
+
+    EMSRemoteConfigResponseMapper *mapper = [[EMSRemoteConfigResponseMapper alloc]
+            initWithRandomProvider:mockRandomProvider];
     NSString *responseRawJson = @"{\n"
                                 "        \"logLevel\":\"error\",\n"
                                 "        \"luckyLogger\":{\n"
@@ -89,7 +94,11 @@
 }
 
 - (void)testMap_withNeverLuckyLog {
-    EMSRemoteConfigResponseMapper *mapper = [EMSRemoteConfigResponseMapper new];
+    EMSRandomProvider *mockRandomProvider = OCMClassMock([EMSRandomProvider class]);
+    OCMStub([mockRandomProvider provideDoubleUntil:@1]).andReturn(@0);
+
+    EMSRemoteConfigResponseMapper *mapper = [[EMSRemoteConfigResponseMapper alloc]
+            initWithRandomProvider:mockRandomProvider];
     NSString *responseRawJson = @"{\n"
                                 "        \"logLevel\":\"error\",\n"
                                 "        \"luckyLogger\":{\n"
@@ -112,6 +121,40 @@
                                                                        inboxService:nil
                                                               v3MessageInboxService:nil
                                                                            logLevel:LogLevelError];
+
+    EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
+
+    XCTAssertEqualObjects(remoteConfig, expectedConfig);
+}
+
+- (void)testMap_withMiddleThresholdLuckyLog {
+    EMSRandomProvider *mockRandomProvider = OCMClassMock([EMSRandomProvider class]);
+    OCMStub([mockRandomProvider provideDoubleUntil:@1]).andReturn(@0);
+
+    EMSRemoteConfigResponseMapper *mapper = [[EMSRemoteConfigResponseMapper alloc]
+            initWithRandomProvider:mockRandomProvider];
+    NSString *responseRawJson = @"{\n"
+                                "        \"logLevel\":\"error\",\n"
+                                "        \"luckyLogger\":{\n"
+                                "            \"logLevel\":\"debug\",\n"
+                                "            \"threshold\":0.5\n"
+                                "        }\n"
+                                "    }";
+    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                                                                                                    statusCode:200
+                                                                                                                   HTTPVersion:nil
+                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
+                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
+                                                                           requestModel:OCMClassMock([EMSRequestModel class])
+                                                                              timestamp:[NSDate date]];
+    EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
+                                                                      clientService:nil
+                                                                     predictService:nil
+                                                              mobileEngageV2Service:nil
+                                                                    deepLinkService:nil
+                                                                       inboxService:nil
+                                                              v3MessageInboxService:nil
+                                                                           logLevel:LogLevelDebug];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
