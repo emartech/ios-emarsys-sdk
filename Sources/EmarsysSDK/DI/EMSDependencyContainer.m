@@ -83,6 +83,7 @@
 #import "EMSInboxResultParser.h"
 #import "EMSLoggingInboxV3.h"
 #import "EMSRandomProvider.h"
+#import "EMSCrypto.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -377,7 +378,9 @@
                                              inboxResultParser:[[EMSInboxResultParser alloc] init]];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
-                                                                                                     uuidProvider:uuidProvider];
+                                                                                                     uuidProvider:uuidProvider
+                                                                                                         endpoint:endpoint
+                                                                                                   requestContext:self.requestContext];
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     _config = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
                                                meRequestContext:self.requestContext
@@ -388,7 +391,8 @@
                                           emarsysRequestFactory:emarsysRequestFactory
                                      remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
                                                        endpoint:endpoint
-                                                         logger:self.logger];
+                                                         logger:self.logger
+                                                         crypto:[[EMSCrypto alloc] initWithDerFileName:@"public"]];
 
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory

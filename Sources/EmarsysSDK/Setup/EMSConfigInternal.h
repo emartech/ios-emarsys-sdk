@@ -17,6 +17,7 @@
 @class EMSRemoteConfigResponseMapper;
 @class EMSEndpoint;
 @class EMSLogger;
+@class EMSCrypto;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
@@ -29,7 +30,8 @@
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
                               endpoint:(EMSEndpoint *)endpoint
-                                logger:(EMSLogger *)logger;
+                                logger:(EMSLogger *)logger
+                                crypto:(EMSCrypto *)crypto;
 
 - (void)refreshConfigFromRemoteConfig;
 

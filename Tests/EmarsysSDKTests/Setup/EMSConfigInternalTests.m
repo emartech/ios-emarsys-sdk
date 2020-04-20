@@ -19,11 +19,14 @@
 #import "EMSRemoteConfig.h"
 #import "EMSUUIDProvider.h"
 #import "EMSLogger.h"
+#import "EMSCrypto.h"
 
 @interface EMSConfigInternal (Tests)
 
 - (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
                   withError:(NSError *)error;
+
+- (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData;
 
 @end
 
@@ -45,6 +48,7 @@
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *mockResponseMapper;
 @property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 @property(nonatomic, strong) EMSLogger *mockLogger;
+@property(nonatomic, strong) EMSCrypto *mockCrypto;
 
 @end
 
@@ -67,6 +71,7 @@
     _mockResponseMapper = OCMClassMock([EMSRemoteConfigResponseMapper class]);
     _mockEndpoint = OCMClassMock([EMSEndpoint class]);
     _mockLogger = OCMClassMock([EMSLogger class]);
+    _mockCrypto = OCMClassMock([EMSCrypto class]);
 
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -80,7 +85,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -94,7 +100,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -112,7 +119,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: meRequestContext");
@@ -130,7 +138,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
@@ -148,7 +157,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when pushInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
@@ -166,7 +176,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: preRequestContext");
@@ -184,7 +195,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
@@ -202,7 +214,8 @@
                                     emarsysRequestFactory:nil
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when emarsysRequestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: emarsysRequestFactory");
@@ -220,7 +233,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:nil
                                                  endpoint:self.mockEndpoint
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when remoteConfigResponseMapper is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: remoteConfigResponseMapper");
@@ -238,7 +252,8 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:nil
-                                                   logger:self.mockLogger];
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
@@ -256,10 +271,30 @@
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
                                remoteConfigResponseMapper:self.mockResponseMapper
                                                  endpoint:self.mockEndpoint
-                                                   logger:nil];
+                                                   logger:nil
+                                                   crypto:self.mockCrypto];
         XCTFail(@"Expected Exception when logger is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: logger");
+    }
+}
+
+- (void)testInit_crypto_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory
+                               remoteConfigResponseMapper:self.mockResponseMapper
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger
+                                                   crypto:nil];
+        XCTFail(@"Expected Exception when crypto is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: crypto");
     }
 }
 
@@ -276,7 +311,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -331,7 +367,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -382,7 +419,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
@@ -431,7 +469,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -494,7 +533,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:nil
@@ -526,7 +566,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -569,7 +610,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -615,7 +657,8 @@
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
                                              remoteConfigResponseMapper:self.mockResponseMapper
                                                                endpoint:self.mockEndpoint
-                                                                 logger:self.mockLogger];
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
@@ -707,75 +750,127 @@
     XCTAssertEqualObjects(result, pushSettings);
 }
 
-- (void)testRefreshConfig {
-    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
-
-    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
-
-    [self.configInternal refreshConfigFromRemoteConfig];
-
-    OCMVerify([self.mockRequestManager submitRequestModelNow:mockRequestModel
-                                                successBlock:[OCMArg any]
-                                                  errorBlock:[OCMArg any]]);
-}
-
-- (void)testRefreshConfig_errorBlock {
+- (void)testRefreshConfigFromRemoteConfig_signature_error {
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
-    FakeRequestManager *fakeRequestManager = [self setupFakeRequestManagerForFetchRemoteConfig];
 
-    fakeRequestManager.errorBlock(@"testRequestId", error);
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:[OCMArg any]
+                                                errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        error,
+                                                                                        nil])]);
+
+    [self.configInternal refreshConfigFromRemoteConfig];
 
     OCMVerify([self.mockEndpoint reset]);
     OCMVerify([self.mockLogger reset]);
 }
 
-- (void)testRefreshConfig_successBlock {
+- (void)testRefreshConfigFromRemoteConfig_signature_success {
+    NSData *signatureData = [NSData new];
+
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
+    OCMStub([mockResponse body]).andReturn(signatureData);
 
-    FakeRequestManager *fakeRequestManager = [self setupFakeRequestManagerForFetchRemoteConfig];
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
 
-    fakeRequestManager.successBlock(@"testRequestId", mockResponse);
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        mockResponse,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
-    OCMVerify([self.mockResponseMapper map:mockResponse]);
+    [partialMockConfigInternal refreshConfigFromRemoteConfig];
+
+    OCMVerify([partialMockConfigInternal fetchRemoteConfigWithSignatureData:signatureData]);
 }
 
-- (void)testRefreshConfig_successBlock_callsUpdate_withNewConfig {
+- (void)testRefreshConfigFromRemoteConfig_error {
+    NSData *signatureData = [NSData new];
+
+    NSError *error = [NSError errorWithCode:1401
+                       localizedDescription:@"testError"];
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:[OCMArg any]
+                                                errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        error,
+                                                                                        nil])]);
+
+    [self.configInternal fetchRemoteConfigWithSignatureData:signatureData];
+
+    OCMVerify([self.mockEndpoint reset]);
+    OCMVerify([self.mockLogger reset]);
+}
+
+- (void)testRefreshConfigFromRemoteConfig_success_verified {
     EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
+    NSData *signatureData = [NSData new];
+    NSData *contentData = [NSData new];
+
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
+    OCMStub([mockResponse body]).andReturn(contentData);
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        mockResponse,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
     OCMStub([self.mockResponseMapper map:mockResponse]).andReturn(config);
+    OCMStub([self.mockCrypto verifyContent:contentData
+                             withSignature:signatureData]).andReturn(YES);
 
-    FakeRequestManager *fakeRequestManager = [self setupFakeRequestManagerForFetchRemoteConfig];
+    [self.configInternal fetchRemoteConfigWithSignatureData:signatureData];
 
-    fakeRequestManager.successBlock(@"testRequestId", mockResponse);
-
+    OCMVerify([self.mockCrypto verifyContent:contentData
+                               withSignature:signatureData]);
     OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
     OCMVerify([self.mockLogger updateWithRemoteConfig:config]);
 }
 
-- (FakeRequestManager *)setupFakeRequestManagerForFetchRemoteConfig {
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
-    FakeRequestManager *fakeRequestManager = [[FakeRequestManager alloc] initWithSubmitNowCompletionBlock:^{
-        [expectation fulfill];
-    }];
-    EMSConfigInternal *configInternal = [[EMSConfigInternal alloc] initWithRequestManager:fakeRequestManager
-                                                                         meRequestContext:self.mockMeRequestContext
-                                                                        preRequestContext:self.mockPreRequestContext
-                                                                             mobileEngage:self.mockMobileEngage
-                                                                             pushInternal:self.mockPushInternal
-                                                                               deviceInfo:self.mockDeviceInfo
-                                                                    emarsysRequestFactory:self.mockEmarsysRequestFactory
-                                                               remoteConfigResponseMapper:self.mockResponseMapper
-                                                                                 endpoint:self.mockEndpoint
-                                                                                   logger:self.mockLogger];
-    [configInternal refreshConfigFromRemoteConfig];
+- (void)testRefreshConfigFromRemoteConfig_success_notVerified {
+    NSData *signatureData = [NSData new];
+    NSData *contentData = [NSData new];
 
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    return fakeRequestManager;
+    EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
+    OCMStub([mockResponse statusCode]).andReturn(@200);
+    OCMStub([mockResponse body]).andReturn(contentData);
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        mockResponse,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
+    OCMStub([self.mockCrypto verifyContent:contentData
+                             withSignature:signatureData]).andReturn(NO);
+
+    [self.configInternal fetchRemoteConfigWithSignatureData:signatureData];
+
+    OCMVerify([self.mockCrypto verifyContent:contentData
+                               withSignature:signatureData]);
+    OCMVerify([self.mockEndpoint reset]);
+    OCMVerify([self.mockLogger reset]);
 }
 
 @end

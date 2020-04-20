@@ -14,6 +14,8 @@
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
 #import "EMSLogger.h"
+#import "EMSResponseModel.h"
+#import "EMSCrypto.h"
 
 @interface EMSConfigInternal ()
 
@@ -30,6 +32,7 @@
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
 @property(nonatomic, strong) NSNumber *updatedContactFieldId;
 @property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
+@property(nonatomic, strong) EMSCrypto *crypto;
 
 @end
 
@@ -44,7 +47,8 @@
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
                               endpoint:(EMSEndpoint *)endpoint
-                                logger:(EMSLogger *)logger {
+                                logger:(EMSLogger *)logger
+                                crypto:(EMSCrypto *)crypto {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
@@ -55,7 +59,7 @@
     NSParameterAssert(remoteConfigResponseMapper);
     NSParameterAssert(endpoint);
     NSParameterAssert(logger);
-
+    NSParameterAssert(crypto);
     if (self = [super init]) {
         _requestManager = requestManager;
         _mobileEngage = mobileEngage;
@@ -67,18 +71,41 @@
         _remoteConfigResponseMapper = remoteConfigResponseMapper;
         _endpoint = endpoint;
         _logger = logger;
+        _crypto = crypto;
     }
     return self;
 }
 
 - (void)refreshConfigFromRemoteConfig {
+    EMSRequestModel *signatureRequestModel = [self.emarsysRequestFactory createRemoteConfigSignatureRequestModel];
+    [self.requestManager submitRequestModelNow:signatureRequestModel
+                                  successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                      [self fetchRemoteConfigWithSignatureData:response.body];
+                                  }
+                                    errorBlock:^(NSString *requestId, NSError *error) {
+                                        if (error) {
+                                            [self.endpoint reset];
+                                            [self.logger reset];
+                                        }
+                                    }];
+
+
+}
+
+- (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData {
     EMSRequestModel *requestModel = [self.emarsysRequestFactory createRemoteConfigRequestModel];
     [self.requestManager submitRequestModelNow:requestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                      if (response) {
-                                          EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
-                                          [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
-                                          [self.logger updateWithRemoteConfig:remoteConfig];
+                                      if ([self.crypto verifyContent:response.body
+                                                       withSignature:signatureData]) {
+                                          if (response) {
+                                              EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
+                                              [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
+                                              [self.logger updateWithRemoteConfig:remoteConfig];
+                                          }
+                                      } else {
+                                          [self.endpoint reset];
+                                          [self.logger reset];
                                       }
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {

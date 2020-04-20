@@ -44,6 +44,10 @@
 
 - (NSString *)geofenceUrlWithApplicationCode:(NSString *)applicationCode;
 
+- (NSString *)remoteConfigUrl:(NSString *)applicationCode;
+
+- (NSString *)remoteConfigSignatureUrl:(NSString *)applicationCode;
+
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig;
 
 - (void)reset;

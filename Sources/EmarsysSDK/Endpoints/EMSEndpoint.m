@@ -104,6 +104,14 @@
     return [NSString stringWithFormat:@"%@/v3/apps/%@/geo-fences", self.clientServiceUrl, applicationCode];
 }
 
+- (NSString *)remoteConfigUrl:(NSString *)applicationCode {
+    return [NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/%@", applicationCode];
+}
+
+- (NSString *)remoteConfigSignatureUrl:(NSString *)applicationCode {
+    return [NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/signature/%@", applicationCode];
+}
+
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {
     [self.clientServiceUrlProvider updateValue:remoteConfig.clientService];
     [self.eventServiceUrlProvider updateValue:remoteConfig.eventService];

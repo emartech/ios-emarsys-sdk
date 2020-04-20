@@ -1,0 +1,37 @@
+{
+   "serviceUrls":{
+      "eventService":"https://mobile-events.eservice.emarsys.net",
+      "clientService":"https://me-client.eservice.emarsys.net"
+   },
+   "logLevel":"ERROR",
+   "luckyLogger": {
+       "logLevel": "DEBUG",
+       "threshold": 0.2
+   },
+   "features":{
+      "mobileEngage":true,
+      "experimentalFeature1":false
+   },
+   "overrides":{
+      "hardwareId1":{
+         "serviceUrls":{
+            "eventService":"https://mobile-events-2.eservice.emarsys.net" ,
+         },
+         "logLevel":"TRACE",
+         "features":{
+            "inApp":false,
+         }
+      },
+      "hardwareId2":{
+         "serviceUrls":{
+            "eventService":"https://mobile-events-2.eservice.emarsys.net" ,
+            "clientService":"https://me-client.eservice.emarsys.net "
+         },
+         "logLevel":"DEBUG",
+         "features":{
+            "mobileEngage":false,
+            "experimentalFeature1":false
+         }
+      }
+   }
+}

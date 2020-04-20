@@ -294,6 +294,22 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, kInboxUrl);
 }
 
+- (void)testRemoteConfigUrl {
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/%@", kApplicationCode]];
+
+    NSString *result = [self.endpoint remoteConfigUrl:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expected);
+}
+
+- (void)testRemoteConfigSignatureUrl {
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/signature/%@", kApplicationCode]];
+
+    NSString *result = [self.endpoint remoteConfigSignatureUrl:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expected);
+}
+
 - (void)testUpdateUrlsWithRemoteConfig {
     NSString *const eventServiceUrl = @"newEventServiceUrl";
     NSString *const clientServiceUrl = @"newClientServiceUrl";
