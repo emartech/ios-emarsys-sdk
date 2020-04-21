@@ -14,15 +14,15 @@
 @implementation EMSCryptoTests
 
 - (void)setUp {
-    _crypto = [[EMSCrypto alloc] initWithDerFileName:@"public"];
+    _crypto = [[EMSCrypto alloc] initWithPemFileName:@"public"];
 }
 
 - (void)testInit_pemFile_mustNotBeNil {
     @try {
-        [[EMSCrypto alloc] initWithDerFileName:nil];
-        XCTFail(@"Expected Exception when derFile is nil!");
+        [[EMSCrypto alloc] initWithPemFileName:nil];
+        XCTFail(@"Expected Exception when pemFile is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: derFile");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pemFile");
     }
 }
 

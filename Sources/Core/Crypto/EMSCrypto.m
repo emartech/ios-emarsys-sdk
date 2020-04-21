@@ -8,48 +8,65 @@
 
 @interface EMSCrypto ()
 
-@property(nonatomic, strong) NSString *derFileName;
+@property(nonatomic, strong) NSString *pemFileName;
 
 @end
 
 @implementation EMSCrypto
 
-- (instancetype)initWithDerFileName:(NSString *)derFile {
-    NSParameterAssert(derFile);
+- (instancetype)initWithPemFileName:(NSString *)pemFile {
+    NSParameterAssert(pemFile);
     if (self = [super init]) {
-        _derFileName = derFile;
+        _pemFileName = pemFile;
     }
     return self;
 }
 
 - (BOOL)verifyContent:(NSData *)content
         withSignature:(NSData *)signature {
-    NSData *publicKeyData = [self dataForName:self.derFileName
-                                    extension:@"der"];
-    SecKeyRef publicKey = [self publicKeyReferenceFromData:publicKeyData];
+    NSString *publicKeyString = [self stringContentOfFileName:self.pemFileName
+                                                    extension:@"pem"];
+    SecKeyRef publicKey = [self publicKeyReferenceFromString:publicKeyString];
     return [self verifyContent:content
                  withSignature:signature
                      publicKey:publicKey];
 }
 
-- (NSData *)dataForName:(NSString *)name
-              extension:(NSString *)extension {
+- (NSString *)stringContentOfFileName:(NSString *)name
+                            extension:(NSString *)extension {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:name
                                                                       ofType:extension];
-    return [NSData dataWithContentsOfFile:path];
+    NSError *error = nil;
+    return [NSString stringWithContentsOfFile:path
+                                     encoding:NSUTF8StringEncoding
+                                        error:&error];
 }
 
-- (SecKeyRef)publicKeyReferenceFromData:(NSData *)publicKeyData {
-    SecCertificateRef certificate = SecCertificateCreateWithData(kCFAllocatorDefault, (__bridge CFDataRef) publicKeyData);
-    SecPolicyRef policy = SecPolicyCreateBasicX509();
-    SecTrustRef trust;
-    SecTrustCreateWithCertificates(certificate, policy, &trust);
-    SecKeyRef securityKey = SecTrustCopyPublicKey(trust);
-    CFRelease(certificate);
-    CFRelease(policy);
-    CFRelease(trust);
+- (SecKeyRef)publicKeyReferenceFromString:(NSString *)publicKeyString {
+    NSString *keyWithoutHeader = [publicKeyString stringByReplacingOccurrencesOfString:@"-----BEGIN PUBLIC KEY-----"
+                                               withString:@""];
+    NSString *keyWithoutFooter = [keyWithoutHeader stringByReplacingOccurrencesOfString:@"-----END PUBLIC KEY-----"
+                                               withString:@""];
+    NSString *keyWithoutLines = [keyWithoutFooter stringByReplacingOccurrencesOfString:@"\n"
+                                                                            withString:@""];
+    NSData *publicKeyData = [keyWithoutLines dataUsingEncoding:NSUTF8StringEncoding];
 
-    return securityKey;
+    NSData *decodedDataBytes = [[NSData alloc] initWithBase64EncodedData:publicKeyData
+                                                                 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    NSData *strippedData = [decodedDataBytes subdataWithRange:NSMakeRange(decodedDataBytes.length - 65, 65)];
+
+    NSDictionary *attributes = @{
+            (NSString *) kSecAttrKeyType: (NSString *) kSecAttrKeyTypeEC,
+            (NSString *) kSecAttrKeyClass: (NSString *) kSecAttrKeyClassPublic,
+            (NSString *) kSecAttrKeySizeInBits: @256,
+            (NSString *) kSecAttrIsPermanent: @(NO)
+    };
+
+    CFErrorRef *error = NULL;
+    SecKeyRef publicKey = SecKeyCreateWithData((__bridge CFDataRef) strippedData, (__bridge CFDictionaryRef) attributes, error);
+
+    return publicKey;
 }
 
 - (BOOL)verifyContent:(NSData *)content

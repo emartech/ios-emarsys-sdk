@@ -6,7 +6,7 @@
 
 @interface EMSCrypto : NSObject
 
-- (instancetype)initWithDerFileName:(NSString *)derFile;
+- (instancetype)initWithPemFileName:(NSString *)pemFile;
 
 - (BOOL)verifyContent:(NSData *)content
         withSignature:(NSData *)signature;
