@@ -158,8 +158,6 @@
 
 - (void)changeMerchantId:(nullable NSString *)merchantId {
     self.preRequestContext.merchantId = merchantId;
-    [self.endpoint reset];
-    [self.logger reset];
 }
 
 - (NSString *)merchantId {
@@ -232,8 +230,7 @@
     }
     self.updatedContactFieldId = nil;
     self.contactFieldIdHasBeenChanged = NO;
-    [self.endpoint reset];
-    [self.logger reset];
+    [self refreshConfigFromRemoteConfig];
     if (completionBlock) {
         completionBlock(error);
     }

@@ -369,6 +369,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto];
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -381,11 +382,11 @@
                                        localizedDescription:@"testError"];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
-    [self.configInternal changeApplicationCode:@"newApplicationCode"
-                               completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
+    [partialMockConfigInternal changeApplicationCode:@"newApplicationCode"
+                                     completionBlock:^(NSError *error) {
+                                         returnedError = error;
+                                         [expectation fulfill];
+                                     }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:5];
@@ -397,8 +398,7 @@
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-    OCMVerify([self.mockEndpoint reset]);
-    OCMVerify([self.mockLogger reset]);
+    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
@@ -449,8 +449,6 @@
                                    completionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-    OCMVerify([self.mockEndpoint reset]);
-    OCMVerify([self.mockLogger reset]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
@@ -693,11 +691,12 @@
 
 - (void)testCallCompletionBlockWithError_whenThereIsNoError {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
-    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 
     [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
             }
                                          withError:nil];
+
+    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 }
 
 - (void)testCallCompletionBlockWithError_whenThereIsError {
@@ -705,11 +704,11 @@
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
 
-    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfig]);
-
     [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
             }
                                          withError:error];
+
+    OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfig]);
 }
 
 - (void)testChangeMerchantId_shouldRefresh {
@@ -732,9 +731,6 @@
     NSString *newMerchantId = @"newMerchantId";
 
     [self.configInternal changeMerchantId:newMerchantId];
-
-    OCMVerify([self.mockLogger reset]);
-    OCMVerify([self.mockEndpoint reset]);
 }
 
 - (void)testHardwareId {
