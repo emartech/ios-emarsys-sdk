@@ -397,6 +397,8 @@
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
+    OCMVerify([self.mockEndpoint reset]);
+    OCMVerify([self.mockLogger reset]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
@@ -447,6 +449,8 @@
                                    completionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
+    OCMVerify([self.mockEndpoint reset]);
+    OCMVerify([self.mockLogger reset]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
@@ -722,6 +726,15 @@
     [self.configInternal changeMerchantId:newMerchantId];
 
     OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
+}
+
+- (void)testChangeMerchantId_shouldResetRemoteConfig {
+    NSString *newMerchantId = @"newMerchantId";
+
+    [self.configInternal changeMerchantId:newMerchantId];
+
+    OCMVerify([self.mockLogger reset]);
+    OCMVerify([self.mockEndpoint reset]);
 }
 
 - (void)testHardwareId {
