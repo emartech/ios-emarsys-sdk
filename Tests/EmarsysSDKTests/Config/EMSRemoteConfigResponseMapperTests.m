@@ -59,6 +59,25 @@
     XCTAssertEqualObjects(remoteConfig, expectedConfig);
 }
 
+- (void)testMap_whenResponseModelParsedBodyIsNil {
+    EMSRemoteConfigResponseMapper *mapper = [EMSRemoteConfigResponseMapper new];
+
+    EMSResponseModel *responseModel = OCMClassMock([EMSResponseModel class]);
+
+    EMSRemoteConfig *expected = [[EMSRemoteConfig alloc] initWithEventService:nil
+                                                                clientService:nil
+                                                               predictService:nil
+                                                        mobileEngageV2Service:nil
+                                                              deepLinkService:nil
+                                                                 inboxService:nil
+                                                        v3MessageInboxService:nil
+                                                                     logLevel:LogLevelError];
+
+    EMSRemoteConfig *result = [mapper map:responseModel];
+
+    XCTAssertEqualObjects(expected, result);
+}
+
 - (void)testMap_withAlwaysLuckyLog {
     EMSRandomProvider *mockRandomProvider = OCMClassMock([EMSRandomProvider class]);
     OCMStub([mockRandomProvider provideDoubleUntil:@1]).andReturn(@1);

@@ -12,6 +12,10 @@
 #import "EMSLoggingPredictInternal.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSConfigInternal.h"
+#import "EMSEndpoint.h"
+#import "MERequestContext.h"
+
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -146,6 +150,27 @@
     [Emarsys.config changeMerchantId:@"1428C8EE286EC34B"];
 
     XCTAssertEqualObjects([Emarsys.predict class], [EMSPredictInternal class]);
+}
+
+- (void)testRemoteConfig {
+    EMSConfigInternal *config = EMSDependencyInjection.dependencyContainer.config;
+    [EMSDependencyInjection.dependencyContainer.requestContext setApplicationCode:@"integrationTest"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+
+    [config refreshConfigFromRemoteConfig];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [expectation fulfill];
+    });
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    EMSEndpoint *endpoint = EMSDependencyInjection.dependencyContainer.endpoint;
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(endpoint.eventServiceUrl, @"https://integration.mobile-events.eservice.emarsys.net");
+    XCTAssertEqualObjects(endpoint.clientServiceUrl, @"https://integration.me-client.eservice.emarsys.net");
 }
 
 @end

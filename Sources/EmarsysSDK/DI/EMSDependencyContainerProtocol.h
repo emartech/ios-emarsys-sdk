@@ -31,6 +31,7 @@
 @class EMSValueProvider;
 @protocol EMSGeofenceProtocol;
 @protocol EMSMessageInboxProtocol;
+@class EMSEndpoint;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -99,5 +100,7 @@
 - (id <EMSDBTriggerProtocol>)loggerTrigger;
 
 - (id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
+
+- (EMSEndpoint *)endpoint;
 
 @end

@@ -7,6 +7,7 @@
 #import "MEExperimental.h"
 #import "MEExperimental+Test.h"
 #import "MERequestContext.h"
+#import "EMSEndpoint.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -72,6 +73,7 @@
 }
 
 + (void)tearDownEmarsys {
+    [EMSDependencyInjection.dependencyContainer.endpoint reset];
     [MEExperimental reset];
     [EMSDependencyInjection.dependencyContainer.operationQueue waitUntilAllOperationsAreFinished];
     [EMSDependencyInjection.dependencyContainer.requestContext reset];

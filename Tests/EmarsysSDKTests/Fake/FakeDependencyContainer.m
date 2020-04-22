@@ -23,6 +23,7 @@
 @property(nonatomic, strong) EMSAppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) EMSLogger *logger;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 

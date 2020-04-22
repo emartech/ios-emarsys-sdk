@@ -127,6 +127,7 @@
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 @property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -156,7 +157,7 @@
                                                                                valueKey:@"INBOX_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
-    EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
+    _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
                                                                predictUrlProvider:predictUrlProvider
                                                               deeplinkUrlProvider:deeplinkUrlProvider
@@ -191,7 +192,7 @@
                                                                        deviceInfo:deviceInfo];
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
-                                                               endpoint:endpoint];
+                                                               endpoint:self.endpoint];
     _notificationCenterManager = [MENotificationCenterManager new];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
@@ -214,7 +215,7 @@
                                                                                                               dbHelper:self.dbHelper
                                                                                                  buttonClickRepository:buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository
-                                                                                                              endpoint:endpoint];
+                                                                                                              endpoint:self.endpoint];
 
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
 
@@ -234,7 +235,7 @@
                                                      delegateQueue:self.operationQueue];
 
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
-                                                                                                                        endpoint:endpoint];
+                                                                                                                        endpoint:self.endpoint];
     NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
@@ -243,13 +244,13 @@
                                                           displayIamRepository:displayedIAMRepository]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
-                                                                                   endpoint:endpoint]];
+                                                                                   endpoint:self.endpoint]];
     [responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext
-                                                                            endpoint:endpoint]];
+                                                                            endpoint:self.endpoint]];
     [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
-                                                                                     endpoint:endpoint]];
+                                                                                     endpoint:self.endpoint]];
     [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
-                                                                                      endpoint:endpoint]];
+                                                                                      endpoint:self.endpoint]];
     [responseHandlers addObject:contactTokenResponseHandler];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
@@ -259,9 +260,9 @@
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
                                              [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                          endpoint:endpoint],
+                                                                                          endpoint:self.endpoint],
                                              [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                                endpoint:endpoint]]
+                                                                                endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
@@ -271,7 +272,7 @@
                                                                                                           restClient:self.restClient
                                                                                                       requestFactory:self.requestFactory
                                                                                               contactResponseHandler:contactTokenResponseHandler
-                                                                                                            endpoint:endpoint
+                                                                                                            endpoint:self.endpoint
                                                                                                              storage:self.storage];
 
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.operationQueue];
@@ -295,7 +296,7 @@
                                                                 specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
                                                                                                                          column:SHARD_COLUMN_NAME_TYPE]
                                                                        mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext
-                                                                                                                      endpoint:endpoint]
+                                                                                                                      endpoint:self.endpoint]
                                                                       chunker:[[EMSListChunker alloc] initWithChunkSize:1]
                                                                     predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
                                                                requestManager:self.requestManager
@@ -331,7 +332,7 @@
     UIApplication *application = [UIApplication sharedApplication];
 
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
-                                                                                                                          endpoint:endpoint];
+                                                                                                                          endpoint:self.endpoint];
     _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
                                                    requestManager:self.requestManager
                                            requestBuilderProvider:builderProvider
@@ -358,7 +359,7 @@
                                    notificationCache:self.notificationCache
                                       requestManager:self.requestManager
                                       requestFactory:self.requestFactory
-                                            endpoint:endpoint];
+                                            endpoint:self.endpoint];
     _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
                                                                                       inApp:self.iam
                                                                           timestampProvider:timestampProvider
@@ -379,7 +380,7 @@
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:uuidProvider
-                                                                                                         endpoint:endpoint
+                                                                                                         endpoint:self.endpoint
                                                                                                    requestContext:self.requestContext];
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     _config = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
@@ -390,7 +391,7 @@
                                                      deviceInfo:deviceInfo
                                           emarsysRequestFactory:emarsysRequestFactory
                                      remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
-                                                       endpoint:endpoint
+                                                       endpoint:self.endpoint
                                                          logger:self.logger
                                                          crypto:[[EMSCrypto alloc] initWithPemFileName:@"public"]];
 
