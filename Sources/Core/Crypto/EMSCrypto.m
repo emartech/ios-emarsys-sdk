@@ -44,9 +44,9 @@
 
 - (SecKeyRef)publicKeyReferenceFromString:(NSString *)publicKeyString {
     NSString *keyWithoutHeader = [publicKeyString stringByReplacingOccurrencesOfString:@"-----BEGIN PUBLIC KEY-----"
-                                               withString:@""];
+                                                                            withString:@""];
     NSString *keyWithoutFooter = [keyWithoutHeader stringByReplacingOccurrencesOfString:@"-----END PUBLIC KEY-----"
-                                               withString:@""];
+                                                                             withString:@""];
     NSString *keyWithoutLines = [keyWithoutFooter stringByReplacingOccurrencesOfString:@"\n"
                                                                             withString:@""];
     NSData *publicKeyData = [keyWithoutLines dataUsingEncoding:NSUTF8StringEncoding];
@@ -72,12 +72,14 @@
 - (BOOL)verifyContent:(NSData *)content
         withSignature:(NSData *)signature
             publicKey:(SecKeyRef)publicKey {
+    NSData *decodedSignature = [[NSData alloc] initWithBase64EncodedData:signature
+                                                                 options:NSDataBase64DecodingIgnoreUnknownCharacters];
     BOOL result = NO;
     SecKeyAlgorithm algorithm = kSecKeyAlgorithmECDSASignatureMessageX962SHA256;
     BOOL canVerify = SecKeyIsAlgorithmSupported(publicKey, kSecKeyOperationTypeVerify, algorithm);
     if (canVerify) {
         CFErrorRef errorRef = NULL;
-        result = SecKeyVerifySignature(publicKey, algorithm, (__bridge CFDataRef) content, (__bridge CFDataRef) signature, &errorRef);
+        result = SecKeyVerifySignature(publicKey, algorithm, (__bridge CFDataRef) content, (__bridge CFDataRef) decodedSignature, &errorRef);
         if (!result) {
             NSError *error = CFBridgingRelease(errorRef);
             NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
