@@ -89,7 +89,7 @@
         statusDict[@"error"] = exception.reason;
         NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
         parametersDict[@"data"] = [[NSString alloc] initWithData:data
-                                                        encoding:NSUTF8StringEncoding];
+                                                        encoding:NSASCIIStringEncoding];
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
