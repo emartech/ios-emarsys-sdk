@@ -3,6 +3,7 @@
 #import "EMSWaiter.h"
 #import "Emarsys.h"
 #import "EmarsysTestUtils.h"
+#import "NSError+EMSCore.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -10,7 +11,8 @@ SPEC_BEGIN(InboxIntegrationTests)
 
         beforeEach(^{
             [EmarsysTestUtils tearDownEmarsys];
-            [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
+            [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                               withDependencyContainer:nil];
             [EmarsysTestUtils waitForSetPushToken];
             [EmarsysTestUtils waitForSetCustomer];
         });
@@ -22,40 +24,42 @@ SPEC_BEGIN(InboxIntegrationTests)
         describe(@"Notification Inbox", ^{
 
             it(@"fetchNotificationsWithResultBlock", ^{
-                __block EMSNotificationInboxStatus *_inboxStatus;
-                __block NSError *_error;
+                __block EMSNotificationInboxStatus *returnedStatus = nil;
+                __block NSError *returnedError = [NSError errorWithCode:-1400
+                                            localizedDescription:@"testError"];
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
 
                 [Emarsys.inbox fetchNotificationsWithResultBlock:^(EMSNotificationInboxStatus *inboxStatus, NSError *error) {
-                    if (error) {
-                        _error = error;
-
-                    } else {
-                        _inboxStatus = inboxStatus;
-                    }
+                    returnedError = error;
+                    returnedStatus = inboxStatus;
+                    [expectation fulfill];
                 }];
 
-                [[_error shouldEventually] beNil];
-                [[_inboxStatus shouldNotEventually] beNil];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:5.0];
+                XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                XCTAssertNil(returnedError);
+                XCTAssertNotNil(returnedStatus);
             });
 
             it(@"fetchNotificationsWithResultBlock result should contain the gained notification", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{
-                    @"inbox": inbox,
-                    @"u": @{
-                        @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
-                        @"ems_default_title_unused": @"This is a default title",
-                        @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
-                        @"sid": @"1d0a_wqdXUl9Vf9NC",
-                        @"test_field": @""
-                    },
-                    @"rootKey": @"rootValue",
-                    @"id": notificationId,
-                    @"aps": @{
-                        @"alert": @"MESS",
-                        @"sound": @"default"
-                    }
+                        @"inbox": inbox,
+                        @"u": @{
+                                @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
+                                @"ems_default_title_unused": @"This is a default title",
+                                @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
+                                @"sid": @"1d0a_wqdXUl9Vf9NC",
+                                @"test_field": @""
+                        },
+                        @"rootKey": @"rootValue",
+                        @"id": notificationId,
+                        @"aps": @{
+                                @"alert": @"MESS",
+                                @"sound": @"default"
+                        }
                 };
 
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
@@ -76,33 +80,34 @@ SPEC_BEGIN(InboxIntegrationTests)
                     }
                 }];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:30];
 
-                [[returnedNotification shouldNot] beNil];
-                [[returnedNotification.id should] equal:notificationId];
+                XCTAssertNotNil(returnedNotification);
+                XCTAssertEqualObjects(returnedNotification.id, notificationId);
             });
 
             it(@"fetchNotificationsWithResultBlock result should contain the gained notification with title and body", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @YES;
                 NSDictionary *userInfo = @{
-                    @"inbox": inbox,
-                    @"u": @{
-                        @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
-                        @"ems_default_title_unused": @"This is a default title",
-                        @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
-                        @"sid": @"1d0a_wqdXUl9Vf9NC",
-                        @"test_field": @""
-                    },
-                    @"rootKey": @"rootValue",
-                    @"id": notificationId,
-                    @"aps": @{
-                        @"alert": @{
-                            @"title": @"title",
-                            @"body": @"body"
+                        @"inbox": inbox,
+                        @"u": @{
+                                @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
+                                @"ems_default_title_unused": @"This is a default title",
+                                @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
+                                @"sid": @"1d0a_wqdXUl9Vf9NC",
+                                @"test_field": @""
                         },
-                        @"sound": @"default"
-                    }
+                        @"rootKey": @"rootValue",
+                        @"id": notificationId,
+                        @"aps": @{
+                                @"alert": @{
+                                        @"title": @"title",
+                                        @"body": @"body"
+                                },
+                                @"sound": @"default"
+                        }
                 };
 
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
@@ -123,32 +128,33 @@ SPEC_BEGIN(InboxIntegrationTests)
                     }
                 }];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:5];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:5];
 
-                [[returnedNotification shouldNot] beNil];
-                [[returnedNotification.id should] equal:notificationId];
-                [[returnedNotification.title should] equal:@"title"];
-                [[returnedNotification.body should] equal:@"body"];
+                XCTAssertNotNil(returnedNotification);
+                XCTAssertEqualObjects(returnedNotification.id, notificationId);
+                XCTAssertEqualObjects(returnedNotification.title, @"title");
+                XCTAssertEqualObjects(returnedNotification.body, @"body");
             });
 
             it(@"fetchNotificationsWithResultBlock result should not contain the gained notification if it's not inbox message", ^{
                 NSString *notificationId = @"210268110.1502804498499608577561.BF04349F-87B6-4CB9-859D-6CDE607F7251";
                 NSNumber *inbox = @NO;
                 NSDictionary *userInfo = @{
-                    @"inbox": inbox,
-                    @"u": @{
-                        @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
-                        @"ems_default_title_unused": @"This is a default title",
-                        @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
-                        @"sid": @"1d0a_wqdXUl9Vf9NC",
-                        @"test_field": @""
-                    },
-                    @"rootKey": @"rootValue",
-                    @"id": notificationId,
-                    @"aps": @{
-                        @"alert": @"MESS",
-                        @"sound": @"default"
-                    }
+                        @"inbox": inbox,
+                        @"u": @{
+                                @"deep_link": @"lifestylelabels.com/mobile/product/3245678",
+                                @"ems_default_title_unused": @"This is a default title",
+                                @"image": @"https://media.giphy.com/media/ktvFa67wmjDEI/giphy.gif",
+                                @"sid": @"1d0a_wqdXUl9Vf9NC",
+                                @"test_field": @""
+                        },
+                        @"rootKey": @"rootValue",
+                        @"id": notificationId,
+                        @"aps": @{
+                                @"alert": @"MESS",
+                                @"sound": @"default"
+                        }
                 };
                 [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
 
@@ -168,24 +174,27 @@ SPEC_BEGIN(InboxIntegrationTests)
                     }
                 }];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:30];
 
-                [[resultInboxStatus shouldNot] beNil];
+                XCTAssertNotNil(resultInboxStatus);
             });
 
             it(@"resetBadgeCount", ^{
-                __block BOOL _success = NO;
-                __block BOOL _error = YES;
+                __block NSError *returnedError = [NSError errorWithCode:-1400
+                                                   localizedDescription:@"testError"];
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
 
                 [Emarsys.inbox resetBadgeCountWithCompletionBlock:^(NSError *error) {
-                    if (!error) {
-                        _success = YES;
-                        _error = NO;
-                    }
+                    returnedError = error;
+                    [expectation fulfill];
                 }];
 
-                [[theValue(_success) shouldNotEventually] beYes];
-                [[theValue(_error) shouldEventually] beNo];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:5.0];
+
+                XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                XCTAssertNil(returnedError);
             });
 
         });
