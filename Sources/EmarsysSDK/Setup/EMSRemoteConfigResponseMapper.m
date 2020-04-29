@@ -47,7 +47,8 @@
 
 - (NSString *)validateEmarsysUrl:(NSString *)url {
     NSString *result = url;
-    if (result && !([result.lowercaseString hasSuffix:@".emarsys.net"] || [result.lowercaseString hasSuffix:@".emarsys.com"])) {
+    NSString *host = url ? [[NSURLComponents alloc] initWithString:url].host : nil;
+    if (!host || (![host.lowercaseString hasSuffix:@".emarsys.net"] && ![host.lowercaseString hasSuffix:@".emarsys.com"])) {
         result = nil;
     }
     return result;
