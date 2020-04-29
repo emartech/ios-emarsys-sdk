@@ -287,6 +287,8 @@ SPEC_BEGIN(EmarsysTests)
                         };
                         void (^appStartBlock3)() = ^{
                         };
+                        void (^appStartBlock4)() = ^{
+                        };
                         [[appStartBlockProvider should] receive:@selector(createAppStartEventBlock)
                                                       andReturn:appStartBlock
                                                   withArguments:requestManager,
@@ -296,17 +298,22 @@ SPEC_BEGIN(EmarsysTests)
                                                   withArguments:requestManager,
                                                                 requestFactory,
                                                                 deviceInfo];
-                        [[appStartBlockProvider shouldNot] receive:@selector(createRemoteConfigEventBlock)
-                                                         andReturn:appStartBlock3];
+                        [[appStartBlockProvider should] receive:@selector(createRemoteConfigEventBlock)
+                                                      andReturn:appStartBlock3];
+                        [[appStartBlockProvider should] receive:@selector(createFetchGeofenceEventBlock)
+                                                      andReturn:appStartBlock4];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock,
                                                                         UIApplicationDidFinishLaunchingNotification];
                         [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
                                                           withArguments:appStartBlock2,
                                                                         UIApplicationDidBecomeActiveNotification];
-                        [[notificationCenterManagerMock shouldNot] receive:@selector(addHandlerBlock:forNotification:)
-                                                             withArguments:appStartBlock3,
-                                                                           UIApplicationDidFinishLaunchingNotification];
+                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                                                          withArguments:appStartBlock3,
+                                                                        UIApplicationDidFinishLaunchingNotification];
+                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
+                                                          withArguments:appStartBlock4,
+                                                                        UIApplicationDidFinishLaunchingNotification];
                         [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                                            withDependencyContainer:dependencyContainer];
                     });

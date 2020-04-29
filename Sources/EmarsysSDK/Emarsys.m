@@ -115,6 +115,8 @@
                                forNotification:UIApplicationDidFinishLaunchingNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createFetchGeofenceEventBlock]
                                forNotification:UIApplicationDidFinishLaunchingNotification];
+    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createRemoteConfigEventBlock]
+                               forNotification:UIApplicationDidFinishLaunchingNotification];
 }
 
 + (id <EMSPushNotificationProtocol>)push {
