@@ -102,6 +102,9 @@
                                               EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
                                               [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
                                               [self.logger updateWithRemoteConfig:remoteConfig];
+                                          } else {
+                                              [self.endpoint reset];
+                                              [self.logger reset];
                                           }
                                       } else {
                                           [self.endpoint reset];

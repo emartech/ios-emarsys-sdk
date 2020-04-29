@@ -22,13 +22,13 @@
     NSDictionary *serviceUrls = parsedBody[@"serviceUrls"];
     NSDictionary *luckyLog = parsedBody[@"luckyLogger"];
 
-    return [[EMSRemoteConfig alloc] initWithEventService:serviceUrls[@"eventService"]
-                                           clientService:serviceUrls[@"clientService"]
-                                          predictService:serviceUrls[@"predictService"]
-                                   mobileEngageV2Service:serviceUrls[@"mobileEngageV2Service"]
-                                         deepLinkService:serviceUrls[@"deepLinkService"]
-                                            inboxService:serviceUrls[@"inboxService"]
-                                   v3MessageInboxService:serviceUrls[@"v3MessageInboxService"]
+    return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:serviceUrls[@"eventService"]]
+                                           clientService:[self validateEmarsysUrl:serviceUrls[@"clientService"]]
+                                          predictService:[self validateEmarsysUrl:serviceUrls[@"predictService"]]
+                                   mobileEngageV2Service:[self validateEmarsysUrl:serviceUrls[@"mobileEngageV2Service"]]
+                                         deepLinkService:[self validateEmarsysUrl:serviceUrls[@"deepLinkService"]]
+                                            inboxService:[self validateEmarsysUrl:serviceUrls[@"inboxService"]]
+                                   v3MessageInboxService:[self validateEmarsysUrl:serviceUrls[@"v3MessageInboxService"]]
                                                 logLevel:[self calculateLogLevel:parsedBody[@"logLevel"]
                                                                    withThreshold:luckyLog[@"threshold"]
                                                                withLuckyLogLevel:luckyLog[@"logLevel"]]];
@@ -45,6 +45,13 @@
     return result;
 }
 
+- (NSString *)validateEmarsysUrl:(NSString *)url {
+    NSString *result = url;
+    if (result && !([result.lowercaseString hasSuffix:@".emarsys.net"] || [result.lowercaseString hasSuffix:@".emarsys.com"])) {
+        result = nil;
+    }
+    return result;
+}
 
 - (LogLevel)logLevelFromRawLogLevel:(NSString *)rawLogLevel {
     LogLevel result = LogLevelError;

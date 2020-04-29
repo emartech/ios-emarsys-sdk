@@ -29,12 +29,12 @@
     NSString *responseRawJson = @"{\n"
                                 "        \"serviceUrls\":{\n"
                                 "            \"eventService\":\"https://testEventService.url\",\n"
-                                "                \"clientService\":\"https://testClientService.url\",\n"
+                                "                \"clientService\":\"https://client.emarsys.com\",\n"
                                 "                \"predictService\":\"https://testPredictService.url\",\n"
                                 "                \"mobileEngageV2Service\":\"https://testMobileEngageV2Service.url\",\n"
                                 "                \"deepLinkService\":\"https://testDeepLinkService.url\",\n"
                                 "                \"inboxService\":\"https://testinboxService.url\",\n"
-                                "                \"v3MessageInboxService\":\"https://testv3MessageInboxService.url\"\n"
+                                "                \"v3MessageInboxService\":\"https://inbox.emarsys.net\"\n"
                                 "        },\n"
                                 "        \"logLevel\":\"warn\"\n"
                                 "    }";
@@ -45,13 +45,13 @@
                                                                                    data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
                                                                            requestModel:OCMClassMock([EMSRequestModel class])
                                                                               timestamp:[NSDate date]];
-    EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:@"https://testEventService.url"
-                                                                      clientService:@"https://testClientService.url"
-                                                                     predictService:@"https://testPredictService.url"
-                                                              mobileEngageV2Service:@"https://testMobileEngageV2Service.url"
-                                                                    deepLinkService:@"https://testDeepLinkService.url"
-                                                                       inboxService:@"https://testinboxService.url"
-                                                              v3MessageInboxService:@"https://testv3MessageInboxService.url"
+    EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
+                                                                      clientService:@"https://client.emarsys.com"
+                                                                     predictService:nil
+                                                              mobileEngageV2Service:nil
+                                                                    deepLinkService:nil
+                                                                       inboxService:nil
+                                                              v3MessageInboxService:@"https://inbox.emarsys.net"
                                                                            logLevel:LogLevelWarn];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
