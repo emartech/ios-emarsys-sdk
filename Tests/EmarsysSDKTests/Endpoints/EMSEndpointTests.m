@@ -295,7 +295,7 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testRemoteConfigUrl {
-    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/%@", kApplicationCode]];
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/%@", kApplicationCode]];
 
     NSString *result = [self.endpoint remoteConfigUrl:kApplicationCode];
 
@@ -303,7 +303,7 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testRemoteConfigSignatureUrl {
-    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/signature/%@", kApplicationCode]];
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/signature/%@", kApplicationCode]];
 
     NSString *result = [self.endpoint remoteConfigSignatureUrl:kApplicationCode];
 

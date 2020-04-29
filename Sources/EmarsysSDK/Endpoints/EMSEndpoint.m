@@ -105,11 +105,11 @@
 }
 
 - (NSString *)remoteConfigUrl:(NSString *)applicationCode {
-    return [NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/%@", applicationCode];
+    return [NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/%@", applicationCode];
 }
 
 - (NSString *)remoteConfigSignatureUrl:(NSString *)applicationCode {
-    return [NSString stringWithFormat:@"https://mobile-sdk-config.eservice.emarsys.net/signature/%@", applicationCode];
+    return [NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/signature/%@", applicationCode];
 }
 
 - (void)updateUrlsWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {
