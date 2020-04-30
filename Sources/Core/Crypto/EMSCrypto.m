@@ -34,12 +34,14 @@
 
 - (NSString *)stringContentOfFileName:(NSString *)name
                             extension:(NSString *)extension {
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:name
-                                                                      ofType:extension];
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *resourceUrl = [bundle URLForResource:self.pemFileName withExtension:@"pem"];
     NSError *error = nil;
-    return [NSString stringWithContentsOfFile:path
-                                     encoding:NSUTF8StringEncoding
-                                        error:&error];
+    
+    NSString *result = [NSString stringWithContentsOfURL:resourceUrl
+    encoding:NSUTF8StringEncoding
+       error:&error];
+    return result;
 }
 
 - (SecKeyRef)publicKeyReferenceFromString:(NSString *)publicKeyString {
@@ -50,22 +52,22 @@
     NSString *keyWithoutLines = [keyWithoutFooter stringByReplacingOccurrencesOfString:@"\n"
                                                                             withString:@""];
     NSData *publicKeyData = [keyWithoutLines dataUsingEncoding:NSUTF8StringEncoding];
-
+    
     NSData *decodedDataBytes = [[NSData alloc] initWithBase64EncodedData:publicKeyData
                                                                  options:NSDataBase64DecodingIgnoreUnknownCharacters];
-
+    
     NSData *strippedData = [decodedDataBytes subdataWithRange:NSMakeRange(decodedDataBytes.length - 65, 65)];
-
+    
     NSDictionary *attributes = @{
-            (NSString *) kSecAttrKeyType: (NSString *) kSecAttrKeyTypeEC,
-            (NSString *) kSecAttrKeyClass: (NSString *) kSecAttrKeyClassPublic,
-            (NSString *) kSecAttrKeySizeInBits: @256,
-            (NSString *) kSecAttrIsPermanent: @(NO)
+        (NSString *) kSecAttrKeyType: (NSString *) kSecAttrKeyTypeEC,
+        (NSString *) kSecAttrKeyClass: (NSString *) kSecAttrKeyClassPublic,
+        (NSString *) kSecAttrKeySizeInBits: @256,
+        (NSString *) kSecAttrIsPermanent: @(NO)
     };
-
+    
     CFErrorRef *error = NULL;
     SecKeyRef publicKey = SecKeyCreateWithData((__bridge CFDataRef) strippedData, (__bridge CFDictionaryRef) attributes, error);
-
+    
     return publicKey;
 }
 
@@ -77,7 +79,7 @@
     BOOL result = NO;
     SecKeyAlgorithm algorithm = kSecKeyAlgorithmECDSASignatureMessageX962SHA256;
     BOOL canVerify = SecKeyIsAlgorithmSupported(publicKey, kSecKeyOperationTypeVerify, algorithm);
-    if (canVerify) {
+    if (canVerify && decodedSignature && content) {
         CFErrorRef errorRef = NULL;
         result = SecKeyVerifySignature(publicKey, algorithm, (__bridge CFDataRef) content, (__bridge CFDataRef) decodedSignature, &errorRef);
         if (!result) {

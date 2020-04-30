@@ -9,7 +9,8 @@ Pod::Spec.new do |spec|
 	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
        'Sources/**/*.{h,m}'
-	]
+    ]
+    spec.resources = ['Sources/Core/Crypto/public.pem']
     spec.exclude_files	  = [
         'Sources/include/EMSNotificationService.h',
         'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
