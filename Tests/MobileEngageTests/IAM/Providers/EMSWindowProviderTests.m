@@ -16,6 +16,11 @@ SPEC_BEGIN(EMSWindowProviderTests)
                                                                          sceneProvider:mockSceneProvider];
         });
 
+        afterEach(^{
+            viewControllerProvider = nil;
+            mockSceneProvider = nil;
+        });
+
         describe(@"initWithViewControllerProvider", ^{
             it(@"iamViewControllerProvider must not be null", ^{
                 @try {
@@ -98,7 +103,8 @@ SPEC_BEGIN(EMSWindowProviderTests)
 
             it(@"should have rootViewController set", ^{
                 UIViewController *viewController = [UIViewController new];
-                [[viewControllerProvider should] receive:@selector(provideViewController) andReturn:viewController];
+                [[viewControllerProvider should] receive:@selector(provideViewController)
+                                               andReturn:viewController];
 
                 UIWindow *window = [windowProvider provideWindow];
 

@@ -8,6 +8,7 @@
 #import "NSData+MobileEngine.h"
 #import "EMSDependencyInjection.h"
 #import "MERequestContext.h"
+#import "NSError+EMSCore.h"
 
 typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 
@@ -108,7 +109,8 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 }
 
 - (void)integrationTestWithExecutionBlock:(ExecutionBlock)executionBlock {
-    __block NSError *returnedError = [NSError new];
+    __block NSError *returnedError = [NSError errorWithCode:-1400
+                                       localizedDescription:@"testError"];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
 
     executionBlock(^(NSError *error) {
