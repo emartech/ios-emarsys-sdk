@@ -47,7 +47,8 @@
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level {
     id url = entry.data[@"url"];
-    if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel) {
+    if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
+            || [entry.topic isEqualToString:@"app:start"]) {
         [self.operationQueue addOperationWithBlock:^{
             [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:[entry topic]];

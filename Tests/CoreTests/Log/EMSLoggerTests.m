@@ -271,6 +271,43 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultTimedOut);
 }
 
+- (void)testShouldLog_whenLogLevelOfLogEntry_isBelowOfLogLevel_butIsAppStartLog {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
+    id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
+
+    OCMStub([logEntry data]).andReturn(self.data);
+    OCMStub([logEntry topic]).andReturn(@"app:start");
+
+    [logger setLogLevel:LogLevelError];
+
+    [logger log:logEntry
+          level:LogLevelInfo];
+
+    [EMSWaiter waitForExpectations:@[expectation]];
+
+
+    NSMutableDictionary *mutableData = [self.data mutableCopy];
+    mutableData[@"level"] = @"INFO";
+
+    OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
+                                                                      type:@"app:start"
+                                                                      data:[NSDictionary dictionaryWithDictionary:mutableData]
+                                                                 timestamp:self.timestamp
+                                                                       ttl:FLT_MAX]]);
+}
+
 - (EMSShard *)shardWithLogLevel:(LogLevel)level {
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     if (level == LogLevelDebug) {
