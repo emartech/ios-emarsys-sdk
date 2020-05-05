@@ -393,7 +393,7 @@
                                      remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
                                                        endpoint:self.endpoint
                                                          logger:self.logger
-                                                         crypto:[[EMSCrypto alloc] initWithPemFileName:@"public"]];
+                                                         crypto:[[EMSCrypto alloc] init]];
 
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory

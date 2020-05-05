@@ -14,16 +14,7 @@
 @implementation EMSCryptoTests
 
 - (void)setUp {
-    _crypto = [[EMSCrypto alloc] initWithPemFileName:@"public"];
-}
-
-- (void)testInit_pemFile_mustNotBeNil {
-    @try {
-        [[EMSCrypto alloc] initWithPemFileName:nil];
-        XCTFail(@"Expected Exception when pemFile is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pemFile");
-    }
+    _crypto = [[EMSCrypto alloc] init];
 }
 
 - (void)testVerifyContentWithSignature {

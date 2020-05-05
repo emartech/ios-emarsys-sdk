@@ -14,34 +14,16 @@
 
 @implementation EMSCrypto
 
-- (instancetype)initWithPemFileName:(NSString *)pemFile {
-    NSParameterAssert(pemFile);
-    if (self = [super init]) {
-        _pemFileName = pemFile;
-    }
-    return self;
-}
-
 - (BOOL)verifyContent:(NSData *)content
         withSignature:(NSData *)signature {
-    NSString *publicKeyString = [self stringContentOfFileName:self.pemFileName
-                                                    extension:@"pem"];
+    NSString *publicKeyString = @"-----BEGIN PUBLIC KEY-----\n"
+                                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELjWEUIBX9zlm1OI4gF1hMCBLzpaB\n"
+                                "wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n"
+                                "-----END PUBLIC KEY-----";
     SecKeyRef publicKey = [self publicKeyReferenceFromString:publicKeyString];
     return [self verifyContent:content
                  withSignature:signature
                      publicKey:publicKey];
-}
-
-- (NSString *)stringContentOfFileName:(NSString *)name
-                            extension:(NSString *)extension {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSURL *resourceUrl = [bundle URLForResource:self.pemFileName withExtension:@"pem"];
-    NSError *error = nil;
-    
-    NSString *result = [NSString stringWithContentsOfURL:resourceUrl
-    encoding:NSUTF8StringEncoding
-       error:&error];
-    return result;
 }
 
 - (SecKeyRef)publicKeyReferenceFromString:(NSString *)publicKeyString {
