@@ -23,7 +23,7 @@
 - (void)testInit_shouldNotAccept_nilCampaignId {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:nil
-                                               sid:@"testSid"
+                                               sid:@"1cf3f_JhIPRzBvNtQF"
                                                url:@"testUrl"
                                               html:@""
                                  responseTimestamp:[NSDate date]];
@@ -36,7 +36,7 @@
 - (void)testInit_shouldNotAccept_nilHtml {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:@"campaignId"
-                                               sid:@"testSid"
+                                               sid:@"1cf3f_JhIPRzBvNtQF"
                                                url:@"testUrl"
                                               html:nil
                                  responseTimestamp:[NSDate date]];
@@ -49,7 +49,7 @@
 - (void)testInit_shouldNotAccept_nilResponseTimestamp {
     @try {
         [[MEInAppMessage alloc] initWithCampaignId:@"campaignId"
-                                               sid:@"testSid"
+                                               sid:@"1cf3f_JhIPRzBvNtQF"
                                                url:@"testUrl"
                                               html:@"html"
                                  responseTimestamp:nil];

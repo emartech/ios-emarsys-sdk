@@ -17,7 +17,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
         beforeEach(^{
             currentInAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
-                                                                         sid:@"testSid"
+                                                                         sid:@"1cf3f_JhIPRzBvNtQF"
                                                                          url:@"https://www.test.com"
                                                                         html:@"</HTML>"
                                                            responseTimestamp:[NSDate date]];

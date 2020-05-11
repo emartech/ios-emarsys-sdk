@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EmarsysTestUtils.h"
-#import "NSData+MobileEngine.h"
 #import "EMSDependencyInjection.h"
 #import "MERequestContext.h"
 #import "NSError+EMSCore.h"
@@ -79,7 +78,7 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
 
 - (void)testTrackMessageOpenWithUserInfo {
     NSDictionary *userInfo = @{
-        @"u": @"{\"sid\": \"testSID\"}"
+        @"u": @"{\"sid\": \"1cf3f_JhIPRzBvNtQF\"}"
     };
 
     [self integrationTestWithExecutionBlock:^(EMSCompletionBlock completionBlock) {
