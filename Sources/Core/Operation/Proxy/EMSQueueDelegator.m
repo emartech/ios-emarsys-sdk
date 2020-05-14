@@ -9,21 +9,17 @@
 
 @property(nonatomic, strong) id emptyTarget;
 @property(nonatomic, strong) NSOperationQueue *queue;
-@property(nonatomic, strong) EMSDispatchWaiter *dispatchWaiter;
 
 @end
 
 @implementation EMSQueueDelegator
 
 - (void)setupWithQueue:(NSOperationQueue *)queue
-           emptyTarget:(id)emptyTarget
-        dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter {
+           emptyTarget:(id)emptyTarget {
     NSParameterAssert(queue);
     NSParameterAssert(emptyTarget);
-    NSParameterAssert(dispatchWaiter);
     _queue = queue;
     _emptyTarget = emptyTarget;
-    _dispatchWaiter = dispatchWaiter;
 }
 
 - (void)proxyWithTargetObject:(id)object {
@@ -35,20 +31,19 @@
     [invocation retainArguments];
     if ([self.emptyTarget respondsToSelector:[invocation selector]]) {
         BOOL isVoid = strcmp(invocation.methodSignature.methodReturnType, @encode(void)) == 0;
-        if (!isVoid) {
-            [self.dispatchWaiter enter];
-        }
         __weak typeof(self) weakSelf = self;
-        [self.queue addOperationWithBlock:^{
-            [invocation setTarget:weakSelf.object];
-
-            [invocation invoke];
-            if (!isVoid) {
-                [weakSelf.dispatchWaiter exit];
-            }
-        }];
-        if (!isVoid) {
-            [self.dispatchWaiter waitWithInterval:5];
+        if (isVoid) {
+            [self.queue addOperationWithBlock:^{
+                [invocation setTarget:weakSelf.object];
+                [invocation invoke];
+            }];
+        } else {
+            NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+                [invocation setTarget:weakSelf.object];
+                [invocation invoke];
+            }];
+            [self.queue addOperations:@[operation]
+                    waitUntilFinished:YES];
         }
     }
 }

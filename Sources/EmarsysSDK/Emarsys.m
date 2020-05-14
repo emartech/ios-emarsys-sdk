@@ -36,7 +36,7 @@
     
     EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
 
-    [dependencyContainer.operationQueue addOperationWithBlock:^{
+    [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         [Emarsys registerAppStartBlock];
 
         if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.contactFieldValue) {

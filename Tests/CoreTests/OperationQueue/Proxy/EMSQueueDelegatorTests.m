@@ -3,10 +3,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 #import "EMSQueueDelegator.h"
 #import "EMSBlocks.h"
-#import "EMSDispatchWaiter.h"
 
 @protocol QueueCheckerProtocol
 
@@ -36,7 +34,6 @@
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property(nonatomic, strong) QueueChecker *queueChecker;
-@property(nonatomic, strong) EMSDispatchWaiter *dispatchWaiter;
 
 @end
 
@@ -51,12 +48,9 @@
     
     _queueChecker = [QueueChecker new];
     
-    _dispatchWaiter = [EMSDispatchWaiter new];
-    
     id queueDelegator = [EMSQueueDelegator alloc];
     [queueDelegator setupWithQueue:self.operationQueue
-                       emptyTarget:[QueueChecker new]
-                    dispatchWaiter:self.dispatchWaiter];
+                       emptyTarget:[QueueChecker new]];
     
     [queueDelegator proxyWithTargetObject:self.queueChecker];
     
@@ -77,8 +71,7 @@
     @try {
         EMSQueueDelegator *delegator = [EMSQueueDelegator alloc];
         [delegator setupWithQueue:nil
-                      emptyTarget:[QueueChecker new]
-                   dispatchWaiter:self.dispatchWaiter];
+                      emptyTarget:[QueueChecker new]];
         XCTFail(@"Expected Exception when queue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
@@ -89,23 +82,10 @@
     @try {
         EMSQueueDelegator *delegator = [EMSQueueDelegator alloc];
         [delegator setupWithQueue:self.operationQueue
-                      emptyTarget:nil
-                   dispatchWaiter:self.dispatchWaiter];
+                      emptyTarget:nil];
         XCTFail(@"Expected Exception when emptyTarget is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: emptyTarget");
-    }
-}
-
-- (void)testProxyWithTargetObjectQueue_dispatchWaiter_mustNotBeNil {
-    @try {
-        EMSQueueDelegator *delegator = [EMSQueueDelegator alloc];
-        [delegator setupWithQueue:self.operationQueue
-                      emptyTarget:[QueueChecker new]
-                   dispatchWaiter:nil];
-        XCTFail(@"Expected Exception when dispatchWaiter is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: dispatchWaiter");
     }
 }
 
@@ -143,17 +123,9 @@
 }
 
 - (void)testDelegateToGivenQueue_sync_wait {
-    id mockDispatchWaiter = OCMStrictClassMock([EMSDispatchWaiter class]);
-    [mockDispatchWaiter setExpectationOrderMatters:YES];
-    
-    OCMExpect([mockDispatchWaiter enter]);
-    OCMExpect([mockDispatchWaiter waitWithInterval:5]);
-    OCMExpect([mockDispatchWaiter exit];);
-    
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
-                  emptyTarget:[QueueChecker new]
-               dispatchWaiter:mockDispatchWaiter];
+                  emptyTarget:[QueueChecker new]];
     
     [delegator proxyWithTargetObject:self.queueChecker];
     
@@ -161,16 +133,9 @@
 }
 
 - (void)testDelegateToGivenQueue_sync_withoutWait {
-    EMSDispatchWaiter *mockDispatchWaiter = OCMClassMock([EMSDispatchWaiter class]);
-    
-    OCMReject([mockDispatchWaiter enter]);
-    OCMReject([mockDispatchWaiter exit];);
-    OCMReject([mockDispatchWaiter waitWithInterval:5]);
-    
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
-                  emptyTarget:[QueueChecker new]
-               dispatchWaiter:mockDispatchWaiter];
+                  emptyTarget:[QueueChecker new]];
     
     [delegator proxyWithTargetObject:self.queueChecker];
     

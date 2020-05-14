@@ -59,7 +59,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [[createWorker() shouldNot] beNil];
             });
 
-            itShouldThrowException(@"should throw exception, when operationQueue is nil", ^{
+            itShouldThrowException(@"should throw exception, when publicApiOperationQueue is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:nil
                                                       requestRepository:repository
                                                      connectionWatchdog:[EMSConnectionWatchdog mock]

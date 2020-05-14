@@ -705,7 +705,7 @@
 
 - (void)waitForSetup {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForDescription"];
-    [EMSDependencyInjection.dependencyContainer.operationQueue addOperationWithBlock:^{
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         [expectation fulfill];
     }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]

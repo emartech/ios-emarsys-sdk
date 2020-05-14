@@ -83,7 +83,7 @@
 
 - (EMSRequestManager *)requestManager;
 
-- (NSOperationQueue *)operationQueue;
+- (NSOperationQueue *)publicApiOperationQueue;
 
 - (MENotificationCenterManager *)notificationCenterManager;
 

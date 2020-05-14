@@ -89,7 +89,7 @@ beforeEach(^{
            [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
            
            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
-           [EMSDependencyInjection.dependencyContainer.operationQueue addOperationWithBlock:^{
+           [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
     [expectation fulfill];
 }];
            XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]

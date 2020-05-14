@@ -350,7 +350,7 @@ SPEC_BEGIN(EMSSchedulerTests)
                 [[theValue(triggerCount) should] equal:theValue(4)];
             });
 
-            it(@"should trigger the triggerBlock on the given operationQueue", ^{
+            it(@"should trigger the triggerBlock on the given publicApiOperationQueue", ^{
                 __block int triggerCount = 0;
                 __block NSOperationQueue *returnedQueue;
                 NSOperationQueue *testQueue = [NSOperationQueue currentQueue];

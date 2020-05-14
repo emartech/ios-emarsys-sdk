@@ -17,11 +17,11 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
         });
 
         describe(@"init", ^{
-            it(@"should throw exception when operationQueue is nil", ^{
+            it(@"should throw exception when publicApiOperationQueue is nil", ^{
                 @try {
                     [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability mock]
                                                          operationQueue:nil];
-                    fail(@"Expected exception when operationQueue is nil");
+                    fail(@"Expected exception when publicApiOperationQueue is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
                 }
@@ -126,7 +126,7 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                 [[theValue(listener.connected) should] equal:theValue(YES)];
             });
 
-            it(@"should be called on the set operationQueue", ^{
+            it(@"should be called on the set publicApiOperationQueue", ^{
                 NSOperationQueue *queue = [NSOperationQueue new];
 
                 EMSReachability *reachabilityMock = [EMSReachability mock];

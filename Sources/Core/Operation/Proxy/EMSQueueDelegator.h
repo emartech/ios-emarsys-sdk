@@ -13,11 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) id object;
 
 - (void)setupWithQueue:(NSOperationQueue *)queue
-           emptyTarget:(id)emptyTarget
-        dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter;
+           emptyTarget:(id)emptyTarget;
 
 - (void)proxyWithTargetObject:(id)object;
-
 
 @end
 
