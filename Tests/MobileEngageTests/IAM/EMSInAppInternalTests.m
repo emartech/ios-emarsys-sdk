@@ -62,12 +62,12 @@
     NSString *eventName = @"inapp:viewed";
     NSDictionary *eventAttributes = @{
         @"campaignId": campaignId,
-        @"sid": @"testSid",
+        @"sid": @"1cf3f_JhIPRzBvNtQF",
         @"url": @"https://www.test.com"
     };
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
-                                                                     sid:@"testSid"
+                                                                     sid:@"1cf3f_JhIPRzBvNtQF"
                                                                      url:@"https://www.test.com"
                                                                     html:@"</HTML>"
                                                        responseTimestamp:[NSDate date]];
@@ -135,13 +135,13 @@
 
     NSDictionary *eventAttributes = @{
         @"campaignId": campaignId,
-        @"sid": @"testSid",
+        @"sid": @"1cf3f_JhIPRzBvNtQF",
         @"url": @"https://www.test.com",
         @"buttonId": buttonId
     };
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:campaignId
-                                                                     sid:@"testSid"
+                                                                     sid:@"1cf3f_JhIPRzBvNtQF"
                                                                      url:@"https://www.test.com"
                                                                     html:@"</HTML>"
                                                        responseTimestamp:[NSDate date]];
@@ -210,7 +210,7 @@
     EMSRequestModel *requestModel = [self createRequestModel];
 
     MEInAppMessage *message = [[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
-                                                                     sid:@"testSid"
+                                                                     sid:@"1cf3f_JhIPRzBvNtQF"
                                                                      url:@"https://www.test.com"
                                                                     html:@"</HTML>"
                                                        responseTimestamp:[NSDate date]];

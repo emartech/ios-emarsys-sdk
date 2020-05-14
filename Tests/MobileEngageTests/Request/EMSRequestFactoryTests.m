@@ -289,7 +289,7 @@
 
 - (void)testCreateMessageOpenWithNotification {
     EMSNotification *notification = [[EMSNotification alloc] initWithNotificationDictionary:@{
-        @"sid": @"testSID"
+        @"sid": @"1cf3f_JhIPRzBvNtQF"
     }];
 
     OCMStub(self.mockRequestContext.contactFieldId).andReturn(@"testContactFieldId");
@@ -303,7 +303,7 @@
                                                                                payload:@{
                                                                                    @"application_id": @"testApplicationCode",
                                                                                    @"hardware_id": @"hardwareId",
-                                                                                   @"sid": @"testSID",
+                                                                                   @"sid": @"1cf3f_JhIPRzBvNtQF",
                                                                                    @"source": @"inbox",
                                                                                    @"contact_field_id": @"testContactFieldId",
                                                                                    @"contact_field_value": @"testContactFieldValue"
