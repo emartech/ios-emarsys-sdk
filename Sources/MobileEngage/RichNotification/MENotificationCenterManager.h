@@ -9,6 +9,7 @@ typedef void (^MEHandlerBlock)(void);
 
 @interface MENotificationCenterManager : NSObject
 
-- (void)addHandlerBlock:(MEHandlerBlock)handlerBlock forNotification:(NSString *)notificationName;
+- (void)addHandlerBlock:(MEHandlerBlock)handlerBlock
+        forNotification:(NSString *)notificationName;
 
 @end

@@ -7,6 +7,7 @@
 #import "Emarsys.h"
 #import "EmarsysTestUtils.h"
 #import "NSData+MobileEngine.h"
+#import "NSError+EMSCore.h"
 
 @interface EmarsysPushIntegrationTests : XCTestCase
 
@@ -26,7 +27,8 @@
 - (void)testSetPushToken {
     NSData *deviceToken = [@"<1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd>" dataUsingEncoding:NSUTF8StringEncoding];
 
-    __block NSError *returnedError = [NSError new];
+    __block NSError *returnedError = [NSError errorWithCode:-1400
+                                       localizedDescription:@"testErrorForSetPushtoken"];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys.push setPushToken:deviceToken
                completionBlock:^(NSError *error) {
@@ -35,7 +37,7 @@
                }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }

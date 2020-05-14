@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Kiwi.h"
+#import <OCMock/OCMock.h>
 #import "Emarsys.h"
 #import "EMSPredictInternal.h"
 #import "EMSSQLiteHelper.h"
@@ -16,7 +16,6 @@
 #import "EMSVisitorIdResponseHandler.h"
 #import "EMSDependencyInjection.h"
 #import "MENotificationCenterManager.h"
-#import "FakeDependencyContainer.h"
 #import "EMSAppStartBlockProvider.h"
 #import "MERequestContext.h"
 #import "EMSDeviceInfo.h"
@@ -41,700 +40,703 @@
 #import "EMSLoggingGeofenceInternal.h"
 #import "EMSInboxV3.h"
 #import "EMSLoggingInboxV3.h"
-
-SPEC_BEGIN(EmarsysTests)
-
-
-        context(@"EmarsysTests", ^{
-
-
-            __block id engage;
-            __block id push;
-            __block id deepLink;
-            __block EMSPredictInternal *predict;
-            __block MERequestContext *requestContext;
-            __block EMSDeviceInfo *deviceInfo;
-            __block EMSRequestFactory *requestFactory;
-            __block EMSRequestManager *requestManager;
-            __block MENotificationCenterManager *notificationCenterManagerMock;
-            __block EMSAppStartBlockProvider *appStartBlockProvider;
-            __block id deviceInfoClient;
-
-            __block EMSConfig *baseConfig;
-            __block id <EMSDependencyContainerProtocol> dependencyContainer;
-
-            NSString *const customerId = @"customerId";
-
-            beforeEach(^{
-                engage = [KWMock nullMockForProtocol:@protocol(EMSMobileEngageProtocol)];
-                push = [KWMock nullMockForProtocol:@protocol(EMSPushNotificationProtocol)];
-                deepLink = [KWMock nullMockForProtocol:@protocol(EMSDeepLinkProtocol)];
-                predict = [EMSPredictInternal nullMock];
-                requestContext = [MERequestContext nullMock];
-                deviceInfo = [EMSDeviceInfo nullMock];
-                [requestContext stub:@selector(meId)
-                           andReturn:@"fakeMeId"];
-                [requestContext stub:@selector(deviceInfo)
-                           andReturn:deviceInfo];
-                requestFactory = [EMSRequestFactory nullMock];
-                requestManager = [EMSRequestManager nullMock];
-                notificationCenterManagerMock = [MENotificationCenterManager nullMock];
-                appStartBlockProvider = [EMSAppStartBlockProvider nullMock];
-                deviceInfoClient = [KWMock nullMockForProtocol:@protocol(EMSDeviceInfoClientProtocol)];
-
-                dependencyContainer = [[FakeDependencyContainer alloc] initWithDbHelper:nil
-                                                                           mobileEngage:engage
-                                                                               deepLink:deepLink
-                                                                                   push:push
-                                                                                  inbox:nil
-                                                                                    iam:nil
-                                                                                predict:predict
-                                                                         requestContext:requestContext
-                                                                         requestFactory:requestFactory
-                                                                      requestRepository:nil
-                                                                      notificationCache:nil
-                                                                       responseHandlers:nil
-                                                                         requestManager:requestManager
-                                                                         operationQueue:nil
-                                                              notificationCenterManager:notificationCenterManagerMock
-                                                                  appStartBlockProvider:appStartBlockProvider
-                                                                       deviceInfoClient:deviceInfoClient
-                                                                                 logger:[EMSLogger nullMock]];
-
-                [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                   withDependencyContainer:dependencyContainer];
-            });
-
-            afterEach(^{
-                [EmarsysTestUtils tearDownEmarsys];
-            });
-
-            describe(@"setupWithConfig:", ^{
-
-                it(@"should initialize category for push", ^{
-                    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
-
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-
-                    __block NSSet *categorySet = nil;
-                    [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
-                        categorySet = categories;
-                        [expectation fulfill];
-                    }];
-
-                    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                    timeout:5];
-
-                    XCTAssertGreaterThan(categorySet.count, 0);
-                    XCTAssertEqual(result, XCTWaiterResultCompleted);
-                });
-
-                it(@"should set predict", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-                    [[(NSObject *) [Emarsys predict] shouldNot] beNil];
-                });
-
-                it(@"should set push", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-                    [[(NSObject *) [Emarsys push] shouldNot] beNil];
-                });
-
-                it(@"should set notificationCenterDelegate", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-                    [[(NSObject *) [Emarsys notificationCenterDelegate] shouldNot] beNil];
-                });
-
-                it(@"should set config", ^{
-                    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                       withDependencyContainer:nil];
-                    [[(NSObject *) [Emarsys config] shouldNot] beNil];
-                });
-
-                it(@"register triggers_when_PredictTurnedOn", ^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                                [builder setMerchantId:@"1428C8EE286EC34B"];
-                                [builder setContactFieldId:@3];
-                            }]
-                                         dependencyContainer:nil];
-                    NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
-
-                    NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
-                                                                                             withEvent:[EMSDBTriggerEvent insertEvent]
-                                                                                              withType:[EMSDBTriggerType afterType]]];
-                    [[theValue([afterInsertTriggers count]) should] equal:theValue(2)];
-                    [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.loggerTrigger];
-                    [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.predictTrigger];
-                });
-
-                it(@"register triggers", ^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                                [builder setContactFieldId:@3];
-                            }]
-                                         dependencyContainer:nil];
-                    NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
-
-                    NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
-                                                                                             withEvent:[EMSDBTriggerEvent insertEvent]
-                                                                                              withType:[EMSDBTriggerType afterType]]];
-                    [[theValue([afterInsertTriggers count]) should] equal:theValue(1)];
-                    [[afterInsertTriggers should] contain:EMSDependencyInjection.dependencyContainer.loggerTrigger];
-                });
-
-                it(@"should throw an exception when there is no config set", ^{
-                    @try {
-                        [Emarsys setupWithConfig:nil];
-                        fail(@"Expected Exception when config is nil!");
-                    } @catch (NSException *exception) {
-                        [[exception.reason should] equal:@"Invalid parameter not satisfying: config"];
-                        [[theValue(exception) shouldNot] beNil];
-                    }
-                });
-
-                context(@"ResponseHandlers", ^{
-
-                    it(@"should register MEIAMResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        BOOL registered = NO;
-                        for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                            if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
-                                registered = YES;
-                            }
-                        }
-
-                        [[theValue(registered) should] beYes];
-                    });
-
-                    it(@"should register MEIAMCleanupResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        BOOL registered = NO;
-                        for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                            if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
-                                registered = YES;
-                            }
-                        }
-
-                        [[theValue(registered) should] beYes];
-                    });
-
-                    it(@"should register EMSVisitorIdResponseHandler if no features are turned on", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        NSUInteger registerCount = 0;
-                        for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                            if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
-                                registerCount++;
-                            }
-                        }
-
-                        [[theValue(registerCount) should] equal:theValue(1)];
-                    });
-
-                    it(@"should register EMSVisitorIdResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        NSUInteger registerCount = 0;
-                        for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                            if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
-                                registerCount++;
-                            }
-                        }
-
-                        [[theValue(registerCount) should] equal:theValue(1)];
-                    });
-
-                    it(@"should register EMSClientStateResponseHandler", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        NSUInteger registerCount = 0;
-                        for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-                            if ([responseHandler isKindOfClass:[EMSClientStateResponseHandler class]]) {
-                                registerCount++;
-                            }
-                        }
-
-                        [[theValue(registerCount) should] equal:theValue(1)];
-                    });
-
-                    it(@"should initialize responseHandlers", ^{
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:nil];
-
-                        [[theValue([EMSDependencyInjection.dependencyContainer.responseHandlers count]) should] equal:theValue(7)];
-                    });
-                });
-
-                context(@"appStart", ^{
-
-                    it(@"should register UIApplicationDidBecomeActiveNotification", ^{
-                        void (^appStartBlock)() = ^{
-                        };
-                        void (^appStartBlock2)() = ^{
-                        };
-                        void (^appStartBlock3)() = ^{
-                        };
-                        void (^appStartBlock4)() = ^{
-                        };
-                        [[appStartBlockProvider should] receive:@selector(createAppStartEventBlock)
-                                                      andReturn:appStartBlock
-                                                  withArguments:requestManager,
-                                                                requestContext];
-                        [[appStartBlockProvider should] receive:@selector(createDeviceInfoEventBlock)
-                                                      andReturn:appStartBlock2
-                                                  withArguments:requestManager,
-                                                                requestFactory,
-                                                                deviceInfo];
-                        [[appStartBlockProvider should] receive:@selector(createRemoteConfigEventBlock)
-                                                      andReturn:appStartBlock3];
-                        [[appStartBlockProvider should] receive:@selector(createFetchGeofenceEventBlock)
-                                                      andReturn:appStartBlock4];
-                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                          withArguments:appStartBlock,
-                                                                        UIApplicationDidFinishLaunchingNotification];
-                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                          withArguments:appStartBlock2,
-                                                                        UIApplicationDidBecomeActiveNotification];
-                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                          withArguments:appStartBlock3,
-                                                                        UIApplicationDidFinishLaunchingNotification];
-                        [[notificationCenterManagerMock should] receive:@selector(addHandlerBlock:forNotification:)
-                                                          withArguments:appStartBlock4,
-                                                                        UIApplicationDidFinishLaunchingNotification];
-                        [EmarsysTestUtils setupEmarsysWithFeatures:@[]
-                                           withDependencyContainer:dependencyContainer];
-                    });
-
-                });
-
-                context(@"automatic anonym applogin", ^{
-
-                    it(@"setupWithConfig should send deviceInfo and login", ^{
-                        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }];
-                        [EmarsysTestUtils tearDownEmarsys];
-                        [EmarsysTestUtils setupEmarsysWithConfig:config
-                                             dependencyContainer:dependencyContainer];
-
-                        [[deviceInfoClient should] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
-                        [[engage should] receive:@selector(setContactWithContactFieldValue:)
-                                   withArguments:kw_any()];
-
-                        [Emarsys setupWithConfig:config];
-                    });
-
-                    it(@"setupWithConfig should not send deviceInfo and login when contactFieldValue is available", ^{
-                        [requestContext stub:@selector(contactFieldValue)
-                                   andReturn:@"testContactFieldValue"];
-
-                        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }];
-                        [EmarsysTestUtils tearDownEmarsys];
-                        [EmarsysTestUtils setupEmarsysWithConfig:config
-                                             dependencyContainer:dependencyContainer];
-
-                        [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
-                        [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:)
-                                      withArguments:kw_any()];
-
-                        [Emarsys setupWithConfig:config];
-                    });
-
-                    it(@"setupWithConfig should not send deviceInfo and login when contactToken is available", ^{
-                        [requestContext stub:@selector(contactToken)
-                                   andReturn:@"testContactToken"];
-
-                        EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                            [builder setMerchantId:@"1428C8EE286EC34B"];
-                            [builder setContactFieldId:@3];
-                        }];
-                        [EmarsysTestUtils tearDownEmarsys];
-                        [EmarsysTestUtils setupEmarsysWithConfig:config
-                                             dependencyContainer:dependencyContainer];
-
-                        [[deviceInfoClient shouldNot] receive:@selector(sendDeviceInfoWithCompletionBlock:)];
-                        [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:)
-                                      withArguments:kw_any()];
-
-                        [Emarsys setupWithConfig:config];
-                    });
-
-                });
-            });
-
-            describe(@"trackDeepLinkWithUserActivity:sourceHandler:", ^{
-
-                it(@"should delegate call to MobileEngage", ^{
-                    NSUserActivity *userActivity = [NSUserActivity mock];
-                    EMSSourceHandler sourceHandler = ^(NSString *source) {
-                    };
-
-                    [[deepLink should] receive:@selector(trackDeepLinkWith:sourceHandler:)
-                                 withArguments:userActivity,
-                                               sourceHandler];
-
-                    [Emarsys trackDeepLinkWithUserActivity:userActivity
-                                             sourceHandler:sourceHandler];
-                });
-            });
-
-            describe(@"trackCustomEventWithName:eventAttributes:completionBlock:", ^{
-
-                it(@"should delegate call to MobileEngage with nil completionBlock", ^{
-                    NSString *eventName = @"eventName";
-                    NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
-
-                    [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
-                               withArguments:eventName,
-                                             eventAttributes, kw_any()];
-
-                    [Emarsys trackCustomEventWithName:eventName
-                                      eventAttributes:eventAttributes];
-                });
-
-                it(@"should delegate call to MobileEngage", ^{
-                    NSString *eventName = @"eventName";
-                    NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
-                    EMSCompletionBlock completionBlock = ^(NSError *error) {
-                    };
-
-                    [[engage should] receive:@selector(trackCustomEventWithName:eventAttributes:completionBlock:)
-                               withArguments:eventName,
-                                             eventAttributes,
-                                             completionBlock];
-
-                    [Emarsys trackCustomEventWithName:eventName
-                                      eventAttributes:eventAttributes
-                                      completionBlock:completionBlock];
-                });
-            });
-
-            describe(@"trackMessageOpenWithUserInfo:completionBlock:", ^{
-
-                NSDictionary *const userInfo = @{@"u": @"{\"sid\":\"dd8_zXfDdndBNEQi\"}"};
-
-                it(@"should delegate call to MobileEngage with nil completionBlock", ^{
-                    [[push should] receive:@selector(trackMessageOpenWithUserInfo:)
-                             withArguments:userInfo];
-
-                    [Emarsys.push trackMessageOpenWithUserInfo:userInfo];
-                });
-
-                it(@"should delegate call to MobileEngage", ^{
-                    EMSCompletionBlock completionBlock = ^(NSError *error) {
-                    };
-
-                    [[push should] receive:@selector(trackMessageOpenWithUserInfo:completionBlock:)
-                             withArguments:userInfo,
-                                           completionBlock];
-
-                    [Emarsys.push trackMessageOpenWithUserInfo:userInfo
-                                               completionBlock:completionBlock];
-                });
-            });
-
-            describe(@"setContactWithContactFieldValue delegates properly based on enabled features", ^{
-                beforeEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                });
-
-                it(@"setContactWithContactFieldValue is not called by predict when predict is disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict shouldNot] receive:@selector(setContactWithContactFieldValue:)];
-
-                    [Emarsys setContactWithContactFieldValue:@"contact"];
-                });
-
-                it(@"setContactWithContactFieldValue is called by predict when predict is enabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMerchantId:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict should] receive:@selector(setContactWithContactFieldValue:)];
-
-                    [Emarsys setContactWithContactFieldValue:@"contact"];
-                });
-
-                it(@"setContactWithContactFieldValue is not called by mobileEngage when mobileEngage is disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMerchantId:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[engage shouldNot] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
-
-                    [Emarsys setContactWithContactFieldValue:@"contact"];
-                });
-
-                it(@"setContactWithContactFieldValue is called by mobileEngage when mobileEngage is enabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
-
-                    [Emarsys setContactWithContactFieldValue:@"contact"];
-                });
-
-                it(@"setContactWithContactFieldValue is only called once when mobileEngage and predict are disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict shouldNot] receive:@selector(setContactWithContactFieldValue:)];
-                    [[engage should] receive:@selector(setContactWithContactFieldValue:completionBlock:)];
-
-                    [Emarsys setContactWithContactFieldValue:@"contact"];
-                });
-            });
-
-            describe(@"clearContact delegates properly based on enabled features", ^{
-                beforeEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                });
-
-                it(@"clearContact is not called by predict when predict is disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict shouldNot] receive:@selector(clearContact)];
-
-                    [Emarsys clearContact];
-                });
-
-                it(@"clearContact is called by predict when predict is enabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMerchantId:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict should] receive:@selector(clearContact)];
-
-                    [Emarsys clearContact];
-                });
-
-                it(@"clearContact is not called by mobileEngage when mobileEngage is disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMerchantId:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[engage shouldNot] receive:@selector(clearContact)];
-
-                    [Emarsys clearContact];
-                });
-
-                it(@"clearContact is called by mobileEngage when mobileEngage is enabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                        [builder setContactFieldId:@3];
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
-
-                    [Emarsys clearContact];
-                });
-
-                it(@"clearContact is only called once when mobileEngage and predict are disabled", ^{
-                    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    }];
-                    [EmarsysTestUtils setupEmarsysWithConfig:config
-                                         dependencyContainer:dependencyContainer];
-
-                    [[predict shouldNot] receive:@selector(clearContact)];
-                    [[engage should] receive:@selector(clearContactWithCompletionBlock:)];
-
-                    [Emarsys clearContact];
-                });
-            });
-
-        });
-        context(@"production setup", ^{
-
-            describe(@"mobileEngage and predict is turned on", ^{
-
-                beforeEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                                [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                                [builder setMerchantId:@"1428C8EE286EC34B"];
-                                [builder setContactFieldId:@3];
-                            }]
-                                         dependencyContainer:nil];
-                });
-
-                afterEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                });
-
-                describe(@"push", ^{
-                    it(@"should be EMSPushV3Internal", ^{
-                        [[((NSObject *) Emarsys.push) should] beKindOfClass:[EMSPushV3Internal class]];
-                    });
-                });
-
-                describe(@"inbox", ^{
-                    it(@"should be MEInbox", ^{
-                        [[((NSObject *) Emarsys.inbox) should] beKindOfClass:[MEInbox class]];
-                    });
-                });
-
-                describe(@"inApp", ^{
-                    it(@"should be MEInApp", ^{
-                        [[((NSObject *) Emarsys.inApp) should] beKindOfClass:[MEInApp class]];
-                    });
-                });
-
-                describe(@"predict", ^{
-                    it(@"should be EMSPredictInternal", ^{
-                        [[((NSObject *) Emarsys.predict) should] beKindOfClass:[EMSPredictInternal class]];
-                    });
-                });
-
-                describe(@"notificationCenterDelegate", ^{
-                    it(@"should be MEUserNotificationDelegate", ^{
-                        [[((NSObject *) Emarsys.notificationCenterDelegate) should] beKindOfClass:[MEUserNotificationDelegate class]];
-                    });
-                });
-
-                describe(@"mobileEngage", ^{
-                    it(@"should be EMSMobileEngageV3Internal", ^{
-                        [[((NSObject *) EMSDependencyInjection.dependencyContainer.mobileEngage) should] beKindOfClass:[EMSMobileEngageV3Internal class]];
-                    });
-                });
-
-                describe(@"deepLink", ^{
-                    it(@"should be EMSDeepLinkInternal", ^{
-                        [[((NSObject *) EMSDependencyInjection.dependencyContainer.deepLink) should] beKindOfClass:[EMSDeepLinkInternal class]];
-                    });
-                });
-
-                describe(@"geofence", ^{
-                    it(@"should be EMSGeofenceInternal", ^{
-                        [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
-                    });
-                });
-
-                describe(@"messageInbox", ^{
-                    it(@"should be EMSInboxV3", ^{
-                        [[((NSObject *) Emarsys.messageInbox) should] beKindOfClass:[EMSInboxV3 class]];
-                    });
-                });
-            });
-
-            describe(@"mobileEngage and predict is turned off", ^{
-
-                beforeEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            }]
-                                         dependencyContainer:nil];
-                });
-
-                afterEach(^{
-                    [EmarsysTestUtils tearDownEmarsys];
-                });
-
-                describe(@"push", ^{
-                    it(@"should be EMSLoggingPushInternal", ^{
-                        [[((NSObject *) Emarsys.push) should] beKindOfClass:[EMSLoggingPushInternal class]];
-                    });
-                });
-
-                describe(@"inbox", ^{
-                    it(@"should be EMSLoggingInbox", ^{
-                        [[((NSObject *) Emarsys.inbox) should] beKindOfClass:[EMSLoggingInbox class]];
-                    });
-                });
-
-                describe(@"inApp", ^{
-                    it(@"should be EMSLoggingInApp", ^{
-                        [[((NSObject *) Emarsys.inApp) should] beKindOfClass:[EMSLoggingInApp class]];
-                    });
-                });
-
-                describe(@"predict", ^{
-                    it(@"should be EMSLoggingPredictInternal", ^{
-                        [[((NSObject *) Emarsys.predict) should] beKindOfClass:[EMSLoggingPredictInternal class]];
-                    });
-                });
-
-                describe(@"notificationCenterDelegate", ^{
-                    it(@"should be EMSLoggingUserNotificationDelegate", ^{
-                        [[((NSObject *) Emarsys.notificationCenterDelegate) should] beKindOfClass:[EMSLoggingUserNotificationDelegate class]];
-                    });
-                });
-
-                describe(@"mobileEngage", ^{
-                    it(@"should be EMSLoggingMobileEngageInternal", ^{
-                        [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSLoggingMobileEngageInternal class]];
-                    });
-                });
-
-                describe(@"deepLink", ^{
-                    it(@"should be EMSLoggingDeepLinkInternal", ^{
-                        [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
-                    });
-                });
-
-                describe(@"geofence", ^{
-                    it(@"should be EMSLoggingGeofenceInternal", ^{
-                        [[((NSObject *) Emarsys.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
-                    });
-                });
-
-                describe(@"messageInbox", ^{
-                    it(@"should be EMSLoggingInboxV3", ^{
-                        [[((NSObject *) Emarsys.messageInbox) should] beKindOfClass:[EMSLoggingInboxV3 class]];
-                    });
-                });
-            });
-
-        });
-
-SPEC_END
+#import "EMSDeviceInfoV3ClientInternal.h"
+#import "EMSQueueDelegator.h"
+
+@interface EmarsysTests: XCTestCase
+
+@end
+
+@implementation EmarsysTests
+
+- (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
+}
+
+- (void)testShouldInitializeCategoryForPush {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
+    
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    __block NSSet*categorySet= nil;
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
+        categorySet= categories;
+        [expectation fulfill];
+    }];
+    
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:10];
+    
+    XCTAssertGreaterThan(categorySet.count, 0);
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+}
+
+- (void)testShouldSetPredict {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    XCTAssertNotNil((NSObject *) [Emarsys predict]);
+}
+
+- (void)testShouldSetPush {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+
+    [self waitForSetup];
+    
+    XCTAssertNotNil((NSObject *) [Emarsys push]);
+}
+
+- (void)testShouldSetNotificationCenterDelegate {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+
+    [self waitForSetup];
+    
+    XCTAssertNotNil((NSObject *) [Emarsys notificationCenterDelegate]);
+}
+
+- (void)testShouldSetConfig {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    XCTAssertNotNil((NSObject *) [Emarsys config]);
+}
+
+- (void)testRegisterTriggers_when_PredictTurnedOn {
+    [EmarsysTestUtils tearDownEmarsys];
+    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+        [builder setMerchantId:@"1428C8EE286EC34B"];
+        [builder setContactFieldId:@3];
+    }]
+                         dependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
+    
+    NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                                             withEvent:[EMSDBTriggerEvent insertEvent]
+                                                                              withType:[EMSDBTriggerType afterType]]];
+    
+    XCTAssertEqual([afterInsertTriggers count], 2);
+    XCTAssertTrue([afterInsertTriggers containsObject:EMSDependencyInjection.dependencyContainer.loggerTrigger]);
+    XCTAssertTrue([afterInsertTriggers containsObject:EMSDependencyInjection.dependencyContainer.predictTrigger ]);
+}
+
+- (void)testRegisterTriggers {
+    [EmarsysTestUtils tearDownEmarsys];
+    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+        [builder setContactFieldId:@3];
+    }]
+                         dependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    NSDictionary *triggers = [[Emarsys sqliteHelper] registeredTriggers];
+    
+    NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
+                                                                             withEvent:[EMSDBTriggerEvent insertEvent]
+                                                                              withType:[EMSDBTriggerType afterType]]];
+    XCTAssertEqual([afterInsertTriggers count], 1);
+    XCTAssertTrue([afterInsertTriggers containsObject:EMSDependencyInjection.dependencyContainer.loggerTrigger]);
+}
+
+- (void)testSetup_config_mustNotBeNil{
+    @try {
+        [Emarsys setupWithConfig:nil];
+        XCTFail(@"Expected Exception when config is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: config"]);
+    }
+}
+
+- (void)testShouldregisterMEIAMResponseHandler {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    BOOL registered = NO;
+    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
+        if ([responseHandler isKindOfClass:[MEIAMResponseHandler class]]) {
+            registered = YES;
+        }
+    }
+    
+    XCTAssertTrue(registered);
+}
+
+- (void)testShouldregisterMEIAMCleanupResponseHandler {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    BOOL registered = NO;
+    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
+        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
+            registered = YES;
+        }
+    }
+    
+    XCTAssertTrue(registered);
+}
+
+- (void)testShouldregisterEMSVisitorIdResponseHandler_ifNoFeaturesAreTurnedOn {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    NSUInteger registerCount = 0;
+    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
+        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
+            registerCount++;
+        }
+    }
+    
+    XCTAssertEqual(registerCount, 1);
+}
+
+- (void)testShouldregisterEMSVisitorIdResponseHandler {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    NSUInteger registerCount = 0;
+    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
+        if ([responseHandler isKindOfClass:[EMSVisitorIdResponseHandler class]]) {
+            registerCount++;
+        }
+    }
+    
+    XCTAssertEqual(registerCount, 1);
+}
+
+- (void)testShouldregisterEMSClientStateResponseHandler {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    NSUInteger registerCount = 0;
+    for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
+        if ([responseHandler isKindOfClass:[EMSClientStateResponseHandler class]]) {
+            registerCount++;
+        }
+    }
+    
+    XCTAssertEqual(registerCount, 1);
+}
+
+- (void)testShouldInitializeresponseHandlers {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+    
+    [self waitForSetup];
+    
+    XCTAssertEqual([EMSDependencyInjection.dependencyContainer.responseHandlers count], 7);
+}
+
+- (void)testShouldregisterUIApplicationDidBecomeActiveNotification {
+    EMSAppStartBlockProvider *mockProvider = OCMClassMock([EMSAppStartBlockProvider class]);
+    MENotificationCenterManager *mockManager = OCMClassMock([MENotificationCenterManager class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer appStartBlockProvider]).andReturn(mockProvider);
+        OCMStub([partialMockContainer notificationCenterManager]).andReturn(mockManager);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    OCMVerify([mockProvider createAppStartEventBlock]);
+    OCMVerify([mockProvider createDeviceInfoEventBlock]);
+    OCMVerify([mockProvider createRemoteConfigEventBlock]);
+    OCMVerify([mockProvider createFetchGeofenceEventBlock]);
+    OCMVerify([mockManager addHandlerBlock:[OCMArg any]
+                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+    OCMVerify([mockManager addHandlerBlock:[OCMArg any]
+                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+    OCMVerify([mockManager addHandlerBlock:[OCMArg any]
+                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+    OCMVerify([mockManager addHandlerBlock:[OCMArg any]
+                           forNotification:UIApplicationDidBecomeActiveNotification]);
+}
+
+- (void)testsetupWithConfigShouldSendDeviceInfoAndLogin {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
+    MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+        OCMStub([partialMockContainer deviceInfoClient]).andReturn(mockDeviceInfoClient);
+        OCMStub([partialMockContainer requestContext]).andReturn(mockRequestContext);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    OCMVerify([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:nil]);
+    OCMVerify([mockMobileEngage setContactWithContactFieldValue:nil]);
+}
+
+- (void)testsetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactFieldValueIsAvailable {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
+    MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    
+    OCMStub([mockRequestContext contactFieldValue]).andReturn(@"testContactFieldValue");
+    
+    OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
+    OCMReject([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+        OCMStub([partialMockContainer deviceInfoClient]).andReturn(mockDeviceInfoClient);
+        OCMStub([partialMockContainer requestContext]).andReturn(mockRequestContext);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+}
+
+- (void)testsetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactTokenIsAvailable {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
+    MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    
+    OCMStub([mockRequestContext contactToken]).andReturn(@"testContactToken");
+    
+    OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
+    OCMReject([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+        OCMStub([partialMockContainer deviceInfoClient]).andReturn(mockDeviceInfoClient);
+        OCMStub([partialMockContainer requestContext]).andReturn(mockRequestContext);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+}
+
+- (void)testShoulddelegatecallToMobileEngage {
+    NSUserActivity *mockUserActivity = OCMClassMock([NSUserActivity class]);
+    EMSSourceHandler sourceHandler = ^(NSString *source) {
+    };
+    
+    EMSDeepLinkInternal *mockDeepLinkInternal = OCMClassMock([EMSDeepLinkInternal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer deepLink]).andReturn(mockDeepLinkInternal);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    [Emarsys trackDeepLinkWithUserActivity:mockUserActivity
+                             sourceHandler:sourceHandler];
+    
+    OCMVerify([mockDeepLinkInternal trackDeepLinkWith:mockUserActivity
+                                        sourceHandler:sourceHandler]);
+}
+
+- (void)testShouldDelegatecallToMobileEngageWithNilCompletionBlock {
+    NSString *eventName = @"eventName";
+    NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
+    
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    [Emarsys trackCustomEventWithName:eventName
+                      eventAttributes:eventAttributes];
+    
+    OCMVerify([mockMobileEngage trackCustomEventWithName:eventName
+                                         eventAttributes:eventAttributes
+                                         completionBlock:[OCMArg any]]);
+}
+
+- (void)testShouldDelegateCallToMobileEngage {
+    NSString *eventName = @"eventName";
+    NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+    
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    [Emarsys trackCustomEventWithName:eventName
+                      eventAttributes:eventAttributes
+                      completionBlock:completionBlock];
+    
+    OCMVerify([mockMobileEngage trackCustomEventWithName:eventName
+                                         eventAttributes:eventAttributes
+                                         completionBlock:completionBlock]);
+}
+
+- (void)testsetContactWithContactFieldValueIsNotCalledByPredict_when_predictIsDisabled {
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    OCMReject([mockPredict setContactWithContactFieldValue:@"contact"]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    [Emarsys setContactWithContactFieldValue:@"contact"];
+}
+
+- (void)testsetContactWithContactFieldValueIsCalledByPredict_when_predictIsEnabled {
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+    
+    [Emarsys setContactWithContactFieldValue:@"contact"];
+    
+    OCMVerify([mockPredict setContactWithContactFieldValue:@"contact"]);
+}
+
+- (void)testsetContactWithContactFieldValueIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    OCMReject([mockMobileEngage setContactWithContactFieldValue:@"contact"
+                                                completionBlock:[OCMArg any]]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:YES];
+    
+    [Emarsys setContactWithContactFieldValue:@"contact"];
+}
+
+- (void)testsetContactWithContactFieldValueisCalledByMobileEngage_when_mobileEngageIsEnabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+    
+    [Emarsys setContactWithContactFieldValue:@"contact"];
+    
+    OCMVerify([mockMobileEngage setContactWithContactFieldValue:@"contact"
+                                                completionBlock:[OCMArg any]]);
+}
+
+- (void)testsetContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    OCMReject([mockPredict setContactWithContactFieldValue:@"contact"]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    [Emarsys setContactWithContactFieldValue:@"contact"];
+    
+    OCMVerify([mockMobileEngage setContactWithContactFieldValue:@"contact"
+                                                completionBlock:[OCMArg any]]);
+}
+
+- (void)testclearContactIsNotCalledByPredict_when_predictIsDisabled {
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    OCMReject([mockPredict clearContact]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    [Emarsys clearContact];
+}
+
+- (void)testclearContactisCalledByPredict_when_predictIsEnabled {
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:YES];
+    
+    [Emarsys clearContact];
+    
+    OCMVerify([mockPredict clearContact]);
+}
+
+- (void)testclearContactIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    OCMReject([mockMobileEngage clearContact]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:YES];
+    
+    [Emarsys clearContact];
+}
+
+- (void)testclearContactisCalledByMobileEngage_when_mobileEngageIsEnabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    
+    [Emarsys clearContact];
+    
+    OCMVerify([mockMobileEngage clearContactWithCompletionBlock:nil]);
+}
+
+- (void)testclearContactisOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
+    
+    OCMReject([mockPredict clearContact]);
+    
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+        OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+        OCMStub([partialMockContainer predict]).andReturn(mockPredict);
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    [Emarsys clearContact];
+    
+    OCMVerify([mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testShouldBeEMSPushV3Internal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+    
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).object class], [EMSPushV3Internal class]);
+}
+
+- (void)testShouldBeMEInbox {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+    
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).object class], [MEInbox class]);
+}
+
+- (void)testShouldBeMEInApp {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+    
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).object class], [MEInApp class]);
+}
+
+- (void)testShouldBeEMSPredictInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
+}
+
+- (void)testShouldBeMEUserNotificationDelegate {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).object class], [MEUserNotificationDelegate class]);
+}
+
+- (void)testShouldBeEMSMobileEngageV3Internal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.mobileEngage).object class], [EMSMobileEngageV3Internal class]);
+}
+
+- (void)testShouldBeEMSDeepLinkInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.deepLink).object class], [EMSDeepLinkInternal class]);
+}
+
+- (void)testShouldBeEMSGeofenceInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).object class], [EMSGeofenceInternal class]);
+}
+
+- (void)testShouldBeEMSInboxV3 {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).object class], [EMSInboxV3 class]);
+}
+
+- (void)testShouldBeEMSLoggingPushInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+
+    XCTAssertEqual([((NSObject *) Emarsys.push) class], [EMSLoggingPushInternal class]);
+}
+
+- (void)testShouldBeEMSLoggingInbox {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.inbox) class], [EMSLoggingInbox class]);
+}
+
+- (void)testShouldBeEMSLoggingInApp {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.inApp) class], [EMSLoggingInApp class]);
+}
+
+- (void)testShouldBeEMSLoggingPredictInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.predict) class], [EMSLoggingPredictInternal class]);
+}
+
+- (void)testShouldBeEMSLoggingUserNotificationDelegate {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.notificationCenterDelegate) class], [EMSLoggingUserNotificationDelegate class]);
+}
+
+- (void)testShouldBeEMSLoggingMobileEngageInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) EMSDependencyInjection.mobileEngage) class], [EMSLoggingMobileEngageInternal class]);
+}
+
+- (void)testShouldBeEMSLoggingDeepLinkInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) EMSDependencyInjection.deepLink) class], [EMSLoggingDeepLinkInternal class]);
+}
+
+- (void)testShouldBeEMSLoggingGeofenceInternal {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.geofence) class], [EMSLoggingGeofenceInternal class]);
+}
+
+- (void)testShouldBeEMSLoggingInboxV3 {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+    }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+    
+    XCTAssertEqual([((NSObject *) Emarsys.messageInbox) class], [EMSLoggingInboxV3 class]);
+}
+
+- (void)waitForSetup {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForDescription"];
+    [EMSDependencyInjection.dependencyContainer.operationQueue addOperationWithBlock:^{
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)setupContainerWithMocks:(void(^)(EMSDependencyContainer *partialMockContainer))partialMockContainerBlock
+            mobileEngageEnabled:(BOOL)isMobileEngageEnabled
+                 predictEnabled:(BOOL)isPredictEnabled {
+    [EmarsysTestUtils tearDownEmarsys];
+    
+    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        if (isPredictEnabled) {
+            [builder setMerchantId:@"14C19-A121F"];
+        }
+        if (isMobileEngageEnabled) {
+            [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+        }
+        [builder setContactFieldId:@3];
+    }];
+    EMSDependencyContainer *container = [[EMSDependencyContainer alloc] initWithConfig:config];
+    
+    EMSDependencyContainer *partialMockContainer = OCMPartialMock(container);
+    
+    partialMockContainerBlock(partialMockContainer);
+    
+    [EmarsysTestUtils setupEmarsysWithConfig:config
+                         dependencyContainer:partialMockContainer];
+    
+    [self waitForSetup];
+}
+
+@end

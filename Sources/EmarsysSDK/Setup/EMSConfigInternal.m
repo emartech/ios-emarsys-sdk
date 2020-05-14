@@ -16,6 +16,8 @@
 #import "EMSLogger.h"
 #import "EMSResponseModel.h"
 #import "EMSCrypto.h"
+#import "EMSDispatchWaiter.h"
+#import "NSError+EMSCore.h"
 
 @interface EMSConfigInternal ()
 
@@ -33,6 +35,8 @@
 @property(nonatomic, strong) NSNumber *updatedContactFieldId;
 @property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
 @property(nonatomic, strong) EMSCrypto *crypto;
+@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) EMSDispatchWaiter *waiter;
 
 @end
 
@@ -48,7 +52,9 @@
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
                               endpoint:(EMSEndpoint *)endpoint
                                 logger:(EMSLogger *)logger
-                                crypto:(EMSCrypto *)crypto {
+                                crypto:(EMSCrypto *)crypto
+                                 queue:(NSOperationQueue *)queue
+                                waiter:(EMSDispatchWaiter *)waiter {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
@@ -60,6 +66,8 @@
     NSParameterAssert(endpoint);
     NSParameterAssert(logger);
     NSParameterAssert(crypto);
+    NSParameterAssert(queue);
+    NSParameterAssert(waiter);
     if (self = [super init]) {
         _requestManager = requestManager;
         _mobileEngage = mobileEngage;
@@ -72,27 +80,32 @@
         _endpoint = endpoint;
         _logger = logger;
         _crypto = crypto;
+        _queue = queue;
+        _waiter = waiter;
     }
     return self;
 }
 
-- (void)refreshConfigFromRemoteConfig {
+- (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     EMSRequestModel *signatureRequestModel = [self.emarsysRequestFactory createRemoteConfigSignatureRequestModel];
     [self.requestManager submitRequestModelNow:signatureRequestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                      [self fetchRemoteConfigWithSignatureData:response.body];
+                                      [self fetchRemoteConfigWithSignatureData:response.body
+                                                               completionBlock:completionBlock];
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
+                                        if (completionBlock) {
+                                            completionBlock(error);
+                                        }
                                         if (error) {
                                             [self.endpoint reset];
                                             [self.logger reset];
                                         }
                                     }];
-
-
 }
 
-- (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData {
+- (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
+                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [self.emarsysRequestFactory createRemoteConfigRequestModel];
     [self.requestManager submitRequestModelNow:requestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
@@ -102,16 +115,30 @@
                                               EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
                                               [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
                                               [self.logger updateWithRemoteConfig:remoteConfig];
+                                              if (completionBlock) {
+                                                  completionBlock(nil);
+                                              }
                                           } else {
+                                              if (completionBlock) {
+                                                  completionBlock([NSError errorWithCode:400
+                                                                    localizedDescription:@"No response"]);
+                                              }
                                               [self.endpoint reset];
                                               [self.logger reset];
                                           }
                                       } else {
+                                          if (completionBlock) {
+                                              completionBlock([NSError errorWithCode:500
+                                                                localizedDescription:@"Crypto error"]);
+                                          }
                                           [self.endpoint reset];
                                           [self.logger reset];
                                       }
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
+                                        if (completionBlock) {
+                                            completionBlock(error);
+                                        }
                                         if (error) {
                                             [self.endpoint reset];
                                             [self.logger reset];
@@ -154,13 +181,26 @@
     }
 }
 
+- (void)changeMerchantId:(nullable NSString *)merchantId {
+    self.preRequestContext.merchantId = merchantId;
+}
+
+- (void)changeMerchantId:(NSString *)merchantId
+         completionBlock:(EMSCompletionBlock)completionHandler {
+    self.preRequestContext.merchantId = merchantId;
+    [self.waiter enter];
+    __weak typeof(self) weakSelf = self;
+    [self.queue addOperationWithBlock:^{
+        [weakSelf.waiter exit];
+    }];
+    [self.waiter waitWithInterval:5];
+    if (completionHandler) {
+        completionHandler(nil);
+    }
+}
 
 - (NSString *)applicationCode {
     return self.meRequestContext.applicationCode;
-}
-
-- (void)changeMerchantId:(nullable NSString *)merchantId {
-    self.preRequestContext.merchantId = merchantId;
 }
 
 - (NSString *)merchantId {
@@ -233,7 +273,7 @@
     }
     self.updatedContactFieldId = nil;
     self.contactFieldIdHasBeenChanged = NO;
-    [self refreshConfigFromRemoteConfig];
+    [self refreshConfigFromRemoteConfigWithCompletionBlock:nil];
     if (completionBlock) {
         completionBlock(error);
     }

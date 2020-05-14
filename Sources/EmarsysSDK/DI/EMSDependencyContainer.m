@@ -84,6 +84,8 @@
 #import "EMSLoggingInboxV3.h"
 #import "EMSRandomProvider.h"
 #import "EMSCrypto.h"
+#import "EMSQueueDelegator.h"
+#import "EMSDispatchWaiter.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -128,6 +130,19 @@
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 @property(nonatomic, strong) EMSStorage *storage;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+
+@property(nonatomic, strong) EMSQueueDelegator *predictDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *mobileEngageDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *deepLinkDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *pushDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *inboxDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *notificationCenterDelegateDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *messageInboxDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *configDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *geofenceDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *iamDelegator;
+@property(nonatomic, strong) CLLocationManager *locationManager;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -137,7 +152,80 @@
 
 - (instancetype)initWithConfig:(EMSConfig *)config {
     if (self = [super init]) {
-        [self initializeDependenciesWithConfig:config];
+        _uuidProvider = [EMSUUIDProvider new];
+        _operationQueue = [EMSOperationQueue new];
+        _operationQueue.maxConcurrentOperationCount = 1;
+        _operationQueue.qualityOfService = NSQualityOfServiceUserInitiated;
+        _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
+                                                          [self.uuidProvider provideUUIDString]];
+
+        _predictDelegator = [EMSQueueDelegator alloc];
+        [self.predictDelegator setupWithQueue:self.operationQueue
+                                  emptyTarget:[EMSPredictInternal new]
+                               dispatchWaiter:[EMSDispatchWaiter new]];
+        _predict = (id <EMSPredictProtocol, EMSPredictInternalProtocol>) self.predictDelegator;
+
+        _mobileEngageDelegator = [EMSQueueDelegator alloc];
+        [self.mobileEngageDelegator setupWithQueue:self.operationQueue
+                                       emptyTarget:[EMSMobileEngageV3Internal new]
+                                    dispatchWaiter:[EMSDispatchWaiter new]];
+        _mobileEngage = (id <EMSMobileEngageProtocol>) self.mobileEngageDelegator;
+
+        _deepLinkDelegator = [EMSQueueDelegator alloc];
+        [self.deepLinkDelegator setupWithQueue:self.operationQueue
+                                   emptyTarget:[EMSDeepLinkInternal new]
+                                dispatchWaiter:[EMSDispatchWaiter new]];
+        _deepLink = (id <EMSDeepLinkProtocol>) self.deepLinkDelegator;
+
+        _pushDelegator = [EMSQueueDelegator alloc];
+        [self.pushDelegator setupWithQueue:self.operationQueue
+                               emptyTarget:[EMSPushV3Internal new]
+                            dispatchWaiter:[EMSDispatchWaiter new]];
+        _push = (id <EMSPushNotificationProtocol>) self.pushDelegator;
+
+        _inboxDelegator = [EMSQueueDelegator alloc];
+        [self.inboxDelegator setupWithQueue:self.operationQueue
+                                emptyTarget:[MEInbox new]
+                             dispatchWaiter:[EMSDispatchWaiter new]];
+        _inbox = (id <EMSInboxProtocol>) self.inboxDelegator;
+
+        _notificationCenterDelegateDelegator = [EMSQueueDelegator alloc];
+        [self.notificationCenterDelegateDelegator setupWithQueue:self.operationQueue
+                                                     emptyTarget:[MEUserNotificationDelegate new]
+                                                  dispatchWaiter:[EMSDispatchWaiter new]];
+        _notificationCenterDelegate = (id <EMSUserNotificationCenterDelegate>) self.notificationCenterDelegateDelegator;
+
+        _messageInboxDelegator = [EMSQueueDelegator alloc];
+        [self.messageInboxDelegator setupWithQueue:self.operationQueue
+                                       emptyTarget:[EMSInboxV3 new]
+                                    dispatchWaiter:[EMSDispatchWaiter new]];
+        _messageInbox = (id <EMSMessageInboxProtocol>) self.messageInboxDelegator;
+
+        _configDelegator = [EMSQueueDelegator alloc];
+        [self.configDelegator setupWithQueue:self.operationQueue
+                                 emptyTarget:[EMSConfigInternal new]
+                              dispatchWaiter:[EMSDispatchWaiter new]];
+        _config = (id <EMSConfigProtocol>) self.configDelegator;
+
+        _geofenceDelegator = [EMSQueueDelegator alloc];
+        [self.geofenceDelegator setupWithQueue:self.operationQueue
+                                   emptyTarget:[EMSGeofenceInternal new]
+                                dispatchWaiter:[EMSDispatchWaiter new]];
+        _geofence = (id <EMSGeofenceProtocol>) self.geofenceDelegator;
+
+        _iamDelegator = [EMSQueueDelegator alloc];
+        [self.iamDelegator setupWithQueue:self.operationQueue
+                              emptyTarget:[MEInApp new]
+                           dispatchWaiter:[EMSDispatchWaiter new]];
+        _iam = (id <EMSInAppProtocol, MEIAMProtocol>) self.iamDelegator;
+
+        _locationManager = [CLLocationManager new];
+
+        NSBlockOperation *initOperation = [NSBlockOperation blockOperationWithBlock:^{
+            [self initializeDependenciesWithConfig:config];
+        }];
+        initOperation.queuePriority = NSOperationQueuePriorityVeryHigh;
+        [_operationQueue addOperation:initOperation];
     }
     return self;
 }
@@ -158,20 +246,16 @@
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
-                                                          eventServiceUrlProvider:eventServiceUrlProvider
-                                                               predictUrlProvider:predictUrlProvider
-                                                              deeplinkUrlProvider:deeplinkUrlProvider
-                                                        v2EventServiceUrlProvider:v2EventServiceUrlProvider
-                                                                 inboxUrlProvider:inboxUrlProvider
-                                                        v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
+                                              eventServiceUrlProvider:eventServiceUrlProvider
+                                                   predictUrlProvider:predictUrlProvider
+                                                  deeplinkUrlProvider:deeplinkUrlProvider
+                                            v2EventServiceUrlProvider:v2EventServiceUrlProvider
+                                                     inboxUrlProvider:inboxUrlProvider
+                                            v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
 
+    EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
-    EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
-    _operationQueue = [EMSOperationQueue new];
-    _operationQueue.maxConcurrentOperationCount = 1;
-    _operationQueue.qualityOfService = NSQualityOfServiceUtility;
-    _operationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
-                                                      [uuidProvider provideUUIDString]];
+
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
     _storage = [[EMSStorage alloc] initWithOperationQueue:self.operationQueue
                                                suiteNames:self.suiteNames];
@@ -183,11 +267,11 @@
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
                                                          contactFieldId:config.contactFieldId
-                                                           uuidProvider:uuidProvider
+                                                           uuidProvider:self.uuidProvider
                                                       timestampProvider:timestampProvider
                                                              deviceInfo:deviceInfo];
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
-                                                                     uuidProvider:uuidProvider
+                                                                     uuidProvider:self.uuidProvider
                                                                        merchantId:config.merchantId
                                                                        deviceInfo:deviceInfo];
 
@@ -199,13 +283,13 @@
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
 
-    _iam = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]
-                                                                                               sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]]
-                                mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
-                                 timestampProvider:timestampProvider
-                           completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.operationQueue]
-                            displayedIamRepository:displayedIAMRepository
-                             buttonClickRepository:buttonClickRepository];
+    [self.iamDelegator proxyWithTargetObject:[[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]
+                                                                                                                                 sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]]
+                                                                  mainWindowProvider:[[EMSMainWindowProvider alloc] initWithApplication:[UIApplication sharedApplication]]
+                                                                   timestampProvider:timestampProvider
+                                                             completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.operationQueue]
+                                                              displayedIamRepository:displayedIAMRepository
+                                                               buttonClickRepository:buttonClickRepository]];
     _loggingIam = [EMSLoggingInApp new];
     [_dbHelper open];
 
@@ -222,7 +306,7 @@
     _logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                           opertaionQueue:self.operationQueue
                                        timestampProvider:timestampProvider
-                                            uuidProvider:uuidProvider
+                                            uuidProvider:self.uuidProvider
                                                  storage:self.storage];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
@@ -333,75 +417,81 @@
 
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
                                                                                                                           endpoint:self.endpoint];
-    _predict = [[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
-                                                   requestManager:self.requestManager
-                                           requestBuilderProvider:builderProvider
-                                                    productMapper:[EMSProductMapper new]];
+    [self.predictDelegator proxyWithTargetObject:[[EMSPredictInternal alloc] initWithRequestContext:self.predictRequestContext
+                                                                                     requestManager:self.requestManager
+                                                                             requestBuilderProvider:builderProvider
+                                                                                      productMapper:[EMSProductMapper new]]];
     _loggingPredict = [EMSLoggingPredictInternal new];
 
-    _mobileEngage = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                                               requestManager:self.requestManager
-                                                               requestContext:self.requestContext
-                                                                      storage:self.storage];
+    [self.mobileEngageDelegator proxyWithTargetObject:[[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                                                                                 requestManager:self.requestManager
+                                                                                                 requestContext:self.requestContext
+                                                                                                        storage:self.storage]];
 
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                        mobileEngage:self.mobileEngage];
 
-    _deepLink = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
-                                                     requestFactory:self.requestFactory];
-    _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                               requestManager:self.requestManager
-                                            notificationCache:self.notificationCache
-                                            timestampProvider:timestampProvider
-                                                actionFactory:actionFactory
-                                                      storage:self.storage];
-    _inbox = [[MEInbox alloc] initWithRequestContext:self.requestContext
-                                   notificationCache:self.notificationCache
-                                      requestManager:self.requestManager
-                                      requestFactory:self.requestFactory
-                                            endpoint:self.endpoint];
-    _notificationCenterDelegate = [[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
-                                                                                      inApp:self.iam
-                                                                          timestampProvider:timestampProvider
-                                                                               uuidProvider:uuidProvider
-                                                                               pushInternal:self.push
-                                                                             requestManager:self.requestManager
-                                                                             requestFactory:self.requestFactory];
+    [self.deepLinkDelegator proxyWithTargetObject:[[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
+                                                                                       requestFactory:self.requestFactory]];
+
+    [self.pushDelegator proxyWithTargetObject:[[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
+                                                                                 requestManager:self.requestManager
+                                                                              notificationCache:self.notificationCache
+                                                                              timestampProvider:timestampProvider
+                                                                                  actionFactory:actionFactory
+                                                                                        storage:self.storage]];
+
+    [self.inboxDelegator proxyWithTargetObject:[[MEInbox alloc] initWithRequestContext:self.requestContext
+                                                                     notificationCache:self.notificationCache
+                                                                        requestManager:self.requestManager
+                                                                        requestFactory:self.requestFactory
+                                                                              endpoint:self.endpoint]];
+
+    [self.notificationCenterDelegateDelegator proxyWithTargetObject:[[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
+                                                                                                                        inApp:self.iam
+                                                                                                            timestampProvider:timestampProvider
+                                                                                                                 uuidProvider:self.uuidProvider
+                                                                                                                 pushInternal:self.push
+                                                                                                               requestManager:self.requestManager
+                                                                                                               requestFactory:self.requestFactory]];
 
     EMSGeofenceInternal *geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
                                                                                  requestManager:self.requestManager
                                                                                  responseMapper:[[EMSGeofenceResponseMapper alloc] init]
-                                                                                locationManager:[[CLLocationManager alloc] init]
+                                                                                locationManager:self.locationManager
                                                                                   actionFactory:actionFactory
                                                                                         storage:self.storage];
-    _messageInbox = [[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
-                                                requestManager:self.requestManager
-                                             inboxResultParser:[[EMSInboxResultParser alloc] init]];
+
+    [self.messageInboxDelegator proxyWithTargetObject:[[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
+                                                                                  requestManager:self.requestManager
+                                                                               inboxResultParser:[[EMSInboxResultParser alloc] init]]];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
-                                                                                                     uuidProvider:uuidProvider
+                                                                                                     uuidProvider:self.uuidProvider
                                                                                                          endpoint:self.endpoint
                                                                                                    requestContext:self.requestContext];
-    EMSRandomProvider *randomProvider = [EMSRandomProvider new];
-    _config = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
-                                               meRequestContext:self.requestContext
-                                              preRequestContext:self.predictRequestContext
-                                                   mobileEngage:self.mobileEngage
-                                                   pushInternal:self.push
-                                                     deviceInfo:deviceInfo
-                                          emarsysRequestFactory:emarsysRequestFactory
-                                     remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
-                                                       endpoint:self.endpoint
-                                                         logger:self.logger
-                                                         crypto:[[EMSCrypto alloc] init]];
+    [self.configDelegator proxyWithTargetObject:[[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
+                                                                                 meRequestContext:self.requestContext
+                                                                                preRequestContext:self.predictRequestContext
+                                                                                     mobileEngage:self.mobileEngage
+                                                                                     pushInternal:self.push
+                                                                                       deviceInfo:deviceInfo
+                                                                            emarsysRequestFactory:emarsysRequestFactory
+                                                                       remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
+                                                                                         endpoint:self.endpoint
+                                                                                           logger:self.logger
+                                                                                           crypto:[[EMSCrypto alloc] init]
+                                                                                            queue:self.operationQueue
+                                                                                           waiter:[EMSDispatchWaiter new]]];
+
+    [self.geofenceDelegator proxyWithTargetObject:geofenceInternal];
 
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
                                                                        configInternal:self.config
-                                                                     geofenceInternal:geofenceInternal];
-    _geofence = geofenceInternal;
+                                                                     geofenceInternal:(id) self.geofenceDelegator];
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     _loggingDeepLink = [EMSLoggingDeepLinkInternal new];

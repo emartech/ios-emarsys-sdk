@@ -8,6 +8,7 @@
 #import "MEExperimental+Test.h"
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
+#import "NSError+EMSCore.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -21,7 +22,7 @@
 
 @implementation EmarsysTestUtils
 
-+ (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
++ (void)setupEmarsysWithFeatures:(NSArray <EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer {
     [EmarsysTestUtils setupEmarsysWithFeatures:features
                        withDependencyContainer:dependencyContainer
@@ -35,24 +36,10 @@
                                         config:config];
 }
 
-+ (void)setupEmarsysWithFeatures:(NSArray<EMSFlipperFeature> *)features
++ (void)setupEmarsysWithFeatures:(NSArray <EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
-    [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                               error:nil];
-    [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
-                                               error:nil];
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults removeObjectForKey:kMEID];
-    [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-    [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
-    [userDefaults removeObjectForKey:kCLIENT_STATE];
-    [userDefaults removeObjectForKey:kCONTACT_TOKEN];
-    [userDefaults synchronize];
-
-    userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-    [userDefaults setObject:@"IntegrationTests" forKey:@"kHardwareIdKey"];
-    [userDefaults synchronize];
+    [self purge];
 
     [EMSDependencyInjection tearDown];
     if (dependencyContainer) {
@@ -72,16 +59,37 @@
     }
 }
 
++ (void)purge {
+    [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
+                                               error:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
+                                               error:nil];
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [userDefaults removeObjectForKey:kMEID];
+    [userDefaults removeObjectForKey:kMEID_SIGNATURE];
+    [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
+    [userDefaults removeObjectForKey:kCLIENT_STATE];
+    [userDefaults removeObjectForKey:kCONTACT_TOKEN];
+    [userDefaults synchronize];
+
+    userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
+    [userDefaults setObject:@"IntegrationTests"
+                     forKey:@"kHardwareIdKey"];
+    [userDefaults synchronize];
+}
+
 + (void)tearDownEmarsys {
+    [EMSDependencyInjection.dependencyContainer.operationQueue waitUntilAllOperationsAreFinished];
+    [self purge];
     [EMSDependencyInjection.dependencyContainer.endpoint reset];
     [MEExperimental reset];
-    [EMSDependencyInjection.dependencyContainer.operationQueue waitUntilAllOperationsAreFinished];
     [EMSDependencyInjection.dependencyContainer.requestContext reset];
     [EMSDependencyInjection tearDown];
 }
 
 + (void)waitForSetCustomer {
-    __block NSError *returnedErrorForSetCustomer = [NSError mock];
+    __block NSError *returnedErrorForSetCustomer = [NSError errorWithCode:-1400
+                                                     localizedDescription:@"testErrorForSetCustomer"];
 
     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
     [Emarsys setContactWithContactFieldValue:@"test@test.com"
@@ -99,7 +107,8 @@
 + (void)waitForSetPushToken {
     NSData *deviceToken = [@"<1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd 1234abcd>" dataUsingEncoding:NSUTF8StringEncoding];
 
-    __block NSError *returnedError = [NSError new];
+    __block NSError *returnedError = [NSError errorWithCode:-1400
+                                       localizedDescription:@"testErrorForSetPushtoken"];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys.push setPushToken:deviceToken
                completionBlock:^(NSError *error) {

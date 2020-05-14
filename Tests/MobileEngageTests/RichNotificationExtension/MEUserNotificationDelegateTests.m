@@ -200,7 +200,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        [exp fulfill];
                                    }];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[exp] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
                 [[theValue(_option) should] equal:theValue(UNNotificationPresentationOptionAlert)];
             });
@@ -244,7 +244,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        [exp fulfill];
                                    }];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[exp] timeout:5];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[exp] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
@@ -287,7 +287,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                    withCompletionHandler:^{
                                        [exp fulfill];
                                    }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:5];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
             });
 
@@ -312,7 +312,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:5];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
 
             });
 
@@ -346,7 +346,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                        withCompletionHandler:^{
                                            [exp fulfill];
                                        }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:5];
+                [EMSWaiter waitForExpectations:@[exp] timeout:10];
                 MEInAppMessage *message = [messageSpy argument];
                 [[message.campaignId should] equal:@"42"];
                 [[message.sid should] equal:@"123456789"];
@@ -512,7 +512,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                    [exp fulfill];
                                }];
             [EMSWaiter waitForExpectations:@[exp]
-                                   timeout:5];
+                                   timeout:10];
         });
 
 SPEC_END

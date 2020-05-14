@@ -184,7 +184,7 @@
 
     self.appStartEventBlock();
 
-    OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfig]);
+    OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
 }
 
 - (void)testCreateFetchGeofenceEventBlock {

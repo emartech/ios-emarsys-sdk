@@ -1,39 +1,35 @@
-#import "Kiwi.h"
+#import <XCTest/XCTest.h>
 #import "EmarsysTestUtils.h"
 
-SPEC_BEGIN(EMSInAppProtocolTests)
+@interface EMSInAppProtocolTests : XCTestCase
 
-        beforeEach(^{
-            [EmarsysTestUtils setupEmarsysWithFeatures:@[] withDependencyContainer:nil];
-        });
+@end
 
-        afterEach(^{
-            [EmarsysTestUtils tearDownEmarsys];
-        });
+@implementation EMSInAppProtocolTests
 
-        describe(@"pause", ^{
+- (void)setUp {
+    [EmarsysTestUtils setupEmarsysWithFeatures:@[]
+                       withDependencyContainer:nil];
+}
 
-            it(@"should set paused state to YES", ^{
-                [Emarsys.inApp pause];
+- (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
+}
 
-                [[theValue([Emarsys.inApp isPaused]) should] beYes];
-            });
-        });
+- (void)testPause {
+    [Emarsys.inApp pause];
 
-        describe(@"resume", ^{
+    XCTAssertTrue([Emarsys.inApp isPaused]);
+}
 
-            it(@"should set paused state to NO", ^{
-                [Emarsys.inApp resume];
+- (void)testResume {
+    [Emarsys.inApp resume];
 
-                [[theValue([Emarsys.inApp isPaused]) should] beNo];
-            });
-        });
+    XCTAssertFalse([Emarsys.inApp isPaused]);
+}
 
-        describe(@"isPaused", ^{
+- (void)testIsPaused {
+    XCTAssertFalse([Emarsys.inApp isPaused]);
+}
 
-            it(@"should be ", ^{
-                [[theValue([Emarsys.inApp isPaused]) should] beNo];
-            });
-        });
-
-SPEC_END
+@end

@@ -18,9 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
                contactFieldId:(NSNumber *)contactFieldId
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
 
-- (NSString *)applicationCode;
-
 - (void)changeMerchantId:(nullable NSString *)merchantId;
+
+- (void)changeMerchantId:(nullable NSString *)merchantId
+        completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
+
+- (NSString *)applicationCode;
 
 - (NSString *)merchantId;
 

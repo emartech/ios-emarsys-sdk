@@ -18,6 +18,7 @@
 @class EMSEndpoint;
 @class EMSLogger;
 @class EMSCrypto;
+@class EMSDispatchWaiter;
 
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
@@ -31,8 +32,10 @@
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
                               endpoint:(EMSEndpoint *)endpoint
                                 logger:(EMSLogger *)logger
-                                crypto:(EMSCrypto *)crypto;
+                                crypto:(EMSCrypto *)crypto
+                                 queue:(NSOperationQueue *)queue
+                                waiter:(EMSDispatchWaiter *)waiter;
 
-- (void)refreshConfigFromRemoteConfig;
+- (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end

@@ -19,7 +19,7 @@ SPEC_BEGIN(MENotificationCenterManagerTests)
 
             [[NSNotificationCenter defaultCenter] postNotificationName:@"testNotification" object:nil];
 
-            [EMSWaiter waitForExpectations:@[exp] timeout:5];
+            [EMSWaiter waitForExpectations:@[exp] timeout:10];
         });
     });
 

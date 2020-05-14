@@ -21,5 +21,4 @@
     [[theValue(result) should] equal:theValue(XCTWaiterResultTimedOut)];
 }
 
-
 @end

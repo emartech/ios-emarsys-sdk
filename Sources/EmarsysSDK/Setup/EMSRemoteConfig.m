@@ -71,4 +71,27 @@
     return hash;
 }
 
+- (NSString *)description {
+    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ",
+                                                                     NSStringFromClass([self class])];
+    [description appendFormat:@"self.eventService=%@",
+                              self.eventService];
+    [description appendFormat:@", self.clientService=%@",
+                              self.clientService];
+    [description appendFormat:@", self.predictService=%@",
+                              self.predictService];
+    [description appendFormat:@", self.mobileEngageV2Service=%@",
+                              self.mobileEngageV2Service];
+    [description appendFormat:@", self.deepLinkService=%@",
+                              self.deepLinkService];
+    [description appendFormat:@", self.inboxService=%@",
+                              self.inboxService];
+    [description appendFormat:@", self.v3MessageInboxService=%@",
+                              self.v3MessageInboxService];
+    [description appendFormat:@", self.logLevel=%d",
+                              self.logLevel];
+    [description appendString:@">"];
+    return description;
+}
+
 @end

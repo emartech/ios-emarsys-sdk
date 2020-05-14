@@ -10,9 +10,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSQueueDelegator : NSProxy
 
-- (void)proxyWithTargetObject:(id)object
-                        queue:(NSOperationQueue *)queue
-               dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter;
+@property(nonatomic, strong) id object;
+
+- (void)setupWithQueue:(NSOperationQueue *)queue
+           emptyTarget:(id)emptyTarget
+        dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter;
+
+- (void)proxyWithTargetObject:(id)object;
+
 
 @end
 

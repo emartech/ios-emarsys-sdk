@@ -384,7 +384,7 @@ static NSString *const kTestValue2String = @"testValue2";
     }]];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 

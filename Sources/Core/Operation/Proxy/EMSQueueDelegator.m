@@ -7,7 +7,7 @@
 
 @interface EMSQueueDelegator ()
 
-@property(nonatomic, strong) id object;
+@property(nonatomic, strong) id emptyTarget;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSDispatchWaiter *dispatchWaiter;
 
@@ -15,21 +15,25 @@
 
 @implementation EMSQueueDelegator
 
-- (void)proxyWithTargetObject:(id)object
-                        queue:(NSOperationQueue *)queue
-               dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter {
-    NSParameterAssert(object);
+- (void)setupWithQueue:(NSOperationQueue *)queue
+           emptyTarget:(id)emptyTarget
+        dispatchWaiter:(EMSDispatchWaiter *)dispatchWaiter {
     NSParameterAssert(queue);
+    NSParameterAssert(emptyTarget);
     NSParameterAssert(dispatchWaiter);
-    _object = object;
     _queue = queue;
+    _emptyTarget = emptyTarget;
     _dispatchWaiter = dispatchWaiter;
+}
+
+- (void)proxyWithTargetObject:(id)object {
+    NSParameterAssert(object);
+    _object = object;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
     [invocation retainArguments];
-
-    if ([self.object respondsToSelector:[invocation selector]]) {
+    if ([self.emptyTarget respondsToSelector:[invocation selector]]) {
         BOOL isVoid = strcmp(invocation.methodSignature.methodReturnType, @encode(void)) == 0;
         if (!isVoid) {
             [self.dispatchWaiter enter];
@@ -50,7 +54,7 @@
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel {
-    return [self.object methodSignatureForSelector:sel];
+    return [self.emptyTarget methodSignatureForSelector:sel];
 }
 
 @end

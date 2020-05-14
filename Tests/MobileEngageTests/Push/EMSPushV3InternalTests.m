@@ -225,7 +225,7 @@
             }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
 
     OCMVerify([self.mockStorage setData:self.mockPushTokenData
                                  forKey:@"EMSPushTokenKey"]);
@@ -248,7 +248,7 @@
             }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
@@ -269,7 +269,7 @@
                 [expectation fulfill];
             }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(returnedQueue, [NSOperationQueue mainQueue]);

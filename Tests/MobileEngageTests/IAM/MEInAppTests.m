@@ -293,7 +293,7 @@ SPEC_BEGIN(MEInAppTests)
                  completionHandler:^{
                  }];
 
-                [XCTWaiter waitForExpectations:@[expectation] timeout:2];
+                [XCTWaiter waitForExpectations:@[expectation] timeout:10];
 
                 [[returnedEventName should] equal:expectedName];
                 [[returnedPayload should] equal:expectedPayload];
@@ -320,7 +320,7 @@ SPEC_BEGIN(MEInAppTests)
                  }];
                 [EMSWaiter waitForExpectations:@[fulfilledExpectation]];
                 [EMSWaiter waitForTimeout:@[timeoutExpectation]
-                                  timeout:5];
+                                  timeout:10];
             });
 
         });

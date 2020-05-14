@@ -129,7 +129,7 @@ SPEC_BEGIN(InboxIntegrationTests)
                 }];
 
                 [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:5];
+                                       timeout:10];
 
                 XCTAssertNotNil(returnedNotification);
                 XCTAssertEqualObjects(returnedNotification.id, notificationId);

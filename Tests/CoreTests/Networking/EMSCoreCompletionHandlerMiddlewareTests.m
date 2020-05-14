@@ -43,7 +43,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
     _mockOperationQueue = OCMClassMock([NSOperationQueue class]);
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _mockResponseModel = OCMClassMock([EMSResponseModel class]);
-    _error = [NSError new];
+    _error = [NSError errorWithCode:-1400
+               localizedDescription:@"testError"];
 
     NSArray *requestIds = @[@"requestId", @"requestId2"];
     OCMStub([self.mockRequestModel requestIds]).andReturn(requestIds);

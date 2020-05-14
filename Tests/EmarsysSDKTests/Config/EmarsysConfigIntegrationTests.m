@@ -15,7 +15,7 @@
 #import "EMSConfigInternal.h"
 #import "EMSEndpoint.h"
 #import "MERequestContext.h"
-
+#import "EMSQueueDelegator.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -54,7 +54,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(Emarsys.config.applicationCode, expectedApplicationCode);
@@ -78,7 +78,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(Emarsys.config.applicationCode, expectedApplicationCode);
@@ -101,7 +101,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
 
     XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
@@ -122,7 +122,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
 
     XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
@@ -133,9 +133,11 @@
     [EmarsysTestUtils waitForSetPushToken];
     [EmarsysTestUtils waitForSetCustomer];
 
-    XCTAssertEqualObjects([Emarsys.predict class], [EMSPredictInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
 
     [Emarsys.config changeMerchantId:nil];
+
+    [self waitForOperationQueue];
 
     XCTAssertEqualObjects([Emarsys.predict class], [EMSLoggingPredictInternal class]);
 }
@@ -149,28 +151,40 @@
 
     [Emarsys.config changeMerchantId:@"1428C8EE286EC34B"];
 
-    XCTAssertEqualObjects([Emarsys.predict class], [EMSPredictInternal class]);
+    [self waitForOperationQueue];
+
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
 }
 
 - (void)testRemoteConfig {
     EMSConfigInternal *config = EMSDependencyInjection.dependencyContainer.config;
+
+    [self waitForOperationQueue];
+
     [EMSDependencyInjection.dependencyContainer.requestContext setApplicationCode:@"integrationTest"];
+
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
-
-    [config refreshConfigFromRemoteConfig];
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [config refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
         [expectation fulfill];
-    });
-
+    }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:5];
+                                                          timeout:10];
 
     EMSEndpoint *endpoint = EMSDependencyInjection.dependencyContainer.endpoint;
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(endpoint.eventServiceUrl, @"https://integration.mobile-events.eservice.emarsys.net");
     XCTAssertEqualObjects(endpoint.clientServiceUrl, @"https://integration.me-client.eservice.emarsys.net");
+}
+
+- (void)waitForOperationQueue {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
+    [EMSDependencyInjection.dependencyContainer.operationQueue addOperationWithBlock:^{
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 @end

@@ -65,7 +65,7 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
@@ -119,7 +119,7 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
 
                 NSArray *shards = [dbHelper executeQuery:TEST_SHARD_SELECT_ALL
@@ -144,7 +144,7 @@ SPEC_BEGIN(DBTriggerTests)
                 [dbHelper insertModel:shard
                                mapper:[EMSShardMapper new]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
             });
 
@@ -262,7 +262,7 @@ SPEC_BEGIN(DBTriggerTests)
                                 selection:@"type=? AND ttl=?"
                             selectionArgs:@[@"type", @"200"]];
 
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:2];
+                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[defaultExpectation] timeout:10];
                 [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
 
             });

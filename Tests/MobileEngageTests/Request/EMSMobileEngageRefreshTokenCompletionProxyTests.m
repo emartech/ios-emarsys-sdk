@@ -161,7 +161,7 @@
     self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(returnedRequestModel, requestModel);
     XCTAssertEqualObjects(returnedResponseModel, responseModel);
@@ -182,7 +182,7 @@
     self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
@@ -232,7 +232,7 @@
     self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:2];
+                                                          timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 

@@ -37,6 +37,16 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
             [EMSDependencyInjection setDependencyContainer:nil];
         });
 
+        void (^waitForSetup)() = ^void() {
+            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
+            [EMSDependencyInjection.dependencyContainer.operationQueue addOperationWithBlock:^{
+                [expectation fulfill];
+            }];
+            XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                  timeout:10];
+            XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+        };
+
         describe(@"setupWithDependencyContainer:", ^{
 
             it(@"should set the given dependencyContainer", ^{
@@ -79,6 +89,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSLoggingMobileEngageInternal class]];
             });
 
@@ -87,6 +99,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.mobileEngage) should] beKindOfClass:[EMSMobileEngageV3Internal class]];
             });
@@ -102,6 +116,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.push) should] beKindOfClass:[EMSLoggingPushInternal class]];
             });
 
@@ -110,6 +126,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.push) should] beKindOfClass:[EMSPushV3Internal class]];
             });
@@ -125,6 +143,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
             });
 
@@ -133,6 +153,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSDeepLinkInternal class]];
             });
@@ -148,6 +170,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[EMSLoggingInbox class]];
             });
 
@@ -156,6 +180,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[MEInbox class]];
             });
@@ -171,6 +197,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[EMSLoggingUserNotificationDelegate class]];
             });
 
@@ -179,6 +207,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[MEUserNotificationDelegate class]];
             });
@@ -194,6 +224,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.iam) should] beKindOfClass:[EMSLoggingInApp class]];
             });
 
@@ -202,6 +234,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.iam) should] beKindOfClass:[MEInApp class]];
             });
@@ -217,6 +251,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.predict) should] beKindOfClass:[EMSLoggingPredictInternal class]];
             });
 
@@ -226,6 +262,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.predict) should] beKindOfClass:[EMSPredictInternal class]];
             });
@@ -241,6 +279,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSLoggingGeofenceInternal class]];
             });
 
@@ -251,6 +291,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.geofence) should] beKindOfClass:[EMSGeofenceInternal class]];
             });
@@ -266,6 +308,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                         }]
                                      dependencyContainer:nil];
 
+                waitForSetup();
+
                 [[((NSObject *) EMSDependencyInjection.messageInbox) should] beKindOfClass:[EMSLoggingInboxV3 class]];
             });
 
@@ -276,6 +320,8 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
                                      dependencyContainer:nil];
+
+                waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.messageInbox) should] beKindOfClass:[EMSInboxV3 class]];
             });

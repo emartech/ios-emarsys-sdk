@@ -33,14 +33,17 @@
     [self initializeDefaultCategory];
 
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
+    
+    EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
 
-    [Emarsys registerAppStartBlock];
+    [dependencyContainer.operationQueue addOperationWithBlock:^{
+        [Emarsys registerAppStartBlock];
 
-    EMSDependencyContainer *container = EMSDependencyInjection.dependencyContainer;
-    if (!container.requestContext.contactToken && !container.requestContext.contactFieldValue) {
-        [container.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
-        [container.mobileEngage setContactWithContactFieldValue:nil];
-    }
+        if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.contactFieldValue) {
+            [dependencyContainer.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
+            [dependencyContainer.mobileEngage setContactWithContactFieldValue:nil];
+        }
+    }];
 }
 
 + (void)initializeDefaultCategory {
