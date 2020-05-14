@@ -457,7 +457,8 @@
                                                                                  responseMapper:[[EMSGeofenceResponseMapper alloc] init]
                                                                                 locationManager:self.locationManager
                                                                                   actionFactory:actionFactory
-                                                                                        storage:self.storage];
+                                                                                        storage:self.storage
+                                                                                          queue:self.coreOperationQueue];
 
     [self.messageInboxDelegator proxyWithTargetObject:[[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
                                                                                   requestManager:self.requestManager

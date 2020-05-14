@@ -31,6 +31,7 @@
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) id mockLocationManager;
 @property(nonatomic, assign) double refreshRadiusRatio;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
@@ -44,6 +45,9 @@
     _mockResponseMapper = OCMClassMock([EMSGeofenceResponseMapper class]);
     _mockActionFactory = OCMClassMock([EMSActionFactory class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
+    _queue = [[NSOperationQueue alloc] init];
+    [self.queue setMaxConcurrentOperationCount:1];
+    [self.queue setName:@"testQueue"];
 
     _mockLocationManager = OCMClassMock([CLLocationManager class]);
 
@@ -55,7 +59,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
     _refreshRadiusRatio = 0.3;
 }
 
@@ -70,7 +75,8 @@
                                              responseMapper:self.mockResponseMapper
                                             locationManager:self.mockLocationManager
                                               actionFactory:self.mockActionFactory
-                                                    storage:self.mockStorage];
+                                                    storage:self.mockStorage
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -84,7 +90,8 @@
                                              responseMapper:self.mockResponseMapper
                                             locationManager:self.mockLocationManager
                                               actionFactory:self.mockActionFactory
-                                                    storage:self.mockStorage];
+                                                    storage:self.mockStorage
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -98,7 +105,8 @@
                                              responseMapper:nil
                                             locationManager:self.mockLocationManager
                                               actionFactory:self.mockActionFactory
-                                                    storage:self.mockStorage];
+                                                    storage:self.mockStorage
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when responseMapper is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: responseMapper");
@@ -112,7 +120,8 @@
                                              responseMapper:self.mockResponseMapper
                                             locationManager:nil
                                               actionFactory:self.mockActionFactory
-                                                    storage:self.mockStorage];
+                                                    storage:self.mockStorage
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when locationManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: locationManager");
@@ -126,7 +135,8 @@
                                              responseMapper:self.mockResponseMapper
                                             locationManager:self.mockLocationManager
                                               actionFactory:nil
-                                                    storage:self.mockStorage];
+                                                    storage:self.mockStorage
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when actionFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: actionFactory");
@@ -140,10 +150,26 @@
                                              responseMapper:self.mockResponseMapper
                                             locationManager:self.mockLocationManager
                                               actionFactory:self.mockActionFactory
-                                                    storage:nil];
+                                                    storage:nil
+                                                      queue:self.queue];
         XCTFail(@"Expected Exception when storage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: storage");
+    }
+}
+
+- (void)testInit_queue_mustNotBeNil {
+    @try {
+        [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                             requestManager:self.mockRequestManager
+                                             responseMapper:self.mockResponseMapper
+                                            locationManager:self.mockLocationManager
+                                              actionFactory:self.mockActionFactory
+                                                    storage:self.mockStorage
+                                                      queue:nil];
+        XCTFail(@"Expected Exception when queue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
     }
 }
 
@@ -176,7 +202,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
 
     [self.geofenceInternal fetchGeofences];
 }
@@ -219,7 +246,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
 
     EMSGeofenceInternal *partialMockGeofenceInternal = OCMPartialMock(self.geofenceInternal);
 
@@ -250,7 +278,7 @@
         [expectation fulfill];
     }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:1];
+                                                          timeout:5];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(returnedError, expectedError);
@@ -294,7 +322,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
 
     OCMStub([self.mockLocationManager authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
 
@@ -333,7 +362,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
 
     XCTAssertFalse([self.geofenceInternal isEnabled]);
 }
@@ -346,7 +376,8 @@
                                                              responseMapper:self.mockResponseMapper
                                                             locationManager:self.mockLocationManager
                                                               actionFactory:self.mockActionFactory
-                                                                    storage:self.mockStorage];
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
 
     OCMVerify([self.mockRequestFactory createGeofenceRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModelNow:self.mockRequestModel
@@ -385,6 +416,8 @@
 
     [partialGeofenceInternal locationManager:self.mockLocationManager
                           didUpdateLocations:@[expectedLocation]];
+
+    [self waitForOperation];
 
     OCMVerify([partialGeofenceInternal registerGeofences]);
 
@@ -603,6 +636,8 @@
     [self.geofenceInternal locationManager:self.mockLocationManager
                             didEnterRegion:enteringRegion];
 
+    [self waitForOperation];
+
     OCMVerify([self.mockActionFactory setEventHandler:handler]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{
             @"id": @"testActionId1",
@@ -646,6 +681,8 @@
     [self.geofenceInternal locationManager:self.mockLocationManager
                              didExitRegion:enteringRegion];
 
+    [self waitForOperation];
+
     OCMVerify([self.mockActionFactory setEventHandler:handler]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
             @"type": @"BadgeCount",
@@ -679,6 +716,8 @@
     [partialGeofenceInternal locationManager:self.mockLocationManager
                                didExitRegion:enteringRegion];
 
+    [self waitForOperation];
+
     OCMVerify([self.mockLocationManager monitoredRegions]);
     OCMVerify([self.mockLocationManager stopMonitoringForRegion:region1]);
     OCMVerify([self.mockLocationManager stopMonitoringForRegion:region2]);
@@ -686,6 +725,54 @@
 
     OCMVerify([partialGeofenceInternal registerGeofences]);
     XCTAssertEqual(partialGeofenceInternal.recalculateable, YES);
+}
+
+- (void)testDidUpdateLocation_schedulesToCoreQueue {
+    NSOperationQueue *mockQueue = OCMClassMock([NSOperationQueue class]);
+    EMSGeofenceInternal *geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                                         requestManager:self.mockRequestManager
+                                                                         responseMapper:self.mockResponseMapper
+                                                                        locationManager:self.mockLocationManager
+                                                                          actionFactory:self.mockActionFactory
+                                                                                storage:self.mockStorage
+                                                                                  queue:mockQueue];
+    [geofence locationManager:self.mockLocationManager
+           didUpdateLocations:@[]];
+
+    OCMVerify([mockQueue addOperationWithBlock:[OCMArg any]]);
+}
+
+- (void)testDidEnterRegion_schedulesToCoreQueue {
+    NSOperationQueue *mockQueue = OCMClassMock([NSOperationQueue class]);
+    EMSGeofenceInternal *geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                                         requestManager:self.mockRequestManager
+                                                                         responseMapper:self.mockResponseMapper
+                                                                        locationManager:self.mockLocationManager
+                                                                          actionFactory:self.mockActionFactory
+                                                                                storage:self.mockStorage
+                                                                                  queue:mockQueue];
+
+    [geofence locationManager:self.mockLocationManager
+               didEnterRegion:OCMClassMock([CLRegion class])];
+
+    OCMVerify([mockQueue addOperationWithBlock:[OCMArg any]]);
+}
+
+- (void)testDidExitRegion_schedulesToCoreQueue {
+    NSOperationQueue *mockQueue = OCMClassMock([NSOperationQueue class]);
+    EMSGeofenceInternal *geofence = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                                         requestManager:self.mockRequestManager
+                                                                         responseMapper:self.mockResponseMapper
+                                                                        locationManager:self.mockLocationManager
+                                                                          actionFactory:self.mockActionFactory
+                                                                                storage:self.mockStorage
+                                                                                  queue:mockQueue];
+    [geofence locationManager:self.mockLocationManager
+                didExitRegion:OCMClassMock([CLRegion class])];
+
+    [self waitForOperation];
+
+    OCMVerify([mockQueue addOperationWithBlock:[OCMArg any]]);
 }
 
 - (EMSGeofenceResponse *)createExpectedResponse {
@@ -806,5 +893,18 @@
         return result;
     }];
 }
+
+- (void)waitForOperation {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+
+    [self.queue addOperationWithBlock:^{
+        [expectation fulfill];
+    }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
 
 @end

@@ -33,7 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
                        locationManager:(CLLocationManager *)locationManager
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage;
+                               storage:(EMSStorage *)storage
+                                 queue:(NSOperationQueue *)queue;
 
 - (void)fetchGeofences;
 - (void)registerGeofences;

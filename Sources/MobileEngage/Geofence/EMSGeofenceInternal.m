@@ -23,6 +23,7 @@
 @property(nonatomic, strong) CLLocationManager *locationManager;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
 @property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @property(nonatomic, assign) BOOL enabled;
 
@@ -35,13 +36,15 @@
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
                        locationManager:(CLLocationManager *)locationManager
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage {
+                               storage:(EMSStorage *)storage
+                                 queue:(NSOperationQueue *)queue {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(responseMapper);
     NSParameterAssert(locationManager);
     NSParameterAssert(actionFactory);
     NSParameterAssert(storage);
+    NSParameterAssert(queue);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
@@ -49,6 +52,7 @@
         _locationManager = locationManager;
         _actionFactory = actionFactory;
         _storage = storage;
+        _queue = queue;
         _geofenceLimit = 20;
         _registeredGeofences = [NSMutableDictionary dictionary];
         _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue];
@@ -111,31 +115,40 @@
 
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray<CLLocation *> *)locations {
-    if (locations && locations.firstObject) {
-        self.currentLocation = locations.firstObject;
-        [self registerGeofences];
-    }
+    __weak typeof(self) weakSelf = self;
+    [self.queue addOperationWithBlock:^{
+        if (locations && locations.firstObject) {
+            weakSelf.currentLocation = locations.firstObject;
+            [weakSelf registerGeofences];
+        }
+    }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region {
-    EMSGeofence *geofence = self.registeredGeofences[region.identifier];
-    [self handleActionWithTriggers:geofence.triggers
-                              type:@"enter"];
+    __weak typeof(self) weakSelf = self;
+    [self.queue addOperationWithBlock:^{
+        EMSGeofence *geofence = self.registeredGeofences[region.identifier];
+        [weakSelf handleActionWithTriggers:geofence.triggers
+                                  type:@"enter"];
+    }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
           didExitRegion:(CLRegion *)region {
-    EMSGeofence *geofence = self.registeredGeofences[region.identifier];
+    __weak typeof(self) weakSelf = self;
+    [self.queue addOperationWithBlock:^{
+        EMSGeofence *geofence = weakSelf.registeredGeofences[region.identifier];
 
-    if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
-        self.recalculateable = YES;
-        [self stopRegionMonitoring];
-        [self registerGeofences];
-    } else {
-        [self handleActionWithTriggers:geofence.triggers
-                                  type:@"exit"];
-    }
+        if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
+            weakSelf.recalculateable = YES;
+            [weakSelf stopRegionMonitoring];
+            [weakSelf registerGeofences];
+        } else {
+            [weakSelf handleActionWithTriggers:geofence.triggers
+                                      type:@"exit"];
+        }
+    }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
