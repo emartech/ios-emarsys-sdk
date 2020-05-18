@@ -9,6 +9,7 @@
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
 #import "NSError+EMSCore.h"
+#import "EMSSQLiteHelper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -39,6 +40,9 @@
 + (void)setupEmarsysWithFeatures:(NSArray <EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.dbHelper close];
     [self purge];
 
     [EMSDependencyInjection tearDown];
@@ -80,6 +84,8 @@
 
 + (void)tearDownEmarsys {
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.dbHelper close];
     [self purge];
     [EMSDependencyInjection.dependencyContainer.endpoint reset];
     [MEExperimental reset];

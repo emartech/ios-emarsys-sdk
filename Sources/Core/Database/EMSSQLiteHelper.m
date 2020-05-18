@@ -41,20 +41,18 @@
 
 - (int)version {
     NSParameterAssert(_db);
-
+    int version = 0;
     sqlite3_stmt *statement;
     int result = sqlite3_prepare_v2(_db, [@"PRAGMA user_version;" UTF8String], -1, &statement, nil);
     if (result == SQLITE_OK) {
-        int version = 0;
+
         int step = sqlite3_step(statement);
         if (step == SQLITE_ROW) {
             version = sqlite3_column_int(statement, 0);
         }
         sqlite3_finalize(statement);
-        return version;
-    } else {
-        return -1;
-    };
+    }
+    return version;
 }
 
 - (void)open {
@@ -105,7 +103,8 @@
     return NO;
 }
 
-- (BOOL)execute:(NSString *)command withBindBlock:(BindBlock)bindBlock {
+- (BOOL)execute:(NSString *)command
+  withBindBlock:(BindBlock)bindBlock {
     sqlite3_stmt *statement;
     int i = sqlite3_prepare_v2(_db, [command UTF8String], -1, &statement, nil);
     if (i == SQLITE_OK) {
@@ -122,9 +121,12 @@
           selectionArgs:(NSArray<NSString *> *)whereArgs {
     NSString *sqlCommand;
     if (where == nil || [where isEqualToString:@""]) {
-        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@", tableName];
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@",
+                                                tableName];
     } else {
-        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, where];
+        sqlCommand = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@",
+                                                tableName,
+                                                where];
     }
 
 

@@ -85,6 +85,8 @@
 
 - (NSOperationQueue *)publicApiOperationQueue;
 
+- (NSOperationQueue *)coreOperationQueue;
+
 - (MENotificationCenterManager *)notificationCenterManager;
 
 - (MERequestContext *)requestContext;
