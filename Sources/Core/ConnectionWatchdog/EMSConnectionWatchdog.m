@@ -14,11 +14,6 @@
 
 @implementation EMSConnectionWatchdog
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue {
-    return [self initWithReachability:[EMSReachability reachabilityForInternetConnection]
-                       operationQueue:operationQueue];
-}
-
 - (instancetype)initWithReachability:(EMSReachability *)reachability
                       operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(reachability);
@@ -53,24 +48,31 @@
 }
 
 - (void)stopObserving {
-    [self.reachability stopNotifier];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.notificationToken];
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.reachability stopNotifier];
+    });
+    [self.operationQueue addOperationWithBlock:^{
+        [[NSNotificationCenter defaultCenter] removeObserver:weakSelf.notificationToken];
+    }];
 }
 
 - (void)startObserving {
     __weak typeof(self) weakSelf = self;
-    self.notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:kEMSReachabilityChangedNotification
-                                                                               object:nil
-                                                                                queue:self.operationQueue
-                                                                           usingBlock:^(NSNotification *note) {
-                                                                               EMSNetworkStatus connectionStatus = [note.object currentReachabilityStatus];
-                                                                               BOOL connected = connectionStatus == ReachableViaWiFi || connectionStatus == ReachableViaWWAN;
-                                                                               [weakSelf.operationQueue addOperationWithBlock:^{
-                                                                                   [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:connectionStatus
-                                                                                                                                      connectionStatus:connected];
-                                                                               }];
-                                                                           }];
-    [self.reachability startNotifier];
+    [self.operationQueue addOperationWithBlock:^{
+        weakSelf.notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:kEMSReachabilityChangedNotification
+                                                                                       object:nil
+                                                                                        queue:weakSelf.operationQueue
+                                                                                   usingBlock:^(NSNotification *note) {
+                                                                                       EMSNetworkStatus connectionStatus = [note.object currentReachabilityStatus];
+                                                                                       BOOL connected = connectionStatus == ReachableViaWiFi || connectionStatus == ReachableViaWWAN;
+                                                                                       [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:connectionStatus
+                                                                                                                                          connectionStatus:connected];
+                                                                                   }];
+    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.reachability startNotifier];
+    });
 }
 
 @end

@@ -7,10 +7,6 @@
  */
 
 #import <arpa/inet.h>
-#import <ifaddrs.h>
-#import <netdb.h>
-#import <sys/socket.h>
-#import <netinet/in.h>
 
 #import <CoreFoundation/CoreFoundation.h>
 
@@ -32,7 +28,10 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
     EMSReachability *noteObject = (__bridge EMSReachability *) info;
     // Post a notification to notify the client that the network reachability changed.
-    [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:noteObject];
+    [noteObject.operationQueue addOperationWithBlock:^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                            object:noteObject];
+    }];
 }
 
 
@@ -56,8 +55,8 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     return returnValue;
 }
 
-
-+ (instancetype)reachabilityWithAddress:(const struct sockaddr *)hostAddress {
++ (instancetype)reachabilityWithAddress:(const struct sockaddr *)hostAddress
+                         operationQueue:(NSOperationQueue *)operationQueue {
     SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, hostAddress);
 
     EMSReachability *returnValue = NULL;
@@ -65,6 +64,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     if (reachability != NULL) {
         returnValue = [[self alloc] init];
         if (returnValue != NULL) {
+            returnValue.operationQueue = operationQueue;
             returnValue->_reachabilityRef = reachability;
         } else {
             CFRelease(reachability);
@@ -74,13 +74,14 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 }
 
 
-+ (instancetype)reachabilityForInternetConnection {
++ (instancetype)reachabilityForInternetConnectionWithOperationQueue:(NSOperationQueue *)operationQueue {
     struct sockaddr_in zeroAddress;
     bzero(&zeroAddress, sizeof(zeroAddress));
     zeroAddress.sin_len = sizeof(zeroAddress);
     zeroAddress.sin_family = AF_INET;
 
-    return [self reachabilityWithAddress:(const struct sockaddr *) &zeroAddress];
+    return [self reachabilityWithAddress:(const struct sockaddr *) &zeroAddress
+                          operationQueue:operationQueue];
 }
 
 #pragma mark reachabilityForLocalWiFi
@@ -138,7 +139,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     }
 
     if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand) != 0) ||
-        (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
+            (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
         /*
          ... and the connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or higher APIs...
          */

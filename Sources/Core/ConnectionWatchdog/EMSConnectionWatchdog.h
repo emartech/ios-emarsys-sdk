@@ -17,8 +17,6 @@
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue;
-
 - (instancetype)initWithReachability:(EMSReachability *)reachability
                       operationQueue:(NSOperationQueue *)operationQueue;
 

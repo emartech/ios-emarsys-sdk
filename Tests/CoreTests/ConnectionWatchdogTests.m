@@ -9,6 +9,15 @@
 
 SPEC_BEGIN(EMSConnectionWatchdogTest)
 
+        void (^waitForOperationQueue)() = ^void() {
+            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [expectation fulfill];
+            }];
+            XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                  timeout:10];
+            XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+        };
 
         beforeEach(^{
         });
@@ -42,7 +51,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be NotReachable when it's really not reachable", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(NotReachable)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(NotReachable)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -51,7 +61,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be ReachableViaWiFi when it's ReachableViaWiFi", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWiFi)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -60,7 +71,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be ReachableViaWWAN when it's ReachableViaWWAN", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWWAN)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWWAN)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -73,7 +85,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be NO when it's not reachable", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(NotReachable)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(NotReachable)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -82,7 +95,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be YES when it's ReachableViaWiFi", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWiFi)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -91,7 +105,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
             it(@"should be YES when it's ReachableViaWWAN", ^{
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWWAN)];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWWAN)];
 
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:[NSOperationQueue currentQueue]];
@@ -106,8 +121,11 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                 NSOperationQueue *queue = [NSOperationQueue new];
 
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(startNotifier) andReturn:@YES];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi) withCountAtLeast:1];
+                [[reachabilityMock should] receive:@selector(startNotifier)
+                                         andReturn:@YES];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWiFi)
+                                  withCountAtLeast:1];
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:queue];
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
@@ -117,7 +135,10 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                 }];
                 watchdog.connectionChangeListener = listener;
 
-                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityMock];
+                waitForOperationQueue();
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                                    object:reachabilityMock];
 
                 [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];
@@ -130,8 +151,11 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                 NSOperationQueue *queue = [NSOperationQueue new];
 
                 EMSReachability *reachabilityMock = [EMSReachability mock];
-                [[reachabilityMock should] receive:@selector(startNotifier) andReturn:@YES];
-                [[reachabilityMock should] receive:@selector(currentReachabilityStatus) andReturn:theValue(ReachableViaWiFi) withCountAtLeast:1];
+                [[reachabilityMock should] receive:@selector(startNotifier)
+                                         andReturn:@YES];
+                [[reachabilityMock should] receive:@selector(currentReachabilityStatus)
+                                         andReturn:theValue(ReachableViaWiFi)
+                                  withCountAtLeast:1];
                 EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachabilityMock
                                                                                        operationQueue:queue];
 
@@ -144,7 +168,10 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                 }];
                 watchdog.connectionChangeListener = listener;
 
-                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification object:reachabilityMock];
+                waitForOperationQueue();
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                                    object:reachabilityMock];
 
                 [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];

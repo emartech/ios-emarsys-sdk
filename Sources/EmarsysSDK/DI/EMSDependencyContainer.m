@@ -164,7 +164,7 @@
         _coreOperationQueue.maxConcurrentOperationCount = 1;
         _coreOperationQueue.qualityOfService = NSQualityOfServiceUtility;
         _coreOperationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
-                                                                   [self.uuidProvider provideUUIDString]];
+                                                              [self.uuidProvider provideUUIDString]];
 
         _predictDelegator = [EMSQueueDelegator alloc];
         [self.predictDelegator setupWithQueue:self.publicApiOperationQueue
@@ -356,7 +356,10 @@
                                                                                                             endpoint:self.endpoint
                                                                                                              storage:self.storage];
 
-    EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.coreOperationQueue];
+    EMSReachability *reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.coreOperationQueue];
+
+    EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachability
+                                                                           operationQueue:self.coreOperationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.coreOperationQueue
                                                               requestRepository:self.requestRepository
                                                              connectionWatchdog:watchdog

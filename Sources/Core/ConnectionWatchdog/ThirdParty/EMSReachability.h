@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2016 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
- 
+
  Abstract:
  Basic demonstration of how to use the SystemConfiguration Reachablity APIs.
  */
@@ -26,6 +26,8 @@ extern NSString *kEMSReachabilityChangedNotification;
 
 @interface EMSReachability : NSObject
 
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
+
 /*!
  * Use to check the reachability of a given host name.
  */
@@ -34,13 +36,13 @@ extern NSString *kEMSReachabilityChangedNotification;
 /*!
  * Use to check the reachability of a given IP address.
  */
-+ (instancetype)reachabilityWithAddress:(const struct sockaddr *)hostAddress;
++ (instancetype)reachabilityWithAddress:(const struct sockaddr *)hostAddress
+                         operationQueue:(NSOperationQueue *)operationQueue;
 
 /*!
  * Checks whether the default route is available. Should be used by applications that do not connect to a particular host.
  */
-+ (instancetype)reachabilityForInternetConnection;
-
++ (instancetype)reachabilityForInternetConnectionWithOperationQueue:(NSOperationQueue *)operationQueue;
 
 #pragma mark reachabilityForLocalWiFi
 //reachabilityForLocalWiFi has been removed from the sample.  See ReadMe.md for more information.

@@ -50,9 +50,13 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                                                                         operationQueue:queue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
                                                                                                                      defaultErrorBlock:middleware.errorBlock];
+
+            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
+                                                                                             operationQueue:queue];
+
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
-                                                                     connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                     connectionWatchdog:connectionWatchdog
                                                                              restClient:restClient
                                                                              errorBlock:middleware.errorBlock
                                                                            proxyFactory:proxyFactory];

@@ -39,16 +39,16 @@ SPEC_BEGIN(DennaTest)
             queue.qualityOfService = NSQualityOfServiceUtility;
 
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                    checkableRequestId = requestId;
-                    NSDictionary<NSString *, id> *returnedPayload = [NSJSONSerialization JSONObjectWithData:response.body
-                                                                                                    options:NSJSONReadingAllowFragments
-                                                                                                      error:nil];
-                    NSLog(@"RequestId: %@, responsePayload: %@", requestId, returnedPayload);
-                    resultMethod = returnedPayload[@"method"];
-                    expectedSubsetOfResultHeaders = [returnedPayload[@"headers"] subsetOfDictionary:headers];
-                    resultPayload = returnedPayload[@"body"];
+                        checkableRequestId = requestId;
+                        NSDictionary<NSString *, id> *returnedPayload = [NSJSONSerialization JSONObjectWithData:response.body
+                                                                                                        options:NSJSONReadingAllowFragments
+                                                                                                          error:nil];
+                        NSLog(@"RequestId: %@, responsePayload: %@", requestId, returnedPayload);
+                        resultMethod = returnedPayload[@"method"];
+                        expectedSubsetOfResultHeaders = [returnedPayload[@"headers"] subsetOfDictionary:headers];
+                        resultPayload = returnedPayload[@"body"];
 
-                }
+                    }
                                                                                              errorBlock:^(NSString *requestId, NSError *error) {
                                                                                                  NSLog(@"ERROR!");
                                                                                                  fail(@"errorblock invoked");
@@ -76,9 +76,13 @@ SPEC_BEGIN(DennaTest)
                                                                                                                         operationQueue:operationQueue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
                                                                                                                      defaultErrorBlock:middleware.errorBlock];
+
+            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
+                                                                                             operationQueue:queue];
+
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
-                                                                     connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                     connectionWatchdog:connectionWatchdog
                                                                              restClient:restClient
                                                                              errorBlock:middleware.errorBlock
                                                                            proxyFactory:proxyFactory];
@@ -104,15 +108,17 @@ SPEC_BEGIN(DennaTest)
         describe(@"EMSRequestManager", ^{
 
             beforeEach(^{
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH error:nil];
-                [[NSFileManager defaultManager] removeItemAtPath:DB_PATH error:nil];
+                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
+                                                           error:nil];
+                [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
+                                                           error:nil];
             });
 
             it(@"should invoke errorBlock when calling error500 on Denna", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:error500];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:error500];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 NSOperationQueue *queue = [NSOperationQueue new];
@@ -120,9 +126,9 @@ SPEC_BEGIN(DennaTest)
                 queue.qualityOfService = NSQualityOfServiceUtility;
 
                 EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        NSLog(@"ERROR!");
-                        fail(@"successBlock invoked :'(");
-                    }
+                            NSLog(@"ERROR!");
+                            fail(@"successBlock invoked :'(");
+                        }
                                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
                                                                                                      NSLog(@"ERROR!");
                                                                                                      fail(@"errorblock invoked");
@@ -149,9 +155,13 @@ SPEC_BEGIN(DennaTest)
                                                                                                                             operationQueue:operationQueue
                                                                                                                        defaultSuccessBlock:middleware.successBlock
                                                                                                                          defaultErrorBlock:middleware.errorBlock];
+
+                EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
+                                                                                                 operationQueue:queue];
+
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository
-                                                                         connectionWatchdog:[[EMSConnectionWatchdog alloc] initWithOperationQueue:queue]
+                                                                         connectionWatchdog:connectionWatchdog
                                                                                  restClient:restClient
                                                                                  errorBlock:middleware.errorBlock
                                                                                proxyFactory:proxyFactory];
@@ -174,10 +184,10 @@ SPEC_BEGIN(DennaTest)
 
             it(@"should respond with the GET request's headers/body", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:echo];
-                        [builder setMethod:HTTPMethodGET];
-                        [builder setHeaders:inputHeaders];
-                    }
+                            [builder setUrl:echo];
+                            [builder setMethod:HTTPMethodGET];
+                            [builder setHeaders:inputHeaders];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 shouldEventuallySucceed(model, @"GET", inputHeaders, nil);
@@ -185,11 +195,11 @@ SPEC_BEGIN(DennaTest)
 
             it(@"should respond with the POST request's headers/body", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:echo];
-                        [builder setMethod:HTTPMethodPOST];
-                        [builder setHeaders:inputHeaders];
-                        [builder setPayload:payload];
-                    }
+                            [builder setUrl:echo];
+                            [builder setMethod:HTTPMethodPOST];
+                            [builder setHeaders:inputHeaders];
+                            [builder setPayload:payload];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 shouldEventuallySucceed(model, @"POST", inputHeaders, payload);
@@ -197,11 +207,11 @@ SPEC_BEGIN(DennaTest)
 
             it(@"should respond with the PUT request's headers/body", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:echo];
-                        [builder setMethod:HTTPMethodPUT];
-                        [builder setHeaders:inputHeaders];
-                        [builder setPayload:payload];
-                    }
+                            [builder setUrl:echo];
+                            [builder setMethod:HTTPMethodPUT];
+                            [builder setHeaders:inputHeaders];
+                            [builder setPayload:payload];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 shouldEventuallySucceed(model, @"PUT", inputHeaders, payload);
@@ -209,10 +219,10 @@ SPEC_BEGIN(DennaTest)
 
             it(@"should respond with the DELETE request's headers/body", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:echo];
-                        [builder setMethod:HTTPMethodDELETE];
-                        [builder setHeaders:inputHeaders];
-                    }
+                            [builder setUrl:echo];
+                            [builder setMethod:HTTPMethodDELETE];
+                            [builder setHeaders:inputHeaders];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
                 shouldEventuallySucceed(model, @"DELETE", inputHeaders, nil);

@@ -75,6 +75,7 @@ SPEC_BEGIN(OfflineTests)
 
         void (^assertForItemsCountInDb)(int expectedItemsCount, NSOperationQueue *operationQueue, EMSRequestModelRepository *requestModelRepository) = ^(int expectedItemsCount, NSOperationQueue *operationQueue, EMSRequestModelRepository *requestModelRepository) {
             __block NSArray<EMSRequestModel *> *items = nil;
+            __block EMSReachability *reachability;
             XCTestExpectation *itemsExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForQueryResult"];
             [operationQueue addOperationWithBlock:^{
                 items = [requestModelRepository query:[EMSFilterByNothingSpecification new]];
@@ -86,6 +87,7 @@ SPEC_BEGIN(OfflineTests)
         };
 
         describe(@"EMSRequestManager", ^{
+            __block EMSReachability *reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:testQueue()];
 
             beforeEach(^{
                 [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
@@ -128,6 +130,7 @@ SPEC_BEGIN(OfflineTests)
                 NSOperationQueue *operationQueue = testQueue();
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@YES, @YES, @YES]
+                                                                                             reachability:reachability
                                                                                               expectation:nil];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
@@ -176,6 +179,7 @@ SPEC_BEGIN(OfflineTests)
                 [watchdogExpectation setExpectedFulfillmentCount:3];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@NO, @NO, @NO]
+                                                                                             reachability:reachability
                                                                                               expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
@@ -221,6 +225,7 @@ SPEC_BEGIN(OfflineTests)
                 [watchdogExpectation setExpectedFulfillmentCount:3];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@YES, @YES, @NO]
+                                                                                             reachability:reachability
                                                                                               expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
@@ -273,6 +278,7 @@ SPEC_BEGIN(OfflineTests)
                 [watchdogExpectation setExpectedFulfillmentCount:2];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@YES, @YES, @YES]
+                                                                                             reachability:reachability
                                                                                               expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
@@ -323,6 +329,7 @@ SPEC_BEGIN(OfflineTests)
                 [watchdogExpectation setExpectedFulfillmentCount:4];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@YES, @YES, @YES]
+                                                                                             reachability:reachability
                                                                                               expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
@@ -376,6 +383,7 @@ SPEC_BEGIN(OfflineTests)
                 [watchdogExpectation setExpectedFulfillmentCount:2];
                 FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
                                                                                       connectionResponses:@[@YES, @YES, @YES]
+                                                                                             reachability:reachability
                                                                                               expectation:watchdogExpectation];
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
                 EMSRequestManager *manager = requestManager(operationQueue, requestModelRepository, watchdog, completionHandler.successBlock, completionHandler.errorBlock);
