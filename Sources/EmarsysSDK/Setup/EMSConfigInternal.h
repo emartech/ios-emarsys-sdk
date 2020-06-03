@@ -20,6 +20,8 @@
 @class EMSCrypto;
 @class EMSDispatchWaiter;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface EMSConfigInternal : NSObject <EMSConfigProtocol>
 
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
@@ -39,3 +41,5 @@
 - (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END
