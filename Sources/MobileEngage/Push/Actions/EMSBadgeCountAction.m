@@ -26,12 +26,14 @@
 
 - (void)execute {
     NSInteger value = [self.action[@"value"] integerValue];
-    if ([[self.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
-        NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
-        [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
-    } else {
-        [self.application setApplicationIconBadgeNumber:value];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[self.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
+            NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
+            [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
+        } else {
+            [self.application setApplicationIconBadgeNumber:value];
+        }
+    });
 }
 
 @end

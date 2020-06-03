@@ -54,6 +54,7 @@
                                                                                       application:self.mockApplication];
 
     [badgeCountAction execute];
+    [self waitForOperation];
 
     OCMVerify([self.mockApplication setApplicationIconBadgeNumber:123]);
     XCTAssertEqual([self.mockApplication applicationIconBadgeNumber], 123);
@@ -70,6 +71,7 @@
                                                                                       application:self.mockApplication];
 
     [badgeCountAction execute];
+    [self waitForOperation];
 
     OCMVerify([self.mockApplication setApplicationIconBadgeNumber:5]);
     XCTAssertEqual([self.mockApplication applicationIconBadgeNumber], 5);
@@ -87,9 +89,21 @@
                                                                                       application:self.mockApplication];
 
     [badgeCountAction execute];
+    [self waitForOperation];
 
     OCMVerify([self.mockApplication setApplicationIconBadgeNumber:1]);
     XCTAssertEqual([self.mockApplication applicationIconBadgeNumber], 1);
 }
+
+- (void)waitForOperation {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperation"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+};
 
 @end
