@@ -267,12 +267,41 @@ SPEC_BEGIN(PredictIntegrationTests)
             };
 
             it(@"search should recommend products by searchTerm with searchTerm", ^{
-                assertWithLogic([EMSLogic searchWithSearchTerm:@"shirt"], 2);
+                __block NSArray *returnedProducts = nil;
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+                [Emarsys.predict recommendProductsWithLogic:[EMSLogic searchWithSearchTerm:@"shirt"]
+                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                                      isValue:@""]]
+                                                      limit:@2
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                  returnedProducts = products;
+                                                  [expectation fulfill];
+                                              }];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:30];
+                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+                XCTAssertNotNil(returnedProducts);
             });
 
             it(@"search should recommend products by searchTerm", ^{
                 [Emarsys.predict trackSearchWithSearchTerm:@"shirt"];
-                assertWithLogic(EMSLogic.search, 2);
+
+                __block NSArray *returnedProducts = nil;
+
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+                [Emarsys.predict recommendProductsWithLogic:EMSLogic.search
+                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                                      isValue:@""]]
+                                                      limit:@2
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                                  returnedProducts = products;
+                                                  [expectation fulfill];
+                                              }];
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:30];
+                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+                XCTAssertNotNil(returnedProducts);
             });
 
             it(@"cart should recommend products by cartItems with cartItems", ^{
