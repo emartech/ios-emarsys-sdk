@@ -10,7 +10,6 @@ Pod::Spec.new do |spec|
 	spec.source_files         = [
        'Sources/**/*.{h,m}'
 	]
-    spec.resources = ['Sources/Core/Crypto/public.pem']
     spec.exclude_files	  = [
         'Sources/include/EMSNotificationService.h',
         'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
