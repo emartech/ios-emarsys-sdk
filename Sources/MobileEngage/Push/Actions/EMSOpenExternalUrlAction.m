@@ -28,9 +28,11 @@
 - (void)execute {
     NSString *urlString = self.action[@"url"];
     if (urlString) {
-        [self.application openURL:[[NSURL alloc] initWithString:urlString]
-                          options:@{}
-                completionHandler:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.application openURL:[[NSURL alloc] initWithString:urlString]
+                              options:@{}
+                    completionHandler:nil];
+        });
     }
 }
 

@@ -48,13 +48,14 @@
     NSDictionary *actionDictionary = @{
             @"type": @"MEAppEvent",
             @"name": @"testName",
-            @"payload" : expectedPayload
+            @"payload": expectedPayload
     };
 
-    EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary: actionDictionary
+    EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary:actionDictionary
                                                                                eventHandler:self.mockAppEventHandler];
 
     [appEventAction execute];
+    [self waitForOperationOnMainQueue];
 
     OCMVerify([self.mockAppEventHandler handleEvent:@"testName" payload:expectedPayload]);
 }
@@ -65,12 +66,24 @@
             @"name": @"testName"
     };
 
-    EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary: actionDictionary
+    EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary:actionDictionary
                                                                                eventHandler:self.mockAppEventHandler];
 
     [appEventAction execute];
+    [self waitForOperationOnMainQueue];
 
     OCMVerify([self.mockAppEventHandler handleEvent:@"testName" payload:nil]);
 }
+
+- (void)waitForOperationOnMainQueue {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationOnMainQueue"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+};
 
 @end

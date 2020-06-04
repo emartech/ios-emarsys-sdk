@@ -44,16 +44,23 @@
 }
 
 - (void)testExecute {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationOnMainQueue"];
     EMSOpenExternalUrlAction *action = [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:@{
-            @"id": @"uniqueId",
-            @"title": @"actionTitle",
-            @"type": @"OpenExternalUrl",
-            @"url": @"https://www.emarsys.com"
-        }
+                    @"id": @"uniqueId",
+                    @"title": @"actionTitle",
+                    @"type": @"OpenExternalUrl",
+                    @"url": @"https://www.emarsys.com"
+            }
                                                                                       application:self.mockApplication];
-
     [action execute];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [expectation fulfill];
+    });
 
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     OCMVerify([self.mockApplication openURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
                                     options:@{}
                           completionHandler:nil]);
@@ -65,10 +72,10 @@
                           completionHandler:nil]);
 
     EMSOpenExternalUrlAction *action = [[EMSOpenExternalUrlAction alloc] initWithActionDictionary:@{
-            @"id": @"uniqueId",
-            @"title": @"actionTitle",
-            @"type": @"OpenExternalUrl"
-        }
+                    @"id": @"uniqueId",
+                    @"title": @"actionTitle",
+                    @"type": @"OpenExternalUrl"
+            }
                                                                                       application:self.mockApplication];
 
     [action execute];

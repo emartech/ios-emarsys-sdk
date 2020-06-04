@@ -27,8 +27,10 @@
 }
 
 - (void)execute {
-    [self.eventHandler handleEvent:self.action[@"name"]
-                           payload:self.action[@"payload"]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.eventHandler handleEvent:self.action[@"name"]
+                               payload:self.action[@"payload"]];
+    });
 }
 
 @end

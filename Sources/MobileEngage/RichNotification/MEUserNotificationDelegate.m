@@ -13,7 +13,6 @@
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
 #import "EMSPushNotificationProtocol.h"
-#import "EMSMobileEngageProtocol.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 
@@ -93,10 +92,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     if (action && action[@"id"]) {
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                      @"origin": @"button",
-                                                                                      @"button_id": action[@"id"],
-                                                                                      @"sid": [userInfo messageId]
-                                                                                  } eventType:EventTypeInternal];
+                                                                                          @"origin": @"button",
+                                                                                          @"button_id": action[@"id"],
+                                                                                          @"sid": [userInfo messageId]}
+                                                                                        eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:nil];
     } else {
