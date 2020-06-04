@@ -50,14 +50,15 @@
             SecItemAdd((__bridge CFDictionaryRef) query, NULL);
         } else if (status != errSecSuccess) {
             NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-            parameters[@"data"] = data;
+            parameters[@"data"] = [[NSString alloc] initWithData:data
+                                                        encoding:NSUTF8StringEncoding];
             parameters[@"key"] = key;
             NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
             statusDict[@"osStatus"] = @(status);
             EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                      sel:_cmd
-                                                              parameters:parameters
-                                                                  status:statusDict];
+                                                              parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                                  status:[NSDictionary dictionaryWithDictionary:statusDict]];
             EMSLog(logEntry, LogLevelDebug);
         }
     }];
@@ -106,8 +107,8 @@
         statusDict[@"osStatus"] = @(status);
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
-                                                          parameters:parameters
-                                                              status:statusDict];
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelDebug);
     }
 
