@@ -5,29 +5,33 @@
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
-#import "MERequestMatcher.h"
 
 @interface MEIAMCleanupResponseHandler ()
 
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIAMRepository;
+@property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
-
 
 @implementation MEIAMCleanupResponseHandler
 
 - (instancetype)initWithButtonClickRepository:(MEButtonClickRepository *)buttonClickRepository
-                         displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository {
+                         displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
+                                     endpoint:(EMSEndpoint *)endpoint {
+    NSParameterAssert(buttonClickRepository);
+    NSParameterAssert(displayedIAMRepository);
+    NSParameterAssert(endpoint);
     if (self = [super init]) {
         _buttonClickRepository = buttonClickRepository;
         _displayedIAMRepository = displayedIAMRepository;
+        _endpoint = endpoint;
     }
     return self;
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
-    if (![MERequestMatcher isV3CustomEventUrl:[response.requestModel.url absoluteString]]) {
+    if (![self.endpoint isV3url:[response.requestModel.url absoluteString]]) {
         return NO;
     }
 

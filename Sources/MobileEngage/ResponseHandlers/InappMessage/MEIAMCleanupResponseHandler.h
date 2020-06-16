@@ -6,10 +6,12 @@
 #import "EMSAbstractResponseHandler.h"
 #import "MEButtonClickRepository.h"
 #import "MEDisplayedIAMRepository.h"
+#import "EMSEndpoint.h"
 
 @interface MEIAMCleanupResponseHandler : EMSAbstractResponseHandler
 
 - (instancetype)initWithButtonClickRepository:(MEButtonClickRepository *)buttonClickRepository
-                         displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository;
+                         displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
+                                     endpoint:(EMSEndpoint *)endpoint;
 
 @end

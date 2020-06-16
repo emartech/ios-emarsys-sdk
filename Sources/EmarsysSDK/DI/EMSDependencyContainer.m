@@ -322,7 +322,8 @@
     [responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
             [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository]]
+                                                          displayIamRepository:displayedIAMRepository
+                                                                      endpoint:self.endpoint]]
     ];
     [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                    endpoint:self.endpoint]];
