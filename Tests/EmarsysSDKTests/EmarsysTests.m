@@ -18,11 +18,7 @@
 #import "MENotificationCenterManager.h"
 #import "EMSAppStartBlockProvider.h"
 #import "MERequestContext.h"
-#import "EMSDeviceInfo.h"
-#import "EMSRequestFactory.h"
 #import "EMSClientStateResponseHandler.h"
-#import "EMSLogger.h"
-#import "EMSRequestManager.h"
 #import "EMSPushV3Internal.h"
 #import "MEInbox.h"
 #import "MEInApp.h"
@@ -257,17 +253,17 @@
     }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
-    
+
     OCMVerify([mockProvider createAppStartEventBlock]);
     OCMVerify([mockProvider createDeviceInfoEventBlock]);
     OCMVerify([mockProvider createRemoteConfigEventBlock]);
     OCMVerify([mockProvider createFetchGeofenceEventBlock]);
     OCMVerify([mockManager addHandlerBlock:[OCMArg any]
-                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+                           forNotification:@"EmarsysSDKDidFinishSetupNotification"]);
     OCMVerify([mockManager addHandlerBlock:[OCMArg any]
-                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+                           forNotification:@"EmarsysSDKDidFinishSetupNotification"]);
     OCMVerify([mockManager addHandlerBlock:[OCMArg any]
-                           forNotification:UIApplicationDidFinishLaunchingNotification]);
+                           forNotification:@"EmarsysSDKDidFinishSetupNotification"]);
     OCMVerify([mockManager addHandlerBlock:[OCMArg any]
                            forNotification:UIApplicationDidBecomeActiveNotification]);
 }
@@ -735,7 +731,7 @@
     
     [EmarsysTestUtils setupEmarsysWithConfig:config
                          dependencyContainer:partialMockContainer];
-    
+
     [self waitForSetup];
 }
 

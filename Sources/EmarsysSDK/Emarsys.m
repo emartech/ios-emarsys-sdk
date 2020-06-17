@@ -33,16 +33,17 @@
     [self initializeDefaultCategory];
 
     [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
-    
+
     EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
 
     [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         [Emarsys registerAppStartBlock];
-
         if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.contactFieldValue) {
             [dependencyContainer.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
             [dependencyContainer.mobileEngage setContactWithContactFieldValue:nil];
         }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
+                                                            object:nil];
     }];
 }
 
@@ -115,11 +116,11 @@
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDeviceInfoEventBlock]
                                forNotification:UIApplicationDidBecomeActiveNotification];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createAppStartEventBlock]
-                               forNotification:UIApplicationDidFinishLaunchingNotification];
+                               forNotification:@"EmarsysSDKDidFinishSetupNotification"];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createFetchGeofenceEventBlock]
-                               forNotification:UIApplicationDidFinishLaunchingNotification];
+                               forNotification:@"EmarsysSDKDidFinishSetupNotification"];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createRemoteConfigEventBlock]
-                               forNotification:UIApplicationDidFinishLaunchingNotification];
+                               forNotification:@"EmarsysSDKDidFinishSetupNotification"];
 }
 
 + (id <EMSPushNotificationProtocol>)push {
