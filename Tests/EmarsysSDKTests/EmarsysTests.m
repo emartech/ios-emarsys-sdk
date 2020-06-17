@@ -38,6 +38,7 @@
 #import "EMSLoggingInboxV3.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSQueueDelegator.h"
+#import "EMSUUIDProvider.h"
 
 @interface EmarsysTests: XCTestCase
 
@@ -272,7 +273,9 @@
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
-    
+    OCMStub([mockRequestContext timestampProvider]).andReturn([EMSTimestampProvider new]);
+    OCMStub([mockRequestContext uuidProvider]).andReturn([EMSUUIDProvider new]);
+
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
         OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
         OCMStub([partialMockContainer deviceInfoClient]).andReturn(mockDeviceInfoClient);
@@ -289,6 +292,8 @@
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    OCMStub([mockRequestContext timestampProvider]).andReturn([EMSTimestampProvider new]);
+    OCMStub([mockRequestContext uuidProvider]).andReturn([EMSUUIDProvider new]);
     
     OCMStub([mockRequestContext contactFieldValue]).andReturn(@"testContactFieldValue");
     
@@ -308,6 +313,8 @@
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
+    OCMStub([mockRequestContext timestampProvider]).andReturn([EMSTimestampProvider new]);
+    OCMStub([mockRequestContext uuidProvider]).andReturn([EMSUUIDProvider new]);
     
     OCMStub([mockRequestContext contactToken]).andReturn(@"testContactToken");
     
