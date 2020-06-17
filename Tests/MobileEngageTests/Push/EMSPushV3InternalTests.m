@@ -285,6 +285,13 @@
     [partialMockPush stopMocking];
 }
 
+- (void)testClearDeviceTokenStorage {
+    [self.push clearDeviceTokenStorage];
+
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
+}
+
 - (void)testClearPushTokenWithCompletionBlock {
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };

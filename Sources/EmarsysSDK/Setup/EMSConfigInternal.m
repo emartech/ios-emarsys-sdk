@@ -219,6 +219,7 @@
 - (void)setPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
     if (self.pushInternal.deviceToken) {
+        [self.pushInternal clearDeviceTokenStorage];
         [self.pushInternal setPushToken:self.pushInternal.deviceToken
                         completionBlock:^(NSError *error) {
                             if (error) {

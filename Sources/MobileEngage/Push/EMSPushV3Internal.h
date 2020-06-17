@@ -22,4 +22,6 @@
                          actionFactory:(EMSActionFactory *)actionFactory
                                storage:(EMSStorage *)storage;
 
+- (void)clearDeviceTokenStorage;
+
 @end

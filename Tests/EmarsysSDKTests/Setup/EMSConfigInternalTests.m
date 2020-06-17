@@ -14,11 +14,8 @@
 #import "EMSEmarsysRequestFactory.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
-#import "FakeRequestManager.h"
 #import "EMSResponseModel.h"
 #import "EMSRemoteConfig.h"
-#import "EMSUUIDProvider.h"
-#import "EMSLogger.h"
 #import "EMSCrypto.h"
 #import "EMSDispatchWaiter.h"
 
@@ -391,6 +388,7 @@
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -413,6 +411,8 @@
 
     [strictMockMobileEngage setExpectationOrderMatters:YES];
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    [strictMockPushInternal setExpectationOrderMatters:YES];
+    OCMExpect([strictMockPushInternal clearDeviceTokenStorage]);
     [strictMockPushInternal setExpectationOrderMatters:YES];
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
@@ -450,6 +450,7 @@
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -470,6 +471,8 @@
 
     [strictMockMobileEngage setExpectationOrderMatters:YES];
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    [strictMockPushInternal setExpectationOrderMatters:YES];
+    OCMExpect([strictMockPushInternal clearDeviceTokenStorage]);
     [strictMockPushInternal setExpectationOrderMatters:YES];
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
@@ -557,6 +560,7 @@
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                                               nil])]);

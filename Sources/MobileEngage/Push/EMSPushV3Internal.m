@@ -54,6 +54,11 @@
     return self;
 }
 
+- (void)clearDeviceTokenStorage {
+    [self.storage setData:nil
+                   forKey:kEMSPushTokenKey];
+}
+
 - (void)setPushToken:(NSData *)pushToken {
     [self setPushToken:pushToken
        completionBlock:nil];
