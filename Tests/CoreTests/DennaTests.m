@@ -17,7 +17,7 @@
 #import "EMSOperationQueue.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 
-#define DennaUrl(ending) [NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@", ending];
+#define DennaUrl(ending) [NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
@@ -25,7 +25,7 @@ SPEC_BEGIN(DennaTest)
 
         NSString *error500 = DennaUrl(@"/customResponseCode/500");
         NSString *echo = DennaUrl(@"/echo");
-        NSDictionary *inputHeaders = @{@"Header1": @"value1", @"Header2": @"value2"};
+        NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
         NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
 
         void (^shouldEventuallySucceed)(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) = ^(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) {
@@ -41,7 +41,7 @@ SPEC_BEGIN(DennaTest)
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                         checkableRequestId = requestId;
                         NSDictionary<NSString *, id> *returnedPayload = [NSJSONSerialization JSONObjectWithData:response.body
-                                                                                                        options:NSJSONReadingAllowFragments
+                                                                                                        options:NSJSONReadingFragmentsAllowed
                                                                                                           error:nil];
                         NSLog(@"RequestId: %@, responsePayload: %@", requestId, returnedPayload);
                         resultMethod = returnedPayload[@"method"];

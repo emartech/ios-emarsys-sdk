@@ -521,7 +521,7 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 for (int i = 0; i < 100; ++i) {
                     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:@"https://ems-denna.herokuapp.com/echo"];
+                            [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
                             [builder setMethod:HTTPMethodGET];
                         }
                                                             timestampProvider:[EMSTimestampProvider new]

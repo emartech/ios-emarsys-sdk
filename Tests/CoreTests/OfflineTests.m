@@ -259,7 +259,7 @@ SPEC_BEGIN(OfflineTests)
                                                          timestampProvider:[EMSTimestampProvider new]
                                                               uuidProvider:[EMSUUIDProvider new]];
                 EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:[NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@",
+                        [builder setUrl:[NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@",
                                                                    @"/customResponseCode/500"]];
                         [builder setMethod:HTTPMethodGET];
                     }
@@ -365,7 +365,7 @@ SPEC_BEGIN(OfflineTests)
                                                          timestampProvider:[EMSTimestampProvider new]
                                                               uuidProvider:[EMSUUIDProvider new]];
                 EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:[NSString stringWithFormat:@"https://ems-denna.herokuapp.com%@",
+                        [builder setUrl:[NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@",
                                                                    @"customResponseCode/408"]];
                         [builder setMethod:HTTPMethodGET];
                     }
