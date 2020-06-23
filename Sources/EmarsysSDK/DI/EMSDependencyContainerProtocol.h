@@ -11,7 +11,7 @@
 @class EMSRequestManager;
 @protocol EMSRequestModelRepositoryProtocol;
 @protocol EMSInboxProtocol;
-@class MENotificationCenterManager;
+@class EMSNotificationCenterManager;
 @class MERequestContext;
 @class EMSAppStartBlockProvider;
 @class MEUserNotificationDelegate;
@@ -87,7 +87,7 @@
 
 - (NSOperationQueue *)coreOperationQueue;
 
-- (MENotificationCenterManager *)notificationCenterManager;
+- (EMSNotificationCenterManager *)notificationCenterManager;
 
 - (MERequestContext *)requestContext;
 

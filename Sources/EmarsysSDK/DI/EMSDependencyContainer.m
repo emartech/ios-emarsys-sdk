@@ -19,7 +19,7 @@
 #import "EMSAbstractResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
 #import "MEInbox.h"
-#import "MENotificationCenterManager.h"
+#import "EMSNotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
 #import "MEIAMResponseHandler.h"
 #import "MEIAMCleanupResponseHandler.h"
@@ -95,7 +95,7 @@
 @property(nonatomic, strong) PRERequestContext *predictRequestContext;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRESTClient *restClient;
-@property(nonatomic, strong) MENotificationCenterManager *notificationCenterManager;
+@property(nonatomic, strong) EMSNotificationCenterManager *notificationCenterManager;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> loggingMobileEngage;
@@ -274,7 +274,7 @@
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
                                                                endpoint:self.endpoint];
-    _notificationCenterManager = [MENotificationCenterManager new];
+    _notificationCenterManager = [[EMSNotificationCenterManager alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];

@@ -10,6 +10,7 @@
 #import "EMSEndpoint.h"
 #import "NSError+EMSCore.h"
 #import "EMSSQLiteHelper.h"
+#import "EMSNotificationCenterManager.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -90,6 +91,7 @@
     [EMSDependencyInjection.dependencyContainer.endpoint reset];
     [MEExperimental reset];
     [EMSDependencyInjection.dependencyContainer.requestContext reset];
+    [EMSDependencyInjection.dependencyContainer.notificationCenterManager removeHandlers];
     [EMSDependencyInjection tearDown];
 }
 

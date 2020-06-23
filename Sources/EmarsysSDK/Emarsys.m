@@ -9,7 +9,7 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "EMSDependencyInjection.h"
-#import "MENotificationCenterManager.h"
+#import "EMSNotificationCenterManager.h"
 #import "EMSAppStartBlockProvider.h"
 #import "EMSDeviceInfoClientProtocol.h"
 #import "MERequestContext.h"
@@ -111,7 +111,7 @@
 }
 
 + (void)registerAppStartBlock {
-    MENotificationCenterManager *notificationCenterManager = EMSDependencyInjection.dependencyContainer.notificationCenterManager;
+    EMSNotificationCenterManager *notificationCenterManager = EMSDependencyInjection.dependencyContainer.notificationCenterManager;
     EMSAppStartBlockProvider *appStartBlockProvider = EMSDependencyInjection.dependencyContainer.appStartBlockProvider;
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDeviceInfoEventBlock]
                                forNotification:UIApplicationDidBecomeActiveNotification];

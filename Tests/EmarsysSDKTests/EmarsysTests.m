@@ -15,7 +15,7 @@
 #import "MEIAMCleanupResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
 #import "EMSDependencyInjection.h"
-#import "MENotificationCenterManager.h"
+#import "EMSNotificationCenterManager.h"
 #import "EMSAppStartBlockProvider.h"
 #import "MERequestContext.h"
 #import "EMSClientStateResponseHandler.h"
@@ -246,7 +246,7 @@
 
 - (void)testShouldregisterUIApplicationDidBecomeActiveNotification {
     EMSAppStartBlockProvider *mockProvider = OCMClassMock([EMSAppStartBlockProvider class]);
-    MENotificationCenterManager *mockManager = OCMClassMock([MENotificationCenterManager class]);
+    EMSNotificationCenterManager *mockManager = OCMClassMock([EMSNotificationCenterManager class]);
     
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
         OCMStub([partialMockContainer appStartBlockProvider]).andReturn(mockProvider);
