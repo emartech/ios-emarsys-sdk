@@ -7,6 +7,12 @@
 #import "FakeConnectionChangeListener.h"
 #import "EMSWaiter.h"
 
+@interface EMSConnectionWatchdog(Tests)
+
+- (id)notificationToken;
+
+@end
+
 SPEC_BEGIN(EMSConnectionWatchdogTest)
 
         void (^waitForOperationQueue)() = ^void() {
@@ -145,6 +151,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
 
                 [[theValue(listener.networkStatus) should] equal:theValue(ReachableViaWiFi)];
                 [[theValue(listener.connected) should] equal:theValue(YES)];
+
+                [[NSNotificationCenter defaultCenter] removeObserver:watchdog.notificationToken];
             });
 
             it(@"should be called on the set publicApiOperationQueue", ^{
@@ -177,6 +185,8 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                                        timeout:10];
 
                 [[result should] equal:queue];
+
+                [[NSNotificationCenter defaultCenter] removeObserver:watchdog.notificationToken];
             });
         });
 
