@@ -31,6 +31,7 @@
         _notificationCenter = notificationCenter;
         _storage = storage;
         _identifierManager = identifierManager;
+        _hardwareId = [self.storage stringForKey:kEMSHardwareIdKey];
     }
     return self;
 }
@@ -81,14 +82,12 @@
 }
 
 - (NSString *)hardwareId {
-    NSString *hardwareId = [self.storage stringForKey:kEMSHardwareIdKey];
-
-    if (!hardwareId) {
-        hardwareId = [self getNewHardwareId];
-        [self.storage setString:hardwareId
+    if (!_hardwareId) {
+        _hardwareId = [self getNewHardwareId];
+        [self.storage setString:_hardwareId
                          forKey:kEMSHardwareIdKey];
     }
-    return hardwareId;
+    return _hardwareId;
 }
 
 - (NSDictionary *)pushSettings {

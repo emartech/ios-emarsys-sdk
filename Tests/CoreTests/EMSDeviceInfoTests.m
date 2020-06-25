@@ -6,6 +6,8 @@
 #import "EMSDeviceInfo.h"
 #import "EMSStorage.h"
 #import "OCMock.h"
+#import "KWReceiveMatcher.h"
+#import "KiwiConfiguration.h"
 #import <AdSupport/AdSupport.h>
 #import <UserNotifications/UserNotifications.h>
 
@@ -400,13 +402,25 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 [userDefaults removeObjectForKey:kEMSHardwareIdKey];
             });
 
-            it(@"should return hwid when it's available in storage", ^{
-                NSString *const kHwId = @"testHWID";
-                [[mockStorage should] receive:@selector(stringForKey:) andReturn:kHwId];
+            it(@"should return with the stored hwid", ^{
+                [[mockStorage should] receive:@selector(stringForKey:)
+                                    andReturn:@"testHWID"];
 
-                NSString *result = [deviceInfo hardwareId];
+                deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSdkVersion"
+                                                    notificationCenter:mockCenter
+                                                               storage:mockStorage
+                                                     identifierManager:mockIdentifierManager];
 
-                [[result should] equal:kHwId];
+                [[deviceInfo.hardwareId should] equal:@"testHWID"];
+            });
+
+            it(@"should store HWID on getHWID when not set", ^{
+                [[mockStorage should] receive:@selector(setString:forKey:)
+                withArguments:kw_any(), @"kHardwareIdKey"];
+
+                NSString *result = deviceInfo.hardwareId;
+
+                [[result shouldNot] beNil];
             });
 
             it(@"should store new hwid in storage when hwid isn't available in userDefaults neither in storage", ^{
