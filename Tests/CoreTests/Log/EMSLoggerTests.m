@@ -139,6 +139,17 @@
     XCTAssertEqual(self.logger.logLevel, LogLevelDebug);
 }
 
+- (void)testInit_shouldSetLogLevelToError_whenStorageIsEmpty {
+    EMSStorage *emptyMockStorage = OCMClassMock([EMSStorage class]);
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
+                                          opertaionQueue:self.operationQueue
+                                       timestampProvider:self.mockTimestampProvider
+                                            uuidProvider:self.mockUuidProvider
+                                                 storage:emptyMockStorage];
+
+    XCTAssertEqual(logger.logLevel, LogLevelError);
+}
+
 - (void)testLogShouldInsertEntryToShardRepository {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
 

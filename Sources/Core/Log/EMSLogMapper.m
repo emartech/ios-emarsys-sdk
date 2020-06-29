@@ -32,12 +32,8 @@
     NSParameterAssert([shards count] > 0);
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            NSMutableArray<NSDictionary<NSString *, id> *> *logs = [NSMutableArray new];
-            EMSDeviceInfo *deviceInfo = weakSelf.requestContext.deviceInfo;
-            for (EMSShard *shard in shards) {
-                NSMutableDictionary<NSString *, id> *shardData = [NSMutableDictionary dictionaryWithDictionary:shard.data];
-                shardData[@"type"] = shard.type;
-
+                NSMutableArray<NSDictionary<NSString *, id> *> *logs = [NSMutableArray new];
+                EMSDeviceInfo *deviceInfo = weakSelf.requestContext.deviceInfo;
                 NSMutableDictionary *mutableDeviceInfoDictionary = [NSMutableDictionary dictionary];
                 mutableDeviceInfoDictionary[@"platform"] = deviceInfo.platform;
                 mutableDeviceInfoDictionary[@"appVersion"] = deviceInfo.applicationVersion;
@@ -47,14 +43,18 @@
                 mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.hardwareId;
                 mutableDeviceInfoDictionary[@"applicationCode"] = weakSelf.applicationCode;
                 mutableDeviceInfoDictionary[@"merchantId"] = weakSelf.merchantId;
-                shardData[@"deviceInfo"] = [NSDictionary dictionaryWithDictionary:mutableDeviceInfoDictionary];
 
-                [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
+                for (EMSShard *shard in shards) {
+                    NSMutableDictionary<NSString *, id> *shardData = [NSMutableDictionary dictionaryWithDictionary:shard.data];
+                    shardData[@"type"] = shard.type;
+                    shardData[@"deviceInfo"] = [NSDictionary dictionaryWithDictionary:mutableDeviceInfoDictionary];
+
+                    [logs addObject:[NSDictionary dictionaryWithDictionary:shardData]];
+                }
+                [builder setUrl:EMSLogEndpoint];
+                [builder setMethod:HTTPMethodPOST];
+                [builder setPayload:@{@"logs": [NSArray arrayWithArray:logs]}];
             }
-            [builder setUrl:EMSLogEndpoint];
-            [builder setMethod:HTTPMethodPOST];
-            [builder setPayload:@{@"logs": [NSArray arrayWithArray:logs]}];
-        }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
 }

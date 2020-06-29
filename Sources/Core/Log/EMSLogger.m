@@ -39,7 +39,8 @@
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _storage = storage;
-        _logLevel = (LogLevel) [[storage numberForKey:kEMSLogLevelKey] intValue];
+        NSNumber *logLevel = [storage numberForKey:kEMSLogLevelKey];
+        _logLevel = logLevel ? [logLevel intValue] : LogLevelError;
     }
     return self;
 }
