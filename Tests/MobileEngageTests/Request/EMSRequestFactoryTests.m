@@ -346,4 +346,18 @@
     XCTAssertEqualObjects(result, expectedRequestModel);
 }
 
+- (void)testCreateInlineInappRequestModel {
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v3/apps/testApplicationCode/inline-messages?viewId=testViewId"]
+                                                                                method:@"GET"
+                                                                               payload:nil
+                                                                               headers:nil
+                                                                                extras:nil];
+    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
+
+    XCTAssertEqualObjects(result, expectedRequestModel);
+}
+
 @end

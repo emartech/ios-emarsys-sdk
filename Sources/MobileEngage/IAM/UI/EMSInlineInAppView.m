@@ -4,6 +4,10 @@
 
 #import "EMSInlineInAppView.h"
 #import <WebKit/WebKit.h>
+#import "EMSDependencyInjection.h"
+#import "EMSRequestManager.h"
+#import "EMSRequestFactory.h"
+#import "EMSResponseModel.h"
 
 IB_DESIGNABLE
 
@@ -76,18 +80,7 @@ IB_DESIGNABLE
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    [self.webView loadHTMLString:@"<!DOCTYPE html>\n"
-                                 "<html>\n"
-                                 "<head>\n"
-                                 "\t<title>iia</title>\n"
-                                 "</head>\n"
-                                 "<body>\n"
-                                 "\t<div style=\"height: 300px; background-color: red;\">\n"
-                                 "\t\t<p>This is a test body for the awesome inline inapp</p>\t\t\n"
-                                 "\t</div>\n"
-                                 "</body>\n"
-                                 "</html>"
-                         baseURL:nil];
+    [self fetchInlineInappMessage];
 }
 
 - (WKWebView *)createWebView {
@@ -121,7 +114,32 @@ didFinishNavigation:(WKNavigation *)navigation {
 }
 
 - (void)loadInAppWithViewId:(NSString *)viewId {
+    _viewId = viewId;
     [self.webView loadRequest:[NSURLRequest requestWithURL:[[NSURL alloc] initWithString:viewId]]];
+}
+
+- (void)fetchInlineInappMessage {
+    EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
+    EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
+    [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
+                                                                        successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                                            NSString *html = [self filterMessagesByViewId:response];
+                                                                            [self.webView loadHTMLString:html
+                                                                                                 baseURL:nil];
+                                                                        }
+                                                                          errorBlock:^(NSString *requestId, NSError *error) {
+                                                                              [self setHidden:YES];
+                                                                          }];
+}
+
+- (NSString *)filterMessagesByViewId:(EMSResponseModel *)response {
+    NSString *html;
+    for (NSDictionary *message in response.parsedBody[@"inlineMessages"]) {
+        if ([self.viewId.lowercaseString isEqualToString:((NSString *) message[@"viewId"]).lowercaseString]) {
+            html = message[@"html"];
+        }
+    }
+    return html;
 }
 
 @end

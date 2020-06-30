@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModel *)createMessageInboxRequestModel;
 
+- (EMSRequestModel *)createInlineInappRequestModelWithViewId:(NSString *)viewId;
+
 @end
 
 NS_ASSUME_NONNULL_END

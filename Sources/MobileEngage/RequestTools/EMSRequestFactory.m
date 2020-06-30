@@ -36,7 +36,7 @@
 - (EMSRequestModel *)createDeviceInfoRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint clientUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint clientUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodPOST];
                 [builder setPayload:[weakSelf.deviceInfo clientPayload]];
             }
@@ -47,7 +47,7 @@
 - (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodPUT];
                 [builder setPayload:@{@"pushToken": pushToken}];
             }
@@ -58,7 +58,7 @@
 - (EMSRequestModel *)createClearPushTokenRequestModel {
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint pushTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodDELETE];
                 [builder setPayload:@{}];
             }
@@ -80,7 +80,7 @@
                 } else {
                     anonymousLogin = YES;
                 }
-                [builder setUrl:[self.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
+                [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
                 queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
                 [builder setPayload:payload];
             }
@@ -94,7 +94,7 @@
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:[self.endpoint eventUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint eventUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
 
                 NSMutableDictionary *mutableEvent = [NSMutableDictionary dictionary];
                 mutableEvent[@"type"] = [weakSelf eventTypeStringRepresentationFromEventType:eventType];
@@ -118,7 +118,7 @@
     __weak typeof(self) weakSelf = self;
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:[self.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
                 mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
                 [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
@@ -128,12 +128,13 @@
 }
 
 - (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId {
+    __weak typeof(self) weakSelf = self;
     NSString *userAgent = [NSString stringWithFormat:@"Emarsys SDK %@ %@ %@", EMARSYS_SDK_VERSION,
                                                      self.requestContext.deviceInfo.deviceType,
                                                      self.requestContext.deviceInfo.osVersion];
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:[self.endpoint deeplinkUrl]];
+                [builder setUrl:[weakSelf.endpoint deeplinkUrl]];
                 [builder setHeaders:@{@"User-Agent": userAgent}];
                 [builder setPayload:@{@"ems_dl": trackingId}];
             }
@@ -142,8 +143,9 @@
 }
 
 - (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification {
+    __weak typeof(self) weakSelf = self;
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint v2EventServiceUrl]];
+                [builder setUrl:[weakSelf.endpoint v2EventServiceUrl]];
                 [builder setMethod:HTTPMethodPOST];
 
                 NSMutableDictionary *payload = [NSMutableDictionary dictionary];
@@ -166,8 +168,9 @@
 }
 
 - (EMSRequestModel *)createGeofenceRequestModel {
+    __weak typeof(self) weakSelf = self;
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint geofenceUrlWithApplicationCode:self.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint geofenceUrlWithApplicationCode:self.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodGET];
                 [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.applicationCode]}];
             }
@@ -179,9 +182,23 @@
 - (EMSRequestModel *)createMessageInboxRequestModel {
     __weak typeof(self) weakSelf = self;
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[self.endpoint v3MessageInboxUrlApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setUrl:[weakSelf.endpoint v3MessageInboxUrlApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodGET];
                 [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:weakSelf.requestContext.applicationCode]}];
+            }
+                                                   timestampProvider:self.requestContext.timestampProvider
+                                                        uuidProvider:self.requestContext.uuidProvider];
+    return requestModel;
+}
+
+- (EMSRequestModel *)createInlineInappRequestModelWithViewId:(NSString *)viewId {
+    __weak typeof(self) weakSelf = self;
+    NSMutableDictionary *queryParamDict = [[NSMutableDictionary alloc] init];
+    queryParamDict[@"viewId"] = viewId;
+    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
+                queryParameters:[NSDictionary dictionaryWithDictionary:queryParamDict]];
+                [builder setMethod:HTTPMethodGET];
             }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];

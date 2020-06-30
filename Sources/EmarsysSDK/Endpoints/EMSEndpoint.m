@@ -79,6 +79,10 @@
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client/events", self.eventServiceUrl, applicationCode];
 }
 
+- (NSString *)inlineInappUrlWithApplicationCode:(NSString *)applicationCode {
+    return [NSString stringWithFormat:@"%@/v3/apps/%@/inline-messages", self.eventServiceUrl, applicationCode];
+}
+
 - (NSString *)baseUrlWithServiceUrl:(NSString *)serviceUrl
                     applicationCode:(NSString *)applicationCode {
     return [NSString stringWithFormat:@"%@/v3/apps/%@/client", serviceUrl, applicationCode];

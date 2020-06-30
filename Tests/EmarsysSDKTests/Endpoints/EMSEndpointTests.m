@@ -220,6 +220,16 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, expectedUrl);
 }
 
+- (void)testInlineInappUrlWithApplicationCode {
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/v3/apps/%@/inline-messages",
+                                                       kEventServiceUrl,
+                                                       kApplicationCode];
+
+    NSString *result = [self.endpoint inlineInappUrlWithApplicationCode:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
 - (void)testIsV3_shouldReturnYes_when_URLClientUrl {
     NSString *url = [self.endpoint clientUrlWithApplicationCode:@"testApplicationCode"];
 

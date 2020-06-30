@@ -30,6 +30,8 @@
 
 - (NSString *)eventUrlWithApplicationCode:(NSString *)applicationCode;
 
+- (NSString *)inlineInappUrlWithApplicationCode:(NSString *)applicationCode;
+
 - (BOOL)isV3url:(NSString *)url;
 
 - (NSString *)predictUrl;
