@@ -105,17 +105,17 @@ IB_DESIGNABLE
 
 - (void)    webView:(WKWebView *)webView
 didFinishNavigation:(WKNavigation *)navigation {
-    self.hidden = NO;
-    if (self.completionBlock) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.hidden = NO;
+        if (self.completionBlock) {
             self.completionBlock(nil);
-        });
-    }
+        }
+    });
 }
 
 - (void)loadInAppWithViewId:(NSString *)viewId {
     _viewId = viewId;
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[[NSURL alloc] initWithString:viewId]]];
+    [self fetchInlineInappMessage];
 }
 
 - (void)fetchInlineInappMessage {
@@ -124,11 +124,15 @@ didFinishNavigation:(WKNavigation *)navigation {
     [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
                                                                         successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                                                             NSString *html = [self filterMessagesByViewId:response];
-                                                                            [self.webView loadHTMLString:html
-                                                                                                 baseURL:nil];
+                                                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                [self.webView loadHTMLString:html
+                                                                                                     baseURL:nil];
+                                                                            });
                                                                         }
                                                                           errorBlock:^(NSString *requestId, NSError *error) {
-                                                                              [self setHidden:YES];
+                                                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                  [self setHidden:YES];
+                                                                              });
                                                                           }];
 }
 

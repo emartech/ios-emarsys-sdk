@@ -80,6 +80,7 @@
                                                                                         nil])
                                                 errorBlock:[OCMArg any]]);
 
+    [self.inappView loadInAppWithViewId:@"testViewId"];
     [self.inappView fetchInlineInappMessage];
 
     OCMVerify([self.inappView.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
