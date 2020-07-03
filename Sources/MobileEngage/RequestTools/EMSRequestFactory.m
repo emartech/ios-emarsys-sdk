@@ -193,12 +193,12 @@
 
 - (EMSRequestModel *)createInlineInappRequestModelWithViewId:(NSString *)viewId {
     __weak typeof(self) weakSelf = self;
-    NSMutableDictionary *queryParamDict = [[NSMutableDictionary alloc] init];
-    queryParamDict[@"viewId"] = viewId;
+    NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
+    payload[@"viewIds"] = @[viewId];
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
-                queryParameters:[NSDictionary dictionaryWithDictionary:queryParamDict]];
-                [builder setMethod:HTTPMethodGET];
+                [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                [builder setMethod:HTTPMethodPOST];
+                [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
             }
                                                    timestampProvider:self.requestContext.timestampProvider
                                                         uuidProvider:self.requestContext.uuidProvider];
