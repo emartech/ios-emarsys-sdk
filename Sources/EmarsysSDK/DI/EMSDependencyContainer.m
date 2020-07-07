@@ -484,7 +484,8 @@
                                                                                            logger:self.logger
                                                                                            crypto:[[EMSCrypto alloc] init]
                                                                                             queue:self.coreOperationQueue
-                                                                                           waiter:[EMSDispatchWaiter new]]];
+                                                                                           waiter:[EMSDispatchWaiter new]
+                                                                                 deviceInfoClient:self.deviceInfoClient]];
 
     [self.geofenceDelegator proxyWithTargetObject:geofenceInternal];
 

@@ -12,6 +12,7 @@
 #import "EMSRequestFactory.h"
 #import "MERequestContext.h"
 #import "EMSStorage.h"
+#import "NSError+EMSCore.h"
 
 @interface EMSDeviceInfoV3ClientInternalTests : XCTestCase
 
@@ -138,8 +139,18 @@
                      forKey:kDEVICE_INFO];
     [userDefaults synchronize];
 
+    __block NSError *returnedError = [NSError errorWithCode:-1400
+                               localizedDescription:@"testError"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:^(NSError *error) {
+        returnedError = error;
+        [expectation fulfill];
     }];
+    
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
 }
 
 - (void)testSendDeviceInfo_shouldSubmit_whenClientStateIsMissing {

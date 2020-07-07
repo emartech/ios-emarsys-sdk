@@ -43,6 +43,8 @@
         EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
         [self.requestManager submitRequestModel:deviceInfoRequest
                             withCompletionBlock:completionBlock];
+    } else {
+        completionBlock(nil);
     }
 }
 

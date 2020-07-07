@@ -38,12 +38,17 @@
                 [invocation invoke];
             }];
         } else {
-            NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+            if ([self.queue isEqual:[NSOperationQueue currentQueue]]) {
                 [invocation setTarget:weakSelf.object];
                 [invocation invoke];
-            }];
-            [self.queue addOperations:@[operation]
-                    waitUntilFinished:YES];
+            } else {
+                NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+                    [invocation setTarget:weakSelf.object];
+                    [invocation invoke];
+                }];
+                [self.queue addOperations:@[operation]
+                        waitUntilFinished:YES];
+            }
         }
     }
 }

@@ -3,6 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "EMSQueueDelegator.h"
 #import "EMSBlocks.h"
 
@@ -122,6 +123,29 @@
     XCTAssertEqual(returnedCompletionBlock, completionBlock);
 }
 
+- (void)testDelegateToGivenQueue_sync_sameQueue {
+    NSOperationQueue *partialMockOperationQueue = OCMPartialMock(self.operationQueue);
+
+    id delegator = [EMSQueueDelegator alloc];
+    [delegator setupWithQueue:self.operationQueue
+                  emptyTarget:[QueueChecker new]];
+    
+    [delegator proxyWithTargetObject:self.queueChecker];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperation"];
+    [partialMockOperationQueue addOperationWithBlock:^{
+        OCMReject([partialMockOperationQueue addOperation:[OCMArg any]]);
+        OCMReject([partialMockOperationQueue waitUntilAllOperationsAreFinished]);
+        
+        ((id <QueueCheckerProtocol>) delegator).completionBlock;
+        
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
 - (void)testDelegateToGivenQueue_sync_wait {
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
@@ -138,7 +162,6 @@
                   emptyTarget:[QueueChecker new]];
     
     [delegator proxyWithTargetObject:self.queueChecker];
-    
     
     [((id <QueueCheckerProtocol>) delegator) setCompletionBlock:^(NSError *error) {
     }];

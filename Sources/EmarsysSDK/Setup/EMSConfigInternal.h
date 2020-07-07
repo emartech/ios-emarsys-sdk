@@ -36,7 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
                                 logger:(EMSLogger *)logger
                                 crypto:(EMSCrypto *)crypto
                                  queue:(NSOperationQueue *)queue
-                                waiter:(EMSDispatchWaiter *)waiter;
+                                waiter:(EMSDispatchWaiter *)waiter
+                      deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient;
 
 - (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 

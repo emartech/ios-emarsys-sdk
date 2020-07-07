@@ -16,6 +16,7 @@
 #import "EMSEndpoint.h"
 #import "MERequestContext.h"
 #import "EMSQueueDelegator.h"
+#import "EMSMobileEngageV3Internal.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -127,6 +128,31 @@
     XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNotNil(returnedError);
+}
+
+- (void)testConfig_changeApplicationCode_wasNotSetup {
+    [EmarsysTestUtils tearDownEmarsys];
+    
+    [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        [builder setContactFieldId:@3];
+            }]
+                         dependencyContainer:nil];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    __block NSError *returnedError = [NSError errorWithCode:1400
+                                       localizedDescription:@"testError"];
+    [Emarsys.config changeApplicationCode:@"EMS11-C3FD3"
+                          completionBlock:^(NSError *error) {
+                              returnedError = error;
+                              [expectation fulfill];
+                          }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:1000000];
+
+    XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).object class], [EMSMobileEngageV3Internal class]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
 }
 
 - (void)testConfig_changeMerchantId_whenNil {

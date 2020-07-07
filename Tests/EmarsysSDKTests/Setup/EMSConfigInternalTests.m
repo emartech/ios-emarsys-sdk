@@ -18,11 +18,12 @@
 #import "EMSRemoteConfig.h"
 #import "EMSCrypto.h"
 #import "EMSDispatchWaiter.h"
+#import "EMSDeviceInfoV3ClientInternal.h"
 
 @interface EMSConfigInternal (Tests)
 
-- (void)callCompletionBlock:(EMSCompletionBlock)completionBlock
-                  withError:(NSError *)error;
+- (void)finalizeWithCompletionBlock:(EMSCompletionBlock)completionBlock
+                  error:(NSError *)error;
 
 - (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
                            completionBlock:(EMSCompletionBlock *)completionBlock;
@@ -50,6 +51,7 @@
 @property(nonatomic, strong) EMSCrypto *mockCrypto;
 @property(nonatomic, strong) EMSDispatchWaiter *waiter;
 @property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient;
 
 @end
 
@@ -61,7 +63,7 @@
     _contactFieldId = @3;
     _contactFieldValue = @"testContactFieldValue";
     _deviceToken = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
-
+    
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockMeRequestContext = OCMClassMock([MERequestContext class]);
     _mockPreRequestContext = OCMClassMock([PRERequestContext class]);
@@ -73,13 +75,15 @@
     _mockEndpoint = OCMClassMock([EMSEndpoint class]);
     _mockLogger = OCMClassMock([EMSLogger class]);
     _mockCrypto = OCMClassMock([EMSCrypto class]);
+    _mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     _waiter = [EMSDispatchWaiter new];
     _queue = [NSOperationQueue new];
     [self.queue setMaxConcurrentOperationCount:1];
-
+    
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
-
+    OCMStub([self.mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg invokeBlock]]);
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -92,7 +96,8 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -109,7 +114,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -130,7 +136,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: meRequestContext");
@@ -151,7 +158,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
@@ -172,7 +180,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when pushInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: pushInternal");
@@ -193,7 +202,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: preRequestContext");
@@ -214,7 +224,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfo");
@@ -235,7 +246,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when emarsysRequestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: emarsysRequestFactory");
@@ -256,7 +268,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when remoteConfigResponseMapper is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: remoteConfigResponseMapper");
@@ -277,7 +290,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");
@@ -298,7 +312,8 @@
                                                    logger:nil
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when logger is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: logger");
@@ -319,7 +334,8 @@
                                                    logger:self.mockLogger
                                                    crypto:nil
                                                     queue:self.queue
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when crypto is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: crypto");
@@ -340,7 +356,8 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:nil
-                                                   waiter:self.waiter];
+                                                   waiter:self.waiter
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when queue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
@@ -361,17 +378,41 @@
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
                                                     queue:self.queue
-                                                   waiter:nil];
+                                                   waiter:nil
+                                         deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when waiter is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: waiter");
     }
 }
 
+
+- (void)testInit_deviceInfoClient_mustNotBeNil {
+    @try {
+        [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                         meRequestContext:self.mockMeRequestContext
+                                        preRequestContext:self.mockPreRequestContext
+                                             mobileEngage:self.mockMobileEngage
+                                             pushInternal:self.mockPushInternal
+                                               deviceInfo:self.mockDeviceInfo
+                                    emarsysRequestFactory:self.mockEmarsysRequestFactory
+                               remoteConfigResponseMapper:self.mockResponseMapper
+                                                 endpoint:self.mockEndpoint
+                                                   logger:self.mockLogger
+                                                   crypto:self.mockCrypto
+                                                    queue:self.queue
+                                                   waiter:self.waiter
+                                         deviceInfoClient:nil];
+        XCTFail(@"Expected Exception when deviceInfoClient is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
+    }
+}
+
 - (void)testChangeApplicationCode_completionHandler_isNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -384,8 +425,9 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
@@ -393,22 +435,22 @@
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     __block NSError *returnedError = [NSError errorWithCode:1400
                                        localizedDescription:@"testError"];
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:nil];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     [strictMockMobileEngage setExpectationOrderMatters:YES];
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
     [strictMockPushInternal setExpectationOrderMatters:YES];
@@ -418,13 +460,13 @@
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -432,7 +474,7 @@
 - (void)testChangeApplicationCode_shouldCallMethodsInOrder {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -445,9 +487,10 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
-
+    
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
@@ -455,20 +498,20 @@
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     __block NSError *returnedError = [NSError errorWithCode:1400
                                        localizedDescription:@"testError"];
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [partialMockConfigInternal changeApplicationCode:@"newApplicationCode"
                                      completionBlock:^(NSError *error) {
-                                         returnedError = error;
-                                         [expectation fulfill];
-                                     }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     [strictMockMobileEngage setExpectationOrderMatters:YES];
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
     [strictMockPushInternal setExpectationOrderMatters:YES];
@@ -479,7 +522,7 @@
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
     OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -487,11 +530,11 @@
 - (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
-
+    
     NSError *inputError = [NSError errorWithCode:1400
                             localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -504,34 +547,35 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
-                                                                                                 nil])]);
+                                                                      nil])]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-
+    
     OCMReject([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
 }
@@ -539,11 +583,11 @@
 - (void)testChangeApplicationCode_setPushToken_shouldCallCompletionBlockWithError {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
-
+    
     NSError *inputError = [NSError errorWithCode:1400
                             localizedDescription:@"testError"];
     __block NSError *returnedError = nil;
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -556,34 +600,35 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:([OCMArg invokeBlockWithArgs:inputError,
-                                                                              nil])]);
+                                                   nil])]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-
+    
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
 }
@@ -591,26 +636,26 @@
 - (void)testChangeApplicationCode_setPushToken_shouldNotBeCalled_afterContactFieldIdChange {
     id mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     OCMStub([mockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-
+    
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
-
+    
     NSNumber *newContactFieldId = @123;
-
+    
     MERequestContext *meContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                                      contactFieldId:@3
                                                                        uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                                   timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                                          deviceInfo:self.mockDeviceInfo];
-
+    
     id mockMEContext = OCMPartialMock(meContext);
-
+    
     __block NSError *returnedError = nil;
-
+    
     OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]
                                                 completionBlock:^(NSError *error) {
-                                                }]);
-
+    }]);
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:mockMEContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -623,19 +668,20 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:nil
                                 contactFieldId:newContactFieldId
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -643,9 +689,9 @@
 - (void)testChangeApplicationCode_setPushToken_shouldNotBeCalled_whenPushTokenIsNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
-
+    
     __block NSError *returnedError = nil;
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -658,30 +704,31 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-
+    
     OCMReject([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -689,9 +736,9 @@
 - (void)testChangeApplicationCode_shouldCallSetPushTokenImmediately_whenApplicationCodeIsNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
-
+    
     __block NSError *returnedError = nil;
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -704,8 +751,9 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([mockPushInternal setPushToken:self.deviceToken
@@ -713,24 +761,24 @@
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-
+    
     OCMExpect([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -738,9 +786,9 @@
 - (void)testChangeApplicationCode_shouldCallSetContactImmediately_whenPushTokenIsNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
-
+    
     __block NSError *returnedError = nil;
-
+    
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -753,42 +801,43 @@
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
-                                                                 waiter:self.waiter];
-
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+    
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
-                                   returnedError = error;
-                                   [expectation fulfill];
-                               }];
-
+        returnedError = error;
+        [expectation fulfill];
+    }];
+    
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-
+    
     OCMReject([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
 
 - (void)testCallCompletionBlockWithError_whenThereIsNoError {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
-
-    [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
-            }
-                                         withError:nil];
-
+    
+    [partialMockConfigInternal finalizeWithCompletionBlock:^(NSError *error) {
+    }
+                                         error:nil];
+    
     OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
 }
 
@@ -796,141 +845,141 @@
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
-
-    [partialMockConfigInternal callCompletionBlock:^(NSError *error) {
-            }
-                                         withError:error];
-
+    
+    [partialMockConfigInternal finalizeWithCompletionBlock:^(NSError *error) {
+    }
+                                         error:error];
+    
     OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
 }
 
 - (void)testChangeMerchantIdCompletionBlock {
     NSString *newMerchantId = @"newMerchantId";
-
+    
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [self.configInternal changeMerchantId:newMerchantId
                           completionBlock:^(NSError *error) {
-                              [expectation fulfill];
-                          }];
+        [expectation fulfill];
+    }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
+    
     OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
-
+    
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)testChangeMerchantId_shouldRefresh {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
-
+    
     OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
-
+    
     [partialMockConfigInternal changeMerchantId:@"testMerchantId"];
 }
 
 - (void)testChangeMerchantId_shouldSetMerchantId_inPRERequestContext {
     NSString *newMerchantId = @"newMerchantId";
-
+    
     [self.configInternal changeMerchantId:newMerchantId];
-
+    
     OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
 }
 
 - (void)testChangeMerchantId_shouldResetRemoteConfig {
     NSString *newMerchantId = @"newMerchantId";
-
+    
     [self.configInternal changeMerchantId:newMerchantId];
 }
 
 - (void)testHardwareId {
     OCMStub([self.mockDeviceInfo hardwareId]).andReturn(@"testHardwareId");
-
+    
     NSString *result = [self.configInternal hardwareId];
-
+    
     XCTAssertEqualObjects(result, @"testHardwareId");
 }
 
 - (void)testLanguageCode {
     OCMStub([self.mockDeviceInfo languageCode]).andReturn(@"testLanguageCode");
-
+    
     NSString *result = [self.configInternal languageCode];
-
+    
     XCTAssertEqualObjects(result, @"testLanguageCode");
 }
 
 - (void)testPushSettings {
     NSDictionary *pushSettings = @{@"test": @"pushSettings"};
-
+    
     OCMStub([self.mockDeviceInfo pushSettings]).andReturn(pushSettings);
-
+    
     NSDictionary *result = [self.configInternal pushSettings];
-
+    
     XCTAssertEqualObjects(result, pushSettings);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_signature_error {
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
-
+    
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
-
+    
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:[OCMArg any]
                                                 errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        error,
-                                                                                        nil])]);
-
+                                                             error,
+                                                             nil])]);
+    
     [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
-
+    
     OCMVerify([self.mockEndpoint reset]);
     OCMVerify([self.mockLogger reset]);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_signature_success {
     NSData *signatureData = [NSData new];
-
+    
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
     OCMStub([mockResponse body]).andReturn(signatureData);
-
+    
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
-
+    
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        mockResponse,
-                                                                                        nil])
+                                                             mockResponse,
+                                                             nil])
                                                 errorBlock:[OCMArg any]]);
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
-
+    
     [partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
-
+    
     OCMVerify([partialMockConfigInternal fetchRemoteConfigWithSignatureData:signatureData
                                                             completionBlock:nil]);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_error {
     NSData *signatureData = [NSData new];
-
+    
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
-
+    
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
-
+    
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:[OCMArg any]
                                                 errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        error,
-                                                                                        nil])]);
-
+                                                             error,
+                                                             nil])]);
+    
     [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
                                             completionBlock:nil];
-
+    
     OCMVerify([self.mockEndpoint reset]);
     OCMVerify([self.mockLogger reset]);
 }
@@ -939,27 +988,27 @@
     EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
     NSData *signatureData = [NSData new];
     NSData *contentData = [NSData new];
-
+    
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
     OCMStub([mockResponse body]).andReturn(contentData);
-
+    
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
-
+    
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        mockResponse,
-                                                                                        nil])
+                                                             mockResponse,
+                                                             nil])
                                                 errorBlock:[OCMArg any]]);
     OCMStub([self.mockResponseMapper map:mockResponse]).andReturn(config);
     OCMStub([self.mockCrypto verifyContent:contentData
                              withSignature:signatureData]).andReturn(YES);
-
+    
     [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
                                             completionBlock:nil];
-
+    
     OCMVerify([self.mockCrypto verifyContent:contentData
                                withSignature:signatureData]);
     OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
@@ -969,26 +1018,26 @@
 - (void)testRefreshConfigFromRemoteConfig_success_notVerified {
     NSData *signatureData = [NSData new];
     NSData *contentData = [NSData new];
-
+    
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
     OCMStub([mockResponse statusCode]).andReturn(@200);
     OCMStub([mockResponse body]).andReturn(contentData);
-
+    
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
-
+    
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        mockResponse,
-                                                                                        nil])
+                                                             mockResponse,
+                                                             nil])
                                                 errorBlock:[OCMArg any]]);
     OCMStub([self.mockCrypto verifyContent:contentData
                              withSignature:signatureData]).andReturn(NO);
-
+    
     [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
                                             completionBlock:nil];
-
+    
     OCMVerify([self.mockCrypto verifyContent:contentData
                                withSignature:signatureData]);
     OCMVerify([self.mockEndpoint reset]);
