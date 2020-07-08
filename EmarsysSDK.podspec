@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysSDK'
-	spec.version              = '2.5.4'
+	spec.version              = '2.5.5'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
@@ -40,8 +40,7 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSNotification.h',
         'Sources/include/EMSNotificationInboxStatus.h',
         'Sources/include/EMSFlipperFeatures.h',
-        'Sources/include/EMSUserNotificationCenterDelegate.h',
-        'Sources/MobileEngage/IAM/UI/EMSInlineInAppView.h'
+        'Sources/include/EMSUserNotificationCenterDelegate.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
