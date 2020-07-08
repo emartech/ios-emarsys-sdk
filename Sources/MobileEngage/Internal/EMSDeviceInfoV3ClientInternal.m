@@ -44,7 +44,9 @@
         [self.requestManager submitRequestModel:deviceInfoRequest
                             withCompletionBlock:completionBlock];
     } else {
-        completionBlock(nil);
+        if (completionBlock) {
+            completionBlock(nil);
+        }
     }
 }
 
