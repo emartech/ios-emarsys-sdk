@@ -16,6 +16,10 @@
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
              appEventProtocol:(id <EMSIAMAppEventProtocol>)appEventProtocol
                 closeProtocol:(id <EMSIAMCloseProtocol>)closeProtocol {
+    NSParameterAssert(meIam);
+    NSParameterAssert(appEventProtocol);
+    NSParameterAssert(closeProtocol);
+
     if (self = [super init]) {
         _meIam = meIam;
         _buttonClickRepository = buttonClickRepository;

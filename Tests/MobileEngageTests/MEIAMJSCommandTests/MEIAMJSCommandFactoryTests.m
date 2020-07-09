@@ -37,12 +37,53 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
         });
 
         describe(@"initWithMEIAM:buttonClickRepository:appEventProtocol:closeProtocol:", ^{
+
+            it(@"meIam should not be nil", ^{
+                @try {
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:nil
+                                           buttonClickRepository:nil
+                                                appEventProtocol:_inappEventProtocol
+                                                   closeProtocol:_inappCloseProtocol];
+                    fail(@"Expected exception when meIam is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: meIam"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"appEventProtocol should not be nil", ^{
+                @try {
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
+                                           buttonClickRepository:nil
+                                                appEventProtocol:nil
+                                                   closeProtocol:_inappCloseProtocol];
+                    fail(@"Expected exception when appEventProtocol is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: appEventProtocol"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"closeProtocol should not be nil", ^{
+                @try {
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
+                                           buttonClickRepository:nil
+                                                appEventProtocol:_inappEventProtocol
+                                                   closeProtocol:nil];
+                    fail(@"Expected exception when closeProtocol is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: closeProtocol"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+
             it(@"should initialize MEInApp property", ^{
                 id meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
                 MEIAMJSCommandFactory *meiamjsCommandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:meiam
                                                                                       buttonClickRepository:nil
-                                                                                           appEventProtocol:nil
-                                                                                              closeProtocol:nil];
+                                                                                           appEventProtocol:_inappEventProtocol
+                                                                                              closeProtocol:_inappCloseProtocol];
 
                 [[@([meiamjsCommandFactory.meIam isEqual:meiam]) should] beYes];
             });
