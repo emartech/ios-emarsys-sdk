@@ -7,7 +7,7 @@
 
 @interface MEIAMClose ()
 
-@property(weak, nonatomic) id <MEIAMProtocol> meiam;
+@property(weak, nonatomic) id <EMSIAMCloseProtocol> closeProtocol;
 
 @end
 
@@ -17,16 +17,16 @@
     return @"close";
 }
 
-- (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meiam {
+- (instancetype)initWithEMSIAMCloseProtocol:(id <EMSIAMCloseProtocol>)closeProtocol {
     if (self = [super init]) {
-        _meiam = meiam;
+        _closeProtocol = closeProtocol;
     }
     return self;
 }
 
 - (void)handleMessage:(NSDictionary *)message
           resultBlock:(MEIAMJSResultBlock)resultBlock {
-    [self.meiam closeInAppMessageWithCompletionBlock:nil];
+    [self.closeProtocol closeInAppWithCompletionHandler:nil];
 }
 
 @end

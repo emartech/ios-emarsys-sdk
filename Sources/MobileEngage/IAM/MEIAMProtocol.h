@@ -4,23 +4,18 @@
 
 #import <Foundation/Foundation.h>
 #import "MEInAppTrackingProtocol.h"
-
-typedef void (^MECompletionHandler)(void);
+#import "EMSIAMCloseProtocol.h"
+#import "EMSIAMAppEventProtocol.h"
 
 @class MEIAMViewController;
-@protocol EMSEventHandler;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MEIAMProtocol <NSObject>
+@protocol MEIAMProtocol <NSObject, EMSIAMCloseProtocol, EMSIAMAppEventProtocol>
 
 @property(nonatomic, strong, nullable) id <MEInAppTrackingProtocol> inAppTracker;
 
-- (_Nullable id <EMSEventHandler>)eventHandler;
-
 - (MEInAppMessage *)currentInAppMessage;
-
-- (void)closeInAppMessageWithCompletionBlock:(_Nullable MECompletionHandler)completionHandler;
 
 @end
 

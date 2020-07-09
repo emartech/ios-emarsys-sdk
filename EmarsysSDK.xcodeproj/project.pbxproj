@@ -781,6 +781,8 @@
 		D3ACDEFE2F78585DCC1B49CD /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EEA2E228F2E328A20C71BF8 /* libPods-PredictTests.a */; };
 		F2A21028A513F7DA68C6F68B /* EMSRandomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */; };
 		F2A213DF1ABE3A5998EEC3B9 /* EMSRandomProviderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */; };
+		F2A21551072282044E7BCDDE /* EMSIAMAppEventProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */; };
+		F2A218FC7528D86470717AE7 /* EMSIAMCloseProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */; };
 		F2A21987EFF34110ACA9B258 /* EMSRandomProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */; };
 		F2A21DC547106E6DD91FCD32 /* EMSRandomProviderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */; };
 /* End PBXBuildFile section */
@@ -1486,9 +1488,11 @@
 		C0C77BA607A48972E157E8DD /* Pods-CoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.release.xcconfig"; sourceTree = "<group>"; };
 		D80802D18D2F21A354BAA052 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		F13F4C2484017916AB55F906 /* Pods-MobileEngageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.release.xcconfig"; sourceTree = "<group>"; };
+		F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMCloseProtocol.h; sourceTree = "<group>"; };
 		F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRandomProvider.m; sourceTree = "<group>"; };
 		F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRandomProvider.h; sourceTree = "<group>"; };
 		F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRandomProviderTest.m; sourceTree = "<group>"; };
+		F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMAppEventProtocol.h; sourceTree = "<group>"; };
 		F46A08A7373E6A04526D651B /* libPods-CoreTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoreTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79BD979F4995A9A1EE35DD5 /* Pods-CoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FE2AB4A269D03D2FB37DAB98 /* Pods-PredictTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -2695,6 +2699,8 @@
 				8A6BE9DD23E86B480066B13C /* MEIAMViewController.h */,
 				32C6F507FC1D65382743B60F /* EMSInlineInAppView.m */,
 				32C6FEF6905107A03103CD44 /* EMSInlineInAppView.h */,
+				F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */,
+				F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3445,6 +3451,8 @@
 				32C6F3F46D487295D3BC2F42 /* EMSQueueDelegator.h in Headers */,
 				32C6F692B868C9AB21CFAC70 /* EMSDispatchWaiter.h in Headers */,
 				32C6F46582A2DD5335197915 /* EMSInlineInAppView.h in Headers */,
+				F2A218FC7528D86470717AE7 /* EMSIAMCloseProtocol.h in Headers */,
+				F2A21551072282044E7BCDDE /* EMSIAMAppEventProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

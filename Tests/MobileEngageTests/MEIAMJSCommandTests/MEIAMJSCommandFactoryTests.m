@@ -1,4 +1,5 @@
 #import "Kiwi.h"
+#import "EMSIAMAppEventProtocol.h"
 #import "MEIAMJSCommandFactory.h"
 #import "MEIAMRequestPushPermission.h"
 #import "MEIAMOpenExternalLink.h"
@@ -14,6 +15,8 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
         __block MEInAppMessage *currentInAppMessage;
         __block id _meiam;
+        __block id _inappEventProtocol;
+        __block id _inappCloseProtocol;
 
         beforeEach(^{
             currentInAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
@@ -22,18 +25,24 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                                                                         html:@"</HTML>"
                                                            responseTimestamp:[NSDate date]];
             _meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
+            _inappEventProtocol = [KWMock mockForProtocol:@protocol(EMSIAMAppEventProtocol)];
+            _inappCloseProtocol = [KWMock mockForProtocol:@protocol(EMSIAMCloseProtocol)];
             [_meiam stub:@selector(currentInAppMessage) andReturn:currentInAppMessage];
             [_meiam stub:@selector(inAppTracker) andReturn:[KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)]];
-            [_meiam stub:@selector(eventHandler) andReturn:[KWMock mockForProtocol:@protocol(EMSEventHandler)]];
+            [_inappEventProtocol stub:@selector(eventHandler) andReturn:[KWMock mockForProtocol:@protocol(EMSEventHandler)]];
             _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
-                                              buttonClickRepository:[MEButtonClickRepository nullMock]];
+                                              buttonClickRepository:[MEButtonClickRepository nullMock]
+                                                   appEventProtocol:_inappEventProtocol
+                                                      closeProtocol:_inappCloseProtocol];
         });
 
-        describe(@"initWithMEIAM:buttonClickRepository:", ^{
+        describe(@"initWithMEIAM:buttonClickRepository:appEventProtocol:closeProtocol:", ^{
             it(@"should initialize MEInApp property", ^{
                 id meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
                 MEIAMJSCommandFactory *meiamjsCommandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:meiam
-                                                                                      buttonClickRepository:nil];
+                                                                                      buttonClickRepository:nil
+                                                                                           appEventProtocol:nil
+                                                                                              closeProtocol:nil];
 
                 [[@([meiamjsCommandFactory.meIam isEqual:meiam]) should] beYes];
             });

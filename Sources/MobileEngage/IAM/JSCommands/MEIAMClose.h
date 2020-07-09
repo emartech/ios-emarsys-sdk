@@ -5,11 +5,10 @@
 #import <Foundation/Foundation.h>
 #import "MEIAMJSCommandProtocol.h"
 
-@class MEIAMViewController;
-@protocol MEIAMProtocol;
+@protocol EMSIAMCloseProtocol;
 
 @interface MEIAMClose : NSObject <MEIAMJSCommandProtocol>
 
-- (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meiam;
+- (instancetype)initWithEMSIAMCloseProtocol:(id <EMSIAMCloseProtocol>)closeProtocol;
 
 @end

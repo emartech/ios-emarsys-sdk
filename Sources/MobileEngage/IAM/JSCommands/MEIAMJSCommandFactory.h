@@ -12,9 +12,13 @@
 
 @property(readonly, nonatomic, weak) id <MEIAMProtocol> meIam;
 @property(nonatomic, readonly) MEButtonClickRepository *buttonClickRepository;
+@property(nonatomic, readonly) id <EMSIAMAppEventProtocol> appEventProtocol;
+@property(nonatomic, readonly) id <EMSIAMCloseProtocol> closeProtocol;
 
 - (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meIam
-        buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository;
+        buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+             appEventProtocol:(id <EMSIAMAppEventProtocol>)appEventProtocol
+                closeProtocol:(id <EMSIAMCloseProtocol>)closeProtocol;
 
 - (id <MEIAMJSCommandProtocol>)commandByName:(NSString *)name;
 

@@ -1,16 +1,15 @@
 #import "Kiwi.h"
 #import "MEIAMClose.h"
-#import "MEIAMViewController.h"
 #import "MEInApp.h"
 
 SPEC_BEGIN(MEIAMCloseTests)
 
-    __block MEInApp *meInApp;
+    __block id closeProtocol;
     __block MEIAMClose *meiamClose;
 
     beforeEach(^{
-        meInApp = [MEIAMViewController mock];
-        meiamClose = [[MEIAMClose alloc] initWithMEIAM:meInApp];
+        closeProtocol = [KWMock mockForProtocol:@protocol(EMSIAMCloseProtocol)];
+        meiamClose = [[MEIAMClose alloc] initWithEMSIAMCloseProtocol:closeProtocol];
     });
 
     describe(@"commandName", ^{
@@ -22,8 +21,8 @@ SPEC_BEGIN(MEIAMCloseTests)
     });
 
     describe(@"handleMessage:resultBlock:", ^{
-        it(@"should invoke closeInAppMessageWithCompletionBlock: on meInApp", ^{
-            [[meInApp should] receive:@selector(closeInAppMessageWithCompletionBlock:)];
+        it(@"should invoke closeInAppWithCompletionHandler: on closeProtocol", ^{
+            [[closeProtocol should] receive:@selector(closeInAppWithCompletionHandler:)];
             [meiamClose handleMessage:@{} resultBlock:nil];
         });
     });

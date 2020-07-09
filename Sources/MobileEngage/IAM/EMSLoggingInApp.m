@@ -57,7 +57,7 @@
     return nil;
 }
 
-- (void)closeInAppMessageWithCompletionBlock:(MECompletionHandler)completionHandler {
+- (void)closeInAppWithCompletionHandler:(_Nullable EMSCompletion)completionHandler {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"completionHandler"] = @(completionHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto

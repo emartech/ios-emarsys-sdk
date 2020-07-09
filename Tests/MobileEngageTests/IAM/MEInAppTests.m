@@ -359,7 +359,7 @@ SPEC_BEGIN(MEInAppTests)
             });
         });
 
-        describe(@"closeInAppMessageWithCompletionBlock:", ^{
+        describe(@"closeInAppWithCompletionHandler:", ^{
 
             it(@"should close the inapp message", ^{
                 UIViewController *rootViewControllerMock = [UIViewController nullMock];
@@ -372,7 +372,7 @@ SPEC_BEGIN(MEInAppTests)
 
                 inApp.iamWindow = window;
 
-                [((id <MEIAMProtocol>) inApp) closeInAppMessageWithCompletionBlock:nil];
+                [((id <MEIAMProtocol>) inApp) closeInAppWithCompletionHandler:nil];
 
                 void (^completionBlock)(void) = spy.argument;
                 completionBlock();

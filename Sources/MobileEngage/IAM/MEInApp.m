@@ -55,7 +55,9 @@
         _completionBlockProvider = completionBlockProvider;
         _windowProvider = windowProvider;
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
-                                                                                                                                                                buttonClickRepository:buttonClickRepository]]];
+                                                                                                                                                                buttonClickRepository:buttonClickRepository
+                                                                                                                                                                     appEventProtocol:self
+                                                                                                                                                                        closeProtocol:self]]];
         _displayedIamRepository = displayedIamRepository;
     }
     return self;
@@ -120,7 +122,7 @@
     [self.inAppTracker trackInAppDisplay:message];
 }
 
-- (void)closeInAppMessageWithCompletionBlock:(MECompletionHandler)completionHandler {
+- (void)closeInAppWithCompletionHandler:(_Nullable EMSCompletion)completionHandler {
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                           completion:^{
