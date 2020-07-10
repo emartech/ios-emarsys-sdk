@@ -195,6 +195,7 @@
     __weak typeof(self) weakSelf = self;
     NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
     payload[@"viewIds"] = @[viewId];
+    payload[@"clicks"] = @[];
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodPOST];

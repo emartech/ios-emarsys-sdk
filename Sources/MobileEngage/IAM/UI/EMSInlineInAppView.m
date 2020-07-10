@@ -8,15 +8,20 @@
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
 #import "EMSResponseModel.h"
+#import "EMSIAMAppEventProtocol.h"
+#import "EMSIAMCloseProtocol.h"
+#import "MEIAMJSCommandFactory.h"
+#import "MEJSBridge.h"
 
 IB_DESIGNABLE
 
-@interface EMSInlineInAppView () <WKNavigationDelegate>
+@interface EMSInlineInAppView () <WKNavigationDelegate, EMSIAMCloseProtocol, EMSIAMAppEventProtocol>
 
 @property(nonatomic, strong) WKWebView *webView;
 
 @property(nonatomic, strong) IBInspectable NSString *viewId;
-@property(nonatomic, strong) IBInspectable NSString *attributes;
+@property(nonatomic, strong) NSLayoutConstraint *selfHeightConstraint;
+@property(nonatomic, strong) MEJSBridge *jsBridge;
 
 @end
 
@@ -37,8 +42,25 @@ IB_DESIGNABLE
 }
 
 - (void)commonInit {
+    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
+                                                                                    buttonClickRepository:nil
+                                                                                         appEventProtocol:self
+                                                                                            closeProtocol:self]];
+
+    __weak typeof(self) weakSelf = self;
+    [self.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+        [weakSelf respondToJS:result];
+    }];
+
     _webView = [self createWebView];
-    self.hidden = YES;
+    _selfHeightConstraint = [NSLayoutConstraint constraintWithItem:self
+                                                         attribute:NSLayoutAttributeHeight
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:nil
+                                                         attribute:NSLayoutAttributeNotAnAttribute
+                                                        multiplier:1
+                                                          constant:0];
+    self.selfHeightConstraint.priority = UILayoutPriorityRequired;
 }
 
 - (void)layoutSubviews {
@@ -53,28 +75,30 @@ IB_DESIGNABLE
                                                            attribute:NSLayoutAttributeTop
                                                           multiplier:1
                                                             constant:0];
-    NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.webView
-                                                            attribute:NSLayoutAttributeLeft
-                                                            relatedBy:NSLayoutRelationEqual
-                                                               toItem:self
-                                                            attribute:NSLayoutAttributeLeft
-                                                           multiplier:1
-                                                             constant:0];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.webView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                       relatedBy:NSLayoutRelationEqual
-                                                                          toItem:self
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                      multiplier:1
-                                                                        constant:0];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.webView
-                                                                        attribute:NSLayoutAttributeHeight
-                                                                        relatedBy:NSLayoutRelationEqual
-                                                                           toItem:self
-                                                                        attribute:NSLayoutAttributeHeight
-                                                                       multiplier:1
-                                                                         constant:0];
-    [self addConstraints:@[top, left, widthConstraint, heightConstraint]];
+    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.webView
+                                                              attribute:NSLayoutAttributeBottom
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self
+                                                              attribute:NSLayoutAttributeBottom
+                                                             multiplier:1
+                                                               constant:0];
+    NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:self.webView
+                                                               attribute:NSLayoutAttributeLeading
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:self
+                                                               attribute:NSLayoutAttributeLeading
+                                                              multiplier:1
+                                                                constant:0];
+    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:self.webView
+                                                                attribute:NSLayoutAttributeTrailing
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:self
+                                                                attribute:NSLayoutAttributeTrailing
+                                                               multiplier:1
+                                                                 constant:0];
+
+
+    [NSLayoutConstraint activateConstraints:@[top, bottom, leading, trailing, self.selfHeightConstraint]];
     [self layoutIfNeeded];
 }
 
@@ -87,7 +111,7 @@ IB_DESIGNABLE
     WKProcessPool *processPool = [WKProcessPool new];
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration new];
     [webViewConfiguration setProcessPool:processPool];
-//    [webViewConfiguration setUserContentController:self.bridge.userContentController];
+    [webViewConfiguration setUserContentController:self.jsBridge.userContentController];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero
                                             configuration:webViewConfiguration];
@@ -105,11 +129,21 @@ IB_DESIGNABLE
 
 - (void)    webView:(WKWebView *)webView
 didFinishNavigation:(WKNavigation *)navigation {
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.hidden = NO;
-        if (self.completionBlock) {
-            self.completionBlock(nil);
-        }
+
+        [webView evaluateJavaScript:@"document.body.offsetHeight"
+                  completionHandler:^(NSNumber *height, NSError *error) {
+                      int htmlHeight = [height intValue];
+                      int selfHeight = htmlHeight == 0 ? (int) weakSelf.webView.scrollView.contentSize.height : htmlHeight;
+                      weakSelf.selfHeightConstraint.constant = selfHeight;
+                      [weakSelf setHidden:NO];
+                      [weakSelf layoutIfNeeded];
+
+                      if (weakSelf.completionBlock) {
+                          weakSelf.completionBlock(nil);
+                      }
+                  }];
     });
 }
 
@@ -119,21 +153,24 @@ didFinishNavigation:(WKNavigation *)navigation {
 }
 
 - (void)fetchInlineInappMessage {
-    EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-    EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
-    [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
-                                                                        successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                                            NSString *html = [self filterMessagesByViewId:response];
-                                                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                [self.webView loadHTMLString:html
-                                                                                                     baseURL:nil];
-                                                                            });
-                                                                        }
-                                                                          errorBlock:^(NSString *requestId, NSError *error) {
-                                                                              dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                  [self setHidden:YES];
-                                                                              });
-                                                                          }];
+    __weak typeof(self) weakSelf = self;
+    if (self.viewId) {
+        EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
+        EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:weakSelf.viewId];
+        [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
+                                                                            successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                    NSString *html = [weakSelf filterMessagesByViewId:response];
+                                                                                    [weakSelf.webView loadHTMLString:html
+                                                                                                         baseURL:nil];
+                                                                                });
+                                                                            }
+                                                                              errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                      [weakSelf setHidden:YES];
+                                                                                  });
+                                                                              }];
+    }
 }
 
 - (NSString *)filterMessagesByViewId:(EMSResponseModel *)response {
@@ -144,6 +181,25 @@ didFinishNavigation:(WKNavigation *)navigation {
         }
     }
     return html;
+}
+
+- (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler {
+    self.closeBlock();
+}
+
+- (void)respondToJS:(NSDictionary<NSString *, NSObject *> *)result {
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:result
+                                                       options:0
+                                                         error:&error];
+    NSString *js = [NSString stringWithFormat:@"MEIAM.handleResponse(%@);",
+                                              [[NSString alloc] initWithData:jsonData
+                                                                    encoding:NSUTF8StringEncoding]];
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.webView evaluateJavaScript:js
+                       completionHandler:nil];
+    });
 }
 
 @end
