@@ -355,7 +355,8 @@
                                                                                payload:@{
                                                                                        @"viewIds": @[
                                                                                                @"testViewId"
-                                                                                       ]
+                                                                                       ],
+                                                                                       @"clicks": @[]
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];

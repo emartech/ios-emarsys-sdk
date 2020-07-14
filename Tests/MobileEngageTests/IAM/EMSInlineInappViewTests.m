@@ -11,6 +11,7 @@
 #import "EMSDependencyInjection.h"
 #import "EMSRequestFactory.h"
 #import "EMSResponseModel.h"
+#import "MeInapp.h"
 
 @interface EMSInlineInAppView (Tests)
 
@@ -31,14 +32,17 @@
 @implementation EMSInlineInappViewTests
 
 - (void)setUp {
-    _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
     _mockContainer = OCMClassMock([EMSDependencyContainer class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
+    MEInApp *mockInapp = OCMClassMock([MEInApp class]);
 
     [EMSDependencyInjection setupWithDependencyContainer:self.mockContainer];
     OCMStub([self.mockContainer requestManager]).andReturn(self.mockRequestManager);
     OCMStub([self.mockContainer requestFactory]).andReturn(self.mockRequestFactory);
+    OCMStub([self.mockContainer iam]).andReturn(mockInapp);
+
+    _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 }
 
 - (void)tearDown {
