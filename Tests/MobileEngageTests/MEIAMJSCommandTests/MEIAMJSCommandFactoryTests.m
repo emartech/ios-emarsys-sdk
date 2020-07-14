@@ -123,6 +123,21 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                 [[(NSObject *) command.inAppTracker shouldNot] beNil];
             });
 
+            it(@"should initialize the MEIAMButtonClicked command with the custom inAppMessage", ^{
+                MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"testCampaignId"
+                                                                                      sid:nil
+                                                                                      url:nil
+                                                                                     html:@"testHTML"
+                                                                        responseTimestamp:[NSDate date]];
+                [_factory setInAppMessage:inAppMessage];
+
+                MEIAMButtonClicked *command = [_factory commandByName:@"buttonClicked"];
+                [[command.inAppMessage shouldNot] beNil];
+                [[command.inAppMessage should] equal:inAppMessage];
+                [[command.repository shouldNot] beNil];
+                [[(NSObject *) command.inAppTracker shouldNot] beNil];
+            });
+
             it(@"should return MEIAMTriggerMEEvent command when the given name is: triggerMEEvent", ^{
                 MEIAMTriggerMEEvent *command = [_factory commandByName:@"triggerMEEvent"];
                 [[command should] beKindOfClass:[MEIAMTriggerMEEvent class]];

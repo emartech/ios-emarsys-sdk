@@ -21,15 +21,15 @@
 
 @end
 
-@interface EMSInlineInappViewTests : XCTestCase
+@interface EMSInlineInAppViewTests : XCTestCase
 
 @property(nonatomic, strong) EMSInlineInAppView *inappView;
-@property(nonatomic, strong) EMSDependencyContainer *mockContainer;
-@property(nonatomic, strong) EMSRequestManager *mockRequestManager;
-@property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
+@property(nonatomic, strong) id mockContainer;
+@property(nonatomic, strong) id mockRequestManager;
+@property(nonatomic, strong) id mockRequestFactory;
 @end
 
-@implementation EMSInlineInappViewTests
+@implementation EMSInlineInAppViewTests
 
 - (void)setUp {
     _mockContainer = OCMClassMock([EMSDependencyContainer class]);
@@ -46,6 +46,9 @@
 }
 
 - (void)tearDown {
+    [self.mockRequestFactory stopMocking];
+    [self.mockRequestManager stopMocking];
+    [self.mockContainer stopMocking];
     [EMSDependencyInjection tearDown];
 }
 

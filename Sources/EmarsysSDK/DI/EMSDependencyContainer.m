@@ -146,6 +146,8 @@
 @property(nonatomic, strong) NSOperationQueue *publicApiOperationQueue;
 @property(nonatomic, strong) NSOperationQueue *coreOperationQueue;
 
+@property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
+
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
 @end
@@ -278,7 +280,7 @@
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
-    MEButtonClickRepository *buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
+    _buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
 
     [self.iamDelegator proxyWithTargetObject:[[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]
                                                                                                                                  sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]]
@@ -286,7 +288,7 @@
                                                                    timestampProvider:timestampProvider
                                                              completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.coreOperationQueue]
                                                               displayedIamRepository:displayedIAMRepository
-                                                               buttonClickRepository:buttonClickRepository]];
+                                                               buttonClickRepository:self.buttonClickRepository]];
     _loggingIam = [EMSLoggingInApp new];
     [_dbHelper open];
 
@@ -294,7 +296,7 @@
     MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
                                                                                                         requestContext:self.requestContext
                                                                                                               dbHelper:self.dbHelper
-                                                                                                 buttonClickRepository:buttonClickRepository
+                                                                                                 buttonClickRepository:self.buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository
                                                                                                               endpoint:self.endpoint];
 
@@ -321,7 +323,7 @@
     [self.dbHelper open];
     [responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:buttonClickRepository
+            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.buttonClickRepository
                                                           displayIamRepository:displayedIAMRepository
                                                                       endpoint:self.endpoint]]
     ];

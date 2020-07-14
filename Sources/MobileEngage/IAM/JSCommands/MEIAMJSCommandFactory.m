@@ -40,7 +40,7 @@
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
         command = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:[self.appEventProtocol eventHandler]];
     } else if ([name isEqualToString:MEIAMButtonClicked.commandName]) {
-        command = [[MEIAMButtonClicked alloc] initWithInAppMessage:[self.meIam currentInAppMessage]
+        command = [[MEIAMButtonClicked alloc] initWithInAppMessage:self.inAppMessage ? self.inAppMessage : [self.meIam currentInAppMessage]
                                                         repository:self.buttonClickRepository
                                                       inAppTracker:self.meIam.inAppTracker];
     } else if ([name isEqualToString:MEIAMTriggerMEEvent.commandName]) {

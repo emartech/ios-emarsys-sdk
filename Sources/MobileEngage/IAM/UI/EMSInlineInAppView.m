@@ -22,6 +22,7 @@ IB_DESIGNABLE
 @property(nonatomic, strong) IBInspectable NSString *viewId;
 @property(nonatomic, strong) NSLayoutConstraint *selfHeightConstraint;
 @property(nonatomic, strong) MEJSBridge *jsBridge;
+@property(nonatomic, strong) MEIAMJSCommandFactory *commandFactory;
 
 @end
 
@@ -42,11 +43,11 @@ IB_DESIGNABLE
 }
 
 - (void)commonInit {
-    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
-                                                                                    buttonClickRepository:nil
-                                                                                         appEventProtocol:self
-                                                                                            closeProtocol:self]];
-
+    _commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
+                                             buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
+                                                  appEventProtocol:self
+                                                     closeProtocol:self];
+    _jsBridge =[[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory];
     __weak typeof(self) weakSelf = self;
     [self.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
         [weakSelf respondToJS:result];
@@ -131,7 +132,6 @@ IB_DESIGNABLE
 didFinishNavigation:(WKNavigation *)navigation {
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-
         [webView evaluateJavaScript:@"document.body.offsetHeight"
                   completionHandler:^(NSNumber *height, NSError *error) {
                       int htmlHeight = [height intValue];
@@ -153,16 +153,17 @@ didFinishNavigation:(WKNavigation *)navigation {
 }
 
 - (void)fetchInlineInappMessage {
-    __weak typeof(self) weakSelf = self;
     if (self.viewId) {
         EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-        EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:weakSelf.viewId];
+        EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
+        __weak typeof(self) weakSelf = self;
         [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
                                                                             successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                                                MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];
+                                                                                [weakSelf.commandFactory setInAppMessage:inAppMessage];
                                                                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                    NSString *html = [weakSelf filterMessagesByViewId:response];
-                                                                                    [weakSelf.webView loadHTMLString:html
-                                                                                                         baseURL:nil];
+                                                                                    [weakSelf.webView loadHTMLString:inAppMessage.html
+                                                                                                             baseURL:nil];
                                                                                 });
                                                                             }
                                                                               errorBlock:^(NSString *requestId, NSError *error) {
@@ -173,14 +174,18 @@ didFinishNavigation:(WKNavigation *)navigation {
     }
 }
 
-- (NSString *)filterMessagesByViewId:(EMSResponseModel *)response {
-    NSString *html;
+- (MEInAppMessage *)filterMessagesByViewId:(EMSResponseModel *)response {
+    MEInAppMessage *inAppMessage = nil;
     for (NSDictionary *message in response.parsedBody[@"inlineMessages"]) {
         if ([self.viewId.lowercaseString isEqualToString:((NSString *) message[@"viewId"]).lowercaseString]) {
-            html = message[@"html"];
+            inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:message[@"campaignId"]
+                                                                  sid:nil
+                                                                  url:nil
+                                                                 html:message[@"html"]
+                                                    responseTimestamp:[NSDate date]];
         }
     }
-    return html;
+    return inAppMessage;
 }
 
 - (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler {
@@ -198,7 +203,7 @@ didFinishNavigation:(WKNavigation *)navigation {
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf.webView evaluateJavaScript:js
-                       completionHandler:nil];
+                           completionHandler:nil];
     });
 }
 

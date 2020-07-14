@@ -32,6 +32,7 @@
 @protocol EMSGeofenceProtocol;
 @protocol EMSMessageInboxProtocol;
 @class EMSEndpoint;
+@class MEButtonClickRepository;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -104,5 +105,7 @@
 - (id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
 - (EMSEndpoint *)endpoint;
+
+- (MEButtonClickRepository *)buttonClickRepository;
 
 @end

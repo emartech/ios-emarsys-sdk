@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 #import "MEIAMJSCommandProtocol.h"
 #import "MEIAMProtocol.h"
+#import "MEInAppMessage.h"
 
 @class MEButtonClickRepository;
 
@@ -14,6 +15,7 @@
 @property(nonatomic, readonly) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, readonly) id <EMSIAMAppEventProtocol> appEventProtocol;
 @property(nonatomic, readonly) id <EMSIAMCloseProtocol> closeProtocol;
+@property(nonatomic, strong) MEInAppMessage *inAppMessage;
 
 - (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meIam
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
