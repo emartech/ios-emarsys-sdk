@@ -45,8 +45,7 @@ static NSString *const kTestValue2String = @"testValue2";
             @"testKey5": @YES
     };
 
-    _storage = [[EMSStorage alloc] initWithOperationQueue:self.mockQueue
-                                               suiteNames:self.suiteNames];
+    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames];
 }
 
 - (void)tearDown {
@@ -69,20 +68,9 @@ static NSString *const kTestValue2String = @"testValue2";
     [userDefaults removeObjectForKey:kTestKey];
 }
 
-- (void)testInit_operationQueue_mustNotBeNil {
-    @try {
-        [[EMSStorage alloc] initWithOperationQueue:nil
-                                        suiteNames:self.suiteNames];
-        XCTFail(@"Expected Exception when operationQueue is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: operationQueue");
-    }
-}
-
 - (void)testInit_suiteNames_mustNotBeNil {
     @try {
-        [[EMSStorage alloc] initWithOperationQueue:self.mockQueue
-                                        suiteNames:nil];
+        [[EMSStorage alloc] initWithSuiteNames:nil];
         XCTFail(@"Expected Exception when suiteNames is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: suiteNames");
@@ -104,8 +92,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
     [self.storage setData:self.testValue1
                    forKey:kTestKey];
-
-    [self waitForOperation];
 
     NSDictionary *query = @{
             (id) kSecClass: (id) kSecClassGenericPassword,
@@ -137,8 +123,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSData *result = [self.storage dataForKey:kTestKey];
 
-    [self waitForOperation];
-
     XCTAssertNil(result);
 }
 
@@ -156,8 +140,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setData:self.testValue1
                    forKey:kTestKey];
 
-    [self waitForOperation];
-
     NSString *result = [[NSString alloc] initWithData:[self.storage dataForKey:kTestKey]
                                              encoding:NSUTF8StringEncoding];
 
@@ -166,8 +148,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
 - (void)testDataForKey_should_returnNil {
     NSData *result = [self.storage dataForKey:kTestKey];
-
-    [self waitForOperation];
 
     XCTAssertNil(result);
 }
@@ -180,8 +160,6 @@ static NSString *const kTestValue2String = @"testValue2";
                      forKey:kTestKey];
 
     NSData *result = [mockStorage dataForKey:kTestKey];
-
-    [self waitForOperation];
 
     NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
 
@@ -201,8 +179,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSData *result = [mockStorage dataForKey:kTestKey];
 
-    [self waitForOperation];
-
     NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
 
     OCMVerify([mockStorage setData:numberData
@@ -220,8 +196,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSDictionary *result = [mockStorage dictionaryForKey:kTestKey];
 
-    [self waitForOperation];
-
     NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
 
     XCTAssertEqualObjects(result, self.testDictionary);
@@ -234,8 +208,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setData:self.testValue2
                    forKey:kTestKey];
 
-    [self waitForOperation];
-
     NSString *result = [[NSString alloc] initWithData:[self.storage dataForKey:kTestKey]
                                              encoding:NSUTF8StringEncoding];
 
@@ -245,8 +217,6 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testSetStringForKey {
     [self.storage setString:kTestValue1String
                      forKey:kTestKey];
-
-    [self waitForOperation];
 
     NSString *result = [[NSString alloc] initWithData:self.storage[kTestKey]
                                              encoding:NSUTF8StringEncoding];
@@ -258,8 +228,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setString:kTestValue1String
                      forKey:kTestKey];
 
-    [self waitForOperation];
-
     NSString *result = [self.storage stringForKey:kTestKey];
 
     XCTAssertEqualObjects(result, kTestValue1String);
@@ -268,16 +236,12 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testStringForKey_should_returnNil {
     NSString *result = [self.storage stringForKey:kTestKey];
 
-    [self waitForOperation];
-
     XCTAssertNil(result);
 }
 
 - (void)testSetNumberForKey {
     [self.storage setNumber:self.testNumber
                      forKey:kTestKey];
-
-    [self waitForOperation];
 
     NSNumber *result = [NSKeyedUnarchiver unarchiveObjectWithData:self.storage[kTestKey]];
 
@@ -288,8 +252,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setNumber:self.testNumber
                      forKey:kTestKey];
 
-    [self waitForOperation];
-
     NSNumber *result = [self.storage numberForKey:kTestKey];
 
     XCTAssertEqualObjects(result, self.testNumber);
@@ -298,16 +260,12 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testNumberForKey_should_returnNil {
     NSNumber *result = [self.storage numberForKey:kTestKey];
 
-    [self waitForOperation];
-
     XCTAssertNil(result);
 }
 
 - (void)testSetDictionaryForKey {
     [self.storage setDictionary:self.testDictionary
                          forKey:kTestKey];
-
-    [self waitForOperation];
 
     NSDictionary *result = [NSKeyedUnarchiver unarchiveObjectWithData:self.storage[kTestKey]];
 
@@ -318,8 +276,6 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setDictionary:self.testDictionary
                          forKey:kTestKey];
 
-    [self waitForOperation];
-
     NSDictionary *result = [self.storage dictionaryForKey:kTestKey];
 
     XCTAssertEqualObjects(result, self.testDictionary);
@@ -328,15 +284,11 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testDictionaryForKey_should_returnNil {
     NSDictionary *result = [self.storage dictionaryForKey:kTestKey];
 
-    [self waitForOperation];
-
     XCTAssertNil(result);
 }
 
 - (void)testSubscriptingValueSet {
     self.storage[kTestKey] = self.testValue1;
-
-    [self waitForOperation];
 
     NSString *result = [[NSString alloc] initWithData:[self.storage dataForKey:kTestKey]
                                              encoding:NSUTF8StringEncoding];
@@ -347,45 +299,8 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testSubscriptingValueGet {
     self.storage[kTestKey] = self.testValue1;
 
-    [self waitForOperation];
-
-    NSData *result = self.storage[kTestKey];
-
-    XCTAssertEqualObjects(result, self.testValue1);
-}
-
-- (void)testSetDataForKey_when_queueIsNotInvokingBlock {
-    OCMStub([self.mockQueue addOperationWithBlock:[OCMArg any]]);
-
-    [self.storage setData:self.testValue1
-                   forKey:kTestKey];
-
-    [self waitForOperation];
-
-    XCTAssertNil(self.storage[kTestKey]);
-}
-
-- (void)testSetDataForKey_when_queueIsInvokingBlock {
-    OCMStub([self.mockQueue addOperationWithBlock:[OCMArg invokeBlock]]);
-
-    [self.storage setData:self.testValue1
-                   forKey:kTestKey];
-
-    [self waitForOperation];
-
     NSData *result = self.storage[kTestKey];
     XCTAssertEqualObjects(result, self.testValue1);
-}
-
-- (void)waitForOperation {
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
-    [self.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [expectation fulfill];
-    }]];
-
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 @end

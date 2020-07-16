@@ -120,9 +120,7 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc]
-                                                                          initWithOperationQueue:[NSOperationQueue new]
-                                                                                      suiteNames:self.suiteNames]
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
 
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
@@ -160,8 +158,7 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]
-                                                                                                          suiteNames:self.suiteNames]
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory

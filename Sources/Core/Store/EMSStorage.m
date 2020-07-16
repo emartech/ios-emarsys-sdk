@@ -14,13 +14,10 @@
 
 @implementation EMSStorage
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
-                            suiteNames:(NSArray<NSString *> *)suiteNames {
-    NSParameterAssert(operationQueue);
+- (instancetype)initWithSuiteNames:(NSArray<NSString *> *)suiteNames {
     NSParameterAssert(suiteNames);
 
     if (self = [super init]) {
-        _operationQueue = operationQueue;
         NSMutableArray <NSUserDefaults *> *mutableUserDefaults = [NSMutableArray new];
         for (NSString *suiteName in suiteNames) {
 
@@ -35,33 +32,31 @@
 - (void)setData:(nullable NSData *)data
          forKey:(NSString *)key {
     NSParameterAssert(key);
-    [self.operationQueue addOperationWithBlock:^{
-        NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
-        mutableQuery[(id) kSecAttrAccount] = key;
-        mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-        mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-        mutableQuery[(id) kSecValueData] = data;
+    NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
+    mutableQuery[(id) kSecAttrAccount] = key;
+    mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
+    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
+    mutableQuery[(id) kSecValueData] = data;
 
-        NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+    NSDictionary * query = [NSDictionary dictionaryWithDictionary:mutableQuery];
 
-        OSStatus status = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
-        if (status == errSecDuplicateItem) {
-            SecItemDelete((__bridge CFDictionaryRef) query);
-            SecItemAdd((__bridge CFDictionaryRef) query, NULL);
-        } else if (status != errSecSuccess) {
-            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-            parameters[@"data"] = [[NSString alloc] initWithData:data
-                                                        encoding:NSUTF8StringEncoding];
-            parameters[@"key"] = key;
-            NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
-            statusDict[@"osStatus"] = @(status);
-            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
-                                                                     sel:_cmd
-                                                              parameters:[NSDictionary dictionaryWithDictionary:parameters]
-                                                                  status:[NSDictionary dictionaryWithDictionary:statusDict]];
-            EMSLog(logEntry, LogLevelDebug);
-        }
-    }];
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
+    if (status == errSecDuplicateItem) {
+        SecItemDelete((__bridge CFDictionaryRef) query);
+        SecItemAdd((__bridge CFDictionaryRef) query, NULL);
+    } else if (status != errSecSuccess) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"data"] = [[NSString alloc] initWithData:data
+                                                    encoding:NSUTF8StringEncoding];
+        parameters[@"key"] = key;
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"osStatus"] = @(status);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelDebug);
+    }
 }
 
 - (void)setString:(nullable NSString *)string

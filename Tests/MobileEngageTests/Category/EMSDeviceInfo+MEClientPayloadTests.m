@@ -18,8 +18,7 @@
 - (void)testClientPayload {
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSDKVersion"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithOperationQueue:[NSOperationQueue new]
-                                                                                                          suiteNames:@[]]
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:@[]]
                                                         identifierManager:[ASIdentifierManager sharedManager]];
 
     EMSDeviceInfo *partialMockDeviceInfo = OCMPartialMock(deviceInfo);

@@ -11,8 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)new NS_UNAVAILABLE;
 
-- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
-                            suiteNames:(NSArray<NSString *> *)suiteNames;
+- (instancetype)initWithSuiteNames:(NSArray<NSString *> *)suiteNames;
 
 - (void)setData:(nullable NSData *)data
          forKey:(NSString *)key;

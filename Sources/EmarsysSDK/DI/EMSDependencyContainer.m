@@ -72,7 +72,6 @@
 #import "EMSCompletionBlockProvider.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSValueProvider.h"
-#import "EMSEndpoint.h"
 #import "EMSStorage.h"
 #import "EMSSceneProvider.h"
 #import "EMSActionFactory.h"
@@ -256,8 +255,7 @@
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
 
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
-    _storage = [[EMSStorage alloc] initWithOperationQueue:self.coreOperationQueue
-                                               suiteNames:self.suiteNames];
+    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames];
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
