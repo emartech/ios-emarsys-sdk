@@ -8,6 +8,7 @@
 @interface EMSStorage ()
 
 @property(nonatomic, strong) NSArray <NSUserDefaults *> *userDefaultsArray;
+@property(nonatomic, strong) NSUserDefaults *fallbackUserDefaults;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
@@ -25,6 +26,7 @@
             [mutableUserDefaults addObject:userDefaults];
         }
         _userDefaultsArray = [NSArray arrayWithArray:mutableUserDefaults];
+        _fallbackUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.sdk"];
     }
     return self;
 }
@@ -38,13 +40,16 @@
     mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
     mutableQuery[(id) kSecValueData] = data;
 
-    NSDictionary * query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
 
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
+    OSStatus status = [self storeInSecureStorageWithQuery:query];
     if (status == errSecDuplicateItem) {
         SecItemDelete((__bridge CFDictionaryRef) query);
-        SecItemAdd((__bridge CFDictionaryRef) query, NULL);
+        [self storeInSecureStorageWithQuery:query];
     } else if (status != errSecSuccess) {
+        [self.fallbackUserDefaults setObject:data
+                                      forKey:key];
+
         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
         parameters[@"data"] = [[NSString alloc] initWithData:data
                                                     encoding:NSUTF8StringEncoding];
@@ -57,6 +62,10 @@
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelDebug);
     }
+}
+
+- (OSStatus)storeInSecureStorageWithQuery:(NSDictionary *)query {
+    return SecItemAdd((__bridge CFDictionaryRef) query, NULL);
 }
 
 - (void)setString:(nullable NSString *)string

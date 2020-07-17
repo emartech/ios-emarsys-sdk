@@ -254,7 +254,7 @@
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
 
-    _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
+    _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage", @"com.emarsys.sdk"];
     _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames];
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION

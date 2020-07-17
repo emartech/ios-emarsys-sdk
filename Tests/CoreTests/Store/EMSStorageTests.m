@@ -6,6 +6,14 @@
 #import <OCMock/OCMock.h>
 #import "EMSStorage.h"
 
+@interface EMSStorage (Tests)
+
+@property(nonatomic, strong) NSUserDefaults *fallbackUserDefaults;
+
+- (OSStatus)storeInSecureStorageWithQuery:(NSDictionary *)query;
+
+@end
+
 static NSString *const kTestKey = @"testKeyForValue";
 static NSString *const kTestValue1String = @"testValue1";
 static NSString *const kTestValue2String = @"testValue2";
@@ -113,6 +121,18 @@ static NSString *const kTestValue2String = @"testValue2";
     }
 
     XCTAssertEqualObjects(result, kTestValue1String);
+}
+
+- (void)testSetDataForKey_whenKeyChainIsUnavailable {
+    EMSStorage *partialMockStorage = OCMPartialMock(self.storage);
+
+    OCMStub([partialMockStorage storeInSecureStorageWithQuery:[OCMArg any]]).andReturn(errSecItemNotFound);
+
+    [partialMockStorage setData:self.testValue1
+                         forKey:kTestKey];
+
+    OCMVerify([partialMockStorage.fallbackUserDefaults setObject:self.testValue1
+                                                          forKey:kTestKey]);
 }
 
 - (void)testSetDataForKey_should_deleteValue_when_dataIsNil {
