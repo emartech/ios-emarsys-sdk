@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aDg-AU-mwu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aDg-AU-mwu">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -249,7 +249,114 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5QH-f6-7jO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-419" y="509"/>
+            <point key="canvasLocation" x="-393" y="477"/>
+        </scene>
+        <!--InlineInapp-->
+        <scene sceneID="cKc-TG-SfQ">
+            <objects>
+                <viewController id="1WO-9x-0CH" userLabel="InlineInapp" customClass="InlineInAppViewController" customModule="Emarsys_Sample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Tth-Vs-miq"/>
+                        <viewControllerLayoutGuide type="bottom" id="2QV-nz-VhJ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="hYn-iT-d5S">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="obG-YK-bgi">
+                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x86-oZ-nSI">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="446"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inline InApp from IB" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vwj-U2-sGq">
+                                                <rect key="frame" x="20" y="20" width="149" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5L1-Gb-NBG" customClass="EMSInlineInAppView">
+                                                <rect key="frame" x="20" y="55" width="374" height="128"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="250" constant="128" id="geH-Vm-giZ"/>
+                                                </constraints>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="viewId" value="main-screen-banner"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </view>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inline InApp from IB and code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H5C-Qb-Jhw">
+                                                <rect key="frame" x="36" y="209" width="225" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vV4-YM-uHI" customClass="EMSInlineInAppView">
+                                                <rect key="frame" x="20" y="248" width="374" height="128"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="250" constant="128" id="su0-N8-amD"/>
+                                                </constraints>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JqC-TT-him">
+                                                <rect key="frame" x="151" y="396" width="112" height="30"/>
+                                                <state key="normal" title="Add Inline InApp"/>
+                                                <connections>
+                                                    <action selector="addInlineInAppButtonClicked:" destination="1WO-9x-0CH" eventType="touchUpInside" id="xZx-sc-g59"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <constraints>
+                                            <constraint firstItem="5L1-Gb-NBG" firstAttribute="top" secondItem="vwj-U2-sGq" secondAttribute="bottom" constant="14" id="5r0-a3-mu5"/>
+                                            <constraint firstItem="vwj-U2-sGq" firstAttribute="leading" secondItem="x86-oZ-nSI" secondAttribute="leading" constant="20" id="A6w-DR-3vC"/>
+                                            <constraint firstAttribute="bottom" secondItem="JqC-TT-him" secondAttribute="bottom" constant="20" id="G2Z-iS-9c7"/>
+                                            <constraint firstItem="H5C-Qb-Jhw" firstAttribute="leading" secondItem="x86-oZ-nSI" secondAttribute="leadingMargin" constant="28" id="O00-G8-GBE"/>
+                                            <constraint firstItem="5L1-Gb-NBG" firstAttribute="leading" secondItem="x86-oZ-nSI" secondAttribute="leading" constant="20" id="ThW-ZR-ZHb"/>
+                                            <constraint firstItem="vV4-YM-uHI" firstAttribute="top" secondItem="H5C-Qb-Jhw" secondAttribute="bottom" constant="18" id="b3N-wU-nhj"/>
+                                            <constraint firstItem="JqC-TT-him" firstAttribute="top" secondItem="vV4-YM-uHI" secondAttribute="bottom" constant="20" id="hBI-M0-CKd"/>
+                                            <constraint firstItem="vV4-YM-uHI" firstAttribute="leading" secondItem="5L1-Gb-NBG" secondAttribute="leading" id="rBC-8Q-D26"/>
+                                            <constraint firstItem="H5C-Qb-Jhw" firstAttribute="top" secondItem="5L1-Gb-NBG" secondAttribute="bottom" constant="26" id="rlh-wf-p1p"/>
+                                            <constraint firstAttribute="trailing" secondItem="vwj-U2-sGq" secondAttribute="trailing" constant="245" id="sSc-hf-AbC"/>
+                                            <constraint firstItem="JqC-TT-him" firstAttribute="centerX" secondItem="x86-oZ-nSI" secondAttribute="centerX" id="soZ-EV-eaZ"/>
+                                            <constraint firstItem="vwj-U2-sGq" firstAttribute="top" secondItem="x86-oZ-nSI" secondAttribute="top" constant="20" id="tnF-Ht-Fyo"/>
+                                            <constraint firstItem="vV4-YM-uHI" firstAttribute="trailing" secondItem="5L1-Gb-NBG" secondAttribute="trailing" id="uH2-ek-wqv"/>
+                                            <constraint firstAttribute="trailing" secondItem="5L1-Gb-NBG" secondAttribute="trailing" constant="20" id="vAz-gh-KdR"/>
+                                            <constraint firstAttribute="width" constant="414" id="ws2-Zx-2nE"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="414" id="ItX-jI-PeR"/>
+                                    <constraint firstAttribute="bottom" secondItem="x86-oZ-nSI" secondAttribute="bottom" id="QbM-jR-PwQ"/>
+                                    <constraint firstItem="x86-oZ-nSI" firstAttribute="leading" secondItem="obG-YK-bgi" secondAttribute="leading" id="cqi-sS-CpW"/>
+                                    <constraint firstItem="vV4-YM-uHI" firstAttribute="centerX" secondItem="obG-YK-bgi" secondAttribute="centerX" id="hMV-CV-fp9"/>
+                                    <constraint firstItem="x86-oZ-nSI" firstAttribute="top" secondItem="obG-YK-bgi" secondAttribute="top" id="rlE-tu-ASa"/>
+                                    <constraint firstAttribute="height" constant="769" id="tGs-eX-X5L"/>
+                                    <constraint firstAttribute="trailing" secondItem="x86-oZ-nSI" secondAttribute="trailing" id="xMV-76-F3S"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Avp-mH-0jM"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="qWM-9N-SpO"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="obG-YK-bgi" secondAttribute="trailing" id="DHG-8K-g9q"/>
+                            <constraint firstItem="obG-YK-bgi" firstAttribute="leading" secondItem="hYn-iT-d5S" secondAttribute="leading" id="MJD-hb-roh"/>
+                            <constraint firstItem="2QV-nz-VhJ" firstAttribute="top" secondItem="obG-YK-bgi" secondAttribute="bottom" id="fPT-ga-plt"/>
+                            <constraint firstItem="obG-YK-bgi" firstAttribute="top" secondItem="Tth-Vs-miq" secondAttribute="bottom" id="uYi-K3-MQF"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="InlineInApp" image="line.horizontal.3.decrease.circle" catalog="system" selectedImage="line.horizontal.3.decrease.circle" id="TPf-9R-oGJ"/>
+                    <connections>
+                        <outlet property="contentView" destination="x86-oZ-nSI" id="qTI-Nz-e55"/>
+                        <outlet property="inappFromIB" destination="5L1-Gb-NBG" id="YvW-zz-jkE"/>
+                        <outlet property="inappFromIBAndCode" destination="vV4-YM-uHI" id="BJA-bJ-MdT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aMS-Gf-p6h" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="469.56521739130437" y="744.64285714285711"/>
         </scene>
         <!--Predict-->
         <scene sceneID="Wy1-ab-INp">
@@ -579,6 +686,7 @@
         <scene sceneID="IrL-jo-wOB">
             <objects>
                 <tabBarController id="aDg-AU-mwu" customClass="TabBarController" customModule="Emarsys_Sample" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="oID-p1-JHh"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="EVU-8f-dk0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -591,6 +699,7 @@
                         <segue destination="y0H-pP-D5z" kind="relationship" relationship="viewControllers" id="b1a-zp-kyy"/>
                         <segue destination="UdX-75-jKB" kind="relationship" relationship="viewControllers" id="lQ3-p5-dtc"/>
                         <segue destination="rj3-AN-ILk" kind="relationship" relationship="viewControllers" id="Ftw-rP-lJc"/>
+                        <segue destination="1WO-9x-0CH" kind="relationship" relationship="viewControllers" id="0x3-0H-wN4"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pSf-av-06R" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -808,15 +917,16 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1414" y="-275"/>
+            <point key="canvasLocation" x="-1414.4927536231885" y="-275.22321428571428"/>
         </scene>
     </scenes>
     <resources>
-        <image name="folder" catalog="system" width="64" height="46"/>
-        <image name="gear" catalog="system" width="64" height="58"/>
+        <image name="folder" catalog="system" width="128" height="95"/>
+        <image name="gear" catalog="system" width="128" height="119"/>
         <image name="inbox" width="29" height="29"/>
+        <image name="line.horizontal.3.decrease.circle" catalog="system" width="128" height="121"/>
         <image name="logo" width="29" height="29"/>
-        <image name="mappin.circle" catalog="system" width="64" height="60"/>
+        <image name="mappin.circle" catalog="system" width="128" height="121"/>
         <image name="placeholder" width="420" height="420"/>
         <image name="predict" width="51" height="51"/>
     </resources>
