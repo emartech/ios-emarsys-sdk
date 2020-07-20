@@ -12,10 +12,9 @@
 #import "EMSIAMCloseProtocol.h"
 #import "MEIAMJSCommandFactory.h"
 #import "MEJSBridge.h"
+#import "EMSEventHandlerProtocolBlockConverter.h"
 
-IB_DESIGNABLE
-
-@interface EMSInlineInAppView () <WKNavigationDelegate, EMSIAMCloseProtocol, EMSIAMAppEventProtocol>
+@interface EMSInlineInAppView () <WKNavigationDelegate, EMSIAMCloseProtocol>
 
 @property(nonatomic, strong) WKWebView *webView;
 
@@ -23,6 +22,7 @@ IB_DESIGNABLE
 @property(nonatomic, strong) NSLayoutConstraint *selfHeightConstraint;
 @property(nonatomic, strong) MEJSBridge *jsBridge;
 @property(nonatomic, strong) MEIAMJSCommandFactory *commandFactory;
+@property(nonatomic, strong) EMSEventHandlerProtocolBlockConverter *protocolBlockConverter;
 
 @end
 
@@ -43,9 +43,10 @@ IB_DESIGNABLE
 }
 
 - (void)commonInit {
+    _protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
     _commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
                                              buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
-                                                  appEventProtocol:self
+                                                  appEventProtocol:self.protocolBlockConverter
                                                      closeProtocol:self];
     _jsBridge =[[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory];
     __weak typeof(self) weakSelf = self;
@@ -205,6 +206,11 @@ didFinishNavigation:(WKNavigation *)navigation {
         [weakSelf.webView evaluateJavaScript:js
                            completionHandler:nil];
     });
+}
+
+- (void)setEventHandler:(EMSEventHandler)eventHandler {
+    _eventHandler = eventHandler;
+    self.protocolBlockConverter.eventHandler.handlerBlock = eventHandler;
 }
 
 @end
