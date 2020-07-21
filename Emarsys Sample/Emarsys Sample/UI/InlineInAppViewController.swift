@@ -11,8 +11,9 @@ class InlineInAppViewController: UIViewController {
     @IBOutlet weak var inappFromIB: EMSInlineInAppView!
     @IBOutlet weak var inappFromIBAndCode: EMSInlineInAppView!
     @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var viewIdTextField: UITextField!
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         handleKeybordDismiss()
@@ -26,21 +27,40 @@ class InlineInAppViewController: UIViewController {
             appEventAlert.addAction(UIAlertAction(title: "Close", style: .destructive, handler: nil))
             self.present(appEventAlert, animated: true, completion: nil)
         }
-    
+        
         inappFromIBAndCode.loadInApp(withViewId: "main-screen-banner")
+        
         inappFromIBAndCode.closeBlock = {
             self.inappFromIBAndCode.isHidden = true
+        }
+        
+        inappFromIBAndCode.completionBlock = { error in
+            if(error == nil) {
+                print("Succesfully created inline in-app")
+            }
         }
     }
     
     @IBAction func addInlineInAppButtonClicked(_ sender: Any) {
-        let inlineInAppFromCode = EMSInlineInAppView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 300))
-        inlineInAppFromCode.loadInApp(withViewId: "main-screen-banner")
-        inlineInAppFromCode.closeBlock = {
-            inlineInAppFromCode.removeFromSuperview()
+        if let viewId = viewIdTextField.text {
+            if viewId.isEmpty {
+                let alert = UIAlertController(title: "Error", message: "A valid viewID is needed for inline in-app", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Close", style: .destructive, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                let inlineInAppFromCode = EMSInlineInAppView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 300))
+                
+                inlineInAppFromCode.loadInApp(withViewId: viewId)
+                
+                inlineInAppFromCode.closeBlock = {
+                    inlineInAppFromCode.isHidden = true
+                    inlineInAppFromCode.removeFromSuperview()
+                    self.contentView.layoutIfNeeded()
+                }
+                
+                contentView.addSubview(inlineInAppFromCode)
+                contentView.layoutIfNeeded()
+            }
         }
-        
-        contentView.addSubview(inlineInAppFromCode)
-        contentView.layoutIfNeeded()
     }
 }
