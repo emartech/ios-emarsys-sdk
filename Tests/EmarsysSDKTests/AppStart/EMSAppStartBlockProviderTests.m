@@ -176,7 +176,7 @@
 
     self.appStartEventBlock();
 
-    OCMVerify([self.mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:nil];);
+    OCMVerify([self.mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:nil];);
 }
 
 - (void)testCreateRemoteConfigEventBlock {

@@ -22,6 +22,10 @@
 
 @interface EMSConfigInternal (Tests)
 
+@property(nonatomic, strong) NSNumber *oldContactFieldId;
+@property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
+@property(nonatomic, strong) NSData *pushToken;
+
 - (void)finalizeWithCompletionBlock:(EMSCompletionBlock)completionBlock
                   error:(NSError *)error;
 
@@ -430,7 +434,7 @@
     
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
+    OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -454,8 +458,7 @@
     [strictMockMobileEngage setExpectationOrderMatters:YES];
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
     [strictMockPushInternal setExpectationOrderMatters:YES];
-    OCMExpect([strictMockPushInternal clearDeviceTokenStorage]);
-    [strictMockPushInternal setExpectationOrderMatters:YES];
+    OCMExpect([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -474,9 +477,11 @@
 - (void)testChangeApplicationCode_shouldCallMethodsInOrder {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
+    id strictMockMeRequestContext = OCMStrictClassMock([MERequestContext class]);
+    id strictMockDeviceInfoClient = OCMStrictClassMock([EMSDeviceInfoV3ClientInternal class]);
     
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
-                                                       meRequestContext:self.mockMeRequestContext
+                                                       meRequestContext:strictMockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
                                                            mobileEngage:strictMockMobileEngage
                                                            pushInternal:strictMockPushInternal
@@ -488,7 +493,7 @@
                                                                  crypto:self.mockCrypto
                                                                   queue:self.queue
                                                                  waiter:self.waiter
-                                                       deviceInfoClient:self.mockDeviceInfoClient];
+                                                       deviceInfoClient:strictMockDeviceInfoClient];
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
     
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -498,6 +503,12 @@
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMeRequestContext applicationCode]).andReturn(@"oldApplicationCode");
+    OCMStub([strictMockMeRequestContext contactFieldId]).andReturn(@3);
+    OCMStub([strictMockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
+    OCMStub([strictMockMeRequestContext setApplicationCode:[OCMArg any]]);
     
     __block NSError *returnedError = [NSError errorWithCode:1400
                                        localizedDescription:@"testError"];
@@ -513,10 +524,14 @@
                                                           timeout:10];
     
     [strictMockMobileEngage setExpectationOrderMatters:YES];
+    [strictMockPushInternal setExpectationOrderMatters:YES];
+    [strictMockMeRequestContext setExpectationOrderMatters:YES];
+    [strictMockDeviceInfoClient setExpectationOrderMatters:YES];
+    
     OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    [strictMockPushInternal setExpectationOrderMatters:YES];
-    OCMExpect([strictMockPushInternal clearDeviceTokenStorage]);
-    [strictMockPushInternal setExpectationOrderMatters:YES];
+    OCMExpect([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMeRequestContext setApplicationCode:@"newApplicationCode"]);
+    OCMExpect([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
     OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
@@ -605,7 +620,7 @@
     
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
+    OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                    nil])]);
@@ -639,6 +654,7 @@
     
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
+    OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     
     NSNumber *newContactFieldId = @123;
     
@@ -711,6 +727,7 @@
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -758,6 +775,7 @@
     OCMStub([mockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([mockPushInternal setPushToken:self.deviceToken
                            completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
@@ -806,6 +824,7 @@
     
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
+    OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                     completionBlock:[OCMArg invokeBlock]]);
@@ -851,6 +870,19 @@
                                          error:error];
     
     OCMVerify([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
+}
+
+- (void)testFinalize {
+    [self.configInternal setPushToken:self.deviceToken];
+    [self.configInternal setOldContactFieldId:@123];
+    [self.configInternal setContactFieldIdHasBeenChanged:YES];
+
+    [self.configInternal finalizeWithCompletionBlock:nil
+                                               error:nil];
+
+    XCTAssertNil(self.configInternal.pushToken);
+    XCTAssertNil(self.configInternal.oldContactFieldId);
+    XCTAssertFalse(self.configInternal.contactFieldIdHasBeenChanged);
 }
 
 - (void)testChangeMerchantIdCompletionBlock {

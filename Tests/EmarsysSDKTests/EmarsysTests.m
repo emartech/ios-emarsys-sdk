@@ -284,7 +284,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:NO];
     
-    OCMVerify([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:nil]);
+    OCMVerify([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:nil]);
     OCMVerify([mockMobileEngage setContactWithContactFieldValue:nil]);
 }
 
@@ -298,7 +298,7 @@
     OCMStub([mockRequestContext contactFieldValue]).andReturn(@"testContactFieldValue");
     
     OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
-    OCMReject([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
+    OCMReject([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:[OCMArg any]]);
     
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
         OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
@@ -319,7 +319,7 @@
     OCMStub([mockRequestContext contactToken]).andReturn(@"testContactToken");
     
     OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
-    OCMReject([mockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
+    OCMReject([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:[OCMArg any]]);
     
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
         OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);

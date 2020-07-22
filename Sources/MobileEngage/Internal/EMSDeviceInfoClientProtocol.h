@@ -6,6 +6,8 @@
 
 @protocol EMSDeviceInfoClientProtocol <NSObject>
 
+- (void)trackDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock;
+
 - (void)sendDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 @end

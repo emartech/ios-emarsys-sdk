@@ -32,7 +32,7 @@
     [userDefaults synchronize];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"wait for completion"];
-    [EMSDependencyInjection.dependencyContainer.deviceInfoClient sendDeviceInfoWithCompletionBlock:^(NSError *error) {
+    [EMSDependencyInjection.dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:^(NSError *error) {
         XCTAssertNil(error);
         [expectation fulfill];
     }];

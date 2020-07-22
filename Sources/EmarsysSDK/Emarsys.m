@@ -39,7 +39,7 @@
     [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         [Emarsys registerAppStartBlock];
         if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.contactFieldValue) {
-            [dependencyContainer.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
+            [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
             [dependencyContainer.mobileEngage setContactWithContactFieldValue:nil];
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"

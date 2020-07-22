@@ -66,7 +66,7 @@
 - (MEHandlerBlock)createDeviceInfoEventBlock {
     __weak typeof(self) weakSelf = self;
     return ^{
-        [weakSelf.deviceInfoClient sendDeviceInfoWithCompletionBlock:nil];
+        [weakSelf.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
     };
 }
 

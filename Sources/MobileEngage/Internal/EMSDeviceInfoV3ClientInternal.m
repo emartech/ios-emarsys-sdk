@@ -35,19 +35,23 @@
     return self;
 }
 
-- (void)sendDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+- (void)trackDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    if (!self.requestContext.clientState || ![[userDefaults dictionaryForKey:kDEVICE_INFO] isEqualToDictionary:[self.deviceInfo clientPayload]]) {
-        [userDefaults setObject:[self.deviceInfo clientPayload]
-                         forKey:kDEVICE_INFO];
-        EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
-        [self.requestManager submitRequestModel:deviceInfoRequest
-                            withCompletionBlock:completionBlock];
-    } else {
+    if (self.requestContext.clientState && [[userDefaults dictionaryForKey:kDEVICE_INFO] isEqualToDictionary:[self.deviceInfo clientPayload]]) {
         if (completionBlock) {
             completionBlock(nil);
         }
+    } else {
+        [userDefaults setObject:[self.deviceInfo clientPayload]
+                         forKey:kDEVICE_INFO];
+        [self sendDeviceInfoWithCompletionBlock:completionBlock];
     }
+}
+
+- (void)sendDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock {
+    EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
+    [self.requestManager submitRequestModel:deviceInfoRequest
+                        withCompletionBlock:completionBlock];
 }
 
 @end

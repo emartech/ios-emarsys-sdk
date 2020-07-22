@@ -106,7 +106,7 @@
     OCMStub([self.mockDeviceInfo clientPayload]).andReturn(expectedDeviceInfoDict);
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
 
-    [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:completionBlock];
+    [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:completionBlock];
 
     NSDictionary *storedDeviceInfoDict = [userDefaults dictionaryForKey:kDEVICE_INFO];
 
@@ -140,7 +140,7 @@
     __block NSError *returnedError = [NSError errorWithCode:-1400
                                localizedDescription:@"testError"];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
-    [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:^(NSError *error) {
+    [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:^(NSError *error) {
         returnedError = error;
         [expectation fulfill];
     }];
@@ -168,10 +168,22 @@
 
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
 
-    [self.deviceInfoInternal sendDeviceInfoWithCompletionBlock:completionBlock];
+    [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:completionBlock];
 
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:completionBlock]);
+}
+
+- (void)testTrackDeviceInfo_shouldCallSendDeviceInfo {
+    EMSDeviceInfoV3ClientInternal *partialDeviceInfoClient = OCMPartialMock(self.deviceInfoInternal);
+
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+
+    };
+
+    [partialDeviceInfoClient trackDeviceInfoWithCompletionBlock:completionBlock];
+
+    OCMVerify([partialDeviceInfoClient sendDeviceInfoWithCompletionBlock:completionBlock]);
 }
 
 @end
