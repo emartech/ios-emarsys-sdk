@@ -26,16 +26,12 @@
 @property(nonatomic, strong) MERequestContext *meRequestContext;
 @property(nonatomic, strong) PRERequestContext *preRequestContext;
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
-@property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSEmarsysRequestFactory *emarsysRequestFactory;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
-@property(nonatomic, strong) NSNumber *oldContactFieldId;
-@property(nonatomic, assign) BOOL contactFieldIdHasBeenChanged;
-@property(nonatomic, strong) NSData *pushToken;
 @property(nonatomic, strong) EMSCrypto *crypto;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSDispatchWaiter *waiter;
@@ -162,30 +158,79 @@
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
                contactFieldId:(NSNumber *)contactFieldId
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler {
-    _contactFieldValue = [self.meRequestContext contactFieldValue];
-    _pushToken = self.pushInternal.deviceToken;
-
-    if (![contactFieldId isEqualToNumber:self.meRequestContext.contactFieldId]) {
-        _contactFieldIdHasBeenChanged = YES;
-        _oldContactFieldId = self.meRequestContext.contactFieldId;
-        [self.meRequestContext setContactFieldId:contactFieldId];
-    }
-
-    __weak typeof(self) weakSelf = self;
-    if (self.meRequestContext.applicationCode) {
-        [self.mobileEngage clearContactWithCompletionBlock:^(NSError *error) {
-            if (error) {
-                [weakSelf finalizeWithCompletionBlock:completionHandler
-                                                error:error];
-            } else {
-                [weakSelf handlePushTokenClearingWithApplicationCode:applicationCode
-                                                     completionBlock:completionHandler];
+    NSData *pushToken = self.pushInternal.deviceToken;
+    NSNumber *oldContactFieldId = self.meRequestContext.contactFieldId;
+    __block NSError *error = nil;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (pushToken) {
+            error = [self clearPushToken];
+        }
+        if (!error && self.meRequestContext.applicationCode && self.meRequestContext.contactFieldValue) {
+            error = [self clearContact];
+        }
+        if (!error) {
+            self.meRequestContext.contactFieldId = contactFieldId;
+            self.meRequestContext.applicationCode = applicationCode;
+            [self sendDeviceInfo];
+            if (pushToken) {
+                error = [self sendPushToken:pushToken];
             }
-        }];
-    } else {
-        [self handlePushTokenClearingWithApplicationCode:applicationCode
-                                         completionBlock:completionHandler];
+        }
+        if (error) {
+            self.meRequestContext.applicationCode = nil;
+            self.meRequestContext.contactFieldId = oldContactFieldId;
+        }
+        if (completionHandler) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(error);
+            });
+        }
+    });
+}
+
+
+- (NSError *)clearContact {
+    __weak typeof(self) weakSelf = self;
+    return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {
+        [weakSelf.mobileEngage clearContactWithCompletionBlock:completion];
+    }];
+}
+
+- (NSError *)clearPushToken {
+    __weak typeof(self) weakSelf = self;
+    return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {
+        [weakSelf.pushInternal clearPushTokenWithCompletionBlock:completion];
+    }];
+}
+
+- (NSError *)sendDeviceInfo {
+    __weak typeof(self) weakSelf = self;
+    return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {
+        [weakSelf.deviceInfoClient sendDeviceInfoWithCompletionBlock:completion];
+    }];
+}
+
+- (NSError *)sendPushToken:(NSData *)pushToken {
+    __weak typeof(self) weakSelf = self;
+    return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {
+        [weakSelf.pushInternal setPushToken:pushToken
+                            completionBlock:completion];
+    }];
+}
+
+- (NSError *)synchronizeMethodWithRunnerBlock:(void (^)(EMSCompletionBlock completion))runnerBlock {
+    __block NSError *result = nil;
+    [self.waiter enter];
+    if (runnerBlock) {
+        __weak typeof(self) weakSelf = self;
+        EMSCompletionBlock completionBlock = ^(NSError *error) {
+            result = error;
+            [weakSelf.waiter exit];
+        };
+        runnerBlock(completionBlock);
     }
+    [self.waiter waitWithInterval:5];
+    return result;
 }
 
 - (void)changeMerchantId:(nullable NSString *)merchantId {
@@ -223,37 +268,6 @@
     self.meRequestContext.contactFieldId = contactFieldId;
 }
 
-- (void)setPushTokenWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    __weak typeof(self) weakSelf = self;
-    if (self.pushInternal.deviceToken) {
-        [self.pushInternal setPushToken:self.pushToken
-                        completionBlock:^(NSError *error) {
-                            if (error) {
-                                [weakSelf finalizeWithCompletionBlock:completionBlock
-                                                                error:error];
-                            } else {
-                                [weakSelf setContactWithCompletionBlock:completionBlock];
-                            }
-                        }];
-    } else {
-        [self setContactWithCompletionBlock:completionBlock];
-    }
-}
-
-- (void)setContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    __weak typeof(self) weakSelf = self;
-    if (self.contactFieldIdHasBeenChanged) {
-        [self finalizeWithCompletionBlock:completionBlock
-                                    error:nil];
-    } else {
-        [self.mobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                           completionBlock:^(NSError *error) {
-                                               [weakSelf finalizeWithCompletionBlock:completionBlock
-                                                                               error:error];
-                                           }];
-    }
-}
-
 - (NSString *)hardwareId {
     return [self.deviceInfo hardwareId];
 }
@@ -264,48 +278,6 @@
 
 - (NSDictionary *)pushSettings {
     return [self.deviceInfo pushSettings];
-}
-
-- (void)handlePushTokenClearingWithApplicationCode:(NSString *)applicationCode
-                                   completionBlock:(EMSCompletionBlock)completionBlock {
-    __weak typeof(self) weakSelf = self;
-    if (self.pushInternal.deviceToken) {
-        [self.pushInternal clearPushTokenWithCompletionBlock:^(NSError * _Nullable error) {
-            if (error) {
-                [weakSelf finalizeWithCompletionBlock:completionBlock
-                                                error:error];
-            } else {
-                [weakSelf collectClientStateWithApplicationCode:applicationCode
-                                                completionBlock:completionBlock];
-            }
-        }];
-    } else {
-        [self collectClientStateWithApplicationCode:applicationCode
-                                    completionBlock:completionBlock];
-    }
-}
-
-- (void)collectClientStateWithApplicationCode:(NSString *)applicationCode
-                              completionBlock:(EMSCompletionBlock)completionBlock {
-    self.meRequestContext.applicationCode = applicationCode;
-    [self.deviceInfoClient sendDeviceInfoWithCompletionBlock:^(NSError *_Nullable error) {
-        [self setPushTokenWithCompletionBlock:completionBlock];
-    }];
-}
-
-- (void)finalizeWithCompletionBlock:(EMSCompletionBlock)completionBlock
-                              error:(NSError *)error {
-    if (error) {
-        self.meRequestContext.applicationCode = nil;
-        self.meRequestContext.contactFieldId = self.oldContactFieldId;
-    }
-    self.oldContactFieldId = nil;
-    self.contactFieldIdHasBeenChanged = NO;
-    self.pushToken = nil;
-    [self refreshConfigFromRemoteConfigWithCompletionBlock:nil];
-    if (completionBlock) {
-        completionBlock(error);
-    }
 }
 
 @end
