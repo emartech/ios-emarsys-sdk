@@ -606,4 +606,35 @@ it(@"should use actionFactory", ^{
                            timeout:10];
 });
 
+it(@"should call notificationInformationDelegate", ^{
+    EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
+    id mockNotificationInformationDelegate = [KWMock mockForProtocol:@protocol(EMSNotificationInformationDelegate)];
+    [[mockNotificationInformationDelegate should] receive:@selector(didReceiveNotificationInformation:)
+                                            withArguments:notificationInformation];
+    
+    MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
+                                                                                                       inApp:inApp
+                                                                                           timestampProvider:timestampProvider
+                                                                                                uuidProvider:uuidProvider
+                                                                                                pushInternal:pushInternal
+                                                                                              requestManager:requestManager
+                                                                                              requestFactory:requestFactory];
+    userNotification.notificationInformationDelegate = mockNotificationInformationDelegate;
+    NSDictionary *userInfo = @{@"ems": @{
+                                       @"multichannelId": @"testMultiChannelId"
+                                       },
+                               @"u": @"{\"sid\": \"123456789\"}"
+    };
+    
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
+              didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
+                       withCompletionHandler:^{
+        [exp fulfill];
+    }];
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:10];
+});
+
+
 SPEC_END

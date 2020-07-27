@@ -32,6 +32,7 @@
 
 @synthesize delegate = _delegate;
 @synthesize eventHandler = _eventHandler;
+@synthesize notificationInformationDelegate = _notificationInformationDelegate;
 
 - (instancetype)initWithActionFactory:(EMSActionFactory *)actionFactory
                                 inApp:(MEInApp *)inApp
@@ -86,6 +87,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     if (userInfo[@"exception"]) {
         EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
     }
+
+    NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
+    if (campaignId && self.notificationInformationDelegate) {
+        EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
+        [self.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+    }
+    
     NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
     if (inApp) {
         [self handleInApp:userInfo

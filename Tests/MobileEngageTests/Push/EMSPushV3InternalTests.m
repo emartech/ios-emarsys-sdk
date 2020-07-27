@@ -15,6 +15,7 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSEventHandler.h"
+#import "EMSNotificationInformationDelegate.h"
 #import "EMSStorage.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
@@ -414,6 +415,7 @@
 }
 
 - (void)testHandleMessageWithUserInfo {
+    EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
     NSDictionary *openExternalUrlAction = @{
             @"type": @"OpenExternalUrl",
             @"url": @"https://www.emarsys.com"
@@ -427,11 +429,13 @@
     id mockActionUrl = OCMProtocolMock(@protocol(EMSActionProtocol));
     id mockActionBadge = OCMProtocolMock(@protocol(EMSActionProtocol));
     id eventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
+    id protocolMockNotificationInformationDelegate = OCMProtocolMock(@protocol(EMSNotificationInformationDelegate));
 
     OCMStub([self.mockActionFactory createActionWithActionDictionary:openExternalUrlAction]).andReturn(mockActionUrl);
     OCMStub([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]).andReturn(mockActionBadge);
 
     [self.push setSilentMessageEventHandler:eventHandler];
+    [self.push setSilentNotificationInformationDelegate:protocolMockNotificationInformationDelegate];
 
     [self.push handleMessageWithUserInfo:@{
             @"ems":
@@ -439,7 +443,9 @@
                     @"actions": @[
                     openExternalUrlAction,
                     badgeCountAction
-            ]}
+            ],
+            @"multichannelId": @"testMultiChannelId"
+            }
     }];
 
     OCMVerify([self.mockActionFactory setEventHandler:eventHandler]);
@@ -447,6 +453,7 @@
     OCMVerify([mockActionUrl execute]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]);
     OCMVerify([mockActionBadge execute]);
+    OCMVerify([protocolMockNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation]);
 }
 
 @end

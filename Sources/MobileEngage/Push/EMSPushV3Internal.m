@@ -13,6 +13,8 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSStorage.h"
+#import "EMSNotificationInformation.h"
+#import "EMSNotificationInformationDelegate.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 
@@ -30,6 +32,7 @@
 @implementation EMSPushV3Internal
 
 @synthesize silentMessageEventHandler = _silentMessageEventHandler;
+@synthesize silentNotificationInformationDelegate = _silentNotificationInforamtionDelegate;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
@@ -145,6 +148,11 @@
     for (NSDictionary *actionDict in actions) {
         id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
         [action execute];
+    }
+    NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
+    if (campaignId && self.silentNotificationInformationDelegate) {
+        EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
+        [self.silentNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
     }
 }
 
