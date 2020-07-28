@@ -39,4 +39,20 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
+- (id)notificationInformationDelegate {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return nil;
+}
+
+- (void)setNotificationInformationDelegate:(id)notificationInformationDelegate {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"notificationInformationDelegate"] = @(notificationInformationDelegate != nil);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
+
 @end

@@ -20,6 +20,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 
+#define METHOD_TIMEOUT 60
+
 @interface EMSConfigInternal ()
 
 @property(nonatomic, strong) EMSMobileEngageV3Internal *mobileEngage;
@@ -219,7 +221,8 @@
 }
 
 - (NSError *)synchronizeMethodWithRunnerBlock:(void (^)(EMSCompletionBlock completion))runnerBlock {
-    __block NSError *result = nil;
+    __block NSError *result = [NSError errorWithCode:-1408
+                                localizedDescription:@"SDK method timeout error"];
     [self.waiter enter];
     if (runnerBlock) {
         __weak typeof(self) weakSelf = self;
@@ -229,7 +232,7 @@
         };
         runnerBlock(completionBlock);
     }
-    [self.waiter waitWithInterval:5];
+    [self.waiter waitWithInterval:METHOD_TIMEOUT];
     return result;
 }
 
