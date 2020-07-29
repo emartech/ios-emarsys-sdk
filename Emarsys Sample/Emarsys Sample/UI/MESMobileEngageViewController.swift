@@ -5,7 +5,12 @@
 import UIKit
 import EmarsysSDK
 
-class MESMobileEngageViewController: UIViewController {
+class MESMobileEngageViewController: UIViewController, EMSNotificationInformationDelegate {
+    
+    func didReceive(_ notificationInformation: EMSNotificationInformation!) {
+        print("CampaignId: \(notificationInformation.campaignId)")
+    }
+    
 
 //MARK: Outlets
     @IBOutlet weak var contactFieldValueTextField: UITextField!
@@ -51,6 +56,9 @@ class MESMobileEngageViewController: UIViewController {
         self.view.addGestureRecognizer(tapGestureRecognizer)
 
         registerForKeyboardNotifications()
+        
+        Emarsys.notificationCenterDelegate.notificationInformationDelegate = self
+        Emarsys.push.silentNotificationInformationDelegate = self
     }
 
 //MARK: Actions
