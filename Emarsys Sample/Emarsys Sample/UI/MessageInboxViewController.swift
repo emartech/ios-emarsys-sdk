@@ -13,6 +13,8 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
     
     //MARK: Variables
     var messages: [EMSMessage] = []
+    var selectedMessage: EMSMessage?
+    var dateFormatter: DateFormatter = DateFormatter()
     
     //MARK: ViewController
     override func viewDidLoad() {
@@ -22,6 +24,7 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
         refreshControl.addTarget(self, action: #selector(refresh(refreshControl:)), for: .valueChanged)
 
         self.tableView.addSubview(refreshControl)
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
     }
 
     
@@ -35,28 +38,40 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
         let message = messages[indexPath.row]
         
         cell.textLabel?.text = message.title
-        cell.detailTextLabel?.numberOfLines = 2
+        cell.detailTextLabel?.numberOfLines = 5
 
-        cell.detailTextLabel?.text = "\(message.body)\nReceived at \(Date(timeIntervalSince1970: message.receivedAt.doubleValue / 1000.0))"
+        let date = Date(timeIntervalSince1970: Double(message.receivedAt.int64Value))
+        
+        let detailText = "\(message.body) \n \(dateFormatter.string(from: date))"
+
+        if let tags = message.tags {
+            let tagsText = tags.reduce("") { $0 == "" ? $1 : "\($0), \($1)"}
+            cell.detailTextLabel?.text = "\(detailText) \n TAGS: \(tagsText)"
+        } else {
+            cell.detailTextLabel?.text = detailText
+        }
         
         cell.imageView?.image = #imageLiteral(resourceName: "placeholder")
+
+        guard let imageUrlString = message.imageUrl  else {
+            return cell
+        }
+
+        guard let imageUrl = URL(string: imageUrlString) else {
+            return cell
+        }
+
+        guard let imageData = try? Data(contentsOf: imageUrl) else {
+          return cell
+        }
         
-    
-//        guard let imageUrlString = message.imageUrl as? String  else {
-//            return cell
-//        }
-//        
-//        guard let imageUrl = URL(string: imageUrlString) else {
-//            return cell
-//        }
-//        
-//        URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
-//            DispatchQueue.main.async {
-//                cell.imageView?.image = data != nil ? UIImage(data: data!) : #imageLiteral(resourceName: "placeholder")
-//            }
-//        }.resume()
-//        
+        cell.imageView?.image = UIImage(data: imageData)
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedMessage = messages[indexPath.row]
     }
     
     @objc public func refresh(refreshControl: UIRefreshControl?) {
@@ -81,9 +96,19 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     @IBAction func addTagButtonClicked(_ sender: Any) {
+        guard let message = selectedMessage else {
+            return
+        }
+        Emarsys.messageInbox.addTag(self.tfTag.text!, forMessage: message.id)
+        refresh(refreshControl: nil)
     }
     
     @IBAction func removeTagButtonClicked(_ sender: Any) {
+        guard let message = selectedMessage else {
+            return
+        }
+        Emarsys.messageInbox.removeTag(self.tfTag.text!, fromMessage: message.id)
+        refresh(refreshControl: nil)
     }
     
 }
