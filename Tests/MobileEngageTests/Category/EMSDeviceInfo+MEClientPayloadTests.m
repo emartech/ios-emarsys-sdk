@@ -8,6 +8,7 @@
 #import <AdSupport/AdSupport.h>
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "EMSStorage.h"
+#import "EMSUUIDProvider.h"
 
 @interface EMSDeviceInfo_MEClientPayloadTests : XCTestCase
 
@@ -18,8 +19,9 @@
 - (void)testClientPayload {
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSDKVersion"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:@[]]
-                                                        identifierManager:[ASIdentifierManager sharedManager]];
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:@[]
+                                                                                                     accessGroup:nil]
+                                                             uuidProvider:[EMSUUIDProvider new]];
 
     EMSDeviceInfo *partialMockDeviceInfo = OCMPartialMock(deviceInfo);
 

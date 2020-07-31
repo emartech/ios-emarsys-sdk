@@ -20,8 +20,8 @@
         _experimentalFeatures = builder.experimentalFeatures;
         _merchantId = builder.merchantId;
         _contactFieldId = builder.contactFieldId;
+        _sharedKeychainAccessGroup = builder.sharedKeychainAccessGroup;
     }
-
     return self;
 }
 

@@ -6,10 +6,8 @@
 #import "EMSDeviceInfo.h"
 #import "EMSStorage.h"
 #import "OCMock.h"
-#import "KWReceiveMatcher.h"
-#import "KiwiConfiguration.h"
-#import <AdSupport/AdSupport.h>
 #import <UserNotifications/UserNotifications.h>
+#import "EMSUUIDProvider.h"
 
 #define kEMSHardwareIdKey @"kHardwareIdKey"
 
@@ -18,16 +16,16 @@ SPEC_BEGIN(EMSDeviceInfoTests)
         __block EMSDeviceInfo *deviceInfo;
         __block UNUserNotificationCenter *mockCenter;
         __block EMSStorage *mockStorage;
-        __block ASIdentifierManager *mockIdentifierManager;
+        __block EMSUUIDProvider *mockUUIDProvider;
 
         beforeEach(^{
             mockCenter = [UNUserNotificationCenter nullMock];
             mockStorage = [EMSStorage nullMock];
-            mockIdentifierManager = [ASIdentifierManager nullMock];
+            mockUUIDProvider = [EMSUUIDProvider nullMock];
             deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSdkVersion"
                                                 notificationCenter:mockCenter
                                                            storage:mockStorage
-                                                 identifierManager:mockIdentifierManager];
+                                                      uuidProvider:mockUUIDProvider];
         });
 
         describe(@"init", ^{
@@ -36,7 +34,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                     [[EMSDeviceInfo alloc] initWithSDKVersion:nil
                                            notificationCenter:[UNUserNotificationCenter mock]
                                                       storage:mockStorage
-                                            identifierManager:mockIdentifierManager];
+                                                 uuidProvider:mockUUIDProvider];
                     fail(@"Expected Exception when sdkVersion is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -49,7 +47,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                     [[EMSDeviceInfo alloc] initWithSDKVersion:@""
                                            notificationCenter:nil
                                                       storage:mockStorage
-                                            identifierManager:mockIdentifierManager];
+                                                 uuidProvider:mockUUIDProvider];
                     fail(@"Expected Exception when notificationCenter is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -62,7 +60,7 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                     [[EMSDeviceInfo alloc] initWithSDKVersion:@""
                                            notificationCenter:[UNUserNotificationCenter mock]
                                                       storage:nil
-                                            identifierManager:mockIdentifierManager];
+                                                 uuidProvider:mockUUIDProvider];
                     fail(@"Expected Exception when storage is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -70,16 +68,16 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 }
             });
 
-            it(@"should throw an exception when identifierManager is nil", ^{
+            it(@"should throw an exception when uuidProvider is nil", ^{
                 @try {
                     [[EMSDeviceInfo alloc] initWithSDKVersion:@""
                                            notificationCenter:[UNUserNotificationCenter mock]
                                                       storage:mockStorage
-                                            identifierManager:nil];
-                    fail(@"Expected Exception when identifierManager is nil!");
+                                                 uuidProvider:nil];
+                    fail(@"Expected Exception when uuidProvider is nil!");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: identifierManager"];
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: uuidProvider"];
                 }
             });
         });
@@ -132,9 +130,11 @@ SPEC_BEGIN(EMSDeviceInfoTests)
 
                 void (^setUserInterfaceIdiom)(NSInteger userInterfaceIdiom) = ^(NSInteger userInterfaceIdiom) {
                     UIDevice *uiDevice = [UIDevice mock];
-                    [[uiDevice should] receive:@selector(userInterfaceIdiom) andReturn:theValue(userInterfaceIdiom)];
+                    [[uiDevice should] receive:@selector(userInterfaceIdiom)
+                                     andReturn:theValue(userInterfaceIdiom)];
 
-                    [[UIDevice should] receive:@selector(currentDevice) andReturn:uiDevice];
+                    [[UIDevice should] receive:@selector(currentDevice)
+                                     andReturn:uiDevice];
                 };
 
                 it(@"should not return nil", ^{
@@ -397,59 +397,29 @@ SPEC_BEGIN(EMSDeviceInfoTests)
 
         context(@"HWID", ^{
 
-            beforeEach(^{
-                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-                [userDefaults removeObjectForKey:kEMSHardwareIdKey];
-            });
-
-            it(@"should return with the stored hwid", ^{
-                [[mockStorage should] receive:@selector(stringForKey:)
-                                    andReturn:@"testHWID"];
-
-                deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSdkVersion"
-                                                    notificationCenter:mockCenter
-                                                               storage:mockStorage
-                                                     identifierManager:mockIdentifierManager];
-
-                [[deviceInfo.hardwareId should] equal:@"testHWID"];
-            });
-
-            it(@"should store HWID on getHWID when not set", ^{
-                [[mockStorage should] receive:@selector(setString:forKey:)
-                withArguments:kw_any(), @"kHardwareIdKey"];
+            it(@"should get HWID from shared storage when no HWID is available", ^{
+                NSData *dataHWID = [@"dataHWID" dataUsingEncoding:NSUTF8StringEncoding];
+                [[mockStorage should] receive:@selector(sharedDataForKey:)
+                                    andReturn:dataHWID
+                                withArguments:kw_any(), @"kHardwareIdKey"];
 
                 NSString *result = deviceInfo.hardwareId;
 
-                [[result shouldNot] beNil];
+                [[result should] equal:@"dataHWID"];
             });
 
-            it(@"should store new hwid in storage when hwid isn't available in userDefaults neither in storage", ^{
-                [[mockStorage should] receive:@selector(setString:forKey:) withArguments:kw_any(), kEMSHardwareIdKey];
+            it(@"should set new UUIDHWID in storage when no HWID is available in both keychains", ^{
+                NSData *dataHWID = [@"testHWID" dataUsingEncoding:NSUTF8StringEncoding];
+                [[mockStorage should] receive:@selector(sharedDataForKey:)
+                                withArguments:kw_any(), @"kHardwareIdKey"];
 
-                NSString *result = [deviceInfo hardwareId];
+                [[mockUUIDProvider should] receive:@selector(provideUUIDString) andReturn:@"testHWID"];
 
-                [[result shouldNot] beNil];
-            });
+                [[mockStorage should] receive:@selector(setSharedData:forKey:)
+                                withArguments:dataHWID, @"kHardwareIdKey"];
+                NSString *result = deviceInfo.hardwareId;
 
-            it(@"should return idfv if idfa is not available and there is no cached hardwareId", ^{
-                NSString *idfv = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-
-                [[mockIdentifierManager should] receive:@selector(isAdvertisingTrackingEnabled) andReturn:theValue(NO)];
-                [[mockStorage should] receive:@selector(setString:forKey:) withArguments:idfv, kEMSHardwareIdKey];
-
-                [[[deviceInfo hardwareId] should] equal:idfv];
-            });
-
-            it(@"should return idfa if available and there is no cached hardwareId", ^{
-                NSUUID *idfaUUID = [NSUUID UUID];
-                NSString *idfa = [idfaUUID UUIDString];
-
-                [[mockIdentifierManager should] receive:@selector(isAdvertisingTrackingEnabled)
-                                              andReturn:theValue(YES)];
-                [[mockIdentifierManager should] receive:@selector(advertisingIdentifier) andReturn:idfaUUID];
-                [[mockStorage should] receive:@selector(setString:forKey:) withArguments:idfa, kEMSHardwareIdKey];
-
-                [[[deviceInfo hardwareId] should] equal:idfa];
+                [[result should] equal:@"testHWID"];
             });
         });
 

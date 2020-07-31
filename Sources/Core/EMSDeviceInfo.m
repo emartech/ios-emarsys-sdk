@@ -4,9 +4,9 @@
 
 #import "EMSDeviceInfo.h"
 #import "EMSStorage.h"
+#import "EMSUUIDProvider.h"
 #import <sys/utsname.h>
 #import <UIKit/UIKit.h>
-#import <AdSupport/AdSupport.h>
 #import <UserNotifications/UserNotifications.h>
 
 @interface EMSDeviceInfo ()
@@ -21,17 +21,16 @@
 - (instancetype)initWithSDKVersion:(NSString *)sdkVersion
                 notificationCenter:(UNUserNotificationCenter *)notificationCenter
                            storage:(EMSStorage *)storage
-                 identifierManager:(ASIdentifierManager *)identifierManager {
+                      uuidProvider:(EMSUUIDProvider *)uuidProvider {
     NSParameterAssert(sdkVersion);
     NSParameterAssert(notificationCenter);
     NSParameterAssert(storage);
-    NSParameterAssert(identifierManager);
+    NSParameterAssert(uuidProvider);
     if (self = [super init]) {
         _sdkVersion = sdkVersion;
         _notificationCenter = notificationCenter;
         _storage = storage;
-        _identifierManager = identifierManager;
-        _hardwareId = [self.storage stringForKey:kEMSHardwareIdKey];
+        _uuidProvider = uuidProvider;
     }
     return self;
 }
@@ -83,9 +82,16 @@
 
 - (NSString *)hardwareId {
     if (!_hardwareId) {
-        _hardwareId = [self getNewHardwareId];
-        [self.storage setString:_hardwareId
-                         forKey:kEMSHardwareIdKey];
+        NSData *hardwareIdData = [self.storage sharedDataForKey:kEMSHardwareIdKey];
+        if (hardwareIdData) {
+            _hardwareId = [[NSString alloc] initWithData:hardwareIdData
+                                                encoding:NSUTF8StringEncoding];
+        }
+        if (!_hardwareId) {
+            _hardwareId = [self.uuidProvider provideUUIDString];
+            [self.storage setSharedData:[_hardwareId dataUsingEncoding:NSUTF8StringEncoding]
+                                 forKey:kEMSHardwareIdKey];
+        }
     }
     return _hardwareId;
 }
@@ -180,13 +186,6 @@
             break;
     }
     return authorizationStatus;
-}
-
-- (NSString *)getNewHardwareId {
-    if ([self.identifierManager isAdvertisingTrackingEnabled]) {
-        return [[self.identifierManager advertisingIdentifier] UUIDString];
-    }
-    return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 }
 
 @end

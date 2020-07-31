@@ -1,6 +1,8 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
+
+#import <UserNotifications/UNUserNotificationCenter.h>
 #import "Kiwi.h"
 #import "MEDisplayedIAMRepository.h"
 #import "MEButtonClickRepository.h"
@@ -21,6 +23,7 @@
 #import "NSDate+EMSCore.h"
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -98,7 +101,11 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
 
             timestampProvider = [EMSTimestampProvider new];
             uuidProvider = [EMSUUIDProvider new];
-            deviceInfo = [EMSDeviceInfo new];
+            deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"testSDKVersion"
+                                                notificationCenter:[UNUserNotificationCenter mock]
+                                                           storage:[[EMSStorage alloc] initWithSuiteNames:@[]
+                                                                                              accessGroup:nil]
+                                                      uuidProvider:[EMSUUIDProvider new]];
 
             displayedRepository = [MEDisplayedIAMRepository nullMock];
             buttonClickRepository = [MEButtonClickRepository nullMock];

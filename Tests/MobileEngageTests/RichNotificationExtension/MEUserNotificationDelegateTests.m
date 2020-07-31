@@ -638,3 +638,4 @@ it(@"should call notificationInformationDelegate", ^{
 
 
 SPEC_END
+

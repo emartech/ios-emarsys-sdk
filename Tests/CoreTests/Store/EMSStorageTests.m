@@ -53,7 +53,8 @@ static NSString *const kTestValue2String = @"testValue2";
             @"testKey5": @YES
     };
 
-    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames];
+    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+                                          accessGroup:@"7ZFXXDJH82.com.emarsys.SdkHostTestGroup"];
 }
 
 - (void)tearDown {
@@ -78,11 +79,19 @@ static NSString *const kTestValue2String = @"testValue2";
 
 - (void)testInit_suiteNames_mustNotBeNil {
     @try {
-        [[EMSStorage alloc] initWithSuiteNames:nil];
+        [[EMSStorage alloc] initWithSuiteNames:nil
+                                   accessGroup:@"testAccessGroup"];
         XCTFail(@"Expected Exception when suiteNames is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: suiteNames");
     }
+}
+
+- (void)testInit_withAccessGroup {
+    NSString *accessGroup = @"testAccessGroup";
+    EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+                                                     accessGroup:accessGroup];
+    XCTAssertEqualObjects(storage.accessGroup, accessGroup);
 }
 
 - (void)testSetDataForKey_key_mustNotBeNil {
@@ -145,7 +154,6 @@ static NSString *const kTestValue2String = @"testValue2";
 
     XCTAssertNil(result);
 }
-
 
 - (void)testDataForKey_key_mustNotBeNil {
     @try {
@@ -321,6 +329,30 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSData *result = self.storage[kTestKey];
     XCTAssertEqualObjects(result, self.testValue1);
+}
+
+- (void)testSharedDataForKey_dataInShared {
+    NSString *key = @"sharedKey20";
+    [self.storage setSharedData:self.testValue1
+                         forKey:key];
+
+    NSData *returnedData = [self.storage dataForKey:key];
+    NSData *returnedSharedData = [self.storage sharedDataForKey:key];
+
+    XCTAssertNil(returnedData);
+    XCTAssertEqualObjects(returnedSharedData, self.testValue1);
+}
+
+- (void)testSharedDataForKey_dataIsNotInShared {
+    NSString *key = @"sharedKey23";
+    [self.storage setData:self.testValue1
+                   forKey:key];
+
+    NSData *returnedData = [self.storage dataForKey:key];
+    NSData *returnedSharedData = [self.storage sharedDataForKey:key];
+
+    XCTAssertEqualObjects(returnedData, self.testValue1);
+    XCTAssertEqualObjects(returnedSharedData, self.testValue1);
 }
 
 @end

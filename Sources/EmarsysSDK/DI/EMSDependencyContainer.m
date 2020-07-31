@@ -3,7 +3,6 @@
 //
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import <AdSupport/AdSupport.h>
 #import "EMSDependencyContainer.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
@@ -255,12 +254,13 @@
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
 
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage", @"com.emarsys.sdk"];
-    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames];
+    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+                                          accessGroup:config.sharedKeychainAccessGroup];
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
                                                                   storage:self.storage
-                                                        identifierManager:[ASIdentifierManager sharedManager]];
+                                                             uuidProvider:self.uuidProvider];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
                                                          contactFieldId:config.contactFieldId

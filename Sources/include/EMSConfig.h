@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
+@property(nonatomic, readonly) NSString *sharedKeychainAccessGroup;
 
 typedef void(^MEConfigBuilderBlock)(EMSConfigBuilder *builder);
 

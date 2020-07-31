@@ -13,6 +13,7 @@
 #import "MERequestContext.h"
 #import "EMSStorage.h"
 #import "NSError+EMSCore.h"
+#import "EMSUUIDProvider.h"
 
 @interface EMSDeviceInfoV3ClientInternalTests : XCTestCase
 
@@ -22,6 +23,7 @@
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
+@property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 
 @end
 
@@ -32,6 +34,7 @@
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    _uuidProvider = [EMSUUIDProvider new];
 
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
@@ -120,8 +123,9 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames]
-                                                        identifierManager:[ASIdentifierManager sharedManager]];
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+                                                                                                     accessGroup:nil]
+                                                             uuidProvider:self.uuidProvider];
 
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
@@ -158,8 +162,9 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames]
-                                                        identifierManager:[ASIdentifierManager sharedManager]];
+                                                                  storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+                                                                                                     accessGroup:nil]
+                                                             uuidProvider:self.uuidProvider];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo

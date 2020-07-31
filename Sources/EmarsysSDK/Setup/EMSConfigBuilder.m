@@ -25,4 +25,10 @@
     _contactFieldId = contactFieldId;
     return self;
 }
+
+- (EMSConfigBuilder *)setSharedKeychainAccessGroup:(NSString *)sharedKeychainAccessGroup {
+    _sharedKeychainAccessGroup = sharedKeychainAccessGroup;
+    return self;
+}
+
 @end

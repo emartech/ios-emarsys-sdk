@@ -15,9 +15,9 @@
 
 @implementation EMSStorage
 
-- (instancetype)initWithSuiteNames:(NSArray<NSString *> *)suiteNames {
+- (instancetype)initWithSuiteNames:(NSArray<NSString *> *)suiteNames
+                       accessGroup:(nullable NSString *)accessGroup {
     NSParameterAssert(suiteNames);
-
     if (self = [super init]) {
         NSMutableArray <NSUserDefaults *> *mutableUserDefaults = [NSMutableArray new];
         for (NSString *suiteName in suiteNames) {
@@ -25,6 +25,7 @@
             NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
             [mutableUserDefaults addObject:userDefaults];
         }
+        _accessGroup = accessGroup;
         _userDefaultsArray = [NSArray arrayWithArray:mutableUserDefaults];
         _fallbackUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.sdk"];
     }
@@ -33,20 +34,10 @@
 
 - (void)setData:(nullable NSData *)data
          forKey:(NSString *)key {
-    NSParameterAssert(key);
-    NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
-    mutableQuery[(id) kSecAttrAccount] = key;
-    mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-    mutableQuery[(id) kSecValueData] = data;
-
-    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-
-    OSStatus status = [self storeInSecureStorageWithQuery:query];
-    if (status == errSecDuplicateItem) {
-        SecItemDelete((__bridge CFDictionaryRef) query);
-        [self storeInSecureStorageWithQuery:query];
-    } else if (status != errSecSuccess) {
+    OSStatus status = [self setData:data
+                             forKey:key
+                        accessGroup:nil];
+    if (status != errSecSuccess) {
         [self.fallbackUserDefaults setObject:data
                                       forKey:key];
 
@@ -62,6 +53,28 @@
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelDebug);
     }
+}
+
+- (OSStatus)setData:(nullable NSData *)data
+             forKey:(NSString *)key
+        accessGroup:(nullable NSString *)accessGroup {
+    NSParameterAssert(key);
+    NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
+    mutableQuery[(id) kSecAttrAccount] = key;
+    mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
+    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
+    mutableQuery[(id) kSecValueData] = data;
+
+    mutableQuery[(id) kSecAttrAccessGroup] = accessGroup;
+
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+
+    OSStatus status = [self storeInSecureStorageWithQuery:query];
+    if (status == errSecDuplicateItem) {
+        SecItemDelete((__bridge CFDictionaryRef) query);
+        status = [self storeInSecureStorageWithQuery:query];
+    }
+    return status;
 }
 
 - (OSStatus)storeInSecureStorageWithQuery:(NSDictionary *)query {
@@ -88,38 +101,8 @@
 }
 
 - (nullable NSData *)dataForKey:(NSString *)key {
-    NSParameterAssert(key);
-    NSData *result;
-    NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
-    mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-    mutableQuery[(id) kSecAttrAccount] = key;
-    mutableQuery[(id) kSecReturnData] = (id) kCFBooleanTrue;
-    mutableQuery[(id) kSecReturnAttributes] = (id) kCFBooleanTrue;
-
-    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-
-    CFTypeRef resultRef = NULL;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef) query, &resultRef);
-    if (status == errSecSuccess) {
-        NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
-        result = resultDict[(id) kSecValueData];
-    } else if (status != errSecItemNotFound) {
-        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-        parameters[@"key"] = key;
-        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
-        statusDict[@"osStatus"] = @(status);
-        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
-                                                                 sel:_cmd
-                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
-                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
-        EMSLog(logEntry, LogLevelDebug);
-    }
-
-    if (resultRef) {
-        CFRelease(resultRef);
-    }
-
+    NSData *result = [self dataForKey:key
+                          accessGroup:nil];
     if (!result) {
         for (NSUserDefaults *userDefaults in self.userDefaultsArray) {
             id userDefaultsValue = [userDefaults objectForKey:key];
@@ -141,6 +124,47 @@
         }
     }
 
+    return result;
+}
+
+- (nullable NSData *)dataForKey:(NSString *)key
+                    accessGroup:(nullable NSString *)accessGroup{
+    NSParameterAssert(key);
+    NSData *result;
+    NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
+    mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
+    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
+    mutableQuery[(id) kSecAttrAccount] = key;
+    mutableQuery[(id) kSecReturnData] = (id) kCFBooleanTrue;
+    mutableQuery[(id) kSecReturnAttributes] = (id) kCFBooleanTrue;
+
+    mutableQuery[(id) kSecAttrAccessGroup] = accessGroup;
+
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+
+    CFTypeRef resultRef = NULL;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef) query, &resultRef);
+    if (status == errSecSuccess) {
+        NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
+        NSString *returnedAccessGroup = resultDict[(id) kSecAttrAccessGroup];
+        if ((!accessGroup && ![returnedAccessGroup isEqual:self.accessGroup]) || (accessGroup && [accessGroup isEqual:returnedAccessGroup])) {
+            result = resultDict[(id) kSecValueData];
+        }
+    } else if (status != errSecItemNotFound) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"key"] = key;
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"osStatus"] = @(status);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelDebug);
+    }
+
+    if (resultRef) {
+        CFRelease(resultRef);
+    }
     return result;
 }
 
@@ -169,6 +193,26 @@
 forKeyedSubscript:(NSString *)key {
     [self setData:obj
            forKey:key];
+}
+
+- (void)setSharedData:(NSData *)data
+               forKey:(NSString *)key {
+    OSStatus status = [self setData:data
+                             forKey:key
+                        accessGroup:self.accessGroup];
+    if (status != errSecSuccess) {
+        [self setData:data
+               forKey:key];
+    }
+}
+
+- (nullable NSData *)sharedDataForKey:(NSString *)key {
+    NSData *result = [self dataForKey:key
+                          accessGroup:self.accessGroup];
+    if (!result) {
+        result = [self dataForKey:key];
+    }
+    return result;
 }
 
 @end

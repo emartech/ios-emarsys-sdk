@@ -6,7 +6,7 @@
 
 @class UNUserNotificationCenter;
 @class EMSStorage;
-@class ASIdentifierManager;
+@class EMSUUIDProvider;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,13 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *sdkVersion;
 @property(nonatomic, readonly) UNUserNotificationCenter *notificationCenter;
 @property(nonatomic, readonly) EMSStorage *storage;
-@property(nonatomic, readonly) ASIdentifierManager *identifierManager;
+@property(nonatomic, readonly) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) NSString *hardwareId;
 
 - (instancetype)initWithSDKVersion:(NSString *)sdkVersion
                 notificationCenter:(UNUserNotificationCenter *)notificationCenter
                            storage:(EMSStorage *)storage
-                 identifierManager:(ASIdentifierManager *)identifierManager;
+                      uuidProvider:(EMSUUIDProvider *)uuidProvider;
 
 - (NSString *)platform;
 
