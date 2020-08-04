@@ -355,4 +355,14 @@ static NSString *const kTestValue2String = @"testValue2";
     XCTAssertEqualObjects(returnedSharedData, self.testValue1);
 }
 
+- (void)testSharedDataForKey_simpleKeychainDataIsMigrated {
+    EMSStorage *partialMockStorage = OCMPartialMock(self.storage);
+    OCMStub([partialMockStorage dataForKey:kTestKey]).andReturn(self.testValue1);
+
+    [partialMockStorage sharedDataForKey:kTestKey];
+
+    OCMVerify([partialMockStorage setSharedData:self.testValue1
+                                         forKey:kTestKey]);
+}
+
 @end

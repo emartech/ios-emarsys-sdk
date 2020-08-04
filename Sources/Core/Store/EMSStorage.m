@@ -211,6 +211,8 @@ forKeyedSubscript:(NSString *)key {
                           accessGroup:self.accessGroup];
     if (!result) {
         result = [self dataForKey:key];
+        [self setSharedData:result
+                     forKey:key];
     }
     return result;
 }
