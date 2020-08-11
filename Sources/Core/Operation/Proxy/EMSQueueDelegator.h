@@ -3,6 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "EMSInstanceRouter.h"
 
 @class EMSDispatchWaiter;
 
@@ -10,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSQueueDelegator : NSProxy
 
-@property(nonatomic, strong) id object;
+@property(nonatomic, strong) EMSInstanceRouter * instanceRouter;
 
 - (void)setupWithQueue:(NSOperationQueue *)queue
            emptyTarget:(id)emptyTarget;
 
-- (void)proxyWithTargetObject:(id)object;
+- (void)proxyWithInstanceRouter:(EMSInstanceRouter *)instanceRouter;
 
 @end
 

@@ -52,8 +52,13 @@
     id queueDelegator = [EMSQueueDelegator alloc];
     [queueDelegator setupWithQueue:self.operationQueue
                        emptyTarget:[QueueChecker new]];
-    
-    [queueDelegator proxyWithTargetObject:self.queueChecker];
+
+    EMSInstanceRouter *queueCheckerRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:self.queueChecker
+                                                                               loggingInstance:self.queueChecker
+                                                                                   routerLogic:^BOOL {
+                                                                                       return NO;
+                                                                                   }];
+    [queueDelegator proxyWithInstanceRouter:queueCheckerRouter];
     
     _queueDelegator = queueDelegator;
 }
@@ -61,10 +66,10 @@
 - (void)testProxyWithTargetObjectQueue_targetObject_mustNotBeNil {
     @try {
         EMSQueueDelegator *delegator = [EMSQueueDelegator alloc];
-        [delegator proxyWithTargetObject:nil];
-        XCTFail(@"Expected Exception when object is nil!");
+        [delegator proxyWithInstanceRouter:nil];
+        XCTFail(@"Expected Exception when instanceRouter is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: object");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: instanceRouter");
     }
 }
 
@@ -129,8 +134,14 @@
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
                   emptyTarget:[QueueChecker new]];
-    
-    [delegator proxyWithTargetObject:self.queueChecker];
+
+    EMSInstanceRouter *queueCheckerRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:self.queueChecker
+                                                                               loggingInstance:self.queueChecker
+                                                                                   routerLogic:^BOOL {
+                                                                                       return NO;
+                                                                                   }];
+
+    [delegator proxyWithInstanceRouter:queueCheckerRouter];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperation"];
     [partialMockOperationQueue addOperationWithBlock:^{
@@ -150,8 +161,15 @@
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
                   emptyTarget:[QueueChecker new]];
-    
-    [delegator proxyWithTargetObject:self.queueChecker];
+
+
+    EMSInstanceRouter *queueCheckerRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:self.queueChecker
+                                                                               loggingInstance:self.queueChecker
+                                                                                   routerLogic:^BOOL {
+                                                                                       return NO;
+                                                                                   }];
+
+    [delegator proxyWithInstanceRouter:queueCheckerRouter];
     
     ((id <QueueCheckerProtocol>) delegator).completionBlock;
 }
@@ -160,8 +178,14 @@
     id delegator = [EMSQueueDelegator alloc];
     [delegator setupWithQueue:self.operationQueue
                   emptyTarget:[QueueChecker new]];
-    
-    [delegator proxyWithTargetObject:self.queueChecker];
+
+    EMSInstanceRouter *queueCheckerRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:self.queueChecker
+                                                                               loggingInstance:self.queueChecker
+                                                                                   routerLogic:^BOOL {
+                                                                                       return NO;
+                                                                                   }];
+
+    [delegator proxyWithInstanceRouter:queueCheckerRouter];
     
     [((id <QueueCheckerProtocol>) delegator) setCompletionBlock:^(NSError *error) {
     }];

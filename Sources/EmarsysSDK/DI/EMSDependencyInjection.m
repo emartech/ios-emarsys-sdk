@@ -3,7 +3,6 @@
 //
 #import "EMSDependencyInjection.h"
 #import "MEExperimental.h"
-#import "EMSInnerFeature.h"
 #import "EMSGeofenceProtocol.h"
 #import "EMSMessageInboxProtocol.h"
 
@@ -31,93 +30,39 @@ static EMSDependencyContainer *_dependencyContainer;
 }
 
 + (id <EMSMobileEngageProtocol>)mobileEngage {
-    id <EMSMobileEngageProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.mobileEngage;
-    } else {
-        result = self.dependencyContainer.loggingMobileEngage;
-    }
-    return result;
+    return self.dependencyContainer.mobileEngage;
 }
 
 + (id <EMSPushNotificationProtocol>)push {
-    id <EMSPushNotificationProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.push;
-    } else {
-        result = self.dependencyContainer.loggingPush;
-    }
-    return result;
+    return self.dependencyContainer.push;
 }
 
 + (id <EMSDeepLinkProtocol>)deepLink {
-    id <EMSDeepLinkProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.deepLink;
-    } else {
-        result = self.dependencyContainer.loggingDeepLink;
-    }
-    return result;
+    return self.dependencyContainer.deepLink;
 }
 
 + (id <EMSInboxProtocol>)inbox {
-    id <EMSInboxProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.inbox;
-    } else {
-        result = self.dependencyContainer.loggingInbox;
-    }
-    return result;
+    return self.dependencyContainer.inbox;
 }
 
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
-    id <EMSUserNotificationCenterDelegate> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.notificationCenterDelegate;
-    } else {
-        result = self.dependencyContainer.loggingNotificationCenterDelegate;
-    }
-    return result;
+    return self.dependencyContainer.notificationCenterDelegate;
 }
 
 + (id <EMSInAppProtocol, MEIAMProtocol>)iam {
-    id <EMSInAppProtocol, MEIAMProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.iam;
-    } else {
-        result = self.dependencyContainer.loggingIam;
-    }
-    return result;
+    return self.dependencyContainer.iam;
 }
 
 + (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict {
-    id <EMSPredictProtocol, EMSPredictInternalProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature predict]]) {
-        result = self.dependencyContainer.predict;
-    } else {
-        result = self.dependencyContainer.loggingPredict;
-    }
-    return result;
+    return self.dependencyContainer.predict;
 }
 
 + (id <EMSGeofenceProtocol>)geofence {
-    id <EMSGeofenceProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.geofence;
-    } else {
-        result = self.dependencyContainer.loggingGeofence;
-    }
-    return result;
+    return self.dependencyContainer.geofence;
 }
 
 + (id <EMSMessageInboxProtocol>)messageInbox {
-    id <EMSMessageInboxProtocol> result;
-    if ([MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]]) {
-        result = self.dependencyContainer.messageInbox;
-    } else {
-        result = self.dependencyContainer.loggingMessageInbox;
-    }
-    return result;
+    return self.dependencyContainer.messageInbox;
 }
 
 @end

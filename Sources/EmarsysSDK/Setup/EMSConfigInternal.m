@@ -173,9 +173,11 @@
         if (!error) {
             self.meRequestContext.contactFieldId = contactFieldId;
             self.meRequestContext.applicationCode = applicationCode;
-            [self sendDeviceInfo];
-            if (pushToken) {
-                error = [self sendPushToken:pushToken];
+            if (applicationCode) {
+                [self sendDeviceInfo];
+                if (pushToken) {
+                    error = [self sendPushToken:pushToken];
+                }
             }
         }
         if (error) {

@@ -96,4 +96,11 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
+- (NSData *)deviceToken {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return nil;
+}
+
 @end

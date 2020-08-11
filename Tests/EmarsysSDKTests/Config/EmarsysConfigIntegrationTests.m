@@ -104,7 +104,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNotNil(returnedError);
 }
@@ -125,9 +125,9 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    XCTAssertEqualObjects([EMSDependencyInjection.mobileEngage class], [EMSLoggingMobileEngageInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertNotNil(returnedError);
+    XCTAssertNil(returnedError);
 }
 
 - (void)testConfig_changeApplicationCode_wasNotSetup {
@@ -148,9 +148,9 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:1000000];
+                                                          timeout:10];
 
-    XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).object class], [EMSMobileEngageV3Internal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSMobileEngageV3Internal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
@@ -159,13 +159,13 @@
     [EmarsysTestUtils waitForSetPushToken];
     [EmarsysTestUtils waitForSetCustomer];
 
-    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 
     [Emarsys.config changeMerchantId:nil];
 
     [self waitForOperationQueue];
 
-    XCTAssertEqualObjects([Emarsys.predict class], [EMSLoggingPredictInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);
 }
 
 - (void)testConfig_changeMerchantId_whenHasValue {
@@ -173,13 +173,13 @@
     [EmarsysTestUtils waitForSetCustomer];
     [MEExperimental disableFeature:EMSInnerFeature.predict];
 
-    XCTAssertEqualObjects([Emarsys.predict class], [EMSLoggingPredictInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);
 
     [Emarsys.config changeMerchantId:@"1428C8EE286EC34B"];
 
     [self waitForOperationQueue];
 
-    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
+    XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 }
 
 - (void)testRemoteConfig {

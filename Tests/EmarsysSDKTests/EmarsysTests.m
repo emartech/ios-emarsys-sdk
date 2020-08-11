@@ -550,7 +550,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
     
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).object class], [EMSPushV3Internal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSPushV3Internal class]);
 }
 
 - (void)testShouldBeMEInbox {
@@ -559,7 +559,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
     
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).object class], [MEInbox class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [MEInbox class]);
 }
 
 - (void)testShouldBeMEInApp {
@@ -568,7 +568,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
     
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).object class], [MEInApp class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).instanceRouter.instance class], [MEInApp class]);
 }
 
 - (void)testShouldBeEMSPredictInternal {
@@ -577,7 +577,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).object class], [EMSPredictInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 }
 
 - (void)testShouldBeMEUserNotificationDelegate {
@@ -586,7 +586,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).object class], [MEUserNotificationDelegate class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).instanceRouter.instance class], [MEUserNotificationDelegate class]);
 }
 
 - (void)testShouldBeEMSMobileEngageV3Internal {
@@ -595,7 +595,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.mobileEngage).object class], [EMSMobileEngageV3Internal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.mobileEngage).instanceRouter.instance class], [EMSMobileEngageV3Internal class]);
 }
 
 - (void)testShouldBeEMSDeepLinkInternal {
@@ -604,7 +604,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.deepLink).object class], [EMSDeepLinkInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.deepLink).instanceRouter.instance class], [EMSDeepLinkInternal class]);
 }
 
 - (void)testShouldBeEMSGeofenceInternal {
@@ -613,7 +613,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).object class], [EMSGeofenceInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).instanceRouter.instance class], [EMSGeofenceInternal class]);
 }
 
 - (void)testShouldBeEMSInboxV3 {
@@ -622,7 +622,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).object class], [EMSInboxV3 class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).instanceRouter.instance class], [EMSInboxV3 class]);
 }
 
 - (void)testShouldBeEMSLoggingPushInternal {
@@ -631,7 +631,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
 
-    XCTAssertEqual([((NSObject *) Emarsys.push) class], [EMSLoggingPushInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSLoggingPushInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingInbox {
@@ -640,7 +640,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.inbox) class], [EMSLoggingInbox class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [EMSLoggingInbox class]);
 }
 
 - (void)testShouldBeEMSLoggingInApp {
@@ -649,7 +649,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.inApp) class], [EMSLoggingInApp class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).instanceRouter.instance class], [EMSLoggingInApp class]);
 }
 
 - (void)testShouldBeEMSLoggingPredictInternal {
@@ -658,7 +658,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.predict) class], [EMSLoggingPredictInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingUserNotificationDelegate {
@@ -667,7 +667,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.notificationCenterDelegate) class], [EMSLoggingUserNotificationDelegate class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).instanceRouter.instance class], [EMSLoggingUserNotificationDelegate class]);
 }
 
 - (void)testShouldBeEMSLoggingMobileEngageInternal {
@@ -676,7 +676,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) EMSDependencyInjection.mobileEngage) class], [EMSLoggingMobileEngageInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingDeepLinkInternal {
@@ -685,7 +685,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) EMSDependencyInjection.deepLink) class], [EMSLoggingDeepLinkInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.deepLink).instanceRouter.instance class], [EMSLoggingDeepLinkInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingGeofenceInternal {
@@ -694,7 +694,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.geofence) class], [EMSLoggingGeofenceInternal class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).instanceRouter.instance class], [EMSLoggingGeofenceInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingInboxV3 {
@@ -703,7 +703,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
     
-    XCTAssertEqual([((NSObject *) Emarsys.messageInbox) class], [EMSLoggingInboxV3 class]);
+    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).instanceRouter.instance class], [EMSLoggingInboxV3 class]);
 }
 
 - (void)waitForSetup {

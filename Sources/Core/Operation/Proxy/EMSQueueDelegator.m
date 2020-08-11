@@ -3,7 +3,6 @@
 //
 
 #import "EMSQueueDelegator.h"
-#import "EMSDispatchWaiter.h"
 
 @interface EMSQueueDelegator ()
 
@@ -22,9 +21,9 @@
     _emptyTarget = emptyTarget;
 }
 
-- (void)proxyWithTargetObject:(id)object {
-    NSParameterAssert(object);
-    _object = object;
+- (void)proxyWithInstanceRouter:(EMSInstanceRouter *)instanceRouter {
+    NSParameterAssert(instanceRouter);
+    _instanceRouter = instanceRouter;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
@@ -34,16 +33,16 @@
         __weak typeof(self) weakSelf = self;
         if (isVoid) {
             [self.queue addOperationWithBlock:^{
-                [invocation setTarget:weakSelf.object];
+                [invocation setTarget:weakSelf.instanceRouter.instance];
                 [invocation invoke];
             }];
         } else {
             if ([self.queue isEqual:[NSOperationQueue currentQueue]]) {
-                [invocation setTarget:weakSelf.object];
+                [invocation setTarget:weakSelf.instanceRouter.instance];
                 [invocation invoke];
             } else {
                 NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-                    [invocation setTarget:weakSelf.object];
+                    [invocation setTarget:weakSelf.instanceRouter.instance];
                     [invocation invoke];
                 }];
                 [self.queue addOperations:@[operation]
