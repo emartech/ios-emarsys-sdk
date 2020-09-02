@@ -71,7 +71,11 @@
 
     OSStatus status = [self storeInSecureStorageWithQuery:query];
     if (status == errSecDuplicateItem) {
-        SecItemDelete((__bridge CFDictionaryRef) query);
+        NSMutableDictionary *mutableDeleteQuery = [query mutableCopy];
+        [mutableDeleteQuery removeObjectForKey:(id) kSecAttrAccessible];
+        NSDictionary *deleteQuery = [NSDictionary dictionaryWithDictionary:mutableDeleteQuery];
+
+        SecItemDelete((__bridge CFDictionaryRef) deleteQuery);
         status = [self storeInSecureStorageWithQuery:query];
     }
     return status;
@@ -128,12 +132,11 @@
 }
 
 - (nullable NSData *)dataForKey:(NSString *)key
-                    accessGroup:(nullable NSString *)accessGroup{
+                    accessGroup:(nullable NSString *)accessGroup {
     NSParameterAssert(key);
     NSData *result;
     NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
     mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
-    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
     mutableQuery[(id) kSecAttrAccount] = key;
     mutableQuery[(id) kSecReturnData] = (id) kCFBooleanTrue;
     mutableQuery[(id) kSecReturnAttributes] = (id) kCFBooleanTrue;
