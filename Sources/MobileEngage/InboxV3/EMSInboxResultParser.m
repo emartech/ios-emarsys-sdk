@@ -25,6 +25,8 @@
                 NSArray *messageErrors = [messageDict validate:^(EMSDictionaryValidator *validate) {
                     [validate valueExistsForKey:@"id"
                                        withType:[NSString class]];
+                    [validate valueExistsForKey:@"campaignId"
+                                       withType:[NSString class]];
                     [validate valueExistsForKey:@"title"
                                        withType:[NSString class]];
                     [validate valueExistsForKey:@"body"
@@ -34,12 +36,14 @@
                 }];
                 if ([messageErrors count] == 0) {
                     EMSMessage *message = [[EMSMessage alloc] initWithId:[messageDict nullSafeValueForKey:@"id"]
+                                                              campaignId:[messageDict nullSafeValueForKey:@"campaignId"]
+                                                              collapseId:[messageDict nullSafeValueForKey:@"collapseId"]
                                                                    title:[messageDict nullSafeValueForKey:@"title"]
                                                                     body:[messageDict nullSafeValueForKey:@"body"]
                                                                 imageUrl:[messageDict nullSafeValueForKey:@"imageUrl"]
                                                               receivedAt:[messageDict nullSafeValueForKey:@"receivedAt"]
                                                                updatedAt:[messageDict nullSafeValueForKey:@"updatedAt"]
-                                                                     ttl:[messageDict nullSafeValueForKey:@"ttl"]
+                                                               expiresAt:[messageDict nullSafeValueForKey:@"expiresAt"]
                                                                     tags:[messageDict nullSafeValueForKey:@"tags"]
                                                               properties:[messageDict nullSafeValueForKey:@"properties"]];
                     [resultMessages addObject:message];

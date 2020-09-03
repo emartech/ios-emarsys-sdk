@@ -68,7 +68,7 @@ completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
                                                                               eventAttributes:@{
                                                                                       @"messageId": messageId,
-                                                                                      @"tag": tag
+                                                                                      @"tag": [tag lowercaseString]
                                                                               }
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel
@@ -90,7 +90,7 @@ completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
                                                                               eventAttributes:@{
                                                                                       @"messageId": messageId,
-                                                                                      @"tag": tag
+                                                                                      @"tag": [tag lowercaseString]
                                                                               }
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel

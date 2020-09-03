@@ -168,6 +168,7 @@
 
 - (void)testAddTagCompletionBlock {
     NSString *tag = @"testTag";
+    NSString *lowerCasedTag = @"testtag";
     NSString *messageId = @"testId1";
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
@@ -176,7 +177,7 @@
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
                                                           eventAttributes:(@{
                                                                   @"messageId": messageId,
-                                                                  @"tag": tag
+                                                                  @"tag": lowerCasedTag
                                                           })
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
 
@@ -187,7 +188,7 @@
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
                                                             eventAttributes:(@{
                                                                     @"messageId": messageId,
-                                                                    @"tag": tag
+                                                                    @"tag": lowerCasedTag
                                                             })
                                                                   eventType:EventTypeInternal]);
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
@@ -230,6 +231,7 @@
 
 - (void)testRemoveTagCompletionBlock {
     NSString *tag = @"testTag";
+    NSString *lowerCasedTag = @"testtag";
     NSString *messageId = @"testId1";
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
@@ -238,7 +240,7 @@
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
                                                           eventAttributes:(@{
                                                                   @"messageId": messageId,
-                                                                  @"tag": tag
+                                                                  @"tag": lowerCasedTag
                                                           })
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
 
@@ -249,7 +251,7 @@
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
                                                             eventAttributes:(@{
                                                                     @"messageId": messageId,
-                                                                    @"tag": tag
+                                                                    @"tag": lowerCasedTag
                                                             })
                                                                   eventType:EventTypeInternal]);
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
@@ -261,13 +263,15 @@
                            "  \"count\": 1,\n"
                            "  \"messages\": [\n"
                            "    {\n"
-                           "        \"initWithId\": \"ef14afa4\",\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
                            "        \"title\": \"title\",\n"
                            "        \"body\": \"body\",\n"
                            "        \"imageUrl\": \"https://example.com/image.jpg\",\n"
                            "        \"receivedAt\": 142141412515,\n"
                            "        \"updatedAt\": 142141412599,\n"
-                           "        \"ttl\": 50,\n"
+                           "        \"expiresAt\": 142141412659,\n"
                            "        \"tags\": [\"tag1\", \"tag2\"],\n"
                            "        \"properties\": {"
                            "            \"key1\": \"value1\","
@@ -292,12 +296,14 @@
 
 - (EMSMessage *)responseMessage {
     return [[EMSMessage alloc] initWithId:@"ef14afa4"
+                               campaignId:@"campaignId"
+                               collapseId:@"collapseId"
                                     title:@"title"
                                      body:@"body"
                                  imageUrl:@"https://example.com/image.jpg"
                                receivedAt:@(142141412515)
                                 updatedAt:@(142141412599)
-                                      ttl:@(50)
+                                expiresAt:@(142141412659)
                                      tags:@[@"tag1", @"tag2"]
                                properties:@{
                                        @"key1": @"value1",

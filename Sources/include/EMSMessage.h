@@ -9,22 +9,26 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSMessage : NSObject
 
 @property(nonatomic, strong) NSString *id;
+@property(nonatomic, strong) NSString *campaignId;
+@property(nonatomic, strong, nullable) NSString *collapseId;
 @property(nonatomic, strong) NSString *title;
 @property(nonatomic, strong) NSString *body;
 @property(nonatomic, strong, nullable) NSString *imageUrl;
 @property(nonatomic, strong) NSNumber *receivedAt;
 @property(nonatomic, strong, nullable) NSNumber *updatedAt;
-@property(nonatomic, strong, nullable) NSNumber *ttl;
+@property(nonatomic, strong, nullable) NSNumber *expiresAt;
 @property(nonatomic, strong, nullable) NSArray<NSString *> *tags;
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, NSString *> *properties;
 
 - (instancetype)initWithId:(NSString *)id
+                campaignId:(NSString *)campaignId
+                collapseId:(nullable NSString *)collapseId
                      title:(NSString *)title
                       body:(NSString *)body
                   imageUrl:(nullable NSString *)imageUrl
                 receivedAt:(NSNumber *)receivedAt
                  updatedAt:(nullable NSNumber *)updatedAt
-                       ttl:(nullable NSNumber *)ttl
+                       expiresAt:(nullable NSNumber *)expiresAt
                       tags:(nullable NSArray<NSString *> *)tags
                 properties:(nullable NSDictionary<NSString *, NSString *> *)properties;
 

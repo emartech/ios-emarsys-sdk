@@ -7,22 +7,26 @@
 @implementation EMSMessage
 
 - (instancetype)initWithId:(NSString *)id
+                campaignId:(NSString *)campaignId
+                collapseId:(nullable NSString *)collapseId
                      title:(NSString *)title
                       body:(NSString *)body
                   imageUrl:(nullable NSString *)imageUrl
                 receivedAt:(NSNumber *)receivedAt
                  updatedAt:(nullable NSNumber *)updatedAt
-                       ttl:(nullable NSNumber *)ttl
+                 expiresAt:(nullable NSNumber *)expiresAt
                       tags:(nullable NSArray<NSString *> *)tags
                 properties:(nullable NSDictionary<NSString *, NSString *> *)properties {
     if (self = [super init]) {
         _id = id;
+        _campaignId = campaignId;
+        _collapseId = collapseId;
         _title = title;
         _body = body;
         _imageUrl = imageUrl;
         _receivedAt = receivedAt;
         _updatedAt = updatedAt;
-        _ttl = ttl;
+        _expiresAt = expiresAt;
         _tags = tags;
         _properties = properties;
     }
@@ -45,6 +49,10 @@
         return NO;
     if (self.id != message.id && ![self.id isEqualToString:message.id])
         return NO;
+    if (self.campaignId != message.campaignId && ![self.campaignId isEqualToString:message.campaignId])
+        return NO;
+    if (self.collapseId != message.collapseId && ![self.collapseId isEqualToString:message.collapseId])
+        return NO;
     if (self.title != message.title && ![self.title isEqualToString:message.title])
         return NO;
     if (self.body != message.body && ![self.body isEqualToString:message.body])
@@ -55,7 +63,7 @@
         return NO;
     if (self.updatedAt != message.updatedAt && ![self.updatedAt isEqualToNumber:message.updatedAt])
         return NO;
-    if (self.ttl != message.ttl && ![self.ttl isEqualToNumber:message.ttl])
+    if (self.expiresAt != message.expiresAt && ![self.expiresAt isEqualToNumber:message.expiresAt])
         return NO;
     if (self.tags != message.tags && ![self.tags isEqualToArray:message.tags])
         return NO;
@@ -66,16 +74,17 @@
 
 - (NSUInteger)hash {
     NSUInteger hash = [self.id hash];
+    hash = hash * 31u + [self.campaignId hash];
+    hash = hash * 31u + [self.collapseId hash];
     hash = hash * 31u + [self.title hash];
     hash = hash * 31u + [self.body hash];
     hash = hash * 31u + [self.imageUrl hash];
     hash = hash * 31u + [self.receivedAt hash];
     hash = hash * 31u + [self.updatedAt hash];
-    hash = hash * 31u + [self.ttl hash];
+    hash = hash * 31u + [self.expiresAt hash];
     hash = hash * 31u + [self.tags hash];
     hash = hash * 31u + [self.properties hash];
     return hash;
 }
-
 
 @end
