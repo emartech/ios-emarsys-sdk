@@ -28,7 +28,7 @@ class InlineInAppViewController: UIViewController {
             self.present(appEventAlert, animated: true, completion: nil)
         }
         
-        inappFromIBAndCode.loadInApp(withViewId: "main-screen-banner")
+        inappFromIBAndCode.loadInApp(withViewId: "ia")
         
         inappFromIBAndCode.closeBlock = {
             self.inappFromIBAndCode.isHidden = true
