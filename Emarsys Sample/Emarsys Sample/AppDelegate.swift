@@ -10,7 +10,7 @@ class AppDelegate: EMSAppDelegate {
     override func provideEMSConfig() -> EMSConfig! {
         return EMSConfig.make { builder in
             builder.setMerchantId("1428C8EE286EC34B")
-            builder.setContactFieldId(3)
+            builder.setContactFieldId(2575)
             #if DEBUG
                 builder.setMobileEngageApplicationCode("EMS11-C3FD3")
             #else
