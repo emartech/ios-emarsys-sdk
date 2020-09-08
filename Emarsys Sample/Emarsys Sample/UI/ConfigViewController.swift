@@ -9,20 +9,32 @@ class ConfigViewController: UIViewController {
 
     @IBOutlet weak var applicationCodeValue: UITextField!
     @IBOutlet weak var merchantIdValue: UITextField!
-
+    @IBOutlet weak var contactFieldIdValue: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         handleKeybordDismiss()
         
         applicationCodeValue.text = Emarsys.config.applicationCode()
         merchantIdValue.text = Emarsys.config.merchantId()
+        contactFieldIdValue.text = Emarsys.config.contactFieldId().stringValue
     }
 
     @IBAction func changeApplicationCodeButtonClicked(_ sender: Any) {
-        Emarsys.config.changeApplicationCode(applicationCodeValue.text) { [unowned self] error in
-            self.applicationCodeValue.text = Emarsys.config.applicationCode()
-            if error != nil {
-                print(error!)
+        if (contactFieldIdValue.text == nil || contactFieldIdValue.text!.isEmpty) {
+            Emarsys.config.changeApplicationCode(applicationCodeValue.text) { [unowned self] error in
+                self.applicationCodeValue.text = Emarsys.config.applicationCode()
+                if error != nil {
+                    print(error!)
+                }
+            }
+        } else {
+            Emarsys.config.changeApplicationCode(applicationCodeValue.text, contactFieldId: Int(contactFieldIdValue.text!)! as NSNumber) { [unowned self] error in
+                self.applicationCodeValue.text = Emarsys.config.applicationCode()
+                self.contactFieldIdValue.text = Emarsys.config.contactFieldId().stringValue
+                if error != nil {
+                    print(error!)
+                }
             }
         }
     }

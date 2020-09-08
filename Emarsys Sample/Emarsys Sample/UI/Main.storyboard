@@ -207,19 +207,24 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Nn-ij-F2D">
-                                <rect key="frame" x="122" y="94" width="170" height="30"/>
+                                <rect key="frame" x="28" y="136" width="358" height="30"/>
                                 <state key="normal" title="Change application code"/>
                                 <connections>
                                     <action selector="changeApplicationCodeButtonClicked:" destination="y0H-pP-D5z" eventType="touchUpInside" id="SzX-WF-Myn"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="merchant id" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xQQ-l9-Bdw">
-                                <rect key="frame" x="28" y="132" width="358" height="34"/>
+                                <rect key="frame" x="28" y="174" width="358" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="contactFieldId (optional)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mD4-SG-C8u">
+                                <rect key="frame" x="28" y="94" width="358" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GFR-tL-9cy">
-                                <rect key="frame" x="137.66666666666666" y="174" width="138.99999999999997" height="30"/>
+                                <rect key="frame" x="113" y="216" width="179" height="30"/>
                                 <state key="normal" title="Change merchant id"/>
                                 <connections>
                                     <action selector="changeMerchantIdButtonClicked:" destination="y0H-pP-D5z" eventType="touchUpInside" id="kZJ-xY-kxH"/>
@@ -228,28 +233,33 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="leading" secondItem="I10-IM-XcZ" secondAttribute="leading" id="4aP-PA-wdw"/>
-                            <constraint firstItem="1Nn-ij-F2D" firstAttribute="top" secondItem="I10-IM-XcZ" secondAttribute="bottom" constant="8" id="EYg-dr-nLR"/>
-                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="height" secondItem="I10-IM-XcZ" secondAttribute="height" id="QP0-fK-YPk"/>
-                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="trailing" secondItem="I10-IM-XcZ" secondAttribute="trailing" id="Wym-YC-A3m"/>
-                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="top" secondItem="1Nn-ij-F2D" secondAttribute="bottom" constant="8" id="X37-WS-QEF"/>
-                            <constraint firstItem="1Nn-ij-F2D" firstAttribute="centerX" secondItem="WHp-9e-oAK" secondAttribute="centerX" id="bYL-ov-iQ8"/>
-                            <constraint firstItem="I10-IM-XcZ" firstAttribute="top" secondItem="ZfF-b4-TTO" secondAttribute="bottom" constant="8" id="faD-EB-Xop"/>
-                            <constraint firstItem="GFR-tL-9cy" firstAttribute="centerX" secondItem="WHp-9e-oAK" secondAttribute="centerX" id="gr9-iL-IXe"/>
-                            <constraint firstItem="I10-IM-XcZ" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leadingMargin" constant="8" id="khr-fh-MtS"/>
-                            <constraint firstItem="GFR-tL-9cy" firstAttribute="top" secondItem="xQQ-l9-Bdw" secondAttribute="bottom" constant="8" id="qC7-3O-0Ez"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="I10-IM-XcZ" secondAttribute="trailing" constant="8" id="rEl-U6-VcX"/>
+                            <constraint firstItem="I10-IM-XcZ" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leading" constant="28" id="0yg-61-RcF"/>
+                            <constraint firstAttribute="trailing" secondItem="GFR-tL-9cy" secondAttribute="trailing" constant="122" id="1nT-b7-Uev"/>
+                            <constraint firstAttribute="trailing" secondItem="I10-IM-XcZ" secondAttribute="trailing" constant="28" id="38Z-yL-auY"/>
+                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leading" constant="28" id="390-Xg-bKt"/>
+                            <constraint firstItem="mD4-SG-C8u" firstAttribute="top" secondItem="I10-IM-XcZ" secondAttribute="bottom" constant="8" id="8KU-GI-3P9"/>
+                            <constraint firstItem="xQQ-l9-Bdw" firstAttribute="top" secondItem="1Nn-ij-F2D" secondAttribute="bottom" constant="8" id="CE1-Bn-mb4"/>
+                            <constraint firstItem="GFR-tL-9cy" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leading" constant="113" id="F1Q-FB-uWy"/>
+                            <constraint firstItem="GFR-tL-9cy" firstAttribute="top" secondItem="xQQ-l9-Bdw" secondAttribute="bottom" constant="8" id="GnK-aM-c96"/>
+                            <constraint firstItem="mD4-SG-C8u" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leading" constant="28" id="UXq-3X-O4A"/>
+                            <constraint firstAttribute="trailing" secondItem="1Nn-ij-F2D" secondAttribute="trailing" constant="28" id="XMa-AA-sDA"/>
+                            <constraint firstItem="I10-IM-XcZ" firstAttribute="top" secondItem="ZfF-b4-TTO" secondAttribute="bottom" constant="8" id="gNf-Wr-dyx"/>
+                            <constraint firstItem="1Nn-ij-F2D" firstAttribute="leading" secondItem="WHp-9e-oAK" secondAttribute="leading" constant="28" id="pBR-pd-30p"/>
+                            <constraint firstItem="1Nn-ij-F2D" firstAttribute="top" secondItem="mD4-SG-C8u" secondAttribute="bottom" constant="8" id="t6u-aU-ysW"/>
+                            <constraint firstAttribute="trailing" secondItem="xQQ-l9-Bdw" secondAttribute="trailing" constant="28" id="uSP-xO-2h8"/>
+                            <constraint firstAttribute="trailing" secondItem="mD4-SG-C8u" secondAttribute="trailing" constant="28" id="vHC-rJ-KhW"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Config" image="gear" catalog="system" selectedImage="gear" id="UZM-XG-b0X"/>
                     <connections>
                         <outlet property="applicationCodeValue" destination="I10-IM-XcZ" id="Hw3-i7-x6l"/>
+                        <outlet property="contactFieldIdValue" destination="mD4-SG-C8u" id="F9P-vG-BDj"/>
                         <outlet property="merchantIdValue" destination="xQQ-l9-Bdw" id="5ds-d9-D1T"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5QH-f6-7jO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-393" y="477"/>
+            <point key="canvasLocation" x="-394.20289855072468" y="476.78571428571428"/>
         </scene>
         <!--InlineInapp-->
         <scene sceneID="cKc-TG-SfQ">
