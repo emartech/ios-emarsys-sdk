@@ -128,7 +128,7 @@
                                                           completion:^{
                                                               if (weakSelf.currentInAppMessage && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
                                                                   [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
-                                                                  EMSLog(weakSelf.inAppLog, LogLevelInfo);
+                                                                  EMSLog(weakSelf.inAppLog, LogLevelMetric);
                                                               }
                                                               [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
                                                               weakSelf.iamWindow = nil;

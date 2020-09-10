@@ -13,7 +13,8 @@ typedef enum {
     LogLevelDebug,
     LogLevelInfo,
     LogLevelWarn,
-    LogLevelError
+    LogLevelError,
+    LogLevelMetric
 } LogLevel;
 
 @protocol EMSLogEntryProtocol;

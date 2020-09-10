@@ -181,8 +181,8 @@
 }
 
 - (void)testMap_logLevel {
-    NSArray *logLevels = @[@"trace", @"Debug", @"inFO", @"warN", @"ERROR"];
-    NSArray *expectedLogLevels = @[@(LogLevelTrace), @(LogLevelDebug), @(LogLevelInfo), @(LogLevelWarn), @(LogLevelError)];
+    NSArray *logLevels = @[@"trace", @"Debug", @"inFO", @"warN", @"ERROR", @"MetRic"];
+    NSArray *expectedLogLevels = @[@(LogLevelTrace), @(LogLevelDebug), @(LogLevelInfo), @(LogLevelWarn), @(LogLevelError), @(LogLevelMetric)];
 
     for (NSUInteger i = 0; i < [logLevels count]; i++) {
         [self assertForRawLogLevel:logLevels[i]

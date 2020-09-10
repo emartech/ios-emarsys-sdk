@@ -64,6 +64,8 @@
                             mutableData[@"level"] = @"WARN";
                         } else if (level == LogLevelError) {
                             mutableData[@"level"] = @"ERROR";
+                        } else if (level == LogLevelMetric) {
+                            mutableData[@"level"] = @"METRIC";
                         }
                         [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
                     }

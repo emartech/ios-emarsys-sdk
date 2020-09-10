@@ -66,6 +66,8 @@
         result = LogLevelWarn;
     } else if ([rawLogLevel.lowercaseString isEqualToString:@"error"]) {
         result = LogLevelError;
+    } else if ([rawLogLevel.lowercaseString isEqualToString:@"metric"]) {
+        result = LogLevelMetric;
     }
     return result;
 }
