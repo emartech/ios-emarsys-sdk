@@ -11,6 +11,7 @@
 @class EMSListChunker;
 @protocol EMSSQLSpecificationProtocol;
 @class EMSPredicate;
+@class EMSConnectionWatchdog;
 
 @interface EMSBatchingShardTrigger : NSObject <EMSDBTriggerProtocol>
 
@@ -20,6 +21,7 @@
                            chunker:(EMSListChunker *)chunker
                          predicate:(EMSPredicate *)predicate
                     requestManager:(EMSRequestManager *)requestManager
-                        persistent:(BOOL)persistent;
+                        persistent:(BOOL)persistent
+                connectionWatchdog:(EMSConnectionWatchdog *)connectionWatchdog;
 
 @end

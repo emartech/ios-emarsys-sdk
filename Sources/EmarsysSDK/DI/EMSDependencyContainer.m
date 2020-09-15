@@ -402,7 +402,8 @@
                                                                       chunker:[[EMSListChunker alloc] initWithChunkSize:1]
                                                                     predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
                                                                requestManager:self.requestManager
-                                                                   persistent:YES];
+                                                                   persistent:YES
+                                                           connectionWatchdog:watchdog];
         [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                     triggerType:EMSDBTriggerType.afterType
                                    triggerEvent:EMSDBTriggerEvent.insertEvent
@@ -418,7 +419,8 @@
                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:10]
                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:10]
                                                           requestManager:self.requestManager
-                                                              persistent:NO];
+                                                              persistent:NO
+                                                      connectionWatchdog:watchdog];
     [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent

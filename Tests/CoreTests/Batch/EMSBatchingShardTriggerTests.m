@@ -12,6 +12,7 @@
 #import "EMSPredicate.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
+#import "EMSConnectionWatchdog.h"
 
 @interface EMSBatchingShardTriggerTests : XCTestCase
 
@@ -22,6 +23,7 @@
 @property(nonatomic, strong) EMSListChunker *chunker;
 @property(nonatomic, strong) id predicate;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) EMSConnectionWatchdog *connectionWatchdog;
 @property(nonatomic, strong) NSArray *shards;
 @property(nonatomic, strong) NSArray<NSArray *> *chunkedShards;
 @property(nonatomic, strong) NSArray *requestModels;
@@ -37,18 +39,131 @@
     _chunker = OCMClassMock([EMSListChunker class]);
     _predicate = OCMClassMock([EMSPredicate class]);
     _requestManager = OCMClassMock([EMSRequestManager class]);
+    _connectionWatchdog = OCMClassMock([EMSConnectionWatchdog class]);
     _shards = [self shardMocks];
     _chunkedShards = @[
-        @[self.shards[0], self.shards[1], self.shards[2]],
-        @[self.shards[3], self.shards[4]]
+            @[self.shards[0], self.shards[1], self.shards[2]],
+            @[self.shards[3], self.shards[4]]
     ];
     _requestModels = @[
-        OCMClassMock([EMSRequestModel class]),
-        OCMClassMock([EMSRequestModel class])];
+            OCMClassMock([EMSRequestModel class]),
+            OCMClassMock([EMSRequestModel class])];
 
     OCMStub([self.shardRepository query:self.specification]).andReturn(self.shards);
 
     _trigger = [self persistentTrigger];
+}
+
+- (void)testInit_shardRepository_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:nil
+                                              specification:self.specification
+                                                     mapper:self.mapper
+                                                    chunker:self.chunker
+                                                  predicate:self.predicate
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when shardRepository is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: shardRepository");
+    }
+}
+
+- (void)testInit_specification_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:nil
+                                                     mapper:self.mapper
+                                                    chunker:self.chunker
+                                                  predicate:self.predicate
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when specification is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: specification");
+    }
+}
+
+- (void)testInit_mapper_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:self.specification
+                                                     mapper:nil
+                                                    chunker:self.chunker
+                                                  predicate:self.predicate
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when mapper is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mapper");
+    }
+}
+
+- (void)testInit_chunker_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:self.specification
+                                                     mapper:self.mapper
+                                                    chunker:nil
+                                                  predicate:self.predicate
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when chunker is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: chunker");
+    }
+}
+
+- (void)testInit_predicate_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:self.specification
+                                                     mapper:self.mapper
+                                                    chunker:self.chunker
+                                                  predicate:nil
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when predicate is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: predicate");
+    }
+}
+
+- (void)testInit_requestManager_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:self.specification
+                                                     mapper:self.mapper
+                                                    chunker:self.chunker
+                                                  predicate:self.predicate
+                                             requestManager:nil
+                                                 persistent:NO
+                                         connectionWatchdog:self.connectionWatchdog];
+        XCTFail(@"Expected Exception when requestManager is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
+    }
+}
+
+- (void)testInit_connectionWatchdog_mustNotBeNil {
+    @try {
+        [[EMSBatchingShardTrigger alloc] initWithRepository:self.shardRepository
+                                              specification:self.specification
+                                                     mapper:self.mapper
+                                                    chunker:self.chunker
+                                                  predicate:self.predicate
+                                             requestManager:self.requestManager
+                                                 persistent:NO
+                                         connectionWatchdog:nil];
+        XCTFail(@"Expected Exception when connectionWatchdog is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: connectionWatchdog");
+    }
 }
 
 - (void)testTriggerBlock_persistent_submitsRequestModels_toRequestManager {
@@ -56,6 +171,7 @@
     OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+    OCMStub([self.connectionWatchdog isConnected]).andReturn(YES);
 
     [self.trigger trigger];
 
@@ -65,17 +181,49 @@
     }
 }
 
+- (void)testTriggerBlock_persistent_shouldNotSubmitsRequestModels_toRequestManager_noConnection {
+    for (EMSRequestModel *requestModel in self.requestModels) {
+        OCMReject([self.requestManager submitRequestModel:requestModel
+                                      withCompletionBlock:nil]);
+    }
+    OCMReject([self.shardRepository remove:[OCMArg any]]);
+
+    OCMStub([self.predicate evaluate:self.shards]).andReturn(YES);
+    OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+    OCMStub([self.connectionWatchdog isConnected]).andReturn(NO);
+
+    [self.trigger trigger];
+}
+
 - (void)testTriggerBlock_transient_submitsRequestModels_toRequestManager {
     OCMStub([self.predicate evaluate:self.shards]).andReturn(YES);
     OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+    OCMStub([self.connectionWatchdog isConnected]).andReturn(YES);
 
     [[self transientTrigger] trigger];
 
     for (EMSRequestModel *requestModel in self.requestModels) {
         OCMVerify([self.requestManager submitRequestModelNow:requestModel]);
     }
+}
+
+- (void)testTriggerBlock_transient_shouldNotSubmitsRequestModels_toRequestManager_noConnection {
+    for (EMSRequestModel *requestModel in self.requestModels) {
+        OCMReject([self.requestManager submitRequestModelNow:requestModel]);
+    }
+    OCMReject([self.shardRepository remove:[OCMArg any]]);
+
+    OCMStub([self.predicate evaluate:self.shards]).andReturn(YES);
+    OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
+    OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+    OCMStub([self.connectionWatchdog isConnected]).andReturn(NO);
+
+    [[self transientTrigger] trigger];
 }
 
 - (void)testTriggerBlock_doesNothing_whenPredicateReturns_false {
@@ -91,6 +239,7 @@
     OCMStub([self.chunker chunk:self.shards]).andReturn(self.chunkedShards);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[0]]).andReturn(self.requestModels[0]);
     OCMStub([self.mapper requestFromShards:self.chunkedShards[1]]).andReturn(self.requestModels[1]);
+    OCMStub([self.connectionWatchdog isConnected]).andReturn(YES);
 
     [self.trigger trigger];
 
@@ -130,8 +279,8 @@
                                                        chunker:self.chunker
                                                      predicate:self.predicate
                                                 requestManager:self.requestManager
-                                                    persistent:flag];
+                                                    persistent:flag
+                                            connectionWatchdog:self.connectionWatchdog];
 }
-
 
 @end
