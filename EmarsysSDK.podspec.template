@@ -23,6 +23,7 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSPushNotificationProtocol.h',
         'Sources/include/EMSMessageInboxProtocol.h',
         'Sources/include/EMSInboxResult.h',
+        'Sources/include/EMSInboxTag.h',
         'Sources/include/EMSMessage.h',
         'Sources/include/EMSBlocks.h',
         'Sources/include/EMSConfig.h',

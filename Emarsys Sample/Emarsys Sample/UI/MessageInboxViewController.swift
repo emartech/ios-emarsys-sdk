@@ -99,6 +99,7 @@ class MessageInboxViewController: UIViewController, UITableViewDataSource, UITab
         guard let message = selectedMessage else {
             return
         }
+        Emarsys.messageInbox.addTag(EMSInboxTagSeen, forMessage: message.id)
         Emarsys.messageInbox.addTag(self.tfTag.text!, forMessage: message.id)
         refresh(refreshControl: nil)
     }
