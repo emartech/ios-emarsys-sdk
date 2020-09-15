@@ -22,7 +22,6 @@
 @property(nonatomic, weak) MEInAppMessage *currentInAppMessage;
 
 @property(nonatomic, strong, nullable) UIWindow *iamWindow;
-@property(nonatomic, strong) NSDate *onScreenShowTimestamp;
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
@@ -126,7 +125,7 @@
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                           completion:^{
-                                                              if (weakSelf.currentInAppMessage && weakSelf.onScreenShowTimestamp && weakSelf.timestampProvider) {
+                                                              if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
                                                                   [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
                                                                   EMSLog(weakSelf.inAppLog, LogLevelMetric);
                                                               }
