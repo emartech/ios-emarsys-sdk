@@ -58,4 +58,16 @@
     return NO;
 }
 
+- (void)fetchGeofences {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+}
+
+- (void)registerGeofences {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+}
+
 @end
