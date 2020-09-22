@@ -6,12 +6,14 @@
 @class EMSRemoteConfig;
 @class EMSResponseModel;
 @class EMSRandomProvider;
+@class EMSDeviceInfo;
 
 @interface EMSRemoteConfigResponseMapper : NSObject
 
 @property(nonatomic, readonly) EMSRandomProvider *randomProvider;
 
-- (instancetype)initWithRandomProvider:(EMSRandomProvider *)randomProvider;
+- (instancetype)initWithRandomProvider:(EMSRandomProvider *)randomProvider
+                            deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel;
 

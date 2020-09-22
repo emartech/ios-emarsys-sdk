@@ -222,4 +222,36 @@ SPEC_BEGIN(NSDictionaryCoreTests)
             });
         });
 
+        describe(@"NSDictionary+EMSCore mergeWithDicitonary:", ^{
+                
+            it(@"should return with merged dicitonary", ^{
+                NSDictionary *original = @{
+                    @"key1": @"value1",
+                    @"key2": @[],
+                    @"key3": @{}
+                };
+                
+                NSDictionary *additional = @{
+                    @"key1": @YES,
+                    @"key3": @{
+                            @"subKey1": @"subValue1"
+                    },
+                    @"key4": @"value4"
+                };
+                NSDictionary *expected = @{
+                    @"key1": @YES,
+                    @"key2": @[],
+                    @"key3": @{
+                            @"subKey1": @"subValue1"
+                    },
+                    @"key4": @"value4"
+                };
+                
+                NSDictionary *result = [original mergeWithDictionary:additional];
+                
+                [[result should] equal:expected];
+            });
+            
+        });
+
 SPEC_END

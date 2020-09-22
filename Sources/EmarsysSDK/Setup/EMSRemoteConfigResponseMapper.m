@@ -5,33 +5,47 @@
 #import "EMSRemoteConfig.h"
 #import "EMSResponseModel.h"
 #import "EMSRandomProvider.h"
+#import "EMSDeviceInfo.h"
+#import "NSDictionary+EMSCore.h"
+
+@interface EMSRemoteConfigResponseMapper()
+
+@property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
+
+@end
 
 @implementation EMSRemoteConfigResponseMapper
-- (instancetype)initWithRandomProvider:(EMSRandomProvider *)randomProvider {
-    NSParameterAssert(randomProvider);
 
+- (instancetype)initWithRandomProvider:(EMSRandomProvider *)randomProvider
+                            deviceInfo:(id)deviceInfo {
+    NSParameterAssert(randomProvider);
+    NSParameterAssert(deviceInfo);
     if (self = [super init]) {
         _randomProvider = randomProvider;
+        _deviceInfo = deviceInfo;
     }
     return self;
 }
 
-
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
     NSDictionary *parsedBody = [responseModel parsedBody];
-    NSDictionary *serviceUrls = parsedBody[@"serviceUrls"];
-    NSDictionary *luckyLog = parsedBody[@"luckyLogger"];
+    NSDictionary *hardwareIdSpecificConfig = parsedBody[@"overrides"][self.deviceInfo.hardwareId];
+    
+    
+    NSMutableDictionary *activeConfig = [[parsedBody mergeWithDictionary:hardwareIdSpecificConfig] mutableCopy];
+    activeConfig[@"serviceUrls"] = [parsedBody[@"serviceUrls"] mergeWithDictionary:hardwareIdSpecificConfig[@"serviceUrls"]];
+    activeConfig[@"luckyLogger"] = [parsedBody[@"luckyLogger"] mergeWithDictionary:hardwareIdSpecificConfig[@"luckyLogger"]];
 
-    return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:serviceUrls[@"eventService"]]
-                                           clientService:[self validateEmarsysUrl:serviceUrls[@"clientService"]]
-                                          predictService:[self validateEmarsysUrl:serviceUrls[@"predictService"]]
-                                   mobileEngageV2Service:[self validateEmarsysUrl:serviceUrls[@"mobileEngageV2Service"]]
-                                         deepLinkService:[self validateEmarsysUrl:serviceUrls[@"deepLinkService"]]
-                                            inboxService:[self validateEmarsysUrl:serviceUrls[@"inboxService"]]
-                                   v3MessageInboxService:[self validateEmarsysUrl:serviceUrls[@"v3MessageInboxService"]]
-                                                logLevel:[self calculateLogLevel:parsedBody[@"logLevel"]
-                                                                   withThreshold:luckyLog[@"threshold"]
-                                                               withLuckyLogLevel:luckyLog[@"logLevel"]]];
+    return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"eventService"]]
+                                           clientService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"clientService"]]
+                                          predictService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"predictService"]]
+                                   mobileEngageV2Service:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"mobileEngageV2Service"]]
+                                         deepLinkService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"deepLinkService"]]
+                                            inboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"inboxService"]]
+                                   v3MessageInboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"v3MessageInboxService"]]
+                                                logLevel:[self calculateLogLevel:activeConfig[@"logLevel"]
+                                                                   withThreshold:activeConfig[@"luckyLogger"][@"threshold"]
+                                                               withLuckyLogLevel:activeConfig[@"luckyLogger"][@"logLevel"]]];
 }
 
 - (LogLevel)calculateLogLevel:(NSString *)defaultLogLevel

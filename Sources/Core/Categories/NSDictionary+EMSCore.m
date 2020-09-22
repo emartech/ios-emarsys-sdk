@@ -133,4 +133,12 @@
     return result;
 }
 
+- (NSDictionary *)mergeWithDictionary:(NSDictionary *)dictionary {
+    NSMutableDictionary *mutableSelf = [self mutableCopy];
+    for (id key in [dictionary allKeys]) {
+        mutableSelf[key] = dictionary[key];
+    }
+    return [NSDictionary dictionaryWithDictionary:mutableSelf];
+}
+
 @end

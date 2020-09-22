@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable id)nullSafeValueForKey:(NSString *)key;
 
+- (NSDictionary *)mergeWithDictionary:(NSDictionary *)dictionary;
+
 @end
 
 NS_ASSUME_NONNULL_END

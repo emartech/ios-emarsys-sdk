@@ -536,7 +536,8 @@
                                                                              pushInternal:self.push
                                                                                deviceInfo:deviceInfo
                                                                     emarsysRequestFactory:emarsysRequestFactory
-                                                               remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider]
+                                                               remoteConfigResponseMapper:[[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider
+                                                                                                                                             deviceInfo:deviceInfo]
                                                                                  endpoint:self.endpoint
                                                                                    logger:self.logger
                                                                                    crypto:[[EMSCrypto alloc] init]
