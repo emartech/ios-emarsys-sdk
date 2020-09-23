@@ -184,6 +184,9 @@
         case UNAuthorizationStatusNotDetermined:
             authorizationStatus = @"notDetermined";
             break;
+        case UNAuthorizationStatusEphemeral:
+            authorizationStatus = @"ephemeral";
+            break;
     }
     return authorizationStatus;
 }
