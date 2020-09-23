@@ -171,22 +171,20 @@
 
 - (NSString *)authorizationStatusStringRepresentation:(UNAuthorizationStatus)status {
     NSString *authorizationStatus = @"notDetermined";
-    switch (status) {
-        case UNAuthorizationStatusAuthorized:
-            authorizationStatus = @"authorized";
-            break;
-        case UNAuthorizationStatusDenied:
-            authorizationStatus = @"denied";
-            break;
-        case UNAuthorizationStatusProvisional:
+    if (status == UNAuthorizationStatusAuthorized) {
+        authorizationStatus = @"authorized";
+    } else if (status == UNAuthorizationStatusDenied) {
+        authorizationStatus = @"denied";
+    } else if (@available(iOS 12.0, *)) {
+        if (status == UNAuthorizationStatusProvisional) {
             authorizationStatus = @"provisional";
-            break;
-        case UNAuthorizationStatusNotDetermined:
-            authorizationStatus = @"notDetermined";
-            break;
-        case UNAuthorizationStatusEphemeral:
+        }
+    } else if (status == UNAuthorizationStatusNotDetermined) {
+        authorizationStatus = @"notDetermined";
+    } else if (@available(iOS 14.0, *)) {
+        if (status == UNAuthorizationStatusEphemeral) {
             authorizationStatus = @"ephemeral";
-            break;
+        }
     }
     return authorizationStatus;
 }
