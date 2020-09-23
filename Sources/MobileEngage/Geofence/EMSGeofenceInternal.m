@@ -130,7 +130,7 @@
     [self.queue addOperationWithBlock:^{
         EMSGeofence *geofence = self.registeredGeofences[region.identifier];
         [weakSelf handleActionWithTriggers:geofence.triggers
-                                  type:@"enter"];
+                                      type:@"enter"];
     }];
 }
 
@@ -146,7 +146,7 @@
             [weakSelf registerGeofences];
         } else {
             [weakSelf handleActionWithTriggers:geofence.triggers
-                                      type:@"exit"];
+                                          type:@"exit"];
         }
     }];
 }
@@ -165,7 +165,13 @@
 }
 
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    if (CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
+    BOOL isAuthorized;
+    if (@available(iOS 14.0, *)) {
+        isAuthorized = [self.locationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways;
+    } else {
+        isAuthorized = CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways;
+    }
+    if (isAuthorized) {
         self.recalculateable = YES;
         [self.locationManager setDelegate:self];
         [self.locationManager setDesiredAccuracy:kCLLocationAccuracyNearestTenMeters];
