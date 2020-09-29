@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *productId;
 @property(nonatomic, readonly) NSString *title;
 @property(nonatomic, readonly) NSURL *linkUrl;
-@property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *customFields;
+@property(nonatomic, readonly) NSDictionary<NSString *, id> *customFields;
 @property(nonatomic, readonly) NSString *feature;
 @property(nonatomic, readonly) NSString *cohort;
 @property(nonatomic, readonly, nullable) NSURL *imageUrl;

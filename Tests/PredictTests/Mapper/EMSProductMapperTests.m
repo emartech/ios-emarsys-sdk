@@ -92,7 +92,9 @@
             @"msrp_try": @"339.95",
             @"price_try": @"339.95",
             @"msrp_usd": @"100",
-            @"price_usd": @"100"}];
+            @"price_usd": @"100",
+            @"null_value": [NSNull null]
+        }];
     }];
     EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
         [builder setRequiredFieldsWithProductId:@"2120"
@@ -191,6 +193,7 @@
                             "      \"price_try\": \"339.95\",\n"
                             "      \"msrp_usd\": \"100\",\n"
                             "      \"price_usd\": \"100\",\n"
+                            "      \"null_value\": null,\n"
                             "      \"link\": \"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html\",\n"
                             "      \"image\": \"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg\",\n"
                             "      \"zoom_image\": \"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg\",\n"
