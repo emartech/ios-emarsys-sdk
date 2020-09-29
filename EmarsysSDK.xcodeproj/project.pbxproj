@@ -4826,7 +4826,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				INFOPLIST_FILE = SdkHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -4845,7 +4845,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				INFOPLIST_FILE = SdkHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
