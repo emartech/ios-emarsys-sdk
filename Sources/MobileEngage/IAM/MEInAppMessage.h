@@ -5,13 +5,15 @@
 #import <Foundation/Foundation.h>
 #import "EMSResponseModel.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MEInAppMessage : NSObject
 
 @property(nonatomic, readonly) NSString *campaignId;
-@property(nonatomic, readonly) NSString *sid;
-@property(nonatomic, readonly) NSString *url;
+@property(nonatomic, readonly, nullable) NSString *sid;
+@property(nonatomic, readonly, nullable) NSString *url;
 @property(nonatomic, readonly) NSString *html;
-@property(nonatomic, readonly) EMSResponseModel *response;
+@property(nonatomic, readonly, nullable) EMSResponseModel *response;
 @property(nonatomic, readonly) NSDate *responseTimestamp;
 
 - (instancetype)initWithResponse:(EMSResponseModel *)responseModel;
@@ -29,3 +31,5 @@
 - (NSUInteger)hash;
 
 @end
+
+NS_ASSUME_NONNULL_END

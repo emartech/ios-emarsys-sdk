@@ -85,21 +85,50 @@
 }
 
 
-- (void)testData {
-    NSDictionary *expectedData = @{
-        @"loadingTimeStart": [self.loadingTimeStart numberValueInMillis],
-        @"loadingTimeEnd": [self.loadingTimeEnd numberValueInMillis],
-        @"loadingTimeDuration": [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart],
-        @"onScreenTimeStart": [self.onScreenTimeStart numberValueInMillis],
-        @"onScreenTimeEnd": [self.onScreenTimeEnd numberValueInMillis],
-        @"onScreenTimeDuration": [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart],
-        @"campaignId": self.inAppMessage.campaignId
-    };
-
+- (void)testData_onPushTriggeredInAppLog {
     [self.inappLog setOnScreenTimeStart:self.onScreenTimeStart];
     [self.inappLog setOnScreenTimeEnd:self.onScreenTimeEnd];
 
-    XCTAssertEqualObjects(self.inappLog.data, expectedData);
+    XCTAssertNotNil(self.inappLog.data[@"requestId"]);
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeStart"], [self.loadingTimeStart numberValueInMillis]);
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeEnd"], [self.loadingTimeEnd numberValueInMillis]);
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeDuration"], [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart]);
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeStart"], [self.onScreenTimeStart numberValueInMillis]);
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeEnd"], [self.onScreenTimeEnd numberValueInMillis]);
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeDuration"], [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart]);
+    XCTAssertEqualObjects(self.inappLog.data[@"campaignId"], self.inAppMessage.campaignId);
+}
+
+
+- (void)testData_onCustomEventTriggeredInAppLog {
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+    OCMStub([mockResponseModel requestModel]).andReturn(mockRequestModel);
+    OCMStub([mockResponseModel timestamp]).andReturn(self.loadingTimeStart);
+    OCMStub([mockResponseModel parsedBody]).andReturn(@{@"message": @{@"campaignId": @"testCampaignId"}});
+
+    MEInAppMessage *customEventTriggeredInAppMessage = [[MEInAppMessage alloc] initWithResponse:mockResponseModel];
+
+
+    EMSInAppLog *inappLog = [[EMSInAppLog alloc] initWithMessage:customEventTriggeredInAppMessage
+                                                  loadingTimeEnd:self.loadingTimeEnd];
+    NSDictionary *expectedData = @{
+            @"requestId": @"testRequestId",
+            @"loadingTimeStart": [self.loadingTimeStart numberValueInMillis],
+            @"loadingTimeEnd": [self.loadingTimeEnd numberValueInMillis],
+            @"loadingTimeDuration": [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart],
+            @"onScreenTimeStart": [self.onScreenTimeStart numberValueInMillis],
+            @"onScreenTimeEnd": [self.onScreenTimeEnd numberValueInMillis],
+            @"onScreenTimeDuration": [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart],
+            @"campaignId": self.inAppMessage.campaignId
+    };
+
+    [inappLog setOnScreenTimeStart:self.onScreenTimeStart];
+    [inappLog setOnScreenTimeEnd:self.onScreenTimeEnd];
+
+    XCTAssertEqualObjects(inappLog.data, expectedData);
 }
 
 @end

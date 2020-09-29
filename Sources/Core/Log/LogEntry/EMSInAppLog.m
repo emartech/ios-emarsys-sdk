@@ -19,7 +19,11 @@
     NSParameterAssert(loadingTimeEnd);
     if (self = [super init]) {
         NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
-
+        if ([message response]) {
+            mutableDictionary[@"requestId"] = [[[message response] requestModel] requestId];
+        } else {
+            mutableDictionary[@"requestId"] = [[NSUUID UUID] UUIDString];
+        }
         mutableDictionary[@"loadingTimeStart"] = [message.responseTimestamp numberValueInMillis];
         mutableDictionary[@"loadingTimeEnd"] = [loadingTimeEnd numberValueInMillis];
         mutableDictionary[@"loadingTimeDuration"] = [loadingTimeEnd numberValueInMillisFromDate:message.responseTimestamp];
