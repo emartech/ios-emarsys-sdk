@@ -10,6 +10,9 @@ class ConfigViewController: UIViewController {
     @IBOutlet weak var applicationCodeValue: UITextField!
     @IBOutlet weak var merchantIdValue: UITextField!
     @IBOutlet weak var contactFieldIdValue: UITextField!
+    @IBOutlet weak var hwIdField: UILabel!
+    @IBOutlet weak var languageCodeField: UILabel!
+    @IBOutlet weak var pushSettingsField: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +21,9 @@ class ConfigViewController: UIViewController {
         applicationCodeValue.text = Emarsys.config.applicationCode()
         merchantIdValue.text = Emarsys.config.merchantId()
         contactFieldIdValue.text = Emarsys.config.contactFieldId().stringValue
+        hwIdField.text = Emarsys.config.hardwareId()
+        languageCodeField.text = Emarsys.config.languageCode()
+        pushSettingsField.text = Emarsys.config.pushSettings().description
     }
 
     @IBAction func changeApplicationCodeButtonClicked(_ sender: Any) {
