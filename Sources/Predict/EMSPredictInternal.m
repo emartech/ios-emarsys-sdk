@@ -160,6 +160,7 @@
     [self recommendProductsWithLogic:logic
                              filters:nil
                                limit:nil
+                    availabilityZone:nil
                        productsBlock:productsBlock];
 }
 
@@ -169,6 +170,7 @@
     [self recommendProductsWithLogic:logic
                              filters:nil
                                limit:limit
+                    availabilityZone:nil
                        productsBlock:productsBlock];
 }
 
@@ -178,24 +180,74 @@
     [self recommendProductsWithLogic:logic
                              filters:filters
                                limit:nil
+                    availabilityZone:nil
                        productsBlock:productsBlock];
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic
+                             filters:filters
+                               limit:limit
+                    availabilityZone:nil
+                       productsBlock:productsBlock];
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic
+                             filters:nil
+                               limit:nil
+                    availabilityZone:availabilityZone
+                       productsBlock:productsBlock];
+
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                             limit:(NSNumber *)limit
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic
+                             filters:nil
+                               limit:limit
+                    availabilityZone:availabilityZone
+                       productsBlock:productsBlock];
+
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(NSArray *)filters
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    [self recommendProductsWithLogic:logic
+                             filters:filters
+                               limit:nil
+                    availabilityZone:availabilityZone
+                       productsBlock:productsBlock];
+
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(NSArray *)filters
+                             limit:(NSNumber *)limit
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+
     NSParameterAssert(productsBlock);
     NSParameterAssert(logic);
 
-    EMSRequestModel *requestModel = [[[[[[[[[self.requestBuilderProvider provideBuilder]
+    EMSRequestModel *requestModel = [[[[[[[[[[self.requestBuilderProvider provideBuilder]
             withLogic:logic]
             withLimit:limit]
-            withFilter:filter]
+            withFilter:filters]
             withLastSearchTerm:self.lastSearchTerm]
             withLastCartItems:self.lastCartItems]
             withLastCategoryPath:self.lastCategoryPath]
             withLastViewItemId:self.lastViewItemId]
+            withAvailabilityZone:availabilityZone]
             build];
 
     __weak typeof(self) weakSelf = self;

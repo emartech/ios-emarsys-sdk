@@ -44,6 +44,26 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock;
 
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                  availabilityZone:(nullable NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock;
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                             limit:(nullable NSNumber *)limit
+                  availabilityZone:(nullable NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock;
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
+                  availabilityZone:(nullable NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock;
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
+                             limit:(nullable NSNumber *)limit
+                  availabilityZone:(nullable NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock;
+
 - (void)trackRecommendationClick:(EMSProduct *)product;
 
 @end

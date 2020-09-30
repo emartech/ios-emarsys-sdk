@@ -21,6 +21,7 @@
 @property(nonatomic, strong) NSString *lastCategoryPath;
 @property(nonatomic, strong) NSNumber *limit;
 @property(nonatomic, strong) NSArray<id <EMSRecommendationFilterProtocol>> *filter;
+@property(nonatomic, strong) NSString *availabilityZone;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
@@ -70,6 +71,11 @@
 
 - (instancetype)withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter {
     _filter = filter;
+    return self;
+}
+
+- (instancetype)withAvailabilityZone:(NSString *)availabilityZone {
+    _availabilityZone = availabilityZone;
     return self;
 }
 
@@ -144,6 +150,7 @@
     }
     logicData[@"ci"] = [self requestContext].customerId;
     logicData[@"vi"] = [self requestContext].visitorId;
+    logicData[@"az"] = self.availabilityZone;
 
     if (!self.logic.data || [self.logic.data count] == 0) {
         if ([self.logic.logic isEqualToString:@"SEARCH"]) {

@@ -98,7 +98,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
 
-                [[requestContextMock should] receive:@selector(setCustomerId:) withArguments:customerId];
+                [[requestContextMock should] receive:@selector(setCustomerId:)
+                                       withArguments:customerId];
                 [internal setContactWithContactFieldValue:customerId];
             });
 
@@ -132,10 +133,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_category_view"];
-                        [builder addPayloadEntryWithKey:@"vc"
-                                                  value:categoryPath];
-                    }
+                            [builder setType:@"predict_item_category_view"];
+                            [builder addPayloadEntryWithKey:@"vc"
+                                                      value:categoryPath];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -182,10 +183,11 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_view"];
-                        [builder addPayloadEntryWithKey:@"v"
-                                                  value:[NSString stringWithFormat:@"i:%@", itemId]];
-                    }
+                            [builder setType:@"predict_item_view"];
+                            [builder addPayloadEntryWithKey:@"v"
+                                                      value:[NSString stringWithFormat:@"i:%@",
+                                                                                       itemId]];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -238,13 +240,13 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_item_view"];
-                        [builder addPayloadEntryWithKey:@"v"
-                                                  value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
-                                                                                   product.productId,
-                                                                                   product.feature,
-                                                                                   product.cohort]];
-                    }
+                            [builder setType:@"predict_item_view"];
+                            [builder addPayloadEntryWithKey:@"v"
+                                                      value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
+                                                                                       product.productId,
+                                                                                       product.feature,
+                                                                                       product.cohort]];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -282,14 +284,18 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 NSString *const shardId = @"shardId";
 
                 EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
-                [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:timestamp];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp];
 
                 EMSUUIDProvider *shardIdProvider = [EMSUUIDProvider mock];
-                [[shardIdProvider should] receive:@selector(provideUUIDString) andReturn:shardId];
+                [[shardIdProvider should] receive:@selector(provideUUIDString)
+                                        andReturn:shardId];
 
                 PRERequestContext *const requestContext = [PRERequestContext mock];
-                [[requestContext should] receive:@selector(timestampProvider) andReturn:timestampProvider];
-                [[requestContext should] receive:@selector(uuidProvider) andReturn:shardIdProvider];
+                [[requestContext should] receive:@selector(timestampProvider)
+                                       andReturn:timestampProvider];
+                [[requestContext should] receive:@selector(uuidProvider)
+                                       andReturn:shardIdProvider];
 
                 EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
                                                                        type:@"predict_cart"
@@ -298,15 +304,20 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                         ttl:FLT_MAX];
 
                 EMSRequestManager *const requestManager = [EMSRequestManager mock];
-                [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
                 EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
                                                                                    requestManager:requestManager
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
 
                 [internal trackCartWithCartItems:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
+                        [EMSCartItem itemWithItemId:@"itemId1"
+                                              price:200.0
+                                           quantity:100.0],
+                        [EMSCartItem itemWithItemId:@"itemId2"
+                                              price:201.0
+                                           quantity:101.0]
                 ]];
             });
 
@@ -338,10 +349,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_search_term"];
-                        [builder addPayloadEntryWithKey:@"q"
-                                                  value:searchTerm];
-                    }
+                            [builder setType:@"predict_search_term"];
+                            [builder addPayloadEntryWithKey:@"q"
+                                                      value:searchTerm];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -366,7 +377,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception when orderId is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] trackPurchaseWithOrderId:nil items:@[]];
+                    [[EMSPredictInternal new] trackPurchaseWithOrderId:nil
+                                                                 items:@[]];
                     fail(@"Expected Exception when orderId is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: orderId"];
@@ -376,7 +388,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception when items is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] trackPurchaseWithOrderId:@"orderId" items:nil];
+                    [[EMSPredictInternal new] trackPurchaseWithOrderId:@"orderId"
+                                                                 items:nil];
                     fail(@"Expected Exception when items is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: items"];
@@ -390,14 +403,18 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 NSString *const orderId = @"orderId";
 
                 EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
-                [[timestampProvider should] receive:@selector(provideTimestamp) andReturn:timestamp];
+                [[timestampProvider should] receive:@selector(provideTimestamp)
+                                          andReturn:timestamp];
 
                 EMSUUIDProvider *shardIdProvider = [EMSUUIDProvider mock];
-                [[shardIdProvider should] receive:@selector(provideUUIDString) andReturn:shardId];
+                [[shardIdProvider should] receive:@selector(provideUUIDString)
+                                        andReturn:shardId];
 
                 PRERequestContext *const requestContext = [PRERequestContext mock];
-                [[requestContext should] receive:@selector(timestampProvider) andReturn:timestampProvider];
-                [[requestContext should] receive:@selector(uuidProvider) andReturn:shardIdProvider];
+                [[requestContext should] receive:@selector(timestampProvider)
+                                       andReturn:timestampProvider];
+                [[requestContext should] receive:@selector(uuidProvider)
+                                       andReturn:shardIdProvider];
 
                 EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
                                                                        type:@"predict_purchase"
@@ -406,17 +423,23 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                         ttl:FLT_MAX];
 
                 EMSRequestManager *const requestManager = [EMSRequestManager mock];
-                [[requestManager should] receive:@selector(submitShard:) withArguments:expectedShard];
+                [[requestManager should] receive:@selector(submitShard:)
+                                   withArguments:expectedShard];
                 EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContext
                                                                                    requestManager:requestManager
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
 
 
-                [internal trackPurchaseWithOrderId:orderId items:@[
-                    [EMSCartItem itemWithItemId:@"itemId1" price:200.0 quantity:100.0],
-                    [EMSCartItem itemWithItemId:@"itemId2" price:201.0 quantity:101.0]
-                ]];
+                [internal trackPurchaseWithOrderId:orderId
+                                             items:@[
+                                                     [EMSCartItem itemWithItemId:@"itemId1"
+                                                                           price:200.0
+                                                                        quantity:100.0],
+                                                     [EMSCartItem itemWithItemId:@"itemId2"
+                                                                           price:201.0
+                                                                        quantity:101.0]
+                                             ]];
             });
 
         });
@@ -453,18 +476,30 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 mockRequestContext = [PRERequestContext nullMock];
                 mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
                 mockBuilder = [EMSPredictRequestModelBuilder nullMock];
-                [mockBuilderProvider stub:@selector(provideBuilder) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastSearchTerm:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withFilter:) andReturn:mockBuilder];
+                [mockBuilderProvider stub:@selector(provideBuilder)
+                                andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withFilter:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withAvailabilityZone:)
+                        andReturn:mockBuilder];
 
                 mockProductMapper = [EMSProductMapper nullMock];
-                [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
-                [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
-                [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
+                [mockRequestContext stub:@selector(timestampProvider)
+                               andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider)
+                               andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId)
+                               andReturn:@"1428C8EE286EC34B"];
 
                 predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
                                                                       requestManager:mockRequestManager
@@ -474,7 +509,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should throw exception productBlocks is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] recommendProductsWithLogic:EMSLogic.search productsBlock:nil];
+                    [[EMSPredictInternal new] recommendProductsWithLogic:EMSLogic.search
+                                                           productsBlock:nil];
                     fail(@"Expected Exception when productBlocks is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: productsBlock"];
@@ -710,19 +746,32 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 mockRequestContext = [PRERequestContext nullMock];
                 mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
                 mockBuilder = [EMSPredictRequestModelBuilder nullMock];
-                [mockBuilderProvider stub:@selector(provideBuilder) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastSearchTerm:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLogic:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withFilter:) andReturn:mockBuilder];
+                [mockBuilderProvider stub:@selector(provideBuilder)
+                                andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLogic:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withFilter:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withAvailabilityZone:)
+                        andReturn:mockBuilder];
 
                 mockProductMapper = [EMSProductMapper nullMock];
-                [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
-                [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
-                [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
+                [mockRequestContext stub:@selector(timestampProvider)
+                               andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider)
+                               andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId)
+                               andReturn:@"1428C8EE286EC34B"];
 
                 predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
                                                                       requestManager:mockRequestManager
@@ -756,19 +805,32 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 mockRequestContext = [PRERequestContext nullMock];
                 mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
                 mockBuilder = [EMSPredictRequestModelBuilder nullMock];
-                [mockBuilderProvider stub:@selector(provideBuilder) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastSearchTerm:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLogic:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withFilter:) andReturn:mockBuilder];
+                [mockBuilderProvider stub:@selector(provideBuilder)
+                                andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLogic:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withFilter:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withAvailabilityZone:)
+                        andReturn:mockBuilder];
 
                 mockProductMapper = [EMSProductMapper nullMock];
-                [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
-                [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
-                [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
+                [mockRequestContext stub:@selector(timestampProvider)
+                               andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider)
+                               andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId)
+                               andReturn:@"1428C8EE286EC34B"];
 
                 predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
                                                                       requestManager:mockRequestManager
@@ -778,10 +840,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should pass filter to requestModelBuilder", ^{
                 NSArray<id <EMSRecommendationFilterProtocol>> *filters = @[
-                    [EMSRecommendationFilter excludeFilterWithField:@"testField"
-                                                            isValue:@"testFieldValue"],
-                    [EMSRecommendationFilter excludeFilterWithField:@"testField2"
-                                                           hasValue:@"testFieldValue2"]];
+                        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                isValue:@"testFieldValue"],
+                        [EMSRecommendationFilter excludeFilterWithField:@"testField2"
+                                                               hasValue:@"testFieldValue2"]];
 
                 [[mockBuilder should] receive:@selector(withFilter:)
                                     andReturn:mockBuilder
@@ -808,19 +870,32 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 mockRequestContext = [PRERequestContext nullMock];
                 mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
                 mockBuilder = [EMSPredictRequestModelBuilder nullMock];
-                [mockBuilderProvider stub:@selector(provideBuilder) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastSearchTerm:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCartItems:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastViewItemId:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLastCategoryPath:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLimit:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withLogic:) andReturn:mockBuilder];
-                [mockBuilder stub:@selector(withFilter:) andReturn:mockBuilder];
+                [mockBuilderProvider stub:@selector(provideBuilder)
+                                andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLogic:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withFilter:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withAvailabilityZone:)
+                        andReturn:mockBuilder];
 
                 mockProductMapper = [EMSProductMapper nullMock];
-                [mockRequestContext stub:@selector(timestampProvider) andReturn:[EMSTimestampProvider new]];
-                [mockRequestContext stub:@selector(uuidProvider) andReturn:[EMSUUIDProvider new]];
-                [mockRequestContext stub:@selector(merchantId) andReturn:@"1428C8EE286EC34B"];
+                [mockRequestContext stub:@selector(timestampProvider)
+                               andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider)
+                               andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId)
+                               andReturn:@"1428C8EE286EC34B"];
 
                 predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
                                                                       requestManager:mockRequestManager
@@ -830,10 +905,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
             it(@"should pass filter to requestModelBuilder", ^{
                 NSArray<id <EMSRecommendationFilterProtocol>> *filters = @[
-                    [EMSRecommendationFilter excludeFilterWithField:@"testField"
-                                                            isValue:@"testFieldValue"],
-                    [EMSRecommendationFilter excludeFilterWithField:@"testField2"
-                                                           hasValue:@"testFieldValue2"]];
+                        [EMSRecommendationFilter excludeFilterWithField:@"testField"
+                                                                isValue:@"testFieldValue"],
+                        [EMSRecommendationFilter excludeFilterWithField:@"testField2"
+                                                               hasValue:@"testFieldValue2"]];
 
                 [[mockBuilder should] receive:@selector(withFilter:)
                                     andReturn:mockBuilder
@@ -850,11 +925,75 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
+        describe(@"recommendProductsWithLogic:availabilityZone:limit:productsBlock:", ^{
+
+            __block EMSRequestManager *mockRequestManager;
+            __block PRERequestContext *mockRequestContext;
+            __block EMSPredictRequestModelBuilderProvider *mockBuilderProvider;
+            __block EMSProductMapper *mockProductMapper;
+            __block EMSPredictInternal *predictInternal;
+            __block EMSPredictRequestModelBuilder *mockBuilder;
+
+            beforeEach(^{
+                mockRequestManager = [EMSRequestManager nullMock];
+                mockRequestContext = [PRERequestContext nullMock];
+                mockBuilderProvider = [EMSPredictRequestModelBuilderProvider nullMock];
+                mockBuilder = [EMSPredictRequestModelBuilder nullMock];
+                [mockBuilderProvider stub:@selector(provideBuilder)
+                                andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastSearchTerm:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCartItems:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastViewItemId:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLastCategoryPath:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLimit:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withLogic:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withFilter:)
+                        andReturn:mockBuilder];
+                [mockBuilder stub:@selector(withAvailabilityZone:)
+                        andReturn:mockBuilder];
+
+                mockProductMapper = [EMSProductMapper nullMock];
+                [mockRequestContext stub:@selector(timestampProvider)
+                               andReturn:[EMSTimestampProvider new]];
+                [mockRequestContext stub:@selector(uuidProvider)
+                               andReturn:[EMSUUIDProvider new]];
+                [mockRequestContext stub:@selector(merchantId)
+                               andReturn:@"1428C8EE286EC34B"];
+
+                predictInternal = [[EMSPredictInternal alloc] initWithRequestContext:mockRequestContext
+                                                                      requestManager:mockRequestManager
+                                                              requestBuilderProvider:mockBuilderProvider
+                                                                       productMapper:mockProductMapper];
+            });
+
+            it(@"should pass availabilityZone to requestModelBuilder", ^{
+                [[mockBuilder should] receive:@selector(withAvailabilityZone:)
+                                    andReturn:mockBuilder
+                                withArguments:@"hu"];
+                [[mockBuilder should] receive:@selector(withLimit:)
+                                    andReturn:mockBuilder
+                                withArguments:@123];
+
+                [predictInternal recommendProductsWithLogic:EMSLogic.search
+                                                      limit:@123
+                                           availabilityZone:@"hu"
+                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+                                              }];
+            });
+        });
+
         describe(@"trackTag:withAttributes:", ^{
 
             it(@"should throw exception when tag is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] trackTag:nil withAttributes:@{}];
+                    [[EMSPredictInternal new] trackTag:nil
+                                        withAttributes:@{}];
                     fail(@"Expected Exception when tag is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: tag"];
@@ -876,10 +1015,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                           withCount:2];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_tag"];
-                        [builder addPayloadEntryWithKey:@"t"
-                                                  value:tag];
-                    }
+                            [builder setType:@"predict_tag"];
+                            [builder addPayloadEntryWithKey:@"t"
+                                                      value:tag];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -895,15 +1034,16 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                    requestManager:requestManager
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
-                [internal trackTag:tag withAttributes:nil];
+                [internal trackTag:tag
+                    withAttributes:nil];
             });
 
             it(@"should submit shard to requestManager with attributes", ^{
                 NSString *tag = @"testTag";
                 NSDictionary *attributes = @{
-                    @"att1": @"value1",
-                    @"att2": @"value2",
-                    @"att3": @"value3"};
+                        @"att1": @"value1",
+                        @"att2": @"value2",
+                        @"att3": @"value3"};
                 NSDate *timestamp = [NSDate date];
 
                 EMSTimestampProvider *timestampProvider = [EMSTimestampProvider mock];
@@ -923,10 +1063,10 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                   encoding:NSUTF8StringEncoding];
 
                 EMSShard *expectedShard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:@"predict_tag"];
-                        [builder addPayloadEntryWithKey:@"ta"
-                                                  value:expectedPayload];
-                    }
+                            [builder setType:@"predict_tag"];
+                            [builder addPayloadEntryWithKey:@"ta"
+                                                      value:expectedPayload];
+                        }
                                                   timestampProvider:timestampProvider
                                                        uuidProvider:uuidProvider];
 
@@ -942,7 +1082,8 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                                                                    requestManager:requestManager
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
-                [internal trackTag:tag withAttributes:attributes];
+                [internal trackTag:tag
+                    withAttributes:attributes];
             });
 
         });

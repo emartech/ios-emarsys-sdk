@@ -110,18 +110,75 @@
 }
 
 - (void)recommendProductsWithLogic:(EMSLogic *)logic
-                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter
+                           filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"productsBlock"] = @(productsBlock != nil);
     parameters[@"logic"] = logic;
     parameters[@"limit"] = limit;
-    parameters[@"filter"] = [filter description];
+    parameters[@"filter"] = [filters description];
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters], LogLevelDebug);
 }
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"availabilityZone"] = availabilityZone;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                             limit:(NSNumber *)limit
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"limit"] = limit;
+    parameters[@"availabilityZone"] = availabilityZone;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(NSArray *)filters
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"filter"] = [filters description];
+    parameters[@"availabilityZone"] = availabilityZone;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
+- (void)recommendProductsWithLogic:(EMSLogic *)logic
+                           filters:(NSArray *)filters
+                             limit:(NSNumber *)limit
+                  availabilityZone:(NSString *)availabilityZone
+                     productsBlock:(EMSProductsBlock)productsBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"productsBlock"] = @(productsBlock != nil);
+    parameters[@"logic"] = logic;
+    parameters[@"limit"] = limit;
+    parameters[@"filter"] = [filters description];
+    parameters[@"availabilityZone"] = availabilityZone;
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
 
 - (void)trackRecommendationClick:(EMSProduct *)product {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
