@@ -907,7 +907,18 @@
     XCTAssertEqualObjects(result, pushSettings);
 }
 
+- (void)testRefreshConfigFromRemoteConfig_shouldNotDoAnything_whenApplicationCodeIsNil {
+    OCMReject([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]);
+    OCMReject([self.mockRequestManager submitRequestModelNow:[OCMArg any]
+                                                successBlock:[OCMArg any]
+                                                  errorBlock:[OCMArg any]]);
+
+    [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
+}
+
 - (void)testRefreshConfigFromRemoteConfig_signature_error {
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"testApplicationCode");
+
     NSError *error = [NSError errorWithCode:1401
                        localizedDescription:@"testError"];
 
@@ -928,6 +939,8 @@
 }
 
 - (void)testRefreshConfigFromRemoteConfig_signature_success {
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"testApplicationCode");
+
     NSData *signatureData = [NSData new];
 
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);

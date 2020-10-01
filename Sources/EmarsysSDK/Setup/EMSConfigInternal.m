@@ -91,21 +91,23 @@
 }
 
 - (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    EMSRequestModel *signatureRequestModel = [self.emarsysRequestFactory createRemoteConfigSignatureRequestModel];
-    [self.requestManager submitRequestModelNow:signatureRequestModel
-                                  successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                      [self fetchRemoteConfigWithSignatureData:response.body
-                                                               completionBlock:completionBlock];
-                                  }
-                                    errorBlock:^(NSString *requestId, NSError *error) {
-                                        if (completionBlock) {
-                                            completionBlock(error);
-                                        }
-                                        if (error) {
-                                            [self.endpoint reset];
-                                            [self.logger reset];
-                                        }
-                                    }];
+    if (self.meRequestContext.applicationCode) {
+        EMSRequestModel *signatureRequestModel = [self.emarsysRequestFactory createRemoteConfigSignatureRequestModel];
+        [self.requestManager submitRequestModelNow:signatureRequestModel
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                          [self fetchRemoteConfigWithSignatureData:response.body
+                                                                   completionBlock:completionBlock];
+                                      }
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+                                            if (completionBlock) {
+                                                completionBlock(error);
+                                            }
+                                            if (error) {
+                                                [self.endpoint reset];
+                                                [self.logger reset];
+                                            }
+                                        }];
+    }
 }
 
 - (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
