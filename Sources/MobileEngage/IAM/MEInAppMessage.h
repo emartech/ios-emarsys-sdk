@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithResponse:(EMSResponseModel *)responseModel;
 
 - (instancetype)initWithCampaignId:(NSString *)campaignId
-                               sid:(NSString *)sid
-                               url:(NSString *)url
+                               sid:(nullable NSString *)sid
+                               url:(nullable NSString *)url
                               html:(NSString *)html
                  responseTimestamp:(NSDate *)responseTimestamp;
 
