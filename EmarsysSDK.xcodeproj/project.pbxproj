@@ -799,8 +799,10 @@
 		F2A21028A513F7DA68C6F68B /* EMSRandomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */; };
 		F2A213DF1ABE3A5998EEC3B9 /* EMSRandomProviderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */; };
 		F2A21551072282044E7BCDDE /* EMSIAMAppEventProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */; };
+		F2A2185BBF96805988D3FDCD /* EMSPredictInternalProtocolTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21F2BFED6C5FAE6BADC42 /* EMSPredictInternalProtocolTests.m */; };
 		F2A218FC7528D86470717AE7 /* EMSIAMCloseProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */; };
 		F2A21987EFF34110ACA9B258 /* EMSRandomProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */; };
+		F2A21D132A18B5F9A432FC65 /* EMSPredictInternalProtocolTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21F2BFED6C5FAE6BADC42 /* EMSPredictInternalProtocolTests.m */; };
 		F2A21DC547106E6DD91FCD32 /* EMSRandomProviderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */; };
 /* End PBXBuildFile section */
 
@@ -1530,6 +1532,7 @@
 		F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRandomProvider.h; sourceTree = "<group>"; };
 		F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRandomProviderTest.m; sourceTree = "<group>"; };
 		F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMAppEventProtocol.h; sourceTree = "<group>"; };
+		F2A21F2BFED6C5FAE6BADC42 /* EMSPredictInternalProtocolTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictInternalProtocolTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3276,6 +3279,7 @@
 				6425902F730BDBF32A1325AD /* Requests */,
 				642596FA8D06ADD945F657FA /* Mapper */,
 				64259F01AC1615684B35B6B6 /* Recommendations */,
+				F2A21F2BFED6C5FAE6BADC42 /* EMSPredictInternalProtocolTests.m */,
 			);
 			path = PredictTests;
 			sourceTree = "<group>";
@@ -4266,6 +4270,7 @@
 				32C6FC02055901363482E29A /* EMSEventHandlerProtocolBlockConverterTests.m in Sources */,
 				32C6F0A1786980F838F2CE92 /* EMSEventHandlerProtocolImplementationTests.m in Sources */,
 				642596192A4396F1A1A14437 /* EMSInstanceRouterTests.m in Sources */,
+				F2A21D132A18B5F9A432FC65 /* EMSPredictInternalProtocolTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4489,6 +4494,7 @@
 				642590A2729A4946FFFCDD17 /* EMSLogicTests.m in Sources */,
 				32C6F2A1EA0FB509509B5E74 /* EMSRecommendationFilterTests.m in Sources */,
 				32C6F6ADF0073BBF2B50F8F6 /* EMSXPResponseHandlerTests.m in Sources */,
+				F2A2185BBF96805988D3FDCD /* EMSPredictInternalProtocolTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

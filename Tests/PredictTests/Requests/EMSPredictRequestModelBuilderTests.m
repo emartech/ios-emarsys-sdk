@@ -233,6 +233,22 @@
           }];
 }
 
+- (void)testAvailabilityZone {
+    OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
+
+    EMSLogic *logic = EMSLogic.search;
+    NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
+    mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
+    mutableQueryParams[@"az"] = @"hu";
+    mutableQueryParams[@"vi"] = self.mockContext.visitorId;
+    [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
+       queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
+          builderBlock:^(EMSPredictRequestModelBuilder *builder) {
+              [builder withLogic:logic];
+              [builder withAvailabilityZone:@"hu"];
+          }];
+}
+
 - (void)testVisitorId_whenNil {
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];

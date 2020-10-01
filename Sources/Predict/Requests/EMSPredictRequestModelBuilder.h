@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)withFilter:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filter;
 
+- (instancetype)withAvailabilityZone:(nullable NSString *)availabilityZone;
+
 - (EMSRequestModel *)build;
 
 @end
