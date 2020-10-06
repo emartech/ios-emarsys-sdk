@@ -18,6 +18,9 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSStorage.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSGeofenceInternalTests : XCTestCase
 
@@ -54,6 +57,8 @@
     OCMStub([self.mockRequestFactory createGeofenceRequestModel]).andReturn(self.mockRequestModel);
     OCMStub([self.mockStorage numberForKey:@"isGeofenceEnabled"]).andReturn(@(YES));
 
+    [MEExperimental enableFeature:[EMSInnerFeature mobileEngage]];
+
     _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                                              requestManager:self.mockRequestManager
                                                              responseMapper:self.mockResponseMapper
@@ -65,6 +70,7 @@
 }
 
 - (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
     [self.mockLocationManager stopMocking];
 }
 

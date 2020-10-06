@@ -14,6 +14,8 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSStorage.h"
+#import "EMSInnerFeature.h"
+#import "MEExperimental.h"
 
 @interface EMSGeofenceInternal ()
 
@@ -55,7 +57,7 @@
         _queue = queue;
         _geofenceLimit = 20;
         _registeredGeofences = [NSMutableDictionary dictionary];
-        _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue];
+        _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue] && [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
         if (self.isEnabled) {
             [self fetchGeofences];
         }
