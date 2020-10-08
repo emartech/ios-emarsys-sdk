@@ -45,6 +45,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
                                                             object:nil];
     }];
+    [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
 }
 
 + (void)initializeDefaultCategory {

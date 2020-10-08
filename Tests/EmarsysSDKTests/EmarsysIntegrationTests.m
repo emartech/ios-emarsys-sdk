@@ -28,6 +28,34 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
     [EmarsysTestUtils tearDownEmarsys];
 }
 
+- (void)testSerialExecution {
+    [EmarsysTestUtils tearDownEmarsys];
+    
+    EMSConfig *configWithFeatures = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        [builder setMobileEngageApplicationCode:@"14C19-A121F"];
+        [builder setContactFieldId:@3];
+    }];
+
+    [Emarsys setupWithConfig:configWithFeatures];
+    
+    __block NSError *returnedError = [NSError errorWithCode:-1400
+                                       localizedDescription:@"testError"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    
+    [Emarsys trackCustomEventWithName:@"testEvent"
+                      eventAttributes:nil
+                      completionBlock:^(NSError * _Nullable error) {
+        returnedError = error;
+        [expectation fulfill];
+    }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
+}
+
 - (void)testClearContact {
     [self integrationTestWithExecutionBlock:^(EMSCompletionBlock completionBlock) {
         [Emarsys clearContactWithCompletionBlock:completionBlock];
