@@ -14,6 +14,7 @@
 @property(nonatomic, strong) NSString *inboxService;
 @property(nonatomic, strong) NSString *v3MessageInboxService;
 @property(nonatomic, assign) LogLevel logLevel;
+@property(nonatomic, strong) NSDictionary *features;
 
 - (instancetype)initWithEventService:(NSString *)eventService
                        clientService:(NSString *)clientService
@@ -22,6 +23,7 @@
                      deepLinkService:(NSString *)deepLinkService
                         inboxService:(NSString *)inboxService
                v3MessageInboxService:(NSString *)v3MessageInboxService
-                            logLevel:(LogLevel)logLevel;
+                            logLevel:(LogLevel)logLevel
+                            features:(NSDictionary *)features;
 
 @end

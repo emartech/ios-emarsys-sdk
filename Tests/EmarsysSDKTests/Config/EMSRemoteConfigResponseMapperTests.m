@@ -26,7 +26,7 @@
 - (void)testInit_randomProvider_mustNotBeNil {
     @try {
         [[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:nil
-                                                           deviceInfo:self.mockDeviceInfo] ;
+                                                           deviceInfo:self.mockDeviceInfo];
         XCTFail(@"Expected Exception when randomProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: randomProvider");
@@ -55,6 +55,11 @@
                                 "                \"inboxService\":\"https://testinboxService.url\",\n"
                                 "                \"v3MessageInboxService\":\"https://inbox.emarsys.net/test/test\"\n"
                                 "        },\n"
+                                "        \"features\":{\n "
+                                "               \"mobileEngage\":false,\n "
+                                "               \"predict\":true,\n "
+                                "               \"experimental_feature1\":false\n "
+                                "            },\n"
                                 "        \"logLevel\":\"warn\"\n"
                                 "    }";
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
@@ -71,7 +76,11 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:@"https://inbox.emarsys.net/test/test"
-                                                                           logLevel:LogLevelWarn];
+                                                                           logLevel:LogLevelWarn
+                                                                           features:@{
+                                                                                   @"mobile_engage": @NO,
+                                                                                   @"predict": @YES,
+                                                                                   @"experimental_feature1": @NO}];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
@@ -80,7 +89,7 @@
 
 - (void)testMap_overrides {
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
-    
+
     EMSRemoteConfigResponseMapper *mapper = [[EMSRemoteConfigResponseMapper alloc] initWithRandomProvider:randomProvider
                                                                                                deviceInfo:self.mockDeviceInfo];
     NSString *responseRawJson = @"{\n"
@@ -94,12 +103,22 @@
                                 "                \"v3MessageInboxService\":\"https://inbox.emarsys.net/test/test\"\n"
                                 "        },\n"
                                 "        \"logLevel\":\"warn\",\n"
+                                "        \"features\":{\n "
+                                "               \"mobileEngage\":true,\n "
+                                "               \"predict\":true,\n "
+                                "               \"experimentalFeature1\":false\n "
+                                "            },\n"
                                 "        \"overrides\":{\n"
                                 "        \"testHWId\":{\n"
                                 "            \"serviceUrls\":{\n"
                                 "                \"eventService\":\"https://event.emarsys.com/test/test\",\n"
                                 "                    \"clientService\":\"https://client2.emarsys.com/test/test\",\n"
                                 "                    \"predictService\":\"https://predict.emarsys.com/test/test\",\n"
+                                "            },\n"
+                                "            \"features\":{\n "
+                                "                \"mobileEngage\":false,\n "
+                                "                \"predict\":true,\n "
+                                "                \"experimentalFeature1\":false\n "
                                 "            },\n"
                                 "            \"logLevel\":\"error\",\n"
                                 "            },"
@@ -119,7 +138,11 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:@"https://inbox.emarsys.net/test/test"
-                                                                           logLevel:LogLevelError];
+                                                                           logLevel:LogLevelError
+                                                                           features:@{
+                                                                                   @"mobile_engage" : @NO,
+                                                                                   @"predict": @YES,
+                                                                                   @"experimental_feature1": @NO}];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
@@ -138,7 +161,8 @@
                                                               deepLinkService:nil
                                                                  inboxService:nil
                                                         v3MessageInboxService:nil
-                                                                     logLevel:LogLevelError];
+                                                                     logLevel:LogLevelError
+                                                                     features:nil];
 
     EMSRemoteConfig *result = [mapper map:responseModel];
 
@@ -172,7 +196,8 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:nil
-                                                                           logLevel:LogLevelDebug];
+                                                                           logLevel:LogLevelDebug
+                                                                           features:nil];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
@@ -206,7 +231,8 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:nil
-                                                                           logLevel:LogLevelError];
+                                                                           logLevel:LogLevelError
+                                                                           features:nil];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
@@ -240,7 +266,8 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:nil
-                                                                           logLevel:LogLevelDebug];
+                                                                           logLevel:LogLevelDebug
+                                                                           features:nil];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
@@ -278,7 +305,8 @@
                                                                     deepLinkService:nil
                                                                        inboxService:nil
                                                               v3MessageInboxService:nil
-                                                                           logLevel:logLevel];
+                                                                           logLevel:logLevel
+                                                                           features:nil];
 
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 

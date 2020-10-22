@@ -12,7 +12,8 @@
                      deepLinkService:(NSString *)deepLinkService
                         inboxService:(NSString *)inboxService
                v3MessageInboxService:(NSString *)v3MessageInboxService
-                            logLevel:(LogLevel)logLevel {
+                            logLevel:(LogLevel)logLevel
+                            features:(NSDictionary *)features {
     if (self = [super init]) {
         _eventService = eventService;
         _clientService = clientService;
@@ -22,6 +23,7 @@
         _inboxService = inboxService;
         _v3MessageInboxService = v3MessageInboxService;
         _logLevel = logLevel;
+        _features = features;
     }
     return self;
 }
@@ -56,6 +58,8 @@
         return NO;
     if (self.logLevel != config.logLevel)
         return NO;
+    if (self.features != config.features && ![self.features isEqualToDictionary:config.features])
+        return NO;
     return YES;
 }
 
@@ -68,6 +72,7 @@
     hash = hash * 31u + [self.inboxService hash];
     hash = hash * 31u + [self.v3MessageInboxService hash];
     hash = hash * 31u + (NSUInteger) self.logLevel;
+    hash = hash * 31u + [self.features hash];
     return hash;
 }
 
@@ -90,6 +95,8 @@
                               self.v3MessageInboxService];
     [description appendFormat:@", self.logLevel=%d",
                               self.logLevel];
+    [description appendFormat:@", self.features=%@",
+                              self.features];
     [description appendString:@">"];
     return description;
 }

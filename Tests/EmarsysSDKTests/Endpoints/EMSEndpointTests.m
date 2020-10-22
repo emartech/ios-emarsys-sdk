@@ -335,7 +335,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                                                   deepLinkService:deeplinkServiceUrl
                                                                      inboxService:inboxServiceUrl
                                                             v3MessageInboxService:v3MessageInboxServiceUrl
-                                                                         logLevel:nil];
+                                                                         logLevel:nil
+                                                                         features:nil];
 
     [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
 
