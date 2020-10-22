@@ -3,7 +3,7 @@ use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-target "Emarsys Sample" do
+target "Emarsys-Sample" do
   if ENV["DEV"] then
     pod 'EmarsysSDK', :path => '../'
   else
@@ -11,7 +11,7 @@ target "Emarsys Sample" do
   end
 end
 
-target "EMSNotificationService" do
+target "NotificationService" do
   if ENV["DEV"] then
     pod 'EmarsysNotificationService', :path => '../'
   else

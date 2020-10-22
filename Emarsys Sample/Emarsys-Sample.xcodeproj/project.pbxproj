@@ -1,0 +1,982 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		561509D325387B3600F8E1CE /* LoginData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 561509D225387B3600F8E1CE /* LoginData.swift */; };
+		5617DE9B2539C32A007930D8 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5617DE9A2539C32A007930D8 /* Product.swift */; };
+		5617DEAC2539C8FC007930D8 /* InAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5617DEAB2539C8FC007930D8 /* InAppView.swift */; };
+		567A64B6253DAFDD00D83D32 /* FloatingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567A64B5253DAFDD00D83D32 /* FloatingTextField.swift */; };
+		569593182527512200879A5D /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569593172527512200879A5D /* Message.swift */; };
+		5697FA8B24B48C93000FB1DC /* InfoPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5697FA8A24B48C93000FB1DC /* InfoPanelView.swift */; };
+		56B48CC6250BA7C0004DB3FA /* UIApplication+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B48CC5250BA7C0004DB3FA /* UIApplication+Keyboard.swift */; };
+		56B953A8253DBD21007C55CF /* ShakeGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B953A7253DBD21007C55CF /* ShakeGesture.swift */; };
+		56C4E945253F640000EB241C /* PullToRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E944253F640000EB241C /* PullToRefreshView.swift */; };
+		56C4E94A253F657500EB241C /* DeviceCentricManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E949253F657500EB241C /* DeviceCentricManager.swift */; };
+		56C4E954254005AC00EB241C /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E953254005AC00EB241C /* MessagesView.swift */; };
+		56C4E96025400FED00EB241C /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E95F25400FED00EB241C /* MessageManager.swift */; };
+		56C4E995254029CC00EB241C /* UserCentricManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E994254029CC00EB241C /* UserCentricManager.swift */; };
+		56C4E99A25402E4200EB241C /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C4E99925402E4200EB241C /* ImageView.swift */; };
+		56D0957C24CB377800085210 /* MultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D0957B24CB377800085210 /* MultilineTextView.swift */; };
+		56DAB671253D8BC100183A82 /* StoredValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56DAB670253D8BC100183A82 /* StoredValue.swift */; };
+		56E7CAF32540659B006323D8 /* InlineInAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7CAF22540659B006323D8 /* InlineInAppView.swift */; };
+		56E7CB3E25408249006323D8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7CB3D25408249006323D8 /* NotificationService.swift */; };
+		56E7CB4225408249006323D8 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 56E7CB3B25408249006323D8 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8AB2B19B245ABAA900FA67E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */; };
+		8AB2B19D245ABAA900FA67E7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */; };
+		8AB2B19F245ABAA900FA67E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19E245ABAA900FA67E7 /* ContentView.swift */; };
+		8AB2B1A1245ABAAA00FA67E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2B1A0245ABAAA00FA67E7 /* Assets.xcassets */; };
+		8AB2B1A4245ABAAA00FA67E7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2B1A3245ABAAA00FA67E7 /* Preview Assets.xcassets */; };
+		8AB2B1A7245ABAAA00FA67E7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2B1A5245ABAAA00FA67E7 /* LaunchScreen.storyboard */; };
+		8AB2B1B2245ABAAA00FA67E7 /* Emarsys_SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1B1245ABAAA00FA67E7 /* Emarsys_SampleTests.swift */; };
+		8AB2B1BD245ABAAA00FA67E7 /* Emarsys_SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1BC245ABAAA00FA67E7 /* Emarsys_SampleUITests.swift */; };
+		8AB2B1CC245ABB7E00FA67E7 /* MobileEngageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1CB245ABB7E00FA67E7 /* MobileEngageView.swift */; };
+		8AB2B1CE245ABBEE00FA67E7 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1CD245ABBEE00FA67E7 /* InboxView.swift */; };
+		8AB2B1D0245ABD0100FA67E7 /* PredictView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1CF245ABD0100FA67E7 /* PredictView.swift */; };
+		8AB2B1D2245ABD5200FA67E7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1D1245ABD5200FA67E7 /* DashboardView.swift */; };
+		8AB2B1D4245ABF7700FA67E7 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1D3245ABF7700FA67E7 /* ProductsView.swift */; };
+		B6CE4BD09413F80CE2590565 /* Pods_NotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9129720D966237E804EEEC79 /* Pods_NotificationService.framework */; };
+		C7D79D179A0E9091F4D1EDAE /* Pods_Emarsys_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0342A9DBE2BA083309C8AA2 /* Pods_Emarsys_Sample.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		56E7CB4025408249006323D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AB2B18F245ABAA900FA67E7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 56E7CB3A25408249006323D8;
+			remoteInfo = NotificationService;
+		};
+		8AB2B1AE245ABAAA00FA67E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AB2B18F245ABAA900FA67E7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8AB2B196245ABAA900FA67E7;
+			remoteInfo = "Emarsys-Sample";
+		};
+		8AB2B1B9245ABAAA00FA67E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AB2B18F245ABAA900FA67E7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8AB2B196245ABAA900FA67E7;
+			remoteInfo = "Emarsys-Sample";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56E7CB4625408249006323D8 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				56E7CB4225408249006323D8 /* NotificationService.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		561509D225387B3600F8E1CE /* LoginData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginData.swift; sourceTree = "<group>"; };
+		5617DE9A2539C32A007930D8 /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
+		5617DEAB2539C8FC007930D8 /* InAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppView.swift; sourceTree = "<group>"; };
+		567A64B5253DAFDD00D83D32 /* FloatingTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTextField.swift; sourceTree = "<group>"; };
+		569593172527512200879A5D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		5697FA8A24B48C93000FB1DC /* InfoPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPanelView.swift; sourceTree = "<group>"; };
+		56B48CC5250BA7C0004DB3FA /* UIApplication+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Keyboard.swift"; sourceTree = "<group>"; };
+		56B953A7253DBD21007C55CF /* ShakeGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeGesture.swift; sourceTree = "<group>"; };
+		56B953F5253DD7BF007C55CF /* Emarsys-Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Emarsys-Sample.entitlements"; sourceTree = "<group>"; };
+		56C4E944253F640000EB241C /* PullToRefreshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefreshView.swift; sourceTree = "<group>"; };
+		56C4E949253F657500EB241C /* DeviceCentricManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCentricManager.swift; sourceTree = "<group>"; };
+		56C4E953254005AC00EB241C /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
+		56C4E95F25400FED00EB241C /* MessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageManager.swift; sourceTree = "<group>"; };
+		56C4E994254029CC00EB241C /* UserCentricManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCentricManager.swift; sourceTree = "<group>"; };
+		56C4E99925402E4200EB241C /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		56D0957B24CB377800085210 /* MultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextView.swift; sourceTree = "<group>"; };
+		56DAB670253D8BC100183A82 /* StoredValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredValue.swift; sourceTree = "<group>"; };
+		56E7CAF22540659B006323D8 /* InlineInAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineInAppView.swift; sourceTree = "<group>"; };
+		56E7CB3B25408249006323D8 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		56E7CB3D25408249006323D8 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		56E7CB3F25408249006323D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8AB2B197245ABAA900FA67E7 /* Emarsys-Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Emarsys-Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		8AB2B19E245ABAA900FA67E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8AB2B1A0245ABAAA00FA67E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8AB2B1A3245ABAAA00FA67E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		8AB2B1A6245ABAAA00FA67E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8AB2B1A8245ABAAA00FA67E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8AB2B1AD245ABAAA00FA67E7 /* Emarsys-SampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Emarsys-SampleTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AB2B1B1245ABAAA00FA67E7 /* Emarsys_SampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emarsys_SampleTests.swift; sourceTree = "<group>"; };
+		8AB2B1B3245ABAAA00FA67E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8AB2B1B8245ABAAA00FA67E7 /* Emarsys-SampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Emarsys-SampleUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AB2B1BC245ABAAA00FA67E7 /* Emarsys_SampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emarsys_SampleUITests.swift; sourceTree = "<group>"; };
+		8AB2B1BE245ABAAA00FA67E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8AB2B1CB245ABB7E00FA67E7 /* MobileEngageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileEngageView.swift; sourceTree = "<group>"; };
+		8AB2B1CD245ABBEE00FA67E7 /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
+		8AB2B1CF245ABD0100FA67E7 /* PredictView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictView.swift; sourceTree = "<group>"; };
+		8AB2B1D1245ABD5200FA67E7 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		8AB2B1D3245ABF7700FA67E7 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
+		9129720D966237E804EEEC79 /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B68129EC9EE2C2E80A6CCAFB /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
+		BE028C949A9179D6DB879F25 /* Pods-Emarsys-Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.debug.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.debug.xcconfig"; sourceTree = "<group>"; };
+		E0342A9DBE2BA083309C8AA2 /* Pods_Emarsys_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Emarsys_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4422D00BD4680845D0BF29A /* Pods-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
+		F91699FF5F7D645870F734F9 /* Pods-Emarsys-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		56E7CB3825408249006323D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6CE4BD09413F80CE2590565 /* Pods_NotificationService.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B194245ABAA900FA67E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7D79D179A0E9091F4D1EDAE /* Pods_Emarsys_Sample.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1AA245ABAAA00FA67E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1B5245ABAAA00FA67E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0E923191E6D55D8DB1FBE360 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BE028C949A9179D6DB879F25 /* Pods-Emarsys-Sample.debug.xcconfig */,
+				F91699FF5F7D645870F734F9 /* Pods-Emarsys-Sample.release.xcconfig */,
+				B68129EC9EE2C2E80A6CCAFB /* Pods-NotificationService.debug.xcconfig */,
+				E4422D00BD4680845D0BF29A /* Pods-NotificationService.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		567A64B4253DAFC800D83D32 /* ViewComponents */ = {
+			isa = PBXGroup;
+			children = (
+				567A64B5253DAFDD00D83D32 /* FloatingTextField.swift */,
+				5697FA8A24B48C93000FB1DC /* InfoPanelView.swift */,
+				56D0957B24CB377800085210 /* MultilineTextView.swift */,
+				8AB2B1D3245ABF7700FA67E7 /* ProductsView.swift */,
+				56C4E944253F640000EB241C /* PullToRefreshView.swift */,
+				56C4E953254005AC00EB241C /* MessagesView.swift */,
+				56C4E99925402E4200EB241C /* ImageView.swift */,
+				56E7CAF22540659B006323D8 /* InlineInAppView.swift */,
+			);
+			path = ViewComponents;
+			sourceTree = "<group>";
+		};
+		5695931625274F2A00879A5D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				569593172527512200879A5D /* Message.swift */,
+				561509D225387B3600F8E1CE /* LoginData.swift */,
+				5617DE9A2539C32A007930D8 /* Product.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		56B953A6253DBCFD007C55CF /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				56B48CC5250BA7C0004DB3FA /* UIApplication+Keyboard.swift */,
+				56B953A7253DBD21007C55CF /* ShakeGesture.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		56C4E95E25400FD400EB241C /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				56C4E949253F657500EB241C /* DeviceCentricManager.swift */,
+				56C4E95F25400FED00EB241C /* MessageManager.swift */,
+				56C4E994254029CC00EB241C /* UserCentricManager.swift */,
+			);
+			path = Inbox;
+			sourceTree = "<group>";
+		};
+		56DAB66F253D8BA200183A82 /* Wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				56DAB670253D8BC100183A82 /* StoredValue.swift */,
+			);
+			path = Wrappers;
+			sourceTree = "<group>";
+		};
+		56E7CB3C25408249006323D8 /* NotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				56E7CB3D25408249006323D8 /* NotificationService.swift */,
+				56E7CB3F25408249006323D8 /* Info.plist */,
+			);
+			path = NotificationService;
+			sourceTree = "<group>";
+		};
+		8AB2B18E245ABAA900FA67E7 = {
+			isa = PBXGroup;
+			children = (
+				8AB2B199245ABAA900FA67E7 /* Emarsys-Sample */,
+				8AB2B1B0245ABAAA00FA67E7 /* Emarsys-SampleTests */,
+				8AB2B1BB245ABAAA00FA67E7 /* Emarsys-SampleUITests */,
+				56E7CB3C25408249006323D8 /* NotificationService */,
+				8AB2B198245ABAA900FA67E7 /* Products */,
+				0E923191E6D55D8DB1FBE360 /* Pods */,
+				E5AC638A8E6B550EECB24A09 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		8AB2B198245ABAA900FA67E7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8AB2B197245ABAA900FA67E7 /* Emarsys-Sample.app */,
+				8AB2B1AD245ABAAA00FA67E7 /* Emarsys-SampleTests.xctest */,
+				8AB2B1B8245ABAAA00FA67E7 /* Emarsys-SampleUITests.xctest */,
+				56E7CB3B25408249006323D8 /* NotificationService.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8AB2B199245ABAA900FA67E7 /* Emarsys-Sample */ = {
+			isa = PBXGroup;
+			children = (
+				56C4E95E25400FD400EB241C /* Inbox */,
+				56B953F5253DD7BF007C55CF /* Emarsys-Sample.entitlements */,
+				56B953A6253DBCFD007C55CF /* Extensions */,
+				567A64B4253DAFC800D83D32 /* ViewComponents */,
+				56DAB66F253D8BA200183A82 /* Wrappers */,
+				5695931625274F2A00879A5D /* Models */,
+				8AB2B1CA245ABB5100FA67E7 /* Views */,
+				8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */,
+				8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */,
+				8AB2B1A0245ABAAA00FA67E7 /* Assets.xcassets */,
+				8AB2B1A5245ABAAA00FA67E7 /* LaunchScreen.storyboard */,
+				8AB2B1A8245ABAAA00FA67E7 /* Info.plist */,
+				8AB2B1A2245ABAAA00FA67E7 /* Preview Content */,
+			);
+			path = "Emarsys-Sample";
+			sourceTree = "<group>";
+		};
+		8AB2B1A2245ABAAA00FA67E7 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				8AB2B1A3245ABAAA00FA67E7 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		8AB2B1B0245ABAAA00FA67E7 /* Emarsys-SampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				8AB2B1B1245ABAAA00FA67E7 /* Emarsys_SampleTests.swift */,
+				8AB2B1B3245ABAAA00FA67E7 /* Info.plist */,
+			);
+			path = "Emarsys-SampleTests";
+			sourceTree = "<group>";
+		};
+		8AB2B1BB245ABAAA00FA67E7 /* Emarsys-SampleUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8AB2B1BC245ABAAA00FA67E7 /* Emarsys_SampleUITests.swift */,
+				8AB2B1BE245ABAAA00FA67E7 /* Info.plist */,
+			);
+			path = "Emarsys-SampleUITests";
+			sourceTree = "<group>";
+		};
+		8AB2B1CA245ABB5100FA67E7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8AB2B19E245ABAA900FA67E7 /* ContentView.swift */,
+				8AB2B1CB245ABB7E00FA67E7 /* MobileEngageView.swift */,
+				8AB2B1CD245ABBEE00FA67E7 /* InboxView.swift */,
+				8AB2B1CF245ABD0100FA67E7 /* PredictView.swift */,
+				8AB2B1D1245ABD5200FA67E7 /* DashboardView.swift */,
+				5617DEAB2539C8FC007930D8 /* InAppView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E5AC638A8E6B550EECB24A09 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E0342A9DBE2BA083309C8AA2 /* Pods_Emarsys_Sample.framework */,
+				9129720D966237E804EEEC79 /* Pods_NotificationService.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		56E7CB3A25408249006323D8 /* NotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56E7CB4325408249006323D8 /* Build configuration list for PBXNativeTarget "NotificationService" */;
+			buildPhases = (
+				28B3EB6889BFFC0E76292DE2 /* [CP] Check Pods Manifest.lock */,
+				56E7CB3725408249006323D8 /* Sources */,
+				56E7CB3825408249006323D8 /* Frameworks */,
+				56E7CB3925408249006323D8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationService;
+			productName = NotificationService;
+			productReference = 56E7CB3B25408249006323D8 /* NotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		8AB2B196245ABAA900FA67E7 /* Emarsys-Sample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AB2B1C1245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-Sample" */;
+			buildPhases = (
+				CF6382E7F9879B9322F45548 /* [CP] Check Pods Manifest.lock */,
+				8AB2B193245ABAA900FA67E7 /* Sources */,
+				8AB2B194245ABAA900FA67E7 /* Frameworks */,
+				8AB2B195245ABAA900FA67E7 /* Resources */,
+				56E7CB4625408249006323D8 /* Embed App Extensions */,
+				ABDB793328855CAA0F941302 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				56E7CB4125408249006323D8 /* PBXTargetDependency */,
+			);
+			name = "Emarsys-Sample";
+			productName = "Emarsys-Sample";
+			productReference = 8AB2B197245ABAA900FA67E7 /* Emarsys-Sample.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8AB2B1AC245ABAAA00FA67E7 /* Emarsys-SampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AB2B1C4245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-SampleTests" */;
+			buildPhases = (
+				8AB2B1A9245ABAAA00FA67E7 /* Sources */,
+				8AB2B1AA245ABAAA00FA67E7 /* Frameworks */,
+				8AB2B1AB245ABAAA00FA67E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8AB2B1AF245ABAAA00FA67E7 /* PBXTargetDependency */,
+			);
+			name = "Emarsys-SampleTests";
+			productName = "Emarsys-SampleTests";
+			productReference = 8AB2B1AD245ABAAA00FA67E7 /* Emarsys-SampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8AB2B1B7245ABAAA00FA67E7 /* Emarsys-SampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AB2B1C7245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-SampleUITests" */;
+			buildPhases = (
+				8AB2B1B4245ABAAA00FA67E7 /* Sources */,
+				8AB2B1B5245ABAAA00FA67E7 /* Frameworks */,
+				8AB2B1B6245ABAAA00FA67E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8AB2B1BA245ABAAA00FA67E7 /* PBXTargetDependency */,
+			);
+			name = "Emarsys-SampleUITests";
+			productName = "Emarsys-SampleUITests";
+			productReference = 8AB2B1B8245ABAAA00FA67E7 /* Emarsys-SampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8AB2B18F245ABAA900FA67E7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = "Laszlo Ori";
+				TargetAttributes = {
+					56E7CB3A25408249006323D8 = {
+						CreatedOnToolsVersion = 12.0.1;
+					};
+					8AB2B196245ABAA900FA67E7 = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+					8AB2B1AC245ABAAA00FA67E7 = {
+						CreatedOnToolsVersion = 11.3.1;
+						TestTargetID = 8AB2B196245ABAA900FA67E7;
+					};
+					8AB2B1B7245ABAAA00FA67E7 = {
+						CreatedOnToolsVersion = 11.3.1;
+						TestTargetID = 8AB2B196245ABAA900FA67E7;
+					};
+				};
+			};
+			buildConfigurationList = 8AB2B192245ABAA900FA67E7 /* Build configuration list for PBXProject "Emarsys-Sample" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8AB2B18E245ABAA900FA67E7;
+			productRefGroup = 8AB2B198245ABAA900FA67E7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8AB2B196245ABAA900FA67E7 /* Emarsys-Sample */,
+				8AB2B1AC245ABAAA00FA67E7 /* Emarsys-SampleTests */,
+				8AB2B1B7245ABAAA00FA67E7 /* Emarsys-SampleUITests */,
+				56E7CB3A25408249006323D8 /* NotificationService */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		56E7CB3925408249006323D8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B195245ABAA900FA67E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AB2B1A7245ABAAA00FA67E7 /* LaunchScreen.storyboard in Resources */,
+				8AB2B1A4245ABAAA00FA67E7 /* Preview Assets.xcassets in Resources */,
+				8AB2B1A1245ABAAA00FA67E7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1AB245ABAAA00FA67E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1B6245ABAAA00FA67E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		28B3EB6889BFFC0E76292DE2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NotificationService-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ABDB793328855CAA0F941302 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF6382E7F9879B9322F45548 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Emarsys-Sample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		56E7CB3725408249006323D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56E7CB3E25408249006323D8 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B193245ABAA900FA67E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56C4E99A25402E4200EB241C /* ImageView.swift in Sources */,
+				8AB2B1D0245ABD0100FA67E7 /* PredictView.swift in Sources */,
+				56C4E94A253F657500EB241C /* DeviceCentricManager.swift in Sources */,
+				5617DEAC2539C8FC007930D8 /* InAppView.swift in Sources */,
+				8AB2B19B245ABAA900FA67E7 /* AppDelegate.swift in Sources */,
+				56C4E945253F640000EB241C /* PullToRefreshView.swift in Sources */,
+				5697FA8B24B48C93000FB1DC /* InfoPanelView.swift in Sources */,
+				8AB2B19D245ABAA900FA67E7 /* SceneDelegate.swift in Sources */,
+				8AB2B1D2245ABD5200FA67E7 /* DashboardView.swift in Sources */,
+				56D0957C24CB377800085210 /* MultilineTextView.swift in Sources */,
+				5617DE9B2539C32A007930D8 /* Product.swift in Sources */,
+				567A64B6253DAFDD00D83D32 /* FloatingTextField.swift in Sources */,
+				56C4E954254005AC00EB241C /* MessagesView.swift in Sources */,
+				8AB2B1D4245ABF7700FA67E7 /* ProductsView.swift in Sources */,
+				8AB2B1CE245ABBEE00FA67E7 /* InboxView.swift in Sources */,
+				56DAB671253D8BC100183A82 /* StoredValue.swift in Sources */,
+				561509D325387B3600F8E1CE /* LoginData.swift in Sources */,
+				8AB2B19F245ABAA900FA67E7 /* ContentView.swift in Sources */,
+				56B953A8253DBD21007C55CF /* ShakeGesture.swift in Sources */,
+				569593182527512200879A5D /* Message.swift in Sources */,
+				56B48CC6250BA7C0004DB3FA /* UIApplication+Keyboard.swift in Sources */,
+				8AB2B1CC245ABB7E00FA67E7 /* MobileEngageView.swift in Sources */,
+				56C4E96025400FED00EB241C /* MessageManager.swift in Sources */,
+				56E7CAF32540659B006323D8 /* InlineInAppView.swift in Sources */,
+				56C4E995254029CC00EB241C /* UserCentricManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1A9245ABAAA00FA67E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AB2B1B2245ABAAA00FA67E7 /* Emarsys_SampleTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AB2B1B4245ABAAA00FA67E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AB2B1BD245ABAAA00FA67E7 /* Emarsys_SampleUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		56E7CB4125408249006323D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 56E7CB3A25408249006323D8 /* NotificationService */;
+			targetProxy = 56E7CB4025408249006323D8 /* PBXContainerItemProxy */;
+		};
+		8AB2B1AF245ABAAA00FA67E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8AB2B196245ABAA900FA67E7 /* Emarsys-Sample */;
+			targetProxy = 8AB2B1AE245ABAAA00FA67E7 /* PBXContainerItemProxy */;
+		};
+		8AB2B1BA245ABAAA00FA67E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8AB2B196245ABAA900FA67E7 /* Emarsys-Sample */;
+			targetProxy = 8AB2B1B9245ABAAA00FA67E7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8AB2B1A5245ABAAA00FA67E7 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8AB2B1A6245ABAAA00FA67E7 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		56E7CB4425408249006323D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B68129EC9EE2C2E80A6CCAFB /* Pods-NotificationService.debug.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample.NotificationService";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		56E7CB4525408249006323D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4422D00BD4680845D0BF29A /* Pods-NotificationService.release.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample.NotificationService";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8AB2B1BF245ABAAA00FA67E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8AB2B1C0245ABAAA00FA67E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8AB2B1C2245ABAAA00FA67E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BE028C949A9179D6DB879F25 /* Pods-Emarsys-Sample.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Emarsys-Sample/Emarsys-Sample.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Emarsys-Sample/Preview Content\"";
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Emarsys-Sample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8AB2B1C3245ABAAA00FA67E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F91699FF5F7D645870F734F9 /* Pods-Emarsys-Sample.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Emarsys-Sample/Emarsys-Sample.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Emarsys-Sample/Preview Content\"";
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Emarsys-Sample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8AB2B1C5245ABAAA00FA67E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = "Emarsys-SampleTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-SampleTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Emarsys-Sample.app/Emarsys-Sample";
+			};
+			name = Debug;
+		};
+		8AB2B1C6245ABAAA00FA67E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = "Emarsys-SampleTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-SampleTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Emarsys-Sample.app/Emarsys-Sample";
+			};
+			name = Release;
+		};
+		8AB2B1C8245ABAAA00FA67E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = "Emarsys-SampleUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-SampleUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Emarsys-Sample";
+			};
+			name = Debug;
+		};
+		8AB2B1C9245ABAAA00FA67E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZFXXDJH82;
+				INFOPLIST_FILE = "Emarsys-SampleUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-SampleUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Emarsys-Sample";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		56E7CB4325408249006323D8 /* Build configuration list for PBXNativeTarget "NotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56E7CB4425408249006323D8 /* Debug */,
+				56E7CB4525408249006323D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8AB2B192245ABAA900FA67E7 /* Build configuration list for PBXProject "Emarsys-Sample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AB2B1BF245ABAAA00FA67E7 /* Debug */,
+				8AB2B1C0245ABAAA00FA67E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8AB2B1C1245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-Sample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AB2B1C2245ABAAA00FA67E7 /* Debug */,
+				8AB2B1C3245ABAAA00FA67E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8AB2B1C4245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-SampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AB2B1C5245ABAAA00FA67E7 /* Debug */,
+				8AB2B1C6245ABAAA00FA67E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8AB2B1C7245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-SampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AB2B1C8245ABAAA00FA67E7 /* Debug */,
+				8AB2B1C9245ABAAA00FA67E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8AB2B18F245ABAA900FA67E7 /* Project object */;
+}
