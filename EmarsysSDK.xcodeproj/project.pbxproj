@@ -761,6 +761,8 @@
 		8A6BEBB623E86B490066B13C /* EMSLoggingDeepLinkInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BEA4D23E86B480066B13C /* EMSLoggingDeepLinkInternal.m */; };
 		8A6BEBB723E86B490066B13C /* EMSLoggingDeepLinkInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */; };
 		8A6BEBB823E86B490066B13C /* EMSDeepLinkInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */; };
+		8A84D9A92546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */; };
+		8A84D9AA2546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */; };
 		8AB925D624CB09A1003B69A1 /* EMSNotificationInformationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB925D524CB09A1003B69A1 /* EMSNotificationInformationDelegate.h */; };
 		8AB925DA24CB0A8F003B69A1 /* EMSNotificationInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB925D824CB0A8F003B69A1 /* EMSNotificationInformation.m */; };
 		8ADAA675210773D500B3AC44 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAA674210773D500B3AC44 /* AppDelegate.m */; };
@@ -1421,6 +1423,8 @@
 		8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLoggingDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA5023E86B480066B13C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EmarsysSDKTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmarsysE2ETests.swift; sourceTree = "<group>"; };
 		8AB2F98421075A8D0030E659 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB2F98821075A8D0030E659 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AB2F99121075B270030E659 /* EMSResponseModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSResponseModelTests.m; sourceTree = "<group>"; };
@@ -3301,6 +3305,8 @@
 				32C6F7C40FE509F1BF1F4BC0 /* RequestTools */,
 				32C6F5AE21CFF14ACD2311F0 /* Endpoints */,
 				32C6F1D69C63DEA3E03991FF /* EventHandler */,
+				8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */,
+				8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */,
 			);
 			path = EmarsysSDKTests;
 			sourceTree = "<group>";
@@ -4115,6 +4121,7 @@
 				166B3F8D2119A862006CD35C /* FakeTimeStampProvider.m in Sources */,
 				166B3F792119A84C006CD35C /* TestUtils.m in Sources */,
 				166B3F3B2119A840006CD35C /* EMSResponseModelTests.m in Sources */,
+				8A84D9A92546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */,
 				8AFCA45921393D710052FEFA /* EmarsysTests.m in Sources */,
 				166B3F3C2119A840006CD35C /* EMSRequestModelRepositoryTests.m in Sources */,
 				166B3F3D2119A840006CD35C /* EMSShardRepositoryTests.m in Sources */,
@@ -4517,6 +4524,7 @@
 				32C6FB33C1F7D30FC79A5034 /* EMSEmarsysRequestFactoryTests.m in Sources */,
 				32C6F3D34488BC864DFC6E39 /* EMSRemoteConfigResponseMapperTests.m in Sources */,
 				32C6F3CB26821135CF50C407 /* EMSValueProviderTests.m in Sources */,
+				8A84D9AA2546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */,
 				32C6FBED4DD34EF20DD246B1 /* EMSEndpointTests.m in Sources */,
 				32C6FD2014CDAAD9549CA5A5 /* FakeRequestManager.m in Sources */,
 				32C6F8F789B2E998257597CE /* EMSEventHandlerProtocolBlockConverterTests.m in Sources */,
@@ -4983,7 +4991,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/EmarsysSDKTests/EmarsysSDKTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5006,7 +5014,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/EmarsysSDKTests/EmarsysSDKTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
