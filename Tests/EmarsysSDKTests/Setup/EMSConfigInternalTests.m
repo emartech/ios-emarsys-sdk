@@ -19,6 +19,8 @@
 #import "EMSCrypto.h"
 #import "EMSDispatchWaiter.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -989,6 +991,7 @@
 
 - (void)testRefreshConfigFromRemoteConfig_success_verified {
     EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
+    OCMStub([config features]).andReturn(@{@"mobile_engage": @NO});
     NSData *signatureData = [NSData new];
     NSData *contentData = [NSData new];
 
@@ -1008,6 +1011,7 @@
     OCMStub([self.mockResponseMapper map:mockResponse]).andReturn(config);
     OCMStub([self.mockCrypto verifyContent:contentData
                              withSignature:signatureData]).andReturn(YES);
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
 
     [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
                                             completionBlock:nil];
@@ -1016,6 +1020,7 @@
                                withSignature:signatureData]);
     OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
     OCMVerify([self.mockLogger updateWithRemoteConfig:config]);
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_success_notVerified {

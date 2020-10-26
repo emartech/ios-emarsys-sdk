@@ -8,7 +8,7 @@
 #import "EMSDeviceInfo.h"
 #import "NSDictionary+EMSCore.h"
 
-@interface EMSRemoteConfigResponseMapper()
+@interface EMSRemoteConfigResponseMapper ()
 
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 
@@ -30,11 +30,12 @@
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
     NSDictionary *parsedBody = [responseModel parsedBody];
     NSDictionary *hardwareIdSpecificConfig = parsedBody[@"overrides"][self.deviceInfo.hardwareId];
-    
-    
+
+
     NSMutableDictionary *activeConfig = [[parsedBody mergeWithDictionary:hardwareIdSpecificConfig] mutableCopy];
     activeConfig[@"serviceUrls"] = [parsedBody[@"serviceUrls"] mergeWithDictionary:hardwareIdSpecificConfig[@"serviceUrls"]];
     activeConfig[@"luckyLogger"] = [parsedBody[@"luckyLogger"] mergeWithDictionary:hardwareIdSpecificConfig[@"luckyLogger"]];
+    activeConfig[@"features"] = [parsedBody[@"features"] mergeWithDictionary:hardwareIdSpecificConfig[@"features"]];
 
     return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"eventService"]]
                                            clientService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"clientService"]]
@@ -45,7 +46,27 @@
                                    v3MessageInboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"v3MessageInboxService"]]
                                                 logLevel:[self calculateLogLevel:activeConfig[@"logLevel"]
                                                                    withThreshold:activeConfig[@"luckyLogger"][@"threshold"]
-                                                               withLuckyLogLevel:activeConfig[@"luckyLogger"][@"logLevel"]]];
+                                                               withLuckyLogLevel:activeConfig[@"luckyLogger"][@"logLevel"]]
+                                                features:[self extractFeatures:activeConfig[@"features"]]];
+}
+
+- (NSDictionary *)extractFeatures:(NSDictionary *)features {
+    if (!features) {
+        return nil;
+    }
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(?<=[a-z])([A-Z])|([A-Z])(?=[a-z])"
+                                                                           options:0
+                                                                             error:nil];
+    for (NSString *key in features) {
+        NSString *underscoreString = [[regex stringByReplacingMatchesInString:key
+                                                                      options:0
+                                                                        range:NSMakeRange(0, key.length)
+                                                                 withTemplate:@"_$1$2"] lowercaseString];
+        result[underscoreString] = features[key];
+    }
+
+    return result;
 }
 
 - (LogLevel)calculateLogLevel:(NSString *)defaultLogLevel

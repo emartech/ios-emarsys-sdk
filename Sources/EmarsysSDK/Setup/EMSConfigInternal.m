@@ -19,6 +19,9 @@
 #import "EMSDispatchWaiter.h"
 #import "NSError+EMSCore.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
+#import "EMSRemoteConfig.h"
 
 #define METHOD_TIMEOUT 60
 
@@ -121,6 +124,7 @@
                                               EMSRemoteConfig *remoteConfig = [self.remoteConfigResponseMapper map:response];
                                               [self.endpoint updateUrlsWithRemoteConfig:remoteConfig];
                                               [self.logger updateWithRemoteConfig:remoteConfig];
+                                              [self overrideFeatureFlippers:remoteConfig];
                                               if (completionBlock) {
                                                   completionBlock(nil);
                                               }
@@ -150,6 +154,26 @@
                                             [self.logger reset];
                                         }
                                     }];
+}
+
+- (void)overrideFeatureFlippers:(EMSRemoteConfig *)remoteConfig {
+    NSDictionary *featureMatrix = [remoteConfig features];
+    NSNumber *mobileEngageFeature = featureMatrix[@"mobile_engage"];
+    if (mobileEngageFeature) {
+        if (mobileEngageFeature.boolValue) {
+            [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+        } else {
+            [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
+        }
+    }
+    NSNumber *predictFeature = featureMatrix[@"predict"];
+    if (predictFeature) {
+        if (predictFeature.boolValue) {
+            [MEExperimental enableFeature:EMSInnerFeature.predict];
+        } else {
+            [MEExperimental disableFeature:EMSInnerFeature.predict];
+        }
+    }
 }
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode

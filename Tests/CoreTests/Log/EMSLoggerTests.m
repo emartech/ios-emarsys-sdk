@@ -238,7 +238,8 @@
                                                                   deepLinkService:nil
                                                                      inboxService:nil
                                                             v3MessageInboxService:nil
-                                                                         logLevel:LogLevelDebug];
+                                                                         logLevel:LogLevelDebug
+                                                                         features:nil];
 
     [self.logger updateWithRemoteConfig:remoteConfig];
 
