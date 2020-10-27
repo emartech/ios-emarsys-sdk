@@ -26,7 +26,7 @@ class EmarsysE2ETests: XCTestCase {
 
         Emarsys.setup(with: config)
         
-        changeAppCode("EMS11-C3FD3", cId: 3)
+        changeAppCode("EMS11-C3FD3", cId: 2575)
         
         setContact("test@test.com")
         
@@ -44,12 +44,12 @@ class EmarsysE2ETests: XCTestCase {
         let timestamp = dateFormatter.string(from: Date())
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("14C19-A121F")
-            builder.setContactFieldId(3)
+            builder.setContactFieldId(2575)
         }
 
         Emarsys.setup(with: config)
         
-        changeAppCode("EMS11-C3FD3", cId: 3)
+        changeAppCode("EMS11-C3FD3", cId: 2575)
         
         setContact("test@test.com")
         
@@ -58,6 +58,43 @@ class EmarsysE2ETests: XCTestCase {
         waitForBE()
         
         _ = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+    }
+
+    func testInboxTags() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        let timestamp = dateFormatter.string(from: Date())
+        let config = EMSConfig.make { builder in
+            builder.setMobileEngageApplicationCode("EMS11-C3FD3")
+            builder.setContactFieldId(2575)
+        }
+
+        Emarsys.setup(with: config)
+
+        setContact("test@test.com")
+
+        sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
+
+        waitForBE()
+
+        let message = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+
+        Emarsys.messageInbox.addTag("testtag", forMessage: message.id)
+
+        waitForBE()
+
+        let messageWithTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+
+        XCTAssertTrue(messageWithTag.tags!.contains("testtag"))
+
+        Emarsys.messageInbox.removeTag("testtag", fromMessage: messageWithTag.id)
+
+        waitForBE()
+
+        let messageWithoutTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+
+        XCTAssertFalse(messageWithoutTag.tags!.contains("testtag"))
     }
     
     func changeAppCode(_ code: String, cId: NSNumber) {
@@ -91,7 +128,7 @@ class EmarsysE2ETests: XCTestCase {
     }
     
     func  waitForBE() {
-        usleep(2000000)
+        usleep(3000000)
     }
     
     func filterForInboxMessage(_ title: String, body: String) -> EMSMessage {
