@@ -299,7 +299,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
                                                                        type:@"predict_cart"
-                                                                       data:@{@"cv": @"1", @"ca": @"i:itemId1,p:200.0,q:100.0|i:itemId2,p:201.0,q:101.0"}
+                                                                       data:@{@"cv": @"1", @"ca": @"i:itemId1,p:200,q:100|i:itemId2,p:201,q:101"}
                                                                   timestamp:timestamp
                                                                         ttl:FLT_MAX];
 
@@ -418,7 +418,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
 
                 EMSShard *expectedShard = [[EMSShard alloc] initWithShardId:shardId
                                                                        type:@"predict_purchase"
-                                                                       data:@{@"oi": orderId, @"co": @"i:itemId1,p:200.0,q:100.0|i:itemId2,p:201.0,q:101.0"}
+                                                                       data:@{@"oi": orderId, @"co": @"i:itemId1,p:200,q:100|i:itemId2,p:201,q:101"}
                                                                   timestamp:timestamp
                                                                         ttl:FLT_MAX];
 

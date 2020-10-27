@@ -97,7 +97,7 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackCartWithCartItems:", ^{
 
             it(@"should send request with cartItems", ^{
-                NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
+                NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
 
                 [Emarsys.predict trackCartWithCartItems:@[
                         [EMSCartItem itemWithItemId:@"2508"
@@ -121,7 +121,7 @@ SPEC_BEGIN(PredictIntegrationTests)
 
             it(@"should send request with orderId and items", ^{
                 NSString *expectedOrderIdQueryParams = @"oi=orderId";
-                NSString *expectedItemsQueryParams = @"co=i%3A2508%2Cp%3A200.0%2Cq%3A100.0%7Ci%3A2073%2Cp%3A201.0%2Cq%3A101.0";
+                NSString *expectedItemsQueryParams = @"co=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
 
                 [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
                                                     items:@[

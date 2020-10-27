@@ -47,7 +47,7 @@
                                                         quantity:2];
     NSDictionary *expectedData = @{
         @"cv": @"1",
-        @"ca": @"i:cartItemId1,p:123.0,q:1.0|i:cartItemId2,p:456.0,q:2.0"
+        @"ca": @"i:cartItemId1,p:123,q:1|i:cartItemId2,p:456,q:2"
     };
 
     EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];

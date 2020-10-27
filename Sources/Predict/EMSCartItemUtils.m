@@ -22,10 +22,10 @@
 }
 
 + (NSString *)queryParamFromCartItem:(id <EMSCartItemProtocol>)cartItem {
-    return [NSString stringWithFormat:@"i:%@,p:%0.1f,q:%.01f",
+    return [NSString stringWithFormat:@"i:%@,p:%@,q:%@",
                                       [cartItem itemId],
-                                      [cartItem price],
-                                      [cartItem quantity]];
+                                      @([cartItem price]).stringValue,
+                                      @([cartItem quantity]).stringValue];
 }
 
 @end
