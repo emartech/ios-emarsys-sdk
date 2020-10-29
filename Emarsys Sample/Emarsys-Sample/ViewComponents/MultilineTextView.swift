@@ -5,10 +5,15 @@
 import SwiftUI
 
 struct MultilineTextView: UIViewRepresentable {
-    @State var text: String
+    @Binding var text: String?
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(self)
+    }
     
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
+        textView.delegate = context.coordinator
         textView.isScrollEnabled = true
         textView.isEditable = true
         textView.isUserInteractionEnabled = true
@@ -19,15 +24,18 @@ struct MultilineTextView: UIViewRepresentable {
         textView.text = text
     }
     
-}
+    class Coordinator : NSObject, UITextViewDelegate {
+        var parent: MultilineTextView
+        init(_ uiTextView: MultilineTextView) {
+            self.parent = uiTextView
+        }
 
-struct MultilineTextView_Previews: PreviewProvider {
-    static var previews: some View {
-        MultilineTextView(
-            text: """
-            {"eventAttributeKey1":"value1",
-            "eventAttributeKey2":"value2"}
-            """
-        ).border(Color.red)
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            return true
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            self.parent.text = textView.text
+        }
     }
 }

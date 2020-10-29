@@ -9,11 +9,7 @@ import EmarsysSDK
 struct MobileEngageView: View {
     @State var sid: String = ""
     @State var customEventName = ""
-    @State var customEventPayload: String? = """
-    {"eventAttributeKey1":"value1",
-     "eventAttributeKey2":"value2"}
-    """
-    
+    @State var customEventPayload: String? = ""
     @State var showingEmptySidAlert = false
     @State var showingEmptyEventNameAlert = false
     
@@ -52,9 +48,10 @@ struct MobileEngageView: View {
                     Text(self.messageText).foregroundColor(Color(self.messageColor))
                 }
                 
-                FloatingTextField(title: "customEventName", text: $customEventName)
+                FloatingTextField(title: "customEventName", text: $customEventName).accessibility(identifier: "CustomEventName")
                 
-                MultilineTextView(text: self.customEventPayload?.description ?? "")
+                MultilineTextView(text: self.$customEventPayload)
+                    .accessibility(identifier: "CustomEventAttributes")
                     .frame(height: 100)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
@@ -70,7 +67,7 @@ struct MobileEngageView: View {
                         Alert(title: Text("Missing eventName"),
                               message: Text("eventName should not be empty if you want to track a custom event"),
                               dismissButton: .default(Text("Got it!")))
-                    }
+                    }.accessibility(identifier: "TrackCustomEvent")
                 }
             }
             .padding(.horizontal)

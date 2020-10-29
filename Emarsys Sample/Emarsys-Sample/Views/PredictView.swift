@@ -12,6 +12,7 @@ struct PredictView: View {
     @State var searchTerm: String = ""
     @State var orderId: String = ""
     @State var cartItems: [EMSCartItem] = []
+    @State var cartItemsString: String? = ""
     @State var showRecommended: Bool = false
     @State var recommendedProducts: [Product] = []
     @State var logic: EMSLogic = EMSLogic.search()
@@ -89,21 +90,19 @@ struct PredictView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 
                 HStack {
-                    MultilineTextView(text: self.cartItems.map({ cartItem -> String in
-                        "id: \(cartItem.itemId), price: \(cartItem.price), quantity: \(cartItem.quantity), \n"
-                    }).joined())
-                        .frame(height: 100)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(lineWidth: 1)
-                                .opacity(0.2)
-                        )
-                    Button(action: self.addSampleCartItems) {
+                    MultilineTextView(text: $cartItemsString)
+                                            .frame(height: 100)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 15)
+                                                    .stroke(lineWidth: 1)
+                                                    .opacity(0.2)
+                                            )
+                    Button(action: self.addSampleCartItem) {
                         Image(systemName: "plus.circle").font(.system(size: 30))
                     }
                 }.onAppear(perform: {
-                    self.cartItems.append(self.generateCartItem())
-                    self.cartItems.append(self.generateCartItem())
+                    self.addSampleCartItem()
+                    self.addSampleCartItem()
                 })
                 HStack {
                     Spacer()
@@ -154,8 +153,10 @@ struct PredictView: View {
         Emarsys.predict.trackPurchase(withOrderId: self.orderId, items: self.cartItems)
     }
     
-    func addSampleCartItems() {
-        self.cartItems.append(generateCartItem())
+    func addSampleCartItem() {
+        let cartItem = generateCartItem()
+        self.appendCartItem(cartItem: cartItem)
+        self.cartItems.append(cartItem)
     }
     
     func trackCartItems() {
@@ -176,6 +177,11 @@ struct PredictView: View {
         }
     }
     
+    private func appendCartItem(cartItem: EMSCartItem) {
+        self.cartItemsString?.append(
+            "id: \(cartItem.itemId), price: \(cartItem.price), quantity: \(cartItem.quantity), \n")
+    }
+    
     private func convertProducts(products: [EMSProduct]) -> [Product]{
         var result : [Product] = []
         for product in products {
@@ -191,47 +197,47 @@ struct PredictView: View {
     }
     
     private func generateCartItem() -> EMSCartItem {
-           let itemIds = [
-               "2185",
-               "2186",
-               "2187",
-               "2188",
-               "2189",
-               "2190",
-               "2191",
-               "2192",
-               "2193",
-               "2194",
-               "2195",
-               "2196",
-               "2197",
-               "2198",
-               "2199",
-               "2200",
-               "2201",
-               "2202",
-               "2206",
-               "2209",
-               "2210",
-               "2211",
-               "2213",
-               "2215",
-               "2231",
-               "2232",
-               "2233",
-               "2235",
-               "2236",
-               "2237",
-               "2239",
-               "2240",
-               "2241",
-               "2244",
-               "2289"
-           ];
-           let price = Double.random(in: 1..<100)
-           let quantity = Double.random(in: 1..<5)
-           return EMSCartItem(itemId: itemIds[Int.random(in: 0..<itemIds.count)], price: price, quantity: quantity)
-       }
+        let itemIds = [
+            "2185",
+            "2186",
+            "2187",
+            "2188",
+            "2189",
+            "2190",
+            "2191",
+            "2192",
+            "2193",
+            "2194",
+            "2195",
+            "2196",
+            "2197",
+            "2198",
+            "2199",
+            "2200",
+            "2201",
+            "2202",
+            "2206",
+            "2209",
+            "2210",
+            "2211",
+            "2213",
+            "2215",
+            "2231",
+            "2232",
+            "2233",
+            "2235",
+            "2236",
+            "2237",
+            "2239",
+            "2240",
+            "2241",
+            "2244",
+            "2289"
+        ];
+        let price = Double.random(in: 1..<100)
+        let quantity = Double.random(in: 1..<5)
+        return EMSCartItem(itemId: itemIds[Int.random(in: 0..<itemIds.count)], price: price, quantity: quantity)
+    }
 }
 
 struct PredictView_Previews: PreviewProvider {
