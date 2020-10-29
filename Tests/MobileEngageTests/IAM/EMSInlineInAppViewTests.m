@@ -12,6 +12,8 @@
 #import "EMSRequestFactory.h"
 #import "EMSResponseModel.h"
 #import "MeInapp.h"
+#import "NSError+EMSCore.h"
+#import "EMSBlocks.h"
 
 @interface EMSInlineInAppView (Tests)
 
@@ -92,6 +94,47 @@
 
     OCMVerify([self.inappView.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
                                              baseURL:nil]);
+}
+
+- (void)testFetchInlineInappMessage_shouldCallCompletionBlockWithError_whenNoInAppMessageFound {
+    EMSInlineInAppView *inlineInappPartialMock = OCMPartialMock(self.inappView);
+    OCMReject([inlineInappPartialMock.webView loadHTMLString:[OCMArg any] baseURL:nil]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
+
+    EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
+    NSError *expectedError = [NSError errorWithCode:-1400
+                               localizedDescription:@"Inline In-App HTML content must not be empty, please check your viewId!"];
+
+    OCMStub([mockResponse parsedBody]).andReturn((@{
+            @"inlineMessages": @[
+            ]
+    }));
+    OCMStub([self.mockRequestManager submitRequestModelNow:[OCMArg any]
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        mockResponse,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
+
+    __block NSError *returnedError;
+    __block NSThread *returnedThread = nil;
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+        returnedError = error;
+        returnedThread = [NSThread currentThread];
+        [expectation fulfill];
+    };
+
+    [inlineInappPartialMock setCompletionBlock:completionBlock];
+    [inlineInappPartialMock loadInAppWithViewId:@"testViewId"];
+    [inlineInappPartialMock fetchInlineInappMessage];
+
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:10];
+
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedError.localizedDescription, expectedError.localizedDescription);
+    XCTAssertEqual(returnedError.code, expectedError.code);
+    XCTAssertEqualObjects(returnedThread, NSThread.mainThread);
 }
 
 @end

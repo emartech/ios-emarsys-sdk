@@ -13,6 +13,7 @@
 #import "MEIAMJSCommandFactory.h"
 #import "MEJSBridge.h"
 #import "EMSEventHandlerProtocolBlockConverter.h"
+#import "NSError+EMSCore.h"
 
 @interface EMSInlineInAppView () <WKNavigationDelegate, EMSIAMCloseProtocol>
 
@@ -48,7 +49,7 @@
                                              buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
                                                   appEventProtocol:self.protocolBlockConverter
                                                      closeProtocol:self];
-    _jsBridge =[[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory];
+    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory];
     __weak typeof(self) weakSelf = self;
     [self.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
         [weakSelf respondToJS:result];
@@ -161,11 +162,21 @@ didFinishNavigation:(WKNavigation *)navigation {
         [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
                                                                             successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                                                                 MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];
-                                                                                [weakSelf.commandFactory setInAppMessage:inAppMessage];
-                                                                                dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                    [weakSelf.webView loadHTMLString:inAppMessage.html
-                                                                                                             baseURL:nil];
-                                                                                });
+                                                                                if (inAppMessage) {
+                                                                                    [weakSelf.commandFactory setInAppMessage:inAppMessage];
+                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                        [weakSelf.webView loadHTMLString:inAppMessage.html
+                                                                                                                 baseURL:nil];
+                                                                                    });
+                                                                                } else {
+                                                                                    NSError *error = [NSError errorWithCode:-1400
+                                                                                                       localizedDescription:@"Inline In-App HTML content must not be empty, please check your viewId!"];
+                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                        if (self.completionBlock) {
+                                                                                            self.completionBlock(error);
+                                                                                        }
+                                                                                    });
+                                                                                }
                                                                             }
                                                                               errorBlock:^(NSString *requestId, NSError *error) {
                                                                                   dispatch_async(dispatch_get_main_queue(), ^{
