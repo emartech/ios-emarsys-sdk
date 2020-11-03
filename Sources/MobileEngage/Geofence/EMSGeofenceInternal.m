@@ -16,6 +16,8 @@
 #import "EMSStorage.h"
 #import "EMSInnerFeature.h"
 #import "MEExperimental.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
 
 @interface EMSGeofenceInternal ()
 
@@ -95,6 +97,15 @@
         [self.locationManager startMonitoringForRegion:[self createRefreshAreaRegionWithDistances:sortedDistances
                                                                                distanceRegionDict:distanceRegionsDict
                                                                                 lastGeofenceIndex:lastGeofenceIndex]];
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"registeredGeofences"] = @(lastGeofenceIndex + 1);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelDebug);
+
     }
 }
 
@@ -128,6 +139,17 @@
 
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region {
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    parametersDict[@"manager"] = [manager description];
+    parametersDict[@"region"] = [region description];
+    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+    statusDict[@"triggerType"] = @"enter";
+    statusDict[@"regionId"] = region.identifier;
+    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                             sel:_cmd
+                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
+    EMSLog(logEntry, LogLevelDebug);
     __weak typeof(self) weakSelf = self;
     [self.queue addOperationWithBlock:^{
         EMSGeofence *geofence = self.registeredGeofences[region.identifier];
@@ -138,6 +160,18 @@
 
 - (void)locationManager:(CLLocationManager *)manager
           didExitRegion:(CLRegion *)region {
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    parametersDict[@"manager"] = [manager description];
+    parametersDict[@"region"] = [region description];
+    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+    statusDict[@"triggerType"] = @"exit";
+    statusDict[@"regionId"] = region.identifier;
+    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                             sel:_cmd
+                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
+    EMSLog(logEntry, LogLevelDebug);
+
     __weak typeof(self) weakSelf = self;
     [self.queue addOperationWithBlock:^{
         EMSGeofence *geofence = weakSelf.registeredGeofences[region.identifier];
@@ -167,6 +201,16 @@
 }
 
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    parametersDict[@"completionBlock"] = @(completionBlock != nil);
+    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+    statusDict[@"geofenceEnabled"] = @YES;
+    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                             sel:_cmd
+                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
+    EMSLog(logEntry, LogLevelDebug);
+
     BOOL isAuthorized;
     if (@available(iOS 14.0, *)) {
         isAuthorized = [self.locationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways;
@@ -195,6 +239,15 @@
 }
 
 - (void)disable {
+    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+    statusDict[@"geofenceEnabled"] = @NO;
+    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                             sel:_cmd
+                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
+    EMSLog(logEntry, LogLevelDebug);
+
     self.enabled = NO;
     self.recalculateable = NO;
     [self.locationManager stopUpdatingLocation];
