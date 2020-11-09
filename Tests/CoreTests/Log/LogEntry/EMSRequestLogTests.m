@@ -38,13 +38,17 @@
     OCMStub(requestModel.url).andReturn(url);
 
     _requestLog = [[EMSRequestLog alloc] initWithResponseModel:self.responseModel
-                                           networkingStartTime:self.timestamp];
+                                           networkingStartTime:self.timestamp
+                                                       headers:nil
+                                                       payload:nil];
 }
 
 - (void)testInit_responseModel_mustNotBeNil {
     @try {
         [[EMSRequestLog alloc] initWithResponseModel:nil
-                                 networkingStartTime:[NSDate date]];
+                                 networkingStartTime:[NSDate date]
+                                             headers:nil
+                                             payload:nil];
         XCTFail(@"Expected Exception when responseModel is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: responseModel");
@@ -54,7 +58,9 @@
 - (void)testInit_networkingStartTime_mustNotBeNil {
     @try {
         [[EMSRequestLog alloc] initWithResponseModel:OCMClassMock([EMSResponseModel class])
-                                 networkingStartTime:nil];
+                                 networkingStartTime:nil
+                                             headers:nil
+                                             payload:nil];
         XCTFail(@"Expected Exception when networkingStartTime is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: networkingStartTime");

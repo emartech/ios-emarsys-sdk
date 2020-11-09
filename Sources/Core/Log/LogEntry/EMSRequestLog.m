@@ -14,7 +14,9 @@
 @implementation EMSRequestLog
 
 - (instancetype)initWithResponseModel:(EMSResponseModel *)responseModel
-                  networkingStartTime:(NSDate *)networkingStartTime {
+                  networkingStartTime:(NSDate *)networkingStartTime
+                              headers:(NSDictionary *)headers
+                              payload:(NSDictionary *)payload {
     NSParameterAssert(responseModel);
     NSParameterAssert(networkingStartTime);
     if (self = [super init]) {
@@ -29,6 +31,8 @@
         mutableData[@"networkingStart"] = [networkingStartTime numberValueInMillis];
         mutableData[@"networkingEnd"] = [responseModel.timestamp numberValueInMillis];
         mutableData[@"networkingDuration"] = [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime];
+        mutableData[@"headers"] = headers;
+        mutableData[@"payload"] = payload;
 
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }

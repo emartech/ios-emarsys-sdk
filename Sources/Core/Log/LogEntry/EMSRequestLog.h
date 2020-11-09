@@ -9,6 +9,8 @@
 @interface EMSRequestLog : NSObject <EMSLogEntryProtocol>
 
 - (instancetype)initWithResponseModel:(EMSResponseModel *)responseModel
-                  networkingStartTime:(NSDate *)networkingStartTime;
+                  networkingStartTime:(NSDate *)networkingStartTime
+                              headers:(NSDictionary *)headers
+                              payload:(NSDictionary *)payload;
 
 @end

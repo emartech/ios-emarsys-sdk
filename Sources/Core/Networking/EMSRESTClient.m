@@ -53,8 +53,12 @@
     NSParameterAssert((NSObject *) completionProxy);
 
     NSDate *networkingStartTime = [self.timestampProvider provideTimestamp];
+
+    EMSRequestModel *finalizedRequestModel = [self finalizeRequestModel:requestModel];
+    NSURLRequest *request = [NSURLRequest requestWithRequestModel:finalizedRequestModel];
+
     __weak typeof(self) weakSelf = self;
-    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:[self createURLRequestFromRequestModel:requestModel]
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                      [weakSelf.queue addOperationWithBlock:^{
                                                          NSError *runtimeError = [weakSelf errorWithData:data
@@ -65,8 +69,15 @@
                                                                                                                                 requestModel:requestModel
                                                                                                                                    timestamp:[weakSelf.timestampProvider provideTimestamp]];
                                                          [weakSelf handleResponse:responseModel];
+
                                                          EMSLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
-                                                                                         networkingStartTime:networkingStartTime], LogLevelInfo);
+                                                                                         networkingStartTime:networkingStartTime
+                                                                                                     headers:finalizedRequestModel.headers
+                                                                                                     payload:finalizedRequestModel.payload], LogLevelDebug);
+                                                         EMSStrictLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
+                                                                                               networkingStartTime:networkingStartTime
+                                                                                                           headers:nil
+                                                                                                           payload:nil], LogLevelInfo);
                                                          if (error && requestModel) {
                                                              NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                                                              parameters[@"requestModel"] = requestModel.description;
@@ -100,10 +111,6 @@
         }
     }
     return runtimeError;
-}
-
-- (NSURLRequest *)createURLRequestFromRequestModel:(EMSRequestModel *)requestModel {
-    return [NSURLRequest requestWithRequestModel:[self finalizeRequestModel:requestModel]];
 }
 
 - (EMSRequestModel *)finalizeRequestModel:(EMSRequestModel *)requestModel {
