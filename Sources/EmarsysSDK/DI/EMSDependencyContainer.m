@@ -3,6 +3,7 @@
 //
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <EmarsysSDK/EmarsysSDK-Swift.h>
 #import "EMSDependencyContainer.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
@@ -62,6 +63,7 @@
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
+#import "EMSLoggingOnEventActionInternal.h"
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSProductMapper.h"
 #import "EMSConfigProtocol.h"
@@ -113,6 +115,8 @@
 @property(nonatomic, strong) id <EMSMessageInboxProtocol> loggingMessageInbox;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> loggingNotificationCenterDelegate;
+@property(nonatomic, strong) id <EMSOnEventActionProtocol> onEventAction;
+@property(nonatomic, strong) id <EMSOnEventActionProtocol> loggingOnEventAction;
 
 @property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
@@ -139,6 +143,7 @@
 @property(nonatomic, strong) EMSQueueDelegator *configDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *geofenceDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *iamDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *onEventActionDelegator;
 @property(nonatomic, strong) CLLocationManager *locationManager;
 
 @property(nonatomic, strong) NSOperationQueue *publicApiOperationQueue;
@@ -217,6 +222,11 @@
         [self.iamDelegator setupWithQueue:self.publicApiOperationQueue
                               emptyTarget:[MEInApp new]];
         _iam = (id <EMSInAppProtocol, MEIAMProtocol>) self.iamDelegator;
+        
+        _onEventActionDelegator = [EMSQueueDelegator alloc];
+        [self.onEventActionDelegator setupWithQueue:self.publicApiOperationQueue
+                                        emptyTarget:[OnEventActionInternal new]];
+        _onEventAction = (id <EMSOnEventActionProtocol>) self.onEventActionDelegator;
 
         _locationManager = [CLLocationManager new];
 
@@ -523,6 +533,16 @@
                                                                                    }];
 
     [self.messageInboxDelegator proxyWithInstanceRouter:messageInboxRouter];
+    
+    EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
+                                                                              mobileEngage:self.mobileEngage];
+    
+    EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[OnEventActionInternal new]
+                                                                                loggingInstance:[EMSLoggingOnEventActionInternal new]
+                                                                                    routerLogic:^BOOL{
+        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+    }];
+    [self.onEventActionDelegator proxyWithInstanceRouter:onEventActionRouter];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:self.uuidProvider

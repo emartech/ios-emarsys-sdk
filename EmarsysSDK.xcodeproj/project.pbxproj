@@ -266,6 +266,7 @@
 		32C6F942CFA228C339374DD5 /* EMSInboxV3IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6FF7E0FC18F0F5635894C /* EMSInboxV3IntegrationTests.m */; };
 		32C6F964570C7D742C363129 /* EmarsysTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F40774A36CCD6E9A29D0 /* EmarsysTestUtils.m */; };
 		32C6F97D961351D2FEC7A9F9 /* EMSAppEventLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F674581A8BE9B3B83AF9 /* EMSAppEventLogTests.m */; };
+		32C6F99288D05508A444E545 /* EMSOnEventActionProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F4A028CDB46C0F8FEF45 /* EMSOnEventActionProtocol.h */; };
 		32C6F999ABB0539F17E3FCBA /* EMS11-C3FD3.json in Resources */ = {isa = PBXBuildFile; fileRef = 32C6FE900D4A91F199E75CB0 /* EMS11-C3FD3.json */; };
 		32C6F9B42C12B269BB77B1A0 /* EMSGeofenceResponseMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C6F3A7A6D9296DD84B9274 /* EMSGeofenceResponseMapper.h */; };
 		32C6F9BC239103829EEB2960 /* EMSValueProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F45231072468EE3DD99F /* EMSValueProviderTests.m */; };
@@ -400,6 +401,10 @@
 		64259FA425362D2A801DC0DA /* EMSCustomEventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 64259852E6A4A27A6EAF02AE /* EMSCustomEventAction.h */; };
 		8A102D702112F3B50046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
+		8A2719E6255AA0DC00CB153E /* OnEventActionInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2719E5255AA0DC00CB153E /* OnEventActionInternal.swift */; };
+		8A2719EE255AA13300CB153E /* EmarsysSDK-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A2719ED255AA13300CB153E /* EmarsysSDK-Bridging-Header.h */; };
+		8A271A31255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A271A2F255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h */; };
+		8A271A32255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A271A30255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m */; };
 		8A3B594521A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
 		8A3B594621A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */; };
 		8A3B594821A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */; };
@@ -763,6 +768,10 @@
 		8A6BEBB823E86B490066B13C /* EMSDeepLinkInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */; };
 		8A84D9A92546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */; };
 		8A84D9AA2546F3E20043BA4A /* EmarsysE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */; };
+		8AB4C835255BD0F200325D65 /* OnEventResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4C834255BD0F200325D65 /* OnEventResponseHandlerTests.swift */; };
+		8AB4C836255BD0F200325D65 /* OnEventResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4C834255BD0F200325D65 /* OnEventResponseHandlerTests.swift */; };
+		8AB4C83D255BD15700325D65 /* OnEventResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AECF4BB255ACEB9000E129A /* OnEventResponseHandler.swift */; };
+		8AB4C84A255BD15900325D65 /* OnEventResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AECF4BB255ACEB9000E129A /* OnEventResponseHandler.swift */; };
 		8AB925D624CB09A1003B69A1 /* EMSNotificationInformationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB925D524CB09A1003B69A1 /* EMSNotificationInformationDelegate.h */; };
 		8AB925DA24CB0A8F003B69A1 /* EMSNotificationInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB925D824CB0A8F003B69A1 /* EMSNotificationInformation.m */; };
 		8ADAA675210773D500B3AC44 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAA674210773D500B3AC44 /* AppDelegate.m */; };
@@ -776,6 +785,7 @@
 		8AEBEC562108657200FC6E83 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC552108657200FC6E83 /* libsqlite3.tbd */; };
 		8AEBEC71210866C200FC6E83 /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8AEBEC72210866C200FC6E83 /* EmarsysSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8AECF4BC255ACEB9000E129A /* OnEventResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AECF4BB255ACEB9000E129A /* OnEventResponseHandler.swift */; };
 		8AFCA41C21393CF30052FEFA /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8AFCA44721393CF60052FEFA /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		8AFCA45221393D640052FEFA /* EMSPredictInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFCA45021393D640052FEFA /* EMSPredictInternalTests.m */; };
@@ -917,6 +927,7 @@
 		32C6F45E904B76485DB1944D /* EMSQueueDelegator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSQueueDelegator.m; sourceTree = "<group>"; };
 		32C6F476118620389B7C9536 /* EMSDeepLinkInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeepLinkInternalTests.m; sourceTree = "<group>"; };
 		32C6F4945BDC3F7177979552 /* EMSMobileEngageV3InternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageV3InternalTests.m; sourceTree = "<group>"; };
+		32C6F4A028CDB46C0F8FEF45 /* EMSOnEventActionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSOnEventActionProtocol.h; sourceTree = "<group>"; };
 		32C6F4AAC80CC3FDD0C6AF20 /* EMSStatusLogTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSStatusLogTests.m; sourceTree = "<group>"; };
 		32C6F4CBB04AF8AAD0FCDB12 /* EMSEventHandlerProtocolBlockConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSEventHandlerProtocolBlockConverter.m; sourceTree = "<group>"; };
 		32C6F4CEF8AFAC14E25EBF99 /* EMSEventHandlerProtocolImplementationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSEventHandlerProtocolImplementationTests.m; sourceTree = "<group>"; };
@@ -1065,6 +1076,10 @@
 		8655CFBA670A36F4A00FE7AE /* EMSInboxTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInboxTag.h; sourceTree = "<group>"; };
 		8A102D762112F3B50046BAFB /* MobileEngageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileEngageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A102E452112F7F90046BAFB /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A2719E5255AA0DC00CB153E /* OnEventActionInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnEventActionInternal.swift; sourceTree = "<group>"; };
+		8A2719ED255AA13300CB153E /* EmarsysSDK-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EmarsysSDK-Bridging-Header.h"; sourceTree = "<group>"; };
+		8A271A2F255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSLoggingOnEventActionInternal.h; sourceTree = "<group>"; };
+		8A271A30255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSLoggingOnEventActionInternal.m; sourceTree = "<group>"; };
 		8A3B594421A6A3A5000B00E4 /* EMSFilterByNothingSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByNothingSpecificationTests.m; sourceTree = "<group>"; };
 		8A3B594721A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByValuesSpecificationTests.m; sourceTree = "<group>"; };
 		8A3B594A21A6A938000B00E4 /* EMSFilterByTypeSpecificationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSFilterByTypeSpecificationTests.m; sourceTree = "<group>"; };
@@ -1497,6 +1512,8 @@
 		8AB2FA0621075B270030E659 /* MEUserNotificationDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEUserNotificationDelegateTests.m; sourceTree = "<group>"; };
 		8AB2FA0721075B270030E659 /* MENotificationServiceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MENotificationServiceTests.m; sourceTree = "<group>"; };
 		8AB2FA0C21075B270030E659 /* EMSNotificationCenterManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSNotificationCenterManagerTests.m; sourceTree = "<group>"; };
+		8AB4C833255BD0F200325D65 /* MobileEngageTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MobileEngageTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8AB4C834255BD0F200325D65 /* OnEventResponseHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnEventResponseHandlerTests.swift; sourceTree = "<group>"; };
 		8AB925D524CB09A1003B69A1 /* EMSNotificationInformationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSNotificationInformationDelegate.h; sourceTree = "<group>"; };
 		8AB925D824CB0A8F003B69A1 /* EMSNotificationInformation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSNotificationInformation.m; sourceTree = "<group>"; };
 		8ADAA671210773D500B3AC44 /* SdkHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SdkHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1514,6 +1531,7 @@
 		8AE0244F25232567009AF054 /* EMSProductMapperSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EMSProductMapperSwiftTests.swift; sourceTree = "<group>"; };
 		8AEBEC552108657200FC6E83 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EmarsysSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AECF4BB255ACEB9000E129A /* OnEventResponseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnEventResponseHandler.swift; sourceTree = "<group>"; };
 		8AED05AB24D30E4C0079DEFE /* SdkHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SdkHost.entitlements; sourceTree = "<group>"; };
 		8AFCA42221393CF30052FEFA /* PredictTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PredictTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AFCA44D21393CF60052FEFA /* EmarsysSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmarsysSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1944,6 +1962,16 @@
 			path = Mappers;
 			sourceTree = "<group>";
 		};
+		32C6FEBFB4953A949A90EC43 /* OnEventAction */ = {
+			isa = PBXGroup;
+			children = (
+				8A2719E5255AA0DC00CB153E /* OnEventActionInternal.swift */,
+				8A271A2F255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h */,
+				8A271A30255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m */,
+			);
+			path = OnEventAction;
+			sourceTree = "<group>";
+		};
 		32C6FEFDD3FBB1A4818ECCDF /* IAM */ = {
 			isa = PBXGroup;
 			children = (
@@ -2036,8 +2064,6 @@
 			children = (
 				64259878FE1E0FD0F0D1A321 /* EMSProductMapperTests.m */,
 				8AE0244F25232567009AF054 /* EMSProductMapperSwiftTests.swift */,
-				8AE0244D25232567009AF054 /* Tests-Bridging-Header.h */,
-				8AE0244E25232567009AF054 /* PredictTests-Bridging-Header.h */,
 			);
 			path = Mapper;
 			sourceTree = "<group>";
@@ -2120,6 +2146,7 @@
 		8A6BE8AA23E86B480066B13C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8A2719ED255AA13300CB153E /* EmarsysSDK-Bridging-Header.h */,
 				8A6BE8AB23E86B480066B13C /* Core */,
 				8A6BE95323E86B480066B13C /* include */,
 				8A6BE96B23E86B480066B13C /* Predict */,
@@ -2510,6 +2537,7 @@
 				8AB925D524CB09A1003B69A1 /* EMSNotificationInformationDelegate.h */,
 				32C6FE9EA704603000CB3430 /* EMSNotificationInformation.h */,
 				8655CFBA670A36F4A00FE7AE /* EMSInboxTag.h */,
+				32C6F4A028CDB46C0F8FEF45 /* EMSOnEventActionProtocol.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -2605,6 +2633,7 @@
 				8A6BEA2523E86B480066B13C /* Info.plist */,
 				32C6F847163FBD4D789C1844 /* Geofence */,
 				32C6FFF909ABC734304D3E41 /* InboxV3 */,
+				32C6FEBFB4953A949A90EC43 /* OnEventAction */,
 			);
 			path = MobileEngage;
 			sourceTree = "<group>";
@@ -2619,6 +2648,7 @@
 				8A6BE99223E86B480066B13C /* InappMessage */,
 				8A6BE99723E86B480066B13C /* EMSContactTokenResponseHandler.m */,
 				8A6BE99823E86B480066B13C /* EMSClientStateResponseHandler.m */,
+				8AECF4BB255ACEB9000E129A /* OnEventResponseHandler.swift */,
 			);
 			path = ResponseHandlers;
 			sourceTree = "<group>";
@@ -2987,6 +3017,10 @@
 		8AB2F98521075A8D0030E659 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				8AB4C833255BD0F200325D65 /* MobileEngageTests-Bridging-Header.h */,
+				8AE0244D25232567009AF054 /* Tests-Bridging-Header.h */,
+				8AE0244E25232567009AF054 /* PredictTests-Bridging-Header.h */,
+				8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */,
 				8AFCA45621393D700052FEFA /* EmarsysSDKTests */,
 				8AFCA44F21393D640052FEFA /* PredictTests */,
 				8AB2F99021075B270030E659 /* CoreTests */,
@@ -3186,6 +3220,7 @@
 				32C6FF7B874CBD7EA0AAA77B /* EMSClientStateResponseHandlerTests.m */,
 				944930E87D0D6F8FE1F2C39F /* EMSContactTokenResponseHandlerTests.m */,
 				94493D6111536D01EFE2D6AE /* EMSRefreshTokenResponseHandlerTests.m */,
+				8AB4C834255BD0F200325D65 /* OnEventResponseHandlerTests.swift */,
 			);
 			path = HandlerTests;
 			sourceTree = "<group>";
@@ -3306,7 +3341,6 @@
 				32C6F5AE21CFF14ACD2311F0 /* Endpoints */,
 				32C6F1D69C63DEA3E03991FF /* EventHandler */,
 				8A84D9A82546F3E20043BA4A /* EmarsysE2ETests.swift */,
-				8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */,
 			);
 			path = EmarsysSDKTests;
 			sourceTree = "<group>";
@@ -3464,6 +3498,7 @@
 				8A6BEA8A23E86B480066B13C /* EMSTimestampProvider.h in Headers */,
 				8A6BEAA723E86B480066B13C /* EMSListChunker.h in Headers */,
 				8A6BEABA23E86B480066B13C /* EMSLogEntryProtocol.h in Headers */,
+				8A271A31255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h in Headers */,
 				8A6BEB2B23E86B490066B13C /* EMSDeviceInfo+MEClientPayload.h in Headers */,
 				8A6BEB6B23E86B490066B13C /* EMSLoggingInApp.h in Headers */,
 				8A6BEB0023E86B480066B13C /* EMSLoggingPredictInternal.h in Headers */,
@@ -3527,6 +3562,7 @@
 				642599A87ACDE5A76D67FAAC /* EMSAppEventAction.h in Headers */,
 				642597CEB8B9B3C48D075107 /* EMSOpenExternalUrlAction.h in Headers */,
 				64259FA425362D2A801DC0DA /* EMSCustomEventAction.h in Headers */,
+				8A2719EE255AA13300CB153E /* EmarsysSDK-Bridging-Header.h in Headers */,
 				32C6F38F9483E284AFBBEE82 /* EMSGeofenceResponse.h in Headers */,
 				32C6FCEEADE304159925A1D3 /* EMSGeofenceGroup.h in Headers */,
 				32C6F6E1403DB142C7357274 /* EMSGeofence.h in Headers */,
@@ -3551,6 +3587,7 @@
 				64259E9951DF1C1476D457FC /* EMSInlineInAppView.h in Headers */,
 				32C6F772F0AF3D63C9AA72B2 /* EMSNotificationInformation.h in Headers */,
 				642591E3407B8597F68D0A49 /* EMSInstanceRouter.h in Headers */,
+				32C6F99288D05508A444E545 /* EMSOnEventActionProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3700,6 +3737,7 @@
 				TargetAttributes = {
 					8A102D1A2112F3B50046BAFB = {
 						DevelopmentTeam = 7ZFXXDJH82;
+						LastSwiftMigration = 1210;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8ADAA670210773D500B3AC44;
 					};
@@ -3723,7 +3761,7 @@
 					8AEBEC5B210866C200FC6E83 = {
 						CreatedOnToolsVersion = 9.4.1;
 						DevelopmentTeam = 7ZFXXDJH82;
-						LastSwiftMigration = 1200;
+						LastSwiftMigration = 1210;
 						ProvisioningStyle = Automatic;
 					};
 					8AFCA3F921393CF30052FEFA = {
@@ -3948,6 +3986,7 @@
 				166B403E2119A91F006CD35C /* InboxIntegrationTests.m in Sources */,
 				166B403F2119A91F006CD35C /* MEInboxTests.m in Sources */,
 				166B40442119A91F006CD35C /* MEIAMButtonClickedTests.m in Sources */,
+				8AB4C836255BD0F200325D65 /* OnEventResponseHandlerTests.swift in Sources */,
 				166B40462119A91F006CD35C /* MEIAMDidAppear.m in Sources */,
 				166B40472119A91F006CD35C /* MEIAMCloseTests.m in Sources */,
 				166B40482119A91F006CD35C /* MEIAMOpenExternalLinkTests.m in Sources */,
@@ -3999,6 +4038,7 @@
 				32C6F2038AB0CD44C88BA300 /* EMSPushV3InternalTests.m in Sources */,
 				32C6F2E0A674E2C54D307EF6 /* EMSMobileEngageV3InternalTests.m in Sources */,
 				94493922ED143B6581B42CD0 /* EMSContactTokenResponseHandlerTests.m in Sources */,
+				8AB4C84A255BD15900325D65 /* OnEventResponseHandler.swift in Sources */,
 				94493D9EA2655A008BD5A078 /* EMSInAppInternalTests.m in Sources */,
 				944937DAD14D36A2655CE16C /* EMSCompletionProxyFactoryTests.m in Sources */,
 				9449378A81A1D5C375D07CA2 /* EMSMobileEngageRefreshTokenCompletionProxyTests.m in Sources */,
@@ -4223,6 +4263,7 @@
 				944934F458F67EC97A0CFF44 /* EMSContactTokenResponseHandlerTests.m in Sources */,
 				94493B746D45EC968231160D /* EMSInAppInternalTests.m in Sources */,
 				94493004CC1D4AAD791090DC /* EMSCompletionProxyFactoryTests.m in Sources */,
+				8AB4C83D255BD15700325D65 /* OnEventResponseHandler.swift in Sources */,
 				94493DBABE1E24395EFDF39A /* EMSMobileEngageRefreshTokenCompletionProxyTests.m in Sources */,
 				94493C79A38278E2B53CF930 /* EMSRefreshTokenResponseHandlerTests.m in Sources */,
 				32C6FA7E90A037C37C9D3403 /* EMSContactTokenMapperTests.m in Sources */,
@@ -4253,6 +4294,7 @@
 				32C6F9BC239103829EEB2960 /* EMSValueProviderTests.m in Sources */,
 				32C6F5F171B0B620C0CFD383 /* EMSEndpointTests.m in Sources */,
 				32C6F83F3F920D72A7F9BB24 /* FakeRequestManager.m in Sources */,
+				8AB4C835255BD0F200325D65 /* OnEventResponseHandlerTests.swift in Sources */,
 				32C6FB16A7C3645DB1EA3CB0 /* EMSStorageTests.m in Sources */,
 				32C6F6ADCF498D49CC1FFFB1 /* EMSStatusLogTests.m in Sources */,
 				32C6FE5E599219BEAC5B2038 /* EMSSceneProviderTests.m in Sources */,
@@ -4320,6 +4362,8 @@
 				8A6BEB9423E86B490066B13C /* MEDefaultHeaders.m in Sources */,
 				8A6BEA8123E86B480066B13C /* EMSRESTClient.m in Sources */,
 				8A6BEB5E23E86B490066B13C /* MEIAMClose.m in Sources */,
+				8AECF4BC255ACEB9000E129A /* OnEventResponseHandler.swift in Sources */,
+				8A2719E6255AA0DC00CB153E /* OnEventActionInternal.swift in Sources */,
 				8A6BEB0823E86B490066B13C /* EMSLogic.m in Sources */,
 				8A6BEB2323E86B490066B13C /* EMSLoggingInbox.m in Sources */,
 				8A6BEB0523E86B480066B13C /* EMSCartItem.m in Sources */,
@@ -4428,6 +4472,7 @@
 				8A6BEAA823E86B480066B13C /* EMSRequestManager.m in Sources */,
 				8A6BEAD823E86B480066B13C /* NSURLRequest+EMSCore.m in Sources */,
 				8A6BEB5023E86B490066B13C /* EMSPushV3Internal.m in Sources */,
+				8A271A32255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m in Sources */,
 				8A6BEB2123E86B490066B13C /* EMSNotificationInboxStatus.m in Sources */,
 				8A6BEBA723E86B490066B13C /* EMSRemoteConfigResponseMapper.m in Sources */,
 				8A6BEB4123E86B490066B13C /* MEButtonClickRepository.m in Sources */,
@@ -4624,6 +4669,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -4682,6 +4728,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -4712,6 +4759,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A40073E014CD18BD275E8EC8 /* Pods-MobileEngageTests.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4722,6 +4770,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/MobileEngageTests/HandlerTests/MobileEngageTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
 			};
@@ -4731,6 +4782,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 68CE8969B36A99139E41CE95 /* Pods-MobileEngageTests.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7ZFXXDJH82;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4741,6 +4793,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/MobileEngageTests/HandlerTests/MobileEngageTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
 			};
@@ -4799,7 +4853,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/PredictTests/Mapper/Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4823,7 +4877,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/PredictTests/Mapper/Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SdkHost.app/SdkHost";
@@ -4834,6 +4888,7 @@
 		8ADAA684210773D500B3AC44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SdkHost/SdkHost.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -4853,6 +4908,7 @@
 		8ADAA685210773D500B3AC44 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SdkHost/SdkHost.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -4872,6 +4928,7 @@
 		8AEBEC74210866C200FC6E83 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -4892,6 +4949,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/EmarsysSDK-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4903,6 +4961,7 @@
 		8AEBEC75210866C200FC6E83 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -4924,6 +4983,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/EmarsysSDK-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

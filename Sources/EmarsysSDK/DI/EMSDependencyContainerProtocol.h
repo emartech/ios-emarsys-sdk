@@ -33,6 +33,7 @@
 @protocol EMSMessageInboxProtocol;
 @class EMSEndpoint;
 @class MEButtonClickRepository;
+@protocol EMSOnEventActionProtocol;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -75,6 +76,10 @@
 - (id <EMSMessageInboxProtocol>)loggingMessageInbox;
 
 - (id <EMSConfigProtocol>)config;
+
+- (id <EMSOnEventActionProtocol>)onEventAction;
+
+- (id <EMSOnEventActionProtocol>)loggingOnEventAction;
 
 - (id <EMSRequestModelRepositoryProtocol>)requestRepository;
 
