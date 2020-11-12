@@ -121,7 +121,7 @@
 @property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
 @property(nonatomic, strong) EMSNotificationCache *notificationCache;
-@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSAppStartBlockProvider *appStartBlockProvider;
 @property(nonatomic, strong) EMSLogger *logger;
@@ -222,7 +222,7 @@
         [self.iamDelegator setupWithQueue:self.publicApiOperationQueue
                               emptyTarget:[MEInApp new]];
         _iam = (id <EMSInAppProtocol, MEIAMProtocol>) self.iamDelegator;
-        
+
         _onEventActionDelegator = [EMSQueueDelegator alloc];
         [self.onEventActionDelegator setupWithQueue:self.publicApiOperationQueue
                                         emptyTarget:[[OnEventActionInternal alloc] initWithActionFactory:nil]];
@@ -254,7 +254,7 @@
                                                                                valueKey:@"INBOX_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
-    
+
     UIApplication *application = [UIApplication sharedApplication];
 
     _mobileEngageRouterLogicBlock = ^BOOL {
@@ -343,38 +343,36 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil
                                                      delegateQueue:self.coreOperationQueue];
-    
+
     EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                               mobileEngage:self.mobileEngage];
-    
+
     EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[OnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
                                                                                 loggingInstance:[EMSLoggingOnEventActionInternal new]
-                                                                                    routerLogic:^BOOL{
-        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
-    }];
+                                                                                    routerLogic:^BOOL {
+                                                                                        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+                                                                                    }];
     [self.onEventActionDelegator proxyWithInstanceRouter:onEventActionRouter];
 
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                                                         endpoint:self.endpoint];
-    NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers = [NSMutableArray array];
+    _responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
-    [responseHandlers addObjectsFromArray:@[
+    [self.responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
             [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.buttonClickRepository
                                                           displayIamRepository:displayedIAMRepository
                                                                       endpoint:self.endpoint]]
     ];
-    [responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
-                                                                                   endpoint:self.endpoint]];
-    [responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext
-                                                                            endpoint:self.endpoint]];
-    [responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
-                                                                                     endpoint:self.endpoint]];
-    [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
-                                                                                      endpoint:self.endpoint]];
-    [responseHandlers addObject:[[OnEventResponseHandler alloc] initWithActionFactory:onEventActionFactory]];
-    [responseHandlers addObject:contactTokenResponseHandler];
-    _responseHandlers = [NSArray arrayWithArray:responseHandlers];
+    [self.responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
+                                                                                        endpoint:self.endpoint]];
+    [self.responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext
+                                                                                 endpoint:self.endpoint]];
+    [self.responseHandlers addObject:[[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                                                          endpoint:self.endpoint]];
+    [self.responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
+                                                                                           endpoint:self.endpoint]];
+    [self.responseHandlers addObject:contactTokenResponseHandler];
 
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.coreOperationQueue
@@ -415,6 +413,12 @@
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
+
+    [self.responseHandlers addObject:[[OnEventResponseHandler alloc] initWithActionFactory:onEventActionFactory
+                                                                    displayedIAMRepository:displayedIAMRepository
+                                                                         timestampProvider:timestampProvider
+                                                                            requestFactory:self.requestFactory
+                                                                            requestManager:self.requestManager]];
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
         _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
@@ -469,11 +473,11 @@
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     EMSInstanceRouter *mobileEngageRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                                                                                                                           requestManager:self.requestManager
-                                                                                                                                           requestContext:self.requestContext
-                                                                                                                                                  storage:self.storage]
-                                                                                loggingInstance:self.loggingMobileEngage
-                                                                                    routerLogic:self.mobileEngageRouterLogicBlock];
+                                                                                                                                          requestManager:self.requestManager
+                                                                                                                                          requestContext:self.requestContext
+                                                                                                                                                 storage:self.storage]
+                                                                               loggingInstance:self.loggingMobileEngage
+                                                                                   routerLogic:self.mobileEngageRouterLogicBlock];
     [self.mobileEngageDelegator proxyWithInstanceRouter:mobileEngageRouter];
 
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application

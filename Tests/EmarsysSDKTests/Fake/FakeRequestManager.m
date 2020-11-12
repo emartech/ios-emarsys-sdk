@@ -27,4 +27,11 @@
     self.completionBlock();
 }
 
+- (void)submitRequestModel:(EMSRequestModel *)model
+       withCompletionBlock:(EMSCompletionBlock)completionBlock {
+    _submittedRequestModel = model;
+    [super submitRequestModel:model
+          withCompletionBlock:completionBlock];
+}
+
 @end

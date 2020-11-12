@@ -5,13 +5,25 @@
 import Foundation
 
 class OnEventResponseHandler: EMSAbstractResponseHandler {
-    
+
     var actionFactory: EMSActionFactory
-    
-    @objc init(actionFactory: EMSActionFactory) {
+    let displayedIAMRepository: EMSRepositoryProtocol
+    let timestampProvider: EMSTimestampProvider
+    let requestFactory: EMSRequestFactory
+    let requestManager: EMSRequestManager
+
+    @objc init(actionFactory: EMSActionFactory,
+               displayedIAMRepository: EMSRepositoryProtocol,
+               timestampProvider: EMSTimestampProvider,
+               requestFactory: EMSRequestFactory,
+               requestManager: EMSRequestManager) {
         self.actionFactory = actionFactory
+        self.displayedIAMRepository = displayedIAMRepository
+        self.timestampProvider = timestampProvider
+        self.requestFactory = requestFactory
+        self.requestManager = requestManager
     }
-    
+
     override func shouldHandleResponse(_ response: EMSResponseModel) -> Bool {
         guard let parsedBody = response.parsedBody() as? [String: Any] else {
             return false
@@ -21,7 +33,7 @@ class OnEventResponseHandler: EMSAbstractResponseHandler {
         }
         return onEventAction["actions"] != nil
     }
-    
+
     override func handleResponse(_ response: EMSResponseModel) {
         guard let parsedBody = response.parsedBody() as? [String: Any] else {
             return
@@ -35,6 +47,13 @@ class OnEventResponseHandler: EMSAbstractResponseHandler {
         actions.forEach { [unowned self] actionDict in
             self.actionFactory.createAction(withActionDictionary: actionDict)?.execute()
         }
+        guard let campaignId = parsedBody["campaignId"] as? String else {
+            return
+        }
+        self.displayedIAMRepository.add(MEDisplayedIAM(campaignId: campaignId, timestamp: self.timestampProvider.provideTimestamp()))
+        let eventAttributes = ["campaignId" : campaignId]
+        let requestModel = requestFactory.createEventRequestModel(withEventName: "inapp:viewed", eventAttributes: eventAttributes, eventType: EventTypeInternal)
+        requestManager.submitRequestModel(requestModel, withCompletionBlock: nil)
     }
-    
+
 }

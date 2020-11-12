@@ -9,6 +9,7 @@
 - (instancetype)initWithSubmitNowCompletionBlock:(EMSCompletion)completionBlock;
 
 @property(nonatomic, strong) EMSRequestModel *submitNowRequestModel;
+@property(nonatomic, strong) EMSRequestModel *submittedRequestModel;
 @property(nonatomic) CoreSuccessBlock successBlock;
 @property(nonatomic) CoreErrorBlock errorBlock;
 

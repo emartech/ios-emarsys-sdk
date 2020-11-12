@@ -10,3 +10,8 @@
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
 #import "EMSEventHandler.h"
+#import "MEDisplayedIAMRepository.h"
+#import "MEDisplayedIAM.h"
+#import "EMSTimestampProvider.h"
+#import "EMSRequestFactory.h"
+#import "EMSRequestManager.h"
