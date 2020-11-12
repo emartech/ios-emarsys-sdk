@@ -219,7 +219,7 @@ didFinishNavigation:(WKNavigation *)navigation {
     });
 }
 
-- (void)setEventHandler:(EMSEventHandler)eventHandler {
+- (void)setEventHandler:(EMSEventHandlerBlock)eventHandler {
     _eventHandler = eventHandler;
     self.protocolBlockConverter.eventHandler.handlerBlock = eventHandler;
 }

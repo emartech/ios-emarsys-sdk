@@ -225,7 +225,7 @@
         
         _onEventActionDelegator = [EMSQueueDelegator alloc];
         [self.onEventActionDelegator setupWithQueue:self.publicApiOperationQueue
-                                        emptyTarget:[OnEventActionInternal new]];
+                                        emptyTarget:[[OnEventActionInternal alloc] initWithActionFactory:nil]];
         _onEventAction = (id <EMSOnEventActionProtocol>) self.onEventActionDelegator;
 
         _locationManager = [CLLocationManager new];
@@ -254,6 +254,8 @@
                                                                                valueKey:@"INBOX_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
+    
+    UIApplication *application = [UIApplication sharedApplication];
 
     _mobileEngageRouterLogicBlock = ^BOOL {
         return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
@@ -341,6 +343,16 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil
                                                      delegateQueue:self.coreOperationQueue];
+    
+    EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
+                                                                              mobileEngage:self.mobileEngage];
+    
+    EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[OnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
+                                                                                loggingInstance:[EMSLoggingOnEventActionInternal new]
+                                                                                    routerLogic:^BOOL{
+        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+    }];
+    [self.onEventActionDelegator proxyWithInstanceRouter:onEventActionRouter];
 
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                                                         endpoint:self.endpoint];
@@ -360,6 +372,7 @@
                                                                                      endpoint:self.endpoint]];
     [responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                       endpoint:self.endpoint]];
+    [responseHandlers addObject:[[OnEventResponseHandler alloc] initWithActionFactory:onEventActionFactory]];
     [responseHandlers addObject:contactTokenResponseHandler];
     _responseHandlers = [NSArray arrayWithArray:responseHandlers];
 
@@ -442,8 +455,6 @@
                                                                        requestFactory:self.requestFactory
                                                                            deviceInfo:deviceInfo
                                                                        requestContext:self.requestContext];
-
-    UIApplication *application = [UIApplication sharedApplication];
 
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
                                                                                                                           endpoint:self.endpoint];
@@ -533,16 +544,6 @@
                                                                                    }];
 
     [self.messageInboxDelegator proxyWithInstanceRouter:messageInboxRouter];
-    
-    EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
-                                                                              mobileEngage:self.mobileEngage];
-    
-    EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[OnEventActionInternal new]
-                                                                                loggingInstance:[EMSLoggingOnEventActionInternal new]
-                                                                                    routerLogic:^BOOL{
-        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
-    }];
-    [self.onEventActionDelegator proxyWithInstanceRouter:onEventActionRouter];
 
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:self.uuidProvider

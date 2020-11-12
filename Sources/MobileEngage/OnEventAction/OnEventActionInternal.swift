@@ -5,7 +5,17 @@
 import Foundation
 
 class OnEventActionInternal: NSObject, EMSOnEventActionProtocol {
-   
-    @objc var eventHandler: EMSEventHandler?
+    
+    var eventHandler: EMSEventHandler? {
+        didSet {
+            self.actionFactory?.eventHandler = eventHandler
+        }
+    }
+    
+    var actionFactory: EMSActionFactory?
+
+    @objc init(actionFactory: EMSActionFactory? = nil) {
+        self.actionFactory = actionFactory
+    }
     
 }

@@ -8,7 +8,7 @@ class OnEventResponseHandler: EMSAbstractResponseHandler {
     
     var actionFactory: EMSActionFactory
     
-    init(actionFactory: EMSActionFactory) {
+    @objc init(actionFactory: EMSActionFactory) {
         self.actionFactory = actionFactory
     }
     

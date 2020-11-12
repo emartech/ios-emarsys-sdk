@@ -7,7 +7,7 @@
 
 @interface EMSInlineInAppView: UIView
 
-@property(nonatomic, strong) EMSEventHandler eventHandler;
+@property(nonatomic, strong) EMSEventHandlerBlock eventHandler;
 @property(nonatomic, strong) EMSCompletionBlock completionBlock;
 @property(nonatomic, strong) EMSInlineInappViewCloseBlock closeBlock;
 

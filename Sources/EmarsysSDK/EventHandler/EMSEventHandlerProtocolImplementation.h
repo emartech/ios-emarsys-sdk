@@ -8,6 +8,6 @@
 
 @interface EMSEventHandlerProtocolImplementation: NSObject <EMSEventHandler>
 
-@property(nonatomic, strong) EMSEventHandler handlerBlock;
+@property(nonatomic, strong) EMSEventHandlerBlock handlerBlock;
 
 @end

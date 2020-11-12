@@ -14,7 +14,7 @@ typedef void (^EMSSourceHandler)(NSString *source);
 
 typedef void (^EMSInboxMessageResultBlock)(EMSInboxResult *_Nullable inboxResult, NSError *_Nullable error);
 
-typedef void (^EMSEventHandler)(NSString *eventName, NSDictionary<NSString *, id> *_Nullable payload);
+typedef void (^EMSEventHandlerBlock)(NSString *eventName, NSDictionary<NSString *, id> *_Nullable payload);
 
 typedef void (^EMSInlineInappViewCloseBlock)(void);
 

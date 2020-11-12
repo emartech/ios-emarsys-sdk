@@ -7,6 +7,6 @@
 
 @protocol EMSOnEventActionProtocol <NSObject>
 
-@property(nonatomic, weak) id <EMSEventHandler> eventHandler;
+@property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
 
 @end

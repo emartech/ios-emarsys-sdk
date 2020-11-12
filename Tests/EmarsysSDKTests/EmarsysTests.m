@@ -241,7 +241,7 @@
     
     [self waitForSetup];
     
-    XCTAssertEqual([EMSDependencyInjection.dependencyContainer.responseHandlers count], 7);
+    XCTAssertEqual([EMSDependencyInjection.dependencyContainer.responseHandlers count], 8);
 }
 
 - (void)testShouldregisterUIApplicationDidBecomeActiveNotification {
