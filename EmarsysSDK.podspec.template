@@ -44,7 +44,8 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSUserNotificationCenterDelegate.h',
         'Sources/include/EMSInlineInAppView.h',
         'Sources/include/EMSNotificationInformationDelegate.h',
-        'Sources/include/EMSNotificationInformation.h'
+        'Sources/include/EMSNotificationInformation.h',
+        'Sources/include/EMSOnEventActionProtocol.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
