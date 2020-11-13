@@ -161,4 +161,8 @@
     return EMSDependencyInjection.messageInbox;
 }
 
++ (id <EMSOnEventActionProtocol>)onEventAction {
+    return EMSDependencyInjection.onEventAction;
+}
+
 @end

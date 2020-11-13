@@ -65,4 +65,8 @@ static EMSDependencyContainer *_dependencyContainer;
     return self.dependencyContainer.messageInbox;
 }
 
++ (id <EMSOnEventActionProtocol>)onEventAction {
+    return self.dependencyContainer.onEventAction;
+}
+
 @end

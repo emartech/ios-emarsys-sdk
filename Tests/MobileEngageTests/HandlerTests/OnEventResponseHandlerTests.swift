@@ -11,7 +11,7 @@ class OnEventResponseHandlerTests: XCTestCase {
     var timestampProvider: EMSTimestampProvider?
     var requestFactory: FakeRequestFactory?
     var requestManager: FakeRequestManager?
-    var responseHandler: OnEventResponseHandler?
+    var responseHandler: EMSOnEventResponseHandler?
 
     override func setUpWithError() throws {
         self.actionFactory = FakeActionFactory {
@@ -20,11 +20,12 @@ class OnEventResponseHandlerTests: XCTestCase {
         self.timestampProvider = EMSTimestampProvider()
         self.requestFactory = FakeRequestFactory()
         self.requestManager = FakeRequestManager()
-        self.responseHandler = OnEventResponseHandler(actionFactory: self.actionFactory!,
-                displayedIAMRepository: self.repository!,
-                timestampProvider: self.timestampProvider!,
+
+        self.responseHandler = EMSOnEventResponseHandler(requestManager: self.requestManager!,
                 requestFactory: self.requestFactory!,
-                requestManager: self.requestManager!)
+                displayedIAMRepository: self.repository!,
+                actionFactory: self.actionFactory!,
+                timestampProvider: self.timestampProvider!)
     }
 
     func testShouldHandleResponse() throws {

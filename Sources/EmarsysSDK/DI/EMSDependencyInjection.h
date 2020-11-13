@@ -30,4 +30,6 @@
 
 + (id <EMSMessageInboxProtocol>)messageInbox;
 
++ (id <EMSOnEventActionProtocol>)onEventAction;
+
 @end

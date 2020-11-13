@@ -3,7 +3,6 @@
 //
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import <EmarsysSDK/EmarsysSDK-Swift.h>
 #import "EMSDependencyContainer.h"
 #import "MERequestContext.h"
 #import "MEInApp.h"
@@ -86,6 +85,8 @@
 #import "EMSCrypto.h"
 #import "EMSQueueDelegator.h"
 #import "EMSDispatchWaiter.h"
+#import "EMSOnEventActionInternal.h"
+#import "EMSOnEventResponseHandler.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -225,7 +226,7 @@
 
         _onEventActionDelegator = [EMSQueueDelegator alloc];
         [self.onEventActionDelegator setupWithQueue:self.publicApiOperationQueue
-                                        emptyTarget:[[OnEventActionInternal alloc] initWithActionFactory:nil]];
+                                        emptyTarget:[EMSOnEventActionInternal new]];
         _onEventAction = (id <EMSOnEventActionProtocol>) self.onEventActionDelegator;
 
         _locationManager = [CLLocationManager new];
@@ -347,7 +348,7 @@
     EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                               mobileEngage:self.mobileEngage];
 
-    EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[OnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
+    EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSOnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
                                                                                 loggingInstance:[EMSLoggingOnEventActionInternal new]
                                                                                     routerLogic:^BOOL {
                                                                                         return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
@@ -414,11 +415,11 @@
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
 
-    [self.responseHandlers addObject:[[OnEventResponseHandler alloc] initWithActionFactory:onEventActionFactory
-                                                                    displayedIAMRepository:displayedIAMRepository
-                                                                         timestampProvider:timestampProvider
-                                                                            requestFactory:self.requestFactory
-                                                                            requestManager:self.requestManager]];
+    [self.responseHandlers addObject:[[EMSOnEventResponseHandler alloc] initWithRequestManager:self.requestManager
+                                                                                requestFactory:self.requestFactory
+                                                                        displayedIAMRepository:displayedIAMRepository
+                                                                                 actionFactory:onEventActionFactory
+                                                                             timestampProvider:timestampProvider]];
 
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
         _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
