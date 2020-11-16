@@ -8,11 +8,15 @@
 
 @interface EMSInboxV3IntegrationTests : XCTestCase
 
+@property(nonatomic, strong) NSString *testMessageId;
+
 @end
 
 @implementation EMSInboxV3IntegrationTests
 
 - (void)setUp {
+    _testMessageId = [NSString stringWithFormat:@"%d",INT_MAX];
+
     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
     [EmarsysTestUtils waitForSetCustomer];
@@ -47,7 +51,7 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys.messageInbox addTag:@"testTag"
-                      forMessage:@"testMessageId"
+                      forMessage:self.testMessageId
                  completionBlock:^(NSError *error) {
                      returnedError = error;
                      [expectation fulfill];
@@ -64,7 +68,7 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [Emarsys.messageInbox removeTag:@"testTag"
-                        fromMessage:@"testMessageId"
+                        fromMessage:self.testMessageId
                     completionBlock:^(NSError *error) {
                         returnedError = error;
                         [expectation fulfill];

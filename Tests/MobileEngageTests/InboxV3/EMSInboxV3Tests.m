@@ -17,6 +17,7 @@
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) EMSInboxResultParser *mockInboxResultParser;
 @property(nonatomic, strong) EMSInboxV3 *inbox;
+@property(nonatomic, strong) NSString *testMessageId;
 
 @end
 
@@ -30,6 +31,7 @@
     _inbox = [[EMSInboxV3 alloc] initWithRequestFactory:self.mockRequestFactory
                                          requestManager:self.mockRequestManager
                                       inboxResultParser:self.mockInboxResultParser];
+    _testMessageId = [NSString stringWithFormat:@"%d",INT_MAX];
 }
 
 - (void)testInit_requestFactory_mustNotBeNil {
@@ -136,20 +138,19 @@
     EMSInboxV3 *partialMockInbox = OCMPartialMock(self.inbox);
 
     NSString *tag = @"testTag";
-    NSString *messageId = @"testId1";
 
     [partialMockInbox addTag:tag
-                  forMessage:messageId];
+                  forMessage:self.testMessageId];
 
     OCMVerify([partialMockInbox addTag:tag
-                            forMessage:messageId
+                            forMessage:self.testMessageId
                        completionBlock:nil]);
 }
 
 - (void)testAddTag_tag_mustNotBeNil {
     @try {
         [self.inbox addTag:nil
-                forMessage:@"testMessageId"];
+                forMessage:self.testMessageId];
         XCTFail(@"Expected Exception when tag is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: tag");
@@ -169,25 +170,24 @@
 - (void)testAddTagCompletionBlock {
     NSString *tag = @"testTag";
     NSString *lowerCasedTag = @"testtag";
-    NSString *messageId = @"testId1";
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
 
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
                                                           eventAttributes:(@{
-                                                                  @"messageId": messageId,
+                                                                  @"messageId": self.testMessageId,
                                                                   @"tag": lowerCasedTag
                                                           })
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
 
     [self.inbox addTag:tag
-            forMessage:messageId
+            forMessage:self.testMessageId
        completionBlock:completionBlock];
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
                                                             eventAttributes:(@{
-                                                                    @"messageId": messageId,
+                                                                    @"messageId": self.testMessageId,
                                                                     @"tag": lowerCasedTag
                                                             })
                                                                   eventType:EventTypeInternal]);
@@ -199,20 +199,19 @@
     EMSInboxV3 *partialMockInbox = OCMPartialMock(self.inbox);
 
     NSString *tag = @"testTag";
-    NSString *messageId = @"testId1";
 
     [partialMockInbox removeTag:tag
-                    fromMessage:messageId];
+                    fromMessage:self.testMessageId];
 
     OCMVerify([partialMockInbox removeTag:tag
-                              fromMessage:messageId
+                              fromMessage:self.testMessageId
                           completionBlock:nil]);
 }
 
 - (void)testRemoveTag_tag_mustNotBeNil {
     @try {
         [self.inbox removeTag:nil
-                  fromMessage:@"testMessageId"];
+                  fromMessage:self.testMessageId];
         XCTFail(@"Expected Exception when tag is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: tag");
@@ -232,25 +231,24 @@
 - (void)testRemoveTagCompletionBlock {
     NSString *tag = @"testTag";
     NSString *lowerCasedTag = @"testtag";
-    NSString *messageId = @"testId1";
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
 
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
                                                           eventAttributes:(@{
-                                                                  @"messageId": messageId,
+                                                                  @"messageId": self.testMessageId,
                                                                   @"tag": lowerCasedTag
                                                           })
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
 
     [self.inbox removeTag:tag
-              fromMessage:messageId
+              fromMessage:self.testMessageId
           completionBlock:completionBlock];
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
                                                             eventAttributes:(@{
-                                                                    @"messageId": messageId,
+                                                                    @"messageId": self.testMessageId,
                                                                     @"tag": lowerCasedTag
                                                             })
                                                                   eventType:EventTypeInternal]);
