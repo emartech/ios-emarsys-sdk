@@ -19,21 +19,14 @@ class Emarsys_SampleUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // UI tests must launch the application that they test.
+    func testInlineInappClose() {
+        
         let app = XCUIApplication()
         app.launch()
-
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let tabBar = app.tabBars["Tab Bar"]
+        tabBar.buttons["chevron.left.slash.chevron.right"].tap()
+        app.webViews.webViews.webViews.staticTexts["×"].tap()
+        
     }
 
-    func testLaunchPerformance() {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTOSSignpostMetric.applicationLaunch]) {
-                XCUIApplication().launch()
-            }
-        }
-    }
 }
