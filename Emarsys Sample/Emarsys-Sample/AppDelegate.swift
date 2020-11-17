@@ -30,21 +30,21 @@ class AppDelegate: EMSAppDelegate {
     }
 
     override func handleEvent(_ eventName: String, payload: [String: NSObject]?) {
-//        super.handleEvent(eventName, payload: payload)
-//        let alertController = UIAlertController(title: eventName, message: "\(String(describing: payload))", preferredStyle: .alert)
-//        alertController.addAction(UIAlertAction(title: "Close", style: .destructive, handler: { (action) in
-//            alertController.dismiss(animated: true, completion: nil)
-//        }))
-//
-//        UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
-//        print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
-//
-//        let content = UNMutableNotificationContent()
-//        content.title = eventName
-//        content.body = payload!.description
-//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-//        let request = UNNotificationRequest(identifier: "notification.id.01", content: content, trigger: trigger)
-//        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        super.handleEvent(eventName, payload: payload)
+        let alertController = UIAlertController(title: eventName, message: "\(String(describing: payload))", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Close", style: .destructive, handler: { (action) in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+
+        UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
+        print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
+
+        let content = UNMutableNotificationContent()
+        content.title = eventName
+        content.body = payload!.description
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "notification.id.01", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
     }
 
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

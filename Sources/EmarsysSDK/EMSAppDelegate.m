@@ -15,6 +15,7 @@ didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsK
     Emarsys.notificationCenterDelegate.eventHandler = self;
     Emarsys.push.silentMessageEventHandler = self;
     Emarsys.geofence.eventHandler = self;
+    Emarsys.onEventAction.eventHandler = self;
     UNUserNotificationCenter.currentNotificationCenter.delegate = Emarsys.notificationCenterDelegate;
 
     [application registerForRemoteNotifications];
