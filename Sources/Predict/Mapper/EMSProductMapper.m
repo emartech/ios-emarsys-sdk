@@ -20,9 +20,11 @@
             NSString *key = item[@"id"];
             NSMutableDictionary *productData = [responseData[@"products"][key] mutableCopy];
             EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                NSCharacterSet *allowedCharacters = [NSCharacterSet URLQueryAllowedCharacterSet];
+                NSString *link = [[productData takeValueForKey:@"link"] stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
                 [builder setRequiredFieldsWithProductId:[productData takeValueForKey:@"item"]
                                                   title:[productData takeValueForKey:@"title"]
-                                                linkUrl:[[NSURL alloc] initWithString:[productData takeValueForKey:@"link"]]
+                                                linkUrl:[[NSURL alloc] initWithString:link]
                                                 feature:featureName
                                                  cohort:responseData[@"cohort"]];
 
@@ -31,10 +33,10 @@
                 [builder setMsrp:[productData takeValueForKey:@"msrp"]];
                 [builder setPrice:[productData takeValueForKey:@"price"]];
 
-                NSString *imageUrl = [productData takeValueForKey:@"image"];
+                NSString *imageUrl = [[productData takeValueForKey:@"image"] stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
                 [builder setImageUrl:imageUrl ? [[NSURL alloc] initWithString:imageUrl] : nil];
 
-                NSString *zoomImageUrl = [productData takeValueForKey:@"zoom_image"];
+                NSString *zoomImageUrl = [[productData takeValueForKey:@"zoom_image"] stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
                 [builder setZoomImageUrl:zoomImageUrl ? [[NSURL alloc] initWithString:zoomImageUrl] : nil];
 
                 [builder setProductDescription:[productData takeValueForKey:@"description"]];

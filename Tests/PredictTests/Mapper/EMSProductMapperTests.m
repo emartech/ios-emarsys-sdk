@@ -59,15 +59,15 @@
         [builder setRequiredFieldsWithProductId:@"2119"
                                           title:@"LSL Men Polo Shirt SE16"
                                         linkUrl:[[NSURL alloc]
-                                            initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html"]
+                                            initWithString:@"http://lifestylelabels.com/lsl-men-p%C3%B3lo-shirt-se16.html"]
                                         feature:feature
                                          cohort:@"AAAA"];
         [builder setCategoryPath:@"MEN>Shirts"];
         [builder setAvailable:@(YES)];
         [builder setMsrp:@(100.0)];
         [builder setPrice:@(100.0)];
-        [builder setImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
-        [builder setZoomImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg"]];
+        [builder setImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media%C3%B3/catalog/product/m/p/mp001.jpg"]];
+        [builder setZoomImageUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/pub/media/catal%C3%B3g/product/m/p/mp001.jpg"]];
         [builder setProductDescription:@"product Description"];
         [builder setAlbum:@"album"];
         [builder setActor:@"actor"];
@@ -99,7 +99,7 @@
     EMSProduct *expectedProduct2 = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
         [builder setRequiredFieldsWithProductId:@"2120"
                                           title:@"LSL Men Polo Shirt LE16"
-                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html"]
+                                        linkUrl:[[NSURL alloc] initWithString:@"http://lifestylelabels.com/lsl-men-pol%C3%B3-shirt-le16.html"]
                                         feature:feature
                                          cohort:@"AAAA"];
     }];
@@ -194,9 +194,9 @@
                             "      \"msrp_usd\": \"100\",\n"
                             "      \"price_usd\": \"100\",\n"
                             "      \"null_value\": null,\n"
-                            "      \"link\": \"http://lifestylelabels.com/lsl-men-polo-shirt-se16.html\",\n"
-                            "      \"image\": \"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg\",\n"
-                            "      \"zoom_image\": \"http://lifestylelabels.com/pub/media/catalog/product/m/p/mp001.jpg\",\n"
+                            "      \"link\": \"http://lifestylelabels.com/lsl-men-pólo-shirt-se16.html\",\n"
+                            "      \"image\": \"http://lifestylelabels.com/pub/mediaó/catalog/product/m/p/mp001.jpg\",\n"
+                            "      \"zoom_image\": \"http://lifestylelabels.com/pub/media/catalóg/product/m/p/mp001.jpg\",\n"
                             "      \"description\": \"product Description\",\n"
                             "      \"album\": \"album\",\n"
                             "      \"actor\": \"actor\",\n"
@@ -208,7 +208,7 @@
                             "    \"2120\": {\n"
                             "      \"item\": \"2120\",\n"
                             "      \"title\": \"LSL Men Polo Shirt LE16\",\n"
-                            "      \"link\": \"http://lifestylelabels.com/lsl-men-polo-shirt-le16.html\",\n"
+                            "      \"link\": \"http://lifestylelabels.com/lsl-men-poló-shirt-le16.html\",\n"
                             "    }\n"
                             "  }\n"
                             "}";
