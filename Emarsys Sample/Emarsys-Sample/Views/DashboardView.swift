@@ -93,7 +93,7 @@ struct DashboardView: View {
                     }
                     
                     if(self.loginData.isLoggedIn == false) {
-                        FloatingTextField(title: "ContactFieldValue", text: $loginData.contactFieldValue).accessibility(identifier: "contactFieldValue")
+                        FloatingTextField(title: "ContactFieldValue", text: $loginData.contactFieldValue).accessibility(identifier: "customFieldValue")
                     }
                     
                     HStack() {

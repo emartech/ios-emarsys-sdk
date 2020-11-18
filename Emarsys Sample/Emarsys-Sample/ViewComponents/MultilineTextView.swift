@@ -29,13 +29,23 @@ struct MultilineTextView: UIViewRepresentable {
         init(_ uiTextView: MultilineTextView) {
             self.parent = uiTextView
         }
-
         func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
             return true
         }
-
         func textViewDidChange(_ textView: UITextView) {
             self.parent.text = textView.text
         }
     }
 }
+    
+//    struct MultilineTextView_Previews: PreviewProvider {
+//        let payload = """
+//            {"eventAttributeKey1":"value1",
+//            "eventAttributeKey2":"value2"}
+//            """
+//        static var previews: some View {
+//            MultilineTextView(
+//                text:
+//            ).border(Color.red)
+//        }
+//    }

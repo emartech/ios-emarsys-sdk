@@ -9,7 +9,12 @@ import EmarsysSDK
 struct MobileEngageView: View {
     @State var sid: String = ""
     @State var customEventName = ""
+//    @State var customEventPayload: String? = """
+//    {"eventAttributeKey1":"value1",
+//     "eventAttributeKey2":"value2"}
+//    """
     @State var customEventPayload: String? = ""
+    
     @State var showingEmptySidAlert = false
     @State var showingEmptyEventNameAlert = false
     
@@ -51,7 +56,7 @@ struct MobileEngageView: View {
                 FloatingTextField(title: "customEventName", text: $customEventName).accessibility(identifier: "CustomEventName")
                 
                 MultilineTextView(text: self.$customEventPayload)
-                    .accessibility(identifier: "CustomEventAttributes")
+                    .accessibility(identifier: "CustomeEventAttributes")
                     .frame(height: 100)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
@@ -97,6 +102,7 @@ struct MobileEngageView: View {
             self.showingEmptyEventNameAlert = true
         } else {
             let eventAttributes = self.convertEventPayloadToJson()
+            print(eventAttributes?.description)
             Emarsys.trackCustomEvent(withName: self.customEventName, eventAttributes: eventAttributes) { error in
                 if(error == nil) {
                     showMessage(successful: true)

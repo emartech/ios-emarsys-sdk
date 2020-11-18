@@ -5,19 +5,20 @@
 import SwiftUI
 import EmarsysSDK
 
+struct AlertItem: Identifiable {
+    var id = UUID()
+    var title: Text
+    var message: Text?
+    var dismissButton: Alert.Button?
+}
+
 struct InAppView: View {
     
     @State var customEventName = ""
     @State var viewId = "ia"
     @State var isInappPaused: Bool = false
-    @State var showingEmptyEventNameAlert = false
-    @State var isHidden: Bool = false
-    @State var showAppEventAlert = false
-    @State var showCompletionAlert = false
-    @State var appeventName : String = ""
-    @State var appEventPayload: Dictionary<String, Any?> = Dictionary()
-    @State var completion: String = ""
-    @State var viewIds = ["ia"]
+    @State var viewIds = ["ia": false]
+    @State var alertItem: AlertItem?
     
     var body: some View {
         VStack {
@@ -31,10 +32,6 @@ struct InAppView: View {
                 
                 Button(action: self.trackCustomEventButtonClicked) {
                     Text("Track")
-                }.alert(isPresented: $showingEmptyEventNameAlert) {
-                    Alert(title: Text("Missing eventName"),
-                          message: Text("eventName should not be empty if you want to track a custom event"),
-                          dismissButton: .default(Text("Got it!")))
                 }
             }
             .padding()
@@ -55,9 +52,9 @@ struct InAppView: View {
             VStack {
                 Text("Inline in-app").bold()
                 HStack {
-                    TextField("viewId", text: $viewId) {
+                    TextField("viewId", text: $viewId, onCommit:  {
                         UIApplication.shared.endEditing()
-                    }
+                    })
                     .multilineTextAlignment(.center)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     
@@ -67,41 +64,38 @@ struct InAppView: View {
                 }
                 .padding()
                 
-                ForEach(Array(viewIds.enumerated()), id: \.element) { _, key in
-                    if(!isHidden) {
-                        InlineInAppView(viewId: "ia",
+                ForEach(Array(viewIds.keys.enumerated()), id: \.element) { _, key in
+                    if(!(viewIds[key]!)) {
+                        InlineInAppView(viewId: key,
                                         onClose: {
-                                            self.isHidden = true
+                                            viewIds[key] = true
                                         },
                                         onEvent: { name, payload in
-                                            self.appeventName = name
-                                            self.appEventPayload = payload ?? Dictionary()
-                                            self.showAppEventAlert = true
+                                            self.alertItem = AlertItem(title: Text(name),
+                                                                       message: Text(payload?.description ?? ""),
+                                                  dismissButton: .cancel())
                                         },
                                         onCompletion: { error in
-                                            if(error == nil) {
-                                                self.completion = "completed"
-                                            } else {
-                                                self.completion = error.debugDescription
+                                            if error != nil {
+                                                self.alertItem = AlertItem(title: Text(error.debugDescription),
+                                                      dismissButton: .cancel())
                                             }
                                         })
                     }
                 }
-                .alert(isPresented: $showAppEventAlert) {
-                    Alert(title: Text(self.appeventName), message: Text(self.appEventPayload.description), dismissButton: .cancel())
-                }
-                .alert(isPresented: $showCompletionAlert) {
-                    Alert(title: Text("CompletionBlock"), message: Text(self.completion), dismissButton: .cancel())
-                }
-                
                 Spacer()
             }
         }
+        .alert(item: $alertItem, content: { alertItem in
+            Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
+        })
     }
     
     func trackCustomEventButtonClicked() {
         if(self.customEventName.isEmpty) {
-            self.showingEmptyEventNameAlert = true
+            self.alertItem = AlertItem(title: Text("Missing eventName"),
+                  message: Text("eventName should not be empty if you want to track a custom event"),
+                  dismissButton: .default(Text("Got it!")))
         } else {
             Emarsys.trackCustomEvent(withName: self.customEventName, eventAttributes: nil) { error in
                 if(error == nil) {
@@ -114,16 +108,9 @@ struct InAppView: View {
     }
     
     func showInlineInApp() {
-        viewIds.append(viewId)
+        viewIds[viewId] = false
     }
-    
-    func addInlineInAppView() -> InlineInAppView {
-        InlineInAppView(viewId: "ia",
-                        onClose: {
-                            self.isHidden = true
-                        })
-        
-    }
+
 }
 
 struct InAppView_Previews: PreviewProvider {
