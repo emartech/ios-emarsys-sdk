@@ -49,7 +49,8 @@
                                              buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
                                                   appEventProtocol:self.protocolBlockConverter
                                                      closeProtocol:self];
-    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory];
+    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory
+                                              operationQueue:EMSDependencyInjection .dependencyContainer.coreOperationQueue];
     __weak typeof(self) weakSelf = self;
     [self.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
         [weakSelf respondToJS:result];

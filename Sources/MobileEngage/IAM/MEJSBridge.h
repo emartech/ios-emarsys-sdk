@@ -12,7 +12,8 @@
 
 @property(nonatomic, strong) MEIAMJSResultBlock jsResultBlock;
 
-- (instancetype)initWithJSCommandFactory:(MEIAMJSCommandFactory *)factory;
+- (instancetype)initWithJSCommandFactory:(MEIAMJSCommandFactory *)factory
+                          operationQueue:(NSOperationQueue *)operationQueue;
 
 - (NSArray<NSString *> *)jsCommandNames;
 

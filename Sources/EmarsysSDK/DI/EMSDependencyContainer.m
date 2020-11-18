@@ -311,7 +311,8 @@
                                              timestampProvider:timestampProvider
                                        completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.coreOperationQueue]
                                         displayedIamRepository:displayedIAMRepository
-                                         buttonClickRepository:self.buttonClickRepository];
+                                         buttonClickRepository:self.buttonClickRepository
+                                                operationQueue:self.coreOperationQueue];
     EMSInstanceRouter *iamInstanceRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:meInApp
                                                                               loggingInstance:self.loggingIam
                                                                                   routerLogic:self.mobileEngageRouterLogicBlock];

@@ -42,13 +42,15 @@
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
-                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+                        operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(windowProvider);
     NSParameterAssert(mainWindowProvider);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(completionBlockProvider);
     NSParameterAssert(displayedIamRepository);
     NSParameterAssert(buttonClickRepository);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _timestampProvider = timestampProvider;
         _completionBlockProvider = completionBlockProvider;
@@ -56,7 +58,8 @@
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
                                                                                                                                                                 buttonClickRepository:buttonClickRepository
                                                                                                                                                                      appEventProtocol:self
-                                                                                                                                                                        closeProtocol:self]]];
+                                                                                                                                                                        closeProtocol:self]
+                                                                                                                          operationQueue:operationQueue]];
         _displayedIamRepository = displayedIamRepository;
     }
     return self;

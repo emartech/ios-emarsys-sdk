@@ -59,7 +59,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:timestampProvider
                                     completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:operationQueue]
                                      displayedIamRepository:displayedIAMRepository
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                                             operationQueue:[NSOperationQueue new]];
             [inApp setInAppTracker:inAppTracker];
         });
 
@@ -72,10 +73,27 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:[EMSTimestampProvider mock]
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when windowProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: windowProvider"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw exception when operationQueue is nil", ^{
+                @try {
+                    [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
+                                         mainWindowProvider:[EMSMainWindowProvider mock]
+                                          timestampProvider:[EMSTimestampProvider mock]
+                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                     displayedIamRepository:[MEDisplayedIAMRepository mock]
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                                             operationQueue:nil];
+                    fail(@"Expected Exception when operationQueue is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -87,7 +105,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:[EMSTimestampProvider mock]
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                            operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when mainWindowProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: mainWindowProvider"];
@@ -102,7 +121,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:nil
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                            operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when timestampProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
@@ -117,7 +137,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:[EMSCompletionBlockProvider mock]
                                     completionBlockProvider:nil
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                            operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when completionBlockProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: completionBlockProvider"];
@@ -132,7 +153,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:[EMSTimestampProvider mock]
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:nil
-                                      buttonClickRepository:[MEDisplayedIAMRepository mock]];
+                                      buttonClickRepository:[MEDisplayedIAMRepository mock]
+                            operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when displayedIamRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIamRepository"];
@@ -147,7 +169,8 @@ SPEC_BEGIN(MEInAppTests)
                                           timestampProvider:[EMSTimestampProvider mock]
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
-                                      buttonClickRepository:nil];
+                                      buttonClickRepository:nil
+                            operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];

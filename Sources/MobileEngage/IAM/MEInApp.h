@@ -36,7 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
-                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository;
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+                        operationQueue:(NSOperationQueue *)operationQueue;
 
 - (UIWindow *)iamWindow;
 

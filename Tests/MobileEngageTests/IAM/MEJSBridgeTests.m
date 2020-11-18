@@ -5,6 +5,7 @@
 #import "MEIAMDidAppear.h"
 #import "MEIAMJSCommandFactory.h"
 #import "EMSWaiter.h"
+#import "FakeCommand.h"
 
 MEJSBridge *_meJsBridge;
 
@@ -72,6 +73,32 @@ SPEC_BEGIN(MEJSBridgeTests)
         });
     });
 
+    describe(@"init", ^{
+        it(@"factory must not be nil", ^{
+            @try {
+                [[MEJSBridge alloc] initWithJSCommandFactory:nil
+                                              operationQueue:[NSOperationQueue mock]];
+
+                fail(@"Expected exception when factory is nil");
+            } @catch (NSException *exception) {
+                [[exception.reason should] equal:@"Invalid parameter not satisfying: factory"];
+                [[theValue(exception) shouldNot] beNil];
+            }
+        });
+
+        it(@"operationQueue must not be nil", ^{
+            @try {
+                [[MEJSBridge alloc] initWithJSCommandFactory:[MEIAMJSCommandFactory mock]
+                                              operationQueue:nil];
+
+                fail(@"Expected exception when operationQueue is nil");
+            } @catch (NSException *exception) {
+                [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
+                [[theValue(exception) shouldNot] beNil];
+            }
+        });
+    });
+
     describe(@"userContentController", ^{
 
         it(@"should not return nil", ^{
@@ -92,18 +119,51 @@ SPEC_BEGIN(MEJSBridgeTests)
                                 andReturn:commandMock
                             withArguments:MEIAMDidAppear.commandName];
 
-            _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock];
+            _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
+                                                        operationQueue:[NSOperationQueue new]];
 
             NSDictionary *arguments = @{@"key": @"value"};
             WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
             [scriptMessageMock stub:@selector(name) andReturn:MEIAMDidAppear.commandName];
             [scriptMessageMock stub:@selector(body) andReturn:arguments];
 
-            [[commandMock should] receive:@selector(handleMessage:resultBlock:)
+            [[commandMock shouldEventually] receive:@selector(handleMessage:resultBlock:)
                             withArguments:arguments, kw_any()];
 
             [_meJsBridge userContentController:[WKUserContentController mock]
                        didReceiveScriptMessage:scriptMessageMock];
+        });
+
+        it(@"should call handleMessage on given queue", ^{
+            FakeCommand *command = [FakeCommand new];
+            MEIAMJSCommandFactory *factoryMock = [MEIAMJSCommandFactory mock];
+            [[factoryMock should] receive:@selector(commandByName:)
+                                andReturn:command
+                            withArguments:FakeCommand.commandName];
+
+            NSOperationQueue *operationQueue = [NSOperationQueue new];
+            _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
+                                                        operationQueue:operationQueue];
+
+            NSDictionary *arguments = @{@"key": @"value"};
+            WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
+            [scriptMessageMock stub:@selector(name) andReturn:FakeCommand.commandName];
+            [scriptMessageMock stub:@selector(body) andReturn:arguments];
+
+            __block NSOperationQueue *returnedQueue = nil;
+            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+            command.completionBlock = ^{
+                returnedQueue = [NSOperationQueue currentQueue];
+                [expectation fulfill];
+            };
+
+            [_meJsBridge userContentController:[WKUserContentController mock]
+                       didReceiveScriptMessage:scriptMessageMock];
+
+            XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                  timeout:5];
+            XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+            XCTAssertEqualObjects(returnedQueue, operationQueue);
         });
 
         it(@"should call resultBlock when command's resultBlock called", ^{
@@ -115,7 +175,10 @@ SPEC_BEGIN(MEJSBridgeTests)
                                 andReturn:command
                             withArguments:MEIAMDidAppear.commandName];
 
-            _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock];
+            NSOperationQueue *operationQueue = [NSOperationQueue new];
+            [operationQueue setMaxConcurrentOperationCount:1];
+            _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
+                                                        operationQueue:operationQueue];
 
             WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
             [scriptMessageMock stub:@selector(name) andReturn:MEIAMDidAppear.commandName];
@@ -124,7 +187,9 @@ SPEC_BEGIN(MEJSBridgeTests)
             [_meJsBridge userContentController:[WKUserContentController mock]
                        didReceiveScriptMessage:scriptMessageMock];
 
-            [command triggerResultBlockWithDictionary:expectedDictionary];
+            [operationQueue addOperationWithBlock:^{
+                [command triggerResultBlockWithDictionary:expectedDictionary];
+            }];
 
             __block NSDictionary *resultDictionary;
             [_meJsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {

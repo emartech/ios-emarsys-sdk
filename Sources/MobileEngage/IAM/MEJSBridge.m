@@ -14,14 +14,19 @@
 @interface MEJSBridge ()
 
 @property(nonatomic, strong) MEIAMJSCommandFactory *factory;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
 @implementation MEJSBridge
 
-- (instancetype)initWithJSCommandFactory:(MEIAMJSCommandFactory *)factory {
+- (instancetype)initWithJSCommandFactory:(MEIAMJSCommandFactory *)factory
+                          operationQueue:(NSOperationQueue *)operationQueue {
+    NSParameterAssert(factory);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _factory = factory;
+        _operationQueue = operationQueue;
     }
     return self;
 }
@@ -32,12 +37,15 @@
     NSDictionary *arguments = message.body;
     id <MEIAMJSCommandProtocol> command = [self.factory commandByName:commandName];
     __weak typeof(self) weakSelf = self;
-    [command handleMessage:arguments
-               resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                   if (weakSelf.jsResultBlock) {
-                       weakSelf.jsResultBlock(result);
-                   }
-               }];
+
+    [self.operationQueue addOperationWithBlock:^{
+        [command handleMessage:arguments
+                   resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                       if (weakSelf.jsResultBlock) {
+                           weakSelf.jsResultBlock(result);
+                       }
+                   }];
+    }];
 }
 
 - (NSArray<NSString *> *)jsCommandNames {

@@ -29,6 +29,7 @@
 @property(nonatomic, strong) id mockContainer;
 @property(nonatomic, strong) id mockRequestManager;
 @property(nonatomic, strong) id mockRequestFactory;
+@property(nonatomic, strong) id mockOperationQueue;
 @end
 
 @implementation EMSInlineInAppViewTests
@@ -37,11 +38,13 @@
     _mockContainer = OCMClassMock([EMSDependencyContainer class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
+    _mockOperationQueue = OCMClassMock([NSOperationQueue class]);
     MEInApp *mockInapp = OCMClassMock([MEInApp class]);
 
     [EMSDependencyInjection setupWithDependencyContainer:self.mockContainer];
     OCMStub([self.mockContainer requestManager]).andReturn(self.mockRequestManager);
     OCMStub([self.mockContainer requestFactory]).andReturn(self.mockRequestFactory);
+    OCMStub([self.mockContainer coreOperationQueue]).andReturn(self.mockOperationQueue);
     OCMStub([self.mockContainer iam]).andReturn(mockInapp);
 
     _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
