@@ -8,16 +8,24 @@ import EmarsysSDK
 
 @UIApplicationMain
 class AppDelegate: EMSAppDelegate {
-
+    
     override func provideEMSConfig() -> EMSConfig! {
+        let userDefaults = UserDefaults.init(suiteName: "com.emarsys.sampleConfig")
         return EMSConfig.make { builder in
-            builder.setMerchantId("1428C8EE286EC34B")
-            builder.setContactFieldId(2575)
-            #if DEBUG
-                builder.setMobileEngageApplicationCode("EMS11-C3FD3")
-            #else
-                builder.setMobileEngageApplicationCode("EMS4C-9A869")
-            #endif
+            if let appCode = userDefaults?.string(forKey: ConfigUserDefaultsKey.applicationCode.rawValue) {
+                builder.setMobileEngageApplicationCode(appCode)
+            }
+            
+            if let contactFieldId = userDefaults?.string(forKey: ConfigUserDefaultsKey.contactFieldId.rawValue) {
+                let contactFieldIdInt = Int(contactFieldId)
+                if(contactFieldIdInt != nil) {
+                    builder.setContactFieldId(NSNumber(value: contactFieldIdInt!))
+                }
+            }
+            
+            if let merchantId = userDefaults?.string(forKey: ConfigUserDefaultsKey.merchantId.rawValue) {
+                builder.setMerchantId(merchantId)
+            }
         }
     }
     
@@ -28,17 +36,17 @@ class AppDelegate: EMSAppDelegate {
         }
         return true
     }
-
+    
     override func handleEvent(_ eventName: String, payload: [String: NSObject]?) {
         super.handleEvent(eventName, payload: payload)
         let alertController = UIAlertController(title: eventName, message: "\(String(describing: payload))", preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Close", style: .destructive, handler: { (action) in
             alertController.dismiss(animated: true, completion: nil)
         }))
-
+        
         UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
         print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
-
+        
         let content = UNMutableNotificationContent()
         content.title = eventName
         content.body = payload!.description
@@ -46,13 +54,13 @@ class AppDelegate: EMSAppDelegate {
         let request = UNNotificationRequest(identifier: "notification.id.01", content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
     }
-
+    
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
         Emarsys.push.setPushToken(deviceToken)
         NotificationCenter.default.post(name: .pushTokenReceived, object: nil, userInfo: ["push_token": deviceToken])
     }
-
+    
 }
 
 extension NSNotification.Name {

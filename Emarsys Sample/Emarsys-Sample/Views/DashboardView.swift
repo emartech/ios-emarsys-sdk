@@ -15,6 +15,7 @@ struct DashboardView: View {
     @State var showLoginMessage: Bool = false
     
     @State var deviceToken : Data?
+    @State var changeEnv: Bool = false
     
     var body: some View {
         ScrollView {
@@ -35,6 +36,16 @@ struct DashboardView: View {
                     
                     HStack {
                         Spacer()
+                        
+                        Button(action: {
+                            changeEnv.toggle()
+                        }) {
+                            Image(systemName: changeEnv ? "checkmark.square" : "square")
+                        }
+                        Text("change env")
+                        
+                        Spacer()
+                                                
                         Button(action: self.changeConfig) {
                             Text("Change")
                         }
@@ -148,14 +159,34 @@ struct DashboardView: View {
             Emarsys.config.changeApplicationCode(self.loginData.applicationCode, contactFieldId: contactFieldId) { error in
                 if (error == nil) {
                     self.showMessage(successful: true)
+                    
+                    let configUserDefaults = UserDefaults(suiteName: "com.emarsys.sampleConfig")
+                    configUserDefaults?.set(self.loginData.contactFieldId, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
+                    configUserDefaults?.set(self.loginData.applicationCode,forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
+                    configUserDefaults?.set(self.loginData.merchantId,forKey: ConfigUserDefaultsKey.merchantId.rawValue)
+                    
+                    UserDefaults.standard.set(self.loginData.applicationCode, forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
+                    UserDefaults.standard.set(self.loginData.contactFieldId, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
+                    
+                    self.doEnvironmentChange()
                 } else {
                     self.showMessage(successful: false)
+                    UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
+                    UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                 }
             }
         } else {
             self.showMessage(successful: false)
         }
         self.showSetupChangeMessage = true
+    }
+    
+    func doEnvironmentChange() {
+        if(changeEnv) {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                exit(0)
+            }
+        }
     }
     
     func showMessage(successful: Bool) {

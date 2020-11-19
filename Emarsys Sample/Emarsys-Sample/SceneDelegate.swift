@@ -11,7 +11,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     
     @StoredValue<String>(key: "contactFieldValue")
-    var contactFieldValue
+    var contactFieldValue: String?
+    
+    @StoredValue<String>(key: "contactFieldId")
+    var contactFieldId
+    
+    @StoredValue<String>(key: "applicationCode")
+    var applicationCode
+    
+    @StoredValue<String>(key: "merchantId")
+    var merchantId
     
     @StoredValue<Bool>(key: "isLoggedIn")
     var isLoggedIn
@@ -24,11 +33,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
+        let configUserDefaults = UserDefaults(suiteName: "com.emarsys.sampleConfig")
+        self.contactFieldId = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
+        self.applicationCode = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
+        self.merchantId = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.merchantId.rawValue)
+        
         loginData = LoginData(isLoggedIn: self.isLoggedIn ?? false,
-                                  contactFieldValue: self.contactFieldValue ?? "",
-                                  contactFieldId: Emarsys.config.contactFieldId().stringValue,
-                                  applicationCode: Emarsys.config.applicationCode(),
-                                  merchantId: Emarsys.config.merchantId(),
+                              contactFieldValue: self.contactFieldValue ?? nil,
+                                  contactFieldId: self.contactFieldId ?? Emarsys.config.contactFieldId().stringValue,
+                                  applicationCode: self.applicationCode ?? Emarsys.config.applicationCode(),
+                                  merchantId: self.merchantId ?? Emarsys.config.merchantId(),
                                   hwId: Emarsys.config.hardwareId(),
                                   languageCode: Emarsys.config.languageCode(),
                                   pushSettings: Emarsys.config.pushSettings() as? Dictionary<String, String> ?? [:]

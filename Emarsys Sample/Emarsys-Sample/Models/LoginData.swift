@@ -18,18 +18,17 @@ class LoginData: ObservableObject {
                                                                "soundSettings": "soundsetting"]
     
     init(isLoggedIn: Bool = false,
-         contactFieldValue: String = "",
-         contactFieldId: String = "",
-         applicationCode: String = "",
-         merchantId: String = "",
+         contactFieldValue: String? = "",
+         contactFieldId: String? = "",
+         applicationCode: String? = "",
+         merchantId: String? = "",
          hwId: String = "",
          languageCode: String = "",
          pushSettings: Dictionary<String, String> = [:]) {
         self.isLoggedIn = isLoggedIn
-        self.contactFieldValue = contactFieldValue
-        self.contactFieldId = contactFieldId
-        self.applicationCode = applicationCode
-        self.merchantId = merchantId
+        self.contactFieldValue = contactFieldValue ?? ""
+        self.contactFieldId = contactFieldId ?? ""
+        self.applicationCode = applicationCode ?? ""
+        self.merchantId = merchantId ?? ""
     }
-
 }

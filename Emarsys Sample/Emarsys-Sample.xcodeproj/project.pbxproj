@@ -28,6 +28,7 @@
 		56E7CAF32540659B006323D8 /* InlineInAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7CAF22540659B006323D8 /* InlineInAppView.swift */; };
 		56E7CB3E25408249006323D8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7CB3D25408249006323D8 /* NotificationService.swift */; };
 		56E7CB4225408249006323D8 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 56E7CB3B25408249006323D8 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		56F2BE9A256561D2007CD8FE /* ConfigUserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56F2BE99256561D2007CD8FE /* ConfigUserDefaultsKey.swift */; };
 		8AB2B19B245ABAA900FA67E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */; };
 		8AB2B19D245ABAA900FA67E7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */; };
 		8AB2B19F245ABAA900FA67E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19E245ABAA900FA67E7 /* ContentView.swift */; };
@@ -105,6 +106,7 @@
 		56E7CB3B25408249006323D8 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		56E7CB3D25408249006323D8 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		56E7CB3F25408249006323D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		56F2BE99256561D2007CD8FE /* ConfigUserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigUserDefaultsKey.swift; sourceTree = "<group>"; };
 		5F283AFD5DFCF01B7B52DC06 /* Pods-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
 		63CD74B9C7DC58C0175FC98E /* Pods-Emarsys-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.release.xcconfig"; sourceTree = "<group>"; };
 		72777F4F181B5A107DB25414 /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -280,6 +282,7 @@
 				5695931625274F2A00879A5D /* Models */,
 				8AB2B1CA245ABB5100FA67E7 /* Views */,
 				8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */,
+				56F2BE99256561D2007CD8FE /* ConfigUserDefaultsKey.swift */,
 				8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */,
 				8AB2B1A0245ABAAA00FA67E7 /* Assets.xcassets */,
 				8AB2B1A5245ABAAA00FA67E7 /* LaunchScreen.storyboard */,
@@ -572,6 +575,7 @@
 				56C4E945253F640000EB241C /* PullToRefreshView.swift in Sources */,
 				5697FA8B24B48C93000FB1DC /* InfoPanelView.swift in Sources */,
 				8AB2B19D245ABAA900FA67E7 /* SceneDelegate.swift in Sources */,
+				56F2BE9A256561D2007CD8FE /* ConfigUserDefaultsKey.swift in Sources */,
 				8AB2B1D2245ABD5200FA67E7 /* DashboardView.swift in Sources */,
 				56D0957C24CB377800085210 /* MultilineTextView.swift in Sources */,
 				5617DE9B2539C32A007930D8 /* Product.swift in Sources */,
