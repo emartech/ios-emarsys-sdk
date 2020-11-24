@@ -126,18 +126,20 @@
 
 - (void)closeInAppWithCompletionHandler:(_Nullable EMSCompletion)completionHandler {
     __weak typeof(self) weakSelf = self;
-    [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
-                                                          completion:^{
-                                                              if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
-                                                                  [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
-                                                                  EMSLog(weakSelf.inAppLog, LogLevelMetric);
-                                                              }
-                                                              [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
-                                                              weakSelf.iamWindow = nil;
-                                                              if (completionHandler) {
-                                                                  completionHandler();
-                                                              }
-                                                          }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.iamWindow.rootViewController dismissViewControllerAnimated:YES
+                                                              completion:^{
+            if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
+                [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
+                EMSLog(weakSelf.inAppLog, LogLevelMetric);
+            }
+            [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
+            weakSelf.iamWindow = nil;
+            if (completionHandler) {
+                completionHandler();
+            }
+        }];
+    });
 }
 
 @end

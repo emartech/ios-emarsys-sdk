@@ -202,7 +202,9 @@ didFinishNavigation:(WKNavigation *)navigation {
 }
 
 - (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler {
-    self.closeBlock();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.closeBlock();
+    });
 }
 
 - (void)respondToJS:(NSDictionary<NSString *, NSObject *> *)result {

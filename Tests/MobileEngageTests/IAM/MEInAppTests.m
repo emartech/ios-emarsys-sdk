@@ -31,7 +31,8 @@ SPEC_BEGIN(MEInAppTests)
         beforeEach(^{
             NSDate *renderEndTime = [NSDate dateWithTimeIntervalSince1970:103];
             EMSTimestampProvider *mockTimeStampProvider = [EMSTimestampProvider mock];
-            [mockTimeStampProvider stub:@selector(provideTimestamp) andReturn:renderEndTime];
+            [mockTimeStampProvider stub:@selector(provideTimestamp)
+                              andReturn:renderEndTime];
 
             displayExpectation = [[XCTestExpectation alloc] initWithDescription:@"displayExpectation"];
             clickExpectation = [[XCTestExpectation alloc] initWithDescription:@"clickExpectation"];
@@ -106,7 +107,7 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
-                            operationQueue:[NSOperationQueue mock]];
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when mainWindowProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: mainWindowProvider"];
@@ -122,7 +123,7 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
-                            operationQueue:[NSOperationQueue mock]];
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when timestampProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: timestampProvider"];
@@ -138,7 +139,7 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:nil
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
-                            operationQueue:[NSOperationQueue mock]];
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when completionBlockProvider is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: completionBlockProvider"];
@@ -154,7 +155,7 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:nil
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
-                            operationQueue:[NSOperationQueue mock]];
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when displayedIamRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIamRepository"];
@@ -170,7 +171,7 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:[EMSCompletionBlockProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:nil
-                            operationQueue:[NSOperationQueue mock]];
+                                             operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];
@@ -197,7 +198,8 @@ SPEC_BEGIN(MEInAppTests)
                  completionHandler:^{
                      [exp fulfill];
                  }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:10];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:10];
                 [[[((id <MEIAMProtocol>) inApp) currentInAppMessage] should] equal:message];
             });
 
@@ -276,9 +278,9 @@ SPEC_BEGIN(MEInAppTests)
             it(@"should pass the eventName and payload to the given eventHandler's handleEvent:payload: method", ^{
                 NSString *expectedName = @"nameOfTheEvent";
                 NSDictionary <NSString *, NSObject *> *expectedPayload = @{
-                    @"payloadKey1": @{
-                        @"payloadKey2": @"payloadValue"
-                    }
+                        @"payloadKey1": @{
+                                @"payloadKey2": @"payloadValue"
+                        }
                 };
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
@@ -316,7 +318,8 @@ SPEC_BEGIN(MEInAppTests)
                  completionHandler:^{
                  }];
 
-                [XCTWaiter waitForExpectations:@[expectation] timeout:10];
+                [XCTWaiter waitForExpectations:@[expectation]
+                                       timeout:10];
 
                 [[returnedEventName should] equal:expectedName];
                 [[returnedPayload should] equal:expectedPayload];
@@ -384,7 +387,7 @@ SPEC_BEGIN(MEInAppTests)
 
         describe(@"closeInAppWithCompletionHandler:", ^{
 
-            it(@"should close the inapp message", ^{
+            it(@"should close the inapp message on main thread", ^{
                 UIViewController *rootViewControllerMock = [UIViewController nullMock];
                 [[rootViewControllerMock should] receive:@selector(dismissViewControllerAnimated:completion:)];
                 KWCaptureSpy *spy = [rootViewControllerMock captureArgument:@selector(dismissViewControllerAnimated:completion:)
@@ -395,10 +398,18 @@ SPEC_BEGIN(MEInAppTests)
 
                 inApp.iamWindow = window;
 
-                [((id <MEIAMProtocol>) inApp) closeInAppWithCompletionHandler:nil];
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+
+                [((id <MEIAMProtocol>) inApp) closeInAppWithCompletionHandler:^{
+                    [expectation fulfill];
+                }];
+
+                [EMSWaiter waitForTimeout:@[expectation]
+                                  timeout:10];
 
                 void (^completionBlock)(void) = spy.argument;
                 completionBlock();
+
                 [[inApp.iamWindow should] beNil];
             });
 
