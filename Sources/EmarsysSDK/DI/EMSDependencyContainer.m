@@ -87,6 +87,7 @@
 #import "EMSDispatchWaiter.h"
 #import "EMSOnEventActionInternal.h"
 #import "EMSOnEventResponseHandler.h"
+#import "EMSSession.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -153,6 +154,7 @@
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, copy) RouterLogicBlock mobileEngageRouterLogicBlock;
 @property(nonatomic, copy) RouterLogicBlock predictRouterLogicBlock;
+@property(nonatomic, strong) EMSSession *session;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
 
@@ -415,6 +417,11 @@
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
+
+    _session = [[EMSSession alloc] initWithRequestManager:self.requestManager
+                                           requestFactory:self.requestFactory
+                                           operationQueue:self.coreOperationQueue
+                                        timestampProvider:timestampProvider];
 
     [self.responseHandlers addObject:[[EMSOnEventResponseHandler alloc] initWithRequestManager:self.requestManager
                                                                                 requestFactory:self.requestFactory
