@@ -5,8 +5,9 @@
 #import <UIKit/UIKit.h>
 #import "EMSSession.h"
 #import "EMSTimestampProvider.h"
+#import "NSDate+EMSCore.h"
 
-@interface EMSSession()
+@interface EMSSession ()
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
@@ -56,8 +57,12 @@
 }
 
 - (void)stopSession {
-    EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"session:stop"
-                                                                              eventAttributes:nil
+    NSDate *sessionStopTime = [self.timestampProvider provideTimestamp];
+    NSString *elapsedTime = [[sessionStopTime numberValueInMillisFromDate:self.sessionStartTime] stringValue];
+    NSMutableDictionary *eventAttributes = [NSMutableDictionary dictionary];
+    eventAttributes[@"elapsedTime"] = elapsedTime;
+    EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"session:end"
+                                                                              eventAttributes:[NSDictionary dictionaryWithDictionary:eventAttributes]
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:nil];

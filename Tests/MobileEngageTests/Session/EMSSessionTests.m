@@ -8,6 +8,7 @@
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
 #import "EMSTimestampProvider.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSSessionTests : XCTestCase
 
@@ -125,10 +126,13 @@
 }
 
 - (void)testStopSession_shouldSendSessionStopEvent {
+    self.session.sessionStartTime = [NSDate date];
+    NSDate *sessionStopTime = [NSDate date];
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(sessionStopTime);
 
-    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"session:stop"
-                                                          eventAttributes:nil
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"session:end"
+                                                          eventAttributes:@{@"elapsedTime": [[sessionStopTime numberValueInMillisFromDate:self.session.sessionStartTime] stringValue]}
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
     [self.session stopSession];
 
