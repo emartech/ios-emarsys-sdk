@@ -16,6 +16,7 @@
 #import "EMSNotification.h"
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
+#import "MEButtonClickRepository.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 
@@ -25,6 +26,7 @@
 @property(nonatomic, strong) EMSUUIDProvider *mockUUIDProvider;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) MEButtonClickRepository *mockButtonClickRepository;
 
 @property(nonatomic, strong) NSDate *timestamp;
 
@@ -37,6 +39,8 @@
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
+    _mockButtonClickRepository = OCMClassMock([MEButtonClickRepository class]);
+
     EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
@@ -71,13 +75,15 @@
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
-                                                               endpoint:self.endpoint];
+                                                               endpoint:self.endpoint
+                                                  buttonClickRepository:self.mockButtonClickRepository];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:nil
-                                                 endpoint:OCMClassMock([EMSEndpoint class])];
+                                                 endpoint:OCMClassMock([EMSEndpoint class])
+                                    buttonClickRepository:self.mockButtonClickRepository];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
@@ -87,10 +93,22 @@
 - (void)testInit_endpoint_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
-                                                 endpoint:nil];
+                                                 endpoint:nil
+                                    buttonClickRepository:self.mockButtonClickRepository];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
+    }
+}
+
+- (void)testInit_buttonClickRepository_mustNotBeNil {
+    @try {
+        [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                 endpoint:self.endpoint
+                                    buttonClickRepository:nil];
+        XCTFail(@"Expected Exception when buttonClickRepository is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: buttonClickRepository"]);
     }
 }
 
@@ -347,6 +365,17 @@
 }
 
 - (void)testCreateInlineInappRequestModel {
+    NSArray<MEButtonClick *> *clicks = @[
+            [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
+                                             buttonId:@"buttonID"
+                                            timestamp:[NSDate date]],
+            [[MEButtonClick alloc] initWithCampaignId:@"campaignID2"
+                                             buttonId:@"buttonID2"
+                                            timestamp:[NSDate date]]
+    ];
+
+    OCMStub([self.mockButtonClickRepository query:[OCMArg any]]).andReturn(clicks);
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -356,7 +385,10 @@
                                                                                        @"viewIds": @[
                                                                                                @"testViewId"
                                                                                        ],
-                                                                                       @"clicks": @[]
+                                                                                       @"clicks": @[
+                                                                                               @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
+                                                                                               @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
+                                                                                               ]
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];

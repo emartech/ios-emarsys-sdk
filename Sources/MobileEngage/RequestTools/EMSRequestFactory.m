@@ -10,25 +10,31 @@
 #import "EmarsysSDKVersion.h"
 #import "EMSNotification.h"
 #import "EMSAuthentication.h"
+#import "MEButtonClickRepository.h"
+#import "EMSFilterByNothingSpecification.h"
 
 @interface EMSRequestFactory ()
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
+@property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 
 @end
 
 @implementation EMSRequestFactory
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
-                              endpoint:(EMSEndpoint *)endpoint {
+                              endpoint:(EMSEndpoint *)endpoint
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
     NSParameterAssert(requestContext);
     NSParameterAssert(endpoint);
+    NSParameterAssert(buttonClickRepository);
     if (self = [super init]) {
         _requestContext = requestContext;
         _deviceInfo = requestContext.deviceInfo;
         _endpoint = endpoint;
+        _buttonClickRepository = buttonClickRepository;
     }
     return self;
 }
@@ -195,7 +201,7 @@
     __weak typeof(self) weakSelf = self;
     NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
     payload[@"viewIds"] = @[viewId];
-    payload[@"clicks"] = @[];
+    payload[@"clicks"] = [self clickRepresentations];
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodPOST];
@@ -212,6 +218,15 @@
         result = @"internal";
     }
     return result;
+}
+
+- (NSArray *)clickRepresentations {
+    NSArray<MEButtonClick *> *buttonModels = [self.buttonClickRepository query:[EMSFilterByNothingSpecification new]];
+    NSMutableArray *clicks = [NSMutableArray new];
+    for (MEButtonClick *click in buttonModels) {
+        [clicks addObject:[click dictionaryRepresentation]];
+    }
+    return [NSArray arrayWithArray:clicks];
 }
 
 @end

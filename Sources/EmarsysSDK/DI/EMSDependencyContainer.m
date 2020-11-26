@@ -297,14 +297,15 @@
                                                                      uuidProvider:self.uuidProvider
                                                                        merchantId:config.merchantId
                                                                        deviceInfo:deviceInfo];
-
-    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
-                                                               endpoint:self.endpoint];
     _notificationCenterManager = [[EMSNotificationCenterManager alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:DB_PATH
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     _buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
+
+    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
+                                                               endpoint:self.endpoint
+                                                  buttonClickRepository:self.buttonClickRepository];
 
     _loggingIam = [EMSLoggingInApp new];
     MEInApp *meInApp = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]

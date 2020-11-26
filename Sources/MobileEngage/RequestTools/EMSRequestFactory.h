@@ -8,6 +8,7 @@
 @class EMSDeviceInfo;
 @class EMSNotification;
 @class EMSEndpoint;
+@class MEButtonClickRepository;
 
 typedef enum {
     EventTypeInternal,
@@ -19,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSRequestFactory : NSObject
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
-                              endpoint:(EMSEndpoint *)endpoint;
+                              endpoint:(EMSEndpoint *)endpoint
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository;
 
 - (EMSRequestModel *)createDeviceInfoRequestModel;
 
