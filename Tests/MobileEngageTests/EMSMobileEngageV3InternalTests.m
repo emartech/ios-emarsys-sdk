@@ -11,6 +11,7 @@
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
 #import "EMSStorage.h"
+#import "EMSSession.h"
 
 @interface EMSMobileEngageV3InternalTests : XCTestCase
 
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
+@property(nonatomic, strong) EMSSession *mockSession;
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) NSString *contactFieldValue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
@@ -46,11 +48,13 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
+    _mockSession = OCMClassMock([EMSSession class]);
 
     _internal = [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                            requestManager:self.mockRequestManager
                                                            requestContext:self.mockRequestContext
-                                                                  storage:self.mockStorage];
+                                                                  storage:self.mockStorage
+                                                                  session:self.mockSession];
 }
 
 - (void)testInit_requestFactory_mustNotBeNil {
@@ -58,7 +62,8 @@
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:nil
                                                    requestManager:self.mockRequestManager
                                                    requestContext:self.mockRequestContext
-                                                          storage:self.mockStorage];
+                                                          storage:self.mockStorage
+                                                          session:self.mockSession];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -70,7 +75,8 @@
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                    requestManager:nil
                                                    requestContext:self.mockRequestContext
-                                                          storage:self.mockStorage];
+                                                          storage:self.mockStorage
+                                                          session:self.mockSession];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -82,7 +88,8 @@
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                    requestManager:self.mockRequestManager
                                                    requestContext:nil
-                                                          storage:self.mockStorage];
+                                                          storage:self.mockStorage
+                                                          session:self.mockSession];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -94,10 +101,24 @@
         [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                    requestManager:self.mockRequestManager
                                                    requestContext:self.mockRequestContext
-                                                          storage:nil];
+                                                          storage:nil
+                                                          session:self.mockSession];
         XCTFail(@"Expected Exception when storage is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: storage");
+    }
+}
+
+- (void)testInit_session_mustNotBeNil {
+    @try {
+        [[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                   requestManager:self.mockRequestManager
+                                                   requestContext:self.mockRequestContext
+                                                          storage:self.mockStorage
+                                                          session:nil];
+        XCTFail(@"Expected Exception when session is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: session");
     }
 }
 
@@ -114,7 +135,11 @@
     EMSRequestModel *requestModel = [self createRequestModel];
     NSNumber *contactFieldId = @3;
 
+    OCMReject([self.mockSession startSession]);
+    OCMReject([self.mockSession stopSession]);
+
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(contactFieldId);
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
     [self.internal setContactWithContactFieldValue:self.contactFieldValue
@@ -125,6 +150,26 @@
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
+}
+
+- (void)testSetContactWithContactFieldValueCompletionBlock_resetSession {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSNumber *contactFieldId = @3;
+
+    OCMStub([self.mockRequestContext contactFieldId]).andReturn(contactFieldId);
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"otherContactFieldValue");
+    OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
+
+    [self.internal setContactWithContactFieldValue:self.contactFieldValue
+                                   completionBlock:self.completionBlock];
+
+    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:self.completionBlock]);
+    OCMVerify([self.mockSession stopSession]);
+    OCMVerify([self.mockSession startSession]);
 }
 
 - (void)testClearContact {
@@ -149,6 +194,8 @@
                                  forKey:@"EMSPushTokenKey"]);
     OCMVerify([partialMockInternal setContactWithContactFieldValue:nil
                                                    completionBlock:self.completionBlock]);
+    OCMVerify([self.mockSession stopSession]);
+    OCMVerify([self.mockSession startSession]);
 }
 
 - (void)testTrackCustomEventWithNameEventAttributes_eventName_mustNotBeNil {

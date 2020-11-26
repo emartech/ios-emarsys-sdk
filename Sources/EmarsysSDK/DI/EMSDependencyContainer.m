@@ -485,7 +485,8 @@
     EMSInstanceRouter *mobileEngageRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                                                                                           requestManager:self.requestManager
                                                                                                                                           requestContext:self.requestContext
-                                                                                                                                                 storage:self.storage]
+                                                                                                                                                 storage:self.storage
+                                                                                                                                                 session:self.session]
                                                                                loggingInstance:self.loggingMobileEngage
                                                                                    routerLogic:self.mobileEngageRouterLogicBlock];
     [self.mobileEngageDelegator proxyWithInstanceRouter:mobileEngageRouter];
