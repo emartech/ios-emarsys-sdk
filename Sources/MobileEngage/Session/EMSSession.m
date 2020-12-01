@@ -63,7 +63,7 @@
     NSDate *sessionStopTime = [self.timestampProvider provideTimestamp];
     NSString *elapsedTime = [[sessionStopTime numberValueInMillisFromDate:self.sessionStartTime] stringValue];
     NSMutableDictionary *eventAttributes = [NSMutableDictionary dictionary];
-    eventAttributes[@"elapsedTime"] = elapsedTime;
+    eventAttributes[@"duration"] = elapsedTime;
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"session:end"
                                                                               eventAttributes:[NSDictionary dictionaryWithDictionary:eventAttributes]
                                                                                     eventType:EventTypeInternal];
