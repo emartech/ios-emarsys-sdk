@@ -303,9 +303,11 @@
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     _buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
 
+    EMSSessionIdHolder *sessionIdHolder = [EMSSessionIdHolder new];
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
                                                                endpoint:self.endpoint
-                                                  buttonClickRepository:self.buttonClickRepository];
+                                                  buttonClickRepository:self.buttonClickRepository
+                                                        sessionIdHolder:sessionIdHolder];
 
     _loggingIam = [EMSLoggingInApp new];
     MEInApp *meInApp = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]
@@ -419,10 +421,11 @@
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
 
-    _session = [[EMSSession alloc] initWithRequestManager:self.requestManager
-                                           requestFactory:self.requestFactory
-                                           operationQueue:self.coreOperationQueue
-                                        timestampProvider:timestampProvider];
+    _session = [[EMSSession alloc] initWithSessionIdHolder:sessionIdHolder
+                                            requestManager:self.requestManager
+                                            requestFactory:self.requestFactory
+                                            operationQueue:self.coreOperationQueue
+                                         timestampProvider:timestampProvider];
 
     [self.responseHandlers addObject:[[EMSOnEventResponseHandler alloc] initWithRequestManager:self.requestManager
                                                                                 requestFactory:self.requestFactory

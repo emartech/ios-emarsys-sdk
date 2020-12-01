@@ -16,6 +16,7 @@
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
+@property(nonatomic, strong) EMSSessionIdHolder *sessionIdHolder;
 @property(nonatomic, strong) EMSSession *session;
 
 @end
@@ -26,19 +27,35 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
+    _sessionIdHolder = [EMSSessionIdHolder new];
     _operationQueue = [NSOperationQueue new];
-    _session = [[EMSSession alloc] initWithRequestManager:self.mockRequestManager
-                                           requestFactory:self.mockRequestFactory
-                                           operationQueue:self.operationQueue
-                                        timestampProvider:self.mockTimestampProvider];
+    _session = [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
+                                            requestManager:self.mockRequestManager
+                                            requestFactory:self.mockRequestFactory
+                                            operationQueue:self.operationQueue
+                                         timestampProvider:self.mockTimestampProvider];
+}
+
+- (void)testInit_sessionIdHolder_mustNotBeNil {
+    @try {
+        [[EMSSession alloc] initWithSessionIdHolder:nil
+                                     requestManager:self.mockRequestManager
+                                     requestFactory:self.mockRequestFactory
+                                     operationQueue:self.operationQueue
+                                  timestampProvider:self.mockTimestampProvider];
+        XCTFail(@"Expected Exception when sessionIdHolde is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: sessionIdHolder");
+    }
 }
 
 - (void)testInit_requestFactory_mustNotBeNil {
     @try {
-        [[EMSSession alloc] initWithRequestManager:self.mockRequestManager
-                                    requestFactory:nil
-                                    operationQueue:self.operationQueue
-                                 timestampProvider:self.mockTimestampProvider];
+        [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
+                                     requestManager:self.mockRequestManager
+                                     requestFactory:nil
+                                     operationQueue:self.operationQueue
+                                  timestampProvider:self.mockTimestampProvider];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -47,10 +64,11 @@
 
 - (void)testInit_operationQueue_mustNotBeNil {
     @try {
-        [[EMSSession alloc] initWithRequestManager:self.mockRequestManager
-                                    requestFactory:self.mockRequestFactory
-                                    operationQueue:nil
-                                 timestampProvider:self.mockTimestampProvider];
+        [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
+                                     requestManager:self.mockRequestManager
+                                     requestFactory:self.mockRequestFactory
+                                     operationQueue:nil
+                                  timestampProvider:self.mockTimestampProvider];
         XCTFail(@"Expected Exception when operationQueue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: operationQueue");
@@ -59,10 +77,11 @@
 
 - (void)testInit_requestManager_mustNotBeNil {
     @try {
-        [[EMSSession alloc] initWithRequestManager:nil
-                                    requestFactory:self.mockRequestFactory
-                                    operationQueue:self.operationQueue
-                                 timestampProvider:self.mockTimestampProvider];
+        [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
+                                     requestManager:nil
+                                     requestFactory:self.mockRequestFactory
+                                     operationQueue:self.operationQueue
+                                  timestampProvider:self.mockTimestampProvider];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -71,10 +90,11 @@
 
 - (void)testInit_timestampProvider_mustNotBeNil {
     @try {
-        [[EMSSession alloc] initWithRequestManager:self.mockRequestManager
-                                    requestFactory:self.mockRequestFactory
-                                    operationQueue:self.operationQueue
-                                 timestampProvider:nil];
+        [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
+                                     requestManager:self.mockRequestManager
+                                     requestFactory:self.mockRequestFactory
+                                     operationQueue:self.operationQueue
+                                  timestampProvider:nil];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
@@ -84,7 +104,7 @@
 - (void)testStartSession_shouldGenerateSessionId {
     [self.session startSession];
 
-    XCTAssertNotNil(self.session.sessionId);
+    XCTAssertNotNil(self.session.sessionIdHolder.sessionId);
 }
 
 - (void)testStartSession_shouldSetSessionStartTime {
@@ -138,6 +158,7 @@
 
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:nil]);
+    XCTAssertNil(self.sessionIdHolder.sessionId);
 }
 
 @end

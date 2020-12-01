@@ -17,6 +17,7 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "MEButtonClickRepository.h"
+#import "EMSSessionIdHolder.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 
@@ -27,6 +28,7 @@
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MEButtonClickRepository *mockButtonClickRepository;
+@property(nonatomic, strong) EMSSessionIdHolder *sessionIdHolder;
 
 @property(nonatomic, strong) NSDate *timestamp;
 
@@ -40,6 +42,8 @@
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockButtonClickRepository = OCMClassMock([MEButtonClickRepository class]);
+    
+    _sessionIdHolder = [EMSSessionIdHolder new];
 
     EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
@@ -76,14 +80,16 @@
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                                endpoint:self.endpoint
-                                                  buttonClickRepository:self.mockButtonClickRepository];
+                                                  buttonClickRepository:self.mockButtonClickRepository
+                                                        sessionIdHolder:self.sessionIdHolder];
 }
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:nil
                                                  endpoint:OCMClassMock([EMSEndpoint class])
-                                    buttonClickRepository:self.mockButtonClickRepository];
+                                    buttonClickRepository:self.mockButtonClickRepository
+                                          sessionIdHolder:self.sessionIdHolder];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
@@ -94,7 +100,8 @@
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                  endpoint:nil
-                                    buttonClickRepository:self.mockButtonClickRepository];
+                                    buttonClickRepository:self.mockButtonClickRepository
+                                          sessionIdHolder:self.sessionIdHolder];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
@@ -105,10 +112,23 @@
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                  endpoint:self.endpoint
-                                    buttonClickRepository:nil];
+                                    buttonClickRepository:nil
+                                          sessionIdHolder:self.sessionIdHolder];
         XCTFail(@"Expected Exception when buttonClickRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: buttonClickRepository"]);
+    }
+}
+
+- (void)testInit_sessionIdHolder_mustNotBeNil {
+    @try {
+        [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                 endpoint:self.endpoint
+                                    buttonClickRepository:self.mockButtonClickRepository
+                                          sessionIdHolder:nil];
+        XCTFail(@"Expected Exception when sessionIdHolder is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: sessionIdHolder"]);
     }
 }
 
@@ -207,6 +227,8 @@
 }
 
 - (void)testCreateEventRequestModel_with_eventName_eventAttributes_internalType {
+    self.sessionIdHolder.sessionId = @"testSessionId";
+    
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -224,7 +246,8 @@
                                                                                                        @{
                                                                                                                @"testEventAttributeKey1": @"testEventAttributeValue1",
                                                                                                                @"testEventAttributeKey2": @"testEventAttributeValue2"
-                                                                                                       }
+                                                                                                       },
+                                                                                                       @"sessionId": @"testSessionId"
                                                                                                }
                                                                                        ]
                                                                                }

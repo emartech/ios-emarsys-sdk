@@ -17,10 +17,12 @@
 
 @implementation EMSSession
 
-- (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
-                        requestFactory:(EMSRequestFactory *)requestFactory
-                        operationQueue:(NSOperationQueue *)operationQueue
-                     timestampProvider:(EMSTimestampProvider *)timestampProvider {
+- (instancetype)initWithSessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
+                         requestManager:(EMSRequestManager *)requestManager
+                         requestFactory:(EMSRequestFactory *)requestFactory
+                         operationQueue:(NSOperationQueue *)operationQueue
+                      timestampProvider:(EMSTimestampProvider *)timestampProvider {
+    NSParameterAssert(sessionIdHolder);
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(operationQueue);
@@ -29,6 +31,7 @@
         _requestManager = requestManager;
         _requestFactory = requestFactory;
         _timestampProvider = timestampProvider;
+        _sessionIdHolder = sessionIdHolder;
         __weak typeof(self) weakSelf = self;
         [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                         object:nil
@@ -47,7 +50,7 @@
 }
 
 - (void)startSession {
-    self.sessionId = [NSUUID UUID].UUIDString;
+    self.sessionIdHolder.sessionId = [NSUUID UUID].UUIDString;
     self.sessionStartTime = [self.timestampProvider provideTimestamp];
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"session:start"
                                                                               eventAttributes:nil
@@ -66,6 +69,7 @@
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:nil];
+    self.sessionIdHolder.sessionId = nil;
 }
 
 @end

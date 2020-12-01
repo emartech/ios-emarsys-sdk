@@ -12,6 +12,7 @@
 #import "EMSAuthentication.h"
 #import "MEButtonClickRepository.h"
 #import "EMSFilterByNothingSpecification.h"
+#import "EMSSessionIdHolder.h"
 
 @interface EMSRequestFactory ()
 
@@ -19,6 +20,7 @@
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
+@property(nonatomic, strong) EMSSessionIdHolder *sessionIdHolder;
 
 @end
 
@@ -26,15 +28,18 @@
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
                               endpoint:(EMSEndpoint *)endpoint
-                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository {
+                 buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
+                       sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder {
     NSParameterAssert(requestContext);
     NSParameterAssert(endpoint);
     NSParameterAssert(buttonClickRepository);
+    NSParameterAssert(sessionIdHolder);
     if (self = [super init]) {
         _requestContext = requestContext;
         _deviceInfo = requestContext.deviceInfo;
         _endpoint = endpoint;
         _buttonClickRepository = buttonClickRepository;
+        _sessionIdHolder = sessionIdHolder;
     }
     return self;
 }
@@ -107,7 +112,7 @@
                 mutableEvent[@"name"] = eventName;
                 mutableEvent[@"timestamp"] = [[weakSelf.requestContext.timestampProvider provideTimestamp] stringValueInUTC];
                 mutableEvent[@"attributes"] = eventAttributes;
-
+                mutableEvent[@"sessionId"] = self.sessionIdHolder.sessionId;
                 NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
                 mutablePayload[@"clicks"] = @[];
                 mutablePayload[@"viewedMessages"] = @[];
