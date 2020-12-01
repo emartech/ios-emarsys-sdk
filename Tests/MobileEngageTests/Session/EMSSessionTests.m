@@ -152,7 +152,7 @@
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(sessionStopTime);
 
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"session:end"
-                                                          eventAttributes:@{@"elapsedTime": [[sessionStopTime numberValueInMillisFromDate:self.session.sessionStartTime] stringValue]}
+                                                          eventAttributes:@{@"duration": [[sessionStopTime numberValueInMillisFromDate:self.session.sessionStartTime] stringValue]}
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
     [self.session stopSession];
 
