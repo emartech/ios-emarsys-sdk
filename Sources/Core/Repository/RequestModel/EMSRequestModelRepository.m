@@ -30,7 +30,7 @@
         __weak typeof(self) weakSelf = self;
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification
                                                           object:nil
-                                                           queue:[NSOperationQueue mainQueue]
+                                                           queue:nil
                                                       usingBlock:^(NSNotification *note) {
                                                           [weakSelf.dbHelper close];
                                                       }];
