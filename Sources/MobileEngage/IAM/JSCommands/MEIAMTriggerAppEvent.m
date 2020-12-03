@@ -41,8 +41,10 @@
     } else {
         NSString *name = message[@"name"];
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
-        [self.inAppMessageHandler handleEvent:name
-                                      payload:payload];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.inAppMessageHandler handleEvent:name
+                                          payload:payload];
+        });
         resultBlock([MEIAMCommandResultUtils createSuccessResultWith:eventId]);
     }
 }

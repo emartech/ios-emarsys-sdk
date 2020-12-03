@@ -35,7 +35,7 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
 
                 MEIAMTriggerAppEvent *appEvent = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:inAppHandler];
 
-                [[inAppHandler should] receive:@selector(handleEvent:payload:) withArguments:eventName, payload];
+                [[inAppHandler shouldEventually] receive:@selector(handleEvent:payload:) withArguments:eventName, payload];
 
                 [appEvent handleMessage:scriptMessage
                             resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
@@ -130,9 +130,11 @@ SPEC_BEGIN(MEIAMTriggerAppEventTests)
 
                 MEIAMTriggerAppEvent *appEvent = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:inAppHandler];
 
-                [appEvent handleMessage:scriptMessage
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                            }];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [appEvent handleMessage:scriptMessage
+                                resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                                }];
+                });
                 [EMSWaiter waitForExpectations:@[exp] timeout:30];
 
                 [[_mainThread should] equal:@(YES)];
