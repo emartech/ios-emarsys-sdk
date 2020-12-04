@@ -157,33 +157,35 @@ didFinishNavigation:(WKNavigation *)navigation {
 
 - (void)fetchInlineInappMessage {
     if (self.viewId) {
+        [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
         EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-        EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
-        __weak typeof(self) weakSelf = self;
-        [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
-                                                                            successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                                                MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];
-                                                                                if (inAppMessage) {
-                                                                                    [weakSelf.commandFactory setInAppMessage:inAppMessage];
-                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                        [weakSelf.webView loadHTMLString:inAppMessage.html
-                                                                                                                 baseURL:nil];
-                                                                                    });
-                                                                                } else {
-                                                                                    NSError *error = [NSError errorWithCode:-1400
-                                                                                                       localizedDescription:@"Inline In-App HTML content must not be empty, please check your viewId!"];
-                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                        if (self.completionBlock) {
-                                                                                            self.completionBlock(error);
-                                                                                        }
-                                                                                    });
+            EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
+            __weak typeof(self) weakSelf = self;
+            [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
+                                                                                successBlock:^(NSString *requestId, EMSResponseModel *response) {
+                                                                                    MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];
+                                                                                    if (inAppMessage) {
+                                                                                        [weakSelf.commandFactory setInAppMessage:inAppMessage];
+                                                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                            [weakSelf.webView loadHTMLString:inAppMessage.html
+                                                                                                                     baseURL:nil];
+                                                                                        });
+                                                                                    } else {
+                                                                                        NSError *error = [NSError errorWithCode:-1400
+                                                                                                           localizedDescription:@"Inline In-App HTML content must not be empty, please check your viewId!"];
+                                                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                            if (self.completionBlock) {
+                                                                                                self.completionBlock(error);
+                                                                                            }
+                                                                                        });
+                                                                                    }
                                                                                 }
-                                                                            }
-                                                                              errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                      [weakSelf setHidden:YES];
-                                                                                  });
-                                                                              }];
+                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
+                                                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                          [weakSelf setHidden:YES];
+                                                                                      });
+                                                                                  }];
+        }];
     }
 }
 
