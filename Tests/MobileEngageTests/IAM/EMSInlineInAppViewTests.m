@@ -40,6 +40,7 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _operationQueue = [NSOperationQueue new];
+    [self.operationQueue setMaxConcurrentOperationCount:1];
     _mockInapp = OCMClassMock([MEInApp class]);
 
     [EMSDependencyInjection setupWithDependencyContainer:self.mockContainer];
