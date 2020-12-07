@@ -10,6 +10,7 @@
 #import "EMSMacros.h"
 #import "EMSAppEventLog.h"
 #import "EMSGeofenceInternal.h"
+#import "EMSDeviceInfo.h"
 
 @interface EMSAppStartBlockProvider ()
 
@@ -53,12 +54,14 @@
         EMSLog([[EMSAppEventLog alloc] initWithEventName:@"app:start"
                                               attributes:nil], LogLevelInfo);
         if (weakSelf.requestContext.contactToken) {
+            BOOL firstAppStart = [[self.requestContext deviceInfo] firstAppStart];
             EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"app:start"
-                                                                                          eventAttributes:nil
+                                                                                          eventAttributes:firstAppStart ? @{@"first": @"true"} : nil
                                                                                                 eventType:EventTypeInternal];
             [weakSelf.requestManager submitRequestModel:requestModel
                                     withCompletionBlock:^(NSError *error) {
                                     }];
+            [[self.requestContext deviceInfo] setFirstAppStart:NO];
         }
     };
 }
