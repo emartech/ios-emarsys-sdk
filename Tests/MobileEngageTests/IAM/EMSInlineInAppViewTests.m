@@ -93,6 +93,15 @@
 
     [self.inappView loadInAppWithViewId:@"testViewId"];
     [self.inappView fetchInlineInappMessage];
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
+    [self.operationQueue addOperationWithBlock:^{
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     OCMVerify([EMSDependencyInjection.dependencyContainer.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"]);
     OCMVerify([self.mockRequestManager submitRequestModelNow:requestModel
                                                 successBlock:[OCMArg any]
