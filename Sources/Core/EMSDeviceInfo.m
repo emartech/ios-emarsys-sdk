@@ -88,7 +88,6 @@
                                                 encoding:NSUTF8StringEncoding];
         }
         if (!_hardwareId) {
-            self.firstAppStart = true;
             _hardwareId = [self.uuidProvider provideUUIDString];
             [self.storage setSharedData:[_hardwareId dataUsingEncoding:NSUTF8StringEncoding]
                                  forKey:kEMSHardwareIdKey];

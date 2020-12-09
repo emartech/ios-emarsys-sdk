@@ -27,7 +27,6 @@
 @property(nonatomic, strong) NSString *applicationCode;
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSGeofenceInternal *mockGeofenceInternal;
-@property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 
 @end
 
@@ -43,12 +42,11 @@
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _mockConfigInternal = OCMClassMock([EMSConfigInternal class]);
     _mockGeofenceInternal = OCMClassMock([EMSGeofenceInternal class]);
-    _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                          contactFieldId:self.contactFieldId
                                                            uuidProvider:[EMSUUIDProvider new]
                                                       timestampProvider:[EMSTimestampProvider new]
-                                                             deviceInfo:self.mockDeviceInfo];
+                                                             deviceInfo:[EMSDeviceInfo new]];
 
     [self.requestContext setContactToken:nil];
 
@@ -154,35 +152,14 @@
 
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
 
-    OCMStub([self.mockDeviceInfo firstAppStart]).andReturn(YES);
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
-                                                          eventAttributes:@{@"first":@"true"}
+                                                          eventAttributes:[OCMArg any]
                                                                 eventType:EventTypeInternal]).andReturn(requestModel);
 
     self.appStartEventBlock();
 
     OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
-                                                            eventAttributes:@{@"first":@"true"}
-                                                                  eventType:EventTypeInternal]);
-    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
-                                      withCompletionBlock:[OCMArg any]]);
-    OCMVerify([self.mockDeviceInfo setFirstAppStart:NO]);
-}
-
-- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock_notFirstAppStart {
-    [self.requestContext setContactToken:@"testContactToken"];
-
-    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
-
-    OCMStub([self.mockDeviceInfo firstAppStart]).andReturn(NO);
-    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
-                                                          eventAttributes:nil
-                                                                eventType:EventTypeInternal]).andReturn(requestModel);
-
-    self.appStartEventBlock();
-
-    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"app:start"
-                                                            eventAttributes:nil
+                                                            eventAttributes:[OCMArg any]
                                                                   eventType:EventTypeInternal]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:[OCMArg any]]);

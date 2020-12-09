@@ -404,10 +404,8 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                                 withArguments:kw_any(), @"kHardwareIdKey"];
 
                 NSString *result = deviceInfo.hardwareId;
-                BOOL firstAppStartResult = deviceInfo.firstAppStart;
 
                 [[result should] equal:@"dataHWID"];
-                [[theValue(firstAppStartResult) should] equal: theValue(NO)];
             });
 
             it(@"should set new UUIDHWID in storage when no HWID is available in both keychains", ^{
@@ -420,10 +418,8 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                 [[mockStorage should] receive:@selector(setSharedData:forKey:)
                                 withArguments:dataHWID, @"kHardwareIdKey"];
                 NSString *result = deviceInfo.hardwareId;
-                BOOL firstAppStartResult = deviceInfo.firstAppStart;
 
                 [[result should] equal:@"testHWID"];
-                [[theValue(firstAppStartResult) should] equal: theValue(YES)];
             });
         });
 
