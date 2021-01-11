@@ -88,8 +88,8 @@ class OnEventResponseHandlerTests: XCTestCase {
 
     func createResponse() -> EMSResponseModel {
         let data = [
-            "campaignId": "1234",
             "onEventAction": [
+                "campaignId": "1234",
                 "actions": [
                     ["actionKey": "actionValue"]
                 ]

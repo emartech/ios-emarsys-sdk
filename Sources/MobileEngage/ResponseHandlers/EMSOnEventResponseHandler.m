@@ -42,7 +42,7 @@
     for (NSDictionary *actionDict in actions) {
         [[self.actionFactory createActionWithActionDictionary:actionDict] execute];
     }
-    NSString *campaignId = response.parsedBody[@"campaignId"];
+    NSString *campaignId = response.parsedBody[@"onEventAction"][@"campaignId"];
     if (campaignId) {
         [self.repository add:[[MEDisplayedIAM alloc] initWithCampaignId:campaignId
                                                               timestamp:[self.timestampProvider provideTimestamp]]];
