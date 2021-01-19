@@ -18,6 +18,10 @@
     return self;
 }
 
+- (void)close {
+    self.closeOperationQueueBlock([NSOperationQueue currentQueue]);
+}
+
 - (void)insertModel:(id)model withQuery:(NSString *)insertSQL mapper:(id <EMSModelMapperProtocol>)mapper {
     _insertedModel = model;
     [_expectation fulfill];

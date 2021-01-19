@@ -53,11 +53,12 @@ SPEC_BEGIN(DennaTest)
                                                                                                  NSLog(@"ERROR!");
                                                                                                  fail(@"errorblock invoked");
                                                                                              }];
+            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
             EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                                                                                              schemaDelegate:[EMSSqliteSchemaHandler new]]];
+                                                                                                                                              schemaDelegate:[EMSSqliteSchemaHandler new]]
+                                                                                                operationQueue:operationQueue];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
 
-            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
 
             NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
             [sessionConfiguration setTimeoutIntervalForRequest:30.0];
@@ -133,10 +134,11 @@ SPEC_BEGIN(DennaTest)
                                                                                                      NSLog(@"ERROR!");
                                                                                                      fail(@"errorblock invoked");
                                                                                                  }];
-                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]];
-                EMSShardRepository *shardRepository = [EMSShardRepository new];
                 NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
+                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
+                                                                                                    operationQueue:operationQueue];
+                EMSShardRepository *shardRepository = [EMSShardRepository new];
 
                 NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
                 [sessionConfiguration setTimeoutIntervalForRequest:30.0];

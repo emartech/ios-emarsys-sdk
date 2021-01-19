@@ -16,6 +16,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSSchemaContract.h"
 #import "EMSRequestModel+RequestIds.h"
+#import "FakeDbHelper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -30,7 +31,8 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                     schemaDelegate:[EMSSqliteSchemaHandler new]];
             [helper open];
-            repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+            repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                              operationQueue:[NSOperationQueue new]];
         });
 
         afterEach(^{
@@ -40,19 +42,73 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
 
         id (^requestModel)(NSString *url, NSDictionary *payload) = ^id(NSString *url, NSDictionary *payload) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:url];
-                [builder setMethod:HTTPMethodPOST];
-                [builder setPayload:payload];
-            }                     timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
+                        [builder setUrl:url];
+                        [builder setMethod:HTTPMethodPOST];
+                        [builder setPayload:payload];
+                    }
+                                  timestampProvider:[EMSTimestampProvider new]
+                                       uuidProvider:[EMSUUIDProvider new]];
         };
 
         id (^requestModelWithTTL)(NSString *url, NSTimeInterval ttl) = ^id(NSString *url, NSTimeInterval ttl) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:url];
-                [builder setMethod:HTTPMethodGET];
-                [builder setExpiry:ttl];
-            }                     timestampProvider:[EMSTimestampProvider new] uuidProvider:[EMSUUIDProvider new]];
+                        [builder setUrl:url];
+                        [builder setMethod:HTTPMethodGET];
+                        [builder setExpiry:ttl];
+                    }
+                                  timestampProvider:[EMSTimestampProvider new]
+                                       uuidProvider:[EMSUUIDProvider new]];
         };
+
+        describe(@"init", ^{
+
+            it(@"sqliteHelper must not be nil", ^{
+                @try {
+                    [[EMSRequestModelRepository alloc] initWithDbHelper:nil
+                                                         operationQueue:[NSOperationQueue mock]];
+                    fail(@"Expected exception when sqliteHelper is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: sqliteHelper"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"operationQueue must not be nil", ^{
+                @try {
+                    [[EMSRequestModelRepository alloc] initWithDbHelper:[EMSRequestModelRepository mock]
+                                                         operationQueue:nil];
+                    fail(@"Expected exception when operationQueue is nil");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should call notification block on the given operationQueue", ^{
+                FakeDbHelper *dbHelper = [FakeDbHelper new];
+                NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
+                operationQueue.name = @"testOperationQueue";
+                EMSRequestModelRepository *requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
+                                                                                                         operationQueue:operationQueue];
+
+                __block NSOperationQueue *returnedOperationQueue = nil;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
+                dbHelper.closeOperationQueueBlock = ^(NSOperationQueue *operationQueue) {
+                    returnedOperationQueue = operationQueue;
+                    [expectation fulfill];
+                };
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
+                                                                    object:nil];
+
+                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                                      timeout:5];
+                XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                XCTAssertEqualObjects(returnedOperationQueue, operationQueue);
+                XCTAssertNotNil(requestModelRepository);
+            });
+
+        });
 
         describe(@"query", ^{
             it(@"should return empty array when the table is isEmpty", ^{

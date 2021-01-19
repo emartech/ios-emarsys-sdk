@@ -18,13 +18,15 @@
                      dbHelper:(EMSSQLiteHelper *)dbHelper
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
-                     endpoint:(EMSEndpoint *)endpoint {
+                     endpoint:(EMSEndpoint *)endpoint
+               operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
     NSParameterAssert(dbHelper);
     NSParameterAssert(buttonClickRepository);
     NSParameterAssert(displayedIAMRepository);
     NSParameterAssert(endpoint);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _inApp = inApp;
         _requestContext = requestContext;
@@ -32,20 +34,23 @@
         _buttonClickRepository = buttonClickRepository;
         _displayedIAMRepository = displayedIAMRepository;
         _endpoint = endpoint;
+        _operationQueue = operationQueue;
     }
     return self;
 }
 
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing {
     if (batchProcessing) {
-        return [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper]
+        return [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
+                                                                                                                     operationQueue:self.operationQueue]
                                                           buttonClickRepository:self.buttonClickRepository
                                                          displayedIAMRepository:self.displayedIAMRepository
                                                                           inApp:self.inApp
                                                                  requestContext:self.requestContext
                                                                        endpoint:self.endpoint];
     }
-    return [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper];
+    return [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
+                                                operationQueue:self.operationQueue];
 }
 
 @end

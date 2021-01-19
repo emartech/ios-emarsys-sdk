@@ -20,7 +20,10 @@
 
 #pragma mark - Init
 
-- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper {
+- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper
+                  operationQueue:(NSOperationQueue *)operationQueue {
+    NSParameterAssert(sqliteHelper);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _dbHelper = sqliteHelper;
         _mapper = [EMSRequestModelMapper new];
@@ -30,7 +33,7 @@
         __weak typeof(self) weakSelf = self;
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification
                                                           object:nil
-                                                           queue:nil
+                                                           queue:operationQueue
                                                       usingBlock:^(NSNotification *note) {
                                                           [weakSelf.dbHelper close];
                                                       }];

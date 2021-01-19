@@ -55,7 +55,8 @@ SPEC_BEGIN(RequestModelSpecificationTests)
                 _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                            schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [_dbHelper open];
-                _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:_dbHelper];
+                _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:_dbHelper
+                                                                   operationQueue:[NSOperationQueue new]];
             });
 
             afterEach(^{

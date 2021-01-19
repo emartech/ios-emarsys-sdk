@@ -20,13 +20,15 @@
 @property(nonatomic, readonly) MEDisplayedIAMRepository *displayedIAMRepository;
 @property(nonatomic, readonly) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
+@property(nonatomic, readonly) NSOperationQueue *operationQueue;
 
 - (instancetype)initWithInApp:(MEInApp *)inApp
                requestContext:(MERequestContext *)requestContext
                      dbHelper:(EMSSQLiteHelper *)dbHelper
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
-                     endpoint:(EMSEndpoint *)endpoint;
+                     endpoint:(EMSEndpoint *)endpoint
+               operationQueue:(NSOperationQueue *)operationQueue;
 
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing;
 

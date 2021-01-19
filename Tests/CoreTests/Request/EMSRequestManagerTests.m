@@ -193,7 +193,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                          schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
-                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                              operationQueue:[NSOperationQueue new]];
 
                 shardRepository = [EMSShardRepository mock];
                 CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
@@ -202,7 +203,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
 
                 };
-                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper], shardRepository);
+                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                                                                     operationQueue:[NSOperationQueue new]], shardRepository);
             });
 
             afterEach(^{
@@ -480,7 +482,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                            schemaDelegate:[EMSSqliteSchemaHandler new]];
-                EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper];
+                EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
+                                                                                             operationQueue:[NSOperationQueue new]];
 
                 CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
                     successCount++;

@@ -332,7 +332,8 @@
                                                                                                               dbHelper:self.dbHelper
                                                                                                  buttonClickRepository:self.buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository
-                                                                                                              endpoint:self.endpoint];
+                                                                                                              endpoint:self.endpoint
+                                                                                                        operationQueue:self.coreOperationQueue];
 
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
 

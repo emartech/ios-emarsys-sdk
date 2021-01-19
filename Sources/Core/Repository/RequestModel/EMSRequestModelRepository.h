@@ -9,6 +9,7 @@
 
 @interface EMSRequestModelRepository : NSObject <EMSRequestModelRepositoryProtocol>
 
-- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper;
+- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper
+                  operationQueue:(NSOperationQueue *)operationQueue;
 
 @end

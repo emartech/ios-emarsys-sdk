@@ -35,7 +35,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
-                repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+                repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                  operationQueue:[NSOperationQueue new]];
             });
 
             afterEach(^{
@@ -127,7 +128,8 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
-                repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+                repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                  operationQueue:[NSOperationQueue new]];
             });
 
             afterEach(^{

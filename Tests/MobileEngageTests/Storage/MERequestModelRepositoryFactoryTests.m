@@ -16,7 +16,6 @@
 
 SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
 
-
         describe(@"initWithInApp:requestContext:dbHelper:buttonClickRepository:displayedIAMRepository:endpoint:", ^{
             it(@"should set inApp after init", ^{
                 MEInApp *inApp = [MEInApp mock];
@@ -26,7 +25,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
                 [[factory.inApp shouldNot] beNil];
             });
 
@@ -38,7 +38,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
                 [[factory.inApp shouldNot] beNil];
             });
 
@@ -50,7 +51,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                      schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                             endpoint:[EMSEndpoint mock]];
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when inApp is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
@@ -66,7 +68,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                      schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                             endpoint:[EMSEndpoint mock]];
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -81,7 +84,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                              dbHelper:nil
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                             endpoint:[EMSEndpoint mock]];
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when dbHelper is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: dbHelper"];
@@ -96,7 +100,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                              dbHelper:[EMSSQLiteHelper mock]
                                                                                                 buttonClickRepository:nil
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                             endpoint:[EMSEndpoint mock]];
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];
@@ -111,7 +116,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                              dbHelper:[EMSSQLiteHelper mock]
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:nil
-                                                                                                             endpoint:[EMSEndpoint mock]];
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when displayedIAMRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIAMRepository"];
@@ -126,7 +132,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                              dbHelper:[EMSSQLiteHelper mock]
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                             endpoint:nil];
+                                                                                                             endpoint:nil
+                                                                                                       operationQueue:[NSOperationQueue mock]];
                     fail(@"Expected Exception when endpoint is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: endpoint"];
@@ -143,7 +150,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
                 [[((NSObject *) [factory createWithBatchCustomEventProcessing:NO]) shouldNot] beNil];
             });
 
@@ -154,7 +162,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
                 [[((NSObject *) [factory createWithBatchCustomEventProcessing:YES]) shouldNot] beNil];
             });
 
@@ -165,7 +174,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
 
                 id <EMSRequestModelRepositoryProtocol> repository = [factory createWithBatchCustomEventProcessing:NO];
                 [[[[repository class] description] should] equal:@"EMSRequestModelRepository"];
@@ -178,7 +188,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
-                                                                                                         endpoint:[EMSEndpoint mock]];
+                                                                                                         endpoint:[EMSEndpoint mock]
+                                                                                                   operationQueue:[NSOperationQueue mock]];
 
                 id <EMSRequestModelRepositoryProtocol> repository = [factory createWithBatchCustomEventProcessing:YES];
                 [[[[repository class] description] should] equal:@"MERequestRepositoryProxy"];

@@ -9,6 +9,7 @@
 @interface FakeDbHelper : EMSSQLiteHelper
 
 @property (nonatomic, strong) id insertedModel;
+@property (nonatomic, strong) void (^closeOperationQueueBlock)(NSOperationQueue *operationQueue);
 
 - (void)waitForInsert;
 

@@ -28,7 +28,8 @@
     EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                              schemaDelegate:[EMSSqliteSchemaHandler new]];
     [helper open];
-    _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+    _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                       operationQueue:[NSOperationQueue new]];
 }
 
 - (void)testQueryShouldReturnWithTheExactRequstModels {

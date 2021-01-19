@@ -97,7 +97,8 @@ SPEC_BEGIN(OfflineTests)
                 [helper open];
                 [helper executeCommand:SQL_REQUEST_PURGE];
 
-                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper];
+                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                              operationQueue:[NSOperationQueue new]];
                 shardRepository = [EMSShardRepository new];
             });
 
