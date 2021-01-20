@@ -534,7 +534,8 @@
                                                                                                                                                           uuidProvider:self.uuidProvider
                                                                                                                                                           pushInternal:self.push
                                                                                                                                                         requestManager:self.requestManager
-                                                                                                                                                        requestFactory:self.requestFactory]
+                                                                                                                                                        requestFactory:self.requestFactory
+                                                                                                                                                        operationQueue:self.coreOperationQueue]
                                                                                              loggingInstance:self.loggingNotificationCenterDelegate
                                                                                                  routerLogic:self.mobileEngageRouterLogicBlock];
     [self.notificationCenterDelegateDelegator proxyWithInstanceRouter:notificationCenterDelegateRouter];

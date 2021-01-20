@@ -21,6 +21,7 @@
                          uuidProvider:(EMSUUIDProvider *)uuidProvider
                          pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                        requestManager:(EMSRequestManager *)requestManager
-                       requestFactory:(EMSRequestFactory *)requestFactory;
+                       requestFactory:(EMSRequestFactory *)requestFactory
+                       operationQueue:(NSOperationQueue *)operationQueue;
 
 @end

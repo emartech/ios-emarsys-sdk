@@ -25,6 +25,7 @@
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> pushInternal;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
@@ -40,7 +41,8 @@
                          uuidProvider:(EMSUUIDProvider *)uuidProvider
                          pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                        requestManager:(EMSRequestManager *)requestManager
-                       requestFactory:(EMSRequestFactory *)requestFactory {
+                       requestFactory:(EMSRequestFactory *)requestFactory
+                       operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(actionFactory);
     NSParameterAssert(inApp);
     NSParameterAssert(timestampProvider);
@@ -48,6 +50,7 @@
     NSParameterAssert(pushInternal);
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _actionFactory = actionFactory;
         _inApp = inApp;
@@ -56,6 +59,7 @@
         _pushInternal = pushInternal;
         _requestManager = requestManager;
         _requestFactory = requestFactory;
+        _operationQueue = operationQueue;
     }
     return self;
 }
@@ -63,60 +67,70 @@
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler NS_AVAILABLE_IOS(10_0) {
-    if (self.delegate) {
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue addOperationWithBlock:^{
+        if (weakSelf.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.delegate userNotificationCenter:center
+                                  willPresentNotification:notification
+                                    withCompletionHandler:completionHandler];
+            });
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate userNotificationCenter:center
-                          willPresentNotification:notification
-                            withCompletionHandler:completionHandler];
+            completionHandler(UNNotificationPresentationOptionAlert);
         });
-    }
-    completionHandler(UNNotificationPresentationOptionAlert);
+    }];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10_0) {
-    if (self.delegate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate userNotificationCenter:center
-                   didReceiveNotificationResponse:response
-                            withCompletionHandler:completionHandler];
-        });
-    }
-    NSDictionary *userInfo = response.notification.request.content.userInfo;
-    if (userInfo[@"exception"]) {
-        EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
-    }
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue addOperationWithBlock:^{
+        if (weakSelf.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.delegate userNotificationCenter:center
+                           didReceiveNotificationResponse:response
+                                    withCompletionHandler:completionHandler];
+            });
+        }
+        NSDictionary *userInfo = response.notification.request.content.userInfo;
+        if (userInfo[@"exception"]) {
+            EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
+        }
 
-    NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
-    if (campaignId && self.notificationInformationDelegate) {
-        EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
-        [self.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
-    }
-    
-    NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
-    if (inApp) {
-        [self handleInApp:userInfo
-                    inApp:inApp];
-    }
-    
-    NSDictionary *action = [self actionFromResponse:response];
-    if (action && action[@"id"]) {
-        EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
-                                                                                  eventAttributes:@{
-                                                                                      @"origin": @"button",
-                                                                                      @"button_id": action[@"id"],
-                                                                                      @"sid": [userInfo messageId]}
-                                                                                        eventType:EventTypeInternal];
-        [self.requestManager submitRequestModel:requestModel
-                            withCompletionBlock:nil];
-    } else {
-        [self.pushInternal trackMessageOpenWithUserInfo:userInfo];
-    }
-    if (action) {
-        [self handleAction:action];
-    }
-    completionHandler();
+        NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
+        if (campaignId && weakSelf.notificationInformationDelegate) {
+            EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
+            [weakSelf.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+        }
+
+        NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
+        if (inApp) {
+            [weakSelf handleInApp:userInfo
+                            inApp:inApp];
+        }
+
+        NSDictionary *action = [weakSelf actionFromResponse:response];
+        if (action && action[@"id"]) {
+            EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"push:click"
+                                                                                          eventAttributes:@{
+                                                                                                  @"origin": @"button",
+                                                                                                  @"button_id": action[@"id"],
+                                                                                                  @"sid": [userInfo messageId]}
+                                                                                                eventType:EventTypeInternal];
+            [weakSelf.requestManager submitRequestModel:requestModel
+                                    withCompletionBlock:nil];
+        } else {
+            [weakSelf.pushInternal trackMessageOpenWithUserInfo:userInfo];
+        }
+        if (action) {
+            [weakSelf handleAction:action];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler();
+        });
+    }];
 }
 
 - (void)handleAction:(NSDictionary *)actionDict {
@@ -129,8 +143,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
               inApp:(NSDictionary *)inApp {
     NSDate *responseTimestamp = [self.timestampProvider provideTimestamp];
     NSArray *errors = [inApp validate:^(EMSDictionaryValidator *validate) {
-        [validate valueExistsForKey:@"inAppData" withType:[NSData class]];
-        [validate valueExistsForKey:@"campaign_id" withType:[NSString class]];
+        [validate valueExistsForKey:@"inAppData"
+                           withType:[NSData class]];
+        [validate valueExistsForKey:@"campaign_id"
+                           withType:[NSString class]];
     }];
     if ([errors count] == 0) {
         NSString *html = [[NSString alloc] initWithData:inApp[@"inAppData"]
@@ -154,27 +170,27 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     NSString *url = inApp[@"url"];
     if (url) {
         EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:url];
-            [builder setMethod:HTTPMethodGET];
-        }
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodGET];
+                }
                                                        timestampProvider:self.timestampProvider
                                                             uuidProvider:self.uuidProvider];
         __weak typeof(self) weakSelf = self;
         [self.requestManager submitRequestModelNow:requestModel
                                       successBlock:^(NSString *requestId, EMSResponseModel *responseModel) {
-            NSString *html = [[NSString alloc] initWithData:responseModel.body
-                                                   encoding:NSUTF8StringEncoding];
-            if (html) {
-                [weakSelf.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
-                                                                                   sid:[userInfo messageId]
-                                                                                   url:inApp[@"url"]
-                                                                                  html:html
-                                                                     responseTimestamp:responseTimestamp]
-                          completionHandler:nil];
-            }
-        }
+                                          NSString *html = [[NSString alloc] initWithData:responseModel.body
+                                                                                 encoding:NSUTF8StringEncoding];
+                                          if (html) {
+                                              [weakSelf.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
+                                                                                                                 sid:[userInfo messageId]
+                                                                                                                 url:inApp[@"url"]
+                                                                                                                html:html
+                                                                                                   responseTimestamp:responseTimestamp]
+                                                        completionHandler:nil];
+                                          }
+                                      }
                                         errorBlock:^(NSString *requestId, NSError *error) {
-        }];
+                                        }];
     }
 }
 
