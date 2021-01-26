@@ -11,6 +11,7 @@
 #import "EMSAbstractResponseHandler+Private.h"
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
+#import "EMSStorage.h"
 
 @interface EMSRefreshTokenResponseHandlerTests : XCTestCase
 
@@ -26,11 +27,13 @@
 - (void)setUp {
     _applicationCode = @"testApplicationCode";
     _contactFieldId = @3;
-    _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
-                                                         contactFieldId:self.contactFieldId
-                                                           uuidProvider:OCMClassMock([EMSUUIDProvider class])
-                                                      timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+    _requestContext = [[MERequestContext alloc]
+            initWithApplicationCode:self.applicationCode
+                     contactFieldId:self.contactFieldId
+                       uuidProvider:OCMClassMock([EMSUUIDProvider class])
+                  timestampProvider:OCMClassMock([EMSTimestampProvider class])
+                         deviceInfo:OCMClassMock([EMSDeviceInfo class])
+                            storage:OCMClassMock([EMSStorage class])];
 
     EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];

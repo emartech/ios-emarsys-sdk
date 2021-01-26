@@ -116,7 +116,9 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                 contactFieldId:contactFieldId
                                                                   uuidProvider:uuidProvider
                                                              timestampProvider:timestampProvider
-                                                                    deviceInfo:deviceInfo];
+                                                                    deviceInfo:deviceInfo
+                                                                       storage:[[EMSStorage alloc] initWithSuiteNames:@[]
+                                                                                                          accessGroup:nil]];
             compositeRequestModelRepository = [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:requestModelRepository
                                                                                          buttonClickRepository:buttonClickRepository
                                                                                         displayedIAMRepository:displayedRepository

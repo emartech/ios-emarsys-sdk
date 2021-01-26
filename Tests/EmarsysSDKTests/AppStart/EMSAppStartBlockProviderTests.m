@@ -13,6 +13,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSDeviceInfoClientProtocol.h"
 #import "EMSGeofenceInternal.h"
+#import "EMSStorage.h"
 
 @interface EMSAppStartBlockProviderTests : XCTestCase
 
@@ -27,6 +28,7 @@
 @property(nonatomic, strong) NSString *applicationCode;
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSGeofenceInternal *mockGeofenceInternal;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 
 @end
 
@@ -42,11 +44,13 @@
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _mockConfigInternal = OCMClassMock([EMSConfigInternal class]);
     _mockGeofenceInternal = OCMClassMock([EMSGeofenceInternal class]);
+    _mockStorage = OCMClassMock([EMSStorage class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                          contactFieldId:self.contactFieldId
                                                            uuidProvider:[EMSUUIDProvider new]
                                                       timestampProvider:[EMSTimestampProvider new]
-                                                             deviceInfo:[EMSDeviceInfo new]];
+                                                             deviceInfo:[EMSDeviceInfo new]
+                                                                storage:self.mockStorage];
 
     [self.requestContext setContactToken:nil];
 

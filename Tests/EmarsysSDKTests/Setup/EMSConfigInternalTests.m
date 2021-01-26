@@ -21,6 +21,7 @@
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSStorage.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -657,7 +658,8 @@
                                                                      contactFieldId:@3
                                                                        uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                                   timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                                         deviceInfo:self.mockDeviceInfo];
+                                                                         deviceInfo:self.mockDeviceInfo
+                                                                            storage:OCMClassMock([EMSStorage class])];
 
     id mockMEContext = OCMPartialMock(meContext);
 

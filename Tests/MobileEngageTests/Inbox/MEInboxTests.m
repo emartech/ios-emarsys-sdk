@@ -14,6 +14,7 @@
 #import "Emarsys.h"
 #import "EMSRequestFactory.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 static NSString *const kAppId = @"kAppId";
 
@@ -28,6 +29,9 @@ SPEC_BEGIN(MEInboxTests)
         __block EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
         __block EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
         __block EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
+        __block EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:@[kEMSSuiteName]
+                                                                 accessGroup:@"7ZFXXDJH82.com.emarsys.SdkHostTestGroup"];
+
 
         EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:applicationCode];
@@ -43,7 +47,8 @@ SPEC_BEGIN(MEInboxTests)
                                                                            contactFieldId:contactFieldId
                                                                              uuidProvider:uuidProvider
                                                                         timestampProvider:timestampProvider
-                                                                               deviceInfo:deviceInfo];
+                                                                               deviceInfo:deviceInfo
+                                                                                  storage:storage];
             if (withContactFieldValue) {
                 [context setContactFieldValue:contactFieldValue];
             } else {
@@ -66,7 +71,13 @@ SPEC_BEGIN(MEInboxTests)
 
         MEInbox *(^createInbox)(void) = ^id() {
             requestManagerMock = [EMSRequestManager nullMock];
-            requestContext = [[MERequestContext alloc] initWithApplicationCode:nil contactFieldId:nil uuidProvider:uuidProvider timestampProvider:timestampProvider deviceInfo:deviceInfo];
+            requestContext = [[MERequestContext alloc]
+                    initWithApplicationCode:nil
+                             contactFieldId:nil
+                               uuidProvider:uuidProvider
+                          timestampProvider:timestampProvider
+                                 deviceInfo:deviceInfo
+                                    storage:storage];
             notificationCache = [EMSNotificationCache new];
 
             EMSEndpoint *endpoint = [EMSEndpoint mock];

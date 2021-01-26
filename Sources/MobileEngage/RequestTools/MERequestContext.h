@@ -8,6 +8,7 @@
 
 @class EMSUUIDProvider;
 @class EMSDeviceInfo;
+@class EMSStorage;
 
 #define kEMSSuiteName @"com.emarsys.mobileengage"
 #define kMEID @"kMEID"
@@ -24,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong, nullable) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong, nullable) EMSDeviceInfo *deviceInfo;
+@property(nonatomic, strong, nullable) EMSStorage *storage;
 @property(nonatomic, strong, nullable) NSNumber *contactFieldId;
 @property(nonatomic, strong, nullable) NSString *contactFieldValue;
 @property(nonatomic, strong, nullable) NSString *clientState;
@@ -35,7 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
                          contactFieldId:(NSNumber *)contactFieldId
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
-                             deviceInfo:(EMSDeviceInfo *)deviceInfo;
+                             deviceInfo:(EMSDeviceInfo *)deviceInfo
+                                storage:(EMSStorage *)storage;
 
 - (void)reset;
 

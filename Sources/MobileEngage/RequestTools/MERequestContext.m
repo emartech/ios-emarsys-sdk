@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
+#import "EMSStorage.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "MERequestContext.h"
@@ -14,19 +15,22 @@
                          contactFieldId:(NSNumber *)contactFieldId
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
-                             deviceInfo:(EMSDeviceInfo *)deviceInfo {
+                             deviceInfo:(EMSDeviceInfo *)deviceInfo
+                                storage:(EMSStorage *)storage {
     NSParameterAssert(uuidProvider);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(deviceInfo);
+    NSParameterAssert(storage);
     if (self = [super init]) {
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _deviceInfo = deviceInfo;
         _contactFieldId = contactFieldId;
         _applicationCode = applicationCode;
+        _storage = storage;
         _clientState = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCLIENT_STATE];
-        _contactToken = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_TOKEN];
-        _refreshToken = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kREFRESH_TOKEN];
+        _contactToken = [storage stringForKey:kCONTACT_TOKEN];
+        _refreshToken = [storage stringForKey:kREFRESH_TOKEN];
         _contactFieldValue = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_FIELD_VALUE];
     }
     return self;
@@ -42,18 +46,14 @@
 
 - (void)setContactToken:(NSString *)contactToken {
     _contactToken = contactToken;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults setObject:contactToken
+    [self.storage setString:contactToken
                      forKey:kCONTACT_TOKEN];
-    [userDefaults synchronize];
 }
 
 - (void)setRefreshToken:(NSString *)refreshToken {
     _refreshToken = refreshToken;
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults setObject:refreshToken
+    [self.storage setString:refreshToken
                      forKey:kREFRESH_TOKEN];
-    [userDefaults synchronize];
 }
 
 - (void)setContactFieldValue:(NSString *)contactFieldValue {

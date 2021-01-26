@@ -292,7 +292,8 @@
                                                          contactFieldId:config.contactFieldId
                                                            uuidProvider:self.uuidProvider
                                                       timestampProvider:timestampProvider
-                                                             deviceInfo:deviceInfo];
+                                                             deviceInfo:deviceInfo
+                                                                storage:self.storage];
     _predictRequestContext = [[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                                      uuidProvider:self.uuidProvider
                                                                        merchantId:config.merchantId

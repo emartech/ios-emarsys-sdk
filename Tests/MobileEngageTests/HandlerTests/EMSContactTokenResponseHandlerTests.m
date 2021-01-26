@@ -11,6 +11,7 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "EMSAbstractResponseHandler+Private.h"
+#import "EMSStorage.h"
 
 @interface EMSContactTokenResponseHandlerTests : XCTestCase
 
@@ -42,7 +43,8 @@
                                                          contactFieldId:self.contactFieldId
                                                            uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                       timestampProvider:OCMClassMock([EMSTimestampProvider class])
-                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])];
+                                                             deviceInfo:OCMClassMock([EMSDeviceInfo class])
+                                                                storage:OCMClassMock([EMSStorage class])];
     _responseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                              endpoint:endpoint];
 }
