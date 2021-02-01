@@ -39,6 +39,8 @@
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSQueueDelegator.h"
 #import "EMSUUIDProvider.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EmarsysTests: XCTestCase
 
@@ -542,6 +544,24 @@
     [Emarsys clearContact];
     
     OCMVerify([mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testV4ShouldBeEnabled {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+
+    XCTAssertTrue([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
+}
+
+- (void)testV4ShouldBeDisabledWhenMobileEngageIsDisabled {
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+            }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
 }
 
 - (void)testShouldBeEMSPushV3Internal {
