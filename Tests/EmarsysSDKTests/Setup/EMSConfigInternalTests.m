@@ -1025,6 +1025,42 @@
     XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]);
 }
 
+- (void)testRefreshConfigFromRemoteConfig_success_verified_overrideEventServiceV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.v4];
+
+    EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
+    OCMStub([config features]).andReturn(@{@"event_service_v4": @NO});
+    NSData *signatureData = [NSData new];
+    NSData *contentData = [NSData new];
+
+    EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
+    OCMStub([mockResponse statusCode]).andReturn(@200);
+    OCMStub([mockResponse body]).andReturn(contentData);
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
+
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
+                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        mockResponse,
+                                                                                        nil])
+                                                errorBlock:[OCMArg any]]);
+    OCMStub([self.mockResponseMapper map:mockResponse]).andReturn(config);
+    OCMStub([self.mockCrypto verifyContent:contentData
+                             withSignature:signatureData]).andReturn(YES);
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+
+    [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
+                                            completionBlock:nil];
+
+    OCMVerify([self.mockCrypto verifyContent:contentData
+                               withSignature:signatureData]);
+    OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
+    OCMVerify([self.mockLogger updateWithRemoteConfig:config]);
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
+}
+
 - (void)testRefreshConfigFromRemoteConfig_success_notVerified {
     NSData *signatureData = [NSData new];
     NSData *contentData = [NSData new];

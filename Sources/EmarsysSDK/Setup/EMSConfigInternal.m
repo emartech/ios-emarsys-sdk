@@ -158,20 +158,21 @@
 
 - (void)overrideFeatureFlippers:(EMSRemoteConfig *)remoteConfig {
     NSDictionary *featureMatrix = [remoteConfig features];
-    NSNumber *mobileEngageFeature = featureMatrix[@"mobile_engage"];
-    if (mobileEngageFeature) {
-        if (mobileEngageFeature.boolValue) {
-            [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+    [self handleFeature:featureMatrix[@"mobile_engage"]
+       withInnerFeature:EMSInnerFeature.mobileEngage];
+    [self handleFeature:featureMatrix[@"predict"]
+       withInnerFeature:EMSInnerFeature.predict];
+    [self handleFeature:featureMatrix[@"event_service_v4"]
+       withInnerFeature:EMSInnerFeature.v4];
+}
+
+- (void)handleFeature:(NSNumber *)feature
+     withInnerFeature:(EMSInnerFeature *)innerFeature {
+    if (feature) {
+        if (feature.boolValue) {
+            [MEExperimental enableFeature:innerFeature];
         } else {
-            [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
-        }
-    }
-    NSNumber *predictFeature = featureMatrix[@"predict"];
-    if (predictFeature) {
-        if (predictFeature.boolValue) {
-            [MEExperimental enableFeature:EMSInnerFeature.predict];
-        } else {
-            [MEExperimental disableFeature:EMSInnerFeature.predict];
+            [MEExperimental disableFeature:innerFeature];
         }
     }
 }
