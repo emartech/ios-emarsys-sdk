@@ -140,6 +140,23 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
+            it(@"should throw an exception when there is no operationQueue", ^{
+                @try {
+                    MERequestModelRepositoryFactory *factory = [[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
+                                                                                                       requestContext:[MERequestContext mock]
+                                                                                                             dbHelper:[EMSSQLiteHelper mock]
+                                                                                                buttonClickRepository:[MEButtonClickRepository mock]
+                                                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:nil];
+                    fail(@"Expected Exception when operationQueue is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
         });
 
         describe(@"create", ^{
