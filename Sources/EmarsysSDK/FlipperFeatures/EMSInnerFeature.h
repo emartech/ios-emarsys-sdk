@@ -8,5 +8,6 @@
 
 @property(class, nonatomic, readonly) id <EMSFlipperFeature> mobileEngage;
 @property(class, nonatomic, readonly) id <EMSFlipperFeature> predict;
+@property(class, nonatomic, readonly) id <EMSFlipperFeature> v4;
 
 @end

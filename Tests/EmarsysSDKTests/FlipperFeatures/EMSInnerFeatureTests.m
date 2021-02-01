@@ -19,6 +19,10 @@
     XCTAssertEqualObjects(EMSInnerFeature.predict.name, @"InnerFeaturePredict");
 }
 
+- (void)testV4 {
+    XCTAssertEqualObjects(EMSInnerFeature.v4.name, @"InnerFeatureV4");
+}
+
 - (void)testPredict_lazyInit {
     XCTAssertEqual(EMSInnerFeature.predict, EMSInnerFeature.predict);
 }
