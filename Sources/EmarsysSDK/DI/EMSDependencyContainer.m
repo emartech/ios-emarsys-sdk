@@ -88,6 +88,7 @@
 #import "EMSOnEventActionInternal.h"
 #import "EMSOnEventResponseHandler.h"
 #import "EMSSession.h"
+#import "MEIAMCleanupResponseHandlerV4.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -370,6 +371,9 @@
     [self.responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
             [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.buttonClickRepository
+                                                            displayIamRepository:displayedIAMRepository
+                                                                        endpoint:self.endpoint],
+            [[MEIAMCleanupResponseHandlerV4 alloc] initWithButtonClickRepository:self.buttonClickRepository
                                                             displayIamRepository:displayedIAMRepository
                                                                         endpoint:self.endpoint]]
     ];
