@@ -2,11 +2,13 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 
-#import "MEIAMCleanupResponseHandler.h"
+#import "MEIAMCleanupResponseHandlerV3.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
-@interface MEIAMCleanupResponseHandler ()
+@interface MEIAMCleanupResponseHandlerV3 ()
 
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIAMRepository;
@@ -14,7 +16,7 @@
 
 @end
 
-@implementation MEIAMCleanupResponseHandler
+@implementation MEIAMCleanupResponseHandlerV3
 
 - (instancetype)initWithButtonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                          displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
@@ -31,7 +33,8 @@
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
-    if (![self.endpoint isMobileEngageUrl:[response.requestModel.url absoluteString]]) {
+    if (![self.endpoint isMobileEngageUrl:[response.requestModel.url absoluteString]]
+            || [MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) {
         return NO;
     }
 

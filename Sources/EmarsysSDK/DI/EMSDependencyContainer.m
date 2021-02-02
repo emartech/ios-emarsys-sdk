@@ -21,7 +21,7 @@
 #import "EMSNotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
 #import "MEIAMResponseHandler.h"
-#import "MEIAMCleanupResponseHandler.h"
+#import "MEIAMCleanupResponseHandlerV3.h"
 #import "MEDefaultHeaders.h"
 #import "EMSAppStartBlockProvider.h"
 #import "EMSWindowProvider.h"
@@ -369,9 +369,9 @@
     [self.dbHelper open];
     [self.responseHandlers addObjectsFromArray:@[
             [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.buttonClickRepository
-                                                          displayIamRepository:displayedIAMRepository
-                                                                      endpoint:self.endpoint]]
+            [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.buttonClickRepository
+                                                            displayIamRepository:displayedIAMRepository
+                                                                        endpoint:self.endpoint]]
     ];
     [self.responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                         endpoint:self.endpoint]];

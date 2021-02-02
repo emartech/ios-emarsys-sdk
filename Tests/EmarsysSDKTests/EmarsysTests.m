@@ -12,7 +12,7 @@
 #import "EmarsysTestUtils.h"
 #import "EMSAbstractResponseHandler.h"
 #import "MEIAMResponseHandler.h"
-#import "MEIAMCleanupResponseHandler.h"
+#import "MEIAMCleanupResponseHandlerV3.h"
 #import "EMSVisitorIdResponseHandler.h"
 #import "EMSDependencyInjection.h"
 #import "EMSNotificationCenterManager.h"
@@ -181,7 +181,7 @@
 
     BOOL registered = NO;
     for (EMSAbstractResponseHandler *responseHandler in EMSDependencyInjection.dependencyContainer.responseHandlers) {
-        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandler class]]) {
+        if ([responseHandler isKindOfClass:[MEIAMCleanupResponseHandlerV3 class]]) {
             registered = YES;
         }
     }

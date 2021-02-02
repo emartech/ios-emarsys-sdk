@@ -8,7 +8,7 @@
 #import "MEDisplayedIAMRepository.h"
 #import "EMSEndpoint.h"
 
-@interface MEIAMCleanupResponseHandler : EMSAbstractResponseHandler
+@interface MEIAMCleanupResponseHandlerV3 : EMSAbstractResponseHandler
 
 - (instancetype)initWithButtonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                          displayIamRepository:(MEDisplayedIAMRepository *)displayedIAMRepository

@@ -6,15 +6,17 @@
 #import <OCMock/OCMock.h>
 #import "EMSTimestampProvider.h"
 #import "EMSRequestModelBuilder.h"
-#import "MEIAMCleanupResponseHandler.h"
+#import "MEIAMCleanupResponseHandlerV3.h"
 #import "EMSAbstractResponseHandler+Private.h"
 #import "EMSFilterByNothingSpecification.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSUUIDProvider.h"
+#import "MEExperimental+Test.h"
+#import "EMSInnerFeature.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMIAMCleanup.db"]
 
-@interface MEIAMCleanupResponseHandlerTests : XCTestCase
+@interface MEIAMCleanupResponseHandlerV3Tests : XCTestCase
 
 @property(nonatomic, strong) MEButtonClickRepository *mockButtonClickRepository;
 @property(nonatomic, strong) MEDisplayedIAMRepository *mockDisplayIamRepository;
@@ -22,11 +24,11 @@
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSRequestModel *requestModel;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
-@property(nonatomic, strong) MEIAMCleanupResponseHandler *responseHandler;
+@property(nonatomic, strong) MEIAMCleanupResponseHandlerV3 *responseHandler;
 
 @end
 
-@implementation MEIAMCleanupResponseHandlerTests
+@implementation MEIAMCleanupResponseHandlerV3Tests
 
 - (void)setUp {
     _mockButtonClickRepository = OCMClassMock([MEButtonClickRepository class]);
@@ -40,9 +42,9 @@
                                    timestampProvider:self.timestampProvider
                                         uuidProvider:[EMSUUIDProvider new]];
 
-    _responseHandler = [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.mockButtonClickRepository
-                                                                     displayIamRepository:self.mockDisplayIamRepository
-                                                                                 endpoint:self.mockEndpoint];
+    _responseHandler = [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.mockButtonClickRepository
+                                                                       displayIamRepository:self.mockDisplayIamRepository
+                                                                                   endpoint:self.mockEndpoint];
 
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
@@ -52,14 +54,15 @@
 }
 
 - (void)tearDown {
+    [MEExperimental reset];
     [self.dbHelper close];
 }
 
 - (void)testInit_buttonClickRepository_mustNotBeNil {
     @try {
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:nil
-                                                      displayIamRepository:self.mockDisplayIamRepository
-                                                                  endpoint:self.mockEndpoint];
+        [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:nil
+                                                        displayIamRepository:self.mockDisplayIamRepository
+                                                                    endpoint:self.mockEndpoint];
         XCTFail(@"Expected Exception when buttonClickRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: buttonClickRepository"]);
@@ -68,9 +71,9 @@
 
 - (void)testInit_displayIamRepository_mustNotBeNil {
     @try {
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.mockButtonClickRepository
-                                                      displayIamRepository:nil
-                                                                  endpoint:self.mockEndpoint];
+        [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.mockButtonClickRepository
+                                                        displayIamRepository:nil
+                                                                    endpoint:self.mockEndpoint];
         XCTFail(@"Expected Exception when displayedIAMRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: displayedIAMRepository"]);
@@ -79,9 +82,9 @@
 
 - (void)testInit_endpoint_mustNotBeNil {
     @try {
-        [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.mockButtonClickRepository
-                                                      displayIamRepository:self.mockDisplayIamRepository
-                                                                  endpoint:nil];
+        [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.mockButtonClickRepository
+                                                        displayIamRepository:self.mockDisplayIamRepository
+                                                                    endpoint:nil];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
@@ -101,6 +104,23 @@
                                                                     timestamp:[NSDate date]];
 
     XCTAssertTrue([self.responseHandler shouldHandleResponse:response]);
+}
+
+- (void)testShouldHandleResponse_returnNo_whenV4isEnabled {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(NO);
+
+    NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@1234, @56789]}
+                                                   options:0
+                                                     error:nil];
+    EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                      headers:@{}
+                                                                         body:body
+                                                                 requestModel:self.requestModel
+                                                                    timestamp:[NSDate date]];
+
+    XCTAssertFalse([self.responseHandler shouldHandleResponse:response]);
 }
 
 - (void)testShouldHandleResponse_returnNo_notV3Url {
@@ -199,9 +219,9 @@
                                                                  requestModel:self.requestModel
                                                                     timestamp:[NSDate date]];
 
-    _responseHandler = [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:repository
-                                                                     displayIamRepository:self.mockDisplayIamRepository
-                                                                                 endpoint:self.mockEndpoint];
+    _responseHandler = [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:repository
+                                                                       displayIamRepository:self.mockDisplayIamRepository
+                                                                                   endpoint:self.mockEndpoint];
 
     [self.responseHandler handleResponse:response];
 
@@ -234,9 +254,9 @@
                                                                  requestModel:self.requestModel
                                                                     timestamp:[NSDate date]];
 
-    _responseHandler = [[MEIAMCleanupResponseHandler alloc] initWithButtonClickRepository:self.mockButtonClickRepository
-                                                                     displayIamRepository:repository
-                                                                                 endpoint:self.mockEndpoint];
+    _responseHandler = [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.mockButtonClickRepository
+                                                                       displayIamRepository:repository
+                                                                                   endpoint:self.mockEndpoint];
 
     [self.responseHandler handleResponse:response];
 
