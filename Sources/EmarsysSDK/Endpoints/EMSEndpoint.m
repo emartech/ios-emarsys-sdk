@@ -4,6 +4,8 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "EMSRemoteConfig.h"
+#import "EMSInnerFeature.h"
+#import "MEExperimental.h"
 
 @interface EMSEndpoint ()
 
@@ -76,11 +78,15 @@
 }
 
 - (NSString *)eventUrlWithApplicationCode:(NSString *)applicationCode {
-    return [NSString stringWithFormat:@"%@/v3/apps/%@/client/events", self.eventServiceUrl, applicationCode];
+    NSString *url = [MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] ?
+            @"%@/v4/apps/%@/client/events" : @"%@/v3/apps/%@/client/events";
+    return [NSString stringWithFormat:url, self.eventServiceUrl, applicationCode];
 }
 
 - (NSString *)inlineInappUrlWithApplicationCode:(NSString *)applicationCode {
-    return [NSString stringWithFormat:@"%@/v3/apps/%@/inline-messages", self.eventServiceUrl, applicationCode];
+    NSString *url = [MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] ?
+            @"%@/v4/apps/%@/inline-messages": @"%@/v3/apps/%@/inline-messages";
+    return [NSString stringWithFormat:url, self.eventServiceUrl, applicationCode];
 }
 
 - (NSString *)baseUrlWithServiceUrl:(NSString *)serviceUrl

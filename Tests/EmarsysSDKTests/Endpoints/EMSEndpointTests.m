@@ -7,6 +7,8 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "EMSRemoteConfig.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 static NSString *const kClientServiceUrl = @"https://me-client.eservice.emarsys.netl";
 static NSString *const kEventServiceUrl = @"https://mobile-events.eservice.emarsys.net";
@@ -56,6 +58,10 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                             v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
                                                      inboxUrlProvider:self.mockInboxUrlProvider
                                             v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
+}
+
+- (void)tearDown {
+    [MEExperimental disableFeature:EMSInnerFeature.eventServiceV4];
 }
 
 - (void)testInit_clientServiceUrlProvider_mustNotBeNil {
@@ -210,8 +216,20 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, expectedUrl);
 }
 
-- (void)testEventUrlWithApplicationCode {
+- (void)testEventUrlWithApplicationCode_forV3 {
     NSString *expectedUrl = [NSString stringWithFormat:@"%@/v3/apps/%@/client/events",
+                                                       kEventServiceUrl,
+                                                       kApplicationCode];
+
+    NSString *result = [self.endpoint eventUrlWithApplicationCode:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
+- (void)testEventUrlWithApplicationCode_forV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/v4/apps/%@/client/events",
                                                        kEventServiceUrl,
                                                        kApplicationCode];
 
@@ -222,6 +240,17 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 
 - (void)testInlineInappUrlWithApplicationCode {
     NSString *expectedUrl = [NSString stringWithFormat:@"%@/v3/apps/%@/inline-messages",
+                                                       kEventServiceUrl,
+                                                       kApplicationCode];
+
+    NSString *result = [self.endpoint inlineInappUrlWithApplicationCode:kApplicationCode];
+
+    XCTAssertEqualObjects(result, expectedUrl);
+}
+
+- (void)testInlineInappUrlWithApplicationCode_forV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    NSString *expectedUrl = [NSString stringWithFormat:@"%@/v4/apps/%@/inline-messages",
                                                        kEventServiceUrl,
                                                        kApplicationCode];
 
