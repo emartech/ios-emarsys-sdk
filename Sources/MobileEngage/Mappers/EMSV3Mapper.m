@@ -28,7 +28,7 @@
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return [self.endpoint isV3url:requestModel.url.absoluteString];
+    return [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString];
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

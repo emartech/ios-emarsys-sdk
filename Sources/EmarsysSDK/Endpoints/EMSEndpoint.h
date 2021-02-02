@@ -32,7 +32,7 @@
 
 - (NSString *)inlineInappUrlWithApplicationCode:(NSString *)applicationCode;
 
-- (BOOL)isV3url:(NSString *)url;
+- (BOOL)isMobileEngageUrl:(NSString *)url;
 
 - (NSString *)predictUrl;
 

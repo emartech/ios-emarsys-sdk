@@ -142,7 +142,7 @@
     [self.v3MessageInboxUrlProvider updateValue:nil];
 }
 
-- (BOOL)isV3url:(NSString *)url {
+- (BOOL)isMobileEngageUrl:(NSString *)url {
     return ([url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]] || [url hasPrefix:self.v3MessageInboxServiceUrl]) && !([url isEqualToString:self.inboxUrl]);
 }
 

@@ -89,7 +89,7 @@
 }
 
 - (void)testShouldHandleResponse_returnYes {
-    OCMStub([self.mockEndpoint isV3url:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
 
     NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@1234, @56789]}
                                                    options:0
@@ -104,7 +104,7 @@
 }
 
 - (void)testShouldHandleResponse_returnNo_notV3Url {
-    OCMStub([self.mockEndpoint isV3url:[OCMArg any]]).andReturn(NO);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(NO);
 
     EMSRequestModel *nonV3EventRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:@"https://www.emarsys.com"];
@@ -125,7 +125,7 @@
 }
 
 - (void)testShouldHandleResponse_returnNo_oldMessagesArrayIsEmpty {
-    OCMStub([self.mockEndpoint isV3url:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
 
     NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[]}
                                                    options:0
@@ -140,7 +140,7 @@
 }
 
 - (void)testShouldHandleResponse_returnNo_noOldMessages {
-    OCMStub([self.mockEndpoint isV3url:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
     NSData *body = [NSJSONSerialization dataWithJSONObject:@{
                     @"nothing": @[@"something"]
 
@@ -157,7 +157,7 @@
 }
 
 - (void)testShouldHandleResponse_returnNo_oldMessagesNotAnArray {
-    OCMStub([self.mockEndpoint isV3url:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
     NSData *body = [NSJSONSerialization dataWithJSONObject:@{
                     @"oldCampaigns": @{@"1234": @56789}
 

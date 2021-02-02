@@ -39,7 +39,7 @@
 - (EMSRESTClientCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
-        if (responseModel.statusCode == 401 && [self.endpoint isV3url:requestModel.url.absoluteString]) {
+        if (responseModel.statusCode == 401 && [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString]) {
             [weakSelf.storage setData:nil
                                forKey:kEMSPushTokenKey];
             weakSelf.originalRequestModel = requestModel;

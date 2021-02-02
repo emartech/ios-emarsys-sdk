@@ -262,31 +262,31 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 - (void)testIsV3_shouldReturnYes_when_URLClientUrl {
     NSString *url = [self.endpoint clientUrlWithApplicationCode:@"testApplicationCode"];
 
-    XCTAssertTrue([self.endpoint isV3url:url]);
+    XCTAssertTrue([self.endpoint isMobileEngageUrl:url]);
 }
 
 - (void)testIsV3_shouldReturnNo_when_URLIsNotV3 {
     NSString *url = @"https://www.notv3url.com";
 
-    XCTAssertFalse([self.endpoint isV3url:url]);
+    XCTAssertFalse([self.endpoint isMobileEngageUrl:url]);
 }
 
 - (void)testIsV3_shouldReturnYes_when_URLEventUrl {
     NSString *url = [self.endpoint eventUrlWithApplicationCode:@"testApplicationCode"];
 
-    XCTAssertTrue([self.endpoint isV3url:url]);
+    XCTAssertTrue([self.endpoint isMobileEngageUrl:url]);
 }
 
 - (void)testIsV3_shouldReturnYes_when_URLInboxV3Url {
     NSString *url = [self.endpoint v3MessageInboxUrlApplicationCode:@"testApplicationCode"];
 
-    XCTAssertTrue([self.endpoint isV3url:url]);
+    XCTAssertTrue([self.endpoint isMobileEngageUrl:url]);
 }
 
 - (void)testIsV3_shouldReturnNo_when_URLInboxUrl {
     NSString *url = [self.endpoint inboxUrl];
 
-    XCTAssertFalse([self.endpoint isV3url:url]);
+    XCTAssertFalse([self.endpoint isMobileEngageUrl:url]);
 }
 
 - (void)testV3MessageInboxUrlWithApplicationCode {

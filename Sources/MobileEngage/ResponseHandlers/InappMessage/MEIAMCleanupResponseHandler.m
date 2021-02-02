@@ -31,7 +31,7 @@
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
-    if (![self.endpoint isV3url:[response.requestModel.url absoluteString]]) {
+    if (![self.endpoint isMobileEngageUrl:[response.requestModel.url absoluteString]]) {
         return NO;
     }
 

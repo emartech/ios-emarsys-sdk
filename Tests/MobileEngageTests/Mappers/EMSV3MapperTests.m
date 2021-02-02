@@ -89,7 +89,7 @@
 - (void)testShouldHandleWithRequestMode_whenV3 {
     _url = [[NSURL alloc] initWithString:@"https://www.realV3url.com"];
 
-    OCMStub([self.mockEndpoint isV3url:@"https://www.realV3url.com"]).andReturn(YES);
+    OCMStub([self.mockEndpoint isMobileEngageUrl:@"https://www.realV3url.com"]).andReturn(YES);
 
     BOOL result = [self.mapper shouldHandleWithRequestModel:[self createRequestModel]];
 
