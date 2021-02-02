@@ -40,7 +40,7 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSRequestFactory.h"
-#import "EMSV3Mapper.h"
+#import "EMSMobileEngageMapper.h"
 #import "EMSPushV3Internal.h"
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSInAppInternal.h"
@@ -390,8 +390,8 @@
                                      requestModelMappers:@[
                                              [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
-                                             [[EMSV3Mapper alloc] initWithRequestContext:self.requestContext
-                                                                                endpoint:self.endpoint]]
+                                             [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
+                                                                                          endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository

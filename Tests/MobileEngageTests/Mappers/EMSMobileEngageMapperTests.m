@@ -4,13 +4,13 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSV3Mapper.h"
+#import "EMSMobileEngageMapper.h"
 #import "EMSRequestModel.h"
 #import "EMSDeviceInfo.h"
 #import "NSDate+EMSCore.h"
 #import "EMSEndpoint.h"
 
-@interface EMSV3MapperTests : XCTestCase
+@interface EMSMobileEngageMapperTests : XCTestCase
 
 @property(nonatomic, strong) NSString *requestId;
 @property(nonatomic, strong) NSDate *timestamp;
@@ -19,7 +19,7 @@
 @property(nonatomic, strong) NSDictionary *payload;
 @property(nonatomic, strong) NSDictionary *headers;
 @property(nonatomic, strong) NSDictionary *extras;
-@property(nonatomic, strong) EMSV3Mapper *mapper;
+@property(nonatomic, strong) EMSMobileEngageMapper *mapper;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) NSString *clientState;
 @property(nonatomic, strong) NSDate *requestOrderTimestamp;
@@ -28,7 +28,7 @@
 
 @end
 
-@implementation EMSV3MapperTests
+@implementation EMSMobileEngageMapperTests
 
 - (void)setUp {
     _requestId = @"testRequestId";
@@ -56,12 +56,12 @@
     OCMStub([self.mockEndpoint clientServiceUrl]).andReturn(@"https://me-client.eservice.emarsys.net");
     OCMStub([self.mockEndpoint eventServiceUrl]).andReturn(@"https://mobile-events.eservice.emarsys.net");
 
-    _mapper = [[EMSV3Mapper alloc] initWithRequestContext:self.mockRequestContext endpoint:self.mockEndpoint];
+    _mapper = [[EMSMobileEngageMapper alloc] initWithRequestContext:self.mockRequestContext endpoint:self.mockEndpoint];
 }
 
 - (void)testInit_requestContext_mustNotBeNull {
     @try {
-        [[EMSV3Mapper alloc] initWithRequestContext:nil endpoint:self.mockEndpoint];
+        [[EMSMobileEngageMapper alloc] initWithRequestContext:nil endpoint:self.mockEndpoint];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -70,8 +70,8 @@
 
 - (void)testInit_endpoint_mustNotBeNull {
     @try {
-        [[EMSV3Mapper alloc] initWithRequestContext:self.mockRequestContext
-                                           endpoint:nil];
+        [[EMSMobileEngageMapper alloc] initWithRequestContext:self.mockRequestContext
+                                                     endpoint:nil];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: endpoint");

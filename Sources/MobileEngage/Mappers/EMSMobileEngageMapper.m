@@ -1,20 +1,20 @@
 //
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
-#import "EMSV3Mapper.h"
+#import "EMSMobileEngageMapper.h"
 #import "EMSRequestModel.h"
 #import "NSDate+EMSCore.h"
 #import "EMSDeviceInfo.h"
 #import "EMSEndpoint.h"
 
-@interface EMSV3Mapper ()
+@interface EMSMobileEngageMapper ()
 
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
-@implementation EMSV3Mapper
+@implementation EMSMobileEngageMapper
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
                               endpoint:(EMSEndpoint *)endpoint {

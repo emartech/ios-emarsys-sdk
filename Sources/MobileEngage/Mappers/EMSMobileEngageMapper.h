@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EMSV3Mapper : NSObject <EMSRequestModelMapperProtocol>
+@interface EMSMobileEngageMapper : NSObject <EMSRequestModelMapperProtocol>
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
                               endpoint:(EMSEndpoint *)endpoint;
