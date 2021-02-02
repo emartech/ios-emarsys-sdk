@@ -22,6 +22,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSStorage.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -98,6 +99,10 @@
                                                                   queue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
+}
+
+- (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -1049,7 +1054,6 @@
     OCMStub([self.mockResponseMapper map:mockResponse]).andReturn(config);
     OCMStub([self.mockCrypto verifyContent:contentData
                              withSignature:signatureData]).andReturn(YES);
-    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
 
     [self.configInternal fetchRemoteConfigWithSignatureData:signatureData
                                             completionBlock:nil];

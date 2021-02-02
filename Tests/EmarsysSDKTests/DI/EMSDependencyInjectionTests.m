@@ -80,6 +80,11 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
         });
 
         describe(@"mobileEngage", ^{
+
+            beforeEach(^{
+                [EmarsysTestUtils tearDownEmarsys];
+            });
+
             afterEach(^{
                 [EmarsysTestUtils tearDownEmarsys];
             });
