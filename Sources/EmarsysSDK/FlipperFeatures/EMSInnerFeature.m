@@ -13,7 +13,7 @@
 
 static id <EMSFlipperFeature> _mobileEngage;
 static id <EMSFlipperFeature> _predict;
-static id <EMSFlipperFeature> _v4;
+static id <EMSFlipperFeature> _eventServiceV4;
 
 - (instancetype)initWithName:(NSString *)name {
     if (self = [super init]) {
@@ -36,11 +36,11 @@ static id <EMSFlipperFeature> _v4;
     return _predict;
 }
 
-+ (id <EMSFlipperFeature>)v4 {
-    if (!_v4) {
-        _v4 = [[EMSInnerFeature alloc] initWithName:@"InnerFeatureV4"];
++ (id <EMSFlipperFeature>)eventServiceV4 {
+    if (!_eventServiceV4) {
+        _eventServiceV4 = [[EMSInnerFeature alloc] initWithName:@"InnerFeatureEventServiceV4"];
     }
-    return _v4;
+    return _eventServiceV4;
 }
 
 @end

@@ -163,7 +163,7 @@
     [self handleFeature:featureMatrix[@"predict"]
        withInnerFeature:EMSInnerFeature.predict];
     [self handleFeature:featureMatrix[@"event_service_v4"]
-       withInnerFeature:EMSInnerFeature.v4];
+       withInnerFeature:EMSInnerFeature.eventServiceV4];
 }
 
 - (void)handleFeature:(NSNumber *)feature

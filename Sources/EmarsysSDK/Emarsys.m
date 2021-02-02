@@ -26,7 +26,7 @@
 
     if (config.applicationCode) {
         [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
-        [MEExperimental enableFeature:EMSInnerFeature.v4];
+        [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
     }
     if (config.merchantId) {
         [MEExperimental enableFeature:EMSInnerFeature.predict];

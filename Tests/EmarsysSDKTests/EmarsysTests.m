@@ -552,7 +552,7 @@
               mobileEngageEnabled:YES
                    predictEnabled:NO];
 
-    XCTAssertTrue([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
+    XCTAssertTrue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]);
 }
 
 - (void)testV4ShouldBeDisabledWhenMobileEngageIsDisabled {
@@ -561,7 +561,7 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
 
-    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]);
 }
 
 - (void)testShouldBeEMSPushV3Internal {

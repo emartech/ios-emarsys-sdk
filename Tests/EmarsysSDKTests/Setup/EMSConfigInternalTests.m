@@ -1026,7 +1026,7 @@
 }
 
 - (void)testRefreshConfigFromRemoteConfig_success_verified_overrideEventServiceV4 {
-    [MEExperimental enableFeature:EMSInnerFeature.v4];
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
 
     EMSRemoteConfig *config = OCMClassMock([EMSRemoteConfig class]);
     OCMStub([config features]).andReturn(@{@"event_service_v4": @NO});
@@ -1058,7 +1058,7 @@
                                withSignature:signatureData]);
     OCMVerify([self.mockEndpoint updateUrlsWithRemoteConfig:config]);
     OCMVerify([self.mockLogger updateWithRemoteConfig:config]);
-    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.v4]);
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_success_notVerified {
