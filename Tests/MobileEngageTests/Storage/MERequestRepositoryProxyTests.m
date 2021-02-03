@@ -24,6 +24,8 @@
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
 #import "EMSStorage.h"
+#import "MEExperimental+Test.h"
+#import "EMSInnerFeature.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -41,6 +43,7 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
         __block NSString *applicationCode;
         __block NSNumber *contactFieldId;
         __block EMSEndpoint *mockEndpoint;
+        __block EMSStorage *mockStorage;
 
         registerMatchers(@"EMS");
 
@@ -91,12 +94,14 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                                         displayedIAMRepository:displayedRepository
                                                                                                          inApp:inApp
                                                                                                 requestContext:requestContext
-                                                                                                      endpoint:mockEndpoint];
+                                                                                                      endpoint:mockEndpoint
+                                                                                                       storage:mockStorage];
             return compositeRequestModelRepository;
         };
 
         beforeEach(^{
             mockEndpoint = [EMSEndpoint mock];
+            mockStorage = [EMSStorage nullMock];
             [mockEndpoint stub:@selector(eventServiceUrl) andReturn:@"testEventServiceUrl"];
 
             timestampProvider = [EMSTimestampProvider new];
@@ -124,10 +129,12 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                                         displayedIAMRepository:displayedRepository
                                                                                                          inApp:[MEInApp mock]
                                                                                                 requestContext:requestContext
-                                                                                                      endpoint:mockEndpoint];
+                                                                                                      endpoint:mockEndpoint
+                                                                                                       storage:mockStorage];
         });
 
         afterEach(^{
+            [MEExperimental reset];
         });
 
         describe(@"initWithRequestModelRepository:buttonClickRepository:displayedIAMRepository:inApp:requestContext:deviceInfo:", ^{
@@ -139,7 +146,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                                inApp:inApp
                                                                                                       requestContext:[MERequestContext nullMock]
-                                                                                                            endpoint:mockEndpoint];
+                                                                                                            endpoint:mockEndpoint
+                                                                                                             storage:[EMSStorage mock]];
                 [[factory.inApp shouldNot] beNil];
             });
 
@@ -149,7 +157,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                                inApp:[MEInApp mock]
                                                                                                       requestContext:requestContext
-                                                                                                            endpoint:mockEndpoint];
+                                                                                                            endpoint:mockEndpoint
+                                                                                                             storage:[EMSStorage mock]];
                 [[factory.requestContext should] equal:requestContext];
             });
 
@@ -160,7 +169,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:nil
                                                                       requestContext:[MERequestContext mock]
-                                                                            endpoint:[EMSEndpoint mock]];
+                                                                            endpoint:[EMSEndpoint mock]
+                                                                             storage:[EMSStorage mock]];
                     fail(@"Expected Exception when inApp is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
@@ -175,7 +185,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:[MEInApp mock]
                                                                       requestContext:[MERequestContext mock]
-                                                                            endpoint:[EMSEndpoint mock]];
+                                                                            endpoint:[EMSEndpoint mock]
+                                                                             storage:[EMSStorage mock]];
                     fail(@"Expected Exception when requestModelRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestModelRepository"];
@@ -190,7 +201,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                inApp:[MEInApp mock]
                                                                       requestContext:[MERequestContext mock]
-                                                                            endpoint:[EMSEndpoint mock]];
+                                                                            endpoint:[EMSEndpoint mock]
+                                                                             storage:[EMSStorage mock]];
                     fail(@"Expected Exception when clickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];
@@ -205,7 +217,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                      displayedIAMRepository:nil
                                                                                       inApp:[MEInApp mock]
                                                                              requestContext:[MERequestContext mock]
-                                                                                   endpoint:[EMSEndpoint mock]];
+                                                                                   endpoint:[EMSEndpoint mock]
+                                                                                    storage:[EMSStorage mock]];
                     fail(@"Expected Exception when displayedIAMRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIAMRepository"];
@@ -220,7 +233,8 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                      displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                       inApp:[MEInApp mock]
                                                                              requestContext:nil
-                                                                                   endpoint:[EMSEndpoint mock]];
+                                                                                   endpoint:[EMSEndpoint mock]
+                                                                                    storage:[EMSStorage mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -235,16 +249,36 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                                                                      displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                       inApp:[MEInApp mock]
                                                                              requestContext:[MERequestContext mock]
-                                                                                   endpoint:nil];
+                                                                                   endpoint:nil
+                                                                                    storage:[EMSStorage mock]];
                     fail(@"Expected Exception when endpoint is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: endpoint"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
+
+            it(@"should throw an exception when there is no storage", ^{
+                @try {
+                    (void) [[MERequestRepositoryProxy alloc] initWithRequestModelRepository:[EMSRequestModelRepository mock]
+                                                                      buttonClickRepository:[MEButtonClickRepository mock]
+                                                                     displayedIAMRepository:[MEDisplayedIAMRepository mock]
+                                                                                      inApp:[MEInApp mock]
+                                                                             requestContext:[MERequestContext mock]
+                                                                                   endpoint:[EMSEndpoint  mock]
+                                                                                    storage:nil];
+                    fail(@"Expected Exception when storage is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: storage"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
         });
 
         describe(@"MERequestRepositoryProxy", ^{
+            afterEach(^{
+                [MEExperimental reset];
+            });
 
             it(@"should add buttonClicks on the custom event requests", ^{
                 NSArray<MEButtonClick *> *clicks = @[
@@ -286,6 +320,39 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                         @{@"campaignId": [viewedMessages[0] campaignId], @"timestamp": [viewedMessages[0] timestamp].stringValueInUTC},
                         @{@"campaignId": [viewedMessages[1] campaignId], @"timestamp": [viewedMessages[1] timestamp].stringValueInUTC}
                 ]];
+            });
+
+            it(@"should add deviceEventState on the custom event requests", ^{
+                [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+                NSDictionary *deviceEventState = @{
+                        @"key1" : @"value2",
+                        @"key2" : @"value1"
+                };
+                [[mockStorage should] receive:@selector(dictionaryForKey:) andReturn:deviceEventState];
+
+                EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
+
+                createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
+
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
+
+                [[[result[0] payload][@"deviceEventState"] should] equal:deviceEventState];
+            });
+
+            it(@"should NOT add deviceEventState on the custom event requests when not V4", ^{
+                NSDictionary *deviceEventState = @{
+                        @"key1" : @"value2",
+                        @"key2" : @"value1"
+                };
+                [[mockStorage should] receive:@selector(dictionaryForKey:) andReturn:deviceEventState];
+
+                EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
+
+                createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
+
+                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
+
+                [[[result[0] payload][@"deviceEventState"] should] beNil];
             });
 
             it(@"should add the element to the requestModelRepository", ^{

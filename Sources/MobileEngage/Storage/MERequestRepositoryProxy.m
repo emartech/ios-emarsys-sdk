@@ -15,6 +15,11 @@
 #import "MERequestContext.h"
 #import "EMSSchemaContract.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
+
+#define kDeviceEventStateKey @"DEVICE_EVENT_STATE_KEY"
 
 @implementation MERequestRepositoryProxy
 
@@ -23,13 +28,15 @@
                         displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                                          inApp:(MEInApp *)inApp
                                 requestContext:(MERequestContext *)requestContext
-                                      endpoint:(EMSEndpoint *)endpoint {
+                                      endpoint:(EMSEndpoint *)endpoint
+                                       storage:(EMSStorage *)storage {
     NSParameterAssert(requestModelRepository);
     NSParameterAssert(buttonClickRepository);
     NSParameterAssert(displayedIAMRepository);
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
     NSParameterAssert(endpoint);
+    NSParameterAssert(storage);
     if (self = [super init]) {
         _requestModelRepository = requestModelRepository;
         _clickRepository = buttonClickRepository;
@@ -37,6 +44,7 @@
         _inApp = inApp;
         _requestContext = requestContext;
         _endpoint = endpoint;
+        _storage = storage;
     }
     return self;
 }
@@ -82,6 +90,12 @@
                 payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
                 payload[@"viewedMessages"] = [self displayRepresentations];
                 payload[@"clicks"] = [self clickRepresentations];
+
+                NSDictionary *deviceEventState = [self.storage dictionaryForKey:kDeviceEventStateKey];
+                if ([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] && deviceEventState) {
+                    payload[@"deviceEventState"] = deviceEventState;
+                }
+
                 if ([self.inApp isPaused]) {
                     payload[@"dnd"] = @([self.inApp isPaused]);
                 }
