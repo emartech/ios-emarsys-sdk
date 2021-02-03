@@ -115,6 +115,22 @@
     XCTAssertFalse([self.responseHandler shouldHandleResponse:response]);
 }
 
+- (void)testShouldHandle_should_ReturnNo_statusCodeIsNot2xx {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+
+    NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"oldCampaigns": @[@1234, @56789]}
+                                                   options:0
+                                                     error:nil];
+    EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:300
+                                                                      headers:@{}
+                                                                         body:body
+                                                                 requestModel:[self createRequestModelWithPayload:@{@"viewedMessages": @[@{}]}]
+                                                                    timestamp:[NSDate date]];
+
+    XCTAssertFalse([self.responseHandler shouldHandleResponse:response]);
+}
+
 - (void)testShouldHandle_should_ReturnNo_whenUrlIsMobileEngage_andViewedMessagesIsEmptyArray {
     [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);

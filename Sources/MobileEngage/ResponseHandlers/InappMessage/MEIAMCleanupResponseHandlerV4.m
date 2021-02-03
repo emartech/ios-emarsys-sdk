@@ -7,6 +7,7 @@
 #import "EMSSchemaContract.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSResponseModel+EMSCore.h"
 
 @interface MEIAMCleanupResponseHandlerV4 ()
 
@@ -35,10 +36,11 @@
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     if ([self.endpoint isMobileEngageUrl:response.requestModel.url.absoluteString] &&
             [MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] &&
-            [self hasValues:@"viewedMessages"
-              responseModel:response] ||
+            [response isSuccess] &&
+            ([self hasValues:@"viewedMessages"
+               requestModel:response.requestModel] ||
             [self hasValues:@"clicks"
-              responseModel:response]) {
+               requestModel:response.requestModel])) {
         return YES;
     }
     return NO;
@@ -69,10 +71,10 @@
 }
 
 - (BOOL)hasValues:(NSString *)value
-    responseModel:(EMSResponseModel *)response {
-    return response.requestModel.payload[value] &&
-            [response.requestModel.payload[value] isKindOfClass:[NSArray class]] &&
-            [(NSArray *) response.requestModel.payload[value] count] > 0;
+     requestModel:(EMSRequestModel *)requestModel {
+    return requestModel.payload[value] &&
+            [requestModel.payload[value] isKindOfClass:[NSArray class]] &&
+            [(NSArray *) requestModel.payload[value] count] > 0;
 }
 
 @end
