@@ -143,7 +143,7 @@
 
 - (EMSRequestModel *)createRequestModelWithPayload:(NSDictionary *)payload {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"testUrl"];
+                [builder setUrl:@"https://www.test.url.com/com/test/url"];
                 [builder setPayload:payload];
             }
                           timestampProvider:self.timestampProvider
