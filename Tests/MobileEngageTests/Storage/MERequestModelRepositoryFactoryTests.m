@@ -11,6 +11,7 @@
 #import "MEDisplayedIAMRepository.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -26,7 +27,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
                 [[factory.inApp shouldNot] beNil];
             });
 
@@ -39,7 +41,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
                 [[factory.inApp shouldNot] beNil];
             });
 
@@ -52,7 +55,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when inApp is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: inApp"];
@@ -69,7 +73,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when requestContext is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: requestContext"];
@@ -85,7 +90,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when dbHelper is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: dbHelper"];
@@ -101,7 +107,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:nil
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when buttonClickRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: buttonClickRepository"];
@@ -117,7 +124,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:nil
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when displayedIAMRepository is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: displayedIAMRepository"];
@@ -133,7 +141,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:nil
-                                                                                                       operationQueue:[NSOperationQueue mock]];
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when endpoint is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: endpoint"];
@@ -149,10 +158,28 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                 buttonClickRepository:[MEButtonClickRepository mock]
                                                                                                displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                              endpoint:[EMSEndpoint mock]
-                                                                                                       operationQueue:nil];
+                                                                                                       operationQueue:nil
+                                                                                                              storage:[EMSStorage mock]];
                     fail(@"Expected Exception when operationQueue is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should throw an exception when there is no storage", ^{
+                @try {
+                    MERequestModelRepositoryFactory *factory = [[MERequestModelRepositoryFactory alloc] initWithInApp:[MEInApp mock]
+                                                                                                       requestContext:[MERequestContext mock]
+                                                                                                             dbHelper:[EMSSQLiteHelper mock]
+                                                                                                buttonClickRepository:[MEButtonClickRepository mock]
+                                                                                               displayedIAMRepository:[MEDisplayedIAMRepository mock]
+                                                                                                             endpoint:[EMSEndpoint mock]
+                                                                                                       operationQueue:[NSOperationQueue mock]
+                                                                                                              storage:nil];
+                    fail(@"Expected Exception when storage is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: storage"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -168,7 +195,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
                 [[((NSObject *) [factory createWithBatchCustomEventProcessing:NO]) shouldNot] beNil];
             });
 
@@ -180,7 +208,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
                 [[((NSObject *) [factory createWithBatchCustomEventProcessing:YES]) shouldNot] beNil];
             });
 
@@ -192,7 +221,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
 
                 id <EMSRequestModelRepositoryProtocol> repository = [factory createWithBatchCustomEventProcessing:NO];
                 [[[[repository class] description] should] equal:@"EMSRequestModelRepository"];
@@ -206,7 +236,8 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                             buttonClickRepository:[MEButtonClickRepository mock]
                                                                                            displayedIAMRepository:[MEDisplayedIAMRepository mock]
                                                                                                          endpoint:[EMSEndpoint mock]
-                                                                                                   operationQueue:[NSOperationQueue mock]];
+                                                                                                   operationQueue:[NSOperationQueue mock]
+                                                                                                          storage:[EMSStorage mock]];
 
                 id <EMSRequestModelRepositoryProtocol> repository = [factory createWithBatchCustomEventProcessing:YES];
                 [[[[repository class] description] should] equal:@"MERequestRepositoryProxy"];

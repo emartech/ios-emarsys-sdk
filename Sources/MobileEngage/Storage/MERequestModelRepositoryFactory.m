@@ -10,6 +10,7 @@
 #import "MEInApp.h"
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
+#import "EMSStorage.h"
 
 @implementation MERequestModelRepositoryFactory
 
@@ -19,7 +20,8 @@
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                      endpoint:(EMSEndpoint *)endpoint
-               operationQueue:(NSOperationQueue *)operationQueue {
+               operationQueue:(NSOperationQueue *)operationQueue
+                      storage:(EMSStorage *)storage {
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
     NSParameterAssert(dbHelper);
@@ -27,6 +29,7 @@
     NSParameterAssert(displayedIAMRepository);
     NSParameterAssert(endpoint);
     NSParameterAssert(operationQueue);
+    NSParameterAssert(storage);
     if (self = [super init]) {
         _inApp = inApp;
         _requestContext = requestContext;
@@ -35,6 +38,7 @@
         _displayedIAMRepository = displayedIAMRepository;
         _endpoint = endpoint;
         _operationQueue = operationQueue;
+        _storage = storage;
     }
     return self;
 }
@@ -47,7 +51,8 @@
                                                          displayedIAMRepository:self.displayedIAMRepository
                                                                           inApp:self.inApp
                                                                  requestContext:self.requestContext
-                                                                       endpoint:self.endpoint];
+                                                                       endpoint:self.endpoint
+                                                                        storage:self.storage];
     }
     return [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
                                                 operationQueue:self.operationQueue];

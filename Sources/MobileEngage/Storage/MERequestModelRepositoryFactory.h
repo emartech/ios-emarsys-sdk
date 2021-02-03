@@ -11,6 +11,7 @@
 @class MEButtonClickRepository;
 @class MEDisplayedIAMRepository;
 @class EMSEndpoint;
+@class EMSStorage;
 
 @interface MERequestModelRepositoryFactory : NSObject
 
@@ -21,6 +22,7 @@
 @property(nonatomic, readonly) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
 @property(nonatomic, readonly) NSOperationQueue *operationQueue;
+@property(nonatomic, readonly) EMSStorage *storage;
 
 - (instancetype)initWithInApp:(MEInApp *)inApp
                requestContext:(MERequestContext *)requestContext
@@ -28,7 +30,8 @@
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                      endpoint:(EMSEndpoint *)endpoint
-               operationQueue:(NSOperationQueue *)operationQueue;
+               operationQueue:(NSOperationQueue *)operationQueue
+                      storage:(EMSStorage *)storage;
 
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing;
 

@@ -336,7 +336,8 @@
                                                                                                  buttonClickRepository:self.buttonClickRepository
                                                                                                 displayedIAMRepository:displayedIAMRepository
                                                                                                               endpoint:self.endpoint
-                                                                                                        operationQueue:self.coreOperationQueue];
+                                                                                                        operationQueue:self.coreOperationQueue
+                                                                                                               storage:self.storage];
 
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
 
