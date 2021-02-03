@@ -65,9 +65,11 @@
             [campaignIdsToRemove addObject:campaignId];
         }
     }
-    EMSFilterByValuesSpecification *filterByViewedCampaignIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:[NSArray arrayWithArray:campaignIdsToRemove]
-                                                                                                                            column:COLUMN_NAME_CAMPAIGN_ID];
-    [repository remove:filterByViewedCampaignIdSpecification];
+    if ([campaignIdsToRemove count] > 0) {
+        EMSFilterByValuesSpecification *filterByViewedCampaignIdSpecification = [[EMSFilterByValuesSpecification alloc] initWithValues:[NSArray arrayWithArray:campaignIdsToRemove]
+                                                                                                                                column:COLUMN_NAME_CAMPAIGN_ID];
+        [repository remove:filterByViewedCampaignIdSpecification];
+    }
 }
 
 - (BOOL)hasValues:(NSString *)value

@@ -211,7 +211,6 @@
     XCTAssertEqualObjects([clicks[1] campaignId], @"id3");
 }
 
-
 - (void)testHandleResponse_removeDisplays {
     MEDisplayedIAMRepository *repository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:_dbHelper];
 
@@ -254,6 +253,32 @@
     XCTAssertEqual([displays count], 2);
     XCTAssertEqualObjects([displays[0] campaignId], @"id1a");
     XCTAssertEqualObjects([displays[1] campaignId], @"id3a");
+}
+
+- (void)testHandleResponse_when_callRepositoryOnce {
+    OCMReject([self.mockButtonClickRepository remove:[OCMArg any]]);
+
+    NSData *body = [NSJSONSerialization dataWithJSONObject:@{}
+                                                   options:0
+                                                     error:nil];
+    EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                      headers:@{}
+                                                                         body:body
+                                                                 requestModel:[self createRequestModelWithPayload:@{
+                                                                         @"viewedMessages": @[
+                                                                                 @{
+                                                                                         @"campaignId": @"id2a"
+                                                                                 },
+                                                                                 @{
+                                                                                         @"campaignId": @"id4a"
+                                                                                 }
+                                                                         ]
+                                                                 }]
+                                                                    timestamp:[NSDate date]];
+
+    [self.responseHandler handleResponse:response];
+
+    OCMVerify([self.mockDisplayIamRepository remove:[OCMArg any]]);
 }
 
 - (EMSRequestModel *)createRequestModelWithPayload:(NSDictionary *)payload {
