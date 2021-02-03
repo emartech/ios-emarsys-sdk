@@ -143,7 +143,7 @@
 
 - (EMSRequestModel *)createRequestModelWithPayload:(NSDictionary *)payload {
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v4/devices/meid/events"];
+                [builder setUrl:@"testUrl"];
                 [builder setPayload:payload];
             }
                           timestampProvider:self.timestampProvider
