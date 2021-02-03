@@ -89,6 +89,7 @@
 #import "EMSOnEventResponseHandler.h"
 #import "EMSSession.h"
 #import "MEIAMCleanupResponseHandlerV4.h"
+#import "EMSDeviceEventStateResponseHandler.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -368,15 +369,15 @@
                                                                                                                         endpoint:self.endpoint];
     _responseHandlers = [NSMutableArray array];
     [self.dbHelper open];
-    [self.responseHandlers addObjectsFromArray:@[
-            [[MEIAMResponseHandler alloc] initWithInApp:self.iam],
-            [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.buttonClickRepository
+    [self.responseHandlers addObject:[[MEIAMResponseHandler alloc] initWithInApp:self.iam]];
+    [self.responseHandlers addObject:[[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.buttonClickRepository
                                                             displayIamRepository:displayedIAMRepository
-                                                                        endpoint:self.endpoint],
-            [[MEIAMCleanupResponseHandlerV4 alloc] initWithButtonClickRepository:self.buttonClickRepository
+                                                                        endpoint:self.endpoint] ];
+    [self.responseHandlers addObject:[[MEIAMCleanupResponseHandlerV4 alloc] initWithButtonClickRepository:self.buttonClickRepository
                                                             displayIamRepository:displayedIAMRepository
-                                                                        endpoint:self.endpoint]]
-    ];
+                                                                        endpoint:self.endpoint]];
+    [self.responseHandlers addObject:[[EMSDeviceEventStateResponseHandler alloc] initWithStorage:self.storage
+                                                                                        endpoint:self.endpoint]];
     [self.responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
                                                                                         endpoint:self.endpoint]];
     [self.responseHandlers addObject:[[EMSXPResponseHandler alloc] initWithRequestContext:self.predictRequestContext
