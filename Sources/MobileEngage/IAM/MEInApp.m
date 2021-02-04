@@ -133,8 +133,7 @@
                 [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
                 EMSLog(weakSelf.inAppLog, LogLevelMetric);
             }
-            
-            weakSelf.iamWindow.rootViewController = nil;
+
             weakSelf.iamWindow = nil;
             
             [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
