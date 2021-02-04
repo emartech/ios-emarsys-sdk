@@ -27,6 +27,17 @@
     }];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [self.webView stopLoading];
+    [self.webView setNavigationDelegate:nil];
+    [self.webView.scrollView setDelegate:nil];
+    [self.webView.configuration.userContentController removeAllUserScripts];
+    [self.webView.configuration setUserContentController:[WKUserContentController new]];
+    [self.webView removeFromSuperview];
+    self.webView = nil;
+    [super viewDidDisappear:animated];
+}
+
 #pragma mark - Public methods
 
 - (instancetype)initWithJSBridge:(MEJSBridge *)bridge {
@@ -56,8 +67,9 @@
 - (void)    webView:(WKWebView *)webView
 didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     if (self.completionHandler) {
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.completionHandler();
+            weakSelf.completionHandler();
         });
     }
 }
@@ -65,14 +77,17 @@ didFinishNavigation:(null_unspecified WKNavigation *)navigation {
 #pragma mark - Private methods
 
 - (WKWebView *)createWebView {
+    __weak typeof(self) weakSelf = self;
+    __weak typeof(self.bridge.userContentController) weakUserContentController = self.bridge.userContentController;
+    
     WKProcessPool *processPool = [WKProcessPool new];
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration new];
     [webViewConfiguration setProcessPool:processPool];
-    [webViewConfiguration setUserContentController:self.bridge.userContentController];
+    [webViewConfiguration setUserContentController:weakUserContentController];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero
                                             configuration:webViewConfiguration];
-    [webView setNavigationDelegate:self];
+    [webView setNavigationDelegate:weakSelf];
     [webView setOpaque:NO];
     [webView setBackgroundColor:UIColor.clearColor];
     [webView.scrollView setBackgroundColor:UIColor.clearColor];
@@ -130,8 +145,9 @@ didFinishNavigation:(null_unspecified WKNavigation *)navigation {
                                                          error:&error];
     NSString *js = [NSString stringWithFormat:@"MEIAM.handleResponse(%@);",
                                               [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.webView evaluateJavaScript:js
+        [weakSelf.webView evaluateJavaScript:js
                        completionHandler:nil];
     });
 }
