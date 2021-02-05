@@ -17,6 +17,8 @@ struct InfoPanelView: View {
                 if(self.loginData.isLoggedIn){
                     Text("Logged in as: ").bold()
                     Text("\(self.loginData.contactFieldValue)")
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 } else {
                     Text("Logged out").bold()
                 }
@@ -41,11 +43,14 @@ struct InfoPanelView: View {
                 HStack {
                     Image(systemName: "gear").frame(width: 30).multilineTextAlignment(.leading)
                     Text("HardwareId: ").bold()
+                        
                     Button(action: {
                         UIPasteboard.general.string = loginData.hwid
                     }) {
                         Text("\(loginData.hwid)")
                             .foregroundColor(Color(.label))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                     }
                 }
                 HStack {

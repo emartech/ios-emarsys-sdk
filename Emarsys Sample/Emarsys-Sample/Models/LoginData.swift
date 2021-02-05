@@ -11,7 +11,7 @@ class LoginData: ObservableObject {
     @Published var contactFieldId : String
     @Published var applicationCode : String
     @Published var merchantId : String
-    @Published var hwid : String = "hardwareId"
+    @Published var hwid : String
     @Published var languageCode: String = "en-US"
     @Published var pushSettings: Dictionary<String, String> = ["notificationEnabled": "true",
                                                                "authorizationStatus": "authorized",
@@ -30,5 +30,8 @@ class LoginData: ObservableObject {
         self.contactFieldId = contactFieldId ?? ""
         self.applicationCode = applicationCode ?? ""
         self.merchantId = merchantId ?? ""
+        self.hwid = hwId
+        self.languageCode = languageCode
+        self.pushSettings = pushSettings
     }
 }
