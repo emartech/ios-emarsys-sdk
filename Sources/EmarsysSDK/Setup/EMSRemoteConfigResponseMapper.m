@@ -43,7 +43,7 @@
                                    mobileEngageV2Service:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"mobileEngageV2Service"]]
                                          deepLinkService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"deepLinkService"]]
                                             inboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"inboxService"]]
-                                   v3MessageInboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"v3MessageInboxService"]]
+                                   v3MessageInboxService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"messageInboxService"]]
                                                 logLevel:[self calculateLogLevel:activeConfig[@"logLevel"]
                                                                    withThreshold:activeConfig[@"luckyLogger"][@"threshold"]
                                                                withLuckyLogLevel:activeConfig[@"luckyLogger"][@"logLevel"]]
