@@ -74,3 +74,5 @@ Pods/
 /test_output/
 
 .swiftpm/
+
+Emarsys Sample/Emarsys-Sample/GoogleService-Info.plist

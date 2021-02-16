@@ -45,7 +45,7 @@ struct DashboardView: View {
                         Text("change env")
                         
                         Spacer()
-                                                
+                        
                         Button(action: self.changeConfig) {
                             Text("Change")
                         }
@@ -115,9 +115,12 @@ struct DashboardView: View {
                             self.loginButtonText()
                         }
                     }
-                }.padding()
+                    
+                    GoogleSignInButton()
+                        .frame(height: 44)
+                }
+                .padding()
                 
-                Spacer()
             }
         }
     }

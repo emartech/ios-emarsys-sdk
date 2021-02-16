@@ -13,7 +13,8 @@ struct ContentView: View {
             InfoPanelView().environmentObject(loginData).padding()
         
             TabView {
-                DashboardView().environmentObject(loginData)
+                DashboardView()
+                    .environmentObject(loginData)
                     .tabItem {
                         Image(systemName: "gear")
                         Text("Dashboard")

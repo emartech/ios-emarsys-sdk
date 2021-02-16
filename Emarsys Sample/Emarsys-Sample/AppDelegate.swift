@@ -5,9 +5,11 @@
 import Foundation
 import UIKit
 import EmarsysSDK
+import GoogleSignIn
 
 @UIApplicationMain
 class AppDelegate: EMSAppDelegate {
+    let googleDelegate = GoogleDelegate()
     
     override func provideEMSConfig() -> EMSConfig! {
         let userDefaults = UserDefaults.init(suiteName: "com.emarsys.sampleConfig")
@@ -31,12 +33,15 @@ class AppDelegate: EMSAppDelegate {
     
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+        setupGoogleSignIn()
+
         NotificationCenter.default.addObserver(forName: .deviceDidShakeNotification, object: nil, queue: nil) { notification in
             print("device did shake")
         }
         return true
     }
-    
+
     override func handleEvent(_ eventName: String, payload: [String: NSObject]?) {
         super.handleEvent(eventName, payload: payload)
         let alertController = UIAlertController(title: eventName, message: "\(String(describing: payload))", preferredStyle: .alert)
@@ -61,6 +66,31 @@ class AppDelegate: EMSAppDelegate {
         NotificationCenter.default.post(name: .pushTokenReceived, object: nil, userInfo: ["push_token": deviceToken])
     }
     
+    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        super.application(app, open: url, options: options)
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+
+    private func setupGoogleSignIn() {
+        var clientId: String? = nil
+
+        if let infoPlistPath = Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") {
+            do {
+                let infoPlistData = try Data(contentsOf: infoPlistPath)
+
+                if let dict = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any] {
+                    clientId = dict["CLIENT_ID"] as! String
+                }
+            } catch {
+                print(error)
+            }
+        }
+
+        if(clientId != nil) {
+            GIDSignIn.sharedInstance()?.clientID = clientId
+        }
+        GIDSignIn.sharedInstance()?.delegate = googleDelegate
+    }
 }
 
 extension NSNotification.Name {

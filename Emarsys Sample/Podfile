@@ -4,6 +4,7 @@ use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
 
 target "Emarsys-Sample" do
+  pod 'GoogleSignIn'
   if ENV["DEV"] then
     pod 'EmarsysSDK', :path => '../'
   else
