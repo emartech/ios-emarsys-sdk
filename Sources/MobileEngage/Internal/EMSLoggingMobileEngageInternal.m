@@ -10,6 +10,19 @@
 
 @implementation EMSLoggingMobileEngageInternal
 
+- (void)setAuthorizedContactWithContactFieldValue:(nullable NSString *)contactFieldValue
+                                          idToken:(nullable NSString *)idToken
+                                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"contactFieldValue"] = contactFieldValue;
+    parameters[@"idToken"] = idToken;
+    parameters[@"completionBlock"] = @(completionBlock != nil);
+
+    EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
+                                                  sel:_cmd
+                                           parameters:parameters], LogLevelDebug);
+}
+
 - (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"contactFieldValue"] = contactFieldValue;

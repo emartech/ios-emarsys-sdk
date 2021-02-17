@@ -17,7 +17,6 @@
 #import "EMSMobileEngageProtocol.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
-#import "EMSOnEventActionProtocol.h"
 
 @implementation Emarsys
 
@@ -56,6 +55,22 @@
                                                                     intentIdentifiers:@[]
                                                                               options:0];
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
+}
+
++ (void)setAuthorizedContactWithContactFieldValue:(NSString *)contactFieldValue
+                                          idToken:(NSString *)idToken
+                                  completionBlock:(EMSCompletionBlock)completionBlock {
+    NSParameterAssert(contactFieldValue);
+    NSParameterAssert(idToken);
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
+            (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
+        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthorizedContactWithContactFieldValue:contactFieldValue
+                                                                                                   idToken:idToken
+                                                                                           completionBlock:completionBlock];
+    }
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
+        [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldValue:contactFieldValue];
+    }
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {

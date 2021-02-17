@@ -43,14 +43,11 @@
     return self;
 }
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
-    [self setContactWithContactFieldValue:contactFieldValue
-                          completionBlock:nil];
-}
-
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
-                        completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)setAuthorizedContactWithContactFieldValue:(nullable NSString *)contactFieldValue
+                                          idToken:(nullable NSString *)idToken
+                                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     [self.requestContext setContactFieldValue:contactFieldValue];
+    [self.requestContext setIdToken:idToken];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
     [self.requestManager submitRequestModel:requestModel
@@ -60,6 +57,18 @@
         [self.session stopSession];
         [self.session startSession];
     }
+}
+
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+    [self setContactWithContactFieldValue:contactFieldValue
+                          completionBlock:nil];
+}
+
+- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
+                        completionBlock:(EMSCompletionBlock)completionBlock {
+    [self setAuthorizedContactWithContactFieldValue:contactFieldValue
+                                            idToken:nil
+                                    completionBlock:completionBlock];
 }
 
 - (void)clearContact {
