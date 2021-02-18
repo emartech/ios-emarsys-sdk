@@ -90,6 +90,7 @@
 #import "EMSSession.h"
 #import "MEIAMCleanupResponseHandlerV4.h"
 #import "EMSDeviceEventStateResponseHandler.h"
+#import "EMSIdTokenMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -372,11 +373,11 @@
     [self.dbHelper open];
     [self.responseHandlers addObject:[[MEIAMResponseHandler alloc] initWithInApp:self.iam]];
     [self.responseHandlers addObject:[[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.buttonClickRepository
-                                                            displayIamRepository:displayedIAMRepository
-                                                                        endpoint:self.endpoint] ];
+                                                                                     displayIamRepository:displayedIAMRepository
+                                                                                                 endpoint:self.endpoint]];
     [self.responseHandlers addObject:[[MEIAMCleanupResponseHandlerV4 alloc] initWithButtonClickRepository:self.buttonClickRepository
-                                                            displayIamRepository:displayedIAMRepository
-                                                                        endpoint:self.endpoint]];
+                                                                                     displayIamRepository:displayedIAMRepository
+                                                                                                 endpoint:self.endpoint]];
     [self.responseHandlers addObject:[[EMSDeviceEventStateResponseHandler alloc] initWithStorage:self.storage
                                                                                         endpoint:self.endpoint]];
     [self.responseHandlers addObject:[[EMSVisitorIdResponseHandler alloc] initWithRequestContext:self.predictRequestContext
@@ -397,7 +398,9 @@
                                              [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
                                              [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
-                                                                                          endpoint:self.endpoint]]
+                                                                                          endpoint:self.endpoint],
+                                             [[EMSIdTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                                                     endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
