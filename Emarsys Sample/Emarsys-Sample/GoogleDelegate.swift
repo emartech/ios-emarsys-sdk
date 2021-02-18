@@ -5,6 +5,7 @@
 
 import Foundation
 import GoogleSignIn
+import EmarsysSDK
 
 class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var signedIn: Bool = false
@@ -23,6 +24,10 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         idToken = user.authentication.idToken
         signedIn = true
+        
+        guard let userId = user.userID else { return }
+        
+        Emarsys.setAuthorizedContactWithContactFieldValue(userId, idToken: idToken, completionBlock: nil)
     }
 }
 
