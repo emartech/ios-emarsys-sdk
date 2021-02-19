@@ -61,63 +61,6 @@ class EmarsysE2ETests: XCTestCase {
             _ = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
         }
     }
-
-    func testInboxTags() {
-        enum InboxError: Error {
-            case missingTag
-            case existingTag
-        }
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-        let timestamp = dateFormatter.string(from: Date())
-        let config = EMSConfig.make { builder in
-            builder.setMobileEngageApplicationCode("EMS11-C3FD3")
-            builder.setContactFieldId(2575)
-        }
-
-        Emarsys.setup(with: config)
-
-        setContact("test@test.com")
-
-        sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
-
-        retry { [unowned self] () in
-
-            let message = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
-
-            Emarsys.messageInbox.addTag("testtag", forMessage: message.id)
-        }
-
-        var messageWithTag: EMSMessage?
-
-        retry { [unowned self] () in
-
-            messageWithTag = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
-
-            if let tags = messageWithTag?.tags, !tags.contains("testtag") {
-                throw InboxError.missingTag
-            }
-        }
-
-        XCTAssertTrue(messageWithTag?.tags?.contains("testtag") ?? false)
-
-        Emarsys.messageInbox.removeTag("testtag", fromMessage: messageWithTag?.id ?? "")
-
-        var messageWithoutTag: EMSMessage?
-
-        retry { [unowned self] () in
-
-            messageWithoutTag = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
-
-            if let tags = messageWithoutTag?.tags, tags.contains("testtag") {
-                throw InboxError.existingTag
-            }
-        }
-
-        XCTAssertFalse(messageWithoutTag?.tags?.contains("testtag") ?? true)
-    }
     
     func changeAppCode(_ code: String, cId: NSNumber) {
         let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
@@ -171,27 +114,4 @@ class EmarsysE2ETests: XCTestCase {
         return message
     }
     
-}
-
-extension XCTestCase {
-
-    func retry(retryCount: Int = 3, delay: Double? = 1.0, retryClosure: @escaping () throws -> ()) {
-        var error: Error?
-        var index = 0
-        repeat {
-            error = nil
-            do {
-                try retryClosure()
-                index += 1
-            } catch let e {
-                error = e
-            }
-            if error != nil, index < retryCount, let delay = delay {
-                Thread.sleep(forTimeInterval: delay)
-            }
-        } while (error != nil && index < retryCount)
-
-        XCTAssertNil(error)
-    }
-
 }

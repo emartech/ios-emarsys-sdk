@@ -3,6 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "XCTestCase+Retry.h"
 #import "Emarsys.h"
 #import "EmarsysTestUtils.h"
 
@@ -15,7 +16,7 @@
 @implementation EMSInboxV3IntegrationTests
 
 - (void)setUp {
-    _testMessageId = [NSString stringWithFormat:@"%d",INT_MAX];
+    _testMessageId = [NSString stringWithFormat:@"%d", INT_MAX];
 
     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
@@ -65,19 +66,19 @@
 
 - (void)testRemoveTag {
     __block NSError *returnedError = nil;
-
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
-    [Emarsys.messageInbox removeTag:@"testTag"
-                        fromMessage:self.testMessageId
-                    completionBlock:^(NSError *error) {
-                        returnedError = error;
-                        [expectation fulfill];
-                    }];
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
-
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertNil(returnedError);
+    [self retryWithRunnerBlock:^(XCTestExpectation *expectation) {
+                [Emarsys.messageInbox removeTag:@"testTag"
+                                    fromMessage:self.testMessageId
+                                completionBlock:^(NSError *error) {
+                                    returnedError = error;
+                                    [expectation fulfill];
+                                }];
+            }
+                assertionBlock:^(XCTWaiterResult waiterResult) {
+                    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                    XCTAssertNil(returnedError);
+                }
+                    retryCount:5];
 }
 
 @end
