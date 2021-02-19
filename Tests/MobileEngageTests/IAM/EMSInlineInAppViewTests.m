@@ -20,6 +20,7 @@
 @property(nonatomic, strong) WKWebView *webView;
 
 - (void)fetchInlineInappMessage;
+- (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler;
 
 @end
 
@@ -179,5 +180,10 @@
     XCTAssertEqual(returnedError.code, expectedError.code);
     XCTAssertEqualObjects(returnedThread, NSThread.mainThread);
 }
+
+- (void)testCloseBlock_shouldNotCrash_whenMissing {
+    [self.inappView closeInAppWithCompletionHandler:nil];
+}
+
 
 @end

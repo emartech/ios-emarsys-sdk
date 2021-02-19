@@ -205,7 +205,9 @@ didFinishNavigation:(WKNavigation *)navigation {
 
 - (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.closeBlock();
+        if(self.closeBlock) {
+            self.closeBlock();
+        }
     });
 }
 
