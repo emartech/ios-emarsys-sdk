@@ -22,3 +22,4 @@
 #import "FakeRequestManager.h"
 #import "EMSUUIDProvider.h"
 #import "EMSOnEventResponseHandler.h"
+#import "EmarsysTestUtils.h"

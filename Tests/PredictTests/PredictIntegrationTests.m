@@ -17,6 +17,7 @@
 #import "EMSProductBuilder.h"
 #import "EMSProduct.h"
 #import "EMSProduct+Emarsys.h"
+#import "XCTestCase+Retry.h"
 
 @interface PredictIntegrationDependencyContainer : EMSDependencyContainer
 
@@ -175,23 +176,31 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackRecommendationClick:", ^{
 
             it(@"should send request with product", ^{
-                EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-                    [builder setRequiredFieldsWithProductId:@"2508"
-                                                      title:@"testTitle"
-                                                    linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                    feature:@"testFeature"
-                                                     cohort:@"testCohort"];
-                }];
-
                 NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature%2Cc%3AtestCohort";
 
-                [Emarsys.predict trackRecommendationClick:product];
+                [self retryWithRunnerBlock:^(XCTestExpectation *expectation) {
+                            EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+                                [builder setRequiredFieldsWithProductId:@"2508"
+                                                                  title:@"testTitle"
+                                                                linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                                                feature:@"testFeature"
+                                                                 cohort:@"testCohort"];
+                            }];
 
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
+                            [Emarsys.predict trackRecommendationClick:product];
 
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+                            [expectation fulfill];
+
+                        }
+                            assertionBlock:^(XCTWaiterResult waiterResult) {
+                                [EMSWaiter waitForExpectations:expectations
+                                                       timeout:10];
+
+                                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+                                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+                            }
+                                retryCount:3];
+
             });
         });
 

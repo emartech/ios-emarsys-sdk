@@ -14,6 +14,10 @@ class EmarsysInboxE2ETests: XCTestCase {
         case missingMessage
     }
 
+    func testInboxTags_step0() {
+        EmarsysTestUtils.tearDownEmarsys()
+    }
+
     func testInboxTags_step1() {
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("EMS11-C3FD3")
@@ -66,6 +70,10 @@ class EmarsysInboxE2ETests: XCTestCase {
         }
 
         XCTAssertFalse(messageWithoutTag?.tags?.contains("testtag") ?? true)
+    }
+
+    func testInboxTags_step5() {
+        EmarsysTestUtils.tearDownEmarsys()
     }
 
     func setContact(_ cValue: String) {
