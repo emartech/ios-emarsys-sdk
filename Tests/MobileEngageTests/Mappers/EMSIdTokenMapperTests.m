@@ -26,7 +26,7 @@
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
-    EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
+    EMSValueProvider *v3MessageInboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
 
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
@@ -35,7 +35,7 @@
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
                                                      inboxUrlProvider:OCMClassMock([EMSValueProvider class])
-                                            v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
+                                            v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _idTokenMapper = [[EMSIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
                                                              endpoint:self.endpoint];
@@ -132,10 +132,9 @@
                                                                                 expiry:FLT_MAX
                                                                                    url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/apps/EMS11-C3FD3/client/contact"]
                                                                                 method:@"POST"
-                                                                               payload:nil
+                                                                               payload:@{@"openIdToken": testIdToken}
                                                                                headers:@{
-                                                                                       @"testHeaderName": @"testHeaderValue",
-                                                                                       @"X-Open-Id": testIdToken
+                                                                                       @"testHeaderName": @"testHeaderValue"
                                                                                }
                                                                                 extras:nil];
 

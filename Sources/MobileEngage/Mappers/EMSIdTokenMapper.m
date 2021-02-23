@@ -31,16 +31,16 @@
                                                expiry:requestModel.ttl
                                                   url:requestModel.url
                                                method:requestModel.method
-                                              payload:requestModel.payload
-                                              headers:[self headers:requestModel]
+                                              payload:[self extendPayload:requestModel.payload]
+                                              headers:requestModel.headers
                                                extras:requestModel.extras];
 }
 
-- (NSDictionary *)headers:(EMSRequestModel *)requestModel {
-    NSMutableDictionary *mergedHeaders = [NSMutableDictionary dictionaryWithDictionary:requestModel.headers];
-    mergedHeaders[@"X-Open-Id"] = self.requestContext.idToken;
-    NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mergedHeaders];
-    return headers;
+- (NSDictionary *)extendPayload:(NSDictionary *)payload {
+    NSMutableDictionary *mergedPayload = [NSMutableDictionary dictionaryWithDictionary:payload];
+    mergedPayload[@"openIdToken"] = self.requestContext.idToken;
+    NSDictionary *result = [NSDictionary dictionaryWithDictionary:mergedPayload];
+    return result;
 }
 
 @end
