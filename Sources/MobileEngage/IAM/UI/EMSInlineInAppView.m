@@ -67,6 +67,19 @@
     self.selfHeightConstraint.priority = UILayoutPriorityRequired;
 }
 
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    if (!newSuperview) {
+        [self.webView stopLoading];
+        [self.webView setNavigationDelegate:nil];
+        [self.webView.scrollView setDelegate:nil];
+        [self.webView.configuration.userContentController removeAllUserScripts];
+        [self.webView.configuration setUserContentController:[WKUserContentController new]];
+        [self.webView removeFromSuperview];
+        self.webView = nil;
+    }
+    [super willMoveToSuperview:newSuperview];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self addSubview:self.webView];
