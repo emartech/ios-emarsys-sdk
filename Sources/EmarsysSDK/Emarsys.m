@@ -56,6 +56,11 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
 }
 
++ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken {
+    [Emarsys setAuthenticatedContactWithIdToken:idToken
+                                completionBlock:nil];
+}
+
 + (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
                            completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(idToken);

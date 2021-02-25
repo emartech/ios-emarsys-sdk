@@ -475,6 +475,23 @@
     }
 }
 
+- (void)testSetAuthenticatedContactWithContactFieldValueSsCalledByMobileEngage_when_mobileEngageIsEnabled {
+    NSString *idToken = @"testIdToken";
+
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken];
+
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                   completionBlock:nil];);
+}
+
 - (void)testSetContactWithContactFieldValueIsNotCalledByPredict_when_predictIsDisabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
