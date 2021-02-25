@@ -10,11 +10,9 @@
 
 @implementation EMSLoggingMobileEngageInternal
 
-- (void)setAuthorizedContactWithContactFieldValue:(nullable NSString *)contactFieldValue
-                                          idToken:(nullable NSString *)idToken
-                                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
+                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"contactFieldValue"] = contactFieldValue;
     parameters[@"idToken"] = idToken;
     parameters[@"completionBlock"] = @(completionBlock != nil);
 

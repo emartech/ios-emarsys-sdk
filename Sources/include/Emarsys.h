@@ -14,6 +14,7 @@
 #import "EMSUserNotificationCenterDelegate.h"
 #import "EMSMessageInboxProtocol.h"
 #import "EMSOnEventActionProtocol.h"
+#import "MEExperimental.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,9 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
-+ (void)setAuthorizedContactWithContactFieldValue:(NSString *)contactFieldValue
-                                          idToken:(NSString *)idToken
-                                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
++ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken;
+
++ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
+                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
 

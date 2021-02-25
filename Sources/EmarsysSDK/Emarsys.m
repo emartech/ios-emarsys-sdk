@@ -15,7 +15,6 @@
 #import "MERequestContext.h"
 #import "EMSDeepLinkProtocol.h"
 #import "EMSMobileEngageProtocol.h"
-#import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 
 @implementation Emarsys
@@ -57,20 +56,16 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
 }
 
-+ (void)setAuthorizedContactWithContactFieldValue:(NSString *)contactFieldValue
-                                          idToken:(NSString *)idToken
-                                  completionBlock:(EMSCompletionBlock)completionBlock {
-    NSParameterAssert(contactFieldValue);
++ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
+                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(idToken);
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
             (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthorizedContactWithContactFieldValue:contactFieldValue
-                                                                                                   idToken:idToken
-                                                                                           completionBlock:completionBlock];
+        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                                                    completionBlock:completionBlock];
     }
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
-        [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldValue:contactFieldValue];
-    }
+
+    [MEExperimental disableFeature:EMSInnerFeature.predict];
 }
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {

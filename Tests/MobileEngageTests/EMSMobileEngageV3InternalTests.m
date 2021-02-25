@@ -131,19 +131,6 @@
                                                    completionBlock:nil]);
 }
 
-- (void)testSetContactWithContactFieldValueCompletionBlock {
-    EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
-    EMSCompletionBlock completionBlock = ^(NSError *error) {
-    };
-
-    [partialMockInternal setContactWithContactFieldValue:self.contactFieldValue
-                                         completionBlock:completionBlock];
-
-    OCMVerify([partialMockInternal setAuthorizedContactWithContactFieldValue:self.contactFieldValue
-                                                                     idToken:nil
-                                                             completionBlock:completionBlock]);
-}
-
 - (void)testSetAuthorizedContactWithContactFieldValueCompletionBlockWithoutIdToken {
     EMSRequestModel *requestModel = [self createRequestModel];
     NSNumber *contactFieldId = @3;
@@ -155,21 +142,21 @@
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthorizedContactWithContactFieldValue:self.contactFieldValue
-                                                     idToken:nil
-                                             completionBlock:self.completionBlock];
+    [self.internal setContactWithContactFieldValue:self.contactFieldValue
+                                      completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
 }
 
 - (void)testSetAuthorizedContactWithContactFieldValueCompletionBlock_setIdTokenOnRequestContext {
     EMSRequestModel *requestModel = [self createRequestModel];
     NSNumber *contactFieldId = @3;
-    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    NSString *newIdToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
 
     OCMReject([self.mockSession startSession]);
     OCMReject([self.mockSession stopSession]);
@@ -178,16 +165,13 @@
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthorizedContactWithContactFieldValue:self.contactFieldValue
-                                                     idToken:idToken
-                                             completionBlock:self.completionBlock];
-
-    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+    [self.internal setAuthenticatedContactWithIdToken:newIdToken
+                                      completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
-    OCMVerify([self.mockRequestContext setIdToken:idToken]);
+    OCMVerify([self.mockRequestContext setIdToken:newIdToken]);
 }
 
 - (void)testSetAuthorizedContactWithContactFieldValueCompletionBlock_resetSession {
@@ -198,11 +182,8 @@
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"otherContactFieldValue");
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthorizedContactWithContactFieldValue:self.contactFieldValue
-                                                     idToken:nil
-                                             completionBlock:self.completionBlock];
-
-    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+    [self.internal setAuthenticatedContactWithIdToken:idToken
+                                      completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
