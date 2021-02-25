@@ -279,7 +279,7 @@ SPEC_BEGIN(MERequestContextTests)
 
         describe(@"reset", ^{
 
-            it(@"should clear contactFieldValue, contactToken, refreshToken", ^{
+            it(@"should clear contactFieldValue, contactToken, refreshToken, idToken", ^{
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                                contactFieldId:contactFieldId
@@ -287,6 +287,8 @@ SPEC_BEGIN(MERequestContextTests)
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
                                                                                       storage:storage];
+                [context setIdToken:@"testIdToken"];
+
                 [userDefaults setObject:@"testContactFieldValue"
                                  forKey:kCONTACT_FIELD_VALUE];
                 [storage setString:@"testContactToken"
@@ -300,6 +302,7 @@ SPEC_BEGIN(MERequestContextTests)
                 [[userDefaults stringForKey:kCONTACT_FIELD_VALUE] shouldBeNil];
                 [[storage stringForKey:kCONTACT_TOKEN] shouldBeNil];
                 [[storage stringForKey:kREFRESH_TOKEN] shouldBeNil];
+                [[context idToken] shouldBeNil];
             });
         });
 SPEC_END

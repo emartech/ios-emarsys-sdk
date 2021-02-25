@@ -77,6 +77,7 @@
     self.contactFieldValue = nil;
     self.contactToken = nil;
     self.refreshToken = nil;
+    self.idToken = nil;
 }
 
 @end
