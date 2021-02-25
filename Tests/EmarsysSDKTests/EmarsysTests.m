@@ -40,6 +40,7 @@
 #import "EMSQueueDelegator.h"
 #import "EMSUUIDProvider.h"
 #import "EMSInnerFeature.h"
+#import "MEExperimental.h"
 
 @interface EmarsysTests : XCTestCase
 
