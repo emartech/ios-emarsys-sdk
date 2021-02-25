@@ -16,6 +16,7 @@
 #import "EMSDeepLinkProtocol.h"
 #import "EMSMobileEngageProtocol.h"
 #import "EMSInnerFeature.h"
+#import "MEExperimental.h"
 
 @implementation Emarsys
 
