@@ -66,9 +66,18 @@
 
 - (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
                         completionBlock:(EMSCompletionBlock)completionBlock {
-    [self setAuthorizedContactWithContactFieldValue:contactFieldValue
-                                            idToken:nil
-                                    completionBlock:completionBlock];
+    BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
+
+    [self.requestContext setContactFieldValue:contactFieldValue];
+
+    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
+    [self.requestManager submitRequestModel:requestModel
+                        withCompletionBlock:completionBlock];
+
+    if (shouldRestartSession) {
+        [self.session stopSession];
+        [self.session startSession];
+    }
 }
 
 - (void)clearContact {
