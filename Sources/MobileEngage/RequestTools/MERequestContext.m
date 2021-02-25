@@ -73,6 +73,10 @@
     }
 }
 
+- (BOOL)hasContactIdentification {
+    return self.idToken || self.contactFieldValue;
+}
+
 - (void)reset {
     self.contactFieldValue = nil;
     self.contactToken = nil;

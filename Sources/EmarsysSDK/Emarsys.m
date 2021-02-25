@@ -38,7 +38,7 @@
 
     [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         [Emarsys registerAppStartBlock];
-        if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.contactFieldValue) {
+        if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
             [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
             [dependencyContainer.mobileEngage setContactWithContactFieldValue:nil];
         }

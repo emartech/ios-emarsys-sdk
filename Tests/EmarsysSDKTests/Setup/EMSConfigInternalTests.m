@@ -508,7 +508,7 @@
     OCMStub([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMeRequestContext applicationCode]).andReturn(@"oldApplicationCode");
     OCMStub([strictMockMeRequestContext contactFieldId]).andReturn(@3);
-    OCMStub([strictMockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
+    OCMStub([strictMockMeRequestContext hasContactIdentification]).andReturn(YES);
     OCMStub([strictMockMeRequestContext setApplicationCode:[OCMArg any]]);
     OCMStub([(MERequestContext *) strictMockMeRequestContext setContactFieldId:self.contactFieldId]);
 
@@ -570,6 +570,7 @@
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn(YES);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                                                                  nil])]);
     OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue

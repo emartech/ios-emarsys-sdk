@@ -277,6 +277,20 @@ SPEC_BEGIN(MERequestContextTests)
             });
         });
 
+        describe(@"hasContactIdentification", ^{
+            it(@"should return YES when contactFieldValue or idToken is not nil", ^{
+                MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                               contactFieldId:contactFieldId
+                                                                                 uuidProvider:uuidProvider
+                                                                            timestampProvider:timestampProvider
+                                                                                   deviceInfo:deviceInfo
+                                                                                      storage:storage];
+                [context setIdToken:@"testIdToken"];
+
+                [[theValue([context hasContactIdentification]) should] beYes];
+            });
+        });
+
         describe(@"reset", ^{
 
             it(@"should clear contactFieldValue, contactToken, refreshToken, idToken", ^{

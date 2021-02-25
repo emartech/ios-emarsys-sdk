@@ -194,7 +194,7 @@
         if (pushToken) {
             error = [self clearPushToken];
         }
-        if (!error && self.meRequestContext.applicationCode && self.meRequestContext.contactFieldValue) {
+        if (!error && self.meRequestContext.applicationCode && [self.meRequestContext hasContactIdentification]) {
             error = [self clearContact];
         }
         if (!error) {

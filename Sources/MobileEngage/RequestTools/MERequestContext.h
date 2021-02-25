@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
                              deviceInfo:(EMSDeviceInfo *)deviceInfo
                                 storage:(EMSStorage *)storage;
 
+- (BOOL)hasContactIdentification;
+
 - (void)reset;
 
 NS_ASSUME_NONNULL_END
