@@ -150,6 +150,7 @@
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
     OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+    OCMVerify([self.mockRequestContext setIdToken:nil]);
 }
 
 - (void)testSetAuthenticatedContactWithIdTokenCompletionBlock_setIdTokenOnRequestContext {
@@ -171,6 +172,7 @@
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
     OCMVerify([self.mockRequestContext setIdToken:newIdToken]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
 }
 
 - (void)testSetAuthenticatedContactWithIdTokenCompletionBlock_resetSession {

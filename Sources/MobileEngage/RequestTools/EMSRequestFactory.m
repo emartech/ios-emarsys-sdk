@@ -82,18 +82,18 @@
     return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
                 BOOL anonymousLogin = NO;
-                NSDictionary *payload = @{};
-                if (weakSelf.requestContext.contactFieldId && weakSelf.requestContext.contactFieldValue) {
-                    payload = @{
-                            @"contactFieldId": weakSelf.requestContext.contactFieldId,
-                            @"contactFieldValue": weakSelf.requestContext.contactFieldValue
-                    };
+                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+                if (weakSelf.requestContext.contactFieldId && [weakSelf.requestContext hasContactIdentification]) {
+                    mutablePayload[@"contactFieldId"] = weakSelf.requestContext.contactFieldId;
+                    if (weakSelf.requestContext.contactFieldValue) {
+                        mutablePayload[@"contactFieldValue"] = weakSelf.requestContext.contactFieldValue;
+                    }
                 } else {
                     anonymousLogin = YES;
                 }
                 [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
                 queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
-                [builder setPayload:payload];
+                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
             }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];

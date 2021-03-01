@@ -47,6 +47,7 @@
                            completionBlock:(EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![idToken isEqualToString:self.requestContext.idToken];
 
+    [self.requestContext setContactFieldValue:nil];
     [self.requestContext setIdToken:idToken];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
@@ -68,6 +69,7 @@
                         completionBlock:(EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
 
+    [self.requestContext setIdToken:nil];
     [self.requestContext setContactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];

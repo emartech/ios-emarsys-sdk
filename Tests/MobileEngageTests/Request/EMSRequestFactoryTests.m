@@ -191,6 +191,7 @@
 - (void)testCreateContactRequestModel {
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"test@test.com");
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -200,6 +201,26 @@
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,
                                                                                        @"contactFieldValue": @"test@test.com"
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+}
+
+- (void)testCreateContactRequestModel_whenContactFieldValueIsNil {
+    OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"contactFieldId": @3,
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
