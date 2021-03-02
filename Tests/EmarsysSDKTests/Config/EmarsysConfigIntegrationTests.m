@@ -17,6 +17,7 @@
 #import "MERequestContext.h"
 #import "EMSQueueDelegator.h"
 #import "EMSMobileEngageV3Internal.h"
+#import "EMSLogLevel.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 
@@ -201,6 +202,10 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(endpoint.eventServiceUrl, @"https://integration.mobile-events.eservice.emarsys.net");
     XCTAssertEqualObjects(endpoint.clientServiceUrl, @"https://integration.me-client.eservice.emarsys.net");
+}
+
+- (void)testLogLevels {
+    XCTAssertEqualObjects(Emarsys.config.logLevels, @[EMSLogLevel.basic]);
 }
 
 - (void)waitForOperationQueue {

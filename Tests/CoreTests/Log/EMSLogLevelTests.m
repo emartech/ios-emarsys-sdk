@@ -17,7 +17,7 @@
     XCTAssertEqualObjects(@"loglevelinfo", [EMSLogLevel.info.level lowercaseString]);
     XCTAssertEqualObjects(@"loglevelwarn", [EMSLogLevel.warn.level lowercaseString]);
     XCTAssertEqualObjects(@"loglevelerror", [EMSLogLevel.error.level lowercaseString]);
-    XCTAssertEqualObjects(@"loglevelmetric", [EMSLogLevel.metric.level lowercaseString]);
+    XCTAssertEqualObjects(@"loglevelbasic", [EMSLogLevel.basic.level lowercaseString]);
 }
 
 @end

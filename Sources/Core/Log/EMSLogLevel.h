@@ -12,6 +12,6 @@
 @property(class, nonatomic, readonly) id <EMSLogLevelProtocol> info;
 @property(class, nonatomic, readonly) id <EMSLogLevelProtocol> warn;
 @property(class, nonatomic, readonly) id <EMSLogLevelProtocol> error;
-@property(class, nonatomic, readonly) id <EMSLogLevelProtocol> metric;
+@property(class, nonatomic, readonly) id <EMSLogLevelProtocol> basic;
 
 @end

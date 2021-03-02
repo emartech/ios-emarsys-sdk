@@ -17,7 +17,7 @@ static id <EMSLogLevelProtocol> _debug;
 static id <EMSLogLevelProtocol> _info;
 static id <EMSLogLevelProtocol> _warn;
 static id <EMSLogLevelProtocol> _error;
-static id <EMSLogLevelProtocol> _metric;
+static id <EMSLogLevelProtocol> _basic;
 
 - (instancetype)initWithLevel:(NSString *)level {
     if (self = [super init]) {
@@ -61,11 +61,11 @@ static id <EMSLogLevelProtocol> _metric;
     return _error;
 }
 
-+ (id)metric {
-    if (!_metric) {
-        _metric = [[EMSLogLevel alloc] initWithLevel:@"LogLevelMetric"];
++ (id)basic {
+    if (!_basic) {
+        _basic = [[EMSLogLevel alloc] initWithLevel:@"LogLevelBasic"];
     }
-    return _metric;
+    return _basic;
 }
 
 
