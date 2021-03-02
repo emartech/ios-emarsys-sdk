@@ -12,12 +12,12 @@
 @implementation EMSLogLevelTests
 
 - (void)testLogLevel {
-    XCTAssertEqualObjects(@"logleveltrace", [EMSLogLevel.trace.level lowercaseString]);
-    XCTAssertEqualObjects(@"logleveldebug", [EMSLogLevel.debug.level lowercaseString]);
-    XCTAssertEqualObjects(@"loglevelinfo", [EMSLogLevel.info.level lowercaseString]);
-    XCTAssertEqualObjects(@"loglevelwarn", [EMSLogLevel.warn.level lowercaseString]);
-    XCTAssertEqualObjects(@"loglevelerror", [EMSLogLevel.error.level lowercaseString]);
-    XCTAssertEqualObjects(@"loglevelbasic", [EMSLogLevel.basic.level lowercaseString]);
+    XCTAssertEqualObjects(@"TRACE", EMSLogLevel.trace.level);
+    XCTAssertEqualObjects(@"DEBUG", EMSLogLevel.debug.level);
+    XCTAssertEqualObjects(@"INFO", EMSLogLevel.info.level);
+    XCTAssertEqualObjects(@"WARN", EMSLogLevel.warn.level);
+    XCTAssertEqualObjects(@"ERROR", EMSLogLevel.error.level);
+    XCTAssertEqualObjects(@"BASIC", EMSLogLevel.basic.level);
 }
 
 @end
