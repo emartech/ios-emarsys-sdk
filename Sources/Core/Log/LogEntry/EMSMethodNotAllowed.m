@@ -44,7 +44,6 @@
         mutableData[@"methodName"] = NSStringFromSelector(sel);
         mutableData[@"parameters"] = parameters;
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
-        NSLog(@"Feature disabled, Class: %@ method: %@ not allowed. Please check your config.", className, NSStringFromSelector(sel));
     }
     return self;
 }
