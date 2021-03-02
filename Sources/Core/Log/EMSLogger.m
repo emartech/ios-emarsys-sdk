@@ -50,8 +50,8 @@
 
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level {
-    [self consoleLogEntry:entry
-               entryLevel:level];
+    [self consoleLogLogEntry:entry
+                  entryLevel:level];
     id url = entry.data[@"url"];
     if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
             || [entry.topic isEqualToString:@"app:start"]) {
@@ -70,17 +70,17 @@
     }
 }
 
-- (void)consoleLogEntry:(id <EMSLogEntryProtocol>)entry
-             entryLevel:(LogLevel)entryLevel {
+- (void)consoleLogLogEntry:(id <EMSLogEntryProtocol>)entry
+                entryLevel:(LogLevel)entryLevel {
     NSString *entryLevelStringRepresentation = [self logLevelStringFromLogLevel:entryLevel];
     NSMutableArray<NSString *> *consoleLogLevelsStringRepresentation = [NSMutableArray array];
-    for (id<EMSLogLevelProtocol> consoleLogLevel in self.consoleLogLevels) {
+    for (id <EMSLogLevelProtocol> consoleLogLevel in self.consoleLogLevels) {
         [consoleLogLevelsStringRepresentation addObject:consoleLogLevel.level];
     }
     NSString *icon = nil;
     if ([self.consoleLogLevels containsObject:EMSLogLevel.basic] && [entry.topic isEqualToString:@"log_method_not_allowed"]) {
         icon = @"🔵";
-    } else if ([consoleLogLevelsStringRepresentation containsObject:entryLevelStringRepresentation.lowercaseString]) {
+    } else if ([consoleLogLevelsStringRepresentation containsObject:entryLevelStringRepresentation]) {
         if (entryLevel == LogLevelTrace) {
             icon = @"🟣";
         } else if (entryLevel == LogLevelDebug) {
@@ -112,8 +112,10 @@
 
 - (NSString *)dataStringRepresentation:(NSDictionary *)data {
     NSMutableString *result = [NSMutableString string];
-    for (NSString* key in [data allKeys]) {
-        [result appendString:[NSString stringWithFormat:@"%@: %@ \n", key, data[key]]];
+    for (NSString *key in [data allKeys]) {
+        [result appendString:[NSString stringWithFormat:@"%@: %@ \n",
+                                                        key,
+                                                        data[key]]];
     }
     return [NSString stringWithString:result];
 }

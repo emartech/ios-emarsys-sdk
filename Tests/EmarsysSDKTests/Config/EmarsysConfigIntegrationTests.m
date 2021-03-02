@@ -17,7 +17,6 @@
 #import "MERequestContext.h"
 #import "EMSQueueDelegator.h"
 #import "EMSMobileEngageV3Internal.h"
-#import "EMSLogLevel.h"
 
 @interface EmarsysConfigIntegrationTests : XCTestCase
 

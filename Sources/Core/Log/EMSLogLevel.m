@@ -28,42 +28,42 @@ static id <EMSLogLevelProtocol> _basic;
 
 + (id)trace {
     if (!_trace) {
-        _trace = [[EMSLogLevel alloc] initWithLevel:@"LogLevelTrace"];
+        _trace = [[EMSLogLevel alloc] initWithLevel:@"TRACE"];
     }
     return _trace;
 }
 
 + (id)debug {
     if (!_debug) {
-        _debug = [[EMSLogLevel alloc] initWithLevel:@"LogLevelDebug"];
+        _debug = [[EMSLogLevel alloc] initWithLevel:@"DEBUG"];
     }
     return _debug;
 }
 
 + (id)info {
     if (!_info) {
-        _info = [[EMSLogLevel alloc] initWithLevel:@"LogLevelInfo"];
+        _info = [[EMSLogLevel alloc] initWithLevel:@"INFO"];
     }
     return _info;
 }
 
 + (id)warn {
     if (!_warn) {
-        _warn = [[EMSLogLevel alloc] initWithLevel:@"LogLevelWarn"];
+        _warn = [[EMSLogLevel alloc] initWithLevel:@"WARN"];
     }
     return _warn;
 }
 
 + (id)error {
     if (!_error) {
-        _error = [[EMSLogLevel alloc] initWithLevel:@"LogLevelError"];
+        _error = [[EMSLogLevel alloc] initWithLevel:@"ERROR"];
     }
     return _error;
 }
 
 + (id)basic {
     if (!_basic) {
-        _basic = [[EMSLogLevel alloc] initWithLevel:@"LogLevelBasic"];
+        _basic = [[EMSLogLevel alloc] initWithLevel:@"BASIC"];
     }
     return _basic;
 }

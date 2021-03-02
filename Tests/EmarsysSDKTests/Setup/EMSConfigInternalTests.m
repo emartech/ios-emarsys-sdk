@@ -23,7 +23,6 @@
 #import "EMSInnerFeature.h"
 #import "EMSStorage.h"
 #import "EmarsysTestUtils.h"
-#import "EMSLogLevel.h"
 
 @interface EMSConfigInternal (Tests)
 

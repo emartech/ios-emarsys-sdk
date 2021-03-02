@@ -18,9 +18,9 @@ typedef enum {
 } LogLevel;
 
 @protocol EMSLogEntryProtocol;
+@protocol EMSLogLevelProtocol;
 @class EMSRemoteConfig;
 @class EMSStorage;
-@protocol EMSLogLevelProtocol;
 
 @interface EMSLogger : NSObject
 
