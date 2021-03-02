@@ -8,6 +8,7 @@
 #import "EMSLogEndpoints.h"
 #import "EMSRemoteConfig.h"
 #import "EMSStorage.h"
+#import "EMSLogLevelProtocol.h"
 
 @interface EMSLogger ()
 

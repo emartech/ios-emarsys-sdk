@@ -20,9 +20,11 @@ typedef enum {
 @protocol EMSLogEntryProtocol;
 @class EMSRemoteConfig;
 @class EMSStorage;
+@protocol EMSLogLevelProtocol;
 
 @interface EMSLogger : NSObject
 
+@property(nonatomic, strong) NSArray<id <EMSLogLevelProtocol>> *consoleLogLevels;
 @property(nonatomic, assign) LogLevel logLevel;
 
 - (instancetype)initWithShardRepository:(id <EMSShardRepositoryProtocol>)shardRepository

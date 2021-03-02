@@ -22,6 +22,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSRemoteConfig.h"
+#import "EMSLogLevel.h"
 
 #define METHOD_TIMEOUT 60
 
@@ -219,6 +220,13 @@
     });
 }
 
+- (void)setLogLevels:(NSArray<id<EMSLogLevelProtocol>> *)logLevels {
+    [self.logger setConsoleLogLevels:logLevels];
+}
+
+- (NSArray<id<EMSLogLevelProtocol>> *)logLevels {
+    return self.logger.consoleLogLevels;
+}
 
 - (NSError *)clearContact {
     __weak typeof(self) weakSelf = self;
