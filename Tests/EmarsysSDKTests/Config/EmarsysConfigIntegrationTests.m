@@ -204,10 +204,6 @@
     XCTAssertEqualObjects(endpoint.clientServiceUrl, @"https://integration.me-client.eservice.emarsys.net");
 }
 
-- (void)testLogLevels {
-    XCTAssertEqualObjects(Emarsys.config.logLevels, @[EMSLogLevel.basic]);
-}
-
 - (void)waitForOperationQueue {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{

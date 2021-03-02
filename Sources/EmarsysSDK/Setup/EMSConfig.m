@@ -3,6 +3,7 @@
 //
 
 #import "EMSConfig.h"
+#import "EMSLogLevelProtocol.h"
 
 @implementation EMSConfig
 
@@ -18,6 +19,7 @@
     if (self = [super init]) {
         _applicationCode = builder.applicationCode;
         _experimentalFeatures = builder.experimentalFeatures;
+        _enabledConsoleLogLevels = builder.enabledConsoleLogLevels;
         _merchantId = builder.merchantId;
         _contactFieldId = builder.contactFieldId;
         _sharedKeychainAccessGroup = builder.sharedKeychainAccessGroup;

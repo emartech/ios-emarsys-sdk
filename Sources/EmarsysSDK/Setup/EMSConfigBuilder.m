@@ -3,6 +3,7 @@
 //
 
 #import "EMSConfigBuilder.h"
+#import "EMSLogLevelProtocol.h"
 
 @implementation EMSConfigBuilder
 
@@ -13,6 +14,11 @@
 
 - (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<id <EMSFlipperFeature>> *)features {
     _experimentalFeatures = features;
+    return self;
+}
+
+- (EMSConfigBuilder *)enableConsoleLogLevels:(NSArray *)consoleLogLevels {
+    _enabledConsoleLogLevels = consoleLogLevels;
     return self;
 }
 

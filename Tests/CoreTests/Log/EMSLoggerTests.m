@@ -10,6 +10,7 @@
 #import "EMSWaiter.h"
 #import "EMSStorage.h"
 #import "EMSRemoteConfig.h"
+#import "EMSLogLevel.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -318,6 +319,10 @@
                                                                       data:[NSDictionary dictionaryWithDictionary:mutableData]
                                                                  timestamp:self.timestamp
                                                                        ttl:FLT_MAX]]);
+}
+
+- (void)testConsoleLogLevels {
+    XCTAssertEqualObjects([self.logger consoleLogLevels], @[EMSLogLevel.basic]);
 }
 
 - (EMSShard *)shardWithLogLevel:(LogLevel)level {

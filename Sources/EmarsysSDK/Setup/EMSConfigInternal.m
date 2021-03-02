@@ -220,14 +220,6 @@
     });
 }
 
-- (void)setLogLevels:(NSArray<id<EMSLogLevelProtocol>> *)logLevels {
-    [self.logger setConsoleLogLevels:logLevels];
-}
-
-- (NSArray<id<EMSLogLevelProtocol>> *)logLevels {
-    return self.logger.consoleLogLevels;
-}
-
 - (NSError *)clearContact {
     __weak typeof(self) weakSelf = self;
     return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {

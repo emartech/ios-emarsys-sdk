@@ -892,24 +892,6 @@
     [self.configInternal changeMerchantId:newMerchantId];
 }
 
-- (void)testSetLogLevels {
-    NSArray *logLevels = @[EMSLogLevel.debug, EMSLogLevel.error];
-
-    [self.configInternal setLogLevels:logLevels];
-
-    OCMVerify([self.mockLogger setConsoleLogLevels:logLevels]);
-}
-
-- (void)testLogLevels {
-    NSArray *expectedLogLevels = @[EMSLogLevel.info, EMSLogLevel.trace];
-
-    OCMStub([self.mockLogger consoleLogLevels]).andReturn(expectedLogLevels);
-
-    NSArray *logLevels = [self.configInternal logLevels];
-
-    XCTAssertEqualObjects(logLevels, expectedLogLevels);
-}
-
 - (void)testHardwareId {
     OCMStub([self.mockDeviceInfo hardwareId]).andReturn(@"testHardwareId");
 

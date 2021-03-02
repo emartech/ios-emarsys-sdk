@@ -6,6 +6,7 @@
 
 @class EMSConfig;
 @protocol EMSFlipperFeature;
+@protocol EMSLogLevelProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) NSString *applicationCode;
 @property(nonatomic, readonly) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
+@property(nonatomic, readonly) NSArray<id <EMSLogLevelProtocol>> *enabledConsoleLogLevels;
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
 @property(nonatomic, readonly) NSString *sharedKeychainAccessGroup;
@@ -20,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode;
 
 - (EMSConfigBuilder *)setExperimentalFeatures:(NSArray<id <EMSFlipperFeature>> *)features;
+
+- (EMSConfigBuilder *)enableConsoleLogLevels:(NSArray<id <EMSLogLevelProtocol>> *)consoleLogLevels;
 
 - (EMSConfigBuilder *)setMerchantId:(NSString *)merchantId;
 

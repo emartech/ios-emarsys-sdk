@@ -43,6 +43,7 @@
         _storage = storage;
         NSNumber *logLevel = [storage numberForKey:kEMSLogLevelKey];
         _logLevel = logLevel ? [logLevel intValue] : LogLevelError;
+        _consoleLogLevels = @[EMSLogLevel.basic];
     }
     return self;
 }
@@ -93,7 +94,7 @@
         }
     }
     if (icon) {
-        NSLog(@"EmarsysSDK - %@ - %@ - \n Data: \n %@", icon, entry.topic, [self dataStringRepresentation:entry.data]);
+        NSLog(@"EmarsysSDK - %@ - %@ \n Data: \n %@", icon, entry.topic, [self dataStringRepresentation:entry.data]);
     }
 }
 

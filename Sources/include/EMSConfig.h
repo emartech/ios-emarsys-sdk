@@ -6,6 +6,7 @@
 #import "EMSConfigBuilder.h"
 
 @protocol EMSFlipperFeature;
+@protocol EMSLogLevelProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) NSString *applicationCode;
 @property(nonatomic, readonly) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
+@property(nonatomic, readonly) NSArray<id <EMSLogLevelProtocol>> *enabledConsoleLogLevels;
 @property(nonatomic, readonly) NSString *merchantId;
 @property(nonatomic, readonly) NSNumber *contactFieldId;
 @property(nonatomic, readonly) NSString *sharedKeychainAccessGroup;

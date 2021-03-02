@@ -348,7 +348,6 @@
                                        timestampProvider:timestampProvider
                                             uuidProvider:self.uuidProvider
                                                  storage:self.storage];
-    self.logger.consoleLogLevels = @[EMSLogLevel.basic];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
 

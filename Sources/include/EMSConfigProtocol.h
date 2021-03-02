@@ -5,8 +5,6 @@
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
-@protocol EMSLogLevelProtocol;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol EMSConfigProtocol <NSObject>
@@ -22,10 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)changeMerchantId:(nullable NSString *)merchantId
         completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
-
-- (void)setLogLevels:(NSArray<id <EMSLogLevelProtocol>> *)logLevels;
-
-- (NSArray<id <EMSLogLevelProtocol>> *)logLevels;
 
 - (NSString *)applicationCode;
 
