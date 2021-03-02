@@ -9,6 +9,7 @@
 #import "EMSRemoteConfig.h"
 #import "EMSStorage.h"
 #import "EMSLogLevelProtocol.h"
+#import "EMSLogLevel.h"
 
 @interface EMSLogger ()
 
@@ -48,6 +49,8 @@
 
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level {
+    [self consoleLogEntry:entry
+               entryLevel:level];
     id url = entry.data[@"url"];
     if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
             || [entry.topic isEqualToString:@"app:start"]) {
@@ -55,27 +58,42 @@
             [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:[entry topic]];
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
-                        if (level == LogLevelTrace) {
-                            mutableData[@"level"] = @"TRACE";
-                        } else if (level == LogLevelDebug) {
-                            mutableData[@"level"] = @"DEBUG";
-                        } else if (level == LogLevelInfo) {
-                            mutableData[@"level"] = @"INFO";
-                        } else if (level == LogLevelWarn) {
-                            mutableData[@"level"] = @"WARN";
-                        } else if (level == LogLevelError) {
-                            mutableData[@"level"] = @"ERROR";
-                        } else if (level == LogLevelMetric) {
-                            mutableData[@"level"] = @"METRIC";
-                        }
+                        mutableData[@"level"] = [self logLevelStringFromLogLevel:level];
                         [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
                     }
                                               timestampProvider:self.timestampProvider
                                                    uuidProvider:self.uuidProvider]];
-
         }];
     } else {
         return;
+    }
+}
+
+- (void)consoleLogEntry:(id <EMSLogEntryProtocol>)entry
+             entryLevel:(LogLevel)entryLevel {
+    NSString *entryLevelStringRepresentation = [self logLevelStringFromLogLevel:entryLevel];
+    NSMutableArray<NSString *> *consoleLogLevelsStringRepresentation = [NSMutableArray array];
+    for (id<EMSLogLevelProtocol> consoleLogLevel in self.consoleLogLevels) {
+        [consoleLogLevelsStringRepresentation addObject:consoleLogLevel.level];
+    }
+    NSString *icon = nil;
+    if ([self.consoleLogLevels containsObject:EMSLogLevel.basic] && [entry.topic isEqualToString:@"log_method_not_allowed"]) {
+        icon = @"🔵";
+    } else if ([consoleLogLevelsStringRepresentation containsObject:entryLevelStringRepresentation.lowercaseString]) {
+        if (entryLevel == LogLevelTrace) {
+            icon = @"🟣";
+        } else if (entryLevel == LogLevelDebug) {
+            icon = @"🔵";
+        } else if (entryLevel == LogLevelInfo) {
+            icon = @"🟡";
+        } else if (entryLevel == LogLevelWarn) {
+            icon = @"🟠";
+        } else if (entryLevel == LogLevelError) {
+            icon = @"🔴";
+        }
+    }
+    if (icon) {
+        NSLog(@"EmarsysSDK - %@ - %@ - \n Data: \n %@", icon, entry.topic, [self dataStringRepresentation:entry.data]);
     }
 }
 
@@ -89,6 +107,30 @@
     self.logLevel = LogLevelError;
     [self.storage setNumber:nil
                      forKey:kEMSLogLevelKey];
+}
+
+- (NSString *)dataStringRepresentation:(NSDictionary *)data {
+    NSMutableString *result = [NSMutableString string];
+    for (NSString* key in [data allKeys]) {
+        [result appendString:[NSString stringWithFormat:@"%@: %@ \n", key, data[key]]];
+    }
+    return [NSString stringWithString:result];
+}
+
+- (NSString *)logLevelStringFromLogLevel:(LogLevel)level {
+    NSString *result = @"TRACE";
+    if (level == LogLevelDebug) {
+        result = @"DEBUG";
+    } else if (level == LogLevelInfo) {
+        result = @"INFO";
+    } else if (level == LogLevelWarn) {
+        result = @"WARN";
+    } else if (level == LogLevelError) {
+        result = @"ERROR";
+    } else if (level == LogLevelMetric) {
+        result = @"METRIC";
+    }
+    return result;
 }
 
 @end
