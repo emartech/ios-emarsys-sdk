@@ -23,6 +23,7 @@
 #import "EMSInnerFeature.h"
 #import "EMSStorage.h"
 #import "EmarsysTestUtils.h"
+#import "EmarsysSDKVersion.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -1094,5 +1095,10 @@
     OCMVerify([self.mockEndpoint reset]);
     OCMVerify([self.mockLogger reset]);
 }
+
+- (void)testSdkVersion {
+    XCTAssertEqualObjects([self.configInternal sdkVersion], EMARSYS_SDK_VERSION);
+}
+
 
 @end
