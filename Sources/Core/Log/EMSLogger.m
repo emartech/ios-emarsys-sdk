@@ -48,6 +48,12 @@
     return self;
 }
 
+- (void)setConsoleLogLevels:(NSArray *)consoleLogLevels {
+    if (consoleLogLevels) {
+        _consoleLogLevels = consoleLogLevels;
+    }
+}
+
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level {
     [self consoleLogLogEntry:entry
@@ -72,6 +78,7 @@
 
 - (void)consoleLogLogEntry:(id <EMSLogEntryProtocol>)entry
                 entryLevel:(LogLevel)entryLevel {
+#ifdef DEBUG
     NSString *entryLevelStringRepresentation = [self logLevelStringFromLogLevel:entryLevel];
     NSMutableArray<NSString *> *consoleLogLevelsStringRepresentation = [NSMutableArray array];
     for (id <EMSLogLevelProtocol> consoleLogLevel in self.consoleLogLevels) {
@@ -96,6 +103,7 @@
     if (icon) {
         NSLog(@"EmarsysSDK - %@ - %@ \n Data: \n %@", icon, entry.topic, [self dataStringRepresentation:entry.data]);
     }
+#endif
 }
 
 - (void)updateWithRemoteConfig:(EMSRemoteConfig *)remoteConfig {

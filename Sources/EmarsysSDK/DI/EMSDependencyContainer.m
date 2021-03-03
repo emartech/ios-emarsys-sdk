@@ -347,6 +347,7 @@
                                        timestampProvider:timestampProvider
                                             uuidProvider:self.uuidProvider
                                                  storage:self.storage];
+    [self.logger setConsoleLogLevels:config.enabledConsoleLogLevels];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];
 
