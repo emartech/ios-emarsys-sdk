@@ -311,7 +311,8 @@
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
                                                                endpoint:self.endpoint
                                                   buttonClickRepository:self.buttonClickRepository
-                                                        sessionIdHolder:sessionIdHolder];
+                                                        sessionIdHolder:sessionIdHolder
+                                                                storage:self.storage];
 
     _loggingIam = [EMSLoggingInApp new];
     MEInApp *meInApp = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]

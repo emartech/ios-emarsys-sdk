@@ -18,6 +18,10 @@
 #import "EMSValueProvider.h"
 #import "MEButtonClickRepository.h"
 #import "EMSSessionIdHolder.h"
+#import "EMSStorage.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
+#import "MEExperimental+Test.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 
@@ -28,6 +32,7 @@
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MEButtonClickRepository *mockButtonClickRepository;
+@property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) EMSSessionIdHolder *sessionIdHolder;
 
 @property(nonatomic, strong) NSDate *timestamp;
@@ -42,7 +47,8 @@
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockButtonClickRepository = OCMClassMock([MEButtonClickRepository class]);
-    
+    _mockStorage = OCMClassMock([EMSStorage class]);
+
     _sessionIdHolder = [EMSSessionIdHolder new];
 
     EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
@@ -81,15 +87,23 @@
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                                endpoint:self.endpoint
                                                   buttonClickRepository:self.mockButtonClickRepository
-                                                        sessionIdHolder:self.sessionIdHolder];
+                                                        sessionIdHolder:self.sessionIdHolder
+                                                                storage:self.mockStorage];
 }
+
+- (void)tearDown {
+    [super tearDown];
+    [MEExperimental reset];
+}
+
 
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:nil
                                                  endpoint:OCMClassMock([EMSEndpoint class])
                                     buttonClickRepository:self.mockButtonClickRepository
-                                          sessionIdHolder:self.sessionIdHolder];
+                                          sessionIdHolder:self.sessionIdHolder
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: requestContext"]);
@@ -101,7 +115,8 @@
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                  endpoint:nil
                                     buttonClickRepository:self.mockButtonClickRepository
-                                          sessionIdHolder:self.sessionIdHolder];
+                                          sessionIdHolder:self.sessionIdHolder
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: endpoint"]);
@@ -113,7 +128,8 @@
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                  endpoint:self.endpoint
                                     buttonClickRepository:nil
-                                          sessionIdHolder:self.sessionIdHolder];
+                                          sessionIdHolder:self.sessionIdHolder
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when buttonClickRepository is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: buttonClickRepository"]);
@@ -125,10 +141,24 @@
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
                                                  endpoint:self.endpoint
                                     buttonClickRepository:self.mockButtonClickRepository
-                                          sessionIdHolder:nil];
+                                          sessionIdHolder:nil
+                                                  storage:self.mockStorage];
         XCTFail(@"Expected Exception when sessionIdHolder is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: sessionIdHolder"]);
+    }
+}
+
+- (void)testInit_storage_mustNotBeNil {
+    @try {
+        [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                 endpoint:self.endpoint
+                                    buttonClickRepository:self.mockButtonClickRepository
+                                          sessionIdHolder:self.sessionIdHolder
+                                                  storage:nil];
+        XCTFail(@"Expected Exception when storage is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: storage"]);
     }
 }
 
@@ -249,7 +279,7 @@
 
 - (void)testCreateEventRequestModel_with_eventName_eventAttributes_internalType {
     self.sessionIdHolder.sessionId = @"testSessionId";
-    
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -432,7 +462,50 @@
                                                                                        @"clicks": @[
                                                                                                @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
                                                                                                @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
-                                                                                               ]
+                                                                                       ]
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
+
+    XCTAssertEqualObjects(result, expectedRequestModel);
+}
+
+- (void)testCreateInlineInappRequestModel_shouldIncludeDeviceEventState_whenV4IsEnabled {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    NSDictionary *deviceEventState = @{
+            @"key1": @"value1",
+            @"key2": @"value2"
+    };
+    NSArray<MEButtonClick *> *clicks = @[
+            [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
+                                             buttonId:@"buttonID"
+                                            timestamp:[NSDate date]],
+            [[MEButtonClick alloc] initWithCampaignId:@"campaignID2"
+                                             buttonId:@"buttonID2"
+                                            timestamp:[NSDate date]]
+    ];
+
+    OCMStub([self.mockButtonClickRepository query:[OCMArg any]]).andReturn(clicks);
+    OCMStub([self.mockStorage dictionaryForKey:[OCMArg any]]).andReturn(deviceEventState);
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v4/apps/testApplicationCode/inline-messages"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"viewIds": @[
+                                                                                               @"testViewId"
+                                                                                       ],
+                                                                                       @"clicks": @[
+                                                                                               @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
+                                                                                               @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
+                                                                                       ],
+                                                                                       @"deviceEventState": @{
+                                                                                               @"key1": @"value1",
+                                                                                               @"key2": @"value2"
+                                                                                       }
                                                                                }
                                                                                headers:nil
                                                                                 extras:nil];
