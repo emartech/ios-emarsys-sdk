@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPushToken:(NSData *)pushToken
      completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
+- (nullable NSData *)pushToken;
+
 - (void)clearPushToken;
 
 - (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;

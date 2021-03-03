@@ -96,6 +96,10 @@
     }
 }
 
+- (nullable NSData *)pushToken {
+    return self.deviceToken;
+}
+
 - (void)clearPushToken {
     [self clearPushTokenWithCompletionBlock:nil];
 }

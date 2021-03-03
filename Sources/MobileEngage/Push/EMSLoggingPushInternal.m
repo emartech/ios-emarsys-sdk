@@ -26,6 +26,13 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
+- (NSData *)pushToken {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return nil;
+}
+
 - (void)clearPushToken {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd

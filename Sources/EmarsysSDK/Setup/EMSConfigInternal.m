@@ -22,6 +22,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSRemoteConfig.h"
+#import "EmarsysSDKVersion.h"
 
 #define METHOD_TIMEOUT 60
 
@@ -309,6 +310,10 @@
 
 - (NSDictionary *)pushSettings {
     return [self.deviceInfo pushSettings];
+}
+
+- (NSString *)sdkVersion {
+    return EMARSYS_SDK_VERSION;
 }
 
 @end

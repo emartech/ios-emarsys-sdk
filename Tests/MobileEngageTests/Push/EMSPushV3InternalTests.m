@@ -276,6 +276,14 @@
     XCTAssertEqualObjects(returnedQueue, [NSOperationQueue mainQueue]);
 }
 
+- (void)testPushToken_shouldReturnTheDeviceToken {
+    NSData *pushToken = [@"testPushTokenData" dataUsingEncoding:NSUTF8StringEncoding];
+    [self.push setPushToken:pushToken];
+
+    XCTAssertEqualObjects([self.push pushToken], pushToken);
+}
+
+
 - (void)testClearPushToken {
     id partialMockPush = OCMPartialMock(self.push);
 
