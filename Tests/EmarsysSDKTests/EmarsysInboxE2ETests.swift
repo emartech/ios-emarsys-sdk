@@ -6,7 +6,7 @@ import XCTest
 
 class EmarsysInboxE2ETests: XCTestCase {
 
-    let timeout = 2.0
+    let timeout = 5.0
     var timestamp: String = "2021-02-19 13:07:27"
     enum InboxError: Error {
         case missingTag
@@ -24,9 +24,10 @@ class EmarsysInboxE2ETests: XCTestCase {
             builder.setContactFieldId(2575)
         }
 
-        Emarsys.setup(with: config)
+        EmarsysTestUtils.setupEmarsys(with: config, dependencyContainer: nil)
 
-        setContact("test@test.com")
+        EmarsysTestUtils.waitForSetPushToken()
+        EmarsysTestUtils.waitForSetCustomer()
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
     }
@@ -94,7 +95,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         ]) { error in
             customEventExpectation.fulfill()
         }
-        _ = XCTWaiter.wait(for: [customEventExpectation], timeout: 2)
+        _ = XCTWaiter.wait(for: [customEventExpectation], timeout: timeout)
     }
 
     func filterForInboxMessage(_ title: String, body: String) throws -> EMSMessage {
@@ -108,7 +109,7 @@ class EmarsysInboxE2ETests: XCTestCase {
             })
             fetchMessagesExpectation.fulfill()
         }
-        _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: 2)
+        _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: timeout)
 
         guard let message = inboxMessage else {
             throw InboxError.missingMessage
@@ -121,7 +122,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
 extension XCTestCase {
 
-    func retry(retryCount: Int = 3, delay: Double? = 3.0, retryClosure: @escaping () throws -> ()) {
+    func retry(retryCount: Int = 3, delay: Double? = 5.0, retryClosure: @escaping () throws -> ()) {
         var error: Error?
         var index = 0
         repeat {
