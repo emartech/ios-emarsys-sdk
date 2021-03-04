@@ -16,6 +16,7 @@ class AppDelegate: EMSAppDelegate {
         return EMSConfig.make { builder in
             if let appCode = userDefaults?.string(forKey: ConfigUserDefaultsKey.applicationCode.rawValue) {
                 builder.setMobileEngageApplicationCode(appCode)
+                builder.enableConsoleLogLevels([EMSLogLevel.basic, EMSLogLevel.error, EMSLogLevel.info, EMSLogLevel.debug])
             }
             
             if let contactFieldId = userDefaults?.string(forKey: ConfigUserDefaultsKey.contactFieldId.rawValue) {

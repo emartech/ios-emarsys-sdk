@@ -31,11 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken;
-
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
-
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
 
 + (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
