@@ -53,6 +53,7 @@
         _timestampProvider = timestampProvider;
         _actionFactory = actionFactory;
         _storage = storage;
+        _deviceToken = [storage dataForKey:kEMSPushTokenKey];
     }
     return self;
 }

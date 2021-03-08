@@ -144,6 +144,22 @@
     }
 }
 
+- (void)testInit_shouldSetDeviceTokenValueFromStorage {
+    NSData *token = [@"token" dataUsingEncoding:NSUTF8StringEncoding];
+    OCMStub([self.mockStorage dataForKey:@"EMSPushTokenKey"]).andReturn(token);
+
+    EMSPushV3Internal *push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                                 requestManager:self.mockRequestManager
+                                                              notificationCache:self.mockNotificationCache
+                                                              timestampProvider:self.mockTimestampProvider
+                                                                  actionFactory:self.mockActionFactory
+                                                                        storage:self.mockStorage];
+
+    NSData *result = [push pushToken];
+
+    XCTAssertEqualObjects(result, token);
+}
+
 - (void)testSetPushToken {
     id partialMockPush = OCMPartialMock(self.push);
 
