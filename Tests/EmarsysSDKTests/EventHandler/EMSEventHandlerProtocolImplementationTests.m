@@ -50,4 +50,25 @@
                                payload:payload];
 }
 
+- (void)testHandleEvent_shouldBeCalledOnMainQueue {
+    __block NSOperationQueue *returnedQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
+    self.eventHandlerImpl.handlerBlock = ^(NSString *eventName, NSDictionary<NSString *, NSObject *> *payload) {
+        returnedQueue = [NSOperationQueue currentQueue];
+        [expectation fulfill];
+    };
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.eventHandlerImpl handleEvent:@"testEventName"
+                                   payload:nil];
+
+    });
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedQueue, [NSOperationQueue mainQueue]);
+}
+
+
 @end

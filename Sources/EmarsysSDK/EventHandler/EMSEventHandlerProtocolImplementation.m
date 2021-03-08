@@ -9,7 +9,9 @@
 - (void)handleEvent:(NSString *)eventName
             payload:(NSDictionary<NSString *, NSObject *> *)payload {
     if (self.handlerBlock) {
-        self.handlerBlock(eventName, payload);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.handlerBlock(eventName, payload);
+        });
     }
 }
 
