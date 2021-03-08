@@ -8,7 +8,7 @@ import EmarsysSDK
 import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
     
     @StoredValue<String>(key: "contactFieldValue")
@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     @StoredValue<Bool>(key: "isLoggedIn")
     var isLoggedIn
-
+    
     var loginData: LoginData?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -35,23 +35,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let googleDelegate = (UIApplication.shared.delegate as! AppDelegate).googleDelegate
         
-
+        
         // Create the SwiftUI view that provides the window contents.
         let configUserDefaults = UserDefaults(suiteName: "com.emarsys.sampleConfig")
         self.contactFieldId = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
         self.applicationCode = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
         self.merchantId = configUserDefaults?.string(forKey: ConfigUserDefaultsKey.merchantId.rawValue)
         
+        let pushToken = Emarsys.push.pushToken()?.reduce("", {$0 + String(format: "%2X", $1)}).uppercased()
+        let sdkVersion = Emarsys.config.sdkVersion()
+        
         loginData = LoginData(isLoggedIn: self.isLoggedIn ?? false,
                               contactFieldValue: self.contactFieldValue ?? nil,
-                                  contactFieldId: self.contactFieldId ?? Emarsys.config.contactFieldId().stringValue,
-                                  applicationCode: self.applicationCode ?? Emarsys.config.applicationCode(),
-                                  merchantId: self.merchantId ?? Emarsys.config.merchantId(),
-                                  hwId: Emarsys.config.hardwareId(),
-                                  languageCode: Emarsys.config.languageCode(),
-                                  pushSettings: Emarsys.config.pushSettings() as? Dictionary<String, String> ?? [:]
+                              contactFieldId: self.contactFieldId ?? Emarsys.config.contactFieldId().stringValue,
+                              applicationCode: self.applicationCode ?? Emarsys.config.applicationCode(),
+                              merchantId: self.merchantId ?? Emarsys.config.merchantId(),
+                              hwId: Emarsys.config.hardwareId(),
+                              languageCode: Emarsys.config.languageCode(),
+                              pushSettings: Emarsys.config.pushSettings() as? Dictionary<String, String> ?? [:],
+                              pushToken: pushToken ?? "",
+                              sdkVersion: sdkVersion
         )
-            
         
         let contentView = ContentView()
             .environmentObject(loginData!)

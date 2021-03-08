@@ -48,7 +48,6 @@ struct InfoPanelView: View {
                         UIPasteboard.general.string = loginData.hwid
                     }) {
                         Text("\(loginData.hwid)")
-                            .foregroundColor(Color(.label))
                             .lineLimit(1)
                             .truncationMode(.tail)
                     }
@@ -68,6 +67,23 @@ struct InfoPanelView: View {
                         Text("\u{2022}").frame(width: 30).multilineTextAlignment(.leading)
                         Text("\(key.capitalized): \(loginData.pushSettings[key] ?? "")")
                     }
+                }
+                HStack {
+                    Image(systemName: "bolt.horizontal.icloud").frame(width: 30).multilineTextAlignment(.leading)
+                    Text("PushToken: ").bold()
+                        
+                    Button(action: {
+                        UIPasteboard.general.string = loginData.pushToken
+                    }) {
+                        Text("\(loginData.pushToken)")
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                }
+                HStack {
+                    Image(systemName: "number.square").frame(width: 30).multilineTextAlignment(.leading)
+                    Text("SdkVersion: ").bold()
+                    Text("\(loginData.sdkVersion)")
                 }
                 if(showMore) {
                     HStack {

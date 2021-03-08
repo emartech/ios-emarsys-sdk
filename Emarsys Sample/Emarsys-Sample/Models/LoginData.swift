@@ -16,6 +16,8 @@ class LoginData: ObservableObject {
     @Published var pushSettings: Dictionary<String, String> = ["notificationEnabled": "true",
                                                                "authorizationStatus": "authorized",
                                                                "soundSettings": "soundsetting"]
+    @Published var pushToken: String
+    @Published var sdkVersion: String
     
     init(isLoggedIn: Bool = false,
          contactFieldValue: String? = "",
@@ -24,7 +26,9 @@ class LoginData: ObservableObject {
          merchantId: String? = "",
          hwId: String = "",
          languageCode: String = "",
-         pushSettings: Dictionary<String, String> = [:]) {
+         pushSettings: Dictionary<String, String> = [:],
+         pushToken: String = "",
+         sdkVersion: String = "") {
         self.isLoggedIn = isLoggedIn
         self.contactFieldValue = contactFieldValue ?? ""
         self.contactFieldId = contactFieldId ?? ""
@@ -33,5 +37,7 @@ class LoginData: ObservableObject {
         self.hwid = hwId
         self.languageCode = languageCode
         self.pushSettings = pushSettings
+        self.pushToken = pushToken
+        self.sdkVersion = sdkVersion
     }
 }
