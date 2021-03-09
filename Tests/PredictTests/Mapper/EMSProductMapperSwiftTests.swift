@@ -127,6 +127,6 @@ class EMSProductMapperSwiftTests: XCTestCase {
         let responseDict: [String: Any] = try! JSONSerialization.jsonObject(with: rawResponse.data(using: .utf8)!, options: .allowFragments) as! [String: Any]
         let data = try! JSONSerialization.data(withJSONObject: responseDict, options: .prettyPrinted) as NSData
         
-        return EMSResponseModel(statusCode: 200, headers: [:], body: data as Data, requestModel: EMSRequestModel(), timestamp: Date())
+        return EMSResponseModel(statusCode: 200, headers: [:], body: data as Data, parsedBody: nil, requestModel: EMSRequestModel(), timestamp: Date())
     }
 }

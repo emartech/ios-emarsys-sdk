@@ -71,7 +71,7 @@ class OnEventResponseHandlerTests: XCTestCase {
             ]
         ] as [String: Any]
         let requestModel = EMSRequestModel()
-        let responseModel = EMSResponseModel(statusCode: 200, headers: ["headerKey": "headerValue"], body: data.toData(), requestModel: requestModel, timestamp: Date())
+        let responseModel = EMSResponseModel(statusCode: 200, headers: ["headerKey": "headerValue"], body: data.toData(), parsedBody: nil, requestModel: requestModel, timestamp: Date())
 
         self.responseHandler!.handleResponse(responseModel)
 
@@ -97,7 +97,7 @@ class OnEventResponseHandlerTests: XCTestCase {
         ] as [String: Any]
 
         let requestModel = EMSRequestModel()
-        return EMSResponseModel(statusCode: 200, headers: ["headerKey": "headerValue"], body: data.toData(), requestModel: requestModel, timestamp: Date())
+        return EMSResponseModel(statusCode: 200, headers: ["headerKey": "headerValue"], body: data.toData(), parsedBody: nil, requestModel: requestModel, timestamp: Date())
     }
 }
 

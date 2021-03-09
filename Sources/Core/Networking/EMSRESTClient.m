@@ -69,6 +69,7 @@
                                                          EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[httpUrlResponse statusCode]
                                                                                                                                 headers:[httpUrlResponse allHeaderFields]
                                                                                                                                    body:data
+                                                                                                                             parsedBody:nil
                                                                                                                            requestModel:requestModel
                                                                                                                               timestamp:[weakSelf.timestampProvider provideTimestamp]];
                                                          [weakSelf handleResponse:responseModel];
@@ -77,6 +78,7 @@
                                                                                          networkingStartTime:networkingStartTime
                                                                                                      headers:finalizedRequestModel.headers
                                                                                                      payload:finalizedRequestModel.payload], LogLevelDebug);
+
                                                          EMSStrictLog([[EMSRequestLog alloc] initWithResponseModel:responseModel
                                                                                                networkingStartTime:networkingStartTime
                                                                                                            headers:nil

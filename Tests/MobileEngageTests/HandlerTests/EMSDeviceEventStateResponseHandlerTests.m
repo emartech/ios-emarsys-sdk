@@ -68,6 +68,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:300
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{}]
                                                                     timestamp:[NSDate date]];
 
@@ -83,6 +84,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{}]
                                                                     timestamp:[NSDate date]];
 
@@ -99,6 +101,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{}]
                                                                     timestamp:[NSDate date]];
 
@@ -115,6 +118,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{}]
                                                                     timestamp:[NSDate date]];
 
@@ -132,6 +136,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{}]
                                                                     timestamp:[NSDate date]];
     [self.responseHandler handleResponse:response];

@@ -26,6 +26,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{@"h1": @"hv1"}
                                                                                   body:responseBody
+                                                                            parsedBody:nil
                                                                           requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
@@ -48,12 +49,44 @@ SPEC_BEGIN(EMSResponseModelTests)
                     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
                                                                                            headers:[response allHeaderFields]
                                                                                               body:data
+                                                                                        parsedBody:nil
                                                                                       requestModel:nil
                                                                                          timestamp:[timestampProvider provideTimestamp]];
                     fail(@"Expected exception when requestModel is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
                 }
+            });
+
+            it(@"should create ResponseModel with all properties", ^{
+
+                    NSDictionary<NSString *, NSString *> *headers = @{
+                            @"key": @"value",
+                            @"key2": @"value2"
+                    };
+                    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"host.com/url"]
+                                                                              statusCode:200
+                                                                             HTTPVersion:@"1.1"
+                                                                            headerFields:headers];
+                    NSString *dataString = @"{}";
+                    NSData *data = [dataString dataUsingEncoding:NSUTF8StringEncoding];
+                    id parsedBody = [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:0
+                                                                      error:nil];
+                    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:response.statusCode
+                                                                                           headers:response.allHeaderFields
+                                                                                              body:data
+                                                                                        parsedBody:parsedBody
+                                                                                      requestModel:[EMSRequestModel nullMock]
+                                                                                         timestamp:[timestampProvider provideTimestamp]];
+                    NSString *responseDataString = [[NSString alloc] initWithData:responseModel.body
+                                                                         encoding:NSUTF8StringEncoding];
+                    [[@(responseModel.statusCode) should] equal:@200];
+                    [[responseModel.headers should] equal:headers];
+                    [[responseModel.body should] equal:data];
+                    [[responseDataString should] equal:dataString];
+                    [[responseModel.parsedBody should] equal:parsedBody];
+
             });
 
             it(@"should make requestModel accessible through the property", ^{
@@ -66,6 +99,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
                                                                                        headers:[response allHeaderFields]
                                                                                           body:data
+                                                                                    parsedBody:nil
                                                                                   requestModel:expectedModel
                                                                                      timestamp:[timestampProvider provideTimestamp]];
                 [[responseModel.requestModel should] equal:expectedModel];
@@ -92,6 +126,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
                                                                                        headers:[response allHeaderFields]
                                                                                           body:data
+                                                                                    parsedBody:nil
                                                                                   requestModel:requestModel
                                                                                      timestamp:[timestampProvider provideTimestamp]];
 
@@ -128,6 +163,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
                                                                                        headers:[response allHeaderFields]
                                                                                           body:data
+                                                                                    parsedBody:nil
                                                                                   requestModel:requestModel
                                                                                      timestamp:[timestampProvider provideTimestamp]];
 
@@ -155,6 +191,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:responseBody
+                                                                            parsedBody:nil
                                                                           requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
@@ -165,6 +202,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:nil
+                                                                            parsedBody:nil
                                                                           requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
@@ -175,6 +213,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:[@"Created" dataUsingEncoding:NSUTF8StringEncoding]
+                                                                            parsedBody:nil
                                                                           requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 
@@ -189,6 +228,7 @@ SPEC_BEGIN(EMSResponseModelTests)
                 EMSResponseModel *model = [[EMSResponseModel alloc] initWithStatusCode:402
                                                                                headers:@{}
                                                                                   body:responseBody
+                                                                            parsedBody:nil
                                                                           requestModel:[EMSRequestModel nullMock]
                                                                              timestamp:[timestampProvider provideTimestamp]];
 

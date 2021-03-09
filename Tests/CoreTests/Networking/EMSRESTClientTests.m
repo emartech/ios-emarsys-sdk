@@ -55,6 +55,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     _expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
                                                                   headers:[self.response allHeaderFields]
                                                                      body:self.data
+                                                               parsedBody:nil
                                                              requestModel:self.requestModel
                                                                 timestamp:self.responseTimestamp];
     _nullValue = [NSNull null];
@@ -164,6 +165,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:nil
                                                                                    headers:nil
                                                                                       body:nil
+                                                                                parsedBody:nil
                                                                               requestModel:self.requestModel
                                                                                  timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue
@@ -184,6 +186,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:nil
                                                                                    headers:nil
                                                                                       body:self.data
+                                                                                parsedBody:nil
                                                                               requestModel:self.requestModel
                                                                                  timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.data
@@ -204,6 +207,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
                                                                                    headers:[self.response allHeaderFields]
                                                                                       body:nil
+                                                                                parsedBody:nil
                                                                               requestModel:self.requestModel
                                                                                  timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue

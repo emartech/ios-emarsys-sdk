@@ -254,6 +254,7 @@
     return [[EMSResponseModel alloc] initWithStatusCode:statusCode
                                                 headers:@{@"responseHeaderKey": @"responseHeaderValue"}
                                                    body:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
+                                             parsedBody:nil
                                            requestModel:[self generateRequestModel]
                                               timestamp:[[EMSTimestampProvider new] provideTimestamp]];
 }

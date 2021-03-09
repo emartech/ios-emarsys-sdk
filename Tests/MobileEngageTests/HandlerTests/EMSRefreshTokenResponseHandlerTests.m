@@ -128,6 +128,7 @@
                                                    body:parsedBody ? [NSJSONSerialization dataWithJSONObject:parsedBody
                                                                                                      options:NSJSONWritingPrettyPrinted
                                                                                                        error:nil] : nil
+                                             parsedBody:nil
                                            requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                                                        [builder setUrl:url];
                                                    }

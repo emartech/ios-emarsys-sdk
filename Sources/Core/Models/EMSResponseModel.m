@@ -8,20 +8,10 @@
     id _parsedBody;
 }
 
-- (id)initWithHttpUrlResponse:(NSHTTPURLResponse *)httpUrlResponse
-                         data:(NSData *)data
-                 requestModel:(EMSRequestModel *)requestModel
-                    timestamp:(NSDate *)timestamp {
-    return [self initWithStatusCode:httpUrlResponse.statusCode
-                            headers:httpUrlResponse.allHeaderFields
-                               body:data
-                       requestModel:requestModel
-                          timestamp:timestamp];
-}
-
 - (id)initWithStatusCode:(NSInteger)statusCode
                  headers:(NSDictionary<NSString *, NSString *> *)headers
                     body:(NSData *)body
+              parsedBody:(nullable id)parsedBody
             requestModel:(EMSRequestModel *)requestModel
                timestamp:(NSDate *)timestamp {
     NSParameterAssert(requestModel);
@@ -31,6 +21,7 @@
         _cookies = [self extractCookies:headers
                            requestModel:requestModel];
         _body = body;
+        _parsedBody = parsedBody;
         _requestModel = requestModel;
         _timestamp = timestamp;
     }

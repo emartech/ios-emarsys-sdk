@@ -189,6 +189,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
+                                                                               parsedBody:nil
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response];
@@ -210,6 +211,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
+                                                                               parsedBody:nil
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response];
@@ -240,6 +242,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
+                                                                               parsedBody:nil
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
 
@@ -312,6 +315,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
+                                                                               parsedBody:nil
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 [inApp showMessage:[[MEInAppMessage alloc] initWithResponse:response]
@@ -332,6 +336,7 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                   headers:@{}
                                                                                      body:body
+                                                                               parsedBody:nil
                                                                              requestModel:[EMSRequestModel nullMock]
                                                                                 timestamp:[NSDate date]];
                 XCTestExpectation *fulfilledExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForFulfill"];
@@ -362,11 +367,13 @@ SPEC_BEGIN(MEInAppTests)
                 EMSResponseModel *response1 = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                    headers:@{}
                                                                                       body:body1
+                                                                                parsedBody:nil
                                                                               requestModel:[EMSRequestModel nullMock]
                                                                                  timestamp:[NSDate date]];
                 EMSResponseModel *response2 = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                    headers:@{}
                                                                                       body:body2
+                                                                                parsedBody:nil
                                                                               requestModel:[EMSRequestModel nullMock]
                                                                                  timestamp:[NSDate date]];
                 MEInAppMessage *message = [[MEInAppMessage alloc] initWithResponse:response1];

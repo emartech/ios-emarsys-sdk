@@ -69,6 +69,7 @@
                                                                          body:[NSJSONSerialization dataWithJSONObject:jsonResponse
                                                                                                               options:0
                                                                                                                 error:nil]
+                                                                   parsedBody:nil
                                                                  requestModel:[EMSRequestModel new]
                                                                     timestamp:[NSDate date]];
     NSError *error = [NSError errorWithCode:500 localizedDescription:@"FakeError"];

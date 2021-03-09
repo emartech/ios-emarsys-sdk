@@ -30,6 +30,7 @@
     _responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
                                                           headers:@{}
                                                              body:body
+                                                       parsedBody:nil
                                                      requestModel:requestModel
                                                         timestamp:self.responseTimestamp];
     OCMStub(requestModel.requestId).andReturn(@"requestId123");

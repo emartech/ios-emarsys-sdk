@@ -125,6 +125,7 @@
     return [[EMSResponseModel alloc] initWithStatusCode:200
                                                 headers:headers
                                                    body:nil
+                                             parsedBody:nil
                                            requestModel:requestModel
                                               timestamp:[NSDate date]];
 }

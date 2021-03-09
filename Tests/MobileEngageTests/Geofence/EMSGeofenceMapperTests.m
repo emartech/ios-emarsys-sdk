@@ -96,6 +96,7 @@
     return [[EMSResponseModel alloc] initWithStatusCode:200
                                                 headers:@{@"responseHeaderKey": @"responseHeaderValue"}
                                                    body:[self.jsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                             parsedBody:nil
                                            requestModel:OCMClassMock([EMSRequestModel class])
                                               timestamp:[NSDate date]];
 }

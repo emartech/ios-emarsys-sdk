@@ -52,6 +52,7 @@
     EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                            headers:@{}
                                                                               body:[self rawResponseDataWithFeature:feature]
+                                                                        parsedBody:nil
                                                                       requestModel:OCMClassMock([EMSRequestModel class])
                                                                          timestamp:[NSDate date]];
 

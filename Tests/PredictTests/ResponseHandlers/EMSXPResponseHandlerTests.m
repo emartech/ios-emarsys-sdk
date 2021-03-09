@@ -124,6 +124,7 @@
     return [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
                                                 headers:[response allHeaderFields]
                                                    body:data
+                                             parsedBody:nil
                                            requestModel:requestModel
                                               timestamp:[timestampProvider provideTimestamp]];
 }

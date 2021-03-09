@@ -94,6 +94,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{@"viewedMessages": @[@{}]}]
                                                                     timestamp:[NSDate date]];
 
@@ -109,6 +110,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:nil]
                                                                     timestamp:[NSDate date]];
 
@@ -125,6 +127,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:300
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{@"viewedMessages": @[@{}]}]
                                                                     timestamp:[NSDate date]];
 
@@ -141,6 +144,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{@"viewedMessages": @[]}]
                                                                     timestamp:[NSDate date]];
 
@@ -157,6 +161,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{@"clicks": @[@{}]}]
                                                                     timestamp:[NSDate date]];
 
@@ -186,6 +191,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{
                                                                          @"clicks": @[
                                                                                  @{
@@ -230,6 +236,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{
                                                                          @"viewedMessages": @[
                                                                                  @{
@@ -264,6 +271,7 @@
     EMSResponseModel *response = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                       headers:@{}
                                                                          body:body
+                                                                   parsedBody:nil
                                                                  requestModel:[self createRequestModelWithPayload:@{
                                                                          @"viewedMessages": @[
                                                                                  @{

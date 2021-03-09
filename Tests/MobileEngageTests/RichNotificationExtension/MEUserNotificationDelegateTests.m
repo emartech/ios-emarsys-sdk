@@ -582,6 +582,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                 EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
                                                                                        headers:@{}
                                                                                           body:[@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                    parsedBody:nil
                                                                                   requestModel:[EMSRequestModel nullMock]
                                                                                      timestamp:responseTimestamp];
 

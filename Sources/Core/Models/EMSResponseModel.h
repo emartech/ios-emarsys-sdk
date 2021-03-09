@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)initWithStatusCode:(NSInteger)statusCode
                  headers:(NSDictionary<NSString *, NSString *> *)headers
                     body:(NSData *)body
+              parsedBody:(nullable id)parsedBody
             requestModel:(EMSRequestModel *)requestModel
                timestamp:(NSDate *)timestamp;
 
