@@ -251,13 +251,11 @@
 }
 
 - (EMSResponseModel *)generateResponseWithStatusCode:(int)statusCode {
-    return [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                         statusCode:statusCode
-                                                                                        HTTPVersion:nil
-                                                                                       headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                        data:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
-                                                requestModel:[self generateRequestModel]
-                                                   timestamp:[[EMSTimestampProvider new] provideTimestamp]];
+    return [[EMSResponseModel alloc] initWithStatusCode:statusCode
+                                                headers:@{@"responseHeaderKey": @"responseHeaderValue"}
+                                                   body:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
+                                           requestModel:[self generateRequestModel]
+                                              timestamp:[[EMSTimestampProvider new] provideTimestamp]];
 }
 
 @end

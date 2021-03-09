@@ -232,13 +232,12 @@
 
 - (EMSResponseModel *)generateResponseWithRequestModel:(EMSRequestModel *)requestModel
                                             statusCode:(int)statusCode {
-    return [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                         statusCode:statusCode
-                                                                                        HTTPVersion:nil
-                                                                                       headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                        data:self.data
-                                                requestModel:requestModel
-                                                   timestamp:self.timestamp];
+
+    return [[EMSResponseModel alloc] initWithStatusCode:statusCode
+                                                headers:@{@"responseHeaderKey": @"responseHeaderValue"}
+                                                   body:self.data
+                                           requestModel:requestModel
+                                              timestamp:self.timestamp];
 }
 
 - (NSData *)generateBodyData {

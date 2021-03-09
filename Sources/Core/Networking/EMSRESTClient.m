@@ -64,10 +64,13 @@
                                                          NSError *runtimeError = [weakSelf errorWithData:data
                                                                                                 response:response
                                                                                                    error:error];
-                                                         EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:(NSHTTPURLResponse *) response
-                                                                                                                                        data:data
-                                                                                                                                requestModel:requestModel
-                                                                                                                                   timestamp:[weakSelf.timestampProvider provideTimestamp]];
+                                                         NSHTTPURLResponse *httpUrlResponse = (NSHTTPURLResponse *) response;
+
+                                                         EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[httpUrlResponse statusCode]
+                                                                                                                                headers:[httpUrlResponse allHeaderFields]
+                                                                                                                                   body:data
+                                                                                                                           requestModel:requestModel
+                                                                                                                              timestamp:[weakSelf.timestampProvider provideTimestamp]];
                                                          [weakSelf handleResponse:responseModel];
 
                                                          EMSLog([[EMSRequestLog alloc] initWithResponseModel:responseModel

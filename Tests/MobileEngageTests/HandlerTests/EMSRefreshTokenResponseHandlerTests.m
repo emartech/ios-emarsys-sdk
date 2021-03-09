@@ -123,19 +123,17 @@
 
 - (EMSResponseModel *)createResponseModelWithUrl:(NSString *)url
                                       parsedBody:(NSDictionary *)parsedBody {
-    return [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:url]
-                                                                                         statusCode:200
-                                                                                        HTTPVersion:nil
-                                                                                       headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                        data:parsedBody ? [NSJSONSerialization dataWithJSONObject:parsedBody
-                                                                                                          options:NSJSONWritingPrettyPrinted
-                                                                                                            error:nil] : nil
-                                                requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                                                        [builder setUrl:url];
-                                                    }
-                                                                            timestampProvider:[EMSTimestampProvider new]
-                                                                                 uuidProvider:[EMSUUIDProvider new]]
-                                                   timestamp:[[EMSTimestampProvider new] provideTimestamp]];
+    return [[EMSResponseModel alloc] initWithStatusCode:200
+                                                headers:@{@"responseHeaderKey": @"responseHeaderValue"}
+                                                   body:parsedBody ? [NSJSONSerialization dataWithJSONObject:parsedBody
+                                                                                                     options:NSJSONWritingPrettyPrinted
+                                                                                                       error:nil] : nil
+                                           requestModel:[EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                                                       [builder setUrl:url];
+                                                   }
+                                                                       timestampProvider:[EMSTimestampProvider new]
+                                                                            uuidProvider:[EMSUUIDProvider new]]
+                                              timestamp:[[EMSTimestampProvider new] provideTimestamp]];
 }
 
 @end

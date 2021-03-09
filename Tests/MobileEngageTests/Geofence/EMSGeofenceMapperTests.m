@@ -93,13 +93,11 @@
 }
 
 - (EMSResponseModel *)createResponse {
-    return [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                         statusCode:200
-                                                                                        HTTPVersion:nil
-                                                                                       headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                        data:[self.jsonString dataUsingEncoding:NSUTF8StringEncoding]
-                                                requestModel:OCMClassMock([EMSRequestModel class])
-                                                   timestamp:[NSDate date]];
+    return [[EMSResponseModel alloc] initWithStatusCode:200
+                                                headers:@{@"responseHeaderKey": @"responseHeaderValue"}
+                                                   body:[self.jsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                           requestModel:OCMClassMock([EMSRequestModel class])
+                                              timestamp:[NSDate date]];
 }
 
 - (NSDictionary *)createGeofenceDictWithoutGeofences {

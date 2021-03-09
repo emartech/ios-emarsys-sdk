@@ -24,10 +24,11 @@ SPEC_BEGIN(EMSVisitorIdResponseHandlerTests)
                 }
                                                            timestampProvider:timestampProvider
                                                                 uuidProvider:uuidProvider];
-            return [[EMSResponseModel alloc] initWithHttpUrlResponse:response
-                                                                data:data
-                                                        requestModel:requestModel
-                                                           timestamp:[timestampProvider provideTimestamp]];
+            return [[EMSResponseModel alloc] initWithStatusCode:[response statusCode]
+                                                        headers:[response allHeaderFields]
+                                                           body:data
+                                                   requestModel:requestModel
+                                                      timestamp:[timestampProvider provideTimestamp]];
         };
 
         describe(@"initWithRequestContext:endpoint:", ^{

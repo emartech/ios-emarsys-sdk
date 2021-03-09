@@ -18,12 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSData *body;
 @property(nonatomic, readonly) NSDate *timestamp;
 
-- (id)initWithHttpUrlResponse:(NSHTTPURLResponse *)httpUrlResponse
-                         data:(NSData *)data
-                 requestModel:(EMSRequestModel *)requestModel
-                    timestamp:(NSDate *)timestamp;
-
-- (id)initWithStatusCode:(NSInteger)statusCod
+- (id)initWithStatusCode:(NSInteger)statusCode
                  headers:(NSDictionary<NSString *, NSString *> *)headers
                     body:(NSData *)body
             requestModel:(EMSRequestModel *)requestModel

@@ -52,10 +52,11 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     _response = [self generateResponse];
     _data = [self generateBodyData];
     _responseTimestamp = [NSDate date];
-    _expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:self.response
-                                                                          data:self.data
-                                                                  requestModel:self.requestModel
-                                                                     timestamp:self.responseTimestamp];
+    _expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
+                                                                  headers:[self.response allHeaderFields]
+                                                                     body:self.data
+                                                             requestModel:self.requestModel
+                                                                timestamp:self.responseTimestamp];
     _nullValue = [NSNull null];
 
     _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
@@ -160,10 +161,11 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 - (void)testExecute_shouldGiveError_whenErrorIsAvailable {
     NSError *expectedError = [NSError errorWithCode:-42
                                localizedDescription:@"TestError for Test."];
-    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:nil
-                                                                                           data:nil
-                                                                                   requestModel:self.requestModel
-                                                                                      timestamp:self.responseTimestamp];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:nil
+                                                                                   headers:nil
+                                                                                      body:nil
+                                                                              requestModel:self.requestModel
+                                                                                 timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.nullValue
                        error:expectedError
@@ -179,10 +181,11 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 - (void)testExecute_shouldGiveError_when_noError_noResponseModel {
     NSError *expectedError = [NSError errorWithCode:1500
                                localizedDescription:@"Missing response"];
-    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:nil
-                                                                                           data:self.data
-                                                                                   requestModel:self.requestModel
-                                                                                      timestamp:self.responseTimestamp];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:nil
+                                                                                   headers:nil
+                                                                                      body:self.data
+                                                                              requestModel:self.requestModel
+                                                                                 timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.data
                  urlResponse:self.nullValue
                        error:self.nullValue
@@ -198,10 +201,11 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 - (void)testExecute_shouldGiveError_when_noData {
     NSError *expectedError = [NSError errorWithCode:1500
                                localizedDescription:@"Missing data"];
-    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:self.response
-                                                                                           data:nil
-                                                                                   requestModel:self.requestModel
-                                                                                      timestamp:self.responseTimestamp];
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
+                                                                                   headers:[self.response allHeaderFields]
+                                                                                      body:nil
+                                                                              requestModel:self.requestModel
+                                                                                 timestamp:self.responseTimestamp];
     [self runExecuteWithData:self.nullValue
                  urlResponse:self.response
                        error:self.nullValue

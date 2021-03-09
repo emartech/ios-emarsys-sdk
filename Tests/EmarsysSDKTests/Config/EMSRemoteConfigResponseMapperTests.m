@@ -62,13 +62,7 @@
                                 "            },\n"
                                 "        \"logLevel\":\"warn\"\n"
                                 "    }";
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:@"https://client.emarsys.com/test/test"
                                                                      predictService:nil
@@ -124,13 +118,7 @@
                                 "            },"
                                 "        },"
                                 "    }";
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:@"https://event.emarsys.com/test/test"
                                                                       clientService:@"https://client2.emarsys.com/test/test"
                                                                      predictService:@"https://predict.emarsys.com/test/test"
@@ -140,7 +128,7 @@
                                                               v3MessageInboxService:@"https://inbox.emarsys.net/test/test"
                                                                            logLevel:LogLevelError
                                                                            features:@{
-                                                                                   @"mobile_engage" : @NO,
+                                                                                   @"mobile_engage": @NO,
                                                                                    @"predict": @YES,
                                                                                    @"experimental_feature1": @NO}];
 
@@ -182,13 +170,8 @@
                                 "            \"threshold\":1\n"
                                 "        }\n"
                                 "    }";
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
@@ -217,13 +200,7 @@
                                 "            \"threshold\":0\n"
                                 "        }\n"
                                 "    }";
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
@@ -252,13 +229,7 @@
                                 "            \"threshold\":0.5\n"
                                 "        }\n"
                                 "    }";
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
@@ -291,13 +262,7 @@
                                                            "        \"logLevel\":\"%@\"\n"
                                                            "    }",
                                                            rawLogLevel];
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithHttpUrlResponse:[[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                                                                    statusCode:200
-                                                                                                                   HTTPVersion:nil
-                                                                                                                  headerFields:@{@"responseHeaderKey": @"responseHeaderValue"}]
-                                                                                   data:[responseRawJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           requestModel:OCMClassMock([EMSRequestModel class])
-                                                                              timestamp:[NSDate date]];
+    EMSResponseModel *responseModel = [self createResponseModelWithRawJson:responseRawJson];
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
@@ -311,6 +276,14 @@
     EMSRemoteConfig *remoteConfig = [mapper map:responseModel];
 
     XCTAssertEqualObjects(remoteConfig, expectedConfig);
+}
+
+- (EMSResponseModel *)createResponseModelWithRawJson:(NSString *)rawJson {
+    return [[EMSResponseModel alloc] initWithStatusCode:200
+                                                headers:@{@"responseHeaderKey": @"responseHeaderValue"}
+                                                   body:[rawJson dataUsingEncoding:NSUTF8StringEncoding]
+                                           requestModel:OCMClassMock([EMSRequestModel class])
+                                              timestamp:[NSDate date]];
 }
 
 @end

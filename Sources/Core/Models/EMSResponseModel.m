@@ -24,8 +24,8 @@
                     body:(NSData *)body
             requestModel:(EMSRequestModel *)requestModel
                timestamp:(NSDate *)timestamp {
+    NSParameterAssert(requestModel);
     if (self = [super init]) {
-        NSParameterAssert(requestModel);
         _statusCode = statusCode;
         _headers = headers;
         _cookies = [self extractCookies:headers
