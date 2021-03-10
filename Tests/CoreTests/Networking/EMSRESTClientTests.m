@@ -15,6 +15,7 @@
 #import "EMSRequestModelMapperProtocol.h"
 #import "FakeRequestModelMapper.h"
 #import "EMSAbstractResponseHandler.h"
+#import "EMSMobileEngageNullSafeBodyParser.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
@@ -34,6 +35,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 @property(nonatomic, strong) NSDate *responseTimestamp;
 @property(nonatomic, strong) EMSResponseModel *expectedResponseModel;
 @property(nonatomic, strong) NSNull *nullValue;
+@property(nonatomic, strong) EMSMobileEngageNullSafeBodyParser *mockMobileEngageBodyParser;
 
 @end
 
@@ -59,13 +61,15 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                                              requestModel:self.requestModel
                                                                 timestamp:self.responseTimestamp];
     _nullValue = [NSNull null];
+    _mockMobileEngageBodyParser = OCMClassMock([EMSMobileEngageNullSafeBodyParser class]);
 
     _restClient = [[EMSRESTClient alloc] initWithSession:self.mockSession
                                                    queue:self.expectedOperationQueue
                                        timestampProvider:self.mockTimestampProvider
                                        additionalHeaders:nil
                                      requestModelMappers:nil
-                                        responseHandlers:nil];
+                                        responseHandlers:nil
+                                  mobileEngageBodyParser:self.mockMobileEngageBodyParser];
 }
 
 - (void)testInit_session_mustNotBeNil {
@@ -75,7 +79,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                              timestampProvider:self.mockTimestampProvider
                              additionalHeaders:nil
                            requestModelMappers:nil
-                              responseHandlers:nil];
+                              responseHandlers:nil
+                        mobileEngageBodyParser:self.mockMobileEngageBodyParser];
         XCTFail(@"Expected Exception when session is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: session");
@@ -89,7 +94,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                              timestampProvider:self.mockTimestampProvider
                              additionalHeaders:nil
                            requestModelMappers:nil
-                              responseHandlers:nil];
+                              responseHandlers:nil
+                        mobileEngageBodyParser:self.mockMobileEngageBodyParser];
         XCTFail(@"Expected Exception when queue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
@@ -103,10 +109,26 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                              timestampProvider:nil
                              additionalHeaders:nil
                            requestModelMappers:nil
-                              responseHandlers:nil];
+                              responseHandlers:nil
+                        mobileEngageBodyParser:self.mockMobileEngageBodyParser];
         XCTFail(@"Expected Exception when timestampProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
+    }
+}
+
+- (void)testInit_mobileEngageBodyParser_mustNotBeNil {
+    @try {
+        [[EMSRESTClient alloc] initWithSession:self.mockSession
+                                         queue:self.mockQueue
+                             timestampProvider:self.mockTimestampProvider
+                             additionalHeaders:nil
+                           requestModelMappers:nil
+                              responseHandlers:nil
+                        mobileEngageBodyParser:nil];
+        XCTFail(@"Expected Exception when mobileEngageBodyParser is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngageBodyParser");
     }
 }
 
@@ -154,6 +176,58 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                   XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
                   XCTAssertEqualObjects(returnedRequest, self.requestModel);
                   XCTAssertEqualObjects(returnedResponseModel, self.expectedResponseModel);
+                  XCTAssertNil(returnedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
+              }];
+}
+
+- (void)testExecute_shouldGiveResponseWithParsedBody_whenMobileEngageRequest {
+    NSData *nullsafeData = [NSData alloc];
+
+    OCMStub([self.mockMobileEngageBodyParser parseWithRequestModel:[OCMArg any]
+                                                      responseBody:self.data]).andReturn(nullsafeData);
+    OCMStub([self.mockMobileEngageBodyParser shouldParse:[OCMArg any]]).andReturn(YES);
+
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
+                                                                                   headers:[self.response allHeaderFields]
+                                                                                      body:self.data
+                                                                                parsedBody:nullsafeData
+                                                                              requestModel:self.requestModel
+                                                                                 timestamp:self.responseTimestamp];
+    [self runExecuteWithData:self.data
+                 urlResponse:self.response
+                       error:self.nullValue
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
+                  XCTAssertEqualObjects(returnedResponseModel, expectedResponseModel);
+                  XCTAssertNil(returnedError);
+                  XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
+                  OCMVerify([self.mockMobileEngageBodyParser parseWithRequestModel:self.requestModel
+                                                                      responseBody:self.data]);
+              }];
+}
+
+- (void)testExecute_shouldGiveResponseWithParsedBody_whenNotMobileEngageRequest {
+    NSData *nullsafeData = [NSData alloc];
+
+    OCMStub([self.mockMobileEngageBodyParser parseWithRequestModel:[OCMArg any]
+                                                      responseBody:self.data]).andReturn(nullsafeData);
+    OCMStub([self.mockMobileEngageBodyParser shouldParse:[OCMArg any]]).andReturn(NO);
+
+    EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
+                                                                                   headers:[self.response allHeaderFields]
+                                                                                      body:self.data
+                                                                                parsedBody:nil
+                                                                              requestModel:self.requestModel
+                                                                                 timestamp:self.responseTimestamp];
+    [self runExecuteWithData:self.data
+                 urlResponse:self.response
+                       error:self.nullValue
+              assertionBlock:^(XCTWaiterResult waiterResult, EMSRequestModel *returnedRequest, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *operationQueue) {
+                  XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                  XCTAssertEqualObjects(returnedRequest, self.requestModel);
+                  XCTAssertEqualObjects(returnedResponseModel, expectedResponseModel);
                   XCTAssertNil(returnedError);
                   XCTAssertEqualObjects(operationQueue, self.expectedOperationQueue);
               }];
@@ -252,7 +326,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                        timestampProvider:self.mockTimestampProvider
                                        additionalHeaders:@{@"testAdditionalHeaderKey": @"testAdditionalHeaderValue"}
                                      requestModelMappers:@[mapper1, mapper2, mapper3]
-                                        responseHandlers:nil];
+                                        responseHandlers:nil
+                                  mobileEngageBodyParser:self.mockMobileEngageBodyParser];
 
     [self.restClient executeWithRequestModel:requestModel1
                          coreCompletionProxy:[[FakeRESTClientCompletionProxy alloc] initWithCompletionBlock:^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
@@ -282,7 +357,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                        timestampProvider:self.mockTimestampProvider
                                        additionalHeaders:nil
                                      requestModelMappers:nil
-                                        responseHandlers:@[mockResponseHandler1, mockResponseHandler2]];
+                                        responseHandlers:@[mockResponseHandler1, mockResponseHandler2]
+                                  mobileEngageBodyParser:self.mockMobileEngageBodyParser];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionProxy"];
     __block EMSResponseModel *returnedResponseModel = nil;

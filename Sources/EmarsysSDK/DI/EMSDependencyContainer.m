@@ -91,6 +91,7 @@
 #import "MEIAMCleanupResponseHandlerV4.h"
 #import "EMSDeviceEventStateResponseHandler.h"
 #import "EMSIdTokenMapper.h"
+#import "EMSMobileEngageNullSafeBodyParser.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -403,7 +404,8 @@
                                                                                           endpoint:self.endpoint],
                                              [[EMSIdTokenMapper alloc] initWithRequestContext:self.requestContext
                                                                                      endpoint:self.endpoint]]
-                                        responseHandlers:self.responseHandlers];
+                                        responseHandlers:self.responseHandlers
+                                  mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
 
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
                                                                                                       operationQueue:self.coreOperationQueue

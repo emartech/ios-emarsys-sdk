@@ -62,6 +62,8 @@
         return YES;
     if (model == nil)
         return NO;
+    if (_parsedBody != model->_parsedBody && ![_parsedBody isEqual:model->_parsedBody])
+        return NO;
     if (self.statusCode != model.statusCode)
         return NO;
     if (self.headers != model.headers && ![self.headers isEqualToDictionary:model.headers])

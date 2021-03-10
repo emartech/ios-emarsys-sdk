@@ -19,6 +19,7 @@
 #import "EMSResponseModel.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSOperationQueue.h"
+#import "EMSMobileEngageNullSafeBodyParser.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -40,12 +41,15 @@ SPEC_BEGIN(EMSRequestManagerTests)
                                                                   delegate:nil
                                                              delegateQueue:queue];
 
+            EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
+
             EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
                                                                          queue:queue
                                                              timestampProvider:[EMSTimestampProvider new]
                                                              additionalHeaders:nil
                                                            requestModelMappers:nil
-                                                              responseHandlers:nil];
+                                                              responseHandlers:nil
+                                                        mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                         operationQueue:queue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
@@ -216,9 +220,9 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 NSString *url = @"https://www.google.com";
 
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:url];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
 
@@ -244,9 +248,9 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 NSString *url = @"https://www.google.com";
 
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:url];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
 
@@ -278,9 +282,9 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
 
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:url];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
 
@@ -288,7 +292,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 __block NSError *checkableError;
 
                 CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    fail([NSString stringWithFormat:@"SuccessBlock: %@", response]);
+                    fail([NSString stringWithFormat:@"SuccessBlock: %@",
+                                                    response]);
                 };
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
                     checkableRequestId = requestId;
@@ -296,7 +301,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 };
                 EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
 
-                [core submitRequestModel:model withCompletionBlock:nil];
+                [core submitRequestModel:model
+                     withCompletionBlock:nil];
 
                 [[checkableRequestId shouldEventually] equal:model.requestId];
                 [[checkableError shouldNotEventually] beNil];
@@ -306,14 +312,15 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
 
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:url];
-                        [builder setMethod:HTTPMethodGET];
-                    }
+                            [builder setUrl:url];
+                            [builder setMethod:HTTPMethodGET];
+                        }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
 
                 CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    fail([NSString stringWithFormat:@"SuccessBlock: %@", response]);
+                    fail([NSString stringWithFormat:@"SuccessBlock: %@",
+                                                    response]);
                 };
                 CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
                 };
@@ -323,17 +330,19 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 __block NSError *returnedError = nil;
                 [core submitRequestModel:model
                      withCompletionBlock:^(NSError *error) {
-                    returnedError = error;
-                    [exp fulfill];
-                }];
+                         returnedError = error;
+                         [exp fulfill];
+                     }];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:30];
                 [[returnedError shouldNot] beNil];
             });
 
             it(@"should throw an exception, when requestModel is nil", ^{
                 @try {
-                    [requestManager submitRequestModel:nil withCompletionBlock:nil];
+                    [requestManager submitRequestModel:nil
+                                   withCompletionBlock:nil];
                     fail(@"Expected exception when requestModel is nil");
                 } @catch (NSException *exception) {
                     [[theValue(exception) shouldNot] beNil];
@@ -352,7 +361,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
             it(@"should save shard via shardRepository", ^{
                 EMSShard *shard = [EMSShard mock];
 
-                [[shardRepository shouldEventually] receive:@selector(add:) withArguments:shard];
+                [[shardRepository shouldEventually] receive:@selector(add:)
+                                              withArguments:shard];
 
                 [requestManager submitShard:shard];
             });
@@ -414,7 +424,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
                     [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                             withArguments:requestModel, completionHandler];
+                                             withArguments:requestModel,
+                                                           completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -455,7 +466,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                     EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
                     EMSRESTClient *restClient = [EMSRESTClient nullMock];
                     [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                             withArguments:requestModel, completionHandler];
+                                             withArguments:requestModel,
+                                                           completionHandler];
 
                     EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
                     EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
@@ -524,12 +536,13 @@ SPEC_BEGIN(EMSRequestManagerTests)
 
                 for (int i = 0; i < 100; ++i) {
                     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
-                            [builder setMethod:HTTPMethodGET];
-                        }
+                                [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
+                                [builder setMethod:HTTPMethodGET];
+                            }
                                                             timestampProvider:[EMSTimestampProvider new]
                                                                  uuidProvider:[EMSUUIDProvider new]];
-                    [requestManager submitRequestModel:model withCompletionBlock:nil];
+                    [requestManager submitRequestModel:model
+                                   withCompletionBlock:nil];
                 }
 
                 EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];
@@ -539,7 +552,8 @@ SPEC_BEGIN(EMSRequestManagerTests)
                 [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
                                                                     object:reachabilityOnlineMock];
 
-                [EMSWaiter waitForExpectations:@[exp] timeout:60];
+                [EMSWaiter waitForExpectations:@[exp]
+                                       timeout:60];
                 [[theValue(successCount) should] equal:theValue(100)];
                 [[theValue(errorCount) should] equal:theValue(0)];
             });

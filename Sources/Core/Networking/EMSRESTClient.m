@@ -12,6 +12,7 @@
 #import "EMSAbstractResponseHandler.h"
 #import "EMSRequestLog.h"
 #import "EMSStatusLog.h"
+#import "EMSResponseBodyParserProtocol.h"
 
 @interface EMSRESTClient () <NSURLSessionDelegate>
 
@@ -22,6 +23,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) NSArray<id <EMSRequestModelMapperProtocol>> *requestModelMappers;
 @property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) id <EMSResponseBodyParserProtocol>mobileEngageBodyParser;
 
 @end
 
@@ -32,10 +34,12 @@
               timestampProvider:(EMSTimestampProvider *)timestampProvider
               additionalHeaders:(nullable NSDictionary<NSString *, NSString *> *)additionalHeaders
             requestModelMappers:(nullable NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers
-               responseHandlers:(nullable NSArray<EMSAbstractResponseHandler *> *)responseHandlers {
+               responseHandlers:(nullable NSArray<EMSAbstractResponseHandler *> *)responseHandlers
+         mobileEngageBodyParser:(id <EMSResponseBodyParserProtocol>)mobileEngageBodyParser {
     NSParameterAssert(session);
     NSParameterAssert(queue);
     NSParameterAssert(timestampProvider);
+    NSParameterAssert(mobileEngageBodyParser);
     if (self = [super init]) {
         _session = session;
         _queue = queue;
@@ -43,6 +47,7 @@
         _additionalHeaders = additionalHeaders;
         _requestModelMappers = requestModelMappers;
         _responseHandlers = responseHandlers;
+        _mobileEngageBodyParser = mobileEngageBodyParser;
     }
     return self;
 }
@@ -66,10 +71,16 @@
                                                                                                    error:error];
                                                          NSHTTPURLResponse *httpUrlResponse = (NSHTTPURLResponse *) response;
 
+                                                         id responseParsedBody = nil;
+                                                         if ([self.mobileEngageBodyParser shouldParse:requestModel]) {
+                                                             responseParsedBody = [self.mobileEngageBodyParser parseWithRequestModel:requestModel
+                                                                                                                        responseBody:data];
+                                                         }
+
                                                          EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:[httpUrlResponse statusCode]
                                                                                                                                 headers:[httpUrlResponse allHeaderFields]
                                                                                                                                    body:data
-                                                                                                                             parsedBody:nil
+                                                                                                                             parsedBody:responseParsedBody
                                                                                                                            requestModel:requestModel
                                                                                                                               timestamp:[weakSelf.timestampProvider provideTimestamp]];
                                                          [weakSelf handleResponse:responseModel];

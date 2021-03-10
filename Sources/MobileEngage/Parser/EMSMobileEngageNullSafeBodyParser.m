@@ -2,11 +2,11 @@
 // Copyright (c) 2021 Emarsys. All rights reserved.
 //
 
-#import <OCMArg.h>
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSStatusLog.h"
 #import "EMSMacros.h"
 #import "EMSResponseModel.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSMobileEngageNullSafeBodyParser ()
 
@@ -30,21 +30,27 @@
 
 - (id)parseWithRequestModel:(EMSRequestModel *)requestModel
                responseBody:(NSData *)responseBody {
+    NSError *error;
+    id result = nil;
     id parsedBody = [NSJSONSerialization JSONObjectWithData:responseBody
                                                     options:NSJSONReadingMutableContainers
-                                                      error:nil];
-    id result = nil;
-    if ([parsedBody isKindOfClass:[NSDictionary class]]) {
-        result = [NSDictionary dictionaryWithDictionary:[self removeNSNullsFromDictionary:parsedBody]];
-    } else if ([parsedBody isKindOfClass:[NSArray class]]) {
-        result = [self removeNSNullsFromArray:parsedBody];
+                                                      error:&error];
+
+    if (error) {
+        [self setShouldSendLog:YES];
+    } else {
+        if ([parsedBody isKindOfClass:[NSDictionary class]]) {
+            result = [NSDictionary dictionaryWithDictionary:[self removeNSNullsFromDictionary:parsedBody]];
+        } else if ([parsedBody isKindOfClass:[NSArray class]]) {
+            result = [self removeNSNullsFromArray:parsedBody];
+        }
     }
 
     if ([self shouldSendLog]) {
         [self sendLogWithRequestModel:requestModel
-                         responseBody:responseBody];
+                         responseBody:responseBody
+                                error:error];
     }
-
     return result;
 }
 
@@ -81,12 +87,14 @@
 }
 
 - (void)sendLogWithRequestModel:(EMSRequestModel *)requestModel
-                   responseBody:(NSData *)responseBody {
+                   responseBody:(NSData *)responseBody
+                          error:(NSError *)error {
     NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
     statusDict[@"responseBody"] = [[NSString alloc] initWithData:responseBody
                                                         encoding:NSUTF8StringEncoding];
-    statusDict[@"url"] = [requestModel url];
-    statusDict[@"timestamp"] = [requestModel timestamp];
+    statusDict[@"url"] = [[requestModel url] absoluteString];
+    statusDict[@"timestamp"] = [[requestModel timestamp] stringValueInUTC];
+    statusDict[@"error"] = error.localizedDescription;
 
     EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                              sel:_cmd

@@ -16,6 +16,7 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSOperationQueue.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
+#import "EMSMobileEngageNullSafeBodyParser.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -67,12 +68,15 @@ SPEC_BEGIN(DennaTest)
                                                                   delegate:nil
                                                              delegateQueue:operationQueue];
 
+            EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
+
             EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
                                                                          queue:operationQueue
                                                              timestampProvider:[EMSTimestampProvider new]
                                                              additionalHeaders:nil
                                                            requestModelMappers:nil
-                                                              responseHandlers:nil];
+                                                              responseHandlers:nil
+                                                        mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                         operationQueue:operationQueue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
@@ -147,12 +151,15 @@ SPEC_BEGIN(DennaTest)
                                                                       delegate:nil
                                                                  delegateQueue:operationQueue];
 
+                EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
+
                 EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
                                                                              queue:operationQueue
                                                                  timestampProvider:[EMSTimestampProvider new]
                                                                  additionalHeaders:nil
                                                                requestModelMappers:nil
-                                                                  responseHandlers:nil];
+                                                                  responseHandlers:nil
+                                                            mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
                 EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
                                                                                                                             operationQueue:operationQueue
                                                                                                                        defaultSuccessBlock:middleware.successBlock
