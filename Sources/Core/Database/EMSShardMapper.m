@@ -23,10 +23,13 @@
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
     NSString *shardId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
     NSString *type = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 1)];
-    NSDictionary<NSString *, NSString *> *data;
+    NSDictionary<NSString *, id> *data;
     if ([self isNotNull:statement atIndex:2]) {
         data = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
                                                                   index:2]];
+        if (!data) {
+            data = @{};
+        }
     }
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 3)];
     NSTimeInterval ttl = sqlite3_column_double(statement, 4);
