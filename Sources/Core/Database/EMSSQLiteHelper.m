@@ -7,6 +7,7 @@
 #import "EMSDBTriggerKey.h"
 #import "EMSSQLStatementFactory.h"
 #import "EMSDBTriggerProtocol.h"
+#import "EMSSQLiteHelperSchemaHandlerProtocol.h"
 
 @interface EMSSQLiteHelper ()
 
@@ -19,7 +20,7 @@
 @implementation EMSSQLiteHelper
 
 - (instancetype)initWithDatabasePath:(NSString *)path
-                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
+                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandlerProtocol>)schemaDelegate {
     if (self = [super init]) {
         _dbPath = path;
         _schemaHandler = schemaDelegate;
@@ -30,7 +31,7 @@
 }
 
 - (instancetype)initWithSqlite3Db:(sqlite3 *)db
-                   schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate {
+                   schemaDelegate:(id <EMSSQLiteHelperSchemaHandlerProtocol>)schemaDelegate {
     if (self = [super init]) {
         _db = db;
         _schemaHandler = schemaDelegate;

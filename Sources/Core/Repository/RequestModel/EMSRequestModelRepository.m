@@ -7,6 +7,7 @@
 #import "EMSSchemaContract.h"
 #import "EMSCountMapper.h"
 #import "EMSSQLiteHelper.h"
+#import "EMSSQLiteHelperProtocol.h"
 #import <UIKit/UIKit.h>
 
 @interface EMSRequestModelRepository ()
@@ -20,7 +21,7 @@
 
 #pragma mark - Init
 
-- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper
+- (instancetype)initWithDbHelper:(id <EMSSQLiteHelperProtocol>)sqliteHelper
                   operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(sqliteHelper);
     NSParameterAssert(operationQueue);

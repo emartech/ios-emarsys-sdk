@@ -3,8 +3,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSSQLiteHelper.h"
+#import "EMSSQLiteHelperSchemaHandlerProtocol.h"
 
-@interface EMSSqliteSchemaHandler : NSObject <EMSSQLiteHelperSchemaHandler>
+@interface EMSSqliteSchemaHandler : NSObject <EMSSQLiteHelperSchemaHandlerProtocol>
 
 @end

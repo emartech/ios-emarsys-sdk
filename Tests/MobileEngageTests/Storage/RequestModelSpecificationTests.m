@@ -11,6 +11,7 @@
 #import "NSDate+EMSCore.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
+#import "EMSSQLiteHelper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 

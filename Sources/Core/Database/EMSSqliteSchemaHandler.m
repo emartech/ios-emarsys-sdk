@@ -7,13 +7,13 @@
 
 @implementation EMSSqliteSchemaHandler
 
-- (void)onCreateWithDbHelper:(EMSSQLiteHelper *)dbHelper {
+- (void)onCreateWithDbHelper:(id <EMSSQLiteHelperProtocol>)dbHelper {
     [self onUpgradeWithDbHelper:dbHelper
                      oldVersion:0
                      newVersion:[self schemaVersion]];
 }
 
-- (void)onUpgradeWithDbHelper:(EMSSQLiteHelper *)dbHelper
+- (void)onUpgradeWithDbHelper:(id <EMSSQLiteHelperProtocol>)dbHelper
                    oldVersion:(int)oldVersion
                    newVersion:(int)newVersion {
     for (int i = oldVersion; i < newVersion; ++i) {

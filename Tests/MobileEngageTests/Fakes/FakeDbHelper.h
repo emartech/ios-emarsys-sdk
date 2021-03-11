@@ -3,14 +3,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSSQLiteHelper.h"
+#import "EMSSQLiteHelperProtocol.h"
 
+@interface FakeDbHelper : NSObject <EMSSQLiteHelperProtocol>
 
-@interface FakeDbHelper : EMSSQLiteHelper
-
-@property (nonatomic, strong) id insertedModel;
 @property (nonatomic, strong) void (^closeOperationQueueBlock)(NSOperationQueue *operationQueue);
-
-- (void)waitForInsert;
 
 @end

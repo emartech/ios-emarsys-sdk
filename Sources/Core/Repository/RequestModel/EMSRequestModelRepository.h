@@ -5,11 +5,11 @@
 #import <Foundation/Foundation.h>
 #import "EMSRequestModelRepositoryProtocol.h"
 
-@class EMSSQLiteHelper;
+@protocol EMSSQLiteHelperProtocol;
 
 @interface EMSRequestModelRepository : NSObject <EMSRequestModelRepositoryProtocol>
 
-- (instancetype)initWithDbHelper:(EMSSQLiteHelper *)sqliteHelper
+- (instancetype)initWithDbHelper:(id <EMSSQLiteHelperProtocol>)sqliteHelper
                   operationQueue:(NSOperationQueue *)operationQueue;
 
 @end

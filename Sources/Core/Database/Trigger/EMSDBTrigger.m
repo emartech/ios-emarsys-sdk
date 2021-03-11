@@ -2,6 +2,8 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSDBTrigger.h"
+#import "EMSDBTriggerProtocol.h"
+#import "EMSModelMapperProtocol.h"
 
 @interface EMSDBTriggerType ()
 

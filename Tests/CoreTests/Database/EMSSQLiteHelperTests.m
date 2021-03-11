@@ -266,7 +266,8 @@ SPEC_BEGIN(EMSSQLiteHelperTests)
             it(@"should call onCreate when the database is opened the first time", ^{
                 EMSSqliteSchemaHandler *schemaDelegate = [EMSSqliteSchemaHandler mock];
                 dbHelper.schemaHandler = schemaDelegate;
-                [[schemaDelegate should] receive:@selector(onCreateWithDbHelper:) withArguments:kw_any()];
+                [[schemaDelegate should] receive:@selector(onCreateWithDbHelper:)
+                                   withArguments:kw_any()];
 
                 [dbHelper open];
             });

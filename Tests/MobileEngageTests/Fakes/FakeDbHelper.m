@@ -18,17 +18,61 @@
     return self;
 }
 
+- (int)version {
+    return 0;
+}
+
+- (void)open {
+
+}
+
+- (void)registerTriggerWithTableName:(NSString *)tableName
+                         triggerType:(EMSDBTriggerType *)triggerType
+                        triggerEvent:(EMSDBTriggerEvent *)triggerEvent
+                             trigger:(id)trigger {
+
+}
+
+- (BOOL)removeFromTable:(NSString *)tableName
+              selection:(NSString *)where
+          selectionArgs:(NSArray<NSString *> *)whereArgs {
+    return NO;
+}
+
+- (NSArray *)queryWithTable:(NSString *)tableName
+                  selection:(NSString *)selection
+              selectionArgs:(NSArray<NSString *> *)selectionArgs
+                    orderBy:(NSString *)orderBy
+                      limit:(NSString *)limit
+                     mapper:(id)mapper {
+    return nil;
+}
+
+- (BOOL)insertModel:(id)model
+             mapper:(id)mapper {
+    return NO;
+}
+
+- (BOOL)executeCommand:(NSString *)command {
+    return NO;
+}
+
+- (BOOL)execute:(NSString *)command
+  withBindBlock:(BindBlock)bindBlock {
+    return NO;
+}
+
+- (NSArray *)executeQuery:(NSString *)query
+                   mapper:(id)mapper {
+    return nil;
+}
+
 - (void)close {
     self.closeOperationQueueBlock([NSOperationQueue currentQueue]);
 }
 
 - (void)insertModel:(id)model withQuery:(NSString *)insertSQL mapper:(id <EMSModelMapperProtocol>)mapper {
-    _insertedModel = model;
     [_expectation fulfill];
-}
-
-- (void)waitForInsert {
-    [EMSWaiter waitForExpectations:@[_expectation] timeout:30];
 }
 
 @end

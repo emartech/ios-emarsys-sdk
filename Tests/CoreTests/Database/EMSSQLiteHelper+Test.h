@@ -7,5 +7,5 @@
 @interface EMSSQLiteHelper (Test)
 
 - (instancetype)initWithSqlite3Db:(sqlite3 *)db
-                   schemaDelegate:(id <EMSSQLiteHelperSchemaHandler>)schemaDelegate;
+                   schemaDelegate:(id <EMSSQLiteHelperSchemaHandlerProtocol>)schemaDelegate;
 @end
