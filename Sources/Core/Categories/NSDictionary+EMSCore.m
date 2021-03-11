@@ -5,6 +5,8 @@
 #import "NSDictionary+EMSCore.h"
 #import "EMSStatusLog.h"
 #import "EMSMacros.h"
+#import "EMSDBTrigger.h"
+#import "MEInAppMessage.h"
 
 @implementation NSDictionary (EMSCore)
 
@@ -139,6 +141,54 @@
         mutableSelf[key] = dictionary[key];
     }
     return [NSDictionary dictionaryWithDictionary:mutableSelf];
+}
+
+- (NSDictionary *)dictionaryWithAllowedTypes:(NSSet<Class> *)allowedTypes {
+    NSMutableDictionary *result = [self mutableCopy];
+    for (NSString *key in result.allKeys) {
+        id value = [self valueWithAllowedTypes:allowedTypes
+                                        object:result[key]];
+        result[key] = value;
+    }
+    return [NSDictionary dictionaryWithDictionary:result];
+}
+
+- (NSArray *)arrayWithAllowedTypes:(NSSet<Class> *)allowedTypes
+                            object:(id)object {
+    NSMutableArray *mutableArray = [object mutableCopy];
+    for (NSInteger i = mutableArray.count - 1; i >= 0; --i) {
+        id value = [self valueWithAllowedTypes:allowedTypes
+                                       object:mutableArray[(NSUInteger) i]];
+        mutableArray[(NSUInteger) i] = value;
+    }
+    return [NSArray arrayWithArray:mutableArray];
+}
+
+- (id)valueWithAllowedTypes:(NSSet<Class> *)allowedTypes
+                     object:(id)object {
+    id result = object;
+    if ([object isKindOfClass:[NSDictionary class]]) {
+        result = [object dictionaryWithAllowedTypes:allowedTypes];
+    } else if ([object isKindOfClass:[NSArray class]]) {
+        result = [self arrayWithAllowedTypes:allowedTypes
+                                      object:object];
+    } else if (![self isKindOfAllowedTypes:allowedTypes
+                                    object:object]) {
+        result = [object description];
+    }
+    return result;
+}
+
+- (BOOL)isKindOfAllowedTypes:(NSSet<Class> *)classes
+                      object:(id)object {
+    BOOL result = NO;
+    for (Class aClass in classes) {
+        if ([object isKindOfClass:aClass]) {
+            result = YES;
+            break;
+        }
+    }
+    return result;
 }
 
 @end

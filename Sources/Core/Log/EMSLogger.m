@@ -10,6 +10,7 @@
 #import "EMSStorage.h"
 #import "EMSLogLevelProtocol.h"
 #import "EMSLogLevel.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSLogger ()
 
@@ -66,7 +67,7 @@
                         [builder setType:[entry topic]];
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
                         mutableData[@"level"] = [self logLevelStringFromLogLevel:level];
-                        [builder addPayloadEntries:[NSDictionary dictionaryWithDictionary:mutableData]];
+                        [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
                     }
                                               timestampProvider:self.timestampProvider
                                                    uuidProvider:self.uuidProvider]];

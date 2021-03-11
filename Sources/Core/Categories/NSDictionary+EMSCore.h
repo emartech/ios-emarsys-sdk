@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)mergeWithDictionary:(NSDictionary *)dictionary;
 
+- (NSDictionary *)dictionaryWithAllowedTypes:(NSSet<Class> *)allowedTypes;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -31,7 +31,9 @@
 
 - (void)setUp {
     _topic = @"general_topic";
-    _data = @{@"key1": @"value1"};
+    _data = @{
+            @"key1": @"value1"
+    };
     _timestamp = [NSDate date];
     _shardId = @"shardId";
 
@@ -143,10 +145,10 @@
 - (void)testInit_shouldSetLogLevelToError_whenStorageIsEmpty {
     EMSStorage *emptyMockStorage = OCMClassMock([EMSStorage class]);
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
-                                          opertaionQueue:self.operationQueue
-                                       timestampProvider:self.mockTimestampProvider
-                                            uuidProvider:self.mockUuidProvider
-                                                 storage:emptyMockStorage];
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:emptyMockStorage];
 
     XCTAssertEqual(logger.logLevel, LogLevelError);
 }
@@ -316,6 +318,52 @@
 
     OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
                                                                       type:@"app:start"
+                                                                      data:[NSDictionary dictionaryWithDictionary:mutableData]
+                                                                 timestamp:self.timestamp
+                                                                       ttl:FLT_MAX]]);
+}
+
+- (void)testLogLevel_useDBSafeDictionaryData {
+    NSDate *date = [NSDate date];
+    self.data = @{
+            @"key1": @"value1",
+            @"key2": date
+    };
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:self.mockStorage];
+    id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
+
+    OCMStub([logEntry data]).andReturn(self.data);
+    OCMStub([logEntry topic]).andReturn(@"testTopic");
+
+    [logger setLogLevel:LogLevelTrace];
+
+    [logger log:logEntry
+          level:LogLevelInfo];
+
+    [EMSWaiter waitForExpectations:@[expectation]];
+
+
+    NSMutableDictionary *mutableData = [@{
+            @"key1": @"value1",
+            @"key2": [date description]
+    } mutableCopy];
+    mutableData[@"level"] = @"INFO";
+
+    OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
+                                                                      type:@"testTopic"
                                                                       data:[NSDictionary dictionaryWithDictionary:mutableData]
                                                                  timestamp:self.timestamp
                                                                        ttl:FLT_MAX]]);
