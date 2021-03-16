@@ -395,103 +395,103 @@
                                          completionBlock:completionBlock]);
 }
 
-//- (void)testSetAuthorizedContact_shouldDelegateCallToMobileEngage {
-//    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
-//    EMSCompletionBlock completionBlock = ^(NSError *error) {
-//    };
-//
-//    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
-//
-//    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-//                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
-//            }
-//              mobileEngageEnabled:YES
-//                   predictEnabled:NO];
-//
-//    [Emarsys setAuthenticatedContactWithIdToken:idToken
-//                                completionBlock:completionBlock];
-//
-//    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-//                                                   completionBlock:completionBlock]);
-//}
-//
-//- (void)testSetAuthorizedContact_shouldDisablePredict {
-//    [MEExperimental enableFeature:EMSInnerFeature.predict];
-//    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
-//    EMSCompletionBlock completionBlock = ^(NSError *error) {
-//    };
-//
-//    [Emarsys setAuthenticatedContactWithIdToken:idToken
-//                                completionBlock:completionBlock];
-//
-//    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]);
-//}
-//
-//- (void)testSetAuthorizedContact_setAuthorizedContactIsNotCalledOnMobileEngage_when_mobileEngageIsDisabled {
-//    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
-//    EMSCompletionBlock completionBlock = ^(NSError *error) {
-//    };
-//
-//    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
-//
-//    OCMReject([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-//                                                   completionBlock:completionBlock]);
-//
-//    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-//                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
-//            }
-//              mobileEngageEnabled:NO
-//                   predictEnabled:YES];
-//
-//    [Emarsys setAuthenticatedContactWithIdToken:idToken
-//                                completionBlock:completionBlock];
-//}
-//
-//- (void)testSetAuthorizedContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
-//    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
-//
-//    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
-//
-//    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-//                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
-//
-//            }
-//              mobileEngageEnabled:NO
-//                   predictEnabled:NO];
-//
-//    [Emarsys setAuthenticatedContactWithIdToken:idToken
-//                                completionBlock:nil];
-//
-//    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-//                                                   completionBlock:[OCMArg any]]);
-//}
-//
-//- (void)testSetAuthenticatedContact_idToken_mustNotBeNil {
-//    @try {
-//        [Emarsys setAuthenticatedContactWithIdToken:nil
-//                                    completionBlock:nil];
-//        XCTFail(@"Expected Exception when idToken is nil!");
-//    } @catch (NSException *exception) {
-//        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: idToken"]);
-//    }
-//}
-//
-//- (void)testSetAuthenticatedContactWithContactFieldValueSsCalledByMobileEngage_when_mobileEngageIsEnabled {
-//    NSString *idToken = @"testIdToken";
-//
-//    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
-//
-//    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-//                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
-//            }
-//              mobileEngageEnabled:YES
-//                   predictEnabled:YES];
-//
-//    [Emarsys setAuthenticatedContactWithIdToken:idToken];
-//
-//    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-//                                                   completionBlock:nil];);
-//}
+- (void)testSetAuthorizedContact_shouldDelegateCallToMobileEngage {
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken
+                                completionBlock:completionBlock];
+
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                   completionBlock:completionBlock]);
+}
+
+- (void)testSetAuthorizedContact_shouldDisablePredict {
+    [MEExperimental enableFeature:EMSInnerFeature.predict];
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken
+                                completionBlock:completionBlock];
+
+    XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]);
+}
+
+- (void)testSetAuthorizedContact_setAuthorizedContactIsNotCalledOnMobileEngage_when_mobileEngageIsDisabled {
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+    };
+
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+
+    OCMReject([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                   completionBlock:completionBlock]);
+
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+            }
+              mobileEngageEnabled:NO
+                   predictEnabled:YES];
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken
+                                completionBlock:completionBlock];
+}
+
+- (void)testSetAuthorizedContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+
+            }
+              mobileEngageEnabled:NO
+                   predictEnabled:NO];
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken
+                                completionBlock:nil];
+
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                   completionBlock:[OCMArg any]]);
+}
+
+- (void)testSetAuthenticatedContact_idToken_mustNotBeNil {
+    @try {
+        [Emarsys setAuthenticatedContactWithIdToken:nil
+                                    completionBlock:nil];
+        XCTFail(@"Expected Exception when idToken is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: idToken"]);
+    }
+}
+
+- (void)testSetAuthenticatedContactWithContactFieldValueSsCalledByMobileEngage_when_mobileEngageIsEnabled {
+    NSString *idToken = @"testIdToken";
+
+    EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:YES];
+
+    [Emarsys setAuthenticatedContactWithIdToken:idToken];
+
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
+                                                   completionBlock:nil];);
+}
 
 - (void)testSetContactWithContactFieldValueIsNotCalledByPredict_when_predictIsDisabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
