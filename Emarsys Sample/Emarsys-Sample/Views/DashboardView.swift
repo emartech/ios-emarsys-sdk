@@ -116,8 +116,8 @@ struct DashboardView: View {
                         }
                     }
                     
-//                    GoogleSignInButton()
-//                        .frame(height: 44)
+                    GoogleSignInButton()
+                        .frame(height: 44)
                 }
                 .padding()
                 
