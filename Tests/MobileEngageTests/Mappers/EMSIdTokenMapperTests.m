@@ -97,7 +97,7 @@
 - (void)testShouldHandleWithRequestModel_YES_whenRequestIsMobileEngageURL_contactEndpoint {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
 
-    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/apps/EMS11-C3FD3/client/contact"]);
+    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/apps/EMS11-C3FD3/client/contact/anonymous=true"]);
 
     BOOL result = [self.idTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
