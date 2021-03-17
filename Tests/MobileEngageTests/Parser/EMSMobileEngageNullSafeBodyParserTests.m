@@ -12,6 +12,7 @@
 @property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 @property(nonatomic, strong) EMSRequestModel *mockRequestModel;
 @property(nonatomic, strong) EMSMobileEngageNullSafeBodyParser *parser;
+@property(nonatomic, strong) NSData *responseBody;
 
 @end
 
@@ -21,6 +22,7 @@
     _mockEndpoint = OCMClassMock([EMSEndpoint class]);
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _parser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.mockEndpoint];
+    _responseBody = [@"testData" dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)testInit_endpointShouldNotBeNil {
@@ -35,7 +37,8 @@
 - (void)testShouldParse_shouldReturnTrue_whenMobileEngageRequest {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
 
-    BOOL result = [self.parser shouldParse:self.mockRequestModel];
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:self.responseBody];
 
     XCTAssertTrue(result);
 }
@@ -43,7 +46,26 @@
 - (void)testShouldParse_shouldReturnFalse_whenNotMobileEngageRequest {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(NO);
 
-    BOOL result = [self.parser shouldParse:self.mockRequestModel];
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:self.responseBody];
+
+    XCTAssertFalse(result);
+}
+
+- (void)testShouldParse_shouldReturnFalse_whenResponseBodyIsEmpty {
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:[NSData new]];
+
+    XCTAssertFalse(result);
+}
+
+- (void)testShouldParse_shouldReturnFalse_whenResponseBodyIsNil {
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:nil];
 
     XCTAssertFalse(result);
 }

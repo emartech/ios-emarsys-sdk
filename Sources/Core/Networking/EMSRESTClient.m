@@ -72,7 +72,8 @@
                                                          NSHTTPURLResponse *httpUrlResponse = (NSHTTPURLResponse *) response;
 
                                                          id responseParsedBody = nil;
-                                                         if ([self.mobileEngageBodyParser shouldParse:requestModel]) {
+                                                         if ([self.mobileEngageBodyParser shouldParse:requestModel
+                                                                                         responseBody:data]) {
                                                              responseParsedBody = [self.mobileEngageBodyParser parseWithRequestModel:requestModel
                                                                                                                         responseBody:data];
                                                          }
