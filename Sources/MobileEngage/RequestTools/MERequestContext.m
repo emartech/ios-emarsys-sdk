@@ -68,6 +68,7 @@
     _applicationCode = applicationCode;
     if (applicationCode) {
         [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+        [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
     } else {
         [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
     }

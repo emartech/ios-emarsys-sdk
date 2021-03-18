@@ -265,7 +265,7 @@ SPEC_BEGIN(MERequestContextTests)
                 [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beNo];
             });
 
-            it(@"should enableWithCompletionBlock: mobileEngage feature when appCode is set", ^{
+            it(@"should enableWithCompletionBlock: mobileEngage, v4 feature when appCode is set", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                                contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
@@ -274,6 +274,7 @@ SPEC_BEGIN(MERequestContextTests)
                                                                                       storage:storage];
                 [context setApplicationCode:@"EMS11-C3FD3"];
                 [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beYes];
+                [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beYes];
             });
         });
 
