@@ -25,9 +25,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         idToken = user.authentication.idToken
         signedIn = true
         
-        guard let userId = user.userID else { return }
-        
-        Emarsys.setAuthenticatedContactWithIdToken(userId, completionBlock: nil)
+        Emarsys.setAuthenticatedContactWithIdToken(idToken, completionBlock: nil)
     }
 }
 
