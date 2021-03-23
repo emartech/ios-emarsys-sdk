@@ -47,16 +47,6 @@
                ReferencedContainer = "container:EmarsysSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8AC1E40D2609F4A5001A5525"
-               BuildableName = "E2ETests.xctest"
-               BlueprintName = "E2ETests"
-               ReferencedContainer = "container:EmarsysSDK.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
