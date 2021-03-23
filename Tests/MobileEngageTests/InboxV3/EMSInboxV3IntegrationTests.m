@@ -31,20 +31,19 @@
 - (void)testFetchMessages {
     __block EMSInboxResult *returnedInboxResult = nil;
     __block NSError *returnedError = nil;
-
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    [Emarsys.messageInbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
-        returnedInboxResult = inboxResult;
-        returnedError = error;
-        [expectation fulfill];
-    }];
-
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
-
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertNil(returnedError);
-    XCTAssertNotNil(returnedInboxResult);
+    [self retryWithRunnerBlock:^(XCTestExpectation *expectation) {
+                [Emarsys.messageInbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
+                    returnedInboxResult = inboxResult;
+                    returnedError = error;
+                    [expectation fulfill];
+                }];
+            }
+                assertionBlock:^(XCTWaiterResult waiterResult) {
+                    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+                    XCTAssertNil(returnedError);
+                    XCTAssertNotNil(returnedInboxResult);
+                }
+                    retryCount:3];
 }
 
 - (void)testAddTag {
