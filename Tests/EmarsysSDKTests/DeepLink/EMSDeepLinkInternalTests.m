@@ -63,7 +63,8 @@
 }
 
 - (void)testTrackDeepLinkWithSourceHandler_shouldReturnYes {
-    NSString *activityType = [NSString stringWithFormat:@"%@", NSUserActivityTypeBrowsingWeb];
+    NSString *activityType = [NSString stringWithFormat:@"%@",
+                                                        NSUserActivityTypeBrowsingWeb];
     NSURL *url = [[NSURL alloc] initWithString:@"http://www.google.com/something?fancy_url=1&ems_dl=1_2_3_4_5"];
     NSUserActivity *userActivity = OCMClassMock([NSUserActivity class]);
 
@@ -91,7 +92,8 @@
 - (void)testTrackDeepLinkWithSourceHandler_shouldCallSourceBlock {
     NSString *expectedSource = @"http://www.google.com/something?fancy_url=1&ems_dl=1_2_3_4_5";
 
-    NSString *activityType = [NSString stringWithFormat:@"%@", NSUserActivityTypeBrowsingWeb];
+    NSString *activityType = [NSString stringWithFormat:@"%@",
+                                                        NSUserActivityTypeBrowsingWeb];
     NSURL *url = [[NSURL alloc] initWithString:expectedSource];
     NSUserActivity *userActivity = OCMClassMock([NSUserActivity class]);
 
@@ -100,16 +102,21 @@
 
     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
 
+    __block NSOperationQueue *returnedOperationQueue = nil;
     __block NSString *resultSource;
-    [self.deepLink trackDeepLinkWith:userActivity
-                       sourceHandler:^(NSString *source) {
-                           resultSource = source;
-                           [exp fulfill];
-                       }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.deepLink trackDeepLinkWith:userActivity
+                           sourceHandler:^(NSString *source) {
+                               returnedOperationQueue = [NSOperationQueue currentQueue];
+                               resultSource = source;
+                               [exp fulfill];
+                           }];
+    });
     [EMSWaiter waitForExpectations:@[exp]
                            timeout:10];
 
     XCTAssertEqualObjects(resultSource, expectedSource);
+    XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
 }
 
 - (void)testTrackDeepLinkWithSourceHandler_shouldSubmitDeepLinkTrackingRequestModel {
@@ -118,7 +125,8 @@
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     NSString *expectedSource = @"http://www.google.com/something?fancy_url=1&ems_dl=1_2_3_4_5";
 
-    NSString *activityType = [NSString stringWithFormat:@"%@", NSUserActivityTypeBrowsingWeb];
+    NSString *activityType = [NSString stringWithFormat:@"%@",
+                                                        NSUserActivityTypeBrowsingWeb];
     NSURL *url = [[NSURL alloc] initWithString:expectedSource];
     NSUserActivity *userActivity = OCMClassMock([NSUserActivity class]);
 

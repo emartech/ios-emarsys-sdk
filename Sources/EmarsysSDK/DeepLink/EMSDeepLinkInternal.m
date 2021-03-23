@@ -44,7 +44,9 @@
         if (queryItem) {
             result = YES;
             if (sourceHandler) {
-                sourceHandler(webPageURL);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    sourceHandler(webPageURL);
+                });
             }
             [self.requestManager submitRequestModel:[self.requestFactory createDeepLinkRequestModelWithTrackingId:queryItem.value ? queryItem.value : @""]
                                 withCompletionBlock:completionBlock];
