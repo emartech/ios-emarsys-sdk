@@ -14,11 +14,11 @@ class EmarsysInboxE2ETests: XCTestCase {
         case missingMessage
     }
 
-    func skipped_testInboxTags_step0() {
+    func testInboxTags_step0() {
         EmarsysTestUtils.tearDownEmarsys()
     }
 
-    func skipped_testInboxTags_step1() {
+    func testInboxTags_step1() {
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("EMS11-C3FD3")
             builder.setContactFieldId(2575)
@@ -32,7 +32,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
     }
 
-    func skipped_testInboxTags_step2() {
+    func testInboxTags_step2() {
         retry { [unowned self] () in
 
             let message = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
@@ -41,7 +41,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         }
     }
 
-    func skipped_testInboxTags_step3() {
+    func testInboxTags_step3() {
         var messageWithTag: EMSMessage?
 
         retry { [unowned self] () in
@@ -58,7 +58,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         Emarsys.messageInbox.removeTag("testtag", fromMessage: messageWithTag?.id ?? "")
     }
 
-    func skipped_testInboxTags_step4() {
+    func testInboxTags_step4() {
         var messageWithoutTag: EMSMessage?
 
         retry { [unowned self] () in
@@ -73,7 +73,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         XCTAssertFalse(messageWithoutTag?.tags?.contains("testtag") ?? true)
     }
 
-    func skipped_testInboxTags_step5() {
+    func testInboxTags_step5() {
         EmarsysTestUtils.tearDownEmarsys()
     }
 

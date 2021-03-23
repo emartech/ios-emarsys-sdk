@@ -1,7 +1,7 @@
 //
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
-#import <Kiwi.h>
+#import <XCTest/XCTest.h>
 #import "EmarsysTestUtils.h"
 #import "EMSDependencyInjection.h"
 #import "MEExperimental.h"
@@ -108,8 +108,7 @@
 
     XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
                                                                timeout:TIMEOUT];
-    [[returnedErrorForSetCustomer should] beNil];
-    [[theValue(setCustomerResult) should] equal:theValue(XCTWaiterResultCompleted)];
+    XCTAssertEqual(setCustomerResult, XCTWaiterResultCompleted);
 }
 
 + (void)waitForSetPushToken {
@@ -126,8 +125,7 @@
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-    [[theValue(waiterResult) should] equal:theValue(XCTWaiterResultCompleted)];
-    [returnedError shouldBeNil];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 @end
