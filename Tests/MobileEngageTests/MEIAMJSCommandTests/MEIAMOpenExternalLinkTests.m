@@ -1,123 +1,123 @@
-#import "Kiwi.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "MEIAMOpenExternalLink.h"
 #import "EMSWaiter.h"
 
-SPEC_BEGIN(MEIAMOpenExternalLinkTests)
+@interface MEIAMOpenExternalLinkTests : XCTestCase
 
-        __block UIApplication *_applicationMock;
-        __block MEIAMOpenExternalLink *_command;
+@property(nonatomic, strong) UIApplication *mockApplication;
+@property(nonatomic, strong) MEIAMOpenExternalLink *command;
 
-        describe(@"openExternalLink", ^{
+@end
 
-            beforeEach(^{
-                _command = [MEIAMOpenExternalLink new];
-                _applicationMock = [UIApplication mock];
-                [[UIApplication should] receive:@selector(sharedApplication) andReturn:_applicationMock];
-            });
+@implementation MEIAMOpenExternalLinkTests
 
-            it(@"should return false if link is not valid", ^{
-                NSString *link = @"notAValidUrl";
+- (void)setUp {
+    _mockApplication = OCMClassMock([UIApplication class]);
+    _command = [[MEIAMOpenExternalLink alloc] initWithApplication:self.mockApplication];
+}
 
-                [[_applicationMock should] receive:@selector(canOpenURL:) andReturn:theValue(NO)];
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"wait"];
+- (void)tearDown {
+    [((id) self.mockApplication) stopMocking];
+}
 
-                __block BOOL returnedContent;
-                [_command handleMessage:@{@"id": @1, @"url": link}
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                                returnedContent = [((NSNumber *) result[@"success"]) boolValue];
-                                [exp fulfill];
-                            }];
+- (void)testInit_application_mustNotBeNil {
+    @try {
+        [[MEIAMOpenExternalLink alloc] initWithApplication:nil];
+        XCTFail(@"Expected Exception when application is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: application");
+    }
+}
 
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:30];
+- (void)testHandleMessage_withNoSuccess {
+    NSString *link = @"notAValidUrl";
 
-                [[theValue(returnedContent) should] beNo];
-            });
+    OCMStub([self.mockApplication canOpenURL:[OCMArg any]]).andReturn(NO);
 
-            it(@"should return false if there is no url", ^{
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block NSDictionary<NSString *, NSObject *> *returnedResult;
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"wait"];
+    __block BOOL returnedContent;
+    [self.command handleMessage:@{@"id": @1, @"url": link}
+                    resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                        returnedContent = [((NSNumber *) result[@"success"]) boolValue];
+                        [exp fulfill];
+                    }];
 
-                [_command handleMessage:@{@"id": @"999"}
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                                returnedResult = result;
-                                [exp fulfill];
-                            }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:30];
 
-                [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[@"Missing 'url' key with type: NSString."]}];
+    XCTAssertFalse(returnedContent);
+}
 
-            });
+- (void)testHandleMessage_withMissingUrl {
+    NSDictionary *expected = @{
+            @"success": @NO,
+            @"id": @"999",
+            @"errors": @[
+                    @"Missing 'url' key with type: NSString."
+            ]
+    };
 
-            it(@"should return false if the url is wrong type", ^{
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block NSDictionary<NSString *, NSObject *> *returnedResult;
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    __block NSDictionary<NSString *, NSObject *> *returnedResult;
 
-                NSArray *urlValue = @[];
-                [_command handleMessage:@{@"id": @"999", @"url": urlValue}
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                                returnedResult = result;
-                                [exp fulfill];
-                            }];
-                [EMSWaiter waitForExpectations:@[exp] timeout:30];
-
-                [[returnedResult should] equal:@{@"success": @NO, @"id": @"999", @"errors": @[[NSString stringWithFormat:@"Type mismatch for key 'url', expected type: NSString, but was: %@.", NSStringFromClass([urlValue class])]]}];
-            });
+    [self.command handleMessage:@{@"id": @"999"}
+                    resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                        returnedResult = result;
+                        [exp fulfill];
+                    }];
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:30];
 
 
-            it(@"should open the link if it is valid above ios10", ^{
-                NSString *link = @"https://www.google.com";
+    XCTAssertEqualObjects(returnedResult, expected);
+}
 
-                _applicationMock = [UIApplication mock];
-                [[UIApplication should] receive:@selector(sharedApplication) andReturn:_applicationMock];
+- (void)testHandleMessage_withWrongType {
+    NSArray *urlValue = @[];
+    NSDictionary *expected = @{
+            @"success": @NO,
+            @"id": @"999",
+            @"errors": @[
+                    [NSString stringWithFormat:@"Type mismatch for key 'url', expected type: NSString, but was: %@.",
+                                               NSStringFromClass([urlValue class])]
+            ]
+    };
 
-                [[_applicationMock should] receive:@selector(canOpenURL:) andReturn:theValue(YES)];
-                [[_applicationMock should] receive:@selector(openURL:options:completionHandler:) withArguments:[NSURL URLWithString:link], @{}, kw_any()];
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    __block NSDictionary<NSString *, NSObject *> *returnedResult;
+    [self.command handleMessage:@{@"id": @"999", @"url": urlValue}
+                    resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                        returnedResult = result;
+                        [exp fulfill];
+                    }];
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:30];
 
-                [_command handleMessage:@{@"url": link, @"id": @1}
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                            }];
-            });
+    XCTAssertEqualObjects(returnedResult, expected);
+}
 
-            void (^testCompletionHandlerWithReturnValue)(BOOL returnValue) = ^void(BOOL expectedValue) {
-                NSString *link = @"https://www.google.com";
+- (void)testHandleMessage_success {
+    NSString *link = @"https://www.google.com";
 
-                _applicationMock = [UIApplication mock];
-                [[UIApplication should] receive:@selector(sharedApplication) andReturn:_applicationMock];
+    OCMStub([self.mockApplication canOpenURL:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockApplication openURL:[OCMArg any]
+                                  options:@{}
+                        completionHandler:([OCMArg invokeBlockWithArgs:@YES, nil])]);
 
-                [[_applicationMock should] receive:@selector(canOpenURL:) andReturn:theValue(YES)];
-                [[_applicationMock should] receive:@selector(openURL:options:completionHandler:)];
-                KWCaptureSpy *spy = [_applicationMock captureArgument:@selector(openURL:options:completionHandler:)
-                                                              atIndex:2];
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [self.command handleMessage:@{@"url": link, @"id": @1}
+                    resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+                        [exp fulfill];
+                    }];
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:5];
 
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"wait"];
-                __block BOOL returnedValue;
-                [_command handleMessage:@{@"url": link, @"id": @1}
-                            resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-                                returnedValue = [((NSNumber *) result[@"success"]) boolValue];
-                                [exp fulfill];
-                            }];
+    OCMVerify([self.mockApplication openURL:[NSURL URLWithString:link]
+                                    options:@{}
+                          completionHandler:[OCMArg isNotNil]]);
+}
 
-                void (^completionBlock)(BOOL success) = spy.argument;
-                completionBlock(expectedValue);
-
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:30];
-
-                [[theValue(returnedValue) should] equal:theValue(expectedValue)];
-            };
-
-            it(@"should call completion handler with YES in openURL completionHandler above ios10", ^{
-                testCompletionHandlerWithReturnValue(YES);
-            });
-
-            it(@"should call completion handler with NO in openURL completionHandler above ios10", ^{
-                testCompletionHandlerWithReturnValue(NO);
-            });
-
-        });
-
-SPEC_END
-
+@end
 
 

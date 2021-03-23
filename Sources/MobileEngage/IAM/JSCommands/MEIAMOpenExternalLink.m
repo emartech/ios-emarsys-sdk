@@ -9,7 +9,21 @@
 
 #define kExternalLink @"url"
 
+@interface MEIAMOpenExternalLink ()
+
+@property(nonatomic, strong) UIApplication *application;
+
+@end
+
 @implementation MEIAMOpenExternalLink
+
+- (instancetype)initWithApplication:(UIApplication *)application {
+    NSParameterAssert(application);
+    if (self = [super init]) {
+        _application = application;
+    }
+    return self;
+}
 
 + (NSString *)commandName {
     return @"openExternalLink";
@@ -17,28 +31,31 @@
 
 - (void)handleMessage:(NSDictionary *)message
           resultBlock:(MEIAMJSResultBlock)resultBlock {
-    UIApplication *application = [UIApplication sharedApplication];
     NSString *eventId = message[@"id"];
 
     NSArray<NSString *> *errors = [message validate:^(EMSDictionaryValidator *validate) {
-        [validate valueExistsForKey:kExternalLink withType:[NSString class]];
+        [validate valueExistsForKey:kExternalLink
+                           withType:[NSString class]];
     }];
 
     if ([errors count] > 0) {
-        resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId errorArray:errors]);
+        resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
+                                                        errorArray:errors]);
     } else {
         NSURL *url = [NSURL URLWithString:message[kExternalLink]];
-        if ([application canOpenURL:url]) {
-            [application openURL:url
-                         options:@{}
-               completionHandler:^(BOOL success) {
-                   resultBlock([self createResultWithJSCommandId:eventId
-                                                         success:success]);
-               }];
-        } else {
-            resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
-                                                          errorMessage:@"Can't open url!"]);
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.application canOpenURL:url]) {
+                [self.application openURL:url
+                                  options:@{}
+                        completionHandler:^(BOOL success) {
+                            resultBlock([self createResultWithJSCommandId:eventId
+                                                                  success:success]);
+                        }];
+            } else {
+                resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
+                                                              errorMessage:@"Can't open url!"]);
+            }
+        });
     }
 }
 

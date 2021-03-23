@@ -34,7 +34,7 @@
     if ([name isEqualToString:MEIAMRequestPushPermission.commandName]) {
         command = [MEIAMRequestPushPermission new];
     } else if ([name isEqualToString:MEIAMOpenExternalLink.commandName]) {
-        command = [MEIAMOpenExternalLink new];
+        command = [[MEIAMOpenExternalLink alloc] initWithApplication:[UIApplication sharedApplication]];
     } else if ([name isEqualToString:MEIAMClose.commandName]) {
         command = [[MEIAMClose alloc] initWithEMSIAMCloseProtocol:self.closeProtocol];
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
