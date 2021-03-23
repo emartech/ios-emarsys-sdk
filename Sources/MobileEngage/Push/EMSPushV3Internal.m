@@ -157,7 +157,10 @@
     NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
     if (campaignId && self.silentNotificationInformationDelegate) {
         EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
-        [self.silentNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.silentNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+        });
     }
 }
 

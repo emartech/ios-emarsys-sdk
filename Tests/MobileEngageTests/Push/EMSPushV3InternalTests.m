@@ -17,6 +17,7 @@
 #import "EMSEventHandler.h"
 #import "EMSNotificationInformationDelegate.h"
 #import "EMSStorage.h"
+#import "FakeNotificationInformationDelegate.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
 
@@ -453,31 +454,43 @@
     id mockActionUrl = OCMProtocolMock(@protocol(EMSActionProtocol));
     id mockActionBadge = OCMProtocolMock(@protocol(EMSActionProtocol));
     id eventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
-    id protocolMockNotificationInformationDelegate = OCMProtocolMock(@protocol(EMSNotificationInformationDelegate));
 
     OCMStub([self.mockActionFactory createActionWithActionDictionary:openExternalUrlAction]).andReturn(mockActionUrl);
     OCMStub([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]).andReturn(mockActionBadge);
 
-    [self.push setSilentMessageEventHandler:eventHandler];
-    [self.push setSilentNotificationInformationDelegate:protocolMockNotificationInformationDelegate];
-
-    [self.push handleMessageWithUserInfo:@{
-            @"ems":
-            @{
-                    @"actions": @[
-                    openExternalUrlAction,
-                    badgeCountAction
-            ],
-            @"multichannelId": @"testMultiChannelId"
-            }
+    __block NSOperationQueue *returnedOperationQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    FakeNotificationInformationDelegate *notificationInformationDelegate = [[FakeNotificationInformationDelegate alloc] initWithCallerQueueBlock:^(NSOperationQueue *callerQueue) {
+        returnedOperationQueue = callerQueue;
+        [expectation fulfill];
     }];
+
+    [self.push setSilentMessageEventHandler:eventHandler];
+    [self.push setSilentNotificationInformationDelegate:notificationInformationDelegate];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.push handleMessageWithUserInfo:@{
+                @"ems":
+                @{
+                        @"actions": @[
+                        openExternalUrlAction,
+                        badgeCountAction
+                ],
+                        @"multichannelId": @"testMultiChannelId"
+                }
+        }];
+    });
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:5];
 
     OCMVerify([self.mockActionFactory setEventHandler:eventHandler]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:openExternalUrlAction]);
     OCMVerify([mockActionUrl execute]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]);
     OCMVerify([mockActionBadge execute]);
-    OCMVerify([protocolMockNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
 }
 
 @end

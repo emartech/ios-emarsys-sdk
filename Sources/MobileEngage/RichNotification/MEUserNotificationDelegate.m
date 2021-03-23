@@ -102,7 +102,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
         if (campaignId && weakSelf.notificationInformationDelegate) {
             EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
-            [weakSelf.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+            });
         }
 
         NSDictionary *inApp = userInfo[@"ems"][@"inapp"];

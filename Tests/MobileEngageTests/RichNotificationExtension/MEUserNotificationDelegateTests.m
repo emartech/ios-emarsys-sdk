@@ -10,6 +10,7 @@
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
 #import "EMSActionFactory.h"
+#import "FakeNotificationInformationDelegate.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -570,10 +571,10 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [notificationDelegate userNotificationCenter:[UNUserNotificationCenter mock]
-                          didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
-                                   withCompletionHandler:^{
-                                       [exp fulfill];
-                                   }];
+                              didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
+                                       withCompletionHandler:^{
+                                           [exp fulfill];
+                                       }];
                 [EMSWaiter waitForExpectations:@[exp]
                                        timeout:10];
 
@@ -716,9 +717,6 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
 
         it(@"should call notificationInformationDelegate", ^{
             EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
-            id mockNotificationInformationDelegate = [KWMock mockForProtocol:@protocol(EMSNotificationInformationDelegate)];
-            [[mockNotificationInformationDelegate should] receive:@selector(didReceiveNotificationInformation:)
-                                                    withArguments:notificationInformation];
 
             MEUserNotificationDelegate *userNotification = [[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
                                                                                                                inApp:inApp
@@ -728,23 +726,31 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       requestManager:requestManager
                                                                                                       requestFactory:requestFactory
                                                                                                       operationQueue:operationQueue];
-            userNotification.notificationInformationDelegate = mockNotificationInformationDelegate;
+            __block NSOperationQueue *returnedQueue = nil;
+            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+            FakeNotificationInformationDelegate *notificationInformationDelegate = [[FakeNotificationInformationDelegate alloc] initWithCallerQueueBlock:^(NSOperationQueue *callerQueue) {
+                returnedQueue = callerQueue;
+                [expectation fulfill];
+            }];
+
+            userNotification.notificationInformationDelegate = notificationInformationDelegate;
             NSDictionary *userInfo = @{@"ems": @{
                     @"multichannelId": @"testMultiChannelId"
             },
                     @"u": @"{\"sid\": \"123456789\"}"
             };
 
-            XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-            [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
-                      didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
-                               withCompletionHandler:^{
-                                   [exp fulfill];
-                               }];
-            [EMSWaiter waitForExpectations:@[exp]
-                                   timeout:10];
-        });
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [userNotification userNotificationCenter:[UNUserNotificationCenter mock]
+                          didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
+                                   withCompletionHandler:^{
+                                   }];
+            });
+            [EMSWaiter waitForExpectations:@[expectation]
+                                   timeout:5];
 
+            XCTAssertEqualObjects(returnedQueue, [NSOperationQueue mainQueue]);
+        });
 
 SPEC_END
 
