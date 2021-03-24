@@ -419,6 +419,9 @@
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
+
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
@@ -439,8 +442,6 @@
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
 
     __block NSError *returnedError = [NSError errorWithCode:1400
                                        localizedDescription:@"testError"];
@@ -457,26 +458,20 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    [strictMockMobileEngage setExpectationOrderMatters:YES];
-    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    [strictMockPushInternal setExpectationOrderMatters:YES];
-    OCMExpect([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
-    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
 
-    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
 
-- (void)testChangeApplicationCode_shouldCallMethodsInOrder {
+- (void)testChangeApplicationCode {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     id strictMockMeRequestContext = OCMStrictClassMock([MERequestContext class]);
@@ -499,17 +494,15 @@
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearDeviceTokenStorage]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMeRequestContext applicationCode]).andReturn(@"oldApplicationCode");
+    OCMStub([strictMockMeRequestContext applicationCode]).andReturn(@"theOldAppCode");
     OCMStub([strictMockMeRequestContext contactFieldId]).andReturn(@3);
-    OCMStub([strictMockMeRequestContext hasContactIdentification]).andReturn(YES);
+    OCMStub([strictMockMeRequestContext hasContactIdentification]).andReturn(NO);
     OCMStub([strictMockMeRequestContext setApplicationCode:[OCMArg any]]);
     OCMStub([(MERequestContext *) strictMockMeRequestContext setContactFieldId:self.contactFieldId]);
 
@@ -526,20 +519,13 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    [strictMockMobileEngage setExpectationOrderMatters:YES];
-    [strictMockPushInternal setExpectationOrderMatters:YES];
-    [strictMockMeRequestContext setExpectationOrderMatters:YES];
-    [strictMockDeviceInfoClient setExpectationOrderMatters:YES];
-
-    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    OCMExpect([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
-    OCMExpect([(MERequestContext *) strictMockMeRequestContext setContactFieldId:self.contactFieldId]);
-    OCMExpect([strictMockMeRequestContext setApplicationCode:@"newApplicationCode"]);
-    OCMExpect([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
-    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+    OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([(MERequestContext *) strictMockMeRequestContext setContactFieldId:self.contactFieldId]);
+    OCMVerify([strictMockMeRequestContext setApplicationCode:@"newApplicationCode"]);
+    OCMVerify([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
+    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
@@ -548,6 +534,9 @@
 - (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
 
     NSError *inputError = [NSError errorWithCode:1400
                             localizedDescription:@"testError"];
@@ -587,8 +576,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-
-    OCMExpect([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
@@ -600,6 +588,9 @@
 - (void)testChangeApplicationCode_setPushToken_shouldCallCompletionBlockWithError {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
 
     NSError *inputError = [NSError errorWithCode:1400
                             localizedDescription:@"testError"];
@@ -627,8 +618,6 @@
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                                               nil])]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -640,9 +629,9 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
 
-    OCMExpect([strictMockPushInternal setPushToken:self.deviceToken
+    OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
                                                       completionBlock:[OCMArg any]]);
@@ -710,6 +699,9 @@
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
+
     __block NSError *returnedError = nil;
 
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
@@ -743,12 +735,10 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMExpect([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
 
     OCMReject([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
@@ -757,6 +747,9 @@
 - (void)testChangeApplicationCode_shouldCallSetPushTokenImmediately_whenApplicationCodeIsNil {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+    OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
 
     __block NSError *returnedError = nil;
 
@@ -781,8 +774,6 @@
                            completionBlock:[OCMArg invokeBlock]]);
     OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -796,10 +787,8 @@
 
     OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
 
-    OCMExpect([mockPushInternal setPushToken:self.deviceToken
+    OCMVerify([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
@@ -865,7 +854,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
+    OCMVerify([self.mockPreRequestContext setMerchantId:newMerchantId]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
@@ -883,7 +872,7 @@
 
     [self.configInternal changeMerchantId:newMerchantId];
 
-    OCMExpect([self.mockPreRequestContext setMerchantId:newMerchantId]);
+    OCMVerify([self.mockPreRequestContext setMerchantId:newMerchantId]);
 }
 
 - (void)testChangeMerchantId_shouldResetRemoteConfig {

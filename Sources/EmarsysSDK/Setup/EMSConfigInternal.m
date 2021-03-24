@@ -190,6 +190,7 @@
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler {
     NSData *pushToken = self.pushInternal.deviceToken;
     NSNumber *oldContactFieldId = self.meRequestContext.contactFieldId;
+    BOOL hasContactIdentification = self.meRequestContext.hasContactIdentification;
     __block NSError *error = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (pushToken) {
@@ -205,6 +206,9 @@
                 [self sendDeviceInfo];
                 if (pushToken) {
                     error = [self sendPushToken:pushToken];
+                }
+                if (!hasContactIdentification) {
+                    error = [self clearContact];
                 }
             }
         }
