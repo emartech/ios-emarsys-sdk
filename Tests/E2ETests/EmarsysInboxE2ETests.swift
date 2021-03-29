@@ -122,7 +122,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
 extension XCTestCase {
 
-    func retry(retryCount: Int = 3, delay: Double? = 5.0, retryClosure: @escaping () throws -> ()) {
+    func retry(retryCount: Int = 10, delay: Double? = 2.0, retryClosure: @escaping () throws -> ()) {
         var error: Error?
         var index = 0
         repeat {
