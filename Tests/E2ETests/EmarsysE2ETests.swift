@@ -5,37 +5,35 @@
 import XCTest
 
 class EmarsysE2ETests: XCTestCase {
-    
+
     let timeout = 2.0
 
-    override func setUpWithError() throws {
-        
+    enum E2EError: Error {
+        case missingMessage
+        case assertionError(assertionMessage: String)
     }
 
-    override func tearDownWithError() throws {
+    override class func tearDown() {
         EmarsysTestUtils.tearDownEmarsys()
     }
 
     func testChangeApplicationCodeFromNil() throws {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        
+
         let timestamp = dateFormatter.string(from: Date())
         let config = EMSConfig.make { builder in
         }
 
         Emarsys.setup(with: config)
-        
+
         changeAppCode("EMS11-C3FD3", cId: 2575)
-        
+
         setContact("test@test.com")
-        
+
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
-        retry { [unowned self] () in
-
-            _ = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
-        }
+        _ = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
     }
 
     func testChangeApplicationCode() throws {
@@ -56,62 +54,75 @@ class EmarsysE2ETests: XCTestCase {
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
-        retry { [unowned self] () in
-
-            _ = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
-        }
+        _ = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
     }
-    
+
     func changeAppCode(_ code: String, cId: NSNumber) {
-        let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.config.changeApplicationCode(code, contactFieldId: cId) { error in
-            XCTAssertNil(error)
-            changeAppCodeExpectation.fulfill()
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.config.changeApplicationCode(code, contactFieldId: cId) { error in
+                returnedError = error
+                changeAppCodeExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [changeAppCodeExpectation], timeout: timeout)
+
+            if let _ = returnedError {
+                throw E2EError.assertionError(assertionMessage: "error is not nil")
+            }
         }
-        _ = XCTWaiter.wait(for: [changeAppCodeExpectation], timeout: timeout)
     }
-    
+
     func setContact(_ cValue: String) {
-        let contactExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.setContactWithContactFieldValue(cValue) { error in
-            XCTAssertNil(error)
-            contactExpectation.fulfill()
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let contactExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.setContactWithContactFieldValue(cValue) { error in
+                returnedError = error
+                contactExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
+            if let _ = returnedError {
+                throw E2EError.assertionError(assertionMessage: "error is not nil")
+            }
         }
-        _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
-
     }
-    
+
     func sendEvent(_ name: String, timestamp: String) {
-        let customEventExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
-            "eventName": name,
-            "timestamp": timestamp
-        ]) { error in
-            customEventExpectation.fulfill()
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let customEventExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
+                "eventName": name,
+                "timestamp": timestamp
+            ]) { error in
+                returnedError = error
+                customEventExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [customEventExpectation], timeout: timeout)
+            if let _ = returnedError {
+                throw E2EError.assertionError(assertionMessage: "error is not nil")
+            }
         }
-        _ = XCTWaiter.wait(for: [customEventExpectation], timeout: 2)
     }
-    
-    func filterForInboxMessage(_ title: String, body: String) throws -> EMSMessage {
-        enum InboxError: Error {
-            case missingMessage
-        }
 
+    func filterForInboxMessage(_ title: String, body: String) -> EMSMessage {
         var inboxMessage: EMSMessage?
-        let fetchMessagesExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.messageInbox.fetchMessages { (inboxResult, error) in
-            inboxMessage = inboxResult?.messages.first(where: { (message) -> Bool in
-                return message.title == title && message.body == body
-            })
-            fetchMessagesExpectation.fulfill()
-        }
-        _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: 2)
+        retry { [unowned self] () in
+            let fetchMessagesExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.messageInbox.fetchMessages { (inboxResult, error) in
+                inboxMessage = inboxResult?.messages.first(where: { (message) -> Bool in
+                    return message.title == title && message.body == body
+                })
+                fetchMessagesExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: timeout)
 
-        guard let message = inboxMessage else {
-            throw InboxError.missingMessage
+            guard let _ = inboxMessage else {
+                throw E2EError.missingMessage
+            }
         }
-        
-        return message
+        return inboxMessage!
     }
-    
+
 }

@@ -12,7 +12,9 @@ class EmarsysInboxE2ETests: XCTestCase {
         case missingTag
         case existingTag
         case missingMessage
+        case assertionError(assertionMessage: String)
     }
+
 
     func testInboxTags_step0() {
         EmarsysTestUtils.tearDownEmarsys()
@@ -35,7 +37,7 @@ class EmarsysInboxE2ETests: XCTestCase {
     func testInboxTags_step2() {
         retry { [unowned self] () in
 
-            let message = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+            let message = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
             Emarsys.messageInbox.addTag("testtag", forMessage: message.id)
         }
@@ -46,7 +48,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
         retry { [unowned self] () in
 
-            messageWithTag = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+            messageWithTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
             if let tags = messageWithTag?.tags, !tags.contains("testtag") {
                 throw InboxError.missingTag
@@ -63,7 +65,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
         retry { [unowned self] () in
 
-            messageWithoutTag = try filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
+            messageWithoutTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
             if let tags = messageWithoutTag?.tags, tags.contains("testtag") {
                 throw InboxError.existingTag
@@ -78,44 +80,55 @@ class EmarsysInboxE2ETests: XCTestCase {
     }
 
     func setContact(_ cValue: String) {
-        let contactExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.setContactWithContactFieldValue(cValue) { error in
-            XCTAssertNil(error)
-            contactExpectation.fulfill()
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let contactExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.setContactWithContactFieldValue(cValue) { error in
+                returnedError = error
+                contactExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
+            if let _ = returnedError {
+                throw InboxError.assertionError(assertionMessage: "error is not nil")
+            }
         }
-        _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
-
     }
 
     func sendEvent(_ name: String, timestamp: String) {
-        let customEventExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
-            "eventName": name,
-            "timestamp": timestamp
-        ]) { error in
-            customEventExpectation.fulfill()
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let customEventExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
+                "eventName": name,
+                "timestamp": timestamp
+            ]) { error in
+                returnedError = error
+                customEventExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [customEventExpectation], timeout: timeout)
+            if let _ = returnedError {
+                throw InboxError.assertionError(assertionMessage: "error is not nil")
+            }
         }
-        _ = XCTWaiter.wait(for: [customEventExpectation], timeout: timeout)
     }
 
-    func filterForInboxMessage(_ title: String, body: String) throws -> EMSMessage {
-        Thread.sleep(forTimeInterval: timeout)
-
+    func filterForInboxMessage(_ title: String, body: String) -> EMSMessage {
         var inboxMessage: EMSMessage?
-        let fetchMessagesExpectation = XCTestExpectation(description: "waitForResult")
-        Emarsys.messageInbox.fetchMessages { (inboxResult, error) in
-            inboxMessage = inboxResult?.messages.first(where: { (message) -> Bool in
-                return message.title == title && message.body == body
-            })
-            fetchMessagesExpectation.fulfill()
-        }
-        _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: timeout)
+        retry { [unowned self] () in
+            let fetchMessagesExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.messageInbox.fetchMessages { (inboxResult, error) in
+                inboxMessage = inboxResult?.messages.first(where: { (message) -> Bool in
+                    return message.title == title && message.body == body
+                })
+                fetchMessagesExpectation.fulfill()
+            }
+            _ = XCTWaiter.wait(for: [fetchMessagesExpectation], timeout: timeout)
 
-        guard let message = inboxMessage else {
-            throw InboxError.missingMessage
+            guard let _ = inboxMessage else {
+                throw InboxError.missingMessage
+            }
         }
-
-        return message
+        return inboxMessage!
     }
 
 }
@@ -128,15 +141,16 @@ extension XCTestCase {
         repeat {
             error = nil
             do {
-                try retryClosure()
                 index += 1
+                try retryClosure()
             } catch let e {
                 error = e
+                print("Error: \(error!.localizedDescription)")
             }
-            if error != nil, index < retryCount, let delay = delay {
+            if let _ = error, index < retryCount, let delay = delay {
                 Thread.sleep(forTimeInterval: delay)
             }
-        } while (error != nil && index < retryCount)
+        } while error != nil && index < retryCount
 
         XCTAssertNil(error)
     }
