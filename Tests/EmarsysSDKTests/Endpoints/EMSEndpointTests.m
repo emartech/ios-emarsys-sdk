@@ -289,6 +289,42 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertFalse([self.endpoint isMobileEngageUrl:url]);
 }
 
+- (void)testIsPush2InApp_shouldReturnYes_when_URLIisCorrect_andV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    NSString *url = [NSString stringWithFormat:@"%@/v4/apps/%@/messages/testMessageId",
+                                               self.endpoint.eventServiceUrl,
+                                               kApplicationCode];
+
+    XCTAssertTrue([self.endpoint isPushToInAppUrl:url]);
+}
+
+- (void)testIsPush2InApp_shouldReturnNo_when_URLIisNotCorrect_andV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    NSString *url = [NSString stringWithFormat:@"%@/v4/apps/%@/inline-messages",
+                                               self.endpoint.eventServiceUrl,
+                                               kApplicationCode];
+
+    XCTAssertFalse([self.endpoint isPushToInAppUrl:url]);
+}
+
+- (void)testIsPush2InApp_shouldReturnNo_when_URLIisNotEventService_andV4 {
+    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
+    NSString *url = [NSString stringWithFormat:@"%@/v4/apps/%@/messages/testMessageId",
+                                               self.endpoint.clientServiceUrl,
+                                               kApplicationCode];
+
+    XCTAssertFalse([self.endpoint isPushToInAppUrl:url]);
+}
+
+- (void)testIsPush2InApp_shouldReturnYes_when_URLIisCorrect_andV3 {
+    [MEExperimental disableFeature:EMSInnerFeature.eventServiceV4];
+    NSString *url = [NSString stringWithFormat:@"%@/v3/apps/%@/messages/testMessageId",
+                                               self.endpoint.clientServiceUrl,
+                                               kApplicationCode];
+
+    XCTAssertFalse([self.endpoint isPushToInAppUrl:url]);
+}
+
 - (void)testV3MessageInboxUrlWithApplicationCode {
     NSString *expectedUrl = [self v3MessageInboxUrl];
 
@@ -334,7 +370,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testRemoteConfigUrl {
-    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/%@", kApplicationCode]];
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/%@",
+                                                                               kApplicationCode]];
 
     NSString *result = [self.endpoint remoteConfigUrl:kApplicationCode];
 
@@ -342,7 +379,8 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 }
 
 - (void)testRemoteConfigSignatureUrl {
-    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/signature/%@", kApplicationCode]];
+    NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/signature/%@",
+                                                                               kApplicationCode]];
 
     NSString *result = [self.endpoint remoteConfigSignatureUrl:kApplicationCode];
 

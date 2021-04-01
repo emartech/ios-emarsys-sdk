@@ -26,7 +26,10 @@
 
 - (BOOL)shouldParse:(EMSRequestModel *)requestModel
        responseBody:(NSData *)responseBody {
-    return [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString] && responseBody && responseBody.length > 0;
+    return [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString]
+            && ![self.endpoint isPushToInAppUrl:requestModel.url.absoluteString]
+            && responseBody
+            && responseBody.length > 0;
 }
 
 - (id)parseWithRequestModel:(EMSRequestModel *)requestModel

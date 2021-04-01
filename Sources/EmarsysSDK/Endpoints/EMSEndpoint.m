@@ -146,6 +146,10 @@
     return ([url hasPrefix:[self clientServiceUrl]] || [url hasPrefix:[self eventServiceUrl]] || [url hasPrefix:self.v3MessageInboxServiceUrl]) && !([url isEqualToString:self.inboxUrl]);
 }
 
+- (BOOL)isPushToInAppUrl:(NSString *)url {
+    return [url hasPrefix:[self eventServiceUrl]] && [url containsString:@"/messages"];
+}
+
 - (NSString *)predictUrl {
     return [self.predictUrlProvider provideValue];
 }

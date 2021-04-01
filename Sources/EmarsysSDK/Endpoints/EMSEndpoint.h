@@ -34,6 +34,8 @@
 
 - (BOOL)isMobileEngageUrl:(NSString *)url;
 
+- (BOOL)isPushToInAppUrl:(NSString *)url;
+
 - (NSString *)predictUrl;
 
 - (NSString *)deeplinkUrl;

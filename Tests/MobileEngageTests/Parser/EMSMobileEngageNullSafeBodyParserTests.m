@@ -70,6 +70,16 @@
     XCTAssertFalse(result);
 }
 
+- (void)testShouldParse_shouldReturnFalse_whenPush2InAppUrl {
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isPushToInAppUrl:[OCMArg any]]).andReturn(YES);
+
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:self.responseBody];
+
+    XCTAssertFalse(result);
+}
+
 - (void)testParse_shouldReturnParsedBodyFromResponseModel_whenNoNullObjectInBody {
     NSDictionary *dict = @{
             @"k1": @"v1",
