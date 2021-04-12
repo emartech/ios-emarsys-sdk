@@ -1,14 +1,12 @@
 platform :ios, '11.0'
 use_frameworks!
 
-source 'https://github.com/CocoaPods/Specs.git'
-
 target "Emarsys-Sample" do
   pod 'GoogleSignIn'
   if ENV["DEV"] then
     pod 'EmarsysSDK', :path => '../'
   else
-    pod 'EmarsysSDK'
+    pod 'EmarsysSDK', :git => 'https://github.com/emartech/ios-emarsys-sdk.git'
   end
 end
 
@@ -16,6 +14,6 @@ target "NotificationService" do
   if ENV["DEV"] then
     pod 'EmarsysNotificationService', :path => '../'
   else
-    pod 'EmarsysNotificationService'
+    pod 'EmarsysNotificationService', :git => 'https://github.com/emartech/ios-emarsys-sdk.git'
   end
 end
