@@ -1,0 +1,94 @@
+---
+jobs:
+  build:
+    name: Build
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Remove old directories
+        run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
+        shell: bash
+      - name: Install provisioning profile for tests
+        uses: davidSchuppa/base64Secret-toFile-action@v1
+        with:
+          secret: ${{ secrets.SDK_HOST_MOBILEPROVISION_BASE64 }}
+          filename: SDKHost.mobileprovision
+          destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Setup Sample Provisioning Profile
+        uses: davidSchuppa/base64Secret-toFile-action@v1
+        with:
+          secret: ${{ secrets.EMARSYS_SAMPLE_ENTERPRISE_PROV_PROF_BASE64 }}
+          filename: EmarsysSampleEnterpriseProvProf.mobileprovision
+          destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Setup NotificationService Provisioning Profile
+        uses: davidSchuppa/base64Secret-toFile-action@v1
+        with:
+          secret: ${{ secrets.EMARSYS_SAMPLE_NOTIFICATION_SERVICE_ENTERPRISE_PROV_PROF_BASE64 }}
+          filename: EmarsysSampleNotificationServiceEnterpriseProvProf.mobileprovision
+          destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Setup ipa export options plist
+        uses: davidSchuppa/base64Secret-toFile-action@v1
+        with:
+          secret: ${{ secrets.IPA_EXPORT_OPTIONS_PLIST_BASE64 }}
+          filename: IpaExportOptions.plist
+          destination-path: ./Emarsys\ Sample
+      - name: Setup GoogleServices.plist
+        uses: davidSchuppa/base64Secret-toFile-action@v1
+        with:
+          secret: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+          filename: GoogleService-Info.plist
+          destination-path: ./Emarsys\ Sample/Emarsys-Sample
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.FIREBASE_SERVICE_KEY_BASE64 }}
+      - name: Setup Sample App Certs
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          keychain-password: ${{ secrets.KEYCHAIN_PASS }}
+          p12-file-base64: ${{ secrets.ENTERPRISE_P12_BASE64 }}
+          p12-password: ${{ secrets.ENTERPRISE_PASS }}
+      - name: Setup Test Certs
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          create-keychain: false
+          keychain-password: ${{ secrets.KEYCHAIN_PASS }}
+          p12-file-base64: ${{ secrets.SDK_TEAM_P12_BASE64 }}
+          p12-password: ${{ secrets.SDK_TEAM_PASS }}
+      - name: Install Dependencies
+        run: pod install --no-repo-update --verbose
+        shell: bash
+      - name: Build For Testing
+        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination generic/platform=iOS build-for-testing -allowProvisioningUpdates -derivedDataPath ~/tmp
+        shell: bash
+      - name: Zip Test Files For Firebase
+        run: cd ~/tmp/Build/Products && zip -r ~/Tests.zip ./
+        shell: bash
+      - name: Run tests on Firebase
+        run: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphonese,version=11.4,locale=en_GB --device model=iphonexsmax,version=12.3,locale=en_GB --device model=iphone8,version=14.1,locale=en_GB
+        shell: bash
+      - name: Install Dependencies
+        run: cd Emarsys\ Sample && pod deintegrate && pod install
+        shell: bash
+      - name: Sample archive
+        run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample COMPILER_INDEX_STORE_ENABLE=NO archive -archivePath ./Emarsys-Sample.xcarchive -destination generic/platform=iOS -allowProvisioningUpdates | xcpretty
+        shell: bash
+      - name: Generate ipa
+        run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportPath ./ -exportOptionsPlist ./IpaExportOptions.plist | xcpretty
+        shell: bash
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.S3_ACCESS_ID }}
+          aws-secret-access-key: ${{ secrets.S3_ACCESS_SECRET }}
+          aws-region: eu-west-1
+      - name: Upload ipa
+        run: aws s3 cp ./Emarsys\ Sample/Emarsys-Sample.ipa s3://${{ secrets.S3_BUCKET }}/bitrise/Emarsys-Sample.ipa
+name: Last commit build
+'on':
+  push:
+    branches:
+      - master
+  workflow_dispatch: null
