@@ -2,7 +2,6 @@ platform :ios, '11.0'
 use_frameworks!
 
 target "Emarsys-Sample" do
-  pod 'GoogleSignIn'
   if ENV["DEV"] then
     pod 'EmarsysSDK', :path => '../'
   else

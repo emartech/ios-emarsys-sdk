@@ -12,9 +12,6 @@
 		5617DEAC2539C8FC007930D8 /* InAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5617DEAB2539C8FC007930D8 /* InAppView.swift */; };
 		567A64B6253DAFDD00D83D32 /* FloatingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567A64B5253DAFDD00D83D32 /* FloatingTextField.swift */; };
 		569593182527512200879A5D /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569593172527512200879A5D /* Message.swift */; };
-		5695B18425DBD71200AA612A /* GoogleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5695B18325DBD71200AA612A /* GoogleDelegate.swift */; };
-		5695B1D625DBF17000AA612A /* GoogleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5695B1D525DBF17000AA612A /* GoogleSignInButton.swift */; };
-		5695B23C25DC09AB00AA612A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5695B23B25DC09AB00AA612A /* GoogleService-Info.plist */; };
 		5697FA8B24B48C93000FB1DC /* InfoPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5697FA8A24B48C93000FB1DC /* InfoPanelView.swift */; };
 		56B48CC6250BA7C0004DB3FA /* UIApplication+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B48CC5250BA7C0004DB3FA /* UIApplication+Keyboard.swift */; };
 		56B953A8253DBD21007C55CF /* ShakeGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B953A7253DBD21007C55CF /* ShakeGesture.swift */; };
@@ -30,7 +27,6 @@
 		56E7CB3E25408249006323D8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7CB3D25408249006323D8 /* NotificationService.swift */; };
 		56E7CB4225408249006323D8 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 56E7CB3B25408249006323D8 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		56F2BE9A256561D2007CD8FE /* ConfigUserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56F2BE99256561D2007CD8FE /* ConfigUserDefaultsKey.swift */; };
-		5C093866F0FF8DFA3A2CC536 /* Pods_Emarsys_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB22AF3C4EBF24711122A956 /* Pods_Emarsys_Sample.framework */; };
 		8AB2B19B245ABAA900FA67E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19A245ABAA900FA67E7 /* AppDelegate.swift */; };
 		8AB2B19D245ABAA900FA67E7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19C245ABAA900FA67E7 /* SceneDelegate.swift */; };
 		8AB2B19F245ABAA900FA67E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B19E245ABAA900FA67E7 /* ContentView.swift */; };
@@ -44,7 +40,8 @@
 		8AB2B1D0245ABD0100FA67E7 /* PredictView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1CF245ABD0100FA67E7 /* PredictView.swift */; };
 		8AB2B1D2245ABD5200FA67E7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1D1245ABD5200FA67E7 /* DashboardView.swift */; };
 		8AB2B1D4245ABF7700FA67E7 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2B1D3245ABF7700FA67E7 /* ProductsView.swift */; };
-		D3EB0E195FF1625F4D2730C6 /* Pods_NotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1008C36F340AA42024CCDF /* Pods_NotificationService.framework */; };
+		8B8D9D7C01FBCC4A8391172C /* Pods_Emarsys_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D19FBA025FE4A4C39EB444 /* Pods_Emarsys_Sample.framework */; };
+		B5CC1255F56AF8673C7D9EC2 /* Pods_NotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6ED7A861927F4A466B3EEB /* Pods_NotificationService.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,17 +83,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3331F569D41BE8B000D53553 /* Pods-Emarsys-Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.debug.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.debug.xcconfig"; sourceTree = "<group>"; };
-		41AE3B45664840F9E81AA242 /* Pods-Emarsys-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.release.xcconfig"; sourceTree = "<group>"; };
-		4D16AEF41C88703583BA37A4 /* Pods-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
+		01D19FBA025FE4A4C39EB444 /* Pods_Emarsys_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Emarsys_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		31B0FFBEB8F1D6651E313702 /* Pods-Emarsys-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.release.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.release.xcconfig"; sourceTree = "<group>"; };
 		561509D225387B3600F8E1CE /* LoginData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginData.swift; sourceTree = "<group>"; };
 		5617DE9A2539C32A007930D8 /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		5617DEAB2539C8FC007930D8 /* InAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppView.swift; sourceTree = "<group>"; };
 		567A64B5253DAFDD00D83D32 /* FloatingTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTextField.swift; sourceTree = "<group>"; };
 		569593172527512200879A5D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		5695B18325DBD71200AA612A /* GoogleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDelegate.swift; sourceTree = "<group>"; };
-		5695B1D525DBF17000AA612A /* GoogleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInButton.swift; sourceTree = "<group>"; };
-		5695B23B25DC09AB00AA612A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5697FA8A24B48C93000FB1DC /* InfoPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPanelView.swift; sourceTree = "<group>"; };
 		56B48CC5250BA7C0004DB3FA /* UIApplication+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Keyboard.swift"; sourceTree = "<group>"; };
 		56B953A7253DBD21007C55CF /* ShakeGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeGesture.swift; sourceTree = "<group>"; };
@@ -133,9 +126,10 @@
 		8AB2B1CF245ABD0100FA67E7 /* PredictView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictView.swift; sourceTree = "<group>"; };
 		8AB2B1D1245ABD5200FA67E7 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		8AB2B1D3245ABF7700FA67E7 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
-		AB22AF3C4EBF24711122A956 /* Pods_Emarsys_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Emarsys_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C45D55E00BB889A2FC5AB772 /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
-		DD1008C36F340AA42024CCDF /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C262ACB80013AE53DB5F55F9 /* Pods-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
+		CC6ED7A861927F4A466B3EEB /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDDF8FEAAC5FB1345AAD81C5 /* Pods-Emarsys-Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Emarsys-Sample.debug.xcconfig"; path = "Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample.debug.xcconfig"; sourceTree = "<group>"; };
+		FC9C4BFDBABDA83045A4B029 /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,7 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3EB0E195FF1625F4D2730C6 /* Pods_NotificationService.framework in Frameworks */,
+				B5CC1255F56AF8673C7D9EC2 /* Pods_NotificationService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C093866F0FF8DFA3A2CC536 /* Pods_Emarsys_Sample.framework in Frameworks */,
+				8B8D9D7C01FBCC4A8391172C /* Pods_Emarsys_Sample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,10 +169,10 @@
 		0E923191E6D55D8DB1FBE360 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3331F569D41BE8B000D53553 /* Pods-Emarsys-Sample.debug.xcconfig */,
-				41AE3B45664840F9E81AA242 /* Pods-Emarsys-Sample.release.xcconfig */,
-				C45D55E00BB889A2FC5AB772 /* Pods-NotificationService.debug.xcconfig */,
-				4D16AEF41C88703583BA37A4 /* Pods-NotificationService.release.xcconfig */,
+				EDDF8FEAAC5FB1345AAD81C5 /* Pods-Emarsys-Sample.debug.xcconfig */,
+				31B0FFBEB8F1D6651E313702 /* Pods-Emarsys-Sample.release.xcconfig */,
+				FC9C4BFDBABDA83045A4B029 /* Pods-NotificationService.debug.xcconfig */,
+				C262ACB80013AE53DB5F55F9 /* Pods-NotificationService.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -194,7 +188,6 @@
 				56C4E953254005AC00EB241C /* MessagesView.swift */,
 				56C4E99925402E4200EB241C /* ImageView.swift */,
 				56E7CAF22540659B006323D8 /* InlineInAppView.swift */,
-				5695B1D525DBF17000AA612A /* GoogleSignInButton.swift */,
 			);
 			path = ViewComponents;
 			sourceTree = "<group>";
@@ -245,15 +238,6 @@
 			path = NotificationService;
 			sourceTree = "<group>";
 		};
-		726AD6C5FA10ECB868365220 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				AB22AF3C4EBF24711122A956 /* Pods_Emarsys_Sample.framework */,
-				DD1008C36F340AA42024CCDF /* Pods_NotificationService.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		8AB2B18E245ABAA900FA67E7 = {
 			isa = PBXGroup;
 			children = (
@@ -263,7 +247,7 @@
 				56E7CB3C25408249006323D8 /* NotificationService */,
 				8AB2B198245ABAA900FA67E7 /* Products */,
 				0E923191E6D55D8DB1FBE360 /* Pods */,
-				726AD6C5FA10ECB868365220 /* Frameworks */,
+				A150D9FE9099EC58E60601F8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -281,7 +265,6 @@
 		8AB2B199245ABAA900FA67E7 /* Emarsys-Sample */ = {
 			isa = PBXGroup;
 			children = (
-				5695B23B25DC09AB00AA612A /* GoogleService-Info.plist */,
 				56C4E95E25400FD400EB241C /* Inbox */,
 				56B953F5253DD7BF007C55CF /* Emarsys-Sample.entitlements */,
 				56B953A6253DBCFD007C55CF /* Extensions */,
@@ -296,7 +279,6 @@
 				8AB2B1A5245ABAAA00FA67E7 /* LaunchScreen.storyboard */,
 				8AB2B1A8245ABAAA00FA67E7 /* Info.plist */,
 				8AB2B1A2245ABAAA00FA67E7 /* Preview Content */,
-				5695B18325DBD71200AA612A /* GoogleDelegate.swift */,
 			);
 			path = "Emarsys-Sample";
 			sourceTree = "<group>";
@@ -340,6 +322,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		A150D9FE9099EC58E60601F8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				01D19FBA025FE4A4C39EB444 /* Pods_Emarsys_Sample.framework */,
+				CC6ED7A861927F4A466B3EEB /* Pods_NotificationService.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -347,7 +338,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 56E7CB4325408249006323D8 /* Build configuration list for PBXNativeTarget "NotificationService" */;
 			buildPhases = (
-				D4FD767AD794BE58E68EBDC8 /* [CP] Check Pods Manifest.lock */,
+				CB2150E5143673B0CD3137CB /* [CP] Check Pods Manifest.lock */,
 				56E7CB3725408249006323D8 /* Sources */,
 				56E7CB3825408249006323D8 /* Frameworks */,
 				56E7CB3925408249006323D8 /* Resources */,
@@ -365,13 +356,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AB2B1C1245ABAAA00FA67E7 /* Build configuration list for PBXNativeTarget "Emarsys-Sample" */;
 			buildPhases = (
-				DF2E5D9716A7F9E61FB19902 /* [CP] Check Pods Manifest.lock */,
+				0531FCDDD0AEC02B36B9273A /* [CP] Check Pods Manifest.lock */,
 				8AB2B193245ABAA900FA67E7 /* Sources */,
 				8AB2B194245ABAA900FA67E7 /* Frameworks */,
 				8AB2B195245ABAA900FA67E7 /* Resources */,
 				56E7CB4625408249006323D8 /* Embed App Extensions */,
-				A6E9C42242082CF34055B658 /* [CP] Embed Pods Frameworks */,
-				87F7888D65AB179DE301BD37 /* [CP] Copy Pods Resources */,
+				DEA7364F50F9206A897C5200 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -479,7 +469,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AB2B1A7245ABAAA00FA67E7 /* LaunchScreen.storyboard in Resources */,
-				5695B23C25DC09AB00AA612A /* GoogleService-Info.plist in Resources */,
 				8AB2B1A4245ABAAA00FA67E7 /* Preview Assets.xcassets in Resources */,
 				8AB2B1A1245ABAAA00FA67E7 /* Assets.xcassets in Resources */,
 			);
@@ -502,41 +491,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		87F7888D65AB179DE301BD37 /* [CP] Copy Pods Resources */ = {
+		0531FCDDD0AEC02B36B9273A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Emarsys-Sample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A6E9C42242082CF34055B658 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D4FD767AD794BE58E68EBDC8 /* [CP] Check Pods Manifest.lock */ = {
+		CB2150E5143673B0CD3137CB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -558,26 +535,21 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DF2E5D9716A7F9E61FB19902 /* [CP] Check Pods Manifest.lock */ = {
+		DEA7364F50F9206A897C5200 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Emarsys-Sample-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Emarsys-Sample/Pods-Emarsys-Sample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -615,9 +587,7 @@
 				561509D325387B3600F8E1CE /* LoginData.swift in Sources */,
 				8AB2B19F245ABAA900FA67E7 /* ContentView.swift in Sources */,
 				56B953A8253DBD21007C55CF /* ShakeGesture.swift in Sources */,
-				5695B1D625DBF17000AA612A /* GoogleSignInButton.swift in Sources */,
 				569593182527512200879A5D /* Message.swift in Sources */,
-				5695B18425DBD71200AA612A /* GoogleDelegate.swift in Sources */,
 				56B48CC6250BA7C0004DB3FA /* UIApplication+Keyboard.swift in Sources */,
 				8AB2B1CC245ABB7E00FA67E7 /* MobileEngageView.swift in Sources */,
 				56C4E96025400FED00EB241C /* MessageManager.swift in Sources */,
@@ -676,7 +646,7 @@
 /* Begin XCBuildConfiguration section */
 		56E7CB4425408249006323D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C45D55E00BB889A2FC5AB772 /* Pods-NotificationService.debug.xcconfig */;
+			baseConfigurationReference = FC9C4BFDBABDA83045A4B029 /* Pods-NotificationService.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -700,7 +670,7 @@
 		};
 		56E7CB4525408249006323D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4D16AEF41C88703583BA37A4 /* Pods-NotificationService.release.xcconfig */;
+			baseConfigurationReference = C262ACB80013AE53DB5F55F9 /* Pods-NotificationService.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -838,7 +808,7 @@
 		};
 		8AB2B1C2245ABAAA00FA67E7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3331F569D41BE8B000D53553 /* Pods-Emarsys-Sample.debug.xcconfig */;
+			baseConfigurationReference = EDDF8FEAAC5FB1345AAD81C5 /* Pods-Emarsys-Sample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -863,7 +833,7 @@
 		};
 		8AB2B1C3245ABAAA00FA67E7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41AE3B45664840F9E81AA242 /* Pods-Emarsys-Sample.release.xcconfig */;
+			baseConfigurationReference = 31B0FFBEB8F1D6651E313702 /* Pods-Emarsys-Sample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

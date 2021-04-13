@@ -5,7 +5,6 @@
 import UIKit
 import SwiftUI
 import EmarsysSDK
-import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -33,8 +32,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
-        let googleDelegate = (UIApplication.shared.delegate as! AppDelegate).googleDelegate
-        
         
         // Create the SwiftUI view that provides the window contents.
         let configUserDefaults = UserDefaults(suiteName: "com.emarsys.sampleConfig")
@@ -59,14 +56,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let contentView = ContentView()
             .environmentObject(loginData!)
-            .environmentObject(googleDelegate)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: contentView)
-            
-            GIDSignIn.sharedInstance().presentingViewController = window.rootViewController
 
             self.window = window
             window.makeKeyAndVisible()
