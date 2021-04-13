@@ -1,6 +1,6 @@
 ---
 env:
-  SLACK_WEBHOOK: ${{ secrets.SLACK_MOBILE_TEAM_CI_CHANNEL_WEBHOOK }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 jobs:
   build:
     name: Build
