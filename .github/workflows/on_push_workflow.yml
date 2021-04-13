@@ -11,9 +11,6 @@ jobs:
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
-      - name: Fail
-        run: bla
-        shell: bash
       - name: Install provisioning profile for tests
         uses: davidSchuppa/base64Secret-toFile-action@v1
         with:
