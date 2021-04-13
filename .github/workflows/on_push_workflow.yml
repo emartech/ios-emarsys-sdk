@@ -63,8 +63,11 @@ jobs:
         run: cd ~/tmp/Build/Products && zip -r ~/Tests.zip ./
         shell: bash
       - name: Run tests on Firebase
-        run: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphonese,version=11.4,locale=en_GB --device model=iphonexsmax,version=12.3,locale=en_GB --device model=iphone8,version=14.1,locale=en_GB
-        shell: bash
+        uses: nick-invision/retry@v2
+        with:
+          max_attempts: 3
+          retry_on: error
+          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphonese,version=11.4,locale=en_GB --device model=iphonexsmax,version=12.3,locale=en_GB --device model=iphone8,version=14.1,locale=en_GB
       - name: Install Dependencies
         run: cd Emarsys\ Sample && pod deintegrate && pod install
         shell: bash
