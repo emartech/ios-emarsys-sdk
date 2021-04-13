@@ -97,7 +97,7 @@ jobs:
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
           message: 'Last push build failed! :sob:'
-          user_icon: ':alert:'
+          user_icon: 'https://media2.giphy.com/media/YO7P8VC7nlQlO/giphy.gif'
           user_name: Emarsys SDK - iOS
       - name: Slack Notification
         uses: megamegax/slack_action@0.2.3
@@ -106,7 +106,7 @@ jobs:
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: success
           message: 'Last push build successful! :man-gesturing-ok: :jobs:'
-          user_icon: ':jobs:'
+          user_icon: 'https://acegif.com/wp-content/gifs/apple-41.gif'
           user_name: Emarsys SDK - iOS
 name: Last commit build
 'on':
