@@ -93,11 +93,11 @@ jobs:
         name: Slack Notification On Error
         uses: megamegax/slack_action@0.2.3
         with:
-          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" },{ "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
           message: 'Last push build failed! :sob:'
-          user_icon: https://i.pinimg.com/474x/60/5e/ac/605eac3124c4885e067002cdd4ff684a.jpg
+          user_icon: ':alert:'
           user_name: Emarsys SDK - iOS
       - name: Slack Notification
         uses: megamegax/slack_action@0.2.3
@@ -106,7 +106,7 @@ jobs:
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: success
           message: 'Last push build successful! :man-gesturing-ok: :jobs:'
-          user_icon: https://cdn4.iconfinder.com/data/icons/old-apple-logo/550/Apple_Rainbow.png
+          user_icon: ':jobs:'
           user_name: Emarsys SDK - iOS
 name: Last commit build
 'on':
