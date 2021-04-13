@@ -11,6 +11,9 @@ jobs:
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
+      - name: Fail
+        run: bla
+        shell: bash
       - name: Install provisioning profile for tests
         uses: davidSchuppa/base64Secret-toFile-action@v1
         with:
@@ -65,10 +68,10 @@ jobs:
       - name: Run tests on Firebase
         uses: nick-invision/retry@v2
         with:
-          timeout_minutes: 30
+          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphonese,version=11.4,locale=en_GB --device model=iphonexsmax,version=12.3,locale=en_GB --device model=iphone8,version=14.1,locale=en_GB
           max_attempts: 3
           retry_on: error
-          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphonese,version=11.4,locale=en_GB --device model=iphonexsmax,version=12.3,locale=en_GB --device model=iphone8,version=14.1,locale=en_GB
+          timeout_minutes: 30
       - name: Install Dependencies
         run: cd Emarsys\ Sample && pod deintegrate && pod install
         shell: bash
@@ -86,6 +89,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.S3_ACCESS_SECRET }}
       - name: Upload ipa
         run: aws s3 cp ./Emarsys\ Sample/Emarsys-Sample.ipa s3://${{ secrets.S3_BUCKET }}/bitrise/Emarsys-Sample.ipa
+      - if: ${{ failure() }}
+        name: Slack Notification On Error
+        uses: megamegax/slack_action@0.2.3
+        with:
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" },{ "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
+          channel: ${{ secrets.SLACK_CHANNEL }}
+          job_status: failure
+          message: 'Last push build failed! :sob:'
+          user_icon: https://i.pinimg.com/474x/60/5e/ac/605eac3124c4885e067002cdd4ff684a.jpg
+          user_name: Emarsys SDK - iOS
       - name: Slack Notification
         uses: megamegax/slack_action@0.2.3
         with:
