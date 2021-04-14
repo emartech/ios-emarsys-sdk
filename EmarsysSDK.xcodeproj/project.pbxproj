@@ -1154,6 +1154,7 @@
 		64259C638B3EE319AE69F9A4 /* EMSActionFactoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSActionFactoryTests.m; sourceTree = "<group>"; };
 		64259C7DB15ED101C980F8DD /* EMSPredictRequestModelBuilderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictRequestModelBuilderTests.m; sourceTree = "<group>"; };
 		64259C87537000FEC9172DA7 /* NSMutableDicitionary+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDicitionary+EMSCoreTests.m"; sourceTree = "<group>"; };
+		64259D0FFCCA010F7BA3F5C1 /* nightly_build_worklow.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = nightly_build_worklow.yml; path = .github/workflows/nightly_build_worklow.yml; sourceTree = "<group>"; };
 		64259D6CA586BDE577D5679A /* EMSInlineInAppViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInlineInAppViewTests.m; sourceTree = "<group>"; };
 		64259E07D567C02596450751 /* EMSInlineInAppView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInlineInAppView.h; sourceTree = "<group>"; };
 		64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofenceInternalTests.m; sourceTree = "<group>"; };
@@ -1740,6 +1741,7 @@
 				3E54A0ED8C611C7E80FE7FF5 /* Pods-PredictTests.release.xcconfig */,
 				D7AEC7D4605081D0CA3B4D98 /* Pods-Tests.debug.xcconfig */,
 				E93F03E1CEA29784963DA0E6 /* Pods-Tests.release.xcconfig */,
+				64259D0FFCCA010F7BA3F5C1 /* nightly_build_worklow.yml */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
