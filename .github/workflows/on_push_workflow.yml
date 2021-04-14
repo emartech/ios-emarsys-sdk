@@ -39,12 +39,8 @@ jobs:
         run: pod install --no-repo-update --verbose
         shell: bash
       - name: Build And Test
-        uses: nick-invision/retry@v2
-        with:
-          command: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max' -derivedDataPath ~/tmp test
-          max_attempts: 3
-          retry_on: error
-          timeout_minutes: 30
+        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max' -derivedDataPath ~/tmp test
+        shell: bash
       - name: Install Dependencies
         run: cd Emarsys\ Sample && pod deintegrate && pod install
         shell: bash
