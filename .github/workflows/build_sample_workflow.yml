@@ -1,0 +1,77 @@
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Remove old directories
+      run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
+      shell: bash
+    - name: Setup Sample Provisioning Profile
+      uses: davidSchuppa/base64Secret-toFile-action@v1
+      with:
+        destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+        filename: EmarsysSampleEnterpriseProvProf.mobileprovision
+        secret: ${{ secrets.EMARSYS_SAMPLE_ENTERPRISE_PROV_PROF_BASE64 }}
+    - name: Setup NotificationService Provisioning Profile
+      uses: davidSchuppa/base64Secret-toFile-action@v1
+      with:
+        destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+        filename: EmarsysSampleNotificationServiceEnterpriseProvProf.mobileprovision
+        secret: ${{ secrets.EMARSYS_SAMPLE_NOTIFICATION_SERVICE_ENTERPRISE_PROV_PROF_BASE64 }}
+    - name: Setup ipa export options plist
+      uses: davidSchuppa/base64Secret-toFile-action@v1
+      with:
+        destination-path: ./Emarsys\ Sample
+        filename: IpaExportOptions.plist
+        secret: ${{ secrets.IPA_EXPORT_OPTIONS_PLIST_BASE64 }}
+    - name: Setup Sample App Certs
+      uses: apple-actions/import-codesign-certs@v1
+      with:
+        keychain-password: ${{ secrets.KEYCHAIN_PASS }}
+        p12-file-base64: ${{ secrets.ENTERPRISE_P12_BASE64 }}
+        p12-password: ${{ secrets.ENTERPRISE_PASS }}
+    - name: Install Dependencies
+      run: cd Emarsys\ Sample && pod deintegrate && pod install
+      shell: bash
+    - name: Sample archive
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample COMPILER_INDEX_STORE_ENABLE=NO archive -archivePath ./Emarsys-Sample.xcarchive -destination generic/platform=iOS -allowProvisioningUpdates | xcpretty
+      shell: bash
+    - name: Generate ipa
+      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportPath ./ -exportOptionsPlist ./IpaExportOptions.plist | xcpretty
+      shell: bash
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.S3_ACCESS_ID }}
+        aws-region: eu-west-1
+        aws-secret-access-key: ${{ secrets.S3_ACCESS_SECRET }}
+    - name: Upload ipa
+      run: aws s3 cp ./Emarsys\ Sample/Emarsys-Sample.ipa s3://${{ secrets.S3_BUCKET }}/bitrise/Emarsys-Sample.ipa --acl public-read
+    - if: ${{ failure() }}
+      name: Slack Notification On Error
+      uses: megamegax/slack_action@0.2.3
+      with:
+        actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
+        channel: ${{ secrets.SLACK_CHANNEL }}
+        job_status: failure
+        message: 'Last push build failed! :sob:'
+        user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
+        user_name: Emarsys SDK - iOS
+    - name: Slack Notification
+      uses: megamegax/slack_action@0.2.3
+      with:
+        actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }, { "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
+        channel: ${{ secrets.SLACK_CHANNEL }}
+        job_status: success
+        message: 'Last push build successful! :man-gesturing-ok: :jobs:'
+        user_icon: 'https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png'
+        user_name: Emarsys SDK - iOS
+name: Last commit build
+'on':
+  repository_dispatch:
+    types: [ build-sample ]
+    branches:
+      - master
+  workflow_dispatch:

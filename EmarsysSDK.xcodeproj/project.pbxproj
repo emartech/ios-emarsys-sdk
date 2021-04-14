@@ -1138,6 +1138,7 @@
 		642594C044516E53D2877760 /* EMSLogicTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLogicTests.m; sourceTree = "<group>"; };
 		642594C59C5EFF459584A660 /* EMSActionFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionFactory.h; sourceTree = "<group>"; };
 		642594FB34B7F6A972DA93B0 /* EMSResponseBodyParserProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSResponseBodyParserProtocol.h; sourceTree = "<group>"; };
+		6425956678EBD2D0A1B8A3BF /* build_sample_workflow.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = build_sample_workflow.yml; path = .github/workflows/build_sample_workflow.yml; sourceTree = "<group>"; };
 		642597A99D66445442FFBE11 /* EMSAppEventAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSAppEventAction.m; sourceTree = "<group>"; };
 		6425981445EC441D5025D02A /* FakeDisplayedIAMRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeDisplayedIAMRepository.swift; sourceTree = "<group>"; };
 		64259852E6A4A27A6EAF02AE /* EMSCustomEventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCustomEventAction.h; sourceTree = "<group>"; };
@@ -1742,6 +1743,7 @@
 				D7AEC7D4605081D0CA3B4D98 /* Pods-Tests.debug.xcconfig */,
 				E93F03E1CEA29784963DA0E6 /* Pods-Tests.release.xcconfig */,
 				64259D0FFCCA010F7BA3F5C1 /* nightly_build_worklow.yml */,
+				6425956678EBD2D0A1B8A3BF /* build_sample_workflow.yml */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
