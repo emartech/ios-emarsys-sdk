@@ -94,7 +94,7 @@ jobs:
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
           message: 'Nightly build failed! :sob:'
-          user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
+          user_icon: https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png
           user_name: Emarsys SDK - iOS
       - name: Slack Notification
         uses: megamegax/slack_action@0.2.3
@@ -103,13 +103,10 @@ jobs:
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: success
           message: 'Nightly build successful! :man-gesturing-ok: :jobs:'
-          user_icon: 'https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png'
+          user_icon: https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png
           user_name: Emarsys SDK - iOS
-
 name: Nightly build
-on:
+'on':
   schedule:
-    - cron:  '0 2 * * *'
-    branches:
-      - master
+    - cron: 0 2 * * *
   workflow_dispatch:
