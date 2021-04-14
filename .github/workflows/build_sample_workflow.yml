@@ -38,10 +38,10 @@ jobs:
       run: cd Emarsys\ Sample && pod deintegrate && pod install
       shell: bash
     - name: Clean project
-      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -sdk iphoneos -configuration Release clean
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
       shell: bash
     - name: Archive project
-      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample iphoneos -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
       shell: bash
     - name: Export ipa
       run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates
