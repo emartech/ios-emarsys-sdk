@@ -112,4 +112,4 @@ on:
     - cron:  '0 2 * * *'
     branches:
       - master
-  workflow_dispatch: null
+  workflow_dispatch:
