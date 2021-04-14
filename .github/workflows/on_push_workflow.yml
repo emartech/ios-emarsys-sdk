@@ -35,13 +35,6 @@ jobs:
           keychain-password: ${{ secrets.KEYCHAIN_PASS }}
           p12-file-base64: ${{ secrets.ENTERPRISE_P12_BASE64 }}
           p12-password: ${{ secrets.ENTERPRISE_PASS }}
-      - name: Setup Test Certs
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          create-keychain: false
-          keychain-password: ${{ secrets.KEYCHAIN_PASS }}
-          p12-file-base64: ${{ secrets.SDK_TEAM_P12_BASE64 }}
-          p12-password: ${{ secrets.SDK_TEAM_PASS }}
       - name: Install Dependencies
         run: pod install --no-repo-update --verbose
         shell: bash
@@ -73,7 +66,7 @@ jobs:
         name: Slack Notification On Error
         uses: megamegax/slack_action@0.2.3
         with:
-          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
           message: 'Last push build failed! :sob:'
@@ -82,7 +75,7 @@ jobs:
       - name: Slack Notification
         uses: megamegax/slack_action@0.2.3
         with:
-          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" },{ "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }, { "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: success
           message: 'Last push build successful! :man-gesturing-ok: :jobs:'
