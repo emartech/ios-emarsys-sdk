@@ -14,43 +14,45 @@ jobs:
       uses: davidSchuppa/base64Secret-toFile-action@v1
       with:
         destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
-        filename: EmarsysSampleEnterpriseProvProf.mobileprovision
-        secret: ${{ secrets.EMARSYS_SAMPLE_ENTERPRISE_PROV_PROF_BASE64 }}
+        filename: EmarsysSampleProvProf.mobileprovision
+        secret: ${{ secrets.DEV_ACCOUNT_EMARSYS_SAMPLE_PROV_PROF_BASE64 }}
     - name: Setup NotificationService Provisioning Profile
       uses: davidSchuppa/base64Secret-toFile-action@v1
       with:
         destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
-        filename: EmarsysSampleNotificationServiceEnterpriseProvProf.mobileprovision
-        secret: ${{ secrets.EMARSYS_SAMPLE_NOTIFICATION_SERVICE_ENTERPRISE_PROV_PROF_BASE64 }}
-    - name: Setup ipa export options plist
+        filename: EmarsysSampleNotificationServiceProvProf.mobileprovision
+        secret: ${{ secrets.DEV_ACCOUNT_EMARSYS_SAMPLE_NOTIFICATION_SERVICE_PROV_PROF_BASE64 }}
+    - name: Setup export options plist
       uses: davidSchuppa/base64Secret-toFile-action@v1
       with:
         destination-path: ./Emarsys\ Sample
-        filename: IpaExportOptions.plist
-        secret: ${{ secrets.IPA_EXPORT_OPTIONS_PLIST_BASE64 }}
-    - name: Setup Sample App Certs
+        filename: exportOptions.plist
+        secret: ${{ secrets.TESTFLIGHT_EXPORT_OPTIONS_PLIST_BASE64 }}
+    - name: Setup Dev Account Dist Cert
       uses: apple-actions/import-codesign-certs@v1
       with:
         keychain-password: ${{ secrets.KEYCHAIN_PASS }}
-        p12-file-base64: ${{ secrets.ENTERPRISE_P12_BASE64 }}
-        p12-password: ${{ secrets.ENTERPRISE_PASS }}
+        p12-file-base64: ${{ secrets.DEV_ACCOUNT_DIST_CERT_P12_BASE64 }}
+        p12-password: ${{ secrets.DEV_ACCOUNT_DIST_CERT_PASS }}
     - name: Install Dependencies
       run: cd Emarsys\ Sample && pod deintegrate && pod install
       shell: bash
-    - name: Sample archive
-      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample COMPILER_INDEX_STORE_ENABLE=NO archive -archivePath ./Emarsys-Sample.xcarchive -destination generic/platform=iOS -allowProvisioningUpdates | xcpretty
+    - name: Clean project
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -sdk iphoneos -configuration Release clean
       shell: bash
-    - name: Generate ipa
-      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportPath ./ -exportOptionsPlist ./IpaExportOptions.plist | xcpretty
+    - name: Archive project
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample iphoneos -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
       shell: bash
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Export ipa
+      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates
+      shell: bash
+    - name: Upload app to TestFlight
+      uses: apple-actions/upload-testflight-build@v1
       with:
-        aws-access-key-id: ${{ secrets.S3_ACCESS_ID }}
-        aws-region: eu-west-1
-        aws-secret-access-key: ${{ secrets.S3_ACCESS_SECRET }}
-    - name: Upload ipa
-      run: aws s3 cp ./Emarsys\ Sample/Emarsys-Sample.ipa s3://${{ secrets.S3_BUCKET }}/bitrise/Emarsys-Sample.ipa --acl public-read
+        app-path: ./Emarsys\ Sample/Emarsys-Sample.ipa
+        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+        api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
     - if: ${{ failure() }}
       name: Slack Notification On Error
       uses: megamegax/slack_action@0.2.3
@@ -58,7 +60,7 @@ jobs:
         actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
         channel: ${{ secrets.SLACK_CHANNEL }}
         job_status: failure
-        message: 'Last push build failed! :sob:'
+        message: 'EmarsysSample build failed! :sob:'
         user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
         user_name: Emarsys SDK - iOS
     - name: Slack Notification

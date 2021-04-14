@@ -661,7 +661,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample.NotificationService";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleNotificationServiceEnterpriseProvProf;
+				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleNotificationServiceProvProf;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -685,7 +685,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample.NotificationService";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleNotificationServiceEnterpriseProvProf;
+				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleNotificationServiceProvProf;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -825,7 +825,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleEnterpriseProvProf;
+				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleProvProf;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -850,7 +850,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emarsys.Emarsys-Sample";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleEnterpriseProvProf;
+				PROVISIONING_PROFILE_SPECIFIER = EmarsysSampleProvProf;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
