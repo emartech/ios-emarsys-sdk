@@ -7,6 +7,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with: 
+        fetch-depth: 0
     - name: Remove old directories
       run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
       shell: bash
@@ -41,8 +43,7 @@ jobs:
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
       shell: bash
     - name: Set build number for EmarsysSample
-      run: git fetch && /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(cd ~/work/ios-emarsys-sdk/ios-emarsys-sdk && git rev-list master --count)" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
-      # run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(($(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist) + 1))" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
+      run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(cd ~/work/ios-emarsys-sdk/ios-emarsys-sdk && git rev-list master --count)" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
       shell: bash
     - name: Set build number for NotificationService
       run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(($(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist)))" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/NotificationService/Info.plist
