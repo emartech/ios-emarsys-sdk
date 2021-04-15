@@ -41,7 +41,7 @@ jobs:
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
       shell: bash
     - name: Set build number
-      run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(git rev-list --count HEAD)" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
+      run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(($(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist) + 1))" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
       shell: bash
     - name: Cat it out build number
       run: git rev-list --count HEAD && cat ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
