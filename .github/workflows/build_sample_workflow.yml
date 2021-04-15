@@ -40,6 +40,9 @@ jobs:
     - name: Clean project
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
       shell: bash
+    - name: Set build number
+      run: buildNumber=$(git rev-list --count HEAD) | /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $buildNumber" "$PRODUCT_SETTINGS_PATH"
+      shell: bash
     - name: Archive project
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
       shell: bash
