@@ -44,7 +44,7 @@ jobs:
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
       shell: bash
     - name: Export ipa
-      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates
+      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates | pwd | ls -la
       shell: bash
     - name: Upload app to TestFlight
       uses: apple-actions/upload-testflight-build@v1
