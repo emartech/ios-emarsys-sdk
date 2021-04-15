@@ -44,15 +44,12 @@ jobs:
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive
       shell: bash
     - name: Export ipa
-      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates && pwd && ls -la
+      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates
       shell: bash
-    - name: Pwd
-      run: pwd && ls -la
-      shell: bash      
     - name: Upload app to TestFlight
       uses: apple-actions/upload-testflight-build@v1
       with:
-        app-path: ./Emarsys\ Sample/Emarsys-Sample.ipa
+        app-path: ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample.ipa
         issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
         api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
         api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
