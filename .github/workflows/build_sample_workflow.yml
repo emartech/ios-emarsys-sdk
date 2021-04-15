@@ -46,6 +46,9 @@ jobs:
     - name: Export ipa
       run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates && pwd && ls -la
       shell: bash
+    - name: Pwd
+      run: pwd && ls -la
+      shell: bash      
     - name: Upload app to TestFlight
       uses: apple-actions/upload-testflight-build@v1
       with:
