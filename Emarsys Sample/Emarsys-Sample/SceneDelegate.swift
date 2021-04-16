@@ -53,9 +53,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                               pushToken: pushToken ?? "",
                               sdkVersion: sdkVersion
         )
+        let signInWithAppleDelegate = SignInWithAppleDelegate(loginData: loginData!)
         
         let contentView = ContentView()
             .environmentObject(loginData!)
+            .environmentObject(signInWithAppleDelegate)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
