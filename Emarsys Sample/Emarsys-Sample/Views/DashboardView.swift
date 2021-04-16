@@ -4,10 +4,12 @@
 
 import SwiftUI
 import EmarsysSDK
+import AuthenticationServices
 
 struct DashboardView: View {
     
     @EnvironmentObject var loginData: LoginData
+    @EnvironmentObject var signInWithAppleDelegate: SignInWithAppleDelegate
     @State var isGeofenceEnabled: Bool = false
     @State var showSetupChangeMessage: Bool = false
     @State var messageText: String = ""
@@ -115,7 +117,12 @@ struct DashboardView: View {
                             self.loginButtonText()
                         }
                     }
-
+                    
+                    SignInWithAppleButton()
+                        .frame(width: 280)
+                        .onTapGesture {
+                            self.signInWithAppleDelegate.handleSignIn()
+                        }
                 }
                 .padding()
                 
