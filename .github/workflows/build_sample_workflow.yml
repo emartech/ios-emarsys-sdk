@@ -74,7 +74,7 @@ jobs:
     - name: Slack Notification
       uses: megamegax/slack_action@0.2.3
       with:
-        actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }, { "type": "button", "text": "Install page", "url": "http://ems-mobileteam-artifacts.s3-website-eu-west-1.amazonaws.com/index-ems.html" }]'
+        actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
         channel: ${{ secrets.SLACK_CHANNEL }}
         job_status: success
         message: 'Build successful! :man-gesturing-ok: :jobs:'
