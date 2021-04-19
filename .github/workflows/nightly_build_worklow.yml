@@ -25,7 +25,6 @@ jobs:
       - name: Setup Test Certs
         uses: apple-actions/import-codesign-certs@v1
         with:
-          create-keychain: false
           keychain-password: ${{ secrets.KEYCHAIN_PASS }}
           p12-file-base64: ${{ secrets.SDK_TEAM_P12_BASE64 }}
           p12-password: ${{ secrets.SDK_TEAM_PASS }}
