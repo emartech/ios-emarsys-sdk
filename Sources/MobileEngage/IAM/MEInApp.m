@@ -22,6 +22,7 @@
 @property(nonatomic, weak) MEInAppMessage *currentInAppMessage;
 
 @property(nonatomic, strong, nullable) UIWindow *iamWindow;
+@property(nonatomic, strong, nullable) UIWindow *originalWindow;
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
@@ -107,6 +108,9 @@
 
 - (void)displayInAppViewController:(MEInAppMessage *)message
                     viewController:(MEIAMViewController *)meiamViewController {
+    NSPredicate *isKeyWindow = [NSPredicate predicateWithFormat:@"isKeyWindow == YES"];
+    self.originalWindow = [[[UIApplication sharedApplication] windows] filteredArrayUsingPredicate:isKeyWindow].firstObject;
+
     [self.iamWindow makeKeyAndVisible];
 
     __weak typeof(self) weakSelf = self;
@@ -128,20 +132,21 @@
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf.iamWindow.rootViewController dismissViewControllerAnimated:YES
-                                                              completion:^{
-            if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
-                [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
-                EMSLog(weakSelf.inAppLog, LogLevelMetric);
-            }
+                                                                  completion:^{
+                                                                      if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
+                                                                          [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
+                                                                          EMSLog(weakSelf.inAppLog, LogLevelMetric);
+                                                                      }
 
-            weakSelf.iamWindow = nil;
-            
-            [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
-            
-            if (completionHandler) {
-                completionHandler();
-            }
-        }];
+                                                                      weakSelf.iamWindow = nil;
+
+                                                                      [weakSelf.originalWindow makeKeyAndVisible];
+                                                                      weakSelf.originalWindow = nil;
+
+                                                                      if (completionHandler) {
+                                                                          completionHandler();
+                                                                      }
+                                                                  }];
     });
 }
 
