@@ -137,7 +137,8 @@
                                                                           [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
                                                                           EMSLog(weakSelf.inAppLog, LogLevelMetric);
                                                                       }
-
+                                                                      weakSelf.iamWindow.windowLevel = UIWindowLevelNormal;
+                                                                      weakSelf.iamWindow.frame = CGRectMake(0, 0, 0, 0);
                                                                       weakSelf.iamWindow = nil;
 
                                                                       [weakSelf.originalWindow makeKeyAndVisible];
