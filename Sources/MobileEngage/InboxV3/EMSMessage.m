@@ -3,6 +3,7 @@
 //
 
 #import "EMSMessage.h"
+#import "EMSActionModelProtocol.h"
 
 @implementation EMSMessage
 
@@ -16,7 +17,8 @@
                  updatedAt:(nullable NSNumber *)updatedAt
                  expiresAt:(nullable NSNumber *)expiresAt
                       tags:(nullable NSArray<NSString *> *)tags
-                properties:(nullable NSDictionary<NSString *, NSString *> *)properties {
+                properties:(nullable NSDictionary<NSString *, NSString *> *)properties
+                   actions:(NSArray<id <EMSActionModelProtocol>> *)actions {
     if (self = [super init]) {
         _id = id;
         _campaignId = campaignId;
@@ -29,6 +31,7 @@
         _expiresAt = expiresAt;
         _tags = tags;
         _properties = properties;
+        _actions = actions;
     }
     return self;
 }
@@ -69,6 +72,8 @@
         return NO;
     if (self.properties != message.properties && ![self.properties isEqualToDictionary:message.properties])
         return NO;
+    if (self.actions != message.actions && ![self.actions isEqualToArray:message.actions])
+        return NO;
     return YES;
 }
 
@@ -84,6 +89,7 @@
     hash = hash * 31u + [self.expiresAt hash];
     hash = hash * 31u + [self.tags hash];
     hash = hash * 31u + [self.properties hash];
+    hash = hash * 31u + [self.actions hash];
     return hash;
 }
 

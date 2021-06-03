@@ -305,7 +305,8 @@
                                      tags:@[@"tag1", @"tag2"]
                                properties:@{
                                        @"key1": @"value1",
-                                       @"key2": @"value2"}];
+                                       @"key2": @"value2"}
+                                  actions:nil];
 }
 
 - (void)setupForSuccess {

@@ -8,6 +8,10 @@
 #import "EMSRequestModel.h"
 #import "EMSResponseModel.h"
 #import "EMSInboxResultParser.h"
+#import "EMSAppEventActionModel.h"
+#import "EMSOpenExternalUrlActionModel.h"
+#import "EMSCustomEventActionModel.h"
+#import "EMSDismissActionModel.h"
 
 @interface EMSInboxResultParserTests : XCTestCase
 
@@ -38,7 +42,25 @@
                            "        \"tags\": [\"tag1\", \"tag2\"],\n"
                            "        \"properties\": {"
                            "            \"key1\": \"value1\","
-                           "            \"key2\": \"value2\"}"
+                           "            \"key2\": \"value2\"},"
+                           "        \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"MEAppEvent\","
+                           "                \"name\": \"testName1\","
+                           "                \"payload\": {"
+                           "                    \"key1\": \"value1\","
+                           "                    \"key2\": \"value2\""
+                           "                }"
+                           "            },"
+                           "            {"
+                           "                \"id\": \"testId2\","
+                           "                \"title\": \"testTitle2\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": \"https://www.emarsys.com\""
+                           "            }"
+                           "        ]"
                            "    },\n"
                            "    {\n"
                            "        \"id\": \"testId2\",\n"
@@ -53,7 +75,24 @@
                            "        \"tags\": [\"tag21\", \"tag22\"],\n"
                            "        \"properties\": {"
                            "            \"key3\": \"value3\","
-                           "            \"key4\": \"value4\"}"
+                           "            \"key4\": \"value4\"},"
+                           "        \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId3\","
+                           "                \"title\": \"testTitle3\","
+                           "                \"type\": \"MECustomEvent\","
+                           "                \"name\": \"testName3\","
+                           "                \"payload\": {"
+                           "                    \"key3\": \"value3\","
+                           "                    \"key4\": \"value4\""
+                           "                }"
+                           "            },"
+                           "            {"
+                           "                \"id\": \"testId4\","
+                           "                \"title\": \"testTitle4\","
+                           "                \"type\": \"Dismiss\""
+                           "            }"
+                           "        ]"
                            "    },\n"
                            "    {\n"
                            "        \"id\": \"testId3\",\n"
@@ -94,7 +133,21 @@
                                                      tags:@[@"tag1", @"tag2"]
                                                properties:@{
                                                        @"key1": @"value1",
-                                                       @"key2": @"value2"}];
+                                                       @"key2": @"value2"}
+                                                  actions:@[
+                                                          [[EMSAppEventActionModel alloc] initWithId:@"testId1"
+                                                                                               title:@"testTitle1"
+                                                                                                type:@"MEAppEvent"
+                                                                                                name:@"testName1"
+                                                                                             payload:@{
+                                                                                                     @"key1": @"value1",
+                                                                                                     @"key2": @"value2"
+                                                                                             }],
+                                                          [[EMSOpenExternalUrlActionModel alloc] initWithId:@"testId2"
+                                                                                                      title:@"testTitle2"
+                                                                                                       type:@"OpenExternalUrl"
+                                                                                                        url:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]]
+                                                  ]];
     EMSMessage *message2 = [[EMSMessage alloc] initWithId:@"testId2"
                                                campaignId:@"campaignId2"
                                                collapseId:@"collapseId2"
@@ -107,7 +160,20 @@
                                                      tags:@[@"tag21", @"tag22"]
                                                properties:@{
                                                        @"key3": @"value3",
-                                                       @"key4": @"value4"}];
+                                                       @"key4": @"value4"}
+                                                  actions:@[
+                                                          [[EMSCustomEventActionModel alloc] initWithId:@"testId3"
+                                                                                                  title:@"testTitle3"
+                                                                                                   type:@"MECustomEvent"
+                                                                                                   name:@"testName3"
+                                                                                                payload:@{
+                                                                                                        @"key3": @"value3",
+                                                                                                        @"key4": @"value4"
+                                                                                                }],
+                                                          [[EMSDismissActionModel alloc] initWithId:@"testId4"
+                                                                                              title:@"testTitle4"
+                                                                                               type:@"Dismiss"]
+                                                  ]];
     EMSMessage *message3 = [[EMSMessage alloc] initWithId:@"testId3"
                                                campaignId:@"campaignId3"
                                                collapseId:nil
@@ -118,7 +184,8 @@
                                                 updatedAt:nil
                                                 expiresAt:nil
                                                      tags:nil
-                                               properties:nil];
+                                               properties:nil
+                                                  actions:nil];
     [expectedResult setMessages:@[message1, message2, message3]];
 
     EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];

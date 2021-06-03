@@ -7,6 +7,10 @@
 #import "EMSInboxResult.h"
 #import "EMSDictionaryValidator.h"
 #import "NSDictionary+EMSCore.h"
+#import "EMSAppEventActionModel.h"
+#import "EMSOpenExternalUrlActionModel.h"
+#import "EMSCustomEventActionModel.h"
+#import "EMSDismissActionModel.h"
 
 @implementation EMSInboxResultParser
 
@@ -35,6 +39,17 @@
                                        withType:[NSNumber class]];
                 }];
                 if ([messageErrors count] == 0) {
+                    NSMutableArray<id <EMSActionModelProtocol>> *mutableActions = nil;
+                    id actions = [messageDict nullSafeValueForKey:@"actions"];
+                    if (actions && [actions isKindOfClass:[NSArray class]] && [actions count] > 0) {
+                        mutableActions = [NSMutableArray array];
+                        for (NSDictionary *actionDictionary in actions) {
+                            id <EMSActionModelProtocol> action = [self createActionFromDictionary:actionDictionary];
+                            if (action) {
+                                [mutableActions addObject:action];
+                            }
+                        }
+                    }
                     EMSMessage *message = [[EMSMessage alloc] initWithId:[messageDict nullSafeValueForKey:@"id"]
                                                               campaignId:[messageDict nullSafeValueForKey:@"campaignId"]
                                                               collapseId:[messageDict nullSafeValueForKey:@"collapseId"]
@@ -45,7 +60,8 @@
                                                                updatedAt:[messageDict nullSafeValueForKey:@"updatedAt"]
                                                                expiresAt:[messageDict nullSafeValueForKey:@"expiresAt"]
                                                                     tags:[messageDict nullSafeValueForKey:@"tags"]
-                                                              properties:[messageDict nullSafeValueForKey:@"properties"]];
+                                                              properties:[messageDict nullSafeValueForKey:@"properties"]
+                                                                 actions:mutableActions ? [NSArray arrayWithArray:mutableActions] : nil];
                     [resultMessages addObject:message];
                 }
             }
@@ -55,6 +71,33 @@
 
     }
     return result;
+}
+
+- (id <EMSActionModelProtocol>)createActionFromDictionary:(NSDictionary *)actionDictionary {
+    id <EMSActionModelProtocol> action = nil;
+    if ([actionDictionary[@"type"] isEqualToString:@"MEAppEvent"]) {
+        action = [[EMSAppEventActionModel alloc] initWithId:actionDictionary[@"id"]
+                                                      title:actionDictionary[@"title"]
+                                                       type:actionDictionary[@"type"]
+                                                       name:actionDictionary[@"name"]
+                                                    payload:actionDictionary[@"payload"]];
+    } else if ([actionDictionary[@"type"] isEqualToString:@"OpenExternalUrl"]) {
+        action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionDictionary[@"id"]
+                                                             title:actionDictionary[@"title"]
+                                                              type:actionDictionary[@"type"]
+                                                               url:actionDictionary[@"url"] ? [[NSURL alloc] initWithString:actionDictionary[@"url"]] : nil];
+    } else if ([actionDictionary[@"type"] isEqualToString:@"MECustomEvent"]) {
+        action = [[EMSCustomEventActionModel alloc] initWithId:actionDictionary[@"id"]
+                                                         title:actionDictionary[@"title"]
+                                                          type:actionDictionary[@"type"]
+                                                          name:actionDictionary[@"name"]
+                                                       payload:actionDictionary[@"payload"]];
+    } else if ([actionDictionary[@"type"] isEqualToString:@"Dismiss"]) {
+        action = [[EMSDismissActionModel alloc] initWithId:actionDictionary[@"id"]
+                                                     title:actionDictionary[@"title"]
+                                                      type:actionDictionary[@"type"]];
+    }
+    return action;
 }
 
 @end

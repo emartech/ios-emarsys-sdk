@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol EMSActionModelProtocol;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSMessage : NSObject
@@ -19,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSNumber *expiresAt;
 @property(nonatomic, strong, nullable) NSArray<NSString *> *tags;
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, NSString *> *properties;
+@property(nonatomic, strong, nullable) NSArray<id<EMSActionModelProtocol>> *actions;
 
 - (instancetype)initWithId:(NSString *)id
                 campaignId:(NSString *)campaignId
@@ -28,9 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
                   imageUrl:(nullable NSString *)imageUrl
                 receivedAt:(NSNumber *)receivedAt
                  updatedAt:(nullable NSNumber *)updatedAt
-                       expiresAt:(nullable NSNumber *)expiresAt
+                 expiresAt:(nullable NSNumber *)expiresAt
                       tags:(nullable NSArray<NSString *> *)tags
-                properties:(nullable NSDictionary<NSString *, NSString *> *)properties;
+                properties:(nullable NSDictionary<NSString *, NSString *> *)properties
+                   actions:(nullable NSArray<id <EMSActionModelProtocol>> *)actions;
 
 @end
 
