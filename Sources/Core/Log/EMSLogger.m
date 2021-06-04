@@ -62,11 +62,13 @@
     id url = entry.data[@"url"];
     if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
             || [entry.topic isEqualToString:@"app:start"]) {
+        NSString *currentQueue = [NSOperationQueue currentQueue].name;
         [self.operationQueue addOperationWithBlock:^{
             [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:[entry topic]];
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
                         mutableData[@"level"] = [self logLevelStringFromLogLevel:level];
+                        mutableData[@"queue"] = currentQueue;
                         [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
                     }
                                               timestampProvider:self.timestampProvider

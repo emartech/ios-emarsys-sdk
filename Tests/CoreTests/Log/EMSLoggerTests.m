@@ -23,6 +23,7 @@
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) id mockLogEntry;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
+@property(nonatomic, strong) NSOperationQueue *runnerQueue;
 @property(nonatomic, strong) EMSLogger *logger;
 
 @end
@@ -53,6 +54,8 @@
 
     _operationQueue = [NSOperationQueue new];
     self.operationQueue.name = @"operationQueueForTesting";
+    _runnerQueue = [NSOperationQueue new];
+    self.runnerQueue.name = @"testRunnerQueue";
 
     _logger = [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
                                           opertaionQueue:self.operationQueue
@@ -168,14 +171,15 @@
                                                       uuidProvider:self.mockUuidProvider
                                                            storage:self.mockStorage];
 
-    [logger log:self.mockLogEntry
-          level:LogLevelError];
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:self.mockLogEntry
+              level:LogLevelError];
+    }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
 
-    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError]]);
-
-
+    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
+                                                  additionalData:@{@"queue": @"testRunnerQueue"}]]);
 }
 
 - (void)testLogShouldCallRepositoryOnTheGivenOperationQueue {
@@ -268,7 +272,8 @@
 
     EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
 
-    OCMReject([partialMockRepository add:[self shardWithLogLevel:LogLevelInfo]]);
+    OCMReject([partialMockRepository add:[self shardWithLogLevel:LogLevelInfo
+                                                  additionalData:@{@"queue": @"testRunnerQueue"}]]);
 
     EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
                                                     opertaionQueue:self.operationQueue
@@ -278,8 +283,10 @@
 
     [logger setLogLevel:LogLevelWarn];
 
-    [logger log:self.mockLogEntry
-          level:LogLevelInfo];
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:self.mockLogEntry
+              level:LogLevelInfo];
+    }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:0.5];
@@ -307,14 +314,17 @@
 
     [logger setLogLevel:LogLevelError];
 
-    [logger log:logEntry
-          level:LogLevelInfo];
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:logEntry
+              level:LogLevelInfo];
+    }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
 
 
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     mutableData[@"level"] = @"INFO";
+    mutableData[@"queue"] = @"testRunnerQueue";
 
     OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
                                                                       type:@"app:start"
@@ -350,8 +360,10 @@
 
     [logger setLogLevel:LogLevelTrace];
 
-    [logger log:logEntry
-          level:LogLevelInfo];
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:logEntry
+              level:LogLevelInfo];
+    }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
 
@@ -361,6 +373,7 @@
             @"key2": [date description]
     } mutableCopy];
     mutableData[@"level"] = @"INFO";
+    mutableData[@"queue"] = @"testRunnerQueue";
 
     OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
                                                                       type:@"testTopic"
@@ -373,7 +386,8 @@
     XCTAssertEqualObjects([self.logger consoleLogLevels], @[EMSLogLevel.basic]);
 }
 
-- (EMSShard *)shardWithLogLevel:(LogLevel)level {
+- (EMSShard *)shardWithLogLevel:(LogLevel)level
+                 additionalData:(NSDictionary *)additionalData {
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     if (level == LogLevelDebug) {
         mutableData[@"level"] = @"DEBUG";
@@ -381,6 +395,9 @@
         mutableData[@"level"] = @"INFO";
     } else if (level == LogLevelError) {
         mutableData[@"level"] = @"ERROR";
+    }
+    if (additionalData) {
+        [mutableData addEntriesFromDictionary:additionalData];
     }
     return [[EMSShard alloc] initWithShardId:self.shardId
                                         type:self.topic
