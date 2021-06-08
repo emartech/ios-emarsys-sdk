@@ -21,6 +21,7 @@ typedef enum {
 @protocol EMSLogLevelProtocol;
 @class EMSRemoteConfig;
 @class EMSStorage;
+@class EMSWrapperChecker;
 
 @interface EMSLogger : NSObject
 
@@ -31,7 +32,8 @@ typedef enum {
                          opertaionQueue:(NSOperationQueue *)operationQueue
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
-                                storage:(EMSStorage *)storage;
+                                storage:(EMSStorage *)storage
+                         wrapperChecker:(EMSWrapperChecker *)wrapperChecker;
 
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level;

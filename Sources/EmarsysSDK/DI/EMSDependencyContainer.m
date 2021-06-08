@@ -92,6 +92,7 @@
 #import "EMSDeviceEventStateResponseHandler.h"
 #import "EMSIdTokenMapper.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
+#import "EMSWrapperChecker.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -348,7 +349,9 @@
                                           opertaionQueue:self.coreOperationQueue
                                        timestampProvider:timestampProvider
                                             uuidProvider:self.uuidProvider
-                                                 storage:self.storage];
+                                                 storage:self.storage
+                                          wrapperChecker:[[EMSWrapperChecker alloc] initWithOperationQueue:self.coreOperationQueue
+                                                                                                    waiter:[EMSDispatchWaiter new]]];
     [self.logger setConsoleLogLevels:config.enabledConsoleLogLevels];
 
     EMSCompletionMiddleware *middleware = [self createMiddleware];

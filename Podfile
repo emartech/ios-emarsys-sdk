@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '11.0'
 
 target "Tests" do
   pod 'Kiwi', :git => 'https://github.com/kiwi-bdd/Kiwi.git', :tag => 'v3.0.0'

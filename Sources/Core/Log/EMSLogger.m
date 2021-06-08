@@ -11,6 +11,7 @@
 #import "EMSLogLevelProtocol.h"
 #import "EMSLogLevel.h"
 #import "NSDictionary+EMSCore.h"
+#import "EMSWrapperChecker.h"
 
 @interface EMSLogger ()
 
@@ -19,6 +20,7 @@
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) EMSWrapperChecker *wrapperChecker;
 
 @end
 
@@ -30,12 +32,14 @@
                          opertaionQueue:(NSOperationQueue *)operationQueue
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
-                                storage:(EMSStorage *)storage {
+                                storage:(EMSStorage *)storage
+                         wrapperChecker:(EMSWrapperChecker *)wrapperChecker {
     NSParameterAssert(shardRepository);
     NSParameterAssert(operationQueue);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(uuidProvider);
     NSParameterAssert(storage);
+    NSParameterAssert(wrapperChecker);
     if (self = [super init]) {
         _shardRepository = shardRepository;
         _operationQueue = operationQueue;
@@ -45,6 +49,7 @@
         NSNumber *logLevel = [storage numberForKey:kEMSLogLevelKey];
         _logLevel = logLevel ? [logLevel intValue] : LogLevelError;
         _consoleLogLevels = @[EMSLogLevel.basic];
+        _wrapperChecker = wrapperChecker;
     }
     return self;
 }
@@ -63,16 +68,20 @@
     if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
             || [entry.topic isEqualToString:@"app:start"]) {
         NSString *currentQueue = [NSOperationQueue currentQueue].name;
+        __weak typeof(self) weakSelf = self;
         [self.operationQueue addOperationWithBlock:^{
-            [self.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
+            [weakSelf.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                         [builder setType:[entry topic]];
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
-                        mutableData[@"level"] = [self logLevelStringFromLogLevel:level];
+                        mutableData[@"level"] = [weakSelf logLevelStringFromLogLevel:level];
                         mutableData[@"queue"] = currentQueue;
+                        if (![weakSelf.wrapperChecker.wrapper isEqualToString:@"none"]) {
+                            mutableData[@"wrapper"] = weakSelf.wrapperChecker.wrapper;
+                        }
                         [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
                     }
-                                              timestampProvider:self.timestampProvider
-                                                   uuidProvider:self.uuidProvider]];
+                                                  timestampProvider:self.timestampProvider
+                                                       uuidProvider:self.uuidProvider]];
         }];
     } else {
         return;
