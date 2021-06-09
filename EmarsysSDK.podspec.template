@@ -47,7 +47,11 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSNotificationInformation.h',
         'Sources/include/EMSOnEventActionProtocol.h',
         'Sources/include/EMSLogLevelProtocol.h',
-        'Sources/include/EMSLogLevel.h'
+        'Sources/include/EMSLogLevel.h',
+        'Sources/include/EMSActionModelProtocol.h',
+        'Sources/include/EMSAppEventActionModel.h',
+        'Sources/include/EMSCustomEventActionModel.h',
+        'Sources/include/EMSOpenExternalUrlActionModel.h'
    	]
 	spec.libraries = 'z', 'c++'
 end
