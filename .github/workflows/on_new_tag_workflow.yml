@@ -1,0 +1,29 @@
+name: New tag triggered build
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  CreateJiraTicket:
+    name: Create Jira ticket
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Jira
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      - name: Create a ticket
+        id: create
+        uses: atlassian/gajira-create@master
+        with:
+          project: ${{ secrets.JIRA_PROJECT }}
+          issuetype: Product docs
+          fields: ${{ secrets.JIRA_TICKET_JSON }}
+          summary: |
+            New Emarsys SDK release on iOS
+          description: |
+            Emarsys SDK ${{GITHUB_REF#refs/*/}} has been released!
