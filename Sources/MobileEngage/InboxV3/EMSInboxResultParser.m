@@ -40,7 +40,8 @@
                 }];
                 if ([messageErrors count] == 0) {
                     NSMutableArray<id <EMSActionModelProtocol>> *mutableActions = nil;
-                    id actions = [messageDict nullSafeValueForKey:@"actions"];
+                    id ems = [messageDict nullSafeValueForKey:@"ems"];
+                    id actions = [ems nullSafeValueForKey:@"actions"];
                     if (actions && [actions isKindOfClass:[NSArray class]] && [actions count] > 0) {
                         mutableActions = [NSMutableArray array];
                         for (NSDictionary *actionDictionary in actions) {
