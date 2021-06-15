@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, weak) id<EMSEventHandler> eventHandler;
 
-- (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initWithApplication:(UIApplication *)application
                        mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage;

@@ -116,7 +116,7 @@ SPEC_BEGIN(EMSNotificationServiceTests)
         describe(@"createCategoryForContent:completionHandler:", ^{
 
             UNNotificationCategory *(^waitUntilNextResult)(EMSNotificationService *service, UNMutableNotificationContent *content) = (UNNotificationCategory *(^)(EMSNotificationService *, UNMutableNotificationContent *)) (UNNotificationCategory *) ^(EMSNotificationService *service, UNMutableNotificationContent *content) {
-                __block UNNotificationCategory *result = [UNNotificationCategory new];
+                __block UNNotificationCategory *result = nil;
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
                 [service createCategoryForContent:content
