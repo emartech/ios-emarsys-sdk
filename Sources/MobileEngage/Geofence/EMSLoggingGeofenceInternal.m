@@ -25,6 +25,21 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
+- (void)setInitialEnterTriggerEnabled:(BOOL)enterInitialTriggerEnabled {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"enterInitialTriggerEnabled"] = @(enterInitialTriggerEnabled);
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:parameters], LogLevelDebug);
+}
+
+- (BOOL)initialEnterTriggerEnabled {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return NO;
+}
+
 - (void)requestAlwaysAuthorization {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd

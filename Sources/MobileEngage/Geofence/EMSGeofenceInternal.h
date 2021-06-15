@@ -14,6 +14,7 @@
 @class EMSGeofenceResponseMapper;
 @class CLLocationManager;
 @class EMSGeofenceResponse;
+@class EMSGeofenceTrigger;
 @class EMSActionFactory;
 @class EMSStorage;
 
@@ -38,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)fetchGeofences;
 - (void)registerGeofences;
+- (void)handleActionWithTriggers:(NSArray<EMSGeofenceTrigger *> *)triggers
+                            type:(NSString *)type;
 
 @end
 

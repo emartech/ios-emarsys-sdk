@@ -179,6 +179,44 @@
     }
 }
 
+- (void)testDidUpdateLocation_whenInitialEnterTriggerEnabled {
+    EMSGeofence *geofence1 = [self createGeofenceWithId:@"id1"
+                                                    lat:41.13
+                                                    lon:13.41
+                                                      r:50];
+    EMSGeofence *geofence2 = [self createGeofenceWithId:@"id2"
+                                                    lat:43.13
+                                                    lon:14.41
+                                                      r:50];
+    
+    self.geofenceInternal.initialEnterTriggerEnabled = YES;
+    EMSGeofenceInternal *partialMockInternal = OCMPartialMock(self.geofenceInternal);
+    
+    [partialMockInternal setRegisteredGeofences:[@{
+        @"id1": geofence1,
+        @"id2": geofence2
+    } mutableCopy]];
+    
+    [partialMockInternal locationManager:self.mockLocationManager didUpdateLocations:@[[[CLLocation alloc] initWithLatitude:41.1301
+                                                                                                                    longitude:13.4101]]];
+    
+    [self waitForOperation];
+    
+    OCMVerify([partialMockInternal handleActionWithTriggers:@[[geofence1.triggers firstObject]]
+                                                       type:@"enter"]);
+}
+
+- (void)testEnterInitialTriggerEnabled {
+    EMSGeofenceInternal *internal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                         requestManager:self.mockRequestManager
+                                         responseMapper:self.mockResponseMapper
+                                        locationManager:self.mockLocationManager
+                                          actionFactory:self.mockActionFactory
+                                                storage:self.mockStorage
+                                                  queue:self.queue];
+    XCTAssertFalse(internal.initialEnterTriggerEnabled);
+}
+
 - (void)testFetchGeofence {
     OCMStub([self.mockRequestManager submitRequestModelNow:self.mockRequestModel
                                               successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",

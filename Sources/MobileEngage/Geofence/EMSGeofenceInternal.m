@@ -28,12 +28,15 @@
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
 @property(nonatomic, strong) EMSStorage *storage;
 @property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, assign) BOOL didFireInitialEnterTrigger;
 
 @property(nonatomic, assign) BOOL enabled;
 
 @end
 
 @implementation EMSGeofenceInternal
+
+@synthesize initialEnterTriggerEnabled = _initialEnterTriggerEnabled;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
@@ -126,6 +129,27 @@
                                          identifier:@"EMSRefreshArea"];
 }
 
+- (void)handleInitialEnterTrigger {
+    if (_initialEnterTriggerEnabled && !self.didFireInitialEnterTrigger) {
+        self.didFireInitialEnterTrigger = YES;
+        NSMutableArray *fireableTriggers = [NSMutableArray array];
+        for (EMSGeofence *geofence in [self.registeredGeofences allValues]) {
+            BOOL inRegion = [[[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(geofence.lat, geofence.lon) radius:geofence.r identifier:geofence.id] containsCoordinate:CLLocationCoordinate2DMake(self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude)];
+            if (inRegion) {
+                for (EMSGeofenceTrigger *trigger in geofence.triggers) {
+                    if ([[trigger.type lowercaseString] isEqualToString:@"enter"]) {
+                        [fireableTriggers addObject:trigger];
+                    }
+                }
+            }
+        }
+        if ([fireableTriggers count] > 0) {
+            [self handleActionWithTriggers:fireableTriggers
+                                          type:@"enter"];
+        }
+    }
+}
+
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray<CLLocation *> *)locations {
     __weak typeof(self) weakSelf = self;
@@ -133,6 +157,7 @@
         if (locations && locations.firstObject) {
             weakSelf.currentLocation = locations.firstObject;
             [weakSelf registerGeofences];
+            [weakSelf handleInitialEnterTrigger];
         }
     }];
 }
