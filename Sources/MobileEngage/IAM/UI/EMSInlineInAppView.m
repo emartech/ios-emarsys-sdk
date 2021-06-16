@@ -44,16 +44,18 @@
 }
 
 - (void)commonInit {
-    _protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
-    _commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
-                                             buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
-                                                  appEventProtocol:self.protocolBlockConverter
-                                                     closeProtocol:self];
-    _jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:self.commandFactory
-                                              operationQueue:EMSDependencyInjection .dependencyContainer.coreOperationQueue];
     __weak typeof(self) weakSelf = self;
-    [self.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
-        [weakSelf respondToJS:result];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
+        weakSelf.protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
+        weakSelf.commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
+                                                         buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
+                                                              appEventProtocol:weakSelf.protocolBlockConverter
+                                                                 closeProtocol:weakSelf];
+        weakSelf.jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:weakSelf.commandFactory
+                                                          operationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
+        [weakSelf.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
+            [weakSelf respondToJS:result];
+        }];
     }];
 
     _webView = [self createWebView];
@@ -171,7 +173,7 @@ didFinishNavigation:(WKNavigation *)navigation {
 - (void)fetchInlineInappMessage {
     if (self.viewId) {
         [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
-        EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
+            EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
             EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
             __weak typeof(self) weakSelf = self;
             [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
@@ -218,7 +220,7 @@ didFinishNavigation:(WKNavigation *)navigation {
 
 - (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if(self.closeBlock) {
+        if (self.closeBlock) {
             self.closeBlock();
         }
     });

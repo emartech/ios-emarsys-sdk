@@ -81,7 +81,6 @@
                                           [weakSelf registerGeofences];
                                       }
                                         errorBlock:^(NSString *requestId, NSError *error) {
-
                                         }];
     }
 }
@@ -164,19 +163,19 @@
 
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region {
-    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
-    parametersDict[@"manager"] = [manager description];
-    parametersDict[@"region"] = [region description];
-    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
-    statusDict[@"triggerType"] = @"enter";
-    statusDict[@"regionId"] = region.identifier;
-    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
-                                                             sel:_cmd
-                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
-                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
-    EMSLog(logEntry, LogLevelDebug);
     __weak typeof(self) weakSelf = self;
     [self.queue addOperationWithBlock:^{
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        parametersDict[@"manager"] = [manager description];
+        parametersDict[@"region"] = [region description];
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"triggerType"] = @"enter";
+        statusDict[@"regionId"] = region.identifier;
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelDebug);
         EMSGeofence *geofence = self.registeredGeofences[region.identifier];
         [weakSelf handleActionWithTriggers:geofence.triggers
                                       type:@"enter"];
@@ -185,20 +184,19 @@
 
 - (void)locationManager:(CLLocationManager *)manager
           didExitRegion:(CLRegion *)region {
-    NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
-    parametersDict[@"manager"] = [manager description];
-    parametersDict[@"region"] = [region description];
-    NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
-    statusDict[@"triggerType"] = @"exit";
-    statusDict[@"regionId"] = region.identifier;
-    EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
-                                                             sel:_cmd
-                                                      parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
-                                                          status:[NSDictionary dictionaryWithDictionary:statusDict]];
-    EMSLog(logEntry, LogLevelDebug);
-
     __weak typeof(self) weakSelf = self;
     [self.queue addOperationWithBlock:^{
+        NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
+        parametersDict[@"manager"] = [manager description];
+        parametersDict[@"region"] = [region description];
+        NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+        statusDict[@"triggerType"] = @"exit";
+        statusDict[@"regionId"] = region.identifier;
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
+                                                              status:[NSDictionary dictionaryWithDictionary:statusDict]];
+        EMSLog(logEntry, LogLevelDebug);
         EMSGeofence *geofence = weakSelf.registeredGeofences[region.identifier];
 
         if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
@@ -252,13 +250,17 @@
             [self fetchGeofences];
         }
         if (completionBlock) {
-            completionBlock(nil);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(nil);
+            });
         }
     } else {
         if (completionBlock) {
             NSError *error = [NSError errorWithCode:1401
                                localizedDescription:@"LocationManager authorization status must be AuthorizedAlways!"];
-            completionBlock(error);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(error);
+            });
         }
     }
 }

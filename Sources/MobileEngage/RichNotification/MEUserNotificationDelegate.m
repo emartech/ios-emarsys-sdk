@@ -68,18 +68,14 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler NS_AVAILABLE_IOS(10_0) {
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (weakSelf.delegate) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.delegate userNotificationCenter:center
-                                  willPresentNotification:notification
-                                    withCompletionHandler:completionHandler];
-            });
+            [weakSelf.delegate userNotificationCenter:center
+                              willPresentNotification:notification
+                                withCompletionHandler:completionHandler];
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(UNNotificationPresentationOptionAlert);
-        });
-    }];
+        completionHandler(UNNotificationPresentationOptionAlert);
+    });
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
