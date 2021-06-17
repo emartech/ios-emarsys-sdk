@@ -431,6 +431,70 @@
     XCTAssertTrue(self.geofenceInternal.isEnabled);
 }
 
+- (void)testInitialEnterTriggerEnabled_shouldReturnNo_onFirstTime {
+    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                             requestManager:self.mockRequestManager
+                                                             responseMapper:self.mockResponseMapper
+                                                            locationManager:self.mockLocationManager
+                                                              actionFactory:self.mockActionFactory
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
+    
+    XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
+}
+
+- (void)testInitialEnterTriggerEnabled_shouldReturnYes_whenWasSetBefore {
+    OCMStub([self.mockStorage numberForKey:@"initialEnterTriggerEnabled"]).andReturn(@(YES));
+    
+    
+    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                             requestManager:self.mockRequestManager
+                                                             responseMapper:self.mockResponseMapper
+                                                            locationManager:self.mockLocationManager
+                                                              actionFactory:self.mockActionFactory
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
+    
+    XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
+}
+
+- (void)testInitialEnterTriggerEnabled_shouldStoreIt_whenSetterCalled {
+    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                             requestManager:self.mockRequestManager
+                                                             responseMapper:self.mockResponseMapper
+                                                            locationManager:self.mockLocationManager
+                                                              actionFactory:self.mockActionFactory
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
+    
+    [self.geofenceInternal setInitialEnterTriggerEnabled:YES];
+    
+    OCMVerify([self.mockStorage setNumber:@(YES)
+                                   forKey:kInitialEnterTriggerEnabled]);
+    
+    XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
+}
+
+
+- (void)testInitialEnterTriggerEnabled_shouldWorkProperly {
+    _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
+                                                             requestManager:self.mockRequestManager
+                                                             responseMapper:self.mockResponseMapper
+                                                            locationManager:self.mockLocationManager
+                                                              actionFactory:self.mockActionFactory
+                                                                    storage:self.mockStorage
+                                                                      queue:self.queue];
+    XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
+    
+    [self.geofenceInternal setInitialEnterTriggerEnabled:YES];
+    
+    XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
+    
+    [self.geofenceInternal setInitialEnterTriggerEnabled:NO];
+    
+    XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
+}
+
 - (void)testDisable {
     CLCircularRegion *region2 = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(47.493812, 19.058537)
                                                                   radius:10

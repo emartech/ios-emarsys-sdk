@@ -8,6 +8,7 @@
 #import "EMSEventHandler.h"
 
 #define kIsGeofenceEnabled @"isGeofenceEnabled"
+#define kInitialEnterTriggerEnabled @"initialEnterTriggerEnabled"
 
 @class EMSRequestManager;
 @class EMSRequestFactory;

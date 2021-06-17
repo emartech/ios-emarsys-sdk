@@ -63,6 +63,7 @@
         _geofenceLimit = 20;
         _registeredGeofences = [NSMutableDictionary dictionary];
         _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue] && [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+        _initialEnterTriggerEnabled = [[self.storage numberForKey:kInitialEnterTriggerEnabled] boolValue];
         if (self.isEnabled) {
             [self fetchGeofences];
         }
@@ -289,6 +290,12 @@
     [self.storage setNumber:@(enabled)
                      forKey:kIsGeofenceEnabled];
     _enabled = enabled;
+}
+
+- (void)setInitialEnterTriggerEnabled:(BOOL)initialEnterTriggerEnabled {
+    [self.storage setNumber:@(initialEnterTriggerEnabled)
+                     forKey:kInitialEnterTriggerEnabled];
+    _initialEnterTriggerEnabled = initialEnterTriggerEnabled;
 }
 
 - (void)stopRegionMonitoring {
