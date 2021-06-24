@@ -45,7 +45,7 @@
 
 - (void)commonInit {
     __weak typeof(self) weakSelf = self;
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         weakSelf.protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
         weakSelf.commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
                                                          buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
