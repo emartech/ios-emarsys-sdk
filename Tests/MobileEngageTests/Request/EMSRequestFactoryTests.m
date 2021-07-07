@@ -13,7 +13,6 @@
 #import "NSDate+EMSCore.h"
 #import "EmarsysSDKVersion.h"
 #import "EMSAuthentication.h"
-#import "EMSNotification.h"
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "MEButtonClickRepository.h"
@@ -66,8 +65,6 @@
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                   deeplinkUrlProvider:deeplinkUrlProvider
-                                            v2EventServiceUrlProvider:v2EventServiceUrlProvider
-                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
 
     _timestamp = [NSDate date];
@@ -375,35 +372,6 @@
                                                                                 extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createDeepLinkRequestModelWithTrackingId:value];
-
-    XCTAssertEqualObjects(requestModel, expectedRequestModel);
-}
-
-- (void)testCreateMessageOpenWithNotification {
-    EMSNotification *notification = [[EMSNotification alloc] initWithNotificationDictionary:@{
-            @"sid": @"1cf3f_JhIPRzBvNtQF"
-    }];
-
-    OCMStub(self.mockRequestContext.contactFieldId).andReturn(@"testContactFieldId");
-    OCMStub(self.mockRequestContext.contactFieldValue).andReturn(@"testContactFieldValue");
-
-    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
-                                                                             timestamp:self.timestamp
-                                                                                expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"]
-                                                                                method:@"POST"
-                                                                               payload:@{
-                                                                                       @"application_id": @"testApplicationCode",
-                                                                                       @"hardware_id": @"hardwareId",
-                                                                                       @"sid": @"1cf3f_JhIPRzBvNtQF",
-                                                                                       @"source": @"inbox",
-                                                                                       @"contact_field_id": @"testContactFieldId",
-                                                                                       @"contact_field_value": @"testContactFieldValue"
-                                                                               }
-                                                                               headers:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:@"testApplicationCode"]}
-                                                                                extras:nil];
-
-    EMSRequestModel *requestModel = [self.requestFactory createMessageOpenWithNotification:notification];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }

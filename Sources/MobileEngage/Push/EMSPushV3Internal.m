@@ -8,7 +8,6 @@
 #import "NSData+MobileEngine.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
-#import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
@@ -22,7 +21,6 @@
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
-@property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
 @property(nonatomic, strong) EMSStorage *storage;
@@ -36,20 +34,17 @@
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                     notificationCache:(EMSNotificationCache *)notificationCache
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          actionFactory:(EMSActionFactory *)actionFactory
                                storage:(EMSStorage *)storage {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
-    NSParameterAssert(notificationCache);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(actionFactory);
     NSParameterAssert(storage);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
-        _notificationCache = notificationCache;
         _timestampProvider = timestampProvider;
         _actionFactory = actionFactory;
         _storage = storage;
@@ -122,11 +117,6 @@
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(userInfo);
-    NSNumber *inbox = userInfo[@"inbox"];
-    if (inbox && [inbox boolValue]) {
-        [self.notificationCache cache:[[EMSNotification alloc] initWithUserInfo:userInfo
-                                                              timestampProvider:self.timestampProvider]];
-    }
 
     NSString *sid = [userInfo messageId];
     if (sid) {

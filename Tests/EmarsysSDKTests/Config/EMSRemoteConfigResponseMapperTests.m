@@ -66,9 +66,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:@"https://client.emarsys.com/test/test"
                                                                      predictService:nil
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:@"https://inbox.emarsys.net/test/test"
                                                                            logLevel:LogLevelWarn
                                                                            features:@{
@@ -122,9 +120,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:@"https://event.emarsys.com/test/test"
                                                                       clientService:@"https://client2.emarsys.com/test/test"
                                                                      predictService:@"https://predict.emarsys.com/test/test"
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:@"https://inbox.emarsys.net/test/test"
                                                                            logLevel:LogLevelError
                                                                            features:@{
@@ -145,9 +141,7 @@
     EMSRemoteConfig *expected = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                 clientService:nil
                                                                predictService:nil
-                                                        mobileEngageV2Service:nil
                                                               deepLinkService:nil
-                                                                 inboxService:nil
                                                         v3MessageInboxService:nil
                                                                      logLevel:LogLevelError
                                                                      features:nil];
@@ -175,9 +169,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:nil
                                                                            logLevel:LogLevelDebug
                                                                            features:nil];
@@ -204,9 +196,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:nil
                                                                            logLevel:LogLevelError
                                                                            features:nil];
@@ -233,9 +223,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:nil
                                                                            logLevel:LogLevelDebug
                                                                            features:nil];
@@ -266,9 +254,7 @@
     EMSRemoteConfig *expectedConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                       clientService:nil
                                                                      predictService:nil
-                                                              mobileEngageV2Service:nil
                                                                     deepLinkService:nil
-                                                                       inboxService:nil
                                                               v3MessageInboxService:nil
                                                                            logLevel:logLevel
                                                                            features:nil];

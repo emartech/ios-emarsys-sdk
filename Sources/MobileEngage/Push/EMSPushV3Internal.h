@@ -6,7 +6,6 @@
 
 @class EMSRequestFactory;
 @class EMSRequestManager;
-@class EMSNotificationCache;
 @class EMSTimestampProvider;
 @class EMSActionFactory;
 @class EMSStorage;
@@ -17,7 +16,6 @@
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                     notificationCache:(EMSNotificationCache *)notificationCache
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          actionFactory:(EMSActionFactory *)actionFactory
                                storage:(EMSStorage *)storage;

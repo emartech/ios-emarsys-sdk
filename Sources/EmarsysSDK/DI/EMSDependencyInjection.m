@@ -41,10 +41,6 @@ static EMSDependencyContainer *_dependencyContainer;
     return self.dependencyContainer.deepLink;
 }
 
-+ (id <EMSInboxProtocol>)inbox {
-    return self.dependencyContainer.inbox;
-}
-
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
     return self.dependencyContainer.notificationCenterDelegate;
 }

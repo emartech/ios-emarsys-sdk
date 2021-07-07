@@ -15,8 +15,6 @@ static NSString *const kEventServiceUrl = @"https://mobile-events.eservice.emars
 static NSString *const kV3MessageInboxServiceUrl = @"https://me-inbox.eservice.emarsys.net";
 static NSString *const kPredictUrl = @"https://recommender.scarabresearch.com";
 static NSString *const kDeeplinkUrl = @"https://deep-link.eservice.emarsys.net/api/clicks";
-static NSString *const kV2ServiceUrl = @"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open";
-static NSString *const kInboxUrl = @"https://me-inbox.eservice.emarsys.net/api/";
 static NSString *const kApplicationCode = @"testApplicationCode";
 
 @interface EMSEndpointTests : XCTestCase
@@ -26,8 +24,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
 @property(nonatomic, strong) EMSValueProvider *mockEventServiceUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *mockPredictUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *mockDeeplinkUrlProvider;
-@property(nonatomic, strong) EMSValueProvider *mockV2EventServiceUrlProvider;
-@property(nonatomic, strong) EMSValueProvider *mockInboxUrlProvider;
 @property(nonatomic, strong) EMSValueProvider *mockV3MessageInboxUrlProvider;
 
 @end
@@ -39,24 +35,18 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     _mockEventServiceUrlProvider = OCMClassMock([EMSValueProvider class]);
     _mockPredictUrlProvider = OCMClassMock([EMSValueProvider class]);
     _mockDeeplinkUrlProvider = OCMClassMock([EMSValueProvider class]);
-    _mockV2EventServiceUrlProvider = OCMClassMock([EMSValueProvider class]);
-    _mockInboxUrlProvider = OCMClassMock([EMSValueProvider class]);
     _mockV3MessageInboxUrlProvider = OCMClassMock([EMSValueProvider class]);
 
     OCMStub([self.mockClientServiceUrlProvider provideValue]).andReturn(kClientServiceUrl);
     OCMStub([self.mockEventServiceUrlProvider provideValue]).andReturn(kEventServiceUrl);
     OCMStub([self.mockPredictUrlProvider provideValue]).andReturn(kPredictUrl);
     OCMStub([self.mockDeeplinkUrlProvider provideValue]).andReturn(kDeeplinkUrl);
-    OCMStub([self.mockV2EventServiceUrlProvider provideValue]).andReturn(kV2ServiceUrl);
-    OCMStub([self.mockInboxUrlProvider provideValue]).andReturn(kInboxUrl);
     OCMStub([self.mockV3MessageInboxUrlProvider provideValue]).andReturn(kV3MessageInboxServiceUrl);
 
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
                                               eventServiceUrlProvider:self.mockEventServiceUrlProvider
                                                    predictUrlProvider:self.mockPredictUrlProvider
                                                   deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                            v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                                     inboxUrlProvider:self.mockInboxUrlProvider
                                             v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
 }
 
@@ -70,8 +60,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                       eventServiceUrlProvider:self.mockEventServiceUrlProvider
                                            predictUrlProvider:self.mockPredictUrlProvider
                                           deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:self.mockInboxUrlProvider
                                     v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
         XCTFail(@"Expected Exception when clientServiceUrlProvider is nil!");
     } @catch (NSException *exception) {
@@ -85,8 +73,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                       eventServiceUrlProvider:nil
                                            predictUrlProvider:self.mockPredictUrlProvider
                                           deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:self.mockInboxUrlProvider
                                     v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
         XCTFail(@"Expected Exception when eventServiceUrlProvider is nil!");
     } @catch (NSException *exception) {
@@ -100,8 +86,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                       eventServiceUrlProvider:self.mockEventServiceUrlProvider
                                            predictUrlProvider:nil
                                           deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:self.mockInboxUrlProvider
                                     v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
         XCTFail(@"Expected Exception when predictUrlProvider is nil!");
     } @catch (NSException *exception) {
@@ -115,42 +99,10 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                       eventServiceUrlProvider:self.mockEventServiceUrlProvider
                                            predictUrlProvider:self.mockPredictUrlProvider
                                           deeplinkUrlProvider:nil
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:self.mockInboxUrlProvider
                                     v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
         XCTFail(@"Expected Exception when deeplinkUrlProvider is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deeplinkUrlProvider");
-    }
-}
-
-- (void)testInit_v2EventServiceUrlProvider_mustNotBeNil {
-    @try {
-        [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
-                                      eventServiceUrlProvider:self.mockEventServiceUrlProvider
-                                           predictUrlProvider:self.mockPredictUrlProvider
-                                          deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:nil
-                                             inboxUrlProvider:self.mockInboxUrlProvider
-                                    v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
-        XCTFail(@"Expected Exception when v2EventServiceUrlProvider is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: v2EventServiceUrlProvider");
-    }
-}
-
-- (void)testInit_inboxUrlProvider_mustNotBeNil {
-    @try {
-        [[EMSEndpoint alloc] initWithClientServiceUrlProvider:self.mockClientServiceUrlProvider
-                                      eventServiceUrlProvider:self.mockEventServiceUrlProvider
-                                           predictUrlProvider:self.mockPredictUrlProvider
-                                          deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:nil
-                                    v3MessageInboxUrlProvider:self.mockV3MessageInboxUrlProvider];
-        XCTFail(@"Expected Exception when inboxUrlProvider is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: inboxUrlProvider");
     }
 }
 
@@ -160,8 +112,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
                                       eventServiceUrlProvider:self.mockEventServiceUrlProvider
                                            predictUrlProvider:self.mockPredictUrlProvider
                                           deeplinkUrlProvider:self.mockDeeplinkUrlProvider
-                                    v2EventServiceUrlProvider:self.mockV2EventServiceUrlProvider
-                                             inboxUrlProvider:self.mockInboxUrlProvider
                                     v3MessageInboxUrlProvider:nil];
         XCTFail(@"Expected Exception when v3MessageInboxUrlProvider is nil!");
     } @catch (NSException *exception) {
@@ -283,12 +233,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertTrue([self.endpoint isMobileEngageUrl:url]);
 }
 
-- (void)testIsV3_shouldReturnNo_when_URLInboxUrl {
-    NSString *url = [self.endpoint inboxUrl];
-
-    XCTAssertFalse([self.endpoint isMobileEngageUrl:url]);
-}
-
 - (void)testIsPush2InApp_shouldReturnYes_when_URLIisCorrect_andV4 {
     [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
     NSString *url = [NSString stringWithFormat:@"%@/v4/apps/%@/messages/testMessageId",
@@ -357,18 +301,6 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertEqualObjects(result, kDeeplinkUrl);
 }
 
-- (void)testV2EventServiceUrl {
-    NSString *result = [self.endpoint v2EventServiceUrl];
-
-    XCTAssertEqualObjects(result, kV2ServiceUrl);
-}
-
-- (void)testInboxUrl {
-    NSString *result = [self.endpoint inboxUrl];
-
-    XCTAssertEqualObjects(result, kInboxUrl);
-}
-
 - (void)testRemoteConfigUrl {
     NSString *expected = [NSString stringWithFormat:[NSString stringWithFormat:@"https://mobile-sdk-config.gservice.emarsys.net/%@",
                                                                                kApplicationCode]];
@@ -391,16 +323,12 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     NSString *const eventServiceUrl = @"newEventServiceUrl";
     NSString *const clientServiceUrl = @"newClientServiceUrl";
     NSString *const predictServiceUrl = @"newPredictServiceUrl";
-    NSString *const v2ServiceUrl = @"newV2ServiceUrl";
     NSString *const deeplinkServiceUrl = @"newDeeplinkServiceUrl";
-    NSString *const inboxServiceUrl = @"newInboxServiceUrl";
     NSString *const v3MessageInboxServiceUrl = @"newV3MessageInboxServiceUrl";
     EMSRemoteConfig *remoteConfig = [[EMSRemoteConfig alloc] initWithEventService:eventServiceUrl
                                                                     clientService:clientServiceUrl
                                                                    predictService:predictServiceUrl
-                                                            mobileEngageV2Service:v2ServiceUrl
                                                                   deepLinkService:deeplinkServiceUrl
-                                                                     inboxService:inboxServiceUrl
                                                             v3MessageInboxService:v3MessageInboxServiceUrl
                                                                          logLevel:nil
                                                                          features:nil];
@@ -410,17 +338,13 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     OCMVerify([self.mockEventServiceUrlProvider updateValue:eventServiceUrl]);
     OCMVerify([self.mockClientServiceUrlProvider updateValue:clientServiceUrl]);
     OCMVerify([self.mockPredictUrlProvider updateValue:predictServiceUrl]);
-    OCMVerify([self.mockV2EventServiceUrlProvider updateValue:v2ServiceUrl]);
     OCMVerify([self.mockDeeplinkUrlProvider updateValue:deeplinkServiceUrl]);
-    OCMVerify([self.mockInboxUrlProvider updateValue:inboxServiceUrl]);
     OCMVerify([self.mockV3MessageInboxUrlProvider updateValue:v3MessageInboxServiceUrl]);
 }
 
 - (void)testReset {
     [self.endpoint reset];
 
-    OCMVerify([self.mockInboxUrlProvider updateValue:nil]);
-    OCMVerify([self.mockV2EventServiceUrlProvider updateValue:nil]);
     OCMVerify([self.mockDeeplinkUrlProvider updateValue:nil]);
     OCMVerify([self.mockPredictUrlProvider updateValue:nil]);
     OCMVerify([self.mockClientServiceUrlProvider updateValue:nil]);

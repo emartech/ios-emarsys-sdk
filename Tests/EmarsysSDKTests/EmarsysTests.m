@@ -20,11 +20,9 @@
 #import "MERequestContext.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSPushV3Internal.h"
-#import "MEInbox.h"
 #import "MEInApp.h"
 #import "MEUserNotificationDelegate.h"
 #import "EMSLoggingPushInternal.h"
-#import "EMSLoggingInbox.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSLoggingUserNotificationDelegate.h"
@@ -671,15 +669,6 @@
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSPushV3Internal class]);
 }
 
-- (void)testShouldBeMEInbox {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:YES
-                   predictEnabled:YES];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [MEInbox class]);
-}
-
 - (void)testShouldBeMEInApp {
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
             }
@@ -750,15 +739,6 @@
                    predictEnabled:NO];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSLoggingPushInternal class]);
-}
-
-- (void)testShouldBeEMSLoggingInbox {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:NO
-                   predictEnabled:NO];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [EMSLoggingInbox class]);
 }
 
 - (void)testShouldBeEMSLoggingInApp {

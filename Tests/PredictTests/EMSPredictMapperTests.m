@@ -57,8 +57,6 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                      eventServiceUrlProvider:[EMSValueProvider mock]
                                                           predictUrlProvider:predictUrlProvider
                                                          deeplinkUrlProvider:[EMSValueProvider mock]
-                                                   v2EventServiceUrlProvider:[EMSValueProvider mock]
-                                                            inboxUrlProvider:[EMSValueProvider mock]
                                                    v3MessageInboxUrlProvider:[EMSValueProvider mock]];
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
                                                              endpoint:endpoint];

@@ -6,7 +6,6 @@
 @class MEInApp;
 @class EMSPredictInternal;
 @class EMSSQLiteHelper;
-@class EMSNotificationCache;
 @class EMSAbstractResponseHandler;
 @class EMSRequestManager;
 @protocol EMSRequestModelRepositoryProtocol;
@@ -82,8 +81,6 @@
 - (id <EMSOnEventActionProtocol>)loggingOnEventAction;
 
 - (id <EMSRequestModelRepositoryProtocol>)requestRepository;
-
-- (EMSNotificationCache *)notificationCache;
 
 - (NSArray<EMSAbstractResponseHandler *> *)responseHandlers;
 

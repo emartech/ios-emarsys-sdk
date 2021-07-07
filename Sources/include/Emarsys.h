@@ -6,7 +6,6 @@
 #import "EMSBlocks.h"
 #import "EMSConfig.h"
 #import "EMSPushNotificationProtocol.h"
-#import "EMSInboxProtocol.h"
 #import "EMSInAppProtocol.h"
 #import "EMSPredictProtocol.h"
 #import "EMSConfigProtocol.h"
@@ -20,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Emarsys : NSObject
 
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
-@property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSMessageInboxProtocol> messageInbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
 @property(class, nonatomic, readonly) id <EMSGeofenceProtocol> geofence;

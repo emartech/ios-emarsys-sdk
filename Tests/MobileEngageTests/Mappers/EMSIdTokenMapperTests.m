@@ -33,8 +33,6 @@
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
-                                            v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _idTokenMapper = [[EMSIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext

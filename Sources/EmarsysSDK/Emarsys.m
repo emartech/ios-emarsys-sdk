@@ -146,10 +146,6 @@
     return EMSDependencyInjection.push;
 }
 
-+ (id <EMSInboxProtocol>)inbox {
-    return EMSDependencyInjection.inbox;
-}
-
 + (id <EMSInAppProtocol>)inApp {
     return EMSDependencyInjection.iam;
 }
