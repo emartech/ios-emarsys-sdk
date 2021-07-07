@@ -31,6 +31,7 @@
 @property(nonatomic, strong) id mockRequestManager;
 @property(nonatomic, strong) id mockRequestFactory;
 @property(nonatomic, strong) id operationQueue;
+@property(nonatomic, strong) id publicApiOperationQueue;
 @property(nonatomic, strong) id mockInapp;
 @end
 
@@ -41,6 +42,7 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _operationQueue = [NSOperationQueue new];
+    _publicApiOperationQueue = [NSOperationQueue new];
     [self.operationQueue setMaxConcurrentOperationCount:1];
     _mockInapp = OCMClassMock([MEInApp class]);
 
@@ -48,6 +50,7 @@
     OCMStub([self.mockContainer requestManager]).andReturn(self.mockRequestManager);
     OCMStub([self.mockContainer requestFactory]).andReturn(self.mockRequestFactory);
     OCMStub([self.mockContainer coreOperationQueue]).andReturn(self.operationQueue);
+    OCMStub([self.mockContainer publicApiOperationQueue]).andReturn(self.publicApiOperationQueue);
     OCMStub([self.mockContainer iam]).andReturn(self.mockInapp);
 
     _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
@@ -65,6 +68,7 @@
     EMSDependencyContainer *container = OCMClassMock([EMSDependencyContainer class]);
     OCMStub([container requestFactory]).andReturn(self.mockRequestFactory);
     OCMStub([container coreOperationQueue]).andReturn(self.operationQueue);
+    OCMStub([container publicApiOperationQueue]).andReturn(self.publicApiOperationQueue);
     OCMStub([container iam]).andReturn(self.mockInapp);
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
     __block NSOperationQueue *resultQueue = nil;
