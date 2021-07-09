@@ -618,7 +618,6 @@
 		8A6BEAE023E86B480066B13C /* EMSRecommendationFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95423E86B480066B13C /* EMSRecommendationFilter.h */; };
 		8A6BEAE123E86B480066B13C /* EMSPushNotificationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95523E86B480066B13C /* EMSPushNotificationProtocol.h */; };
 		8A6BEAE223E86B480066B13C /* EMSInAppProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95623E86B480066B13C /* EMSInAppProtocol.h */; };
-		8A6BEAE323E86B480066B13C /* EMSNotificationInboxStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95723E86B480066B13C /* EMSNotificationInboxStatus.h */; };
 		8A6BEAE423E86B480066B13C /* EMSUserNotificationCenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95823E86B480066B13C /* EMSUserNotificationCenterDelegate.h */; };
 		8A6BEAE623E86B480066B13C /* EMSConfigBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95A23E86B480066B13C /* EMSConfigBuilder.h */; };
 		8A6BEAE723E86B480066B13C /* EMSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE95B23E86B480066B13C /* EMSAppDelegate.h */; };
@@ -1337,7 +1336,6 @@
 		8A6BE95423E86B480066B13C /* EMSRecommendationFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRecommendationFilter.h; sourceTree = "<group>"; };
 		8A6BE95523E86B480066B13C /* EMSPushNotificationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSPushNotificationProtocol.h; sourceTree = "<group>"; };
 		8A6BE95623E86B480066B13C /* EMSInAppProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInAppProtocol.h; sourceTree = "<group>"; };
-		8A6BE95723E86B480066B13C /* EMSNotificationInboxStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSNotificationInboxStatus.h; sourceTree = "<group>"; };
 		8A6BE95823E86B480066B13C /* EMSUserNotificationCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSUserNotificationCenterDelegate.h; sourceTree = "<group>"; };
 		8A6BE95A23E86B480066B13C /* EMSConfigBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSConfigBuilder.h; sourceTree = "<group>"; };
 		8A6BE95B23E86B480066B13C /* EMSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSAppDelegate.h; sourceTree = "<group>"; };
@@ -2694,7 +2692,6 @@
 				8A6BE95423E86B480066B13C /* EMSRecommendationFilter.h */,
 				8A6BE95523E86B480066B13C /* EMSPushNotificationProtocol.h */,
 				8A6BE95623E86B480066B13C /* EMSInAppProtocol.h */,
-				8A6BE95723E86B480066B13C /* EMSNotificationInboxStatus.h */,
 				8A6BE95823E86B480066B13C /* EMSUserNotificationCenterDelegate.h */,
 				8A6BE95A23E86B480066B13C /* EMSConfigBuilder.h */,
 				8A6BE95B23E86B480066B13C /* EMSAppDelegate.h */,
@@ -3593,7 +3590,6 @@
 				8A6BEA8E23E86B480066B13C /* EMSConnectionWatchdog.h in Headers */,
 				8A6BEAC223E86B480066B13C /* EMSDictionaryValidator.h in Headers */,
 				8A6BEAFF23E86B480066B13C /* EMSProductMapper.h in Headers */,
-				8A6BEAE323E86B480066B13C /* EMSNotificationInboxStatus.h in Headers */,
 				8A6BEAA023E86B480066B13C /* EMSBatchingShardTrigger.h in Headers */,
 				8A6BEB7923E86B490066B13C /* MEIAMProtocol.h in Headers */,
 				8A6BEB9823E86B490066B13C /* EmarsysSDKVersion.h in Headers */,
