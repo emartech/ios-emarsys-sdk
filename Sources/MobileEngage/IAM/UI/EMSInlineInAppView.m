@@ -14,6 +14,7 @@
 #import "MEJSBridge.h"
 #import "EMSEventHandlerProtocolBlockConverter.h"
 #import "NSError+EMSCore.h"
+#import "EMSDispatchWaiter.h"
 
 @interface EMSInlineInAppView () <WKNavigationDelegate, EMSIAMCloseProtocol>
 
@@ -45,6 +46,10 @@
 
 - (void)commonInit {
     __weak typeof(self) weakSelf = self;
+    EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
+    
+    [waiter enter];
+    
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         weakSelf.protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
         weakSelf.commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
@@ -56,16 +61,19 @@
         [weakSelf.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
             [weakSelf respondToJS:result];
         }];
+        
+        [waiter exit];
     }];
-
-    _webView = [self createWebView];
-    _selfHeightConstraint = [NSLayoutConstraint constraintWithItem:self
-                                                         attribute:NSLayoutAttributeHeight
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:nil
-                                                         attribute:NSLayoutAttributeNotAnAttribute
-                                                        multiplier:1
-                                                          constant:0];
+    
+    [waiter waitWithInterval:3];
+    self.webView = [self createWebView];
+    self.selfHeightConstraint = [NSLayoutConstraint constraintWithItem:self
+                                                                 attribute:NSLayoutAttributeHeight
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:1
+                                                                  constant:0];
     self.selfHeightConstraint.priority = UILayoutPriorityRequired;
 }
 
@@ -130,7 +138,10 @@
     WKProcessPool *processPool = [WKProcessPool new];
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration new];
     [webViewConfiguration setProcessPool:processPool];
-    [webViewConfiguration setUserContentController:self.jsBridge.userContentController];
+    
+    if (self.jsBridge) {
+        [webViewConfiguration setUserContentController:self.jsBridge.userContentController];
+    }
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero
                                             configuration:webViewConfiguration];
