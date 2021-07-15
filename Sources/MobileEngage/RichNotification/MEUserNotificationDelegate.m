@@ -33,7 +33,6 @@
 
 @synthesize delegate = _delegate;
 @synthesize eventHandler = _eventHandler;
-@synthesize notificationInformationDelegate = _notificationInformationDelegate;
 
 - (instancetype)initWithActionFactory:(EMSActionFactory *)actionFactory
                                 inApp:(MEInApp *)inApp
@@ -99,7 +98,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         if (campaignId && weakSelf.notificationInformationDelegate) {
             EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.notificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+                weakSelf.notificationInformationDelegate(notificationInformation);
             });
         }
 

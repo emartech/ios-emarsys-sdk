@@ -14,6 +14,7 @@
 
 @property(nonatomic, readonly) NSData *deviceToken;
 @property(nonatomic, strong) EMSEventHandlerBlock silentMessageEventHandler;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock silentNotificationInformationDelegate;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager

@@ -29,8 +29,6 @@
 
 @implementation EMSPushV3Internal
 
-@synthesize silentNotificationInformationDelegate = _silentNotificationInforamtionDelegate;
-
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
@@ -148,7 +146,7 @@
         EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.silentNotificationInformationDelegate didReceiveNotificationInformation:notificationInformation];
+            weakSelf.silentNotificationInformationDelegate(notificationInformation);
         });
     }
 }

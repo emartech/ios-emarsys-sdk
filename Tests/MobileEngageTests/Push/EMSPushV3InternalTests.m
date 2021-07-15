@@ -15,7 +15,6 @@
 #import "EMSActionProtocol.h"
 #import "EMSNotificationInformationDelegate.h"
 #import "EMSStorage.h"
-#import "FakeNotificationInformationDelegate.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
 
@@ -407,17 +406,16 @@
 
     __block NSOperationQueue *returnedOperationQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    FakeNotificationInformationDelegate *notificationInformationDelegate = [[FakeNotificationInformationDelegate alloc] initWithCallerQueueBlock:^(NSOperationQueue *callerQueue) {
-        returnedOperationQueue = callerQueue;
-        [expectation fulfill];
-    }];
 
     EMSEventHandlerBlock eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
 
     };
 
     [self.push setSilentMessageEventHandler:eventHandler];
-    [self.push setSilentNotificationInformationDelegate:notificationInformationDelegate];
+    [self.push setSilentNotificationInformationDelegate:^(EMSNotificationInformation *notificationInformation) {
+        returnedOperationQueue = [NSOperationQueue currentQueue];
+        [expectation fulfill];
+    }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self.push handleMessageWithUserInfo:@{

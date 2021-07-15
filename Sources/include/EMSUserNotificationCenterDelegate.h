@@ -9,6 +9,6 @@
 
 @property(nonatomic, weak) id <UNUserNotificationCenterDelegate> delegate NS_AVAILABLE_IOS(10.0);
 @property(nonatomic, weak) EMSEventHandlerBlock eventHandler;
-@property(nonatomic, weak) id <EMSNotificationInformationDelegate> notificationInformationDelegate;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock notificationInformationDelegate;
 
 @end

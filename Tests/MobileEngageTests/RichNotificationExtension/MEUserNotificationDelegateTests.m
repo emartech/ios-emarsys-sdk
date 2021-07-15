@@ -10,7 +10,6 @@
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
 #import "EMSActionFactory.h"
-#import "FakeNotificationInformationDelegate.h"
 
 @interface MEUserNotificationDelegate ()
 
@@ -729,12 +728,11 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       operationQueue:operationQueue];
             __block NSOperationQueue *returnedQueue = nil;
             XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-            FakeNotificationInformationDelegate *notificationInformationDelegate = [[FakeNotificationInformationDelegate alloc] initWithCallerQueueBlock:^(NSOperationQueue *callerQueue) {
-                returnedQueue = callerQueue;
-                [expectation fulfill];
-            }];
 
-            userNotification.notificationInformationDelegate = notificationInformationDelegate;
+            userNotification.notificationInformationDelegate = ^(EMSNotificationInformation *notificationInformation) {
+                returnedQueue = [NSOperationQueue currentQueue];
+                [expectation fulfill];
+            };
             NSDictionary *userInfo = @{@"ems": @{
                     @"multichannelId": @"testMultiChannelId"
             },
