@@ -87,7 +87,7 @@
 #import "EMSSession.h"
 #import "MEIAMCleanupResponseHandlerV4.h"
 #import "EMSDeviceEventStateResponseHandler.h"
-#import "EMSIdTokenMapper.h"
+#import "EMSOpenIdTokenMapper.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSWrapperChecker.h"
 
@@ -387,7 +387,7 @@
                                                                                           endpoint:self.endpoint],
                                              [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
-                                             [[EMSIdTokenMapper alloc] initWithRequestContext:self.requestContext
+                                             [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
                                                                                      endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];

@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSString *contactToken;
 @property(nonatomic, strong, nullable) NSString *refreshToken;
 @property(nonatomic, strong, nullable) NSString *applicationCode;
-@property(nonatomic, strong, nullable) NSString *idToken;
+@property(nonatomic, strong, nullable) NSString *openIdToken;
 
 - (instancetype)initWithApplicationCode:(NSString *)applicationCode
                          contactFieldId:(NSNumber *)contactFieldId

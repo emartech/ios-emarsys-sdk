@@ -150,7 +150,7 @@
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
     OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
-    OCMVerify([self.mockRequestContext setIdToken:nil]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
 }
 
 - (void)testSetAuthenticatedContactWithIdTokenCompletionBlock_setIdTokenOnRequestContext {
@@ -162,16 +162,16 @@
     OCMReject([self.mockSession stopSession]);
 
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(contactFieldId);
-    OCMStub([self.mockRequestContext idToken]).andReturn(newIdToken);
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(newIdToken);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthenticatedContactWithIdToken:newIdToken
-                                      completionBlock:self.completionBlock];
+    [self.internal setAuthenticatedContactWithOpenIdToken:newIdToken
+                                          completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:self.completionBlock]);
-    OCMVerify([self.mockRequestContext setIdToken:newIdToken]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:newIdToken]);
     OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
 }
 
@@ -183,8 +183,8 @@
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(contactFieldId);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthenticatedContactWithIdToken:idToken
-                                      completionBlock:self.completionBlock];
+    [self.internal setAuthenticatedContactWithOpenIdToken:idToken
+                                          completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel

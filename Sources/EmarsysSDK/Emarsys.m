@@ -6,7 +6,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import "Emarsys.h"
 #import "EMSPredictInternal.h"
-#import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "EMSDependencyInjection.h"
 #import "EMSNotificationCenterManager.h"
@@ -57,18 +56,18 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
 }
 
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken {
-    [Emarsys setAuthenticatedContactWithIdToken:idToken
-                                completionBlock:nil];
++ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken {
+    [Emarsys setAuthenticatedContactWithOpenIdToken:openIdToken
+                                    completionBlock:nil];
 }
 
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    NSParameterAssert(idToken);
++ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSParameterAssert(openIdToken);
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
             (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithIdToken:idToken
-                                                                                    completionBlock:completionBlock];
+        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithOpenIdToken:openIdToken
+                                                                                        completionBlock:completionBlock];
     }
 
     [MEExperimental disableFeature:EMSInnerFeature.predict];

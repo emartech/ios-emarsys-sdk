@@ -279,14 +279,14 @@ SPEC_BEGIN(MERequestContextTests)
         });
 
         describe(@"hasContactIdentification", ^{
-            it(@"should return YES when contactFieldValue or idToken is not nil", ^{
+            it(@"should return YES when contactFieldValue or openIdToken is not nil", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                                contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
                                                                                       storage:storage];
-                [context setIdToken:@"testIdToken"];
+                [context setOpenIdToken:@"testIdToken"];
 
                 [[theValue([context hasContactIdentification]) should] beYes];
             });
@@ -294,7 +294,7 @@ SPEC_BEGIN(MERequestContextTests)
 
         describe(@"reset", ^{
 
-            it(@"should clear contactFieldValue, contactToken, refreshToken, idToken", ^{
+            it(@"should clear contactFieldValue, contactToken, refreshToken, openIdToken", ^{
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                                contactFieldId:contactFieldId
@@ -302,7 +302,7 @@ SPEC_BEGIN(MERequestContextTests)
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
                                                                                       storage:storage];
-                [context setIdToken:@"testIdToken"];
+                [context setOpenIdToken:@"testIdToken"];
 
                 [userDefaults setObject:@"testContactFieldValue"
                                  forKey:kCONTACT_FIELD_VALUE];
@@ -317,7 +317,7 @@ SPEC_BEGIN(MERequestContextTests)
                 [[userDefaults stringForKey:kCONTACT_FIELD_VALUE] shouldBeNil];
                 [[storage stringForKey:kCONTACT_TOKEN] shouldBeNil];
                 [[storage stringForKey:kREFRESH_TOKEN] shouldBeNil];
-                [[context idToken] shouldBeNil];
+                [[context openIdToken] shouldBeNil];
             });
         });
 SPEC_END

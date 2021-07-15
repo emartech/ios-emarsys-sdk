@@ -10,10 +10,10 @@
 
 @implementation EMSLoggingMobileEngageInternal
 
-- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+- (void)setAuthenticatedContactWithOpenIdToken:(nullable NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"idToken"] = idToken;
+    parameters[@"openIdToken"] = openIdToken;
     parameters[@"completionBlock"] = @(completionBlock != nil);
 
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass

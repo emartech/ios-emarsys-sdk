@@ -43,12 +43,12 @@
     return self;
 }
 
-- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
-                           completionBlock:(EMSCompletionBlock)completionBlock {
-    BOOL shouldRestartSession = ![idToken isEqualToString:self.requestContext.idToken];
+- (void)setAuthenticatedContactWithOpenIdToken:(nullable NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    BOOL shouldRestartSession = ![openIdToken isEqualToString:self.requestContext.openIdToken];
 
     [self.requestContext setContactFieldValue:nil];
-    [self.requestContext setIdToken:idToken];
+    [self.requestContext setOpenIdToken:openIdToken];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
     [self.requestManager submitRequestModel:requestModel
@@ -69,7 +69,7 @@
                         completionBlock:(EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
 
-    [self.requestContext setIdToken:nil];
+    [self.requestContext setOpenIdToken:nil];
     [self.requestContext setContactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
