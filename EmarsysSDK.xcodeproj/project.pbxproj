@@ -59,7 +59,6 @@
 		166B3F8D2119A862006CD35C /* FakeTimeStampProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 374609973B222C522AC186B1 /* FakeTimeStampProvider.m */; };
 		166B3F902119A86E006CD35C /* MEIAMDidAppear.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9CA21075B270030E659 /* MEIAMDidAppear.m */; };
 		166B3F942119A86E006CD35C /* FakeResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */; };
-		166B3F972119A86E006CD35C /* FakeInAppHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */; };
 		166B3F9A2119A86E006CD35C /* FakeInboxNotificationRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */; };
 		166B3F9B2119A86E006CD35C /* FakeDbHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E221075B270030E659 /* FakeDbHelper.m */; };
 		166B3F9D2119A86E006CD35C /* FakeJSBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E421075B270030E659 /* FakeJSBridge.m */; };
@@ -103,7 +102,6 @@
 		166B40502119A91F006CD35C /* MEIAMCleanupResponseHandlerV3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D521075B270030E659 /* MEIAMCleanupResponseHandlerV3Tests.m */; };
 		166B40512119A91F006CD35C /* AbstractResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9D621075B270030E659 /* AbstractResponseHandlerTests.m */; };
 		166B40542119A91F006CD35C /* FakeResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */; };
-		166B40572119A91F006CD35C /* FakeInAppHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */; };
 		166B405A2119A91F006CD35C /* FakeInboxNotificationRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */; };
 		166B405B2119A91F006CD35C /* FakeDbHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E221075B270030E659 /* FakeDbHelper.m */; };
 		166B405D2119A91F006CD35C /* FakeJSBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F9E421075B270030E659 /* FakeJSBridge.m */; };
@@ -630,7 +628,6 @@
 		8A6BEAEE23E86B480066B13C /* EMSCartItemProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96223E86B480066B13C /* EMSCartItemProtocol.h */; };
 		8A6BEAEF23E86B480066B13C /* EMSPredictProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96323E86B480066B13C /* EMSPredictProtocol.h */; };
 		8A6BEAF023E86B480066B13C /* EMSProduct.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96423E86B480066B13C /* EMSProduct.h */; };
-		8A6BEAF123E86B480066B13C /* EMSEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96523E86B480066B13C /* EMSEventHandler.h */; };
 		8A6BEAF223E86B480066B13C /* EMSLogicProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96623E86B480066B13C /* EMSLogicProtocol.h */; };
 		8A6BEAF323E86B480066B13C /* EMSFlipperFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96723E86B480066B13C /* EMSFlipperFeatures.h */; };
 		8A6BEAF423E86B480066B13C /* EMSConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE96823E86B480066B13C /* EMSConfig.h */; };
@@ -1348,7 +1345,6 @@
 		8A6BE96223E86B480066B13C /* EMSCartItemProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCartItemProtocol.h; sourceTree = "<group>"; };
 		8A6BE96323E86B480066B13C /* EMSPredictProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSPredictProtocol.h; sourceTree = "<group>"; };
 		8A6BE96423E86B480066B13C /* EMSProduct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSProduct.h; sourceTree = "<group>"; };
-		8A6BE96523E86B480066B13C /* EMSEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEventHandler.h; sourceTree = "<group>"; };
 		8A6BE96623E86B480066B13C /* EMSLogicProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLogicProtocol.h; sourceTree = "<group>"; };
 		8A6BE96723E86B480066B13C /* EMSFlipperFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSFlipperFeatures.h; sourceTree = "<group>"; };
 		8A6BE96823E86B480066B13C /* EMSConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSConfig.h; sourceTree = "<group>"; };
@@ -1585,12 +1581,10 @@
 		8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeResponseHandler.m; sourceTree = "<group>"; };
 		8AB2F9DB21075B270030E659 /* FakeSpecification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeSpecification.h; sourceTree = "<group>"; };
 		8AB2F9DC21075B270030E659 /* FakeRequestRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeRequestRepository.h; sourceTree = "<group>"; };
-		8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeInAppHandler.m; sourceTree = "<group>"; };
 		8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeInboxNotificationRequestManager.m; sourceTree = "<group>"; };
 		8AB2F9E221075B270030E659 /* FakeDbHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeDbHelper.m; sourceTree = "<group>"; };
 		8AB2F9E321075B270030E659 /* FakeResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeResponseHandler.h; sourceTree = "<group>"; };
 		8AB2F9E421075B270030E659 /* FakeJSBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeJSBridge.m; sourceTree = "<group>"; };
-		8AB2F9E621075B270030E659 /* FakeInAppHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeInAppHandler.h; sourceTree = "<group>"; };
 		8AB2F9E721075B270030E659 /* FakeRequestRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeRequestRepository.m; sourceTree = "<group>"; };
 		8AB2F9E821075B270030E659 /* FakeSpecification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeSpecification.m; sourceTree = "<group>"; };
 		8AB2F9EA21075B270030E659 /* FakeInboxNotificationRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeInboxNotificationRequestManager.h; sourceTree = "<group>"; };
@@ -2704,7 +2698,6 @@
 				8A6BE96223E86B480066B13C /* EMSCartItemProtocol.h */,
 				8A6BE96323E86B480066B13C /* EMSPredictProtocol.h */,
 				8A6BE96423E86B480066B13C /* EMSProduct.h */,
-				8A6BE96523E86B480066B13C /* EMSEventHandler.h */,
 				8A6BE96623E86B480066B13C /* EMSLogicProtocol.h */,
 				8A6BE96723E86B480066B13C /* EMSFlipperFeatures.h */,
 				8A6BE96823E86B480066B13C /* EMSConfig.h */,
@@ -3411,12 +3404,10 @@
 				8AB2F9DA21075B270030E659 /* FakeResponseHandler.m */,
 				8AB2F9DB21075B270030E659 /* FakeSpecification.h */,
 				8AB2F9DC21075B270030E659 /* FakeRequestRepository.h */,
-				8AB2F9DD21075B270030E659 /* FakeInAppHandler.m */,
 				8AB2F9E121075B270030E659 /* FakeInboxNotificationRequestManager.m */,
 				8AB2F9E221075B270030E659 /* FakeDbHelper.m */,
 				8AB2F9E321075B270030E659 /* FakeResponseHandler.h */,
 				8AB2F9E421075B270030E659 /* FakeJSBridge.m */,
-				8AB2F9E621075B270030E659 /* FakeInAppHandler.h */,
 				8AB2F9E721075B270030E659 /* FakeRequestRepository.m */,
 				8AB2F9E821075B270030E659 /* FakeSpecification.m */,
 				8AB2F9EA21075B270030E659 /* FakeInboxNotificationRequestManager.h */,
@@ -3710,7 +3701,6 @@
 				8A6BEB4F23E86B490066B13C /* EMSLoggingPushInternal.h in Headers */,
 				8A6BEB3723E86B490066B13C /* EMSMobileEngageProtocol.h in Headers */,
 				8A6BEB7823E86B490066B13C /* MEInApp.h in Headers */,
-				8A6BEAF123E86B480066B13C /* EMSEventHandler.h in Headers */,
 				8A6BEAE623E86B480066B13C /* EMSConfigBuilder.h in Headers */,
 				8A6BEABB23E86B480066B13C /* EMSCrashLog.h in Headers */,
 				8A6BEB6523E86B490066B13C /* MEIAMCommandResultUtils.h in Headers */,
@@ -4239,7 +4229,6 @@
 				166B40502119A91F006CD35C /* MEIAMCleanupResponseHandlerV3Tests.m in Sources */,
 				166B40512119A91F006CD35C /* AbstractResponseHandlerTests.m in Sources */,
 				166B40542119A91F006CD35C /* FakeResponseHandler.m in Sources */,
-				166B40572119A91F006CD35C /* FakeInAppHandler.m in Sources */,
 				166B405A2119A91F006CD35C /* FakeInboxNotificationRequestManager.m in Sources */,
 				166B405B2119A91F006CD35C /* FakeDbHelper.m in Sources */,
 				166B405D2119A91F006CD35C /* FakeJSBridge.m in Sources */,
@@ -4403,7 +4392,6 @@
 				166B3F902119A86E006CD35C /* MEIAMDidAppear.m in Sources */,
 				166B3F942119A86E006CD35C /* FakeResponseHandler.m in Sources */,
 				8A3B594821A6A54C000B00E4 /* EMSFilterByValuesSpecificationTests.m in Sources */,
-				166B3F972119A86E006CD35C /* FakeInAppHandler.m in Sources */,
 				166B3F9A2119A86E006CD35C /* FakeInboxNotificationRequestManager.m in Sources */,
 				166B3F9B2119A86E006CD35C /* FakeDbHelper.m in Sources */,
 				166B3F9D2119A86E006CD35C /* FakeJSBridge.m in Sources */,

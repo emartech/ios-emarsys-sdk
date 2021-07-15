@@ -13,6 +13,7 @@
 @interface EMSPushV3Internal : NSObject <EMSPushNotificationProtocol>
 
 @property(nonatomic, readonly) NSData *deviceToken;
+@property(nonatomic, strong) EMSEventHandlerBlock silentMessageEventHandler;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager

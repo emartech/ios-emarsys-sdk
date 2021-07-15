@@ -9,14 +9,14 @@
 
 @implementation EMSLoggingInApp
 
-- (id <EMSEventHandler>)eventHandler {
+- (EMSEventHandlerBlock)eventHandler {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:nil], LogLevelDebug);
     return nil;
 }
 
-- (void)setEventHandler:(id <EMSEventHandler>)eventHandler {
+- (void)setEventHandler:(EMSEventHandlerBlock)eventHandler {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"eventHandler"] = @(eventHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto

@@ -10,7 +10,6 @@
 #import "EmarsysTestUtils.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
-#import "EMSEventHandler.h"
 #import "EMSAbstractResponseHandler+Private.h"
 #import "EMSAbstractResponseHandler.h"
 #import "MEDisplayedIAMRepository.h"

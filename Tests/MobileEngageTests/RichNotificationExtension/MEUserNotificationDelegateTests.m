@@ -670,7 +670,8 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
         });
 
         it(@"should use actionFactory", ^{
-            id eventHandlerMock = [KWMock mockForProtocol:@protocol(EMSEventHandler)];
+            EMSEventHandlerBlock eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+            };
             NSString *eventName = @"testEventName";
             NSDictionary *payload = @{@"key1": @"value1", @"key2": @"value2", @"key3": @"value3"};
             NSDictionary *expectedAction = @{
@@ -683,7 +684,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
             id mockAction = [KWMock mockForProtocol:@protocol(EMSActionProtocol)];
 
             [[actionFactory should] receive:@selector(setEventHandler:)
-                              withArguments:eventHandlerMock];
+                              withArguments:eventHandler];
             [[actionFactory should] receive:@selector(createActionWithActionDictionary:)
                                   andReturn:mockAction
                               withArguments:expectedAction];
@@ -697,7 +698,7 @@ SPEC_BEGIN(MEUserNotificationDelegateTests)
                                                                                                       requestManager:requestManager
                                                                                                       requestFactory:requestFactory
                                                                                                       operationQueue:operationQueue];
-            userNotification.eventHandler = eventHandlerMock;
+            userNotification.eventHandler = eventHandler;
             NSDictionary *userInfo = @{@"ems": @{
                     @"actions": @[
                             expectedAction

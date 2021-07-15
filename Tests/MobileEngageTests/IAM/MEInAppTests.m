@@ -1,7 +1,6 @@
 #import "Kiwi.h"
 #import "MEInApp.h"
 
-#import "FakeInAppHandler.h"
 #import "EMSTimestampProvider.h"
 #import "FakeTimeStampProvider.h"
 #import "EMSWaiter.h"
@@ -290,12 +289,11 @@ SPEC_BEGIN(MEInAppTests)
                 __block NSString *returnedEventName;
                 __block NSDictionary<NSString *, NSObject *> *returnedPayload;
 
-                FakeInAppHandler *inAppHandler = [[FakeInAppHandler alloc] initWithHandlerBlock:^(NSString *eventName, NSDictionary<NSString *, NSObject *> *payload) {
+                [inApp setEventHandler:^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
                     returnedEventName = eventName;
                     returnedPayload = payload;
                     [expectation fulfill];
                 }];
-                [inApp setEventHandler:inAppHandler];
 
                 NSString *message = @"<!DOCTYPE html>\n"
                                     "<html lang=\"en\">\n"

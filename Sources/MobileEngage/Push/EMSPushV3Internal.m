@@ -29,7 +29,6 @@
 
 @implementation EMSPushV3Internal
 
-@synthesize silentMessageEventHandler = _silentMessageEventHandler;
 @synthesize silentNotificationInformationDelegate = _silentNotificationInforamtionDelegate;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory

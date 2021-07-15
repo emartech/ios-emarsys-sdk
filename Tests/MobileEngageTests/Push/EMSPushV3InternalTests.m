@@ -13,7 +13,6 @@
 #import "EMSTimestampProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
-#import "EMSEventHandler.h"
 #import "EMSNotificationInformationDelegate.h"
 #import "EMSStorage.h"
 #import "FakeNotificationInformationDelegate.h"
@@ -390,7 +389,6 @@
 }
 
 - (void)testHandleMessageWithUserInfo {
-    EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
     NSDictionary *openExternalUrlAction = @{
             @"type": @"OpenExternalUrl",
             @"url": @"https://www.emarsys.com"
@@ -403,7 +401,6 @@
 
     id mockActionUrl = OCMProtocolMock(@protocol(EMSActionProtocol));
     id mockActionBadge = OCMProtocolMock(@protocol(EMSActionProtocol));
-    id eventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
 
     OCMStub([self.mockActionFactory createActionWithActionDictionary:openExternalUrlAction]).andReturn(mockActionUrl);
     OCMStub([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]).andReturn(mockActionBadge);
@@ -414,6 +411,10 @@
         returnedOperationQueue = callerQueue;
         [expectation fulfill];
     }];
+
+    EMSEventHandlerBlock eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+
+    };
 
     [self.push setSilentMessageEventHandler:eventHandler];
     [self.push setSilentNotificationInformationDelegate:notificationInformationDelegate];

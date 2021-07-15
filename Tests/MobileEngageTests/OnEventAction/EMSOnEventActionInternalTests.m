@@ -13,7 +13,8 @@
 @implementation EMSOnEventActionInternalTests
 
 - (void)testEventHandler {
-    id eventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
+    EMSEventHandlerBlock eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+    };
     EMSActionFactory *mockActionFactory = OCMClassMock([EMSActionFactory class]);
     EMSOnEventActionInternal *eventActionInternal = [[EMSOnEventActionInternal alloc] initWithActionFactory:mockActionFactory];
     

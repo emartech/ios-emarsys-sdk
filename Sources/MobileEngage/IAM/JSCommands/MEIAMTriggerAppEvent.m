@@ -4,21 +4,20 @@
 
 #import "EMSDictionaryValidator.h"
 #import "MEIAMTriggerAppEvent.h"
-#import "EMSEventHandler.h"
 #import "MEIAMCommandResultUtils.h"
 #import "NSDictionary+EMSCore.h"
 
 @interface MEIAMTriggerAppEvent ()
 
-@property(nonatomic, weak, nullable) id <EMSEventHandler> inAppMessageHandler;
+@property(nonatomic, strong, nullable) EMSEventHandlerBlock eventHandler;
 
 @end
 
 @implementation MEIAMTriggerAppEvent
 
-- (instancetype)initWithInAppMessageHandler:(id <EMSEventHandler>)inAppMessageHandler {
+- (instancetype)initWithEventHandler:(EMSEventHandlerBlock)eventHandler {
     if (self = [super init]) {
-        _inAppMessageHandler = inAppMessageHandler;
+        _eventHandler = eventHandler;
     }
     return self;
 }
@@ -33,17 +32,18 @@
     NSString *eventId = message[@"id"];
 
     NSArray<NSString *> *errors = [message validate:^(EMSDictionaryValidator *validate) {
-        [validate valueExistsForKey:@"name" withType:[NSString class]];
+        [validate valueExistsForKey:@"name"
+                           withType:[NSString class]];
     }];
 
     if ([errors count] > 0) {
-        resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId errorArray:errors]);
+        resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
+                                                        errorArray:errors]);
     } else {
         NSString *name = message[@"name"];
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.inAppMessageHandler handleEvent:name
-                                          payload:payload];
+            self.eventHandler(name, payload);
         });
         resultBlock([MEIAMCommandResultUtils createSuccessResultWith:eventId]);
     }

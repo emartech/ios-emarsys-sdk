@@ -713,7 +713,8 @@
 }
 
 - (void)testDidEnter_triggerMobileEngageInternalEvent {
-    id <EMSEventHandler> handler = OCMProtocolMock(@protocol(EMSEventHandler));
+    EMSEventHandlerBlock eventHandlerBlock = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+    };
 
     id mockAction = OCMProtocolMock(@protocol(EMSActionProtocol));
     OCMStub([self.mockActionFactory createActionWithActionDictionary:(@{
@@ -739,14 +740,14 @@
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
     [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
-    [self.geofenceInternal setEventHandler:handler];
+    [self.geofenceInternal setEventHandler:eventHandlerBlock];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
                             didEnterRegion:enteringRegion];
 
     [self waitForOperation];
 
-    OCMVerify([self.mockActionFactory setEventHandler:handler]);
+    OCMVerify([self.mockActionFactory setEventHandler:eventHandlerBlock]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{
             @"id": @"testActionId1",
             @"title": @"Custom event",
@@ -759,7 +760,8 @@
 }
 
 - (void)testDidExit_triggerBadgeCountEvent {
-    id <EMSEventHandler> handler = OCMProtocolMock(@protocol(EMSEventHandler));
+    EMSEventHandlerBlock eventHandlerBlock = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+    };
     id mockAction = OCMProtocolMock(@protocol(EMSActionProtocol));
     OCMStub([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
             @"type": @"BadgeCount",
@@ -784,14 +786,14 @@
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
     [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
-    [self.geofenceInternal setEventHandler:handler];
+    [self.geofenceInternal setEventHandler:eventHandlerBlock];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
                              didExitRegion:enteringRegion];
 
     [self waitForOperation];
 
-    OCMVerify([self.mockActionFactory setEventHandler:handler]);
+    OCMVerify([self.mockActionFactory setEventHandler:eventHandlerBlock]);
     OCMVerify([self.mockActionFactory createActionWithActionDictionary:(@{@"id": @"testActionId2",
             @"type": @"BadgeCount",
             @"method": @"add",

@@ -3,8 +3,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSEventHandler.h"
+#import "EMSBlocks.h"
 
 @protocol EMSIAMAppEventProtocol <NSObject>
-- (_Nullable id <EMSEventHandler>)eventHandler;
+- (_Nullable EMSEventHandlerBlock)eventHandler;
 @end
