@@ -86,7 +86,7 @@
         action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionDictionary[@"id"]
                                                              title:actionDictionary[@"title"]
                                                               type:actionDictionary[@"type"]
-                                                               url:actionDictionary[@"url"] ? [[NSURL alloc] initWithString:actionDictionary[@"url"]] : nil];
+        url:actionDictionary[@"url"] ? [[NSURL alloc] initWithString:actionDictionary[@"url"]] : [NSURL new]];
     } else if ([actionDictionary[@"type"] isEqualToString:@"MECustomEvent"]) {
         action = [[EMSCustomEventActionModel alloc] initWithId:actionDictionary[@"id"]
                                                          title:actionDictionary[@"title"]
