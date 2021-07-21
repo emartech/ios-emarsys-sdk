@@ -31,6 +31,7 @@
 @property(nonatomic, strong) id mockRequestManager;
 @property(nonatomic, strong) id mockRequestFactory;
 @property(nonatomic, strong) id operationQueue;
+@property(nonatomic, strong) id publicApiOperationQueue;
 @property(nonatomic, strong) id mockInapp;
 @end
 
@@ -41,31 +42,27 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _operationQueue = [NSOperationQueue new];
+    [self.operationQueue setName:@"CORE"];
     [self.operationQueue setMaxConcurrentOperationCount:1];
+    _publicApiOperationQueue = [NSOperationQueue new];
+    [self.publicApiOperationQueue setName:@"PUBLIC"];
+    [self.publicApiOperationQueue setMaxConcurrentOperationCount:1];
     _mockInapp = OCMClassMock([MEInApp class]);
-
-    [EMSDependencyInjection setupWithDependencyContainer:self.mockContainer];
-    OCMStub([self.mockContainer requestManager]).andReturn(self.mockRequestManager);
-    OCMStub([self.mockContainer requestFactory]).andReturn(self.mockRequestFactory);
-    OCMStub([self.mockContainer coreOperationQueue]).andReturn(self.operationQueue);
-    OCMStub([self.mockContainer iam]).andReturn(self.mockInapp);
-
-    _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 }
 
 - (void)tearDown {
     [self.mockRequestFactory stopMocking];
     [self.mockRequestManager stopMocking];
+    [self.mockInapp stopMocking];
     [self.mockContainer stopMocking];
+    [self.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [self.operationQueue waitUntilAllOperationsAreFinished];
+    self.publicApiOperationQueue = nil;
+    self.operationQueue = nil;
     [EMSDependencyInjection tearDown];
 }
 
 - (void)testFetchInlineInapp_shouldScheduleToCoreThread {
-    [EMSDependencyInjection tearDown];
-    EMSDependencyContainer *container = OCMClassMock([EMSDependencyContainer class]);
-    OCMStub([container requestFactory]).andReturn(self.mockRequestFactory);
-    OCMStub([container coreOperationQueue]).andReturn(self.operationQueue);
-    OCMStub([container iam]).andReturn(self.mockInapp);
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
     __block NSOperationQueue *resultQueue = nil;
 
@@ -73,9 +70,7 @@
         resultQueue = [NSOperationQueue currentQueue];
         [expectation fulfill];
     }];
-    OCMStub([container requestManager]).andReturn(fakeRequestManager);
-
-    [EMSDependencyInjection setupWithDependencyContainer:container];
+    [self setupMockContainerWithRequestManager:fakeRequestManager];
 
     EMSInlineInAppView *inlineInAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 
@@ -89,11 +84,14 @@
 }
 
 - (void)testFetchInlineInappMessage_shouldSendInlineInappRequestWithManager {
+    [self setupMockContainerWithRequestManager:self.mockRequestManager];
+
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub([self.mockRequestFactory createInlineInappRequestModelWithViewId:@"testViewId"]).andReturn(requestModel);
 
-    [self.inappView loadInAppWithViewId:@"testViewId"];
-    [self.inappView fetchInlineInappMessage];
+    EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
+    [inAppView loadInAppWithViewId:@"testViewId"];
+    [inAppView fetchInlineInappMessage];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
     [self.operationQueue addOperationWithBlock:^{
@@ -110,6 +108,7 @@
 }
 
 - (void)testFetchInlineInappMessage_shouldLoadMessage {
+    [self setupMockContainerWithRequestManager:self.mockRequestManager];
     EMSResponseModel *mockResponse = OCMClassMock([EMSResponseModel class]);
 
     OCMStub([mockResponse parsedBody]).andReturn((@{
@@ -132,14 +131,18 @@
                                                                                         nil])
                                                 errorBlock:[OCMArg any]]);
 
-    [self.inappView loadInAppWithViewId:@"testViewId"];
-    [self.inappView fetchInlineInappMessage];
+    EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
+    [inAppView loadInAppWithViewId:@"testViewId"];
+    [inAppView fetchInlineInappMessage];
 
-    OCMVerify([self.inappView.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
+    OCMVerify([inAppView.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
                                              baseURL:nil]);
 }
 
 - (void)testFetchInlineInappMessage_shouldCallCompletionBlockWithError_whenNoInAppMessageFound {
+    [self setupMockContainerWithRequestManager:self.mockRequestManager];
+    _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
+
     EMSInlineInAppView *inlineInappPartialMock = OCMPartialMock(self.inappView);
     OCMReject([inlineInappPartialMock.webView loadHTMLString:[OCMArg any]
                                                      baseURL:nil]);
@@ -182,7 +185,20 @@
 }
 
 - (void)testCloseBlock_shouldNotCrash_whenMissing {
-    [self.inappView closeInAppWithCompletionHandler:nil];
+    [self setupMockContainerWithRequestManager:self.mockRequestManager];
+    EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
+    [inAppView closeInAppWithCompletionHandler:nil];
+}
+
+- (void)setupMockContainerWithRequestManager:(EMSRequestManager *)requestManager {
+    [EMSDependencyInjection setupWithDependencyContainer:self.mockContainer];
+    OCMStub([self.mockContainer requestFactory]).andReturn(self.mockRequestFactory);
+    OCMStub([self.mockContainer coreOperationQueue]).andReturn(self.operationQueue);
+    OCMStub([self.mockContainer publicApiOperationQueue]).andReturn(self.publicApiOperationQueue);
+    OCMStub([self.mockContainer iam]).andReturn(self.mockInapp);
+    if (requestManager != nil) {
+        OCMStub([self.mockContainer requestManager]).andReturn(requestManager);
+    }
 }
 
 
