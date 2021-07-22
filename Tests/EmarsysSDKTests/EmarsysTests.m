@@ -49,7 +49,7 @@
 @implementation EmarsysTests
 
 - (void)tearDown {
-    [EmarsysTestUtils tearDownEmarsys];
+    [EMSDependencyInjection tearDown];
 }
 
 - (void)testShouldInitializeCategoryForPush {
@@ -824,6 +824,41 @@
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).instanceRouter.instance class], [EMSLoggingInboxV3 class]);
 }
 
+- (void)testShouldResetContextOnReinstall {
+    MERequestContext *mockContext = OCMClassMock([MERequestContext class]);
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer requestContext]).andReturn(mockContext);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+    OCMVerify([mockContext reset]);
+
+}
+
+- (void)testShouldNotResetContextOnReinstallWhenContactFieldValueIsPresent {
+    MERequestContext *mockContext = OCMClassMock([MERequestContext class]);
+    OCMStub([mockContext contactFieldValue]).andReturn(@"teszt@teszt.kom");
+    OCMReject([mockContext reset]);
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer requestContext]).andReturn(mockContext);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+}
+
+- (void)testShouldNotResetContextOnSetupWhenItIsNotReinstall {
+    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [ud setBool:YES
+         forKey:@"kSDKAlreadyInstalled"];
+    MERequestContext *mockContext = OCMClassMock([MERequestContext class]);
+    OCMReject([mockContext reset]);
+    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
+                OCMStub([partialMockContainer requestContext]).andReturn(mockContext);
+            }
+              mobileEngageEnabled:YES
+                   predictEnabled:NO];
+}
+
 - (void)waitForSetup {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForDescription"];
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
@@ -851,6 +886,8 @@
     EMSDependencyContainer *container = [[EMSDependencyContainer alloc] initWithConfig:config];
 
     EMSDependencyContainer *partialMockContainer = OCMPartialMock(container);
+    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [ud removeObjectForKey:@"kSDKAlreadyInstalled"];
 
     partialMockContainerBlock(partialMockContainer);
 

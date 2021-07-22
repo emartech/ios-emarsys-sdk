@@ -6,7 +6,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import "Emarsys.h"
 #import "EMSPredictInternal.h"
-#import "EMSSqliteSchemaHandler.h"
 #import "EMSDependencyContainer.h"
 #import "EMSDependencyInjection.h"
 #import "EMSNotificationCenterManager.h"
@@ -18,6 +17,7 @@
 #import "EMSInnerFeature.h"
 #import "MEExperimental.h"
 
+#define kSDKAlreadyInstalled @"kSDKAlreadyInstalled"
 @implementation Emarsys
 
 + (void)setupWithConfig:(EMSConfig *)config {
@@ -38,6 +38,7 @@
     EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
 
     [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
+        [Emarsys resetRequestContextOnReinstall];
         [Emarsys registerAppStartBlock];
         if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
             [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
@@ -47,6 +48,15 @@
                                                             object:nil];
     }];
     [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+}
+
++ (void)resetRequestContextOnReinstall {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    BOOL alreadyInstalled = [userDefaults boolForKey:kSDKAlreadyInstalled];
+    if (!alreadyInstalled && !EMSDependencyInjection.dependencyContainer.requestContext.contactFieldValue) {
+        [EMSDependencyInjection.dependencyContainer.requestContext reset];
+        [userDefaults setBool:YES forKey:kSDKAlreadyInstalled];
+    }
 }
 
 + (void)initializeDefaultCategory {
