@@ -8,7 +8,6 @@
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
 #import "EmarsysSDKVersion.h"
-#import "EMSNotification.h"
 #import "EMSAuthentication.h"
 #import "MEButtonClickRepository.h"
 #import "EMSFilterByNothingSpecification.h"
@@ -159,31 +158,6 @@
             }
                           timestampProvider:self.requestContext.timestampProvider
                                uuidProvider:self.requestContext.uuidProvider];
-}
-
-- (EMSRequestModel *)createMessageOpenWithNotification:(EMSNotification *)notification {
-    __weak typeof(self) weakSelf = self;
-    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[weakSelf.endpoint v2EventServiceUrl]];
-                [builder setMethod:HTTPMethodPOST];
-
-                NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-                payload[@"application_id"] = self.requestContext.applicationCode;
-                payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
-                payload[@"sid"] = notification.sid;
-                payload[@"source"] = @"inbox";
-
-                if (self.requestContext.contactFieldId && self.requestContext.contactFieldValue) {
-                    payload[@"contact_field_id"] = self.requestContext.contactFieldId;
-                    payload[@"contact_field_value"] = self.requestContext.contactFieldValue;
-                }
-
-                [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
-                [builder setHeaders:@{@"Authorization": [EMSAuthentication createBasicAuthWithUsername:self.requestContext.applicationCode]}];
-            }
-                                                   timestampProvider:self.requestContext.timestampProvider
-                                                        uuidProvider:self.requestContext.uuidProvider];
-    return requestModel;
 }
 
 - (EMSRequestModel *)createGeofenceRequestModel {

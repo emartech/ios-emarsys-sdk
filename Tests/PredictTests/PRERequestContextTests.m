@@ -28,6 +28,8 @@ SPEC_BEGIN(PRERequestContextTests)
                              forKey:kEMSCustomerId];
             [userDefaults setObject:nil
                              forKey:kEMSVisitorId];
+            [userDefaults setObject:nil
+                             forKey:kEMSContactFieldId];
             [userDefaults synchronize];
         });
 
@@ -72,17 +74,31 @@ SPEC_BEGIN(PRERequestContextTests)
             });
         });
 
-        describe(@"setCustomerId:", ^{
+        describe(@"setContactFieldValue:", ^{
             it(@"should persist the parameter", ^{
                 NSString *const customerId = @"testId";
                 [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                          uuidProvider:uuidProvider
                                                            merchantId:@"merchantId"
-                                                           deviceInfo:deviceInfo] setCustomerId:customerId];
+                                                           deviceInfo:deviceInfo] setContactFieldValue:customerId];
                 [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
                                                            uuidProvider:uuidProvider
                                                              merchantId:@"merchantId"
-                                                             deviceInfo:deviceInfo] customerId] should] equal:customerId];
+                                                             deviceInfo:deviceInfo] contactFieldValue] should] equal:customerId];
+            });
+        });
+
+        describe(@"setContactFieldId:", ^{
+            it(@"should persist the parameter", ^{
+                NSNumber *const contactFieldId = @3;
+                [[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider
+                                                           merchantId:@"merchantId"
+                                                           deviceInfo:deviceInfo] setContactFieldId:contactFieldId];
+                [[[[[PRERequestContext alloc] initWithTimestampProvider:timestampProvider
+                                                           uuidProvider:uuidProvider
+                                                             merchantId:@"merchantId"
+                                                             deviceInfo:deviceInfo] contactFieldId] should] equal:contactFieldId];
             });
         });
 

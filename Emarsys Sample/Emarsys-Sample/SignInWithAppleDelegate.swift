@@ -31,7 +31,7 @@ class SignInWithAppleDelegate: NSObject, ASAuthorizationControllerDelegate, Obse
         guard let token = credentials.identityToken, let tokenString = String(data: token, encoding: .utf8) else { return }
         let contactFieldValue = credentials.email ?? credentials.user
         
-        Emarsys.setAuthenticatedContactWithIdToken(tokenString) { error in
+        Emarsys.setAuthenticatedContactWithOpenIdToken(tokenString) { error in
             if error == nil {
                 self.loginData.isLoggedIn = true
                 self.loginData.contactFieldValue = contactFieldValue

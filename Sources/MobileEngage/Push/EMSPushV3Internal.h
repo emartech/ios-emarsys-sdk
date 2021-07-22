@@ -6,7 +6,6 @@
 
 @class EMSRequestFactory;
 @class EMSRequestManager;
-@class EMSNotificationCache;
 @class EMSTimestampProvider;
 @class EMSActionFactory;
 @class EMSStorage;
@@ -14,10 +13,11 @@
 @interface EMSPushV3Internal : NSObject <EMSPushNotificationProtocol>
 
 @property(nonatomic, readonly) NSData *deviceToken;
+@property(nonatomic, strong) EMSEventHandlerBlock silentMessageEventHandler;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock silentNotificationInformationDelegate;
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                     notificationCache:(EMSNotificationCache *)notificationCache
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          actionFactory:(EMSActionFactory *)actionFactory
                                storage:(EMSStorage *)storage;

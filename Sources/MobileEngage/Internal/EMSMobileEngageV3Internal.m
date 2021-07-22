@@ -43,12 +43,12 @@
     return self;
 }
 
-- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
-                           completionBlock:(EMSCompletionBlock)completionBlock {
-    BOOL shouldRestartSession = ![idToken isEqualToString:self.requestContext.idToken];
+- (void)setAuthenticatedContactWithOpenIdToken:(nullable NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    BOOL shouldRestartSession = ![openIdToken isEqualToString:self.requestContext.openIdToken];
 
     [self.requestContext setContactFieldValue:nil];
-    [self.requestContext setIdToken:idToken];
+    [self.requestContext setOpenIdToken:openIdToken];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
     [self.requestManager submitRequestModel:requestModel
@@ -60,16 +60,20 @@
     }
 }
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
-    [self setContactWithContactFieldValue:contactFieldValue
-                          completionBlock:nil];
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue {
+    [self setContactWithContactFieldId:contactFieldId
+                     contactFieldValue:contactFieldValue
+                       completionBlock:nil];
 }
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
-                        completionBlock:(EMSCompletionBlock)completionBlock {
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
 
-    [self.requestContext setIdToken:nil];
+    [self.requestContext setOpenIdToken:nil];
+    [self.requestContext setContactFieldId:contactFieldId];
     [self.requestContext setContactFieldValue:contactFieldValue];
 
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
@@ -91,8 +95,9 @@
                    forKey:kEMSPushTokenKey];
     [self.requestContext reset];
     [self.session stopSession];
-    [self setContactWithContactFieldValue:nil
-                          completionBlock:completionBlock];
+    [self setContactWithContactFieldId:nil
+                     contactFieldValue:nil
+                       completionBlock:completionBlock];
     [self.session startSession];
 }
 

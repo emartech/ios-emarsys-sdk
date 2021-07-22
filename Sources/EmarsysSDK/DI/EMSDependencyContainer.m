@@ -17,7 +17,6 @@
 #import "EMSPredictMapper.h"
 #import "EMSAbstractResponseHandler.h"
 #import "EMSVisitorIdResponseHandler.h"
-#import "MEInbox.h"
 #import "EMSNotificationCenterManager.h"
 #import "EMSDefaultWorker.h"
 #import "MEIAMResponseHandler.h"
@@ -49,7 +48,6 @@
 #import "EMSContactTokenMapper.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeepLinkInternal.h"
-#import "EMSNotificationCache.h"
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSCompletionMiddleware.h"
 #import "EMSRequestManager.h"
@@ -57,7 +55,6 @@
 #import "EMSInnerFeature.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSLoggingPushInternal.h"
-#import "EMSLoggingInbox.h"
 #import "EMSLoggingUserNotificationDelegate.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingMobileEngageInternal.h"
@@ -90,7 +87,7 @@
 #import "EMSSession.h"
 #import "MEIAMCleanupResponseHandlerV4.h"
 #import "EMSDeviceEventStateResponseHandler.h"
-#import "EMSIdTokenMapper.h"
+#import "EMSOpenIdTokenMapper.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSWrapperChecker.h"
 
@@ -110,8 +107,6 @@
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> loggingDeepLink;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> loggingPush;
-@property(nonatomic, strong) id <EMSInboxProtocol> inbox;
-@property(nonatomic, strong) id <EMSInboxProtocol> loggingInbox;
 @property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> iam;
 @property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> loggingIam;
 @property(nonatomic, strong) id <EMSPredictProtocol, EMSPredictInternalProtocol> predict;
@@ -127,7 +122,6 @@
 
 @property(nonatomic, strong) id <EMSConfigProtocol> config;
 @property(nonatomic, strong) id <EMSRequestModelRepositoryProtocol> requestRepository;
-@property(nonatomic, strong) EMSNotificationCache *notificationCache;
 @property(nonatomic, strong) NSMutableArray<EMSAbstractResponseHandler *> *responseHandlers;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSAppStartBlockProvider *appStartBlockProvider;
@@ -144,7 +138,6 @@
 @property(nonatomic, strong) EMSQueueDelegator *mobileEngageDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *deepLinkDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *pushDelegator;
-@property(nonatomic, strong) EMSQueueDelegator *inboxDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *notificationCenterDelegateDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *messageInboxDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *configDelegator;
@@ -201,11 +194,6 @@
                                emptyTarget:[EMSPushV3Internal new]];
         _push = (id <EMSPushNotificationProtocol>) self.pushDelegator;
 
-        _inboxDelegator = [EMSQueueDelegator alloc];
-        [self.inboxDelegator setupWithQueue:self.publicApiOperationQueue
-                                emptyTarget:[MEInbox new]];
-        _inbox = (id <EMSInboxProtocol>) self.inboxDelegator;
-
         _notificationCenterDelegateDelegator = [EMSQueueDelegator alloc];
         [self.notificationCenterDelegateDelegator setupWithQueue:self.publicApiOperationQueue
                                                      emptyTarget:[MEUserNotificationDelegate new]];
@@ -256,10 +244,6 @@
                                                                                  valueKey:@"PREDICT_URL"];
     EMSValueProvider *deeplinkUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://deep-link.eservice.emarsys.net/api/clicks"
                                                                                   valueKey:@"DEEPLINK_URL"];
-    EMSValueProvider *v2EventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://push.eservice.emarsys.net/api/mobileengage/v2/events/message_open"
-                                                                                        valueKey:@"V2_EVENT_SERVICE_URL"];
-    EMSValueProvider *inboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net/api/"
-                                                                               valueKey:@"INBOX_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
 
@@ -277,8 +261,6 @@
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:predictUrlProvider
                                                   deeplinkUrlProvider:deeplinkUrlProvider
-                                            v2EventServiceUrlProvider:v2EventServiceUrlProvider
-                                                     inboxUrlProvider:inboxUrlProvider
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
 
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
@@ -294,7 +276,6 @@
                                                              uuidProvider:self.uuidProvider];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
-                                                         contactFieldId:config.contactFieldId
                                                            uuidProvider:self.uuidProvider
                                                       timestampProvider:timestampProvider
                                                              deviceInfo:deviceInfo
@@ -405,7 +386,7 @@
                                                                                           endpoint:self.endpoint],
                                              [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
-                                             [[EMSIdTokenMapper alloc] initWithRequestContext:self.requestContext
+                                             [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
                                                                                      endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
@@ -484,8 +465,6 @@
                                triggerEvent:EMSDBTriggerEvent.insertEvent
                                     trigger:self.loggerTrigger];
 
-    _notificationCache = [[EMSNotificationCache alloc] init];
-
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                            deviceInfo:deviceInfo
@@ -526,23 +505,12 @@
     _loggingPush = [EMSLoggingPushInternal new];
     EMSInstanceRouter *pushRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                                                                           requestManager:self.requestManager
-                                                                                                                       notificationCache:self.notificationCache
                                                                                                                        timestampProvider:timestampProvider
                                                                                                                            actionFactory:actionFactory
                                                                                                                                  storage:self.storage]
                                                                        loggingInstance:self.loggingPush
                                                                            routerLogic:self.mobileEngageRouterLogicBlock];
     [self.pushDelegator proxyWithInstanceRouter:pushRouter];
-
-    _loggingInbox = [EMSLoggingInbox new];
-    EMSInstanceRouter *inboxRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[MEInbox alloc] initWithRequestContext:self.requestContext
-                                                                                                              notificationCache:self.notificationCache
-                                                                                                                 requestManager:self.requestManager
-                                                                                                                 requestFactory:self.requestFactory
-                                                                                                                       endpoint:self.endpoint]
-                                                                        loggingInstance:self.loggingInbox
-                                                                            routerLogic:self.mobileEngageRouterLogicBlock];
-    [self.inboxDelegator proxyWithInstanceRouter:inboxRouter];
 
     _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
     EMSInstanceRouter *notificationCenterDelegateRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory

@@ -118,7 +118,6 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
             applicationCode = @"testApplicationCode";
             contactFieldId = @3;
             requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                contactFieldId:contactFieldId
                                                                   uuidProvider:uuidProvider
                                                              timestampProvider:timestampProvider
                                                                     deviceInfo:deviceInfo

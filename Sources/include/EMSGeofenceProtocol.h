@@ -7,11 +7,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol EMSEventHandler;
-
 @protocol EMSGeofenceProtocol <NSObject>
 
-@property(nonatomic, weak) id <EMSEventHandler> eventHandler;
+@property(nonatomic, strong) EMSEventHandlerBlock eventHandler;
 @property(nonatomic, assign) BOOL initialEnterTriggerEnabled;
 
 - (void)requestAlwaysAuthorization;

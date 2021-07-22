@@ -7,7 +7,6 @@
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMButtonClicked.h"
 #import "MEIAMTriggerMEEvent.h"
-#import "MEInAppMessage.h"
 
 MEIAMJSCommandFactory *_factory;
 
@@ -17,6 +16,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
         __block id _meiam;
         __block id _inappEventProtocol;
         __block id _inappCloseProtocol;
+        __block EMSEventHandlerBlock eventHandler;
 
         beforeEach(^{
             currentInAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
@@ -27,9 +27,11 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
             _meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
             _inappEventProtocol = [KWMock mockForProtocol:@protocol(EMSIAMAppEventProtocol)];
             _inappCloseProtocol = [KWMock mockForProtocol:@protocol(EMSIAMCloseProtocol)];
+            eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+            };
             [_meiam stub:@selector(currentInAppMessage) andReturn:currentInAppMessage];
             [_meiam stub:@selector(inAppTracker) andReturn:[KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)]];
-            [_inappEventProtocol stub:@selector(eventHandler) andReturn:[KWMock mockForProtocol:@protocol(EMSEventHandler)]];
+            [_inappEventProtocol stub:@selector(eventHandler) andReturn:eventHandler];
             _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
                                               buttonClickRepository:[MEButtonClickRepository nullMock]
                                                    appEventProtocol:_inappEventProtocol

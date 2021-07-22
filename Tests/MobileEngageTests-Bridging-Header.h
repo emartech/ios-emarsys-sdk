@@ -4,5 +4,4 @@
 
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
-#import "EMSEventHandler.h"
 #import "EMSOnEventResponseHandler.h"

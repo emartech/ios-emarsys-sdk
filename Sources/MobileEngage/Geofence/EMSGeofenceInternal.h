@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "EMSGeofenceProtocol.h"
-#import "EMSEventHandler.h"
+#import "EMSBlocks.h"
 
 #define kIsGeofenceEnabled @"isGeofenceEnabled"
 #define kInitialEnterTriggerEnabled @"initialEnterTriggerEnabled"
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSGeofenceInternal : NSObject <EMSGeofenceProtocol, CLLocationManagerDelegate>
 
-@property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
+@property(nonatomic, strong, nullable) EMSEventHandlerBlock eventHandler;
 @property(nonatomic, strong) EMSGeofenceResponse *geofenceResponse;
 @property(nonatomic, strong) CLLocation *currentLocation;
 @property(nonatomic, strong) NSMutableDictionary *registeredGeofences;

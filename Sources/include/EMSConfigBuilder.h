@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSArray<id <EMSFlipperFeature>> *experimentalFeatures;
 @property(nonatomic, readonly) NSArray<id <EMSLogLevelProtocol>> *enabledConsoleLogLevels;
 @property(nonatomic, readonly) NSString *merchantId;
-@property(nonatomic, readonly) NSNumber *contactFieldId;
 @property(nonatomic, readonly) NSString *sharedKeychainAccessGroup;
 
 - (EMSConfigBuilder *)setMobileEngageApplicationCode:(NSString *)applicationCode;
@@ -26,8 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (EMSConfigBuilder *)enableConsoleLogLevels:(NSArray<id <EMSLogLevelProtocol>> *)consoleLogLevels;
 
 - (EMSConfigBuilder *)setMerchantId:(NSString *)merchantId;
-
-- (EMSConfigBuilder *)setContactFieldId:(NSNumber *)contactFieldId;
 
 - (EMSConfigBuilder *)setSharedKeychainAccessGroup:(NSString *)sharedKeychainAccessGroup;
 

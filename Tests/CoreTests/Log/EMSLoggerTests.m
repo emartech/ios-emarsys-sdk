@@ -273,9 +273,7 @@
     EMSRemoteConfig *remoteConfig = [[EMSRemoteConfig alloc] initWithEventService:nil
                                                                     clientService:nil
                                                                    predictService:nil
-                                                            mobileEngageV2Service:nil
                                                                   deepLinkService:nil
-                                                                     inboxService:nil
                                                             v3MessageInboxService:nil
                                                                          logLevel:LogLevelDebug
                                                                          features:nil];

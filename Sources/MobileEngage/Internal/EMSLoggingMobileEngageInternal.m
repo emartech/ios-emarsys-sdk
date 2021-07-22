@@ -10,10 +10,10 @@
 
 @implementation EMSLoggingMobileEngageInternal
 
-- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+- (void)setAuthenticatedContactWithOpenIdToken:(nullable NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"idToken"] = idToken;
+    parameters[@"openIdToken"] = openIdToken;
     parameters[@"completionBlock"] = @(completionBlock != nil);
 
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
@@ -21,17 +21,21 @@
                                            parameters:parameters], LogLevelDebug);
 }
 
-- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue {
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"contactFieldId"] = contactFieldId;
     parameters[@"contactFieldValue"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithClass:klass
                                                   sel:_cmd
                                            parameters:parameters], LogLevelDebug);
 }
 
-- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue
-                        completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"contactFieldId"] = contactFieldId;
     parameters[@"contactFieldValue"] = contactFieldValue;
     parameters[@"completionBlock"] = @(completionBlock != nil);
 

@@ -3,11 +3,10 @@
 //
 #import <Foundation/Foundation.h>
 #import "MEIAMJSCommandProtocol.h"
-
-@protocol EMSEventHandler;
+#import "EMSBlocks.h"
 
 @interface MEIAMTriggerAppEvent : NSObject <MEIAMJSCommandProtocol>
 
-- (instancetype)initWithInAppMessageHandler:(id <EMSEventHandler>)inAppMessageHandler;
+- (instancetype)initWithEventHandler:(EMSEventHandlerBlock)eventHandler;
 
 @end

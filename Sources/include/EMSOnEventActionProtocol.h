@@ -3,10 +3,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSEventHandler.h"
+#import "EMSBlocks.h"
 
 @protocol EMSOnEventActionProtocol <NSObject>
 
-@property(nonatomic, weak, nullable) id <EMSEventHandler> eventHandler;
+@property(nonatomic, weak, nullable) EMSEventHandlerBlock eventHandler;
 
 @end

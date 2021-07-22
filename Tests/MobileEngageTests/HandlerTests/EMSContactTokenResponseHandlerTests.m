@@ -32,15 +32,12 @@
                                                           eventServiceUrlProvider:eventServiceUrlProvider
                                                                predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                               deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                        v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                                 inboxUrlProvider:OCMClassMock([EMSValueProvider class])
                                                         v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
 
 
     _applicationCode = @"testApplicationCode";
     _contactFieldId = @3;
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
-                                                         contactFieldId:self.contactFieldId
                                                            uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                       timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                              deviceInfo:OCMClassMock([EMSDeviceInfo class])

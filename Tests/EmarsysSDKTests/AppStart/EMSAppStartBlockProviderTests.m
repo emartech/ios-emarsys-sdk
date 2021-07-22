@@ -46,7 +46,6 @@
     _mockGeofenceInternal = OCMClassMock([EMSGeofenceInternal class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
-                                                         contactFieldId:self.contactFieldId
                                                            uuidProvider:[EMSUUIDProvider new]
                                                       timestampProvider:[EMSTimestampProvider new]
                                                              deviceInfo:[EMSDeviceInfo new]

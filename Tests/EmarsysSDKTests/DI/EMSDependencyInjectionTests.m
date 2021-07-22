@@ -12,8 +12,6 @@
 #import "EMSLoggingPushInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSDeepLinkInternal.h"
-#import "EMSLoggingInbox.h"
-#import "MEInbox.h"
 #import "MEUserNotificationDelegate.h"
 #import "EMSLoggingUserNotificationDelegate.h"
 #import "MEInApp.h"
@@ -165,33 +163,6 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
             });
         });
 
-        describe(@"inbox", ^{
-            afterEach(^{
-                [EmarsysTestUtils tearDownEmarsys];
-            });
-
-            it(@"should return with logging instance when mobileEngage is not enabled", ^{
-                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        }]
-                                     dependencyContainer:nil];
-
-                waitForSetup();
-
-                [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[EMSLoggingInbox class]];
-            });
-
-            it(@"should return real instance when mobileEngage is enabled", ^{
-                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                        }]
-                                     dependencyContainer:nil];
-
-                waitForSetup();
-
-                [[((NSObject *) EMSDependencyInjection.inbox) should] beKindOfClass:[MEInbox class]];
-            });
-        });
-
         describe(@"notificationCenterDelegate", ^{
             afterEach(^{
                 [EmarsysTestUtils tearDownEmarsys];
@@ -263,7 +234,6 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
 
             it(@"should return real instance when predict is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setContactFieldId:@3];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                         }]
                                      dependencyContainer:nil];
@@ -291,7 +261,6 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setContactFieldId:@3];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]
@@ -320,7 +289,6 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
 
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setContactFieldId:@3];
                             [builder setMerchantId:@"1428C8EE286EC34B"];
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                         }]

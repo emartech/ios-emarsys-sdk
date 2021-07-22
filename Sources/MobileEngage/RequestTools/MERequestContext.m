@@ -12,7 +12,6 @@
 @implementation MERequestContext
 
 - (instancetype)initWithApplicationCode:(NSString *)applicationCode
-                         contactFieldId:(NSNumber *)contactFieldId
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                              deviceInfo:(EMSDeviceInfo *)deviceInfo
@@ -25,7 +24,6 @@
         _timestampProvider = timestampProvider;
         _uuidProvider = uuidProvider;
         _deviceInfo = deviceInfo;
-        _contactFieldId = contactFieldId;
         _applicationCode = applicationCode;
         _storage = storage;
         _clientState = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCLIENT_STATE];
@@ -75,14 +73,15 @@
 }
 
 - (BOOL)hasContactIdentification {
-    return self.idToken || self.contactFieldValue;
+    return self.openIdToken || self.contactFieldValue;
 }
 
 - (void)reset {
+    self.contactFieldId = nil;
     self.contactFieldValue = nil;
     self.contactToken = nil;
     self.refreshToken = nil;
-    self.idToken = nil;
+    self.openIdToken = nil;
 }
 
 @end

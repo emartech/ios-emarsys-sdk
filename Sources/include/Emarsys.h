@@ -6,7 +6,6 @@
 #import "EMSBlocks.h"
 #import "EMSConfig.h"
 #import "EMSPushNotificationProtocol.h"
-#import "EMSInboxProtocol.h"
 #import "EMSInAppProtocol.h"
 #import "EMSPredictProtocol.h"
 #import "EMSConfigProtocol.h"
@@ -20,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Emarsys : NSObject
 
 @property(class, nonatomic, readonly) id <EMSPushNotificationProtocol> push;
-@property(class, nonatomic, readonly) id <EMSInboxProtocol> inbox;
 @property(class, nonatomic, readonly) id <EMSMessageInboxProtocol> messageInbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
 @property(class, nonatomic, readonly) id <EMSGeofenceProtocol> geofence;
@@ -31,15 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)setupWithConfig:(EMSConfig *)config;
 
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken;
++ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken;
 
-+ (void)setAuthenticatedContactWithIdToken:(NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
++ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
-+ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
++ (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue;
 
-+ (void)setContactWithContactFieldValue:(NSString *)contactFieldValue
-                        completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
++ (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 + (void)clearContact;
 

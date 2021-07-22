@@ -3,7 +3,6 @@
 //
 
 #import "EMSConfigBuilder.h"
-#import "EMSLogLevelProtocol.h"
 
 @implementation EMSConfigBuilder
 
@@ -24,11 +23,6 @@
 
 - (EMSConfigBuilder *)setMerchantId:(NSString *)merchantId {
     _merchantId = merchantId;
-    return self;
-}
-
-- (EMSConfigBuilder *)setContactFieldId:(NSNumber *)contactFieldId {
-    _contactFieldId = contactFieldId;
     return self;
 }
 

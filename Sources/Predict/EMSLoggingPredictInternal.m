@@ -52,9 +52,11 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+- (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"customerId"] = contactFieldValue;
+    parameters[@"contactFieldId"] = contactFieldId;
+    parameters[@"contactFieldValue"] = contactFieldValue;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters], LogLevelDebug);

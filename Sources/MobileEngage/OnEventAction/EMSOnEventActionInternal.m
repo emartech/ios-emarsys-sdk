@@ -21,7 +21,7 @@
     return self;
 }
 
-- (void)setEventHandler:(id<EMSEventHandler>)eventHandler {
+- (void)setEventHandler:(EMSEventHandlerBlock)eventHandler {
     _eventHandler = eventHandler;
     self.actionFactory.eventHandler = eventHandler;
 }

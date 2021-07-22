@@ -2,12 +2,12 @@
 // Copyright (c) 2021 Emarsys. All rights reserved.
 //
 
-#import "EMSIdTokenMapper.h"
+#import "EMSOpenIdTokenMapper.h"
 #import "EMSEndpoint.h"
 #import "MERequestContext.h"
 #import "EMSRequestModel.h"
 
-@implementation EMSIdTokenMapper
+@implementation EMSOpenIdTokenMapper
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
                               endpoint:(EMSEndpoint *)endpoint {
@@ -38,7 +38,7 @@
 
 - (NSDictionary *)extendPayload:(NSDictionary *)payload {
     NSMutableDictionary *mergedPayload = [NSMutableDictionary dictionaryWithDictionary:payload];
-    mergedPayload[@"openIdToken"] = self.requestContext.idToken;
+    mergedPayload[@"openIdToken"] = self.requestContext.openIdToken;
     NSDictionary *result = [NSDictionary dictionaryWithDictionary:mergedPayload];
     return result;
 }

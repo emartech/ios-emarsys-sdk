@@ -65,12 +65,11 @@ SPEC_BEGIN(PredictIntegrationTests)
             [EmarsysTestUtils tearDownEmarsys];
 
             NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.predict"];
-            [userDefaults removeObjectForKey:@"customerId"];
+            [userDefaults removeObjectForKey:@"contactFieldValue"];
             [userDefaults removeObjectForKey:@"visitorId"];
             [userDefaults synchronize];
 
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setContactFieldId:@3];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
             }];
             [MEExperimental enableFeature:EMSInnerFeature.predict];
@@ -241,7 +240,8 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys clearContact];
 
-                [Emarsys setContactWithContactFieldValue:@"test@test.com"];
+                [Emarsys setContactWithContactFieldId:@3
+                                    contactFieldValue:@"test@test.com"];
 
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
                 [EMSWaiter waitForExpectations:@[expectationSearchTerm2]

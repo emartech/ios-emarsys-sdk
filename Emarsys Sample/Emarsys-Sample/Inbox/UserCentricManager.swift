@@ -7,6 +7,9 @@ import EmarsysSDK
 
 class UserCentricManager: ObservableObject, MessageManager {
     @Published var messages: [Message]
+    var needsRefresh: Bool {
+        messages.count == 0
+    }
     var messagesPublished: Published<[Message]> { _messages }
     var messagesPublisher: Published<[Message]>.Publisher { $messages }
     

@@ -29,7 +29,7 @@ class EmarsysE2ETests: XCTestCase {
 
         changeAppCode("EMS11-C3FD3", cId: 2575)
 
-        setContact("test@test.com")
+        setContact(cId: 3, "test@test.com")
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
@@ -43,14 +43,13 @@ class EmarsysE2ETests: XCTestCase {
         let timestamp = dateFormatter.string(from: Date())
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("14C19-A121F")
-            builder.setContactFieldId(2575)
         }
 
         Emarsys.setup(with: config)
 
         changeAppCode("EMS11-C3FD3", cId: 2575)
 
-        setContact("test@test.com")
+        setContact(cId: 3, "test@test.com")
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
@@ -73,11 +72,11 @@ class EmarsysE2ETests: XCTestCase {
         }
     }
 
-    func setContact(_ cValue: String) {
+    func setContact(cId: NSNumber, _ cValue: String) {
         retry { [unowned self] () in
             var returnedError: Error?
             let contactExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.setContactWithContactFieldValue(cValue) { error in
+            Emarsys.setContactWithContactFieldId(cId, contactFieldValue: cValue) { error in
                 returnedError = error
                 contactExpectation.fulfill()
             }

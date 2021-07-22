@@ -8,7 +8,6 @@
 #import "PRERequestContext.h"
 #import "NSURL+EMSCore.h"
 #import "EMSShard.h"
-#import "EMSPredictInternal.h"
 #import "EMSDeviceInfo.h"
 #import "EMSEndpoint.h"
 
@@ -33,7 +32,7 @@
             EMSShard *shard = shards.firstObject;
             NSMutableDictionary<NSString *, NSString *> *queryParameters = [NSMutableDictionary new];
             queryParameters[@"cp"] = @"1";
-            queryParameters[@"ci"] = self.requestContext.customerId;
+            queryParameters[@"ci"] = self.requestContext.contactFieldValue;
             queryParameters[@"vi"] = self.requestContext.visitorId;
             [queryParameters addEntriesFromDictionary:shard.data];
             [builder setUrl:[[NSURL urlWithBaseUrl:[NSString stringWithFormat:@"%@/merchants/%@",

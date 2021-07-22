@@ -18,8 +18,6 @@
 
 + (id <EMSDeepLinkProtocol>)deepLink;
 
-+ (id <EMSInboxProtocol>)inbox;
-
 + (id <EMSInAppProtocol, MEIAMProtocol>)iam;
 
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;

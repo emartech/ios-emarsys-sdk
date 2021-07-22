@@ -11,11 +11,14 @@
 - (BOOL)          application:(UIApplication *)application
 didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
     [Emarsys setupWithConfig:self.provideEMSConfig];
-    Emarsys.inApp.eventHandler = self;
-    Emarsys.notificationCenterDelegate.eventHandler = self;
-    Emarsys.push.silentMessageEventHandler = self;
-    Emarsys.geofence.eventHandler = self;
-    Emarsys.onEventAction.eventHandler = self;
+    if (self.eventHandler) {
+        Emarsys.inApp.eventHandler = self.eventHandler;
+        Emarsys.notificationCenterDelegate.eventHandler = self.eventHandler;
+        Emarsys.push.silentMessageEventHandler = self.eventHandler;
+        Emarsys.geofence.eventHandler = self.eventHandler;
+        Emarsys.onEventAction.eventHandler = self.eventHandler;
+    }
+
     UNUserNotificationCenter.currentNotificationCenter.delegate = Emarsys.notificationCenterDelegate;
 
     [application registerForRemoteNotifications];

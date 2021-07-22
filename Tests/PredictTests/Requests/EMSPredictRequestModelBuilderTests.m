@@ -167,7 +167,7 @@
 
 - (void)testLimit_defaultValue_whenNil {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
@@ -184,7 +184,7 @@
 
 - (void)testLimit_defaultValue_whenLimitIsZero {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
@@ -201,13 +201,13 @@
 
 - (void)testLimit_defaultValue_whenLimitIsNegative {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.customerId;
+    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -218,13 +218,13 @@
 
 - (void)testLimit {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:123,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.customerId;
+    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -267,7 +267,7 @@
     EMSLogic *logic = EMSLogic.search;
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
-    mutableQueryParams[@"ci"] = self.mockContext.customerId;
+    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
 
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
@@ -431,7 +431,7 @@
 
 - (void)testPersonalLogic {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
 
@@ -445,7 +445,7 @@
 
 - (void)testHomeLogic {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
 
@@ -485,12 +485,12 @@
        withQueryParams:(NSDictionary *)queryParams
           builderBlock:(void (^)(EMSPredictRequestModelBuilder *builder))builderBlock {
     OCMStub([self.mockContext visitorId]).andReturn(@"testVisitorId");
-    OCMStub([self.mockContext customerId]).andReturn(@"testCustomerId");
+    OCMStub([self.mockContext contactFieldValue]).andReturn(@"testCustomerId");
 
     NSMutableDictionary *mutableQueryParams = [queryParams mutableCopy];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.customerId;
+    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {

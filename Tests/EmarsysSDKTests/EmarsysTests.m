@@ -20,11 +20,9 @@
 #import "MERequestContext.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSPushV3Internal.h"
-#import "MEInbox.h"
 #import "MEInApp.h"
 #import "MEUserNotificationDelegate.h"
 #import "EMSLoggingPushInternal.h"
-#import "EMSLoggingInbox.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSLoggingUserNotificationDelegate.h"
@@ -112,7 +110,6 @@
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
-                [builder setContactFieldId:@3];
             }]
                          dependencyContainer:nil];
 
@@ -133,7 +130,6 @@
     [EmarsysTestUtils tearDownEmarsys];
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-                [builder setContactFieldId:@3];
             }]
                          dependencyContainer:nil];
 
@@ -237,7 +233,7 @@
     XCTAssertEqual(registerCount, 1);
 }
 
-- (void)testShouldInitializeresponseHandlers {
+- (void)testShouldInitializeResponseHandlers {
     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
 
@@ -246,7 +242,7 @@
     XCTAssertEqual([EMSDependencyInjection.dependencyContainer.responseHandlers count], 10);
 }
 
-- (void)testShouldregisterUIApplicationDidBecomeActiveNotification {
+- (void)testShouldRegisterUIApplicationDidBecomeActiveNotification {
     EMSAppStartBlockProvider *mockProvider = OCMClassMock([EMSAppStartBlockProvider class]);
     EMSNotificationCenterManager *mockManager = OCMClassMock([EMSNotificationCenterManager class]);
 
@@ -271,7 +267,7 @@
                            forNotification:UIApplicationDidBecomeActiveNotification]);
 }
 
-- (void)testsetupWithConfigShouldSendDeviceInfoAndLogin {
+- (void)testSetupWithConfigShouldSendDeviceInfoAndLogin {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
@@ -287,10 +283,11 @@
                    predictEnabled:NO];
 
     OCMVerify([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:nil]);
-    OCMVerify([mockMobileEngage setContactWithContactFieldValue:nil]);
+    OCMVerify([mockMobileEngage setContactWithContactFieldId:nil
+                                           contactFieldValue:nil]);
 }
 
-- (void)testsetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactFieldValueIsAvailable {
+- (void)testSetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactFieldValueIsAvailable {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
@@ -299,7 +296,8 @@
 
     OCMStub([mockRequestContext contactFieldValue]).andReturn(@"testContactFieldValue");
 
-    OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
+    OCMReject([mockMobileEngage setContactWithContactFieldId:[OCMArg any]
+                                           contactFieldValue:[OCMArg any]]);
     OCMReject([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:[OCMArg any]]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -311,7 +309,7 @@
                    predictEnabled:NO];
 }
 
-- (void)testsetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactTokenIsAvailable {
+- (void)testSetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactTokenIsAvailable {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSDeviceInfoV3ClientInternal *mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     MERequestContext *mockRequestContext = OCMClassMock([MERequestContext class]);
@@ -320,7 +318,8 @@
 
     OCMStub([mockRequestContext contactToken]).andReturn(@"testContactToken");
 
-    OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]]);
+    OCMReject([mockMobileEngage setContactWithContactFieldId:[OCMArg any]
+                                           contactFieldValue:[OCMArg any]]);
     OCMReject([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:[OCMArg any]]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -332,7 +331,7 @@
                    predictEnabled:NO];
 }
 
-- (void)testShoulddelegatecallToMobileEngage {
+- (void)testShouldDelegateCallToDeeplink {
     NSUserActivity *mockUserActivity = OCMClassMock([NSUserActivity class]);
     EMSSourceHandler sourceHandler = ^(NSString *source) {
     };
@@ -352,7 +351,7 @@
                                         sourceHandler:sourceHandler]);
 }
 
-- (void)testShouldDelegatecallToMobileEngageWithNilCompletionBlock {
+- (void)testShouldDelegateCallToMobileEngageWithNilCompletionBlock {
     NSString *eventName = @"eventName";
     NSDictionary<NSString *, NSString *> *eventAttributes = @{@"key": @"value"};
 
@@ -408,11 +407,11 @@
               mobileEngageEnabled:YES
                    predictEnabled:NO];
 
-    [Emarsys setAuthenticatedContactWithIdToken:idToken
-                                completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
+                                    completionBlock:completionBlock];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-                                                   completionBlock:completionBlock]);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
+                                                       completionBlock:completionBlock]);
 }
 
 - (void)testSetAuthorizedContact_shouldDisablePredict {
@@ -421,8 +420,8 @@
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
 
-    [Emarsys setAuthenticatedContactWithIdToken:idToken
-                                completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
+                                    completionBlock:completionBlock];
 
     XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]);
 }
@@ -434,8 +433,8 @@
 
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
-    OCMReject([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-                                                   completionBlock:completionBlock]);
+    OCMReject([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
+                                                       completionBlock:completionBlock]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
                 OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
@@ -443,8 +442,8 @@
               mobileEngageEnabled:NO
                    predictEnabled:YES];
 
-    [Emarsys setAuthenticatedContactWithIdToken:idToken
-                                completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
+                                    completionBlock:completionBlock];
 }
 
 - (void)testSetAuthorizedContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
@@ -459,20 +458,20 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
 
-    [Emarsys setAuthenticatedContactWithIdToken:idToken
-                                completionBlock:nil];
+    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
+                                    completionBlock:nil];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-                                                   completionBlock:[OCMArg any]]);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
+                                                       completionBlock:[OCMArg any]]);
 }
 
 - (void)testSetAuthenticatedContact_idToken_mustNotBeNil {
     @try {
-        [Emarsys setAuthenticatedContactWithIdToken:nil
-                                    completionBlock:nil];
-        XCTFail(@"Expected Exception when idToken is nil!");
+        [Emarsys setAuthenticatedContactWithOpenIdToken:nil
+                                        completionBlock:nil];
+        XCTFail(@"Expected Exception when openIdToken is nil!");
     } @catch (NSException *exception) {
-        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: idToken"]);
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: openIdToken"]);
     }
 }
 
@@ -487,16 +486,38 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    [Emarsys setAuthenticatedContactWithIdToken:idToken];
+    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithIdToken:idToken
-                                                   completionBlock:nil];);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
+                                                       completionBlock:nil];);
 }
+
+- (void)testSetContact_contactFieldId_mustNotBeNil {
+    @try {
+        [Emarsys setContactWithContactFieldId:nil
+                            contactFieldValue:@"contactFieldValue"];
+        XCTFail(@"Expected Exception when contactFieldId is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: contactFieldId"]);
+    }
+}
+
+- (void)testSetContact_contactFieldValue_mustNotBeNil {
+    @try {
+        [Emarsys setContactWithContactFieldId:@3
+                            contactFieldValue:nil];
+        XCTFail(@"Expected Exception when contactFieldValue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: contactFieldValue"]);
+    }
+}
+
 
 - (void)testSetContactWithContactFieldValueIsNotCalledByPredict_when_predictIsDisabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
-    OCMReject([mockPredict setContactWithContactFieldValue:@"contact"]);
+    OCMReject([mockPredict setContactWithContactFieldId:@3
+                                      contactFieldValue:@"contact"]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
                 OCMStub([partialMockContainer predict]).andReturn(mockPredict);
@@ -504,10 +525,11 @@
               mobileEngageEnabled:YES
                    predictEnabled:NO];
 
-    [Emarsys setContactWithContactFieldValue:@"contact"];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"contact"];
 }
 
-- (void)testsetContactWithContactFieldValueIsCalledByPredict_when_predictIsEnabled {
+- (void)testSetContactWithContactFieldValueIsCalledByPredict_when_predictIsEnabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -516,16 +538,19 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    [Emarsys setContactWithContactFieldValue:@"contact"];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"contact"];
 
-    OCMVerify([mockPredict setContactWithContactFieldValue:@"contact"]);
+    OCMVerify([mockPredict setContactWithContactFieldId:@3
+                                      contactFieldValue:@"contact"]);
 }
 
-- (void)testsetContactWithContactFieldValueIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
+- (void)testSetContactWithContactFieldValueIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
-    OCMReject([mockMobileEngage setContactWithContactFieldValue:@"contact"
-                                                completionBlock:[OCMArg any]]);
+    OCMReject([mockMobileEngage setContactWithContactFieldId:@3
+                                           contactFieldValue:@"contact"
+                                             completionBlock:[OCMArg any]]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
                 OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
@@ -533,10 +558,11 @@
               mobileEngageEnabled:NO
                    predictEnabled:YES];
 
-    [Emarsys setContactWithContactFieldValue:@"contact"];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"contact"];
 }
 
-- (void)testsetContactWithContactFieldValueisCalledByMobileEngage_when_mobileEngageIsEnabled {
+- (void)testSetContactWithContactFieldValueIsCalledByMobileEngage_when_mobileEngageIsEnabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -545,17 +571,20 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    [Emarsys setContactWithContactFieldValue:@"contact"];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"contact"];
 
-    OCMVerify([mockMobileEngage setContactWithContactFieldValue:@"contact"
-                                                completionBlock:[OCMArg any]]);
+    OCMVerify([mockMobileEngage setContactWithContactFieldId:@3
+                                           contactFieldValue:@"contact"
+                                             completionBlock:[OCMArg any]]);
 }
 
-- (void)testsetContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
+- (void)testSetContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
-    OCMReject([mockPredict setContactWithContactFieldValue:@"contact"]);
+    OCMReject([mockPredict setContactWithContactFieldId:@3
+                                      contactFieldValue:@"contact"]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
                 OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
@@ -564,13 +593,15 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
 
-    [Emarsys setContactWithContactFieldValue:@"contact"];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"contact"];
 
-    OCMVerify([mockMobileEngage setContactWithContactFieldValue:@"contact"
-                                                completionBlock:[OCMArg any]]);
+    OCMVerify([mockMobileEngage setContactWithContactFieldId:@3
+                                           contactFieldValue:@"contact"
+                                             completionBlock:[OCMArg any]]);
 }
 
-- (void)testclearContactIsNotCalledByPredict_when_predictIsDisabled {
+- (void)testClearContactIsNotCalledByPredict_when_predictIsDisabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
     OCMReject([mockPredict clearContact]);
@@ -584,7 +615,7 @@
     [Emarsys clearContact];
 }
 
-- (void)testclearContactisCalledByPredict_when_predictIsEnabled {
+- (void)testClearContactIsCalledByPredict_when_predictIsEnabled {
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -598,7 +629,7 @@
     OCMVerify([mockPredict clearContact]);
 }
 
-- (void)testclearContactIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
+- (void)testClearContactIsNotCalledByMobileEngage_when_mobileEngageIsDisabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
     OCMReject([mockMobileEngage clearContact]);
@@ -612,7 +643,7 @@
     [Emarsys clearContact];
 }
 
-- (void)testclearContactisCalledByMobileEngage_when_mobileEngageIsEnabled {
+- (void)testClearContactIsCalledByMobileEngage_when_mobileEngageIsEnabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -626,7 +657,7 @@
     OCMVerify([mockMobileEngage clearContactWithCompletionBlock:nil]);
 }
 
-- (void)testclearContactisOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
+- (void)testClearContactIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
     EMSPredictInternal *mockPredict = OCMClassMock([EMSPredictInternal class]);
 
@@ -669,15 +700,6 @@
                    predictEnabled:YES];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSPushV3Internal class]);
-}
-
-- (void)testShouldBeMEInbox {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:YES
-                   predictEnabled:YES];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [MEInbox class]);
 }
 
 - (void)testShouldBeMEInApp {
@@ -750,15 +772,6 @@
                    predictEnabled:NO];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSLoggingPushInternal class]);
-}
-
-- (void)testShouldBeEMSLoggingInbox {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:NO
-                   predictEnabled:NO];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inbox).instanceRouter.instance class], [EMSLoggingInbox class]);
 }
 
 - (void)testShouldBeEMSLoggingInApp {
@@ -881,7 +894,6 @@
         if (isMobileEngageEnabled) {
             [builder setMobileEngageApplicationCode:@"14C19-A121F"];
         }
-        [builder setContactFieldId:@3];
     }];
     EMSDependencyContainer *container = [[EMSDependencyContainer alloc] initWithConfig:config];
 

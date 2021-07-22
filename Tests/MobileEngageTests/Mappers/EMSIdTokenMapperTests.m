@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "EMSIdTokenMapper.h"
+#import "EMSOpenIdTokenMapper.h"
 #import "EMSEndpoint.h"
 #import "MERequestContext.h"
 #import "EMSRequestModel.h"
@@ -15,7 +15,7 @@
 
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
-@property(nonatomic, strong) EMSIdTokenMapper *idTokenMapper;
+@property(nonatomic, strong) EMSOpenIdTokenMapper *idTokenMapper;
 
 @end
 
@@ -33,11 +33,9 @@
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:OCMClassMock([EMSValueProvider class])
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
-                                            v2EventServiceUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                     inboxUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
     _mockRequestContext = OCMClassMock([MERequestContext class]);
-    _idTokenMapper = [[EMSIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
+    _idTokenMapper = [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
                                                              endpoint:self.endpoint];
 }
 
@@ -46,7 +44,7 @@
 
 - (void)testInit_requestContext_mustNotBeNull {
     @try {
-        [[EMSIdTokenMapper alloc] initWithRequestContext:nil
+        [[EMSOpenIdTokenMapper alloc] initWithRequestContext:nil
                                                 endpoint:self.endpoint];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
@@ -56,7 +54,7 @@
 
 - (void)testInit_endpoint_mustNotBeNull {
     @try {
-        [[EMSIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
+        [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
                                                 endpoint:nil];
         XCTFail(@"Expected Exception when endpoint is nil!");
     } @catch (NSException *exception) {
@@ -114,7 +112,7 @@
 
     OCMStub([mockUUIDProvider provideUUIDString]).andReturn(requestId);
     OCMStub([mockTimestampProvider provideTimestamp]).andReturn(timestamp);
-    OCMStub([self.mockRequestContext idToken]).andReturn(testIdToken);
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(testIdToken);
     OCMStub([self.mockRequestContext timestampProvider]).andReturn(mockTimestampProvider);
     OCMStub([self.mockRequestContext uuidProvider]).andReturn(mockUUIDProvider);
     OCMStub([self.mockRequestContext uuidProvider]).andReturn(mockUUIDProvider);

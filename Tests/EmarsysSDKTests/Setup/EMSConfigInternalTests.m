@@ -563,8 +563,9 @@
     OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn(YES);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                                                                  nil])]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                               contactFieldValue:self.contactFieldValue
+                                                 completionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -578,8 +579,9 @@
 
     OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
     OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
+    OCMReject([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                                 contactFieldValue:self.contactFieldValue
+                                                   completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
@@ -633,8 +635,9 @@
 
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMReject([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
+    OCMReject([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                                 contactFieldValue:self.contactFieldValue
+                                                   completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
@@ -651,7 +654,6 @@
     NSNumber *newContactFieldId = @123;
 
     MERequestContext *meContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
-                                                                     contactFieldId:@3
                                                                        uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                                   timestampProvider:OCMClassMock([EMSTimestampProvider class])
                                                                          deviceInfo:self.mockDeviceInfo
@@ -661,9 +663,10 @@
 
     __block NSError *returnedError = nil;
 
-    OCMReject([mockMobileEngage setContactWithContactFieldValue:[OCMArg any]
-                                                completionBlock:^(NSError *error) {
-                                                }]);
+    OCMReject([mockMobileEngage setContactWithContactFieldId:[OCMArg any]
+                                           contactFieldValue:[OCMArg any]
+                                             completionBlock:^(NSError *error) {
+                                             }]);
 
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:mockMEContext
@@ -721,8 +724,9 @@
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                               contactFieldValue:self.contactFieldValue
+                                                 completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
@@ -819,8 +823,9 @@
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
     OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                    completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                               contactFieldValue:self.contactFieldValue
+                                                 completionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -836,8 +841,9 @@
 
     OCMReject([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldValue:self.contactFieldValue
-                                                      completionBlock:[OCMArg any]]);
+    OCMExpect([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+                                                 contactFieldValue:self.contactFieldValue
+                                                   completionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);

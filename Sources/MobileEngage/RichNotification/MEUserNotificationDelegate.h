@@ -15,6 +15,8 @@
 
 @interface MEUserNotificationDelegate : NSObject <EMSUserNotificationCenterDelegate>
 
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock notificationInformationDelegate;
+
 - (instancetype)initWithActionFactory:(EMSActionFactory *)actionFactory
                                 inApp:(MEInApp *)inApp
                     timestampProvider:(EMSTimestampProvider *)timestampProvider

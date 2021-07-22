@@ -38,8 +38,6 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSRecommendationFilter.h',
         'Sources/include/EMSRecommendationFilterProtocol.h',
         'Sources/include/EMSEventHandler.h',
-        'Sources/include/EMSNotification.h',
-        'Sources/include/EMSNotificationInboxStatus.h',
         'Sources/include/EMSFlipperFeatures.h',
         'Sources/include/EMSUserNotificationCenterDelegate.h',
         'Sources/include/EMSInlineInAppView.h',

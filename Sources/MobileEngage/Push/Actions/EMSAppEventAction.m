@@ -12,10 +12,8 @@
 
 @implementation EMSAppEventAction
 
-@synthesize eventHandler = _eventHandler;
-
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
-                            eventHandler:(id <EMSEventHandler>)eventHandler {
+                            eventHandler:(EMSEventHandlerBlock) eventHandler {
     NSParameterAssert(action);
     NSParameterAssert(eventHandler);
 
@@ -27,10 +25,12 @@
 }
 
 - (void)execute {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.eventHandler handleEvent:self.action[@"name"]
-                               payload:self.action[@"payload"]];
-    });
+    if (self.eventHandler) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.eventHandler(self.action[@"name"],
+                    self.action[@"payload"]);
+        });
+    }
 }
 
 @end

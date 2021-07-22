@@ -10,21 +10,17 @@
 #import "NSData+MobileEngine.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
-#import "EMSNotificationCache.h"
 #import "EMSTimestampProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
-#import "EMSEventHandler.h"
 #import "EMSNotificationInformationDelegate.h"
 #import "EMSStorage.h"
-#import "FakeNotificationInformationDelegate.h"
 
 @interface EMSPushV3InternalTests : XCTestCase
 
 @property(nonatomic, strong) EMSPushV3Internal *push;
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
-@property(nonatomic, strong) EMSNotificationCache *mockNotificationCache;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSActionFactory *mockActionFactory;
 @property(nonatomic, strong) NSString *pushToken;
@@ -38,7 +34,6 @@
 - (void)setUp {
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
-    _mockNotificationCache = OCMClassMock([EMSNotificationCache class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockActionFactory = OCMClassMock([EMSActionFactory class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
@@ -50,7 +45,6 @@
 
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                requestManager:self.mockRequestManager
-                                            notificationCache:self.mockNotificationCache
                                             timestampProvider:self.mockTimestampProvider
                                                 actionFactory:self.mockActionFactory
                                                       storage:self.mockStorage];
@@ -65,7 +59,6 @@
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:nil
                                            requestManager:self.mockRequestManager
-                                        notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage];
@@ -79,7 +72,6 @@
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:nil
-                                        notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage];
@@ -89,25 +81,10 @@
     }
 }
 
-- (void)testInit_notificationCache_mustNotBeNil {
-    @try {
-        [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
-                                           requestManager:self.mockRequestManager
-                                        notificationCache:nil
-                                        timestampProvider:self.mockTimestampProvider
-                                            actionFactory:self.mockActionFactory
-                                                  storage:self.mockStorage];
-        XCTFail(@"Expected Exception when notificationCache is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: notificationCache");
-    }
-}
-
 - (void)testInit_timestampProvider_mustNotBeNil {
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        notificationCache:self.mockNotificationCache
                                         timestampProvider:nil
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage];
@@ -121,7 +98,6 @@
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
                                             actionFactory:nil
                                                   storage:self.mockStorage];
@@ -135,7 +111,6 @@
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        notificationCache:self.mockNotificationCache
                                         timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:nil];
@@ -151,7 +126,6 @@
 
     EMSPushV3Internal *push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                                  requestManager:self.mockRequestManager
-                                                              notificationCache:self.mockNotificationCache
                                                               timestampProvider:self.mockTimestampProvider
                                                                   actionFactory:self.mockActionFactory
                                                                         storage:self.mockStorage];
@@ -413,34 +387,7 @@
     XCTAssertEqualObjects(usedOperationQueue, [NSOperationQueue mainQueue]);
 }
 
-- (void)testTrackMessageOpenWithUserInfoCompletionBlock_cachesInboxNotifications {
-    NSDictionary *userInfo = @{
-            @"inbox": @(1)
-    };
-    NSDate *date = [NSDate date];
-
-    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(date);
-
-    EMSNotification *expectedNotification = [[EMSNotification alloc] initWithUserInfo:userInfo
-                                                                    timestampProvider:self.mockTimestampProvider];
-
-    [self.push trackMessageOpenWithUserInfo:userInfo
-                            completionBlock:nil];
-
-    OCMVerify([self.mockNotificationCache cache:expectedNotification]);
-}
-
-- (void)testTrackMessageOpenWithUserInfoCompletionBlock_shouldNotCache_when_notInboxNotification {
-    NSDictionary *userInfo = @{@"inbox": @(NO)};
-
-    OCMReject([self.mockNotificationCache cache:[OCMArg any]]);
-
-    [self.push trackMessageOpenWithUserInfo:userInfo
-                            completionBlock:nil];
-}
-
 - (void)testHandleMessageWithUserInfo {
-    EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
     NSDictionary *openExternalUrlAction = @{
             @"type": @"OpenExternalUrl",
             @"url": @"https://www.emarsys.com"
@@ -453,20 +400,22 @@
 
     id mockActionUrl = OCMProtocolMock(@protocol(EMSActionProtocol));
     id mockActionBadge = OCMProtocolMock(@protocol(EMSActionProtocol));
-    id eventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
 
     OCMStub([self.mockActionFactory createActionWithActionDictionary:openExternalUrlAction]).andReturn(mockActionUrl);
     OCMStub([self.mockActionFactory createActionWithActionDictionary:badgeCountAction]).andReturn(mockActionBadge);
 
     __block NSOperationQueue *returnedOperationQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    FakeNotificationInformationDelegate *notificationInformationDelegate = [[FakeNotificationInformationDelegate alloc] initWithCallerQueueBlock:^(NSOperationQueue *callerQueue) {
-        returnedOperationQueue = callerQueue;
-        [expectation fulfill];
-    }];
+
+    EMSEventHandlerBlock eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+
+    };
 
     [self.push setSilentMessageEventHandler:eventHandler];
-    [self.push setSilentNotificationInformationDelegate:notificationInformationDelegate];
+    [self.push setSilentNotificationInformationDelegate:^(EMSNotificationInformation *notificationInformation) {
+        returnedOperationQueue = [NSOperationQueue currentQueue];
+        [expectation fulfill];
+    }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self.push handleMessageWithUserInfo:@{

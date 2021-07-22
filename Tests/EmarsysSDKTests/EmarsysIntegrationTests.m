@@ -33,7 +33,6 @@ typedef void (^ExecutionBlock)(EMSCompletionBlock completionBlock);
     
     EMSConfig *configWithFeatures = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
         [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-        [builder setContactFieldId:@3];
     }];
 
     [Emarsys setupWithConfig:configWithFeatures];

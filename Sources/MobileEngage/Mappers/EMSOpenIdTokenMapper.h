@@ -8,7 +8,7 @@
 @class EMSEndpoint;
 @class MERequestContext;
 
-@interface EMSIdTokenMapper: NSObject <EMSRequestModelMapperProtocol>
+@interface EMSOpenIdTokenMapper: NSObject <EMSRequestModelMapperProtocol>
 
 @property(nonatomic, readonly) MERequestContext *requestContext;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;

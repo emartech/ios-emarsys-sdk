@@ -23,7 +23,6 @@ class EmarsysInboxE2ETests: XCTestCase {
     func testInboxTags_step1() {
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("EMS11-C3FD3")
-            builder.setContactFieldId(2575)
         }
 
         EmarsysTestUtils.setupEmarsys(with: config, dependencyContainer: nil)
@@ -79,11 +78,11 @@ class EmarsysInboxE2ETests: XCTestCase {
         EmarsysTestUtils.tearDownEmarsys()
     }
 
-    func setContact(_ cValue: String) {
+    func setContact(cId: NSNumber, _ cValue: String) {
         retry { [unowned self] () in
             var returnedError: Error?
             let contactExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.setContactWithContactFieldValue(cValue) { error in
+            Emarsys.setContactWithContactFieldId(cId, contactFieldValue: cValue) { error in
                 returnedError = error
                 contactExpectation.fulfill()
             }

@@ -28,7 +28,6 @@
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
-                [builder setContactFieldId:@3];
             }]
                          dependencyContainer:nil];
 }
@@ -134,7 +133,6 @@
     [EmarsysTestUtils tearDownEmarsys];
     
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-        [builder setContactFieldId:@3];
             }]
                          dependencyContainer:nil];
 

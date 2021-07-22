@@ -3,7 +3,6 @@
 //
 
 #import "EMSConfig.h"
-#import "EMSLogLevelProtocol.h"
 
 @implementation EMSConfig
 
@@ -21,7 +20,6 @@
         _experimentalFeatures = builder.experimentalFeatures;
         _enabledConsoleLogLevels = builder.enabledConsoleLogLevels;
         _merchantId = builder.merchantId;
-        _contactFieldId = builder.contactFieldId;
         _sharedKeychainAccessGroup = builder.sharedKeychainAccessGroup;
     }
     return self;

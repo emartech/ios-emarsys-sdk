@@ -14,7 +14,7 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
 
 @protocol EMSPredictProtocol <NSObject>
 
-- (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)cartItems;
+- (void)trackCartWithCartItems:(NSArray<id <EMSCartItemProtocol>> *)items;
 
 - (void)trackPurchaseWithOrderId:(NSString *)orderId
                            items:(NSArray<id <EMSCartItemProtocol>> *)items;

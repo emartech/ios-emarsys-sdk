@@ -3,11 +3,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "EMSEventHandler.h"
 #import "EMSBlocks.h"
 
-@interface EMSEventHandlerProtocolImplementation: NSObject <EMSEventHandler>
+@interface EMSEventHandlerProtocolImplementation: NSObject
 
 @property(nonatomic, strong) EMSEventHandlerBlock handlerBlock;
 
+- (void)handleEvent:(NSString *)eventName
+            payload:(NSDictionary<NSString *, NSObject *> *)payload;
 @end

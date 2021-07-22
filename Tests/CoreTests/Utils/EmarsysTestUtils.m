@@ -54,7 +54,6 @@
     if (features) {
         EMSConfig *configWithFeatures = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:@"14C19-A121F"];
-            [builder setContactFieldId:@3];
             [builder setExperimentalFeatures:features];
         }];
 
@@ -100,11 +99,12 @@
                                                      localizedDescription:@"testErrorForSetCustomer"];
 
     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-    [Emarsys setContactWithContactFieldValue:@"test@test.com"
-                             completionBlock:^(NSError *error) {
-                                 returnedErrorForSetCustomer = error;
-                                 [setCustomerExpectation fulfill];
-                             }];
+    [Emarsys setContactWithContactFieldId:@3
+                        contactFieldValue:@"test@test.com"
+                          completionBlock:^(NSError *error) {
+                              returnedErrorForSetCustomer = error;
+                              [setCustomerExpectation fulfill];
+                          }];
 
     XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
                                                                timeout:TIMEOUT];

@@ -20,7 +20,8 @@
     NSParameterAssert(deviceInfo);
     if (self = [super init]) {
         NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
-        _customerId = [defaults objectForKey:kEMSCustomerId];
+        _contactFieldValue = [defaults objectForKey:kEMSCustomerId];
+        _contactFieldId = [defaults objectForKey:kEMSContactFieldId];
         _visitorId = [defaults objectForKey:kEMSVisitorId];
         _xp = [defaults objectForKey:kEMSXp];
         _timestampProvider = timestampProvider;
@@ -31,10 +32,18 @@
     return self;
 }
 
-- (void)setCustomerId:(NSString *)customerId {
-    _customerId = customerId;
+- (void)setContactFieldId:(NSNumber *)contactFieldId {
+    _contactFieldId = contactFieldId;
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
-    [userDefaults setObject:customerId
+    [userDefaults setObject:contactFieldId
+                     forKey:kEMSContactFieldId];
+    [userDefaults synchronize];
+}
+
+- (void)setContactFieldValue:(NSString *)contactFieldValue {
+    _contactFieldValue = contactFieldValue;
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+    [userDefaults setObject:contactFieldValue
                      forKey:kEMSCustomerId];
     [userDefaults synchronize];
 }

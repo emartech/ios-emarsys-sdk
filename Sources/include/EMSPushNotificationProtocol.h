@@ -4,15 +4,13 @@
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
-@protocol EMSEventHandler;
-@protocol EMSNotificationInformationDelegate;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol EMSPushNotificationProtocol <NSObject>
 
-@property(nonatomic, weak) id <EMSEventHandler> silentMessageEventHandler;
-@property(nonatomic, weak) id <EMSNotificationInformationDelegate> silentNotificationInformationDelegate;
+@property(nonatomic, strong) EMSEventHandlerBlock silentMessageEventHandler;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock silentNotificationInformationDelegate;
+
 
 - (void)setPushToken:(NSData *)pushToken;
 

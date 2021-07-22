@@ -15,7 +15,7 @@
 @property(nonatomic, strong) EMSActionFactory *factory;
 @property(nonatomic, strong) id mockMobileEngage;
 @property(nonatomic, strong) id mockApplication;
-@property(nonatomic, strong) id mockEventHandler;
+@property(nonatomic, strong) EMSEventHandlerBlock eventHandler;
 
 @end
 
@@ -24,7 +24,8 @@
 - (void)setUp {
     _mockMobileEngage = OCMProtocolMock(@protocol(EMSMobileEngageProtocol));
     _mockApplication = OCMClassMock([UIApplication class]);
-    _mockEventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
+    _eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+    };
     _factory = [[EMSActionFactory alloc] initWithApplication:self.mockApplication
                                                 mobileEngage:self.mockMobileEngage];
 }
@@ -81,7 +82,7 @@
             @"type": @"MEAppEvent"
     };
 
-    [self.factory setEventHandler:self.mockEventHandler];
+    [self.factory setEventHandler:self.eventHandler];
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
 
     XCTAssertNil(action);
@@ -104,7 +105,7 @@
             @"name": @"testName"
     };
 
-    [self.factory setEventHandler:self.mockEventHandler];
+    [self.factory setEventHandler:self.eventHandler];
     id <EMSActionProtocol> action = [self.factory createActionWithActionDictionary:actionDictionary];
 
     XCTAssertTrue([action isKindOfClass:[EMSAppEventAction class]]);

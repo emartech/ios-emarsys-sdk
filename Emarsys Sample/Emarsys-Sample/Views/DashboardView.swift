@@ -125,7 +125,6 @@ struct DashboardView: View {
                         }
                 }
                 .padding()
-                
             }
         }
     }
@@ -137,15 +136,20 @@ struct DashboardView: View {
     
     func loginButtonClicked(){
         if self.loginData.isLoggedIn == false {
-            Emarsys.setContactWithContactFieldValue(loginData.contactFieldValue) { error in
-                if error == nil {
-                    print("setContact succesful")
-                    self.loginData.isLoggedIn = true
-                    UserDefaults.standard.set(self.loginData.contactFieldValue, forKey: "contactFieldValue")
-                    showMessage(successful: true)
-                } else {
-                    showMessage(successful: false)
+            if let contactFieldId = Int(loginData.contactFieldId) {
+                let contactFieldId = NSNumber(value:contactFieldId)
+                Emarsys.setContactWithContactFieldId(contactFieldId, contactFieldValue: loginData.contactFieldValue) { error in
+                    if error == nil {
+                        print("setContact succesful")
+                        self.loginData.isLoggedIn = true
+                        UserDefaults.standard.set(self.loginData.contactFieldValue, forKey: "contactFieldValue")
+                        showMessage(successful: true)
+                    } else {
+                        showMessage(successful: false)
+                    }
                 }
+            } else {
+                showMessage(successful: false)
             }
         } else {
             Emarsys.clearContact() { error in

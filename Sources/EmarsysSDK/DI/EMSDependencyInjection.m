@@ -2,7 +2,6 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSDependencyInjection.h"
-#import "MEExperimental.h"
 #import "EMSGeofenceProtocol.h"
 #import "EMSMessageInboxProtocol.h"
 
@@ -39,10 +38,6 @@ static EMSDependencyContainer *_dependencyContainer;
 
 + (id <EMSDeepLinkProtocol>)deepLink {
     return self.dependencyContainer.deepLink;
-}
-
-+ (id <EMSInboxProtocol>)inbox {
-    return self.dependencyContainer.inbox;
 }
 
 + (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {

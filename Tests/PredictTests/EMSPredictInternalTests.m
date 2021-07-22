@@ -77,11 +77,12 @@ SPEC_BEGIN(EMSPredictInternalTests)
             });
         });
 
-        describe(@"setContactWithContactFieldValue:", ^{
+        describe(@"setContactWithContactFieldIdContactFieldValue:", ^{
 
             it(@"should throw exception when contactFieldValue is nil", ^{
                 @try {
-                    [[EMSPredictInternal new] setContactWithContactFieldValue:nil];
+                    [[EMSPredictInternal new] setContactWithContactFieldId:@3
+                                                         contactFieldValue:nil];
                     fail(@"Expected Exception when contactFieldValue is nil!");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: contactFieldValue"];
@@ -89,18 +90,33 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 }
             });
 
-            it(@"should set the customerId in RequestContext", ^{
+            it(@"should throw exception when contactFieldId is nil", ^{
+                @try {
+                    [[EMSPredictInternal new] setContactWithContactFieldId:nil
+                                                         contactFieldValue:@"contactFieldValue"];
+                    fail(@"Expected Exception when contactFieldId is nil!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: contactFieldId"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
+            it(@"should set the contactFieldValue and contactFieldValue in RequestContext", ^{
                 PRERequestContext *requestContextMock = [PRERequestContext mock];
                 EMSRequestManager *requestManagerMock = [EMSRequestManager mock];
-                NSString *const customerId = @"customerID";
+                NSString *const contactFieldValue = @"customerID";
+                NSNumber *const contactFieldId = @3;
                 EMSPredictInternal *internal = [[EMSPredictInternal alloc] initWithRequestContext:requestContextMock
                                                                                    requestManager:requestManagerMock
                                                                            requestBuilderProvider:[EMSPredictRequestModelBuilderProvider mock]
                                                                                     productMapper:[EMSProductMapper mock]];
 
-                [[requestContextMock should] receive:@selector(setCustomerId:)
-                                       withArguments:customerId];
-                [internal setContactWithContactFieldValue:customerId];
+                [[requestContextMock should] receive:@selector(setContactFieldId:)
+                                       withArguments:contactFieldId];
+                [[requestContextMock should] receive:@selector(setContactFieldValue:)
+                                       withArguments:contactFieldValue];
+                [internal setContactWithContactFieldId:@3
+                                     contactFieldValue:contactFieldValue];
             });
 
         });
@@ -445,9 +461,11 @@ SPEC_BEGIN(EMSPredictInternalTests)
         });
 
         describe(@"clearContact", ^{
-            it(@"should setCustomerId and visitorId to nil on requestContext", ^{
+            it(@"should setContactFieldId, contactFieldValue and visitorId to nil on requestContext", ^{
                 PRERequestContext *const requestContext = [PRERequestContext mock];
-                [[requestContext should] receive:@selector(setCustomerId:)
+                [[requestContext should] receive:@selector(setContactFieldId:)
+                                   withArguments:nil];
+                [[requestContext should] receive:@selector(setContactFieldValue:)
                                    withArguments:nil];
                 [[requestContext should] receive:@selector(setVisitorId:)
                                    withArguments:nil];

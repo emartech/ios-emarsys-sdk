@@ -49,7 +49,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                      uuidProvider:uuidProvider
                                                                        merchantId:merchantId
                                                                        deviceInfo:deviceInfo];
-            [requestContext setCustomerId:customerId];
+            [requestContext setContactFieldValue:customerId];
 
             EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
                                                                                          valueKey:@"PREDICT_URL"];
@@ -57,8 +57,6 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                      eventServiceUrlProvider:[EMSValueProvider mock]
                                                           predictUrlProvider:predictUrlProvider
                                                          deeplinkUrlProvider:[EMSValueProvider mock]
-                                                   v2EventServiceUrlProvider:[EMSValueProvider mock]
-                                                            inboxUrlProvider:[EMSValueProvider mock]
                                                    v3MessageInboxUrlProvider:[EMSValueProvider mock]];
             mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
                                                              endpoint:endpoint];
@@ -215,7 +213,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 [[requestModel should] equal:expectedRequestModel];
             });
 
-            it(@"should return with correct requestModel when there is no customerId", ^{
+            it(@"should return with correct requestModel when there is no contactFieldValue", ^{
                 EMSShard *shard = [[EMSShard alloc] initWithShardId:@"shardId"
                                                                type:@"shardType"
                                                                data:@{@"dataKey": @"dataValue"}
@@ -232,7 +230,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                                                                                             extras:nil];
 
                 requestContext.visitorId = nil;
-                requestContext.customerId = nil;
+                requestContext.contactFieldValue = nil;
                 mapper = [[EMSPredictMapper alloc] initWithRequestContext:requestContext
                                                                  endpoint:endpoint];
                 EMSRequestModel *requestModel = [mapper requestFromShards:shards];

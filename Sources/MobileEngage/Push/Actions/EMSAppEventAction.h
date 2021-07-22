@@ -4,15 +4,15 @@
 
 #import <Foundation/Foundation.h>
 #import "EMSActionProtocol.h"
-#import "EMSEventHandler.h"
+#import "EMSBlocks.h"
 
 
 @interface EMSAppEventAction : NSObject <EMSActionProtocol>
 
-@property(nonatomic, weak) id <EMSEventHandler> eventHandler;
+@property(nonatomic, strong) EMSEventHandlerBlock eventHandler;
 
 - (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
-                            eventHandler:(id <EMSEventHandler>)eventHandler;
+                            eventHandler:(EMSEventHandlerBlock)eventHandler;
 @end

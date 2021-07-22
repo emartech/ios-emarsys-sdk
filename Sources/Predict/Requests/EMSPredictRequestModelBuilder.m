@@ -148,7 +148,7 @@
     if (self.filter) {
         logicData[@"ex"] = [self filterQueryValue];
     }
-    logicData[@"ci"] = [self requestContext].customerId;
+    logicData[@"ci"] = [self requestContext].contactFieldValue;
     logicData[@"vi"] = [self requestContext].visitorId;
     logicData[@"az"] = self.availabilityZone;
 

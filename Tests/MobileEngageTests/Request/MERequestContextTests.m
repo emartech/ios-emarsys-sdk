@@ -13,16 +13,14 @@ SPEC_BEGIN(MERequestContextTests)
         __block EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
         __block EMSDeviceInfo *deviceInfo = [EMSDeviceInfo new];
         __block NSString *applicationCode = @"testApplicationCode";
-        __block NSNumber *contactFieldId = @3;
         __block EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:@[kEMSSuiteName]
                                                                  accessGroup:@"7ZFXXDJH82.com.emarsys.SdkHostTestGroup"];
 
-        describe(@"intialization", ^{
+        describe(@"initialization", ^{
 
             it(@"should throw exception when uuidProvider is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                                          contactFieldId:contactFieldId
                                                                                             uuidProvider:nil
                                                                                        timestampProvider:[EMSTimestampProvider mock]
                                                                                               deviceInfo:[EMSDeviceInfo mock]
@@ -37,7 +35,6 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when timestampProvider is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                                          contactFieldId:contactFieldId
                                                                                             uuidProvider:[EMSUUIDProvider mock]
                                                                                        timestampProvider:nil
                                                                                               deviceInfo:[EMSDeviceInfo mock]
@@ -52,7 +49,6 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when deviceInfo is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                                          contactFieldId:contactFieldId
                                                                                             uuidProvider:[EMSUUIDProvider mock]
                                                                                        timestampProvider:[EMSTimestampProvider mock]
                                                                                               deviceInfo:nil
@@ -66,7 +62,6 @@ SPEC_BEGIN(MERequestContextTests)
             it(@"should throw exception when storage is nil", ^{
                 @try {
                     MERequestContext *requestContext = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                                          contactFieldId:contactFieldId
                                                                                             uuidProvider:[EMSUUIDProvider mock]
                                                                                        timestampProvider:[EMSTimestampProvider mock]
                                                                                               deviceInfo:[EMSDeviceInfo mock]
@@ -97,7 +92,6 @@ SPEC_BEGIN(MERequestContextTests)
                 [userDefaults synchronize];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -111,7 +105,6 @@ SPEC_BEGIN(MERequestContextTests)
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -138,7 +131,6 @@ SPEC_BEGIN(MERequestContextTests)
                 [storage setString:contactToken forKey:kCONTACT_TOKEN];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -150,7 +142,6 @@ SPEC_BEGIN(MERequestContextTests)
                 NSString *expectedContactToken = @"Stored contact token";
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -177,7 +168,6 @@ SPEC_BEGIN(MERequestContextTests)
                 [storage setString:refreshToken forKey:kREFRESH_TOKEN];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -191,7 +181,6 @@ SPEC_BEGIN(MERequestContextTests)
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -222,7 +211,6 @@ SPEC_BEGIN(MERequestContextTests)
                 [userDefaults synchronize];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -236,7 +224,6 @@ SPEC_BEGIN(MERequestContextTests)
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
 
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -255,7 +242,6 @@ SPEC_BEGIN(MERequestContextTests)
 
             it(@"should disable mobileEngage feature when appCode is set to nil", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -267,7 +253,6 @@ SPEC_BEGIN(MERequestContextTests)
 
             it(@"should enableWithCompletionBlock: mobileEngage, v4 feature when appCode is set", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
@@ -279,14 +264,13 @@ SPEC_BEGIN(MERequestContextTests)
         });
 
         describe(@"hasContactIdentification", ^{
-            it(@"should return YES when contactFieldValue or idToken is not nil", ^{
+            it(@"should return YES when contactFieldValue or openIdToken is not nil", ^{
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
                                                                                       storage:storage];
-                [context setIdToken:@"testIdToken"];
+                [context setOpenIdToken:@"testIdToken"];
 
                 [[theValue([context hasContactIdentification]) should] beYes];
             });
@@ -294,15 +278,14 @@ SPEC_BEGIN(MERequestContextTests)
 
         describe(@"reset", ^{
 
-            it(@"should clear contactFieldValue, contactToken, refreshToken, idToken", ^{
+            it(@"should clear contactFieldValue, contactToken, refreshToken, openIdToken", ^{
                 NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
                 MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
-                                                                               contactFieldId:contactFieldId
                                                                                  uuidProvider:uuidProvider
                                                                             timestampProvider:timestampProvider
                                                                                    deviceInfo:deviceInfo
                                                                                       storage:storage];
-                [context setIdToken:@"testIdToken"];
+                [context setOpenIdToken:@"testIdToken"];
 
                 [userDefaults setObject:@"testContactFieldValue"
                                  forKey:kCONTACT_FIELD_VALUE];
@@ -317,7 +300,8 @@ SPEC_BEGIN(MERequestContextTests)
                 [[userDefaults stringForKey:kCONTACT_FIELD_VALUE] shouldBeNil];
                 [[storage stringForKey:kCONTACT_TOKEN] shouldBeNil];
                 [[storage stringForKey:kREFRESH_TOKEN] shouldBeNil];
-                [[context idToken] shouldBeNil];
+                [[context openIdToken] shouldBeNil];
+                [[context contactFieldId] shouldBeNil];
             });
         });
 SPEC_END

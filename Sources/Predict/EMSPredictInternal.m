@@ -46,13 +46,17 @@
     return self;
 }
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue {
+- (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue {
+    NSParameterAssert(contactFieldId);
     NSParameterAssert(contactFieldValue);
-    [self.requestContext setCustomerId:contactFieldValue];
+    [self.requestContext setContactFieldId:contactFieldId];
+    [self.requestContext setContactFieldValue:contactFieldValue];
 }
 
 - (void)clearContact {
-    [self.requestContext setCustomerId:nil];
+    [self.requestContext setContactFieldId:nil];
+    [self.requestContext setContactFieldValue:nil];
     [self.requestContext setVisitorId:nil];
 }
 

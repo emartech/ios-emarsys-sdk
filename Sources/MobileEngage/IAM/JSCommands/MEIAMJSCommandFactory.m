@@ -38,7 +38,7 @@
     } else if ([name isEqualToString:MEIAMClose.commandName]) {
         command = [[MEIAMClose alloc] initWithEMSIAMCloseProtocol:self.closeProtocol];
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
-        command = [[MEIAMTriggerAppEvent alloc] initWithInAppMessageHandler:[self.appEventProtocol eventHandler]];
+        command = [[MEIAMTriggerAppEvent alloc] initWithEventHandler:[self.appEventProtocol eventHandler]];
     } else if ([name isEqualToString:MEIAMButtonClicked.commandName]) {
         command = [[MEIAMButtonClicked alloc] initWithInAppMessage:self.inAppMessage ? self.inAppMessage : [self.meIam currentInAppMessage]
                                                         repository:self.buttonClickRepository

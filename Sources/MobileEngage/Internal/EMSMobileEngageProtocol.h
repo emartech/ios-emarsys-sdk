@@ -8,13 +8,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol EMSMobileEngageProtocol <NSObject>
 
-- (void)setAuthenticatedContactWithIdToken:(nullable NSString *)idToken
-                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+- (void)setAuthenticatedContactWithOpenIdToken:(nullable NSString *)openIdToken
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
-- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue;
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue;
 
-- (void)setContactWithContactFieldValue:(nullable NSString *)contactFieldValue
-                        completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
+                   contactFieldValue:(nullable NSString *)contactFieldValue
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 - (void)clearContact;
 

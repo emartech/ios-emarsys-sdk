@@ -10,8 +10,6 @@ SPEC_BEGIN(BuilderTest)
                     [builder setMobileEngageApplicationCode:@"code"];
                     [builder setExperimentalFeatures:@[]];
                     [builder setMerchantId:@"merchantId"];
-                    [builder setContactFieldId:@"contactFieldId"];
-
                 }];
 
                 [[config.experimentalFeatures should] equal:@[]];
@@ -24,8 +22,6 @@ SPEC_BEGIN(BuilderTest)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setMobileEngageApplicationCode:@"test1"];
                     [builder setMerchantId:@"merchantId"];
-                    [builder setContactFieldId:@"contactFieldId"];
-
                 }];
 
                 [[@"test1" should] equal:config.applicationCode];
@@ -38,21 +34,8 @@ SPEC_BEGIN(BuilderTest)
                 EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                     [builder setMobileEngageApplicationCode:@"code"];
                     [builder setMerchantId:@"merchantId"];
-                    [builder setContactFieldId:@"contactFieldId"];
                 }];
                 [[@"merchantId" should] equal:config.merchantId];
-
-            });
-        });
-        describe(@"setContactFieldId", ^{
-
-            it(@"should set contactFieldId on EMSConfig", ^{
-                EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                    [builder setMobileEngageApplicationCode:@"code"];
-                    [builder setMerchantId:@"merchantId"];
-                    [builder setContactFieldId:@"contactFieldId"];
-                }];
-                [[@"contactFieldId" should] equal:config.contactFieldId];
 
             });
         });

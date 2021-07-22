@@ -3,26 +3,20 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-#import "EMSEventHandler.h"
 #import "EMSAppEventAction.h"
 
 @interface EMSAppEventActionTests : XCTestCase
-
-@property(nonatomic, strong) id mockAppEventHandler;
 
 @end
 
 @implementation EMSAppEventActionTests
 
-- (void)setUp {
-    _mockAppEventHandler = OCMProtocolMock(@protocol(EMSEventHandler));
-}
 
 - (void)testInit_action_mustNotBeNil {
     @try {
         [[EMSAppEventAction alloc] initWithActionDictionary:nil
-                                               eventHandler:self.mockAppEventHandler];
+                                               eventHandler:^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+                                               }];
         XCTFail(@"Expected Exception when action is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: action");
@@ -51,13 +45,23 @@
             @"payload": expectedPayload
     };
 
+    __block NSDictionary *resultPayload = nil;
+    __block NSString *resultEventName = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary:actionDictionary
-                                                                               eventHandler:self.mockAppEventHandler];
+                                                                               eventHandler:^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+                                                                                   resultEventName = eventName;
+                                                                                   resultPayload = payload;
+                                                                                   [expectation fulfill];
+                                                                               }];
 
     [appEventAction execute];
-    [self waitForOperationOnMainQueue];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:3];
 
-    OCMVerify([self.mockAppEventHandler handleEvent:@"testName" payload:expectedPayload]);
+    XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+    XCTAssertEqual(resultEventName, @"testName");
+    XCTAssertEqualObjects(expectedPayload, resultPayload);
 }
 
 - (void)testHandleMessageWithUserInfo_shouldHandleEventWithEventHandler_whenPayloadIsNil {
@@ -66,24 +70,33 @@
             @"name": @"testName"
     };
 
+    __block NSDictionary *result = @{};
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary:actionDictionary
-                                                                               eventHandler:self.mockAppEventHandler];
+                                                                               eventHandler:^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+                                                                                   result = payload;
+                                                                                   [expectation fulfill];
+                                                                               }];
 
     [appEventAction execute];
-    [self waitForOperationOnMainQueue];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:3];
 
-    OCMVerify([self.mockAppEventHandler handleEvent:@"testName" payload:nil]);
+    XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+    XCTAssertNil(result);
 }
 
-- (void)waitForOperationOnMainQueue {
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationOnMainQueue"];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [expectation fulfill];
-    });
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+- (void)testHandleMessageWithUserInfo_shouldNotCrash_whenEventHandlerIsNil {
+    NSDictionary *actionDictionary = @{
+            @"type": @"MEAppEvent",
+            @"name": @"testName"
+    };
 
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-};
+    EMSAppEventAction *appEventAction = [[EMSAppEventAction alloc] initWithActionDictionary:actionDictionary
+                                                                               eventHandler:^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+                                                                               }];
+    appEventAction.eventHandler = nil;
+    [appEventAction execute];
+}
 
 @end

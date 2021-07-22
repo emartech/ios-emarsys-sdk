@@ -4,16 +4,16 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "EMSBlocks.h"
 
 @protocol EMSActionProtocol;
 @protocol EMSMobileEngageProtocol;
-@protocol EMSEventHandler;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSActionFactory : NSObject
 
-@property(nonatomic, weak) id<EMSEventHandler> eventHandler;
+@property(nonatomic, strong) EMSEventHandlerBlock eventHandler;
 
 
 - (instancetype)initWithApplication:(UIApplication *)application

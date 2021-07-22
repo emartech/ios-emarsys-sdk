@@ -5,7 +5,8 @@
 
 @protocol EMSPredictInternalProtocol <NSObject>
 
-- (void)setContactWithContactFieldValue:(NSString *)contactFieldValue;
+- (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue;
 
 - (void)clearContact;
 
