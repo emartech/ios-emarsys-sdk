@@ -10,7 +10,6 @@
 #import "EMSPredictProtocol.h"
 #import "EMSConfigProtocol.h"
 #import "EMSGeofenceProtocol.h"
-#import "EMSUserNotificationCenterDelegate.h"
 #import "EMSMessageInboxProtocol.h"
 #import "EMSOnEventActionProtocol.h"
 
@@ -22,7 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSMessageInboxProtocol> messageInbox;
 @property(class, nonatomic, readonly) id <EMSInAppProtocol> inApp;
 @property(class, nonatomic, readonly) id <EMSGeofenceProtocol> geofence;
-@property(class, nonatomic, readonly) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
 @property(class, nonatomic, readonly) id <EMSPredictProtocol> predict;
 @property(class, nonatomic, readonly) id <EMSConfigProtocol> config;
 @property(class, nonatomic, readonly) id <EMSOnEventActionProtocol> onEventAction;

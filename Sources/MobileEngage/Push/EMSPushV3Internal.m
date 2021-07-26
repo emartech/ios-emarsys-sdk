@@ -2,6 +2,7 @@
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 #import "EMSPushV3Internal.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
@@ -11,8 +12,12 @@
 #import "EMSTimestampProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSActionProtocol.h"
-#import "EMSStorage.h"
 #import "EMSNotificationInformation.h"
+#import "EMSUUIDProvider.h"
+#import "EMSMacros.h"
+#import "EMSCrashLog.h"
+#import "EMSStatusLog.h"
+#import "EMSDictionaryValidator.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 
@@ -23,21 +28,32 @@
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
 @property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) MEInApp *inApp;
+@property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
 @implementation EMSPushV3Internal
 
+@synthesize delegate = _delegate;
+
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage {
+                               storage:(EMSStorage *)storage
+                                 inApp:(MEInApp *)inApp
+                          uuidProvider:(EMSUUIDProvider *)uuidProvider
+                        operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(actionFactory);
     NSParameterAssert(storage);
+    NSParameterAssert(inApp);
+    NSParameterAssert(uuidProvider);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
@@ -45,6 +61,9 @@
         _actionFactory = actionFactory;
         _storage = storage;
         _deviceToken = [storage dataForKey:kEMSPushTokenKey];
+        _inApp = inApp;
+        _uuidProvider = uuidProvider;
+        _operationQueue = operationQueue;
     }
     return self;
 }
@@ -141,12 +160,170 @@
         [action execute];
     }
     NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
-    if (campaignId && self.silentNotificationInformationDelegate) {
+    if (campaignId && self.silentMessageInformationBlock) {
         EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.silentNotificationInformationDelegate(notificationInformation);
+            weakSelf.silentMessageInformationBlock(notificationInformation);
         });
+    }
+}
+
+- (NSDictionary *)actionFromResponse:(UNNotificationResponse *)response {
+    NSDictionary *ems = response.notification.request.content.userInfo[@"ems"];
+    NSDictionary *action;
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        action = ems[@"default_action"];
+    }
+    for (NSDictionary *actionDict in ems[@"actions"]) {
+        if ([response.actionIdentifier isEqualToString:actionDict[@"id"]]) {
+            action = actionDict;
+            break;
+        }
+    }
+    return action;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (weakSelf.delegate) {
+            [weakSelf.delegate userNotificationCenter:center
+                              willPresentNotification:notification
+                                withCompletionHandler:completionHandler];
+        }
+        completionHandler(UNNotificationPresentationOptionAlert);
+    });
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler {
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue addOperationWithBlock:^{
+        if (weakSelf.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.delegate userNotificationCenter:center
+                           didReceiveNotificationResponse:response
+                                    withCompletionHandler:completionHandler];
+            });
+        }
+        NSDictionary *userInfo = response.notification.request.content.userInfo;
+        if (userInfo[@"exception"]) {
+            EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
+        }
+
+        NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
+        if (campaignId && weakSelf.notificationInformationBlock) {
+            EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakSelf.notificationInformationBlock(notificationInformation);
+            });
+        }
+
+        NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
+        if (inApp) {
+            [weakSelf handleInApp:userInfo
+                            inApp:inApp];
+        }
+
+        NSDictionary *action = [weakSelf actionFromResponse:response];
+        if (action && action[@"id"]) {
+            EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"push:click"
+                                                                                          eventAttributes:@{
+                                                                                                  @"origin": @"button",
+                                                                                                  @"button_id": action[@"id"],
+                                                                                                  @"sid": [userInfo messageId]}
+                                                                                                eventType:EventTypeInternal];
+            [weakSelf.requestManager submitRequestModel:requestModel
+                                    withCompletionBlock:nil];
+        } else {
+            [self trackMessageOpenWithUserInfo:userInfo];
+        }
+        if (action) {
+            [self handleAction:action];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler();
+        });
+    }];
+}
+
+- (void)handleAction:(NSDictionary *)actionDict {
+    [self.actionFactory setEventHandler:self.notificationEventHandler];
+    id <EMSActionProtocol> action = [self.actionFactory createActionWithActionDictionary:actionDict];
+    [action execute];
+}
+
+
+- (void)handleInApp:(NSDictionary *)userInfo
+              inApp:(NSDictionary *)inApp {
+    NSDate *responseTimestamp = [self.timestampProvider provideTimestamp];
+    NSArray *errors = [inApp validate:^(EMSDictionaryValidator *validate) {
+        [validate valueExistsForKey:@"inAppData"
+                           withType:[NSData class]];
+        [validate valueExistsForKey:@"campaign_id"
+                           withType:[NSString class]];
+    }];
+    if ([errors count] == 0) {
+        NSString *html = [[NSString alloc] initWithData:inApp[@"inAppData"]
+                                               encoding:NSUTF8StringEncoding];
+        [self.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
+                                                                       sid:[userInfo messageId]
+                                                                       url:inApp[@"url"]
+                                                                      html:html
+                                                         responseTimestamp:responseTimestamp]
+              completionHandler:nil];
+    } else {
+        [self handleNotPreloadedInapp:responseTimestamp
+                             userInfo:userInfo
+                                inApp:inApp];
+    }
+}
+
+- (void)handleNotPreloadedInapp:(NSDate *)responseTimestamp
+                       userInfo:(NSDictionary *)userInfo
+                          inApp:(NSDictionary *)inApp {
+    NSString *url = inApp[@"url"];
+    if (url) {
+        EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                    [builder setUrl:url];
+                    [builder setMethod:HTTPMethodGET];
+                }
+                                                       timestampProvider:self.timestampProvider
+                                                            uuidProvider:self.uuidProvider];
+        __weak typeof(self) weakSelf = self;
+        [self.requestManager submitRequestModelNow:requestModel
+                                      successBlock:^(NSString *requestId, EMSResponseModel *responseModel) {
+                                          NSString *html = [[NSString alloc] initWithData:responseModel.body
+                                                                                 encoding:NSUTF8StringEncoding];
+                                          if (html) {
+                                              [weakSelf.inApp showMessage:[[MEInAppMessage alloc] initWithCampaignId:inApp[@"campaign_id"]
+                                                                                                                 sid:[userInfo messageId]
+                                                                                                                 url:inApp[@"url"]
+                                                                                                                html:html
+                                                                                                   responseTimestamp:responseTimestamp]
+                                                        completionHandler:nil];
+                                          }
+                                      }
+
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+                                            NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+                                            parameterDictionary[@"userInfo"] = userInfo;
+                                            parameterDictionary[@"inApp"] = inApp;
+                                            NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+                                            statusDictionary[@"requestModel"] = requestModel.description;
+                                            statusDictionary[@"requestId"] = requestId;
+                                            statusDictionary[@"error"] = [error localizedDescription];
+                                            EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                                                                sel:_cmd
+                                                                                         parameters:parameterDictionary
+                                                                                             status:statusDictionary];
+
+                                            EMSLog(log, LogLevelError);
+                                        }];
     }
 }
 

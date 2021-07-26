@@ -12,9 +12,6 @@
 #import "EMSLoggingPushInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
 #import "EMSDeepLinkInternal.h"
-#import "MEUserNotificationDelegate.h"
-#import "EMSLoggingUserNotificationDelegate.h"
-#import "MEInApp.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSPredictInternal.h"
@@ -160,33 +157,6 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
                 waitForSetup();
 
                 [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSDeepLinkInternal class]];
-            });
-        });
-
-        describe(@"notificationCenterDelegate", ^{
-            afterEach(^{
-                [EmarsysTestUtils tearDownEmarsys];
-            });
-
-            it(@"should return with logging instance when mobileEngage is not enabled", ^{
-                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        }]
-                                     dependencyContainer:nil];
-
-                waitForSetup();
-
-                [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[EMSLoggingUserNotificationDelegate class]];
-            });
-
-            it(@"should return real instance when mobileEngage is enabled", ^{
-                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                            [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
-                        }]
-                                     dependencyContainer:nil];
-
-                waitForSetup();
-
-                [[((NSObject *) EMSDependencyInjection.notificationCenterDelegate) should] beKindOfClass:[MEUserNotificationDelegate class]];
             });
         });
 

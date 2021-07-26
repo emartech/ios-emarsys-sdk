@@ -2,14 +2,19 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+#import <UserNotifications/UNUserNotificationCenter.h>
 #import "EMSBlocks.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol EMSPushNotificationProtocol <NSObject>
+@protocol EMSPushNotificationProtocol <UNUserNotificationCenterDelegate>
+
+@property(nonatomic, weak) id <UNUserNotificationCenterDelegate> delegate;
 
 @property(nonatomic, strong) EMSEventHandlerBlock silentMessageEventHandler;
-@property(nonatomic, strong) EMSSilentNotificationInformationBlock silentNotificationInformationDelegate;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock silentMessageInformationBlock;
+@property(nonatomic, strong) EMSEventHandlerBlock notificationEventHandler;
+@property(nonatomic, strong) EMSSilentNotificationInformationBlock notificationInformationBlock;
 
 
 - (void)setPushToken:(NSData *)pushToken;

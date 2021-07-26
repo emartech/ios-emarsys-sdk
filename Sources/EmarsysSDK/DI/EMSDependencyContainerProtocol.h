@@ -62,10 +62,6 @@
 
 - (id <EMSPredictProtocol, EMSPredictInternalProtocol>)loggingPredict;
 
-- (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
-
-- (id <EMSUserNotificationCenterDelegate>)loggingNotificationCenterDelegate;
-
 - (id <EMSGeofenceProtocol>)geofence;
 
 - (id <EMSGeofenceProtocol>)loggingGeofence;

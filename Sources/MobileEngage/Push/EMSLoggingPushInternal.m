@@ -73,16 +73,16 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (id)silentMessageEventHandler {
+- (id)silentNotificationEventHandler {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:nil], LogLevelDebug);
     return nil;
 }
 
-- (void)setSilentMessageEventHandler:(id)silentMessageEventHandler {
+- (void)setSilentNotificationEventHandler:(id)silentNotificationEventHandler {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"silentMessageEventHandler"] = @(silentMessageEventHandler != nil);
+    parameters[@"silentNotificationEventHandler"] = @(silentNotificationEventHandler != nil);
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd
                                               parameters:parameters], LogLevelDebug);

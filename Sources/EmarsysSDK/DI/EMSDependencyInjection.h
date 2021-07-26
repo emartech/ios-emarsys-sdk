@@ -20,8 +20,6 @@
 
 + (id <EMSInAppProtocol, MEIAMProtocol>)iam;
 
-+ (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate;
-
 + (id <EMSPredictProtocol, EMSPredictInternalProtocol>)predict;
 
 + (id <EMSGeofenceProtocol>)geofence;

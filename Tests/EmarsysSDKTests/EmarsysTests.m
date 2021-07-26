@@ -20,12 +20,9 @@
 #import "MERequestContext.h"
 #import "EMSClientStateResponseHandler.h"
 #import "EMSPushV3Internal.h"
-#import "MEInApp.h"
-#import "MEUserNotificationDelegate.h"
 #import "EMSLoggingPushInternal.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
-#import "EMSLoggingUserNotificationDelegate.h"
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSDeepLinkInternal.h"
@@ -93,7 +90,7 @@
 
     [self waitForSetup];
 
-    XCTAssertNotNil((NSObject *) [Emarsys notificationCenterDelegate]);
+    XCTAssertNotNil((NSObject *) [Emarsys push]);
 }
 
 - (void)testShouldSetConfig {
@@ -720,15 +717,6 @@
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 }
 
-- (void)testShouldBeMEUserNotificationDelegate {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:YES
-                   predictEnabled:YES];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).instanceRouter.instance class], [MEUserNotificationDelegate class]);
-}
-
 - (void)testShouldBeEMSMobileEngageV3Internal {
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
             }
@@ -790,15 +778,6 @@
                    predictEnabled:NO];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);
-}
-
-- (void)testShouldBeEMSLoggingUserNotificationDelegate {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:NO
-                   predictEnabled:NO];
-
-    XCTAssertEqual([((EMSQueueDelegator *) Emarsys.notificationCenterDelegate).instanceRouter.instance class], [EMSLoggingUserNotificationDelegate class]);
 }
 
 - (void)testShouldBeEMSLoggingMobileEngageInternal {

@@ -3,13 +3,12 @@
 //
 
 #import "EMSRequestModel.h"
-#import "EMSRequestModelBuilder.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-#import "EMSShardRepositoryProtocol.h"
 
 
-@implementation EMSRequestModel
+@implementation
+EMSRequestModel
 
 + (instancetype)makeWithBuilder:(EMSRequestBuilderBlock)builderBlock
               timestampProvider:(EMSTimestampProvider *)timestampProvider

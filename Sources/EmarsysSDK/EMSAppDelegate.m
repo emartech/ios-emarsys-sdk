@@ -13,13 +13,13 @@ didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsK
     [Emarsys setupWithConfig:self.provideEMSConfig];
     if (self.eventHandler) {
         Emarsys.inApp.eventHandler = self.eventHandler;
-        Emarsys.notificationCenterDelegate.eventHandler = self.eventHandler;
+        Emarsys.push.notificationEventHandler = self.eventHandler;
         Emarsys.push.silentMessageEventHandler = self.eventHandler;
         Emarsys.geofence.eventHandler = self.eventHandler;
         Emarsys.onEventAction.eventHandler = self.eventHandler;
     }
 
-    UNUserNotificationCenter.currentNotificationCenter.delegate = Emarsys.notificationCenterDelegate;
+    UNUserNotificationCenter.currentNotificationCenter.delegate = Emarsys.push;
 
     [application registerForRemoteNotifications];
 
@@ -40,11 +40,6 @@ continueUserActivity:(NSUserActivity *)userActivity
     return [Emarsys trackDeepLinkWithUserActivity:userActivity
                                     sourceHandler:^(NSString *source) {
                                     }];
-}
-
-- (void)handleEvent:(NSString *)eventName
-            payload:(nullable NSDictionary<NSString *, NSObject *> *)payload {
-
 }
 
 - (void)                             application:(UIApplication *)application

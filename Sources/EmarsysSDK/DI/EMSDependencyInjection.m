@@ -40,10 +40,6 @@ static EMSDependencyContainer *_dependencyContainer;
     return self.dependencyContainer.deepLink;
 }
 
-+ (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
-    return self.dependencyContainer.notificationCenterDelegate;
-}
-
 + (id <EMSInAppProtocol, MEIAMProtocol>)iam {
     return self.dependencyContainer.iam;
 }

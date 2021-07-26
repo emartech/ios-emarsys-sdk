@@ -175,10 +175,6 @@
     return EMSDependencyInjection.predict;
 }
 
-+ (id <EMSUserNotificationCenterDelegate>)notificationCenterDelegate {
-    return EMSDependencyInjection.notificationCenterDelegate;
-}
-
 + (EMSSQLiteHelper *)sqliteHelper {
     return EMSDependencyInjection.dependencyContainer.dbHelper;
 }

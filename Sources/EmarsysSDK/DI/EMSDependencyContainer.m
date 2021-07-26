@@ -26,7 +26,6 @@
 #import "EMSWindowProvider.h"
 #import "EMSMainWindowProvider.h"
 #import "EMSViewControllerProvider.h"
-#import "MEUserNotificationDelegate.h"
 #import "EMSLogger.h"
 #import "EMSBatchingShardTrigger.h"
 #import "EMSListChunker.h"
@@ -55,7 +54,6 @@
 #import "EMSInnerFeature.h"
 #import "EMSLoggingPredictInternal.h"
 #import "EMSLoggingPushInternal.h"
-#import "EMSLoggingUserNotificationDelegate.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSLoggingDeepLinkInternal.h"
@@ -69,7 +67,6 @@
 #import "EMSCompletionBlockProvider.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSValueProvider.h"
-#import "EMSStorage.h"
 #import "EMSSceneProvider.h"
 #import "EMSActionFactory.h"
 #import "EMSGeofenceInternal.h"
@@ -115,8 +112,6 @@
 @property(nonatomic, strong) id <EMSGeofenceProtocol> loggingGeofence;
 @property(nonatomic, strong) id <EMSMessageInboxProtocol> messageInbox;
 @property(nonatomic, strong) id <EMSMessageInboxProtocol> loggingMessageInbox;
-@property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> notificationCenterDelegate;
-@property(nonatomic, strong) id <EMSUserNotificationCenterDelegate> loggingNotificationCenterDelegate;
 @property(nonatomic, strong) id <EMSOnEventActionProtocol> onEventAction;
 @property(nonatomic, strong) id <EMSOnEventActionProtocol> loggingOnEventAction;
 
@@ -193,11 +188,6 @@
         [self.pushDelegator setupWithQueue:self.publicApiOperationQueue
                                emptyTarget:[EMSPushV3Internal new]];
         _push = (id <EMSPushNotificationProtocol>) self.pushDelegator;
-
-        _notificationCenterDelegateDelegator = [EMSQueueDelegator alloc];
-        [self.notificationCenterDelegateDelegator setupWithQueue:self.publicApiOperationQueue
-                                                     emptyTarget:[MEUserNotificationDelegate new]];
-        _notificationCenterDelegate = (id <EMSUserNotificationCenterDelegate>) self.notificationCenterDelegateDelegator;
 
         _messageInboxDelegator = [EMSQueueDelegator alloc];
         [self.messageInboxDelegator setupWithQueue:self.publicApiOperationQueue
@@ -507,23 +497,13 @@
                                                                                                                           requestManager:self.requestManager
                                                                                                                        timestampProvider:timestampProvider
                                                                                                                            actionFactory:actionFactory
-                                                                                                                                 storage:self.storage]
+                                                                                                                                 storage:self.storage
+                                                                                                                                   inApp:meInApp
+                                                                                                                            uuidProvider:self.uuidProvider
+                                                                                                                          operationQueue:self.coreOperationQueue]
                                                                        loggingInstance:self.loggingPush
                                                                            routerLogic:self.mobileEngageRouterLogicBlock];
     [self.pushDelegator proxyWithInstanceRouter:pushRouter];
-
-    _loggingNotificationCenterDelegate = [EMSLoggingUserNotificationDelegate new];
-    EMSInstanceRouter *notificationCenterDelegateRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[MEUserNotificationDelegate alloc] initWithActionFactory:actionFactory
-                                                                                                                                                                 inApp:self.iam
-                                                                                                                                                     timestampProvider:timestampProvider
-                                                                                                                                                          uuidProvider:self.uuidProvider
-                                                                                                                                                          pushInternal:self.push
-                                                                                                                                                        requestManager:self.requestManager
-                                                                                                                                                        requestFactory:self.requestFactory
-                                                                                                                                                        operationQueue:self.coreOperationQueue]
-                                                                                             loggingInstance:self.loggingNotificationCenterDelegate
-                                                                                                 routerLogic:self.mobileEngageRouterLogicBlock];
-    [self.notificationCenterDelegateDelegator proxyWithInstanceRouter:notificationCenterDelegateRouter];
 
     _loggingGeofence = [EMSLoggingGeofenceInternal new];
 
