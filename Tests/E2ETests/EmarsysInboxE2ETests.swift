@@ -38,7 +38,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
             let message = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
-            Emarsys.messageInbox.addTag("testtag", forMessage: message.id)
+            Emarsys.messageInbox.addTag(tag: "testtag", messageId: message.id)
         }
     }
 
@@ -56,7 +56,7 @@ class EmarsysInboxE2ETests: XCTestCase {
 
         XCTAssertTrue(messageWithTag?.tags?.contains("testtag") ?? false)
 
-        Emarsys.messageInbox.removeTag("testtag", fromMessage: messageWithTag?.id ?? "")
+        Emarsys.messageInbox.removeTag(tag: "testtag", messageId: messageWithTag?.id ?? "")
     }
 
     func testInboxTags_step4() {
@@ -82,7 +82,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let contactExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.setContactWithContactFieldId(cId, contactFieldValue: cValue) { error in
+            Emarsys.setContact(contactFieldId: cId, contactFieldValue: cValue) { error in
                 returnedError = error
                 contactExpectation.fulfill()
             }
@@ -97,7 +97,7 @@ class EmarsysInboxE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let customEventExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
+            Emarsys.trackCustomEvent(eventName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
                 "eventName": name,
                 "timestamp": timestamp
             ]) { error in

@@ -25,7 +25,7 @@ class EmarsysE2ETests: XCTestCase {
         let config = EMSConfig.make { builder in
         }
 
-        Emarsys.setup(with: config)
+        Emarsys.setup(config: config)
 
         changeAppCode("EMS11-C3FD3", cId: 2575)
 
@@ -45,7 +45,7 @@ class EmarsysE2ETests: XCTestCase {
             builder.setMobileEngageApplicationCode("14C19-A121F")
         }
 
-        Emarsys.setup(with: config)
+        Emarsys.setup(config: config)
 
         changeAppCode("EMS11-C3FD3", cId: 2575)
 
@@ -60,7 +60,7 @@ class EmarsysE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.config.changeApplicationCode(code, contactFieldId: cId) { error in
+            Emarsys.config.changeApplicationCode(applicationCode: code, contactFieldId: cId) { error in
                 returnedError = error
                 changeAppCodeExpectation.fulfill()
             }
@@ -76,7 +76,7 @@ class EmarsysE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let contactExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.setContactWithContactFieldId(cId, contactFieldValue: cValue) { error in
+            Emarsys.setContact(contactFieldId: cId, contactFieldValue: cValue) { error in
                 returnedError = error
                 contactExpectation.fulfill()
             }
@@ -91,7 +91,7 @@ class EmarsysE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let customEventExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.trackCustomEvent(withName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
+            Emarsys.trackCustomEvent(eventName: "emarsys-sdk-e2e-inbox-test", eventAttributes: [
                 "eventName": name,
                 "timestamp": timestamp
             ]) { error in
