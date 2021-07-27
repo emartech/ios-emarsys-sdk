@@ -138,7 +138,7 @@ struct DashboardView: View {
         if self.loginData.isLoggedIn == false {
             if let contactFieldId = Int(loginData.contactFieldId) {
                 let contactFieldId = NSNumber(value:contactFieldId)
-                Emarsys.setContactWithContactFieldId(contactFieldId, contactFieldValue: loginData.contactFieldValue) { error in
+                Emarsys.setContact(contactFieldId: contactFieldId, contactFieldValue: loginData.contactFieldValue) { error in
                     if error == nil {
                         print("setContact succesful")
                         self.loginData.isLoggedIn = true
@@ -168,7 +168,7 @@ struct DashboardView: View {
     func changeConfig() {
         if let myInteger = Int(self.loginData.contactFieldId) {
             let contactFieldId = NSNumber(value:myInteger)
-            Emarsys.config.changeApplicationCode(self.loginData.applicationCode, contactFieldId: contactFieldId) { error in
+            Emarsys.config.changeApplicationCode(applicationCode: self.loginData.applicationCode, contactFieldId: contactFieldId) { error in
                 if (error == nil) {
                     self.showMessage(successful: true)
                     
@@ -222,7 +222,7 @@ struct DashboardView: View {
     
     func setPushTokenButtonClicked() {
         if (self.deviceToken != nil) {
-            Emarsys.push.setPushToken(deviceToken!) { error in
+            Emarsys.push.setPushToken(pushToken: deviceToken!) { error in
                 if (error == nil) {
                     print("push token has been set")
                 }

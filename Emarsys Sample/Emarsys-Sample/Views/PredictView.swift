@@ -136,22 +136,22 @@ struct PredictView: View {
     }
     
     func trackItemId() {
-        Emarsys.predict.trackItemView(withItemId: self.itemId)
-        self.logic = EMSLogic.related(withViewItemId: self.itemId)
+        Emarsys.predict.trackItem(itemId: self.itemId)
+        self.logic = EMSLogic.related(itemId: self.itemId)
     }
     
     func trackCategoryView() {
-        Emarsys.predict.trackCategoryView(withCategoryPath: self.categoryView)
-        self.logic = EMSLogic.category(withCategoryPath: self.categoryView)
+        Emarsys.predict.trackCategory(categoryPath:  self.categoryView)
+        self.logic = EMSLogic.category(categoryPath: self.categoryView)
     }
     
     func trackSearchTerm() {
-        Emarsys.predict.trackSearch(withSearchTerm: self.searchTerm)
-        self.logic = EMSLogic.search(withSearchTerm: self.searchTerm)
+        Emarsys.predict.trackSearch(searchTerm: self.searchTerm)
+        self.logic = EMSLogic.search(searchTerm: self.searchTerm)
     }
     
     func trackOrderId() {
-        Emarsys.predict.trackPurchase(withOrderId: self.orderId, items: self.cartItems)
+        Emarsys.predict.trackPurchase(orderId: self.orderId, items: self.cartItems)
     }
     
     func addSampleCartItems() {
@@ -159,12 +159,12 @@ struct PredictView: View {
     }
     
     func trackCartItems() {
-        Emarsys.predict.trackCart(withCartItems: self.cartItems)
-        self.logic = EMSLogic.cart(withCartItems: self.cartItems)
+        Emarsys.predict.trackCart(items: self.cartItems)
+        self.logic = EMSLogic.cart(cartItems: self.cartItems)
     }
     
     func recommendProducts() {
-        Emarsys.predict.recommendProducts(with: self.logic) { products, error in
+        Emarsys.predict.recommendProducts(logic: self.logic) { products, error in
             guard let existingProducts = products else {
                 return
             }

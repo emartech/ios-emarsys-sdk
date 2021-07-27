@@ -15,7 +15,6 @@ class AppDelegate: EMSAppDelegate {
             alertController.addAction(UIAlertAction(title: "Close", style: .destructive, handler: { (action) in
                 alertController.dismiss(animated: true, completion: nil)
             }))
-            
             UIApplication.shared.windows.first?.rootViewController?.present(alertController, animated: true, completion: nil)
             print("EVENT_NAME: \(eventName), PAYLOAD: \(payload ?? [:])")
             

@@ -97,7 +97,7 @@ struct InAppView: View {
                   message: Text("eventName should not be empty if you want to track a custom event"),
                   dismissButton: .default(Text("Got it!")))
         } else {
-            Emarsys.trackCustomEvent(withName: self.customEventName, eventAttributes: nil) { error in
+            Emarsys.trackCustomEvent(eventName: self.customEventName, eventAttributes: nil) { error in
                 if(error == nil) {
                     print("succesful eventName tracking")
                 } else {

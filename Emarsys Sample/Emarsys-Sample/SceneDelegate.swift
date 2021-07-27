@@ -118,16 +118,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         })
         if let merchantId = merchantId {
-            Emarsys.config.changeMerchantId(merchantId)
+            Emarsys.config.changeMerchantId(merchantId: merchantId)
             self.loginData!.merchantId = merchantId
         }
         if let appCode = appCode {
             if let contactFieldId = contactFieldId, let contactId = NumberFormatter().number(from: contactFieldId) {
-                Emarsys.config.changeApplicationCode(appCode, contactFieldId: contactId)
+                Emarsys.config.changeApplicationCode(applicationCode: appCode, contactFieldId: contactId)
                 self.loginData!.contactFieldId = contactFieldId
                 self.loginData?.applicationCode = appCode
             } else {
-                Emarsys.config.changeApplicationCode(appCode)
+                Emarsys.config.changeApplicationCode(applicationCode: appCode)
                 self.loginData?.applicationCode = appCode
             }
         }
