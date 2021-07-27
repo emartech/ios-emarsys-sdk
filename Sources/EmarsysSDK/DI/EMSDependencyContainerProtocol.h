@@ -50,10 +50,6 @@
 
 - (id <EMSPushNotificationProtocol>)loggingPush;
 
-- (id <EMSInboxProtocol>)inbox;
-
-- (id <EMSInboxProtocol>)loggingInbox;
-
 - (id <EMSInAppProtocol, MEIAMProtocol>)iam;
 
 - (id <EMSInAppProtocol, MEIAMProtocol>)loggingIam;
