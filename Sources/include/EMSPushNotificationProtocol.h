@@ -20,20 +20,25 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPushToken:(NSData *)pushToken;
 
 - (void)setPushToken:(NSData *)pushToken
-     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+     completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(setPushToken(pushToken:completionBlock:));
 
 - (nullable NSData *)pushToken;
 
 - (void)clearPushToken;
 
-- (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
-
-- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo;
+- (void)clearPushTokenWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(clearPushToken(completionBlock:));
 
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
-                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+    NS_SWIFT_NAME(trackMessageOpen(userInfo:));
 
-- (void)handleMessageWithUserInfo:(NSDictionary *)userInfo;
+- (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(trackMessageOpen(userInfo:completionBlock:));
+
+- (void)handleMessageWithUserInfo:(NSDictionary *)userInfo
+    NS_SWIFT_NAME(handleMessage(userInfo:));
 
 @end
 

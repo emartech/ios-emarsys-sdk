@@ -10,16 +10,20 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol EMSConfigProtocol <NSObject>
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
-              completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
+              completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(changeApplicationCode(applicationCode:completionBlock:));
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
                contactFieldId:(NSNumber *)contactFieldId
-              completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
-
-- (void)changeMerchantId:(nullable NSString *)merchantId;
+              completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(changeApplicationCode(applicationCode:contactFieldId:completionBlock:));
 
 - (void)changeMerchantId:(nullable NSString *)merchantId
-        completionBlock:(_Nullable EMSCompletionBlock)completionHandler;
+    NS_SWIFT_NAME(changeMerchantId(merchantId:));
+
+- (void)changeMerchantId:(nullable NSString *)merchantId
+        completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(changeMerchantId(merchantId:completionBlock:));
 
 - (NSString *)applicationCode;
 

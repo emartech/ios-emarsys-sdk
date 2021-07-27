@@ -25,33 +25,41 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSConfigProtocol> config;
 @property(class, nonatomic, readonly) id <EMSOnEventActionProtocol> onEventAction;
 
-+ (void)setupWithConfig:(EMSConfig *)config;
++ (void)setupWithConfig:(EMSConfig *)config
+    NS_SWIFT_NAME(setup(config:));
 
-+ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken;
++ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken NS_SWIFT_NAME(setAuthenticatedContact(openIdToken:));
 
 + (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken
-                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
-
-+ (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
-                   contactFieldValue:(NSString *)contactFieldValue;
+                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(setAuthenticatedContact(openIdToken:completionBlock:));
 
 + (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
                    contactFieldValue:(NSString *)contactFieldValue
-                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+    NS_SWIFT_NAME(setContact(contactFieldId:contactFieldValue:));
+
++ (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
+                   contactFieldValue:(NSString *)contactFieldValue
+                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(setContact(contactFieldId:contactFieldValue:completionBlock:));
 
 + (void)clearContact;
 
-+ (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
-
-+ (void)trackCustomEventWithName:(NSString *)eventName
-                 eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes;
++ (void)clearContactWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(clearContact(completionBlock:));
 
 + (void)trackCustomEventWithName:(NSString *)eventName
                  eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
-                 completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+    NS_SWIFT_NAME(trackCustomEvent(eventName:eventAttributes:));
+
++ (void)trackCustomEventWithName:(NSString *)eventName
+                 eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
+                 completionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(trackCustomEvent(eventName:eventAttributes:completionBlock:));
 
 + (BOOL)trackDeepLinkWithUserActivity:(NSUserActivity *)userActivity
-                        sourceHandler:(_Nullable EMSSourceHandler)sourceHandler;
+                        sourceHandler:(_Nullable EMSSourceHandler)sourceHandler
+    NS_SWIFT_NAME(trackDeepLink(userActivity:sourceHandler:));
 
 @end
 

@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestAlwaysAuthorization;
 
 - (void)enable;
-- (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+- (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock
+    NS_SWIFT_NAME(enable(completionBlock:));
 - (void)disable;
 - (BOOL)isEnabled;
 
