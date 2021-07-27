@@ -68,18 +68,23 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithArray:@[category]]];
 }
 
-+ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken {
-    [Emarsys setAuthenticatedContactWithOpenIdToken:openIdToken
-                                    completionBlock:nil];
++ (void)setAuthenticatedContactWithContactFieldId:(NSNumber *)contactFieldId
+                                      openIdToken:(NSString *)openIdToken {
+    [Emarsys setAuthenticatedContactWithContactFieldId:contactFieldId
+                                           openIdToken:openIdToken
+                                       completionBlock:nil];
 }
 
-+ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken
-                               completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
++ (void)setAuthenticatedContactWithContactFieldId:(NSNumber *)contactFieldId
+                                      openIdToken:(NSString *)openIdToken
+                                  completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSParameterAssert(contactFieldId);
     NSParameterAssert(openIdToken);
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
             (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithOpenIdToken:openIdToken
-                                                                                        completionBlock:completionBlock];
+        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithContactFieldId:contactFieldId
+                                                                                               openIdToken:openIdToken
+                                                                                           completionBlock:completionBlock];
     }
 
     [MEExperimental disableFeature:EMSInnerFeature.predict];

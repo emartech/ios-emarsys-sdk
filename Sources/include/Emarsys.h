@@ -28,11 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)setupWithConfig:(EMSConfig *)config
     NS_SWIFT_NAME(setup(config:));
 
-+ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken NS_SWIFT_NAME(setAuthenticatedContact(openIdToken:));
++ (void)setAuthenticatedContactWithContactFieldId:(NSNumber* )contactFieldId
+                                      openIdToken:(NSString *)openIdToken
+    NS_SWIFT_NAME(setAuthenticatedContact(contactFieldId:openIdToken:));
 
-+ (void)setAuthenticatedContactWithOpenIdToken:(NSString *)openIdToken
++ (void)setAuthenticatedContactWithContactFieldId:(NSNumber *)contactFieldId
+                                      openIdToken:(NSString *)openIdToken
                                completionBlock:(_Nullable EMSCompletionBlock)completionBlock
-    NS_SWIFT_NAME(setAuthenticatedContact(openIdToken:completionBlock:));
+    NS_SWIFT_NAME(setAuthenticatedContact(contactFieldId:openIdToken:completionBlock:));
 
 + (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
                    contactFieldValue:(NSString *)contactFieldValue

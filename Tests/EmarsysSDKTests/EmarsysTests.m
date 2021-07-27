@@ -404,11 +404,13 @@
               mobileEngageEnabled:YES
                    predictEnabled:NO];
 
-    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
-                                    completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                           openIdToken:idToken
+                                       completionBlock:completionBlock];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
-                                                       completionBlock:completionBlock]);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithContactFieldId:@3
+                                                              openIdToken:idToken
+                                                          completionBlock:completionBlock]);
 }
 
 - (void)testSetAuthorizedContact_shouldDisablePredict {
@@ -417,8 +419,9 @@
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
 
-    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
-                                    completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                           openIdToken:idToken
+                                       completionBlock:completionBlock];
 
     XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]);
 }
@@ -430,8 +433,9 @@
 
     EMSMobileEngageV3Internal *mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
 
-    OCMReject([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
-                                                       completionBlock:completionBlock]);
+    OCMReject([mockMobileEngage setAuthenticatedContactWithContactFieldId:@3
+                                                              openIdToken:idToken
+                                                          completionBlock:completionBlock]);
 
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
                 OCMStub([partialMockContainer mobileEngage]).andReturn(mockMobileEngage);
@@ -439,8 +443,9 @@
               mobileEngageEnabled:NO
                    predictEnabled:YES];
 
-    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
-                                    completionBlock:completionBlock];
+    [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                           openIdToken:idToken
+                                       completionBlock:completionBlock];
 }
 
 - (void)testSetAuthorizedContactWithContactFieldValueIsOnlyCalledOnce_when_mobileEngageAndPredictAreDisabled {
@@ -455,17 +460,31 @@
               mobileEngageEnabled:NO
                    predictEnabled:NO];
 
-    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken
-                                    completionBlock:nil];
+    [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                           openIdToken:idToken
+                                       completionBlock:nil];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
-                                                       completionBlock:[OCMArg any]]);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithContactFieldId:@3
+                                                              openIdToken:idToken
+                                                          completionBlock:[OCMArg any]]);
+}
+
+- (void)testSetAuthenticatedContact_contactFieldId_mustNotBeNil {
+    @try {
+        [Emarsys setAuthenticatedContactWithContactFieldId:nil
+                                               openIdToken:@"testIdToken"
+                                           completionBlock:nil];
+        XCTFail(@"Expected Exception when contactFieldId is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: contactFieldId"]);
+    }
 }
 
 - (void)testSetAuthenticatedContact_idToken_mustNotBeNil {
     @try {
-        [Emarsys setAuthenticatedContactWithOpenIdToken:nil
-                                        completionBlock:nil];
+        [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                               openIdToken:nil
+                                           completionBlock:nil];
         XCTFail(@"Expected Exception when openIdToken is nil!");
     } @catch (NSException *exception) {
         XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: openIdToken"]);
@@ -483,10 +502,12 @@
               mobileEngageEnabled:YES
                    predictEnabled:YES];
 
-    [Emarsys setAuthenticatedContactWithOpenIdToken:idToken];
+    [Emarsys setAuthenticatedContactWithContactFieldId:@3
+                                           openIdToken:idToken];
 
-    OCMVerify([mockMobileEngage setAuthenticatedContactWithOpenIdToken:idToken
-                                                       completionBlock:nil];);
+    OCMVerify([mockMobileEngage setAuthenticatedContactWithContactFieldId:@3
+                                                              openIdToken:idToken
+                                                          completionBlock:nil]);
 }
 
 - (void)testSetContact_contactFieldId_mustNotBeNil {

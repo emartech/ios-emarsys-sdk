@@ -169,8 +169,9 @@
     OCMStub([self.mockRequestContext openIdToken]).andReturn(newIdToken);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthenticatedContactWithOpenIdToken:newIdToken
-                                          completionBlock:self.completionBlock];
+    [self.internal setAuthenticatedContactWithContactFieldId:@3
+                                                 openIdToken:newIdToken
+                                             completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
@@ -186,8 +187,9 @@
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(self.contactFieldId);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
-    [self.internal setAuthenticatedContactWithOpenIdToken:idToken
-                                          completionBlock:self.completionBlock];
+    [self.internal setAuthenticatedContactWithContactFieldId:@3
+                                                 openIdToken:idToken
+                                             completionBlock:self.completionBlock];
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
