@@ -32,8 +32,6 @@ struct DashboardView: View {
                     
                     FloatingTextField(title: "ApplicationCode", text: $loginData.applicationCode)
                     
-                    FloatingTextField(title: "ContactFieldId", text: $loginData.contactFieldId)
-                    
                     FloatingTextField(title: "MerchantId", text: $loginData.merchantId)
                     
                     HStack {
@@ -172,7 +170,6 @@ struct DashboardView: View {
     }
     
     func changeConfig() {
-        if let contactFieldId = getContactFieldId() {
             Emarsys.config.changeApplicationCode(applicationCode: self.loginData.applicationCode) { error in
                 if (error == nil) {
                     self.showMessage(successful: true)
@@ -190,7 +187,7 @@ struct DashboardView: View {
                     UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
                     UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                 }
-            }
+
             self.showSetupChangeMessage = true
         }
     }
