@@ -123,7 +123,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         if let appCode = appCode {
             if let contactFieldId = contactFieldId, let contactId = NumberFormatter().number(from: contactFieldId) {
-                Emarsys.config.changeApplicationCode(applicationCode: appCode, contactFieldId: contactId)
+                Emarsys.config.changeApplicationCode(applicationCode: appCode)
                 self.loginData!.contactFieldId = contactFieldId
                 self.loginData?.applicationCode = appCode
             } else {

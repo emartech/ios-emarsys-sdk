@@ -173,7 +173,7 @@ struct DashboardView: View {
     
     func changeConfig() {
         if let contactFieldId = getContactFieldId() {
-            Emarsys.config.changeApplicationCode(applicationCode: self.loginData.applicationCode, contactFieldId: contactFieldId) { error in
+            Emarsys.config.changeApplicationCode(applicationCode: self.loginData.applicationCode) { error in
                 if (error == nil) {
                     self.showMessage(successful: true)
                     
