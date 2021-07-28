@@ -14,7 +14,6 @@
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
 #import "EMSLogger.h"
-#import "EMSResponseModel.h"
 #import "EMSCrypto.h"
 #import "EMSDispatchWaiter.h"
 #import "NSError+EMSCore.h"
@@ -180,16 +179,7 @@
 
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler; {
-    [self changeApplicationCode:applicationCode
-                 contactFieldId:[self.meRequestContext contactFieldId]
-                completionBlock:completionHandler];
-}
-
-- (void)changeApplicationCode:(nullable NSString *)applicationCode
-               contactFieldId:(NSNumber *)contactFieldId
-              completionBlock:(_Nullable EMSCompletionBlock)completionHandler {
     NSData *pushToken = self.pushInternal.deviceToken;
-    NSNumber *oldContactFieldId = self.meRequestContext.contactFieldId;
     BOOL hasContactIdentification = self.meRequestContext.hasContactIdentification;
     __block NSError *error = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -200,7 +190,6 @@
             error = [self clearContact];
         }
         if (!error) {
-            self.meRequestContext.contactFieldId = contactFieldId;
             self.meRequestContext.applicationCode = applicationCode;
             if (applicationCode) {
                 [self sendDeviceInfo];
@@ -214,7 +203,6 @@
         }
         if (error) {
             self.meRequestContext.applicationCode = nil;
-            self.meRequestContext.contactFieldId = oldContactFieldId;
         }
         if (completionHandler) {
             dispatch_async(dispatch_get_main_queue(), ^{

@@ -520,7 +520,6 @@
                                                           timeout:10];
 
     OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
-    OCMVerify([(MERequestContext *) strictMockMeRequestContext setContactFieldId:self.contactFieldId]);
     OCMVerify([strictMockMeRequestContext setApplicationCode:@"newApplicationCode"]);
     OCMVerify([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
@@ -651,8 +650,6 @@
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
 
-    NSNumber *newContactFieldId = @123;
-
     MERequestContext *meContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                                        uuidProvider:OCMClassMock([EMSUUIDProvider class])
                                                                   timestampProvider:OCMClassMock([EMSTimestampProvider class])
@@ -685,7 +682,6 @@
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:nil
-                                contactFieldId:newContactFieldId
                                completionBlock:^(NSError *error) {
                                    returnedError = error;
                                    [expectation fulfill];

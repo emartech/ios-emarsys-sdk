@@ -13,11 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
               completionBlock:(_Nullable EMSCompletionBlock)completionBlock
     NS_SWIFT_NAME(changeApplicationCode(applicationCode:completionBlock:));
 
-- (void)changeApplicationCode:(nullable NSString *)applicationCode
-               contactFieldId:(NSNumber *)contactFieldId
-              completionBlock:(_Nullable EMSCompletionBlock)completionBlock
-    NS_SWIFT_NAME(changeApplicationCode(applicationCode:contactFieldId:completionBlock:));
-
 - (void)changeMerchantId:(nullable NSString *)merchantId
     NS_SWIFT_NAME(changeMerchantId(merchantId:));
 
