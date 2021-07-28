@@ -25,7 +25,7 @@ struct InlineInAppView: UIViewRepresentable {
             self.onCompletion(error)
         }
         
-        inlineInApp.loadInApp(withViewId: viewId)
+        inlineInApp.loadInApp(viewId: viewId)
         
         return inlineInApp
     }

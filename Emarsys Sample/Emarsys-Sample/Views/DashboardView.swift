@@ -106,7 +106,13 @@ struct DashboardView: View {
                     }
                     
                     if(self.loginData.isLoggedIn == false) {
-                        FloatingTextField(title: "ContactFieldValue", text: $loginData.contactFieldValue).accessibility(identifier: "customFieldValue")
+                        HStack {
+                            FloatingTextField(title: "CFId", text: $loginData.contactFieldId)
+                                .frame(width: 100)
+                            
+                            FloatingTextField(title: "ContactFieldValue", text: $loginData.contactFieldValue).accessibility(identifier: "customFieldValue")
+                            
+                        }
                     }
                     
                     HStack() {
@@ -136,12 +142,12 @@ struct DashboardView: View {
     
     func loginButtonClicked(){
         if self.loginData.isLoggedIn == false {
-            if let contactFieldId = Int(loginData.contactFieldId) {
-                let contactFieldId = NSNumber(value:contactFieldId)
+            if let contactFieldId = getContactFieldId() {
                 Emarsys.setContact(contactFieldId: contactFieldId, contactFieldValue: loginData.contactFieldValue) { error in
                     if error == nil {
                         print("setContact succesful")
                         self.loginData.isLoggedIn = true
+                        UserDefaults.standard.set(self.loginData.contactFieldId, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                         UserDefaults.standard.set(self.loginData.contactFieldValue, forKey: "contactFieldValue")
                         showMessage(successful: true)
                     } else {
@@ -166,14 +172,12 @@ struct DashboardView: View {
     }
     
     func changeConfig() {
-        if let myInteger = Int(self.loginData.contactFieldId) {
-            let contactFieldId = NSNumber(value:myInteger)
+        if let contactFieldId = getContactFieldId() {
             Emarsys.config.changeApplicationCode(applicationCode: self.loginData.applicationCode, contactFieldId: contactFieldId) { error in
                 if (error == nil) {
                     self.showMessage(successful: true)
                     
                     let configUserDefaults = UserDefaults(suiteName: "com.emarsys.sampleConfig")
-                    configUserDefaults?.set(self.loginData.contactFieldId, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                     configUserDefaults?.set(self.loginData.applicationCode,forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
                     configUserDefaults?.set(self.loginData.merchantId,forKey: ConfigUserDefaultsKey.merchantId.rawValue)
                     
@@ -187,10 +191,19 @@ struct DashboardView: View {
                     UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                 }
             }
+            self.showSetupChangeMessage = true
+        }
+    }
+    
+    func getContactFieldId() -> NSNumber? {
+        var result: NSNumber? = nil
+        if let myInteger = Int(self.loginData.contactFieldId) {
+            result = NSNumber(value:myInteger)
         } else {
             self.showMessage(successful: false)
         }
-        self.showSetupChangeMessage = true
+        
+        return result
     }
     
     func doEnvironmentChange() {
@@ -249,7 +262,7 @@ struct DashboardView: View {
 struct DashboardView_Previews: PreviewProvider {
     
     static var previews: some View {
-        DashboardView().environmentObject(LoginData(isLoggedIn: true,
+        DashboardView().environmentObject(LoginData(isLoggedIn: false,
                                                     contactFieldValue: "test@test.com",
                                                     contactFieldId: "2545",
                                                     applicationCode: "EMS11-C3FD3",
