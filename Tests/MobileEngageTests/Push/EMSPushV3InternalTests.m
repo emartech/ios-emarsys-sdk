@@ -564,6 +564,29 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
                                                withCompletionHandler:completionHandler]);
 }
 
+- (void)testShouldCallTheInjectedDelegate_userNotificationCenter_openSettingsForNotification_method {
+    if (@available(iOS 12, *)) {
+        id userNotificationCenterDelegate = OCMProtocolMock(@protocol(UNUserNotificationCenterDelegate));
+        UNUserNotificationCenter *mockCenter = OCMClassMock([UNUserNotificationCenter class]);
+        UNNotification *mockNotification = OCMClassMock([UNNotification class]);
+
+        self.push.delegate = userNotificationCenterDelegate;
+
+        [self.push userNotificationCenter:mockCenter
+              openSettingsForNotification:mockNotification];
+
+        XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForMainQueue"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [expectation fulfill];
+        });
+        XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                              timeout:2];
+
+        OCMVerify([userNotificationCenterDelegate userNotificationCenter:mockCenter
+                                             openSettingsForNotification:mockNotification]);
+        XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    }
+}
 
 - (void)testShouldCallTheInjectedDelegate_userNotificationCenterWillPresentNotificationWithCompletionHandler_methodOnMainThread {
     FakeNotificationDelegate *delegate = [FakeNotificationDelegate new];

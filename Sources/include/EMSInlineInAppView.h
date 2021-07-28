@@ -11,6 +11,7 @@
 @property(nonatomic, strong) EMSCompletionBlock completionBlock;
 @property(nonatomic, strong) EMSInlineInappViewCloseBlock closeBlock;
 
-- (void)loadInAppWithViewId:(NSString *)viewId;
+- (void)loadInAppWithViewId:(NSString *)viewId
+    NS_SWIFT_NAME(loadInApp(viewId:));
 
 @end
