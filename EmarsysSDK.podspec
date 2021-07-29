@@ -17,7 +17,6 @@ Pod::Spec.new do |spec|
 	spec.public_header_files  = [
         'Sources/include/Emarsys.h',
         'Sources/include/EMSInAppProtocol.h',
-        'Sources/include/EMSInboxProtocol.h',
         'Sources/include/EMSPredictProtocol.h',
         'Sources/include/EMSGeofenceProtocol.h',
         'Sources/include/EMSPushNotificationProtocol.h',
@@ -37,10 +36,8 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSLogic.h',
         'Sources/include/EMSRecommendationFilter.h',
         'Sources/include/EMSRecommendationFilterProtocol.h',
-        'Sources/include/EMSEventHandler.h',
         'Sources/include/EMSFlipperFeatures.h',
         'Sources/include/EMSInlineInAppView.h',
-        'Sources/include/EMSNotificationInformationDelegate.h',
         'Sources/include/EMSNotificationInformation.h',
         'Sources/include/EMSOnEventActionProtocol.h',
         'Sources/include/EMSLogLevelProtocol.h',

@@ -10,9 +10,9 @@
 #import "NSData+MobileEngine.h"
 #import "NSDictionary+MobileEngage.h"
 #import "NSError+EMSCore.h"
-#import "EMSNotificationInformationDelegate.h"
 #import "FakeNotificationDelegate.h"
 #import "EMSWaiter.h"
+#import "EMSNotificationInformation.h"
 
 @interface EMSPushV3Internal ()
 
@@ -930,8 +930,6 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 }
 
 - (void)testShouldCallotificationInformationDelegate {
-    EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:@"testMultiChannelId"];
-
     __block NSOperationQueue *returnedQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
 
