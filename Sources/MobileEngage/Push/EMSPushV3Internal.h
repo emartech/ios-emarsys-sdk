@@ -11,6 +11,7 @@
 @class EMSTimestampProvider;
 @class EMSActionFactory;
 @class EMSStorage;
+@class EMSInAppInternal;
 
 @interface EMSPushV3Internal : NSObject <EMSPushNotificationProtocol>
 
@@ -22,11 +23,9 @@
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
-                     timestampProvider:(EMSTimestampProvider *)timestampProvider
                          actionFactory:(EMSActionFactory *)actionFactory
                                storage:(EMSStorage *)storage
-                                 inApp:(MEInApp *)inApp
-                          uuidProvider:(EMSUUIDProvider *)uuidProvider
+                         inAppInternal:(EMSInAppInternal *)inAppInternal
                         operationQueue:(NSOperationQueue *)operationQueue;
 
 - (void)clearDeviceTokenStorage;

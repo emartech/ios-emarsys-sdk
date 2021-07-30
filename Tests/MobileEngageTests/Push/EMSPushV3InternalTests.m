@@ -13,6 +13,7 @@
 #import "FakeNotificationDelegate.h"
 #import "EMSWaiter.h"
 #import "EMSNotificationInformation.h"
+#import "EMSInAppInternal.h"
 
 @interface EMSPushV3Internal ()
 
@@ -25,13 +26,11 @@
 @property(nonatomic, strong) EMSPushV3Internal *push;
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) EMSRequestFactory *mockRequestFactory;
-@property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSActionFactory *mockActionFactory;
 @property(nonatomic, strong) NSString *pushToken;
 @property(nonatomic, strong) id mockPushTokenData;
 @property(nonatomic, strong) EMSStorage *mockStorage;
-@property(nonatomic, strong) MEInApp *mockInApp;
-@property(nonatomic, strong) EMSUUIDProvider *mockUuidProvider;
+@property(nonatomic, strong) EMSInAppInternal *mockInAppInternal;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
@@ -59,11 +58,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 - (void)setUp {
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
-    _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockActionFactory = OCMClassMock([EMSActionFactory class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
-    _mockInApp = OCMClassMock([MEInApp class]);
-    _mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
+    _mockInAppInternal = OCMClassMock([EMSInAppInternal class]);
     _operationQueue = [NSOperationQueue new];
 
     _pushToken = @"pushTokenString";
@@ -73,11 +70,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 
     _push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                requestManager:self.mockRequestManager
-                                            timestampProvider:self.mockTimestampProvider
                                                 actionFactory:self.mockActionFactory
                                                       storage:self.mockStorage
-                                                        inApp:self.mockInApp
-                                                 uuidProvider:self.mockUuidProvider
+                                                inAppInternal:self.mockInAppInternal
                                                operationQueue:self.operationQueue];
 }
 
@@ -90,11 +85,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:nil
                                            requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:self.mockInAppInternal
                                            operationQueue:self.operationQueue];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
@@ -106,11 +99,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:nil
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:self.mockInAppInternal
                                            operationQueue:self.operationQueue];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
@@ -118,31 +109,13 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     }
 }
 
-- (void)testInit_timestampProvider_mustNotBeNil {
-    @try {
-        [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
-                                           requestManager:self.mockRequestManager
-                                        timestampProvider:nil
-                                            actionFactory:self.mockActionFactory
-                                                  storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
-                                           operationQueue:self.operationQueue];
-        XCTFail(@"Expected Exception when timestampProvider is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: timestampProvider");
-    }
-}
-
 - (void)testInit_actionFactory_mustNotBeNil {
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:nil
                                                   storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:self.mockInAppInternal
                                            operationQueue:self.operationQueue];
         XCTFail(@"Expected Exception when actionFactory is nil!");
     } @catch (NSException *exception) {
@@ -154,11 +127,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:nil
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:self.mockInAppInternal
                                            operationQueue:self.operationQueue];
         XCTFail(@"Expected Exception when storage is nil!");
     } @catch (NSException *exception) {
@@ -166,35 +137,17 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     }
 }
 
-- (void)testInit_inApp_mustNotBeNil {
+- (void)testInit_inAppInternal_mustNotBeNil {
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage
-                                                    inApp:nil
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:nil
                                            operationQueue:self.operationQueue];
-        XCTFail(@"Expected Exception when inApp is nil!");
+        XCTFail(@"Expected Exception when inAppInternal is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: inApp");
-    }
-}
-
-- (void)testInit_uuidProvider_mustNotBeNil {
-    @try {
-        [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
-                                           requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
-                                            actionFactory:self.mockActionFactory
-                                                  storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:nil
-                                           operationQueue:self.operationQueue];
-        XCTFail(@"Expected Exception when uuidProvider is nil!");
-    } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: uuidProvider");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: inAppInternal");
     }
 }
 
@@ -202,11 +155,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     @try {
         [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                            requestManager:self.mockRequestManager
-                                        timestampProvider:self.mockTimestampProvider
                                             actionFactory:self.mockActionFactory
                                                   storage:self.mockStorage
-                                                    inApp:self.mockInApp
-                                             uuidProvider:self.mockUuidProvider
+                                            inAppInternal:self.mockInAppInternal
                                            operationQueue:nil];
         XCTFail(@"Expected Exception when operationQueue is nil!");
     } @catch (NSException *exception) {
@@ -220,11 +171,9 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 
     EMSPushV3Internal *push = [[EMSPushV3Internal alloc] initWithRequestFactory:self.mockRequestFactory
                                                                  requestManager:self.mockRequestManager
-                                                              timestampProvider:self.mockTimestampProvider
                                                                   actionFactory:self.mockActionFactory
                                                                         storage:self.mockStorage
-                                                                          inApp:self.mockInApp
-                                                                   uuidProvider:self.mockUuidProvider
+                                                                  inAppInternal:self.mockInAppInternal
                                                                  operationQueue:self.operationQueue];
 
     NSData *result = [push pushToken];
@@ -763,22 +712,15 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     OCMVerify([partialMockPushInternal trackMessageOpenWithUserInfo:userInfo]);
 }
 
-- (void)testShouldCall_showMessageCompletionHandler_onIAMWithInAppMessage_whenDidReceiveNotificationResponseWithCompletionHandler_isCalledWithInAppPayload {
-    NSDate *responseTimestamp = [NSDate date];
-    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(responseTimestamp);
-
-    MEInAppMessage *expectation = [[MEInAppMessage new] initWithCampaignId:@"42"
-                                                                       sid:@"123456789"
-                                                                       url:@"https://www.test.com"
-                                                                      html:@"<html/>"
-                                                         responseTimestamp:responseTimestamp];
+- (void)testShouldCall_handleInApp_onInAppInternal_withUserInfo_inAppDictionary {
+    NSDictionary *inAppDictionary = @{
+            @"campaign_id": @"42",
+            @"url": @"https://www.test.com",
+            @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
+    };
 
     NSDictionary *userInfo = @{@"ems": @{
-            @"inapp": @{
-                    @"campaign_id": @"42",
-                    @"url": @"https://www.test.com",
-                    @"inAppData": [@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
-            }},
+            @"inapp": inAppDictionary},
             @"u": @"{\"sid\": \"123456789\"}"};
 
     XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
@@ -790,55 +732,8 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     [EMSWaiter waitForExpectations:@[exp]
                            timeout:10];
 
-    OCMVerify([self.mockInApp showMessage:expectation
-                        completionHandler:[OCMArg any]]);
-}
-
-- (void)testShouldDownloadInappAndTriggerIt_whenInAppDataMissing {
-    NSDate *responseTimestamp = [NSDate date];
-    OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(responseTimestamp);
-
-    NSDictionary *userInfo = @{@"ems": @{
-            @"inapp": @{
-                    @"campaign_id": @"42",
-                    @"url": @"https://www.test.com"
-            }},
-            @"u": @"{\"sid\": \"123456789\"}"};
-
-    EMSResponseModel *responseModel = [[EMSResponseModel alloc] initWithStatusCode:200
-                                                                           headers:@{}
-                                                                              body:[@"<html/>" dataUsingEncoding:NSUTF8StringEncoding]
-                                                                        parsedBody:nil
-                                                                      requestModel:OCMClassMock([EMSRequestModel class])
-                                                                         timestamp:responseTimestamp];
-
-    MEInAppMessage *inAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"42"
-                                                                          sid:@"123456789"
-                                                                          url:@"https://www.test.com"
-                                                                         html:@"<html/>"
-                                                            responseTimestamp:responseTimestamp];
-
-    OCMStub([self.mockRequestManager submitRequestModelNow:[OCMArg any]
-                                              successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
-                                                                                        responseModel,
-                                                                                        nil])
-                                                errorBlock:[OCMArg any]]);
-
-    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-
-    [self.push userNotificationCenter:OCMClassMock([UNUserNotificationCenter class])
-       didReceiveNotificationResponse:notificationResponseWithUserInfo(userInfo)
-                withCompletionHandler:^{
-                    [exp fulfill];
-                }];
-    [EMSWaiter waitForExpectations:@[exp]
-                           timeout:10];
-
-    //times 2
-    OCMVerify([self.mockInApp showMessage:inAppMessage
-                        completionHandler:[OCMArg any]]);
-    OCMVerify([self.mockTimestampProvider provideTimestamp]);
-    OCMVerify([self.mockTimestampProvider provideTimestamp]);
+    OCMVerify([self.mockInAppInternal handleInApp:userInfo
+                                            inApp:inAppDictionary];);
 }
 
 - (void)testShouldReturnTheDefaultAction_whenTheActionIdentifierIsUNNotificationDefaultActionIdentifier {
