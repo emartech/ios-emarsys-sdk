@@ -14,6 +14,8 @@
 #import "EMSDeviceInfoClientProtocol.h"
 #import "EMSGeofenceInternal.h"
 #import "EMSStorage.h"
+#import "EMSSdkStateLogger.h"
+#import "EMSLogger.h"
 
 @interface EMSAppStartBlockProviderTests : XCTestCase
 
@@ -29,6 +31,8 @@
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSGeofenceInternal *mockGeofenceInternal;
 @property(nonatomic, strong) EMSStorage *mockStorage;
+@property(nonatomic, strong) EMSSdkStateLogger *mockSdkStateLogger;
+@property(nonatomic, strong) EMSLogger *mockLogger;
 
 @end
 
@@ -53,12 +57,17 @@
 
     [self.requestContext setContactToken:nil];
 
+    _mockSdkStateLogger = OCMClassMock([EMSSdkStateLogger class]);
+    _mockLogger = OCMClassMock([EMSLogger class]);
+
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                                        requestFactory:self.mockRequestFactory
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.mockDeviceInfoClient
                                                                        configInternal:self.mockConfigInternal
-                                                                     geofenceInternal:self.mockGeofenceInternal];
+                                                                     geofenceInternal:self.mockGeofenceInternal
+                                                                       sdkStateLogger:self.mockSdkStateLogger
+                                                                               logger:self.mockLogger];
     _appStartEventBlock = [self.appStartBlockProvider createAppStartEventBlock];
 }
 
@@ -73,7 +82,9 @@
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
                                                   configInternal:self.mockConfigInternal
-                                                geofenceInternal:self.mockGeofenceInternal];
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -87,7 +98,9 @@
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
                                                   configInternal:self.mockConfigInternal
-                                                geofenceInternal:self.mockGeofenceInternal];
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -101,7 +114,9 @@
                                                   requestContext:nil
                                                 deviceInfoClient:self.mockDeviceInfoClient
                                                   configInternal:self.mockConfigInternal
-                                                geofenceInternal:self.mockGeofenceInternal];
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -115,7 +130,9 @@
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:nil
                                                   configInternal:self.mockConfigInternal
-                                                geofenceInternal:self.mockGeofenceInternal];
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when deviceInfoClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
@@ -129,7 +146,9 @@
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
                                                   configInternal:nil
-                                                geofenceInternal:self.mockGeofenceInternal];
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when configInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: configInternal");
@@ -143,10 +162,44 @@
                                                   requestContext:self.mockRequestContext
                                                 deviceInfoClient:self.mockDeviceInfoClient
                                                   configInternal:self.mockConfigInternal
-                                                geofenceInternal:nil];
+                                                geofenceInternal:nil
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger];
         XCTFail(@"Expected Exception when geofenceInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: geofenceInternal");
+    }
+}
+
+- (void)testInit_sdkStateLogger_mustNotBeNil {
+    @try {
+        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                  requestFactory:self.mockRequestFactory
+                                                  requestContext:self.mockRequestContext
+                                                deviceInfoClient:self.mockDeviceInfoClient
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:nil
+                                                          logger:self.mockLogger];
+        XCTFail(@"Expected Exception when sdkStateLogger is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: sdkStateLogger");
+    }
+}
+
+- (void)testInit_logger_mustNotBeNil {
+    @try {
+        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                  requestFactory:self.mockRequestFactory
+                                                  requestContext:self.mockRequestContext
+                                                deviceInfoClient:self.mockDeviceInfoClient
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:nil];
+        XCTFail(@"Expected Exception when logger is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: logger");
     }
 }
 
@@ -187,7 +240,27 @@
 
     self.appStartEventBlock();
 
-    OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
+    OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testCreateRemoteConfigEventBlock_refreshConfigBlockInvocation_triggersSdkStateLogger {
+    OCMStub([self.mockLogger logLevel]).andReturn(LogLevelTrace);
+    OCMStub([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg invokeBlock]]);
+    _appStartEventBlock = [self.appStartBlockProvider createRemoteConfigEventBlock];
+
+    self.appStartEventBlock();
+
+    OCMVerify([self.mockSdkStateLogger log]);
+}
+
+- (void)testCreateRemoteConfigEventBlock_refreshConfigBlockInvocation_shouldNotTriggersSdkStateLogger {
+    OCMReject([self.mockSdkStateLogger log]);
+
+    OCMStub([self.mockLogger logLevel]).andReturn(LogLevelInfo);
+    OCMStub([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg invokeBlock]]);
+    _appStartEventBlock = [self.appStartBlockProvider createRemoteConfigEventBlock];
+
+    self.appStartEventBlock();
 }
 
 - (void)testCreateFetchGeofenceEventBlock {

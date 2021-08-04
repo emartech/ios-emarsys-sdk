@@ -110,6 +110,10 @@
                                                 [self.logger reset];
                                             }
                                         }];
+    } else {
+        if (completionBlock) {
+            completionBlock(nil);
+        }
     }
 }
 

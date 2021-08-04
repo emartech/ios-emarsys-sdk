@@ -10,6 +10,8 @@
 @protocol EMSDeviceInfoClientProtocol;
 @class EMSConfigInternal;
 @class EMSGeofenceInternal;
+@class EMSSdkStateLogger;
+@class EMSLogger;
 
 @interface EMSAppStartBlockProvider : NSObject
 
@@ -18,7 +20,9 @@
                         requestContext:(MERequestContext *)requestContext
                       deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
                         configInternal:(EMSConfigInternal *)configInternal
-                      geofenceInternal:(EMSGeofenceInternal *)geofenceInternal;
+                      geofenceInternal:(EMSGeofenceInternal *)geofenceInternal
+                        sdkStateLogger:(EMSSdkStateLogger *)sdkStateLogger
+                                logger:(EMSLogger *)logger;
 
 - (MEHandlerBlock)createAppStartEventBlock;
 

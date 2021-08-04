@@ -14,21 +14,19 @@
 #import "EMSEmarsysRequestFactory.h"
 #import "EMSRemoteConfigResponseMapper.h"
 #import "EMSEndpoint.h"
-#import "EMSResponseModel.h"
 #import "EMSRemoteConfig.h"
 #import "EMSCrypto.h"
 #import "EMSDispatchWaiter.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
-#import "EMSStorage.h"
 #import "EmarsysTestUtils.h"
 #import "EmarsysSDKVersion.h"
 
 @interface EMSConfigInternal (Tests)
 
 - (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
-                           completionBlock:(EMSCompletionBlock *)completionBlock;
+                           completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
 
@@ -861,10 +859,10 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
-- (void)testChangeMerchantId_shouldRefresh {
+- (void)testChangeMerchantId_shouldNotRefresh {
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
-    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil]);
+    OCMReject([partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg any]]);
 
     [partialMockConfigInternal changeMerchantId:@"testMerchantId"];
 }
@@ -915,7 +913,13 @@
                                                 successBlock:[OCMArg any]
                                                   errorBlock:[OCMArg any]]);
 
-    [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
+    __block BOOL completionBlockInvoked = NO;
+
+    [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
+        completionBlockInvoked = YES;
+    }];
+
+    XCTAssertTrue(completionBlockInvoked);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_signature_error {
@@ -934,14 +938,21 @@
                                                                                         error,
                                                                                         nil])]);
 
-    [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
+    __block BOOL completionBlockInvoked = NO;
 
+    [self.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
+        completionBlockInvoked = YES;
+    }];
+
+    XCTAssertTrue(completionBlockInvoked);
     OCMVerify([self.mockEndpoint reset]);
     OCMVerify([self.mockLogger reset]);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_signature_success {
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"testApplicationCode");
+    OCMStub([self.mockCrypto verifyContent:[OCMArg any]
+                             withSignature:[OCMArg any]]).andReturn(YES);
 
     NSData *signatureData = [NSData new];
 
@@ -953,6 +964,7 @@
     OCMStub([mockRequestModel requestId]).andReturn(@"testRequestId");
 
     OCMStub([self.mockEmarsysRequestFactory createRemoteConfigSignatureRequestModel]).andReturn(mockRequestModel);
+    OCMStub([self.mockEmarsysRequestFactory createRemoteConfigRequestModel]).andReturn(mockRequestModel);
     OCMStub([self.mockRequestManager submitRequestModelNow:mockRequestModel
                                               successBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
                                                                                         mockResponse,
@@ -960,10 +972,23 @@
                                                 errorBlock:[OCMArg any]]);
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
 
-    [partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
+
+    __block BOOL completionBlockInvoked = NO;
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+        completionBlockInvoked = YES;
+        [expectation fulfill];
+    };
+
+    [partialMockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:completionBlock];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
 
     OCMVerify([partialMockConfigInternal fetchRemoteConfigWithSignatureData:signatureData
-                                                            completionBlock:nil]);
+                                                            completionBlock:completionBlock]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertTrue(completionBlockInvoked);
 }
 
 - (void)testRefreshConfigFromRemoteConfig_error {

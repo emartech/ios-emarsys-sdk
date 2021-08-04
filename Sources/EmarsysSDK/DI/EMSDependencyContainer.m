@@ -87,6 +87,7 @@
 #import "EMSOpenIdTokenMapper.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSWrapperChecker.h"
+#import "EMSSdkStateLogger.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -377,7 +378,7 @@
                                              [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
                                              [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                     endpoint:self.endpoint]]
+                                                                                         endpoint:self.endpoint]]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
 
@@ -564,7 +565,12 @@
                                                                        requestContext:self.requestContext
                                                                      deviceInfoClient:self.deviceInfoClient
                                                                        configInternal:self.config
-                                                                     geofenceInternal:(id) self.geofenceDelegator];
+                                                                     geofenceInternal:(id) self.geofenceDelegator
+                                                                       sdkStateLogger:[[EMSSdkStateLogger alloc] initWithEndpoint:self.endpoint
+                                                                                                                 meRequestContext:self.requestContext
+                                                                                                                           config:config
+                                                                                                                          storage:self.storage]
+                                                                               logger:self.logger];
 
     [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                 requestFactory:self.requestFactory

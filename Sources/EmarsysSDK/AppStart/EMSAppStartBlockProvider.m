@@ -10,6 +10,7 @@
 #import "EMSMacros.h"
 #import "EMSAppEventLog.h"
 #import "EMSGeofenceInternal.h"
+#import "EMSSdkStateLogger.h"
 
 @interface EMSAppStartBlockProvider ()
 
@@ -19,6 +20,8 @@
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) EMSConfigInternal *configInternal;
 @property(nonatomic, strong) EMSGeofenceInternal *geofenceInternal;
+@property(nonatomic, strong) EMSSdkStateLogger *sdkStateLogger;
+@property(nonatomic, strong) EMSLogger *logger;
 
 @end
 
@@ -29,13 +32,17 @@
                         requestContext:(MERequestContext *)requestContext
                       deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient
                         configInternal:(EMSConfigInternal *)configInternal
-                      geofenceInternal:(EMSGeofenceInternal *)geofenceInternal {
+                      geofenceInternal:(EMSGeofenceInternal *)geofenceInternal
+                        sdkStateLogger:(EMSSdkStateLogger *)sdkStateLogger
+                                logger:(EMSLogger *)logger {
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestContext);
     NSParameterAssert(deviceInfoClient);
     NSParameterAssert(configInternal);
     NSParameterAssert(geofenceInternal);
+    NSParameterAssert(sdkStateLogger);
+    NSParameterAssert(logger);
     if (self = [super init]) {
         _requestManager = requestManager;
         _requestFactory = requestFactory;
@@ -43,6 +50,8 @@
         _deviceInfoClient = deviceInfoClient;
         _configInternal = configInternal;
         _geofenceInternal = geofenceInternal;
+        _sdkStateLogger = sdkStateLogger;
+        _logger = logger;
     }
     return self;
 }
@@ -73,7 +82,11 @@
 - (MEHandlerBlock)createRemoteConfigEventBlock {
     __weak typeof(self) weakSelf = self;
     return ^{
-        [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:nil];
+        [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
+            if ([self.logger logLevel] == LogLevelTrace) {
+                [self.sdkStateLogger log];
+            }
+        }];
     };
 }
 
