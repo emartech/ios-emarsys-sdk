@@ -27,6 +27,7 @@
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
 @property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
+@property(nonatomic, strong) EMSEventHandlerBlock innerEventHandler;
 
 @property(nonatomic, strong) EMSInAppLog *inAppLog;
 
@@ -56,9 +57,15 @@
         _timestampProvider = timestampProvider;
         _completionBlockProvider = completionBlockProvider;
         _windowProvider = windowProvider;
+        __weak typeof(self) weakSelf = self;
+        _innerEventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+            if (weakSelf.eventHandler) {
+                weakSelf.eventHandler(eventName, payload);
+            }
+        };
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
                                                                                                                                                                 buttonClickRepository:buttonClickRepository
-                                                                                                                                                                     appEventProtocol:self
+                        appEventHandlerBlock:self.innerEventHandler
                                                                                                                                                                         closeProtocol:self]
                                                                                                                           operationQueue:operationQueue]];
         _displayedIamRepository = displayedIamRepository;

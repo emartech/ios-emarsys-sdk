@@ -14,7 +14,6 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
         __block MEInAppMessage *currentInAppMessage;
         __block id _meiam;
-        __block id _inappEventProtocol;
         __block id _inappCloseProtocol;
         __block EMSEventHandlerBlock eventHandler;
 
@@ -25,16 +24,14 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                                                                         html:@"</HTML>"
                                                            responseTimestamp:[NSDate date]];
             _meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
-            _inappEventProtocol = [KWMock mockForProtocol:@protocol(EMSIAMAppEventProtocol)];
             _inappCloseProtocol = [KWMock mockForProtocol:@protocol(EMSIAMCloseProtocol)];
             eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
             };
             [_meiam stub:@selector(currentInAppMessage) andReturn:currentInAppMessage];
             [_meiam stub:@selector(inAppTracker) andReturn:[KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)]];
-            [_inappEventProtocol stub:@selector(eventHandler) andReturn:eventHandler];
             _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
                                               buttonClickRepository:[MEButtonClickRepository nullMock]
-                                                   appEventProtocol:_inappEventProtocol
+                    appEventHandlerBlock:eventHandler
                                                       closeProtocol:_inappCloseProtocol];
         });
 
@@ -44,7 +41,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                 @try {
                     [[MEIAMJSCommandFactory alloc] initWithMEIAM:nil
                                            buttonClickRepository:nil
-                                                appEventProtocol:_inappEventProtocol
+                            appEventHandlerBlock:eventHandler
                                                    closeProtocol:_inappCloseProtocol];
                     fail(@"Expected exception when meIam is nil");
                 } @catch (NSException *exception) {
@@ -53,15 +50,15 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                 }
             });
 
-            it(@"appEventProtocol should not be nil", ^{
+            it(@"appEventHandlerBlock should not be nil", ^{
                 @try {
                     [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
                                            buttonClickRepository:nil
-                                                appEventProtocol:nil
+                            appEventHandlerBlock:nil
                                                    closeProtocol:_inappCloseProtocol];
-                    fail(@"Expected exception when appEventProtocol is nil");
+                    fail(@"Expected exception when appEventHandlerBlock is nil");
                 } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: appEventProtocol"];
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: appEventHandlerBlock"];
                     [[theValue(exception) shouldNot] beNil];
                 }
             });
@@ -70,7 +67,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                 @try {
                     [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
                                            buttonClickRepository:nil
-                                                appEventProtocol:_inappEventProtocol
+                            appEventHandlerBlock:eventHandler
                                                    closeProtocol:nil];
                     fail(@"Expected exception when closeProtocol is nil");
                 } @catch (NSException *exception) {
@@ -84,7 +81,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                 id meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
                 MEIAMJSCommandFactory *meiamjsCommandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:meiam
                                                                                       buttonClickRepository:nil
-                                                                                           appEventProtocol:_inappEventProtocol
+                        appEventHandlerBlock:eventHandler
                                                                                               closeProtocol:_inappCloseProtocol];
 
                 [[@([meiamjsCommandFactory.meIam isEqual:meiam]) should] beYes];

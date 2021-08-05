@@ -14,16 +14,16 @@
 
 - (instancetype)initWithMEIAM:(id <MEIAMProtocol>)meIam
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
-             appEventProtocol:(id <EMSIAMAppEventProtocol>)appEventProtocol
+        appEventHandlerBlock:(EMSEventHandlerBlock)appEventHandlerBlock
                 closeProtocol:(id <EMSIAMCloseProtocol>)closeProtocol {
     NSParameterAssert(meIam);
-    NSParameterAssert(appEventProtocol);
+    NSParameterAssert(appEventHandlerBlock);
     NSParameterAssert(closeProtocol);
 
     if (self = [super init]) {
         _meIam = meIam;
         _buttonClickRepository = buttonClickRepository;
-        _appEventProtocol = appEventProtocol;
+        _appEventHandlerBlock = appEventHandlerBlock;
         _closeProtocol = closeProtocol;
     }
     return self;
@@ -38,7 +38,7 @@
     } else if ([name isEqualToString:MEIAMClose.commandName]) {
         command = [[MEIAMClose alloc] initWithEMSIAMCloseProtocol:self.closeProtocol];
     } else if ([name isEqualToString:MEIAMTriggerAppEvent.commandName]) {
-        command = [[MEIAMTriggerAppEvent alloc] initWithEventHandler:[self.appEventProtocol eventHandler]];
+        command = [[MEIAMTriggerAppEvent alloc] initWithEventHandler:self.appEventHandlerBlock];
     } else if ([name isEqualToString:MEIAMButtonClicked.commandName]) {
         command = [[MEIAMButtonClicked alloc] initWithInAppMessage:self.inAppMessage ? self.inAppMessage : [self.meIam currentInAppMessage]
                                                         repository:self.buttonClickRepository

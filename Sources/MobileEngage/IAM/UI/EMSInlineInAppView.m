@@ -12,7 +12,6 @@
 #import "EMSIAMCloseProtocol.h"
 #import "MEIAMJSCommandFactory.h"
 #import "MEJSBridge.h"
-#import "EMSEventHandlerProtocolBlockConverter.h"
 #import "NSError+EMSCore.h"
 #import "EMSDispatchWaiter.h"
 
@@ -24,7 +23,7 @@
 @property(nonatomic, strong) NSLayoutConstraint *selfHeightConstraint;
 @property(nonatomic, strong) MEJSBridge *jsBridge;
 @property(nonatomic, strong) MEIAMJSCommandFactory *commandFactory;
-@property(nonatomic, strong) EMSEventHandlerProtocolBlockConverter *protocolBlockConverter;
+@property(nonatomic, strong) EMSEventHandlerBlock innerEventHandler;
 
 @end
 
@@ -47,14 +46,18 @@
 - (void)commonInit {
     __weak typeof(self) weakSelf = self;
     EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
+    _innerEventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
+        if (weakSelf.eventHandler) {
+            weakSelf.eventHandler(eventName, payload);
+        }
+    };
     
     [waiter enter];
     
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
-        weakSelf.protocolBlockConverter = [EMSEventHandlerProtocolBlockConverter new];
         weakSelf.commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
                                                          buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
-                                                              appEventProtocol:weakSelf.protocolBlockConverter
+                appEventHandlerBlock:weakSelf.innerEventHandler
                                                                  closeProtocol:weakSelf];
         weakSelf.jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:weakSelf.commandFactory
                                                           operationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
@@ -250,11 +253,6 @@ didFinishNavigation:(WKNavigation *)navigation {
         [weakSelf.webView evaluateJavaScript:js
                            completionHandler:nil];
     });
-}
-
-- (void)setEventHandler:(EMSEventHandlerBlock)eventHandler {
-    _eventHandler = eventHandler;
-    self.protocolBlockConverter.eventHandler.handlerBlock = eventHandler;
 }
 
 @end
