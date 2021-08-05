@@ -42,8 +42,11 @@
     } else {
         NSString *name = message[@"name"];
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.eventHandler(name, payload);
+            if (weakSelf.eventHandler) {
+                weakSelf.eventHandler(name, payload);
+            }
         });
         resultBlock([MEIAMCommandResultUtils createSuccessResultWith:eventId]);
     }
