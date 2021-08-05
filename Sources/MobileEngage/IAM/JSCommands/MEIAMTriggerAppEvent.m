@@ -6,6 +6,7 @@
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMCommandResultUtils.h"
 #import "NSDictionary+EMSCore.h"
+#import "EMSDispatchWaiter.h"
 
 @interface MEIAMTriggerAppEvent ()
 
@@ -42,12 +43,17 @@
     } else {
         NSString *name = message[@"name"];
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
-        __weak typeof(self) weakSelf = self;
+        EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
+        [waiter enter];
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (weakSelf.eventHandler) {
-                weakSelf.eventHandler(name, payload);
+            if (self.eventHandler) {
+                self.eventHandler(name, payload);
             }
+            [waiter exit];
         });
+
+        [waiter waitWithInterval:2];
+
         resultBlock([MEIAMCommandResultUtils createSuccessResultWith:eventId]);
     }
 }

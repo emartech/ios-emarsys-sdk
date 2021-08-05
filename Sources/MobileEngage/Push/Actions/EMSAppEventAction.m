@@ -25,10 +25,11 @@
 }
 
 - (void)execute {
+    __weak typeof(self) weakSelf = self;
     if (self.eventHandler) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.eventHandler(self.action[@"name"],
-                    self.action[@"payload"]);
+            weakSelf.eventHandler(weakSelf.action[@"name"],
+                    weakSelf.action[@"payload"]);
         });
     }
 }
