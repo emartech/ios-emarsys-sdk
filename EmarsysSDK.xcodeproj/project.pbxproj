@@ -410,6 +410,7 @@
 		6425957CDB105E80461977CB /* EMSInlineInAppViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259D6CA586BDE577D5679A /* EMSInlineInAppViewTests.m */; };
 		642595A62591A0C73A5D1467 /* NSMutableDicitionary+EMSCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259C87537000FEC9172DA7 /* NSMutableDicitionary+EMSCoreTests.m */; };
 		642595EB5E38E8C5A0FF5E31 /* EMSMobileEngageNullSafeBodyParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 64259C3478D23395AB676CDE /* EMSMobileEngageNullSafeBodyParser.h */; };
+		64259603871205D1EBFCA15E /* repo-info.json in Resources */ = {isa = PBXBuildFile; fileRef = 64259D5AEAF25267590037DD /* repo-info.json */; };
 		642596192A4396F1A1A14437 /* EMSInstanceRouterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425985453DED43875F5A3C5 /* EMSInstanceRouterTests.m */; };
 		64259684DD80A4E8BE0A44FD /* EMSInstanceRouterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6425985453DED43875F5A3C5 /* EMSInstanceRouterTests.m */; };
 		642596C2D0A52B425744457B /* EMSOpenExternalEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642591C29A568D99A7659383 /* EMSOpenExternalEventActionTests.m */; };
@@ -1158,6 +1159,7 @@
 		64259C7DB15ED101C980F8DD /* EMSPredictRequestModelBuilderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictRequestModelBuilderTests.m; sourceTree = "<group>"; };
 		64259C87537000FEC9172DA7 /* NSMutableDicitionary+EMSCoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDicitionary+EMSCoreTests.m"; sourceTree = "<group>"; };
 		64259D0FFCCA010F7BA3F5C1 /* nightly_build_worklow.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = nightly_build_worklow.yml; path = .github/workflows/nightly_build_worklow.yml; sourceTree = "<group>"; };
+		64259D5AEAF25267590037DD /* repo-info.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "repo-info.json"; path = "Assets.xcassets/repo-info.json"; sourceTree = "<group>"; };
 		64259D6CA586BDE577D5679A /* EMSInlineInAppViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInlineInAppViewTests.m; sourceTree = "<group>"; };
 		64259E07D567C02596450751 /* EMSInlineInAppView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInlineInAppView.h; sourceTree = "<group>"; };
 		64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofenceInternalTests.m; sourceTree = "<group>"; };
@@ -3500,6 +3502,7 @@
 				8ADAA67E210773D500B3AC44 /* LaunchScreen.storyboard */,
 				8ADAA681210773D500B3AC44 /* Info.plist */,
 				8ADAA682210773D500B3AC44 /* main.m */,
+				64259D5AEAF25267590037DD /* repo-info.json */,
 			);
 			path = SdkHost;
 			sourceTree = "<group>";
@@ -4081,6 +4084,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64259603871205D1EBFCA15E /* repo-info.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
