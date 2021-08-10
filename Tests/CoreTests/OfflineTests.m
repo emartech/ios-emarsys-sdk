@@ -213,13 +213,13 @@ SPEC_BEGIN(OfflineTests)
                                                          timestampProvider:[EMSTimestampProvider new]
                                                               uuidProvider:[EMSUUIDProvider new]];
                 EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://www.yahoo.com"];
+                        [builder setUrl:@"https://www.emarsys.com"];
                         [builder setMethod:HTTPMethodGET];
                     }
                                                          timestampProvider:[EMSTimestampProvider new]
                                                               uuidProvider:[EMSUUIDProvider new]];
                 EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                        [builder setUrl:@"https://www.wolframalpha.com"];
+                        [builder setUrl:@"https://www.sap.com"];
                         [builder setMethod:HTTPMethodGET];
                     }
                                                          timestampProvider:[EMSTimestampProvider new]
