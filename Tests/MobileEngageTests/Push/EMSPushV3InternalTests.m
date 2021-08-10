@@ -582,7 +582,11 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
                                                     timeout:10];
 
     XCTAssertEqual(result, XCTWaiterResultCompleted);
-    XCTAssertEqual(_option, UNNotificationPresentationOptionAlert);
+    if (@available(iOS 14.0, *)) {
+        XCTAssertEqual(_option, UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionList);
+    } else {
+        XCTAssertEqual(_option, UNNotificationPresentationOptionAlert);
+    }
     XCTAssertEqualObjects(currentQueue, [NSOperationQueue mainQueue]);
 }
 

@@ -183,7 +183,11 @@
                               willPresentNotification:notification
                                 withCompletionHandler:completionHandler];
         }
-        completionHandler(UNNotificationPresentationOptionAlert);
+        if (@available(iOS 14.0, *)) {
+            completionHandler(UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionList);
+        } else {
+            completionHandler(UNNotificationPresentationOptionAlert);
+        }
     });
 }
 
