@@ -4,6 +4,7 @@
 
 #import <UIKit/UIKit.h>
 #import "EMSOpenExternalUrlAction.h"
+#import "EMSDispatchWaiter.h"
 
 @interface EMSOpenExternalUrlAction ()
 
@@ -26,13 +27,20 @@
 }
 
 - (void)execute {
+    EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
     NSString *urlString = self.action[@"url"];
+
     if (urlString) {
+        [waiter enter];
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.application openURL:[[NSURL alloc] initWithString:urlString]
-                              options:@{}
-                    completionHandler:nil];
+            [weakSelf.application openURL:[[NSURL alloc] initWithString:urlString]
+                                  options:@{}
+                        completionHandler:nil];
+            [waiter exit];
         });
+
+        [waiter waitWithInterval:2];
     }
 }
 

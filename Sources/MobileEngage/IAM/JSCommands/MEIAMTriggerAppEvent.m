@@ -45,9 +45,10 @@
         NSDictionary *payload = [message dictionaryValueForKey:@"payload"];
         EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
         [waiter enter];
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.eventHandler) {
-                self.eventHandler(name, payload);
+            if (weakSelf.eventHandler) {
+                weakSelf.eventHandler(name, payload);
             }
             [waiter exit];
         });

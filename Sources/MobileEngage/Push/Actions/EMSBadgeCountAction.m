@@ -3,6 +3,7 @@
 //
 
 #import "EMSBadgeCountAction.h"
+#import "EMSDispatchWaiter.h"
 
 @interface EMSBadgeCountAction ()
 
@@ -25,15 +26,22 @@
 }
 
 - (void)execute {
+    EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
     NSInteger value = [self.action[@"value"] integerValue];
+
+    __weak typeof(self) weakSelf = self;
+    [waiter enter];
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([[self.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
-            NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
-            [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
+        if ([[weakSelf.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
+            NSInteger currentBadgeCount = [weakSelf.application applicationIconBadgeNumber];
+            [weakSelf.application setApplicationIconBadgeNumber:currentBadgeCount + value];
         } else {
-            [self.application setApplicationIconBadgeNumber:value];
+            [weakSelf.application setApplicationIconBadgeNumber:value];
         }
+        [waiter exit];
     });
+
+    [waiter waitWithInterval:2];
 }
 
 @end

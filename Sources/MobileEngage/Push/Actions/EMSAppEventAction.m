@@ -3,6 +3,7 @@
 //
 
 #import "EMSAppEventAction.h"
+#import "EMSDispatchWaiter.h"
 
 @interface EMSAppEventAction ()
 
@@ -13,7 +14,7 @@
 @implementation EMSAppEventAction
 
 - (instancetype)initWithActionDictionary:(NSDictionary<NSString *, id> *)action
-                            eventHandler:(EMSEventHandlerBlock) eventHandler {
+                            eventHandler:(EMSEventHandlerBlock)eventHandler {
     NSParameterAssert(action);
     NSParameterAssert(eventHandler);
 
@@ -25,12 +26,17 @@
 }
 
 - (void)execute {
-    __weak typeof(self) weakSelf = self;
+    EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
+    [waiter enter];
     if (self.eventHandler) {
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.eventHandler(weakSelf.action[@"name"],
                     weakSelf.action[@"payload"]);
+            [waiter exit];
         });
+
+        [waiter waitWithInterval:2];
     }
 }
 
