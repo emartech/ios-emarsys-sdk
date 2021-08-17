@@ -493,12 +493,18 @@
 
     [self.deepLinkDelegator proxyWithInstanceRouter:deepLinkRouter];
 
+    EMSInAppInternal *inAppInternal = [[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
+                                                                        requestFactory:self.requestFactory
+                                                                               meInApp:meInApp
+                                                                     timestampProvider:timestampProvider
+                                                                          uuidProvider:self.uuidProvider];
+
     _loggingPush = [EMSLoggingPushInternal new];
     EMSInstanceRouter *pushRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                                                                           requestManager:self.requestManager
                                                                                                                            actionFactory:actionFactory
                                                                                                                                  storage:self.storage
-                                                                                                                           inAppInternal:(EMSInAppInternal *) self.iam
+                                                                                                                           inAppInternal:inAppInternal
                                                                                                                           operationQueue:self.coreOperationQueue]
                                                                        loggingInstance:self.loggingPush
                                                                            routerLogic:self.mobileEngageRouterLogicBlock];
@@ -572,11 +578,7 @@
                                                                                                                           storage:self.storage]
                                                                                logger:self.logger];
 
-    [self.iam setInAppTracker:[[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
-                                                                requestFactory:self.requestFactory
-                                                                       meInApp:meInApp
-                                                             timestampProvider:timestampProvider
-                                                                  uuidProvider:self.uuidProvider]];
+    [self.iam setInAppTracker:inAppInternal];
 }
 
 - (EMSCompletionMiddleware *)createMiddleware {
