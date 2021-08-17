@@ -24,7 +24,9 @@
 
     if (@available(iOS 13.0, *)) {
         for (UIScene *scene in self.application.connectedScenes) {
-            if ([scene activationState] == UISceneActivationStateForegroundActive) {
+            UISceneActivationState activationState = [scene activationState];
+            if (activationState == UISceneActivationStateForegroundActive
+                    || activationState == UISceneActivationStateForegroundInactive) {
                 result = scene;
                 break;
             }

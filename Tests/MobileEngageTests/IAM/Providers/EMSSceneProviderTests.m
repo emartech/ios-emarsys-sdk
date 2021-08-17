@@ -21,25 +21,49 @@
     }
 }
 
-- (void)testProvideScene {
+- (void)testProvideScene_active {
     if (@available(iOS 13.0, *)) {
         UIApplication *mockApplication = OCMClassMock([UIApplication class]);
         UIScene *mockScene1 = OCMClassMock([UIScene class]);
         UIScene *mockScene2 = OCMClassMock([UIScene class]);
-        UIScene *mockScene3 = OCMClassMock([UIScene class]);
 
-        NSSet *connectedScenes = [NSSet setWithArray:@[mockScene1, mockScene2, mockScene3]];
+        NSSet *connectedScenes = [NSSet setWithArray:@[mockScene1, mockScene2]];
 
-        OCMStub([mockScene2 activationState]).andReturn(UISceneActivationStateForegroundActive);
-        OCMStub([mockScene1 activationState]).andReturn(UISceneActivationStateForegroundInactive);
-        OCMStub([mockScene3 activationState]).andReturn(UISceneActivationStateBackground);
+        OCMStub([mockScene1 activationState]).andReturn(UISceneActivationStateForegroundActive);
+        OCMStub([mockScene2 activationState]).andReturn(UISceneActivationStateBackground);
         OCMStub([mockApplication connectedScenes]).andReturn(connectedScenes);
 
         EMSSceneProvider *provider = [[EMSSceneProvider alloc] initWithApplication:mockApplication];
 
         UIScene *result = [provider provideScene];
 
-        XCTAssertEqualObjects(result, mockScene2);
+        XCTAssertEqualObjects(result, mockScene1);
+    } else {
+        EMSSceneProvider *provider = [[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]];
+
+        UIScene *result = [provider provideScene];
+
+        XCTAssertNil(result);
+    }
+}
+
+- (void)testProvideScene_inactive {
+    if (@available(iOS 13.0, *)) {
+        UIApplication *mockApplication = OCMClassMock([UIApplication class]);
+        UIScene *mockScene1 = OCMClassMock([UIScene class]);
+        UIScene *mockScene2 = OCMClassMock([UIScene class]);
+
+        NSSet *connectedScenes = [NSSet setWithArray:@[mockScene1, mockScene2]];
+
+        OCMStub([mockScene1 activationState]).andReturn(UISceneActivationStateForegroundInactive);
+        OCMStub([mockScene2 activationState]).andReturn(UISceneActivationStateBackground);
+        OCMStub([mockApplication connectedScenes]).andReturn(connectedScenes);
+
+        EMSSceneProvider *provider = [[EMSSceneProvider alloc] initWithApplication:mockApplication];
+
+        UIScene *result = [provider provideScene];
+
+        XCTAssertEqualObjects(result, mockScene1);
     } else {
         EMSSceneProvider *provider = [[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]];
 
