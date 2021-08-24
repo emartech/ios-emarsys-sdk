@@ -32,9 +32,8 @@
 
     if (urlString) {
         [waiter enter];
-        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.application openURL:[[NSURL alloc] initWithString:urlString]
+            [self.application openURL:[[NSURL alloc] initWithString:urlString]
                                   options:@{}
                         completionHandler:nil];
             [waiter exit];

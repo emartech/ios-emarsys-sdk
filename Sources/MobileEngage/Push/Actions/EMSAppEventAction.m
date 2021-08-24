@@ -29,15 +29,14 @@
     EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
     [waiter enter];
     if (self.eventHandler) {
-        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.eventHandler(weakSelf.action[@"name"],
-                    weakSelf.action[@"payload"]);
+            self.eventHandler(self.action[@"name"],
+                    self.action[@"payload"]);
             [waiter exit];
         });
-
-        [waiter waitWithInterval:2];
     }
+
+    [waiter waitWithInterval:2];
 }
 
 @end

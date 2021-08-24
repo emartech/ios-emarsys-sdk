@@ -28,15 +28,14 @@
 - (void)execute {
     EMSDispatchWaiter *waiter = [[EMSDispatchWaiter alloc] init];
     NSInteger value = [self.action[@"value"] integerValue];
-
-    __weak typeof(self) weakSelf = self;
+    
     [waiter enter];
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([[weakSelf.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
-            NSInteger currentBadgeCount = [weakSelf.application applicationIconBadgeNumber];
-            [weakSelf.application setApplicationIconBadgeNumber:currentBadgeCount + value];
+        if ([[self.action[@"method"] lowercaseString] isEqualToString:@"add"]) {
+            NSInteger currentBadgeCount = [self.application applicationIconBadgeNumber];
+            [self.application setApplicationIconBadgeNumber:currentBadgeCount + value];
         } else {
-            [weakSelf.application setApplicationIconBadgeNumber:value];
+            [self.application setApplicationIconBadgeNumber:value];
         }
         [waiter exit];
     });
