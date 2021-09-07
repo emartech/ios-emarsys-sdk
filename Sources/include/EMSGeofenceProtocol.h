@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
+@class EMSGeofence;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol EMSGeofenceProtocol <NSObject>
@@ -13,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL initialEnterTriggerEnabled;
 
 - (void)requestAlwaysAuthorization;
+- (NSArray <EMSGeofence *> *) registeredGeofences;
 
 - (void)enable;
 - (void)enableWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock

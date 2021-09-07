@@ -188,32 +188,32 @@
                                                     lat:43.13
                                                     lon:14.41
                                                       r:50];
-    
+
     self.geofenceInternal.initialEnterTriggerEnabled = YES;
     EMSGeofenceInternal *partialMockInternal = OCMPartialMock(self.geofenceInternal);
-    
-    [partialMockInternal setRegisteredGeofences:[@{
-        @"id1": geofence1,
-        @"id2": geofence2
+
+    [partialMockInternal setRegisteredGeofencesDictionary:[@{
+            @"id1": geofence1,
+            @"id2": geofence2
     } mutableCopy]];
-    
+
     [partialMockInternal locationManager:self.mockLocationManager didUpdateLocations:@[[[CLLocation alloc] initWithLatitude:41.1301
-                                                                                                                    longitude:13.4101]]];
-    
+                                                                                                                  longitude:13.4101]]];
+
     [self waitForOperation];
-    
+
     OCMVerify([partialMockInternal handleActionWithTriggers:@[[geofence1.triggers firstObject]]
                                                        type:@"enter"]);
 }
 
 - (void)testEnterInitialTriggerEnabled {
     EMSGeofenceInternal *internal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
-                                         requestManager:self.mockRequestManager
-                                         responseMapper:self.mockResponseMapper
-                                        locationManager:self.mockLocationManager
-                                          actionFactory:self.mockActionFactory
-                                                storage:self.mockStorage
-                                                  queue:self.queue];
+                                                                         requestManager:self.mockRequestManager
+                                                                         responseMapper:self.mockResponseMapper
+                                                                        locationManager:self.mockLocationManager
+                                                                          actionFactory:self.mockActionFactory
+                                                                                storage:self.mockStorage
+                                                                                  queue:self.queue];
     XCTAssertFalse(internal.initialEnterTriggerEnabled);
 }
 
@@ -263,7 +263,7 @@
 }
 
 - (void)testRegisteredGeofences {
-    XCTAssertNotNil(self.geofenceInternal.registeredGeofences);
+    XCTAssertNotNil(self.geofenceInternal.registeredGeofencesDictionary);
 }
 
 - (void)testEnable_whenIsEnabled_YES {
@@ -439,14 +439,13 @@
                                                               actionFactory:self.mockActionFactory
                                                                     storage:self.mockStorage
                                                                       queue:self.queue];
-    
+
     XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
 }
 
 - (void)testInitialEnterTriggerEnabled_shouldReturnYes_whenWasSetBefore {
     OCMStub([self.mockStorage numberForKey:@"initialEnterTriggerEnabled"]).andReturn(@(YES));
-    
-    
+
     _geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.mockRequestFactory
                                                              requestManager:self.mockRequestManager
                                                              responseMapper:self.mockResponseMapper
@@ -454,7 +453,7 @@
                                                               actionFactory:self.mockActionFactory
                                                                     storage:self.mockStorage
                                                                       queue:self.queue];
-    
+
     XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
 }
 
@@ -466,12 +465,12 @@
                                                               actionFactory:self.mockActionFactory
                                                                     storage:self.mockStorage
                                                                       queue:self.queue];
-    
+
     [self.geofenceInternal setInitialEnterTriggerEnabled:YES];
-    
+
     OCMVerify([self.mockStorage setNumber:@(YES)
                                    forKey:kInitialEnterTriggerEnabled]);
-    
+
     XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
 }
 
@@ -485,13 +484,13 @@
                                                                     storage:self.mockStorage
                                                                       queue:self.queue];
     XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
-    
+
     [self.geofenceInternal setInitialEnterTriggerEnabled:YES];
-    
+
     XCTAssertTrue(self.geofenceInternal.initialEnterTriggerEnabled);
-    
+
     [self.geofenceInternal setInitialEnterTriggerEnabled:NO];
-    
+
     XCTAssertFalse(self.geofenceInternal.initialEnterTriggerEnabled);
 }
 
@@ -739,7 +738,7 @@
     CLCircularRegion *enteringRegion = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(12.34, 56.78)
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
-    [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
+    [self.geofenceInternal setRegisteredGeofencesDictionary:[@{@"geofenceId": geofence} mutableCopy]];
     [self.geofenceInternal setEventHandler:eventHandlerBlock];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
@@ -785,7 +784,7 @@
     CLCircularRegion *enteringRegion = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(12.34, 56.78)
                                                                          radius:12
                                                                      identifier:@"geofenceId"];
-    [self.geofenceInternal setRegisteredGeofences:[@{@"geofenceId": geofence} mutableCopy]];
+    [self.geofenceInternal setRegisteredGeofencesDictionary:[@{@"geofenceId": geofence} mutableCopy]];
     [self.geofenceInternal setEventHandler:eventHandlerBlock];
 
     [self.geofenceInternal locationManager:self.mockLocationManager
@@ -819,7 +818,7 @@
     CLCircularRegion *enteringRegion = [[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(12.34, 56.78)
                                                                          radius:12
                                                                      identifier:@"EMSRefreshArea"];
-    [partialGeofenceInternal setRegisteredGeofences:[@{@"EMSRefreshArea": geofence} mutableCopy]];
+    [partialGeofenceInternal setRegisteredGeofencesDictionary:[@{@"EMSRefreshArea": geofence} mutableCopy]];
 
     OCMReject([self.mockActionFactory createActionWithActionDictionary:[OCMArg any]]);
 
@@ -883,6 +882,40 @@
     [self waitForOperation];
 
     OCMVerify([mockQueue addOperationWithBlock:[OCMArg any]]);
+}
+
+- (void)testRegisteredGeofences_shouldReturnWithArrayOfRegisteredGeofences {
+    NSArray *expected = @[
+            [self createGeofenceWithId:@"geofenceId1"
+                                   lat:47.493160
+                                   lon:19.058355
+                                     r:10],
+            [self createGeofenceWithId:@"geofenceId2"
+                                   lat:47.493812
+                                   lon:19.058537
+                                     r:10],
+            [self createGeofenceWithId:@"geofenceId3"
+                                   lat:47.493827
+                                   lon:19.060715
+                                     r:10]
+    ];
+    EMSGeofenceInternal *partialMockInternal = OCMPartialMock(self.geofenceInternal);
+    OCMStub([partialMockInternal registeredGeofencesDictionary]).andReturn((@{
+            @"geofenceId1": [self createGeofenceWithId:@"geofenceId1"
+                                                   lat:47.493160
+                                                   lon:19.058355
+                                                     r:10],
+            @"geofenceId2": [self createGeofenceWithId:@"geofenceId2"
+                                                   lat:47.493812
+                                                   lon:19.058537
+                                                     r:10],
+            @"geofenceId3": [self createGeofenceWithId:@"geofenceId3"
+                                                   lat:47.493827
+                                                   lon:19.060715
+                                                     r:10]}));
+    NSArray *result = [partialMockInternal registeredGeofences];
+
+    XCTAssertEqualObjects(result, expected);
 }
 
 - (EMSGeofenceResponse *)createExpectedResponse {

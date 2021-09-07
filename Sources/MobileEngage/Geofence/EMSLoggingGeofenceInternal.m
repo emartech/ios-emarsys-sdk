@@ -46,6 +46,13 @@
                                               parameters:nil], LogLevelDebug);
 }
 
+- (NSArray <EMSGeofence *> *)registeredGeofences {
+    EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
+                                                     sel:_cmd
+                                              parameters:nil], LogLevelDebug);
+    return @[];
+}
+
 - (void)enable {
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
                                                      sel:_cmd

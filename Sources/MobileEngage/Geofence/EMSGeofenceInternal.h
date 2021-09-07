@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) EMSEventHandlerBlock eventHandler;
 @property(nonatomic, strong) EMSGeofenceResponse *geofenceResponse;
 @property(nonatomic, strong) CLLocation *currentLocation;
-@property(nonatomic, strong) NSMutableDictionary *registeredGeofences;
+@property(nonatomic, strong) NSMutableDictionary *registeredGeofencesDictionary;
 @property(nonatomic, assign) int geofenceLimit;
 @property(nonatomic, assign) BOOL recalculateable;
 

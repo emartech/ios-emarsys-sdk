@@ -61,7 +61,7 @@
         _storage = storage;
         _queue = queue;
         _geofenceLimit = 20;
-        _registeredGeofences = [NSMutableDictionary dictionary];
+        _registeredGeofencesDictionary = [NSMutableDictionary dictionary];
         _enabled = [[self.storage numberForKey:kIsGeofenceEnabled] boolValue] && [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
         _initialEnterTriggerEnabled = [[self.storage numberForKey:kInitialEnterTriggerEnabled] boolValue];
         if (self.isEnabled) {
@@ -133,7 +133,7 @@
     if (_initialEnterTriggerEnabled && !self.didFireInitialEnterTrigger) {
         self.didFireInitialEnterTrigger = YES;
         NSMutableArray *fireableTriggers = [NSMutableArray array];
-        for (EMSGeofence *geofence in [self.registeredGeofences allValues]) {
+        for (EMSGeofence *geofence in [self.registeredGeofencesDictionary allValues]) {
             BOOL inRegion = [[[CLCircularRegion alloc] initWithCenter:CLLocationCoordinate2DMake(geofence.lat, geofence.lon) radius:geofence.r identifier:geofence.id] containsCoordinate:CLLocationCoordinate2DMake(self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude)];
             if (inRegion) {
                 for (EMSGeofenceTrigger *trigger in geofence.triggers) {
@@ -177,7 +177,7 @@
                                                           parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelDebug);
-        EMSGeofence *geofence = self.registeredGeofences[region.identifier];
+        EMSGeofence *geofence = self.registeredGeofencesDictionary[region.identifier];
         [weakSelf handleActionWithTriggers:geofence.triggers
                                       type:@"enter"];
     }];
@@ -198,7 +198,7 @@
                                                           parameters:[NSDictionary dictionaryWithDictionary:parametersDict]
                                                               status:[NSDictionary dictionaryWithDictionary:statusDict]];
         EMSLog(logEntry, LogLevelDebug);
-        EMSGeofence *geofence = weakSelf.registeredGeofences[region.identifier];
+        EMSGeofence *geofence = weakSelf.registeredGeofencesDictionary[region.identifier];
 
         if ([geofence.id isEqualToString:@"EMSRefreshArea"]) {
             weakSelf.recalculateable = YES;
@@ -218,6 +218,10 @@
 
 - (void)requestAlwaysAuthorization {
     [self.locationManager requestAlwaysAuthorization];
+}
+
+- (NSArray <EMSGeofence *> *)registeredGeofences {
+    return [self.registeredGeofencesDictionary allValues];
 }
 
 - (void)enable {
@@ -322,11 +326,11 @@
 }
 
 - (NSDictionary<NSNumber *, CLCircularRegion *> *)createDistanceRegionDictionary {
-    [self.registeredGeofences removeAllObjects];
+    [self.registeredGeofencesDictionary removeAllObjects];
     NSMutableDictionary *regions = [NSMutableDictionary dictionary];
     for (EMSGeofenceGroup *group in self.geofenceResponse.groups) {
         for (EMSGeofence *geofence in group.geofences) {
-            self.registeredGeofences[geofence.id] = geofence;
+            self.registeredGeofencesDictionary[geofence.id] = geofence;
             CLLocation *location = [[CLLocation alloc] initWithLatitude:geofence.lat
                                                               longitude:geofence.lon];
             CLLocationDistance distance = [self.currentLocation distanceFromLocation:location];
