@@ -40,7 +40,7 @@ jobs:
       - name: Run tests on Firebase
         uses: nick-invision/retry@v2
         with:
-          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphonexr,version=13.2,locale=en_GB --device model=iphone11,version=13.3,locale=en_GB --device model=iphone8,version=12.4,locale=en_GB --device model=iphone11pro,version=14.7,locale=en_GB
+          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone11,version=13.3,locale=en_GB --device model=iphonexr,version=12.4,locale=en_GB --device model=iphone11pro,version=14.7,locale=en_GB
           max_attempts: 3
           retry_on: error
           timeout_minutes: 30
