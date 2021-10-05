@@ -2,7 +2,7 @@
 //  Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "Kiwi.h"
+#import <OCMock/OCMock.h>
 #import "EMSRequestManager.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteSchemaHandler.h"
@@ -23,540 +23,560 @@
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
-SPEC_BEGIN(EMSRequestManagerTests)
-        __block EMSSQLiteHelper *helper;
-        __block EMSRequestModelRepository *requestModelRepository;
 
-        NSOperationQueue *queue = [EMSOperationQueue new];
-        queue.maxConcurrentOperationCount = 1;
-        queue.qualityOfService = NSQualityOfServiceUtility;
+@interface EMSRequestManagerTests : XCTestCase
 
-        EMSRequestManager *(^createRequestManager)(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) = ^EMSRequestManager *(CoreSuccessBlock successBlock, CoreErrorBlock errorBlock, EMSRequestModelRepository *requestRepository, EMSShardRepository *shardRepository) {
-            EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
-                                                                                             errorBlock:errorBlock];
-            NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-            [sessionConfiguration setTimeoutIntervalForRequest:30.0];
-            [sessionConfiguration setHTTPCookieStorage:nil];
-            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
-                                                                  delegate:nil
-                                                             delegateQueue:queue];
+@property(nonatomic, strong) EMSSQLiteHelper *helper;
+@property(nonatomic, strong) EMSRequestModelRepository *requestModelRepository;
+@property(nonatomic, strong) EMSShardRepository *shardRepository;
+@property(nonatomic, strong) EMSRequestManager *requestManager;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
-            EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
+@end
 
-            EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                         queue:queue
-                                                             timestampProvider:[EMSTimestampProvider new]
-                                                             additionalHeaders:nil
-                                                           requestModelMappers:nil
-                                                              responseHandlers:nil
-                                                        mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
-            EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                        operationQueue:queue
-                                                                                                                   defaultSuccessBlock:middleware.successBlock
-                                                                                                                     defaultErrorBlock:middleware.errorBlock];
+@implementation EMSRequestManagerTests
 
-            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
-                                                                                             operationQueue:queue];
 
-            EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
-                                                                      requestRepository:requestRepository
-                                                                     connectionWatchdog:connectionWatchdog
-                                                                             restClient:restClient
-                                                                             errorBlock:middleware.errorBlock
-                                                                           proxyFactory:proxyFactory];
-            return [[EMSRequestManager alloc] initWithCoreQueue:queue
-                                           completionMiddleware:middleware
-                                                     restClient:restClient
-                                                         worker:worker
-                                              requestRepository:requestRepository
-                                                shardRepository:shardRepository
-                                                   proxyFactory:proxyFactory];
-        };
+- (void)setUp {
+    _queue = [EMSOperationQueue new];
+    self.queue.maxConcurrentOperationCount = 1;
+    self.queue.qualityOfService = NSQualityOfServiceUtility;
+    
+    EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                             schemaDelegate:[EMSSqliteSchemaHandler new]];
+    [helper open];
+    [helper executeCommand:SQL_REQUEST_PURGE];
+    self.requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                       operationQueue:[NSOperationQueue new]];
+    
+    self.shardRepository = OCMClassMock([EMSShardRepository class]);
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+        
+    };
+    self.requestManager = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:helper
+                                                                                                                                                               operationQueue:[NSOperationQueue new]] shardRepository:self.shardRepository];
+}
 
-        describe(@"initWithCoreQueue:completionMiddleware:restClient:worker:requestRepository:shardRepository:proxyFactory:", ^{
+- (void)tearDown {
+    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
+                                               error:nil];
+}
 
-            it(@"should throw an exception when coreQueue is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:nil
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when coreQueue is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: coreQueue"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
+- (void)testShouldThrowAnExceptionWhenCoreQueueIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:nil
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when coreQueue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: coreQueue");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenCompletionmiddlewareIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:nil
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when completionMiddleware is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionMiddleware");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenRestclientIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:nil
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when restClient is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: restClient");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenWorkerIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:nil
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when worker is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: worker");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenRequestrepositoryIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:nil
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when requestRepository is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestRepository");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenShardrepositoryIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:nil
+                                        proxyFactory:OCMClassMock([EMSRESTClientCompletionProxyFactory class])];
+        XCTFail(@"Expected Exception when shardRepository is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: shardRepository");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenProxyfactoryIsNil {
+    @try {
+        [[EMSRequestManager alloc] initWithCoreQueue:OCMClassMock([NSOperationQueue class])
+                                completionMiddleware:OCMClassMock([EMSCompletionMiddleware class])
+                                          restClient:OCMClassMock([EMSRESTClient class])
+                                              worker:OCMClassMock([EMSDefaultWorker class])
+                                   requestRepository:OCMClassMock([EMSRequestModelRepository class])
+                                     shardRepository:OCMClassMock([EMSShardRepository class])
+                                        proxyFactory:nil];
+        XCTFail(@"Expected Exception when proxyFactory is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: proxyFactory");
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnSuccess {
+    NSString *url = @"https://www.google.com";
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:url];
+        [builder setMethod:HTTPMethodGET];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    __block NSString *checkableRequestId;
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        checkableRequestId = requestId;
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+        XCTFail(@"Error block has invoked");
+    };
+    
+    EMSRequestManager *core = [self createRequestManagerWithSuccessBlock:successBlock
+                                                              errorBlock:errorBlock
+                                                       requestRepository:self.requestModelRepository
+                                                         shardRepository:self.shardRepository];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    [core submitRequestModel:model
+         withCompletionBlock:^(NSError *error){
+        [expectation fulfill];
+    }];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:2];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+}
+
+- (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnSuccessInCompletionBlock {
+    NSString *url = @"https://www.google.com";
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:url];
+        [builder setMethod:HTTPMethodGET];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+        XCTFail(@"Error block has invoked");
+    };
+    EMSRequestManager *core = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:self.requestModelRepository shardRepository:[EMSShardRepository new]];
+    
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    __block NSError *returnedError = [NSError errorWithCode:500
+                                       localizedDescription:@"completion block not called!"];
+    [core submitRequestModel:model
+         withCompletionBlock:^(NSError *error) {
+        returnedError = error;
+        [exp fulfill];
+    }];
+    
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:30];
+    XCTAssertNil(returnedError);
+}
+
+- (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnFailure {
+    NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:url];
+        [builder setMethod:HTTPMethodGET];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    __block NSString *checkableRequestId;
+    __block NSError *checkableError;
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        XCTFail(@"Success block has invoked");
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+        checkableRequestId = requestId;
+        checkableError = error;
+    };
+    EMSRequestManager *core = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:self.requestModelRepository shardRepository:[EMSShardRepository new]];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    [core submitRequestModel:model
+         withCompletionBlock:^(NSError *error){
+        [expectation fulfill];
+    }];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:2];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(checkableRequestId, model.requestId);
+    XCTAssertNotNil(checkableError);
+}
+
+- (void)testShouldNotDoNetworkingWithTheGainedEmsrequestmodelAndReturnWithExpectedError {
+    NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:url];
+        [builder setMethod:HTTPMethodGET];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        XCTFail(@"Success block has invoked");
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+    };
+    EMSRequestManager *core = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:self.requestModelRepository shardRepository:[EMSShardRepository new]];
+    
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    __block NSError *returnedError = nil;
+    [core submitRequestModel:model
+         withCompletionBlock:^(NSError *error) {
+        returnedError = error;
+        [exp fulfill];
+    }];
+    
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:30];
+    XCTAssertNotNil(returnedError);
+}
+
+- (void)testShouldThrowAnExceptionWhenRequestmodelIsNil {
+    @try {
+        [self.requestManager submitRequestModel:nil
+                            withCompletionBlock:nil];
+        XCTFail(@"Expected exception when requestModel is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowAnExceptionWhenShardmodelIsNil {
+    @try {
+        [self.requestManager submitShard:nil];
+        XCTFail(@"Expected exception when shardModel is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldSaveShardViaShardrepository {
+    EMSShard *shard = OCMClassMock([EMSShard class]);
+    
+    [self.requestManager submitShard:shard];
+    
+    OCMVerify([self.shardRepository add:shard]);
+}
+
+
+- (void)testShouldThrowExceptionWhenRequestmodelIsNil {
+    @try {
+        [self.requestManager submitRequestModelNow:nil
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
+        }
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+        }];
+        XCTFail(@"Expected exception when requestModel is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowExceptionWhenSuccessblockIsNil {
+    @try {
+        [self.requestManager submitRequestModelNow:OCMClassMock([EMSRequestModel class])
+                                      successBlock:nil
+                                        errorBlock:^(NSString *requestId, NSError *error) {
+        }];
+        XCTFail(@"Expected exception when successBlock is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldThrowExceptionWhenErrorblockIsNil {
+    @try {
+        [self.requestManager submitRequestModelNow:OCMClassMock([EMSRequestModel class])
+                                      successBlock:^(NSString *requestId, EMSResponseModel *response) {
+        }
+                                        errorBlock:nil];
+        XCTFail(@"Expected exception when errorBlock is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldInvokeRestclientWithTheGivenRequestmodelAndSuccessblockAndErrorblock {
+    EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder * _Nonnull builder) {
+        [builder setUrl:@"https://www.emarsys.com"];
+    }
+                                                   timestampProvider:[EMSTimestampProvider new]
+                                                        uuidProvider:[EMSUUIDProvider new]];
+    EMSRESTClientCompletionProxyFactory *mockProxyFactory = OCMClassMock([EMSRESTClientCompletionProxyFactory class]);
+    EMSCoreCompletionHandler *completionHandler = OCMClassMock([EMSCoreCompletionHandler class]);
+    
+    OCMStub([mockProxyFactory createWithWorker:[OCMArg isNil]
+                                  successBlock:[OCMArg isNotNil]
+                                    errorBlock:[OCMArg isNotNil]]).andReturn(completionHandler);
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+    };
+    
+    EMSRequestModelRepository *requestRepository = OCMClassMock([EMSRequestModelRepository class]);
+    
+    EMSCompletionMiddleware *middleware = OCMClassMock([EMSCompletionMiddleware class]);
+    EMSRESTClient *restClient = OCMClassMock([EMSRESTClient class]);
+    
+    EMSDefaultWorker *worker = OCMClassMock([EMSDefaultWorker class]);
+    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:self.queue
+                                                      completionMiddleware:middleware
+                                                                restClient:restClient
+                                                                    worker:worker
+                                                         requestRepository:requestRepository
+                                                           shardRepository:self.shardRepository
+                                                              proxyFactory:mockProxyFactory];
+    [core submitRequestModelNow:requestModel
+                   successBlock:successBlock
+                     errorBlock:errorBlock];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [self.queue addOperationWithBlock:^{
+            [expectation fulfill];
+    }];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:2];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    
+    OCMVerify([restClient executeWithRequestModel:requestModel
+                              coreCompletionProxy:completionHandler]);
+}
+
+
+- (void)testShouldThrowExceptionWhenRequestmodelIsNilWithoutCallbacks {
+    @try {
+        [self.requestManager submitRequestModelNow:nil];
+        XCTFail(@"Expected exception when requestModel is nil");
+    } @catch (NSException *exception) {
+        XCTAssertNotNil(exception);
+    }
+}
+
+- (void)testShouldInvokeRestclientWithTheGivenParameters {
+    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
+    EMSRESTClientCompletionProxyFactory *mockProxyFactory = OCMClassMock([EMSRESTClientCompletionProxyFactory class]);
+    EMSCoreCompletionHandler *completionHandler = OCMClassMock([EMSCoreCompletionHandler class]);
+    
+    OCMStub([mockProxyFactory createWithWorker:[OCMArg any]
+                                  successBlock:[OCMArg any]
+                                    errorBlock:[OCMArg any]]).andReturn(completionHandler);
+    
+    EMSRequestModelRepository *requestRepository = OCMClassMock([EMSRequestModelRepository class]);
+    
+    EMSCompletionMiddleware *middleware = OCMClassMock([EMSCompletionMiddleware class]);
+    EMSRESTClient *restClient = OCMClassMock([EMSRESTClient class]);
+    
+    EMSDefaultWorker *worker = OCMClassMock([EMSDefaultWorker class]);
+    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:self.queue
+                                                      completionMiddleware:middleware
+                                                                restClient:restClient
+                                                                    worker:worker
+                                                         requestRepository:requestRepository
+                                                           shardRepository:self.shardRepository
+                                                              proxyFactory:mockProxyFactory];
+    
+    [core submitRequestModelNow:requestModel];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [self.queue addOperationWithBlock:^{
+            [expectation fulfill];
+    }];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:2];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    
+    OCMVerify([restClient executeWithRequestModel:requestModel
+                              coreCompletionProxy:completionHandler]);
+}
+
+- (void)testShouldNotCrashWhenEmsrequestmanagerCreatedOnThreadAAndReachabilityIsOfflineAndThereAreLotOfRequestInTheQueueAndReachabilityGoesOfflineAndStillALotOfRequestsTriggering {
+    
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
+    __block NSInteger successCount = 0;
+    __block NSInteger errorCount = 0;
+    
+    EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                               schemaDelegate:[EMSSqliteSchemaHandler new]];
+    EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
+                                                                                 operationQueue:[NSOperationQueue new]];
+    
+    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        successCount++;
+        if (successCount + errorCount >= 100) {
+            [exp fulfill];
+        }
+        
+        if (successCount == 30) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                EMSReachability *reachabilityOfflineMock = OCMClassMock([EMSReachability class]);
+                OCMStub([reachabilityOfflineMock currentReachabilityStatus]).andReturn(NotReachable);
+                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                                    object:reachabilityOfflineMock];
             });
-
-            it(@"should throw an exception when completionMiddleware is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:nil
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when completionMiddleware is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: completionMiddleware"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception when restClient is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:nil
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when restClient is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: restClient"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception when worker is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:nil
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when worker is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: worker"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception when requestRepository is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:nil
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when requestRepository is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: requestRepository"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception when shardRepository is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:nil
-                                                    proxyFactory:[EMSRESTClientCompletionProxyFactory mock]];
-                    fail(@"Expected Exception when shardRepository is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: shardRepository"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception when proxyFactory is nil", ^{
-                @try {
-                    [[EMSRequestManager alloc] initWithCoreQueue:[NSOperationQueue mock]
-                                            completionMiddleware:[EMSCompletionMiddleware mock]
-                                                      restClient:[EMSRESTClient mock]
-                                                          worker:[EMSDefaultWorker mock]
-                                               requestRepository:[EMSRequestModelRepository mock]
-                                                 shardRepository:[EMSShardRepository mock]
-                                                    proxyFactory:nil];
-                    fail(@"Expected Exception when proxyFactory is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: proxyFactory"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-        });
-
-        describe(@"EMSRequestManager", ^{
-            __block EMSRequestManager *requestManager;
-            __block EMSShardRepository *shardRepository;
-
-            beforeEach(^{
-                EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
-                [helper open];
-                [helper executeCommand:SQL_REQUEST_PURGE];
-                requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                              operationQueue:[NSOperationQueue new]];
-
-                shardRepository = [EMSShardRepository mock];
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-
-                };
-                requestManager = createRequestManager(successBlock, errorBlock, [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                                                                     operationQueue:[NSOperationQueue new]], shardRepository);
-            });
-
-            afterEach(^{
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                           error:nil];
-            });
-
-            it(@"should do networking with the gained EMSRequestModel and return success", ^{
-                NSString *url = @"https://www.google.com";
-
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:url];
-                            [builder setMethod:HTTPMethodGET];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-
-                __block NSString *checkableRequestId;
-
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    checkableRequestId = requestId;
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                    NSLog(@"ERROR: %@", error);
-                    fail([NSString stringWithFormat:@"errorBlock: %@",
-                                                    error]);
-                };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
-
-                [core submitRequestModel:model
-                     withCompletionBlock:nil];
-
-                [[checkableRequestId shouldEventually] equal:model.requestId];
-            });
-
-            it(@"should do networking with the gained EMSRequestModel and return success in completion block", ^{
-                NSString *url = @"https://www.google.com";
-
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:url];
-                            [builder setMethod:HTTPMethodGET];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                    NSLog(@"ERROR: %@", error);
-                    fail([NSString stringWithFormat:@"errorBlock: %@",
-                                                    error]);
-                };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block NSError *returnedError = [NSError errorWithCode:500
-                                                   localizedDescription:@"completion block not called!"];
-                [core submitRequestModel:model
-                     withCompletionBlock:^(NSError *error) {
-                         returnedError = error;
-                         [exp fulfill];
-                     }];
-
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:30];
-                [[returnedError should] beNil];
-            });
-
-            it(@"should do networking with the gained EMSRequestModel and return failure", ^{
-                NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
-
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:url];
-                            [builder setMethod:HTTPMethodGET];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-
-                __block NSString *checkableRequestId;
-                __block NSError *checkableError;
-
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    fail([NSString stringWithFormat:@"SuccessBlock: %@",
-                                                    response]);
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                    checkableRequestId = requestId;
-                    checkableError = error;
-                };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
-
-                [core submitRequestModel:model
-                     withCompletionBlock:nil];
-
-                [[checkableRequestId shouldEventually] equal:model.requestId];
-                [[checkableError shouldNotEventually] beNil];
-            });
-
-            it(@"should not do networking with the gained EMSRequestModel and return with expected error", ^{
-                NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
-
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:url];
-                            [builder setMethod:HTTPMethodGET];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    fail([NSString stringWithFormat:@"SuccessBlock: %@",
-                                                    response]);
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                };
-                EMSRequestManager *core = createRequestManager(successBlock, errorBlock, requestModelRepository, [EMSShardRepository new]);
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                __block NSError *returnedError = nil;
-                [core submitRequestModel:model
-                     withCompletionBlock:^(NSError *error) {
-                         returnedError = error;
-                         [exp fulfill];
-                     }];
-
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:30];
-                [[returnedError shouldNot] beNil];
-            });
-
-            it(@"should throw an exception, when requestModel is nil", ^{
-                @try {
-                    [requestManager submitRequestModel:nil
-                                   withCompletionBlock:nil];
-                    fail(@"Expected exception when requestModel is nil");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should throw an exception, when shardModel is nil", ^{
-                @try {
-                    [requestManager submitShard:nil];
-                    fail(@"Expected exception when shardModel is nil");
-                } @catch (NSException *exception) {
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
-
-            it(@"should save shard via shardRepository", ^{
-                EMSShard *shard = [EMSShard mock];
-
-                [[shardRepository shouldEventually] receive:@selector(add:)
-                                              withArguments:shard];
-
-                [requestManager submitShard:shard];
-            });
-
-            context(@"submitRequestModelNow:successBlock:errorBlock:", ^{
-
-                it(@"should throw exception, when requestModel is nil", ^{
-                    @try {
-                        [requestManager submitRequestModelNow:nil
-                                                 successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                 }
-                                                   errorBlock:^(NSString *requestId, NSError *error) {
-                                                   }];
-                        fail(@"Expected exception when requestModel is nil");
-                    } @catch (NSException *exception) {
-                        [[theValue(exception) shouldNot] beNil];
-                    }
-                });
-
-                it(@"should throw exception, when successBlock is nil", ^{
-                    @try {
-                        [requestManager submitRequestModelNow:[EMSRequestModel mock]
-                                                 successBlock:nil
-                                                   errorBlock:^(NSString *requestId, NSError *error) {
-                                                   }];
-                        fail(@"Expected exception when successBlock is nil");
-                    } @catch (NSException *exception) {
-                        [[theValue(exception) shouldNot] beNil];
-                    }
-                });
-
-                it(@"should throw exception, when errorBlock is nil", ^{
-                    @try {
-                        [requestManager submitRequestModelNow:[EMSRequestModel mock]
-                                                 successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                                 }
-                                                   errorBlock:nil];
-                        fail(@"Expected exception when errorBlock is nil");
-                    } @catch (NSException *exception) {
-                        [[theValue(exception) shouldNot] beNil];
-                    }
-                });
-
-                it(@"should invoke restClient with the given requestModel and successBlock and errorBlock", ^{
-                    EMSRequestModel *requestModel = [EMSRequestModel nullMock];
-                    EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
-                    EMSCoreCompletionHandler *completionHandler = [EMSCoreCompletionHandler mock];
-
-                    [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
-                                 andReturn:completionHandler];
-
-                    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    };
-                    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                    };
-
-                    EMSRequestModelRepository *requestRepository = [EMSRequestModelRepository mock];
-
-                    EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
-                    EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                             withArguments:requestModel,
-                                                           completionHandler];
-
-                    EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
-                    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
-                                                                      completionMiddleware:middleware
-                                                                                restClient:restClient
-                                                                                    worker:worker
-                                                                         requestRepository:requestRepository
-                                                                           shardRepository:shardRepository
-                                                                              proxyFactory:mockProxyFactory];
-                    [core submitRequestModelNow:requestModel
-                                   successBlock:successBlock
-                                     errorBlock:errorBlock];
-                });
-
-            });
-
-            context(@"submitRequestModelNow:", ^{
-
-                it(@"should throw exception, when requestModel is nil", ^{
-                    @try {
-                        [requestManager submitRequestModelNow:nil];
-                        fail(@"Expected exception when requestModel is nil");
-                    } @catch (NSException *exception) {
-                        [[theValue(exception) shouldNot] beNil];
-                    }
-                });
-
-                it(@"should invoke restClient with the given requestModel and successBlock and errorBlock", ^{
-                    EMSRequestModel *requestModel = [EMSRequestModel nullMock];
-                    EMSRESTClientCompletionProxyFactory *mockProxyFactory = [EMSRESTClientCompletionProxyFactory nullMock];
-                    EMSCoreCompletionHandler *completionHandler = [EMSCoreCompletionHandler mock];
-
-                    [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
-                                 andReturn:completionHandler];
-
-                    EMSRequestModelRepository *requestRepository = [EMSRequestModelRepository mock];
-
-                    EMSCompletionMiddleware *middleware = [EMSCompletionMiddleware nullMock];
-                    EMSRESTClient *restClient = [EMSRESTClient nullMock];
-                    [[restClient shouldEventually] receive:@selector(executeWithRequestModel:coreCompletionProxy:)
-                                             withArguments:requestModel,
-                                                           completionHandler];
-
-                    EMSDefaultWorker *worker = [EMSDefaultWorker nullMock];
-                    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
-                                                                      completionMiddleware:middleware
-                                                                                restClient:restClient
-                                                                                    worker:worker
-                                                                         requestRepository:requestRepository
-                                                                           shardRepository:shardRepository
-                                                                              proxyFactory:mockProxyFactory];
-
-                    [core submitRequestModelNow:requestModel];
-                });
-
-            });
-
-        });
-
-        describe(@"Core", ^{
-            it(@"should not crash when EMSRequestManager created on Thread A and Reachability is Offline and there are lot of request in the queue and Reachability goes offline and still a lot of requests triggering", ^{
-
-                XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
-                __block NSInteger successCount = 0;
-                __block NSInteger errorCount = 0;
-
-                EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                           schemaDelegate:[EMSSqliteSchemaHandler new]];
-                EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
-                                                                                             operationQueue:[NSOperationQueue new]];
-
-                CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-                    successCount++;
-                    if (successCount + errorCount >= 100) {
-                        [exp fulfill];
-                    }
-
-                    if (successCount == 30) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            EMSReachability *reachabilityOfflineMock = [EMSReachability nullMock];
-                            [[reachabilityOfflineMock should] receive:@selector(currentReachabilityStatus)
-                                                            andReturn:theValue(NotReachable)
-                                                     withCountAtLeast:0];
-                            [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                                                object:reachabilityOfflineMock];
-                        });
-                    }
-
-                    if (successCount == 70) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];
-                            [[reachabilityOnlineMock should] receive:@selector(currentReachabilityStatus)
-                                                           andReturn:theValue(ReachableViaWiFi)
-                                                    withCountAtLeast:0];
-                            [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                                                object:reachabilityOnlineMock];
-                        });
-                    }
-
-                };
-                CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-                    errorCount++;
-                    if (successCount + errorCount >= 100) {
-                        [exp fulfill];
-                    }
-                };
-                EMSRequestManager *requestManager = createRequestManager(successBlock, errorBlock, repository, [EMSShardRepository new]);
-
-                for (int i = 0; i < 100; ++i) {
-                    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                                [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
-                                [builder setMethod:HTTPMethodGET];
-                            }
-                                                            timestampProvider:[EMSTimestampProvider new]
-                                                                 uuidProvider:[EMSUUIDProvider new]];
-                    [requestManager submitRequestModel:model
-                                   withCompletionBlock:nil];
-                }
-
-                EMSReachability *reachabilityOnlineMock = [EMSReachability nullMock];
-                [[reachabilityOnlineMock should] receive:@selector(currentReachabilityStatus)
-                                               andReturn:theValue(ReachableViaWiFi)
-                                        withCountAtLeast:0];
+        }
+        
+        if (successCount == 70) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                EMSReachability *reachabilityOnlineMock = OCMClassMock([EMSReachability class]);
+                OCMStub([reachabilityOnlineMock currentReachabilityStatus]).andReturn(ReachableViaWiFi);
                 [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
                                                                     object:reachabilityOnlineMock];
-
-                [EMSWaiter waitForExpectations:@[exp]
-                                       timeout:60];
-                [[theValue(successCount) should] equal:theValue(100)];
-                [[theValue(errorCount) should] equal:theValue(0)];
             });
-        });
+        }
+        
+    };
+    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
+        errorCount++;
+        if (successCount + errorCount >= 100) {
+            [exp fulfill];
+        }
+    };
+    EMSRequestManager *requestManager = [self createRequestManagerWithSuccessBlock:successBlock
+                                                                        errorBlock:errorBlock
+                                                                 requestRepository:repository
+                                                                   shardRepository:[EMSShardRepository new]];
+    
+    for (int i = 0; i < 100; ++i) {
+        EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
+            [builder setMethod:HTTPMethodGET];
+        }
+                                                timestampProvider:[EMSTimestampProvider new]
+                                                     uuidProvider:[EMSUUIDProvider new]];
+        [requestManager submitRequestModel:model
+                       withCompletionBlock:nil];
+    }
+    
+    EMSReachability *reachabilityOnlineMock = OCMClassMock([EMSReachability class]);
+    OCMStub([reachabilityOnlineMock currentReachabilityStatus]).andReturn(ReachableViaWiFi);
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                        object:reachabilityOnlineMock];
+    
+    [EMSWaiter waitForExpectations:@[exp]
+                           timeout:60];
+    XCTAssertEqual(successCount, 100);
+    XCTAssertEqual(errorCount, 0);
+}
 
-SPEC_END
+- (EMSRequestManager *)createRequestManagerWithSuccessBlock:(CoreSuccessBlock)successBlock errorBlock:(CoreErrorBlock)errorBlock requestRepository:(EMSRequestModelRepository *)requestRepository shardRepository:(EMSShardRepository *)shardRepository {
+    EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
+                                                                                     errorBlock:errorBlock];
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+    [sessionConfiguration setHTTPCookieStorage:nil];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                          delegate:nil
+                                                     delegateQueue:self.queue];
+    
+    EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:OCMClassMock([EMSEndpoint class])];
+    
+    EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                 queue:self.queue
+                                                     timestampProvider:[EMSTimestampProvider new]
+                                                     additionalHeaders:nil
+                                                   requestModelMappers:nil
+                                                      responseHandlers:nil
+                                                mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
+    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                operationQueue:self.queue
+                                                                                                           defaultSuccessBlock:middleware.successBlock
+                                                                                                             defaultErrorBlock:middleware.errorBlock];
+    
+    EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.queue]
+                                                                                     operationQueue:self.queue];
+    
+    EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.queue
+                                                              requestRepository:requestRepository
+                                                             connectionWatchdog:connectionWatchdog
+                                                                     restClient:restClient
+                                                                     errorBlock:middleware.errorBlock
+                                                                   proxyFactory:proxyFactory];
+    return [[EMSRequestManager alloc] initWithCoreQueue:self.queue
+                                   completionMiddleware:middleware
+                                             restClient:restClient
+                                                 worker:worker
+                                      requestRepository:requestRepository
+                                        shardRepository:shardRepository
+                                           proxyFactory:proxyFactory];
+}
+
+
+@end
