@@ -331,6 +331,14 @@
     
     [self.requestManager submitShard:shard];
     
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [self.queue addOperationWithBlock:^{
+            [expectation fulfill];
+    }];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:2];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    
     OCMVerify([self.shardRepository add:shard]);
 }
 
