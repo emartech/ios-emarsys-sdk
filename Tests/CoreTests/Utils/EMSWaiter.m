@@ -2,7 +2,7 @@
 // Copyright (c) 2018 Emarsys. All rights reserved.
 //
 #import "EMSWaiter.h"
-#import "Kiwi.h"
+#import <XCTest/XCTest.h>
 
 @implementation EMSWaiter
 
@@ -13,12 +13,12 @@
 
 + (void)waitForExpectations:(NSArray<XCTestExpectation *> *)expectations timeout:(NSTimeInterval)seconds {
     XCTWaiterResult result = [XCTWaiter waitForExpectations:expectations timeout:seconds];
-    [[theValue(result) should] equal:theValue(XCTWaiterResultCompleted)];
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
 }
 
 + (void)waitForTimeout:(NSArray<XCTestExpectation *> *)expectations timeout:(NSTimeInterval)seconds {
     XCTWaiterResult result = [XCTWaiter waitForExpectations:expectations timeout:seconds];
-    [[theValue(result) should] equal:theValue(XCTWaiterResultTimedOut)];
+    XCTAssertEqual(result, XCTWaiterResultTimedOut);
 }
 
 @end
