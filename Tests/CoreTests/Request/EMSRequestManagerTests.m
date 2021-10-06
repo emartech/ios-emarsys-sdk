@@ -178,7 +178,7 @@
 }
 
 - (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnSuccess {
-    NSString *url = @"https://www.google.com";
+    NSString *url = @"https://denna.gservice.emarsys.net/echo";
     
     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
         [builder setUrl:url];
@@ -212,7 +212,7 @@
 }
 
 - (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnSuccessInCompletionBlock {
-    NSString *url = @"https://www.google.com";
+    NSString *url = @"https://denna.gservice.emarsys.net/echo";
     
     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
         [builder setUrl:url];
@@ -244,7 +244,7 @@
 }
 
 - (void)testShouldDoNetworkingWithTheGainedEmsrequestmodelAndReturnFailure {
-    NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
+    NSString *url = @"https://denna.gservice.emarsys.net/customResponseCode/404";
     
     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
         [builder setUrl:url];
@@ -278,7 +278,7 @@
 }
 
 - (void)testShouldNotDoNetworkingWithTheGainedEmsrequestmodelAndReturnWithExpectedError {
-    NSString *url = @"https://alma.korte.szilva/egyeb/palinkagyumolcsok";
+    NSString *url = @"https://denna.gservice.emarsys.net/customResponseCode/404";
     
     EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
         [builder setUrl:url];
@@ -382,7 +382,7 @@
 
 - (void)testShouldInvokeRestclientWithTheGivenRequestmodelAndSuccessblockAndErrorblock {
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder * _Nonnull builder) {
-        [builder setUrl:@"https://www.emarsys.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
     }
                                                    timestampProvider:[EMSTimestampProvider new]
                                                         uuidProvider:[EMSUUIDProvider new]];

@@ -58,19 +58,19 @@
 
 - (void)testShouldReceive3Response_when3RequestHasBeenSent{
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.yahoo.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.wolframalpha.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -107,19 +107,19 @@
 
 - (void)testShouldReceive0Response_requestModelRepositoryCount3When3RequestSentAndThereIsNoInternetConnection{
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.yahoo.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.wolframalpha.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -159,19 +159,19 @@
 
 - (void)testShouldReceive2Response_requestModelRepositoryCount1When3RequestSentAndConnectionsAreYES_YES_NO {
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.emarsys.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.sap.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -216,7 +216,7 @@
 
 - (void)testShouldStopTheWorkerWhenResponseIs500{
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -229,7 +229,7 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.wolframalpha.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -273,19 +273,19 @@
 
 - (void)testShouldNotStopTheWorkerWhenResponseIs4xx {
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model2 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://alma.korte.szilva/egyeb/palinkagyumolcsok"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/customResponseCode/404"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.wolframalpha.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -332,7 +332,7 @@
 
 - (void)testShouldStopTheWorkerWhenResponseIs408 {
     EMSRequestModel *model1 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.google.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
@@ -345,7 +345,7 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     EMSRequestModel *model3 = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-        [builder setUrl:@"https://www.wolframalpha.com"];
+        [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
         [builder setMethod:HTTPMethodGET];
     }
                                              timestampProvider:[EMSTimestampProvider new]
