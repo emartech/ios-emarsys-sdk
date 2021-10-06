@@ -3,6 +3,7 @@
 //
 
 #import <OCMock/OCMock.h>
+#import <XCTest/XCTest.h>
 #import "EMSRequestManager.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteSchemaHandler.h"
@@ -333,7 +334,7 @@
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
     [self.queue addOperationWithBlock:^{
-            [expectation fulfill];
+        [expectation fulfill];
     }];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:2];
@@ -417,7 +418,7 @@
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
     [self.queue addOperationWithBlock:^{
-            [expectation fulfill];
+        [expectation fulfill];
     }];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:2];
@@ -464,7 +465,7 @@
     
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
     [self.queue addOperationWithBlock:^{
-            [expectation fulfill];
+        [expectation fulfill];
     }];
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:2];
@@ -474,77 +475,75 @@
                               coreCompletionProxy:completionHandler]);
 }
 
-- (void)testShouldNotCrashWhenEmsrequestmanagerCreatedOnThreadAAndReachabilityIsOfflineAndThereAreLotOfRequestInTheQueueAndReachabilityGoesOfflineAndStillALotOfRequestsTriggering {
-    
-    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
+- (void)testShouldNotCrashWhenEmsRequestManagerCreatedOnThreadAAndReachabilityIsOfflineAndThereAreLotOfRequestInTheQueueAndReachabilityGoesOfflineAndStillALotOfRequestsTriggering {
+    NSUInteger requestCount = 100;
+    int changeToNotReachable = 30;
+    int changeToReachable = 70;
     __block NSInteger successCount = 0;
     __block NSInteger errorCount = 0;
-    
+
+    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
+    [exp setExpectedFulfillmentCount:requestCount];
+
+    EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
+    EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
     EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
-                                                                                 operationQueue:[NSOperationQueue new]];
+                                                                                 operationQueue:self.queue];
     
     CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
+        NSLog(@"success");
         successCount++;
-        if (successCount + errorCount >= 100) {
-            [exp fulfill];
+        if (successCount == changeToNotReachable) {
+            [self postReachabilityWithNetworkStatus:NotReachable];
         }
-        
-        if (successCount == 30) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                EMSReachability *reachabilityOfflineMock = OCMClassMock([EMSReachability class]);
-                OCMStub([reachabilityOfflineMock currentReachabilityStatus]).andReturn(NotReachable);
-                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                                    object:reachabilityOfflineMock];
-            });
+        if (successCount == changeToReachable) {
+            [self postReachabilityWithNetworkStatus:ReachableViaWiFi];
         }
-        
-        if (successCount == 70) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                EMSReachability *reachabilityOnlineMock = OCMClassMock([EMSReachability class]);
-                OCMStub([reachabilityOnlineMock currentReachabilityStatus]).andReturn(ReachableViaWiFi);
-                [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                                    object:reachabilityOnlineMock];
-            });
-        }
-        
     };
     CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
         errorCount++;
-        if (successCount + errorCount >= 100) {
-            [exp fulfill];
-        }
     };
     EMSRequestManager *requestManager = [self createRequestManagerWithSuccessBlock:successBlock
                                                                         errorBlock:errorBlock
                                                                  requestRepository:repository
-                                                                   shardRepository:[EMSShardRepository new]];
-    
-    for (int i = 0; i < 100; ++i) {
-        EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-            [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
-            [builder setMethod:HTTPMethodGET];
+                                                                   shardRepository:[[EMSShardRepository alloc] initWithDbHelper:dbHelper]];
+
+    [self postReachabilityWithNetworkStatus:ReachableViaWiFi];
+
+    [self.queue addOperationWithBlock:^{
+        for (int i = 0; i < requestCount; ++i) {
+            NSLog(@"I: %d", i);
+            EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
+                [builder setMethod:HTTPMethodGET];
+            }
+                                                    timestampProvider:timestampProvider
+                                                         uuidProvider:uuidProvider];
+            
+            [NSThread sleepForTimeInterval:0.1];
+            [requestManager submitRequestModel:model
+                           withCompletionBlock:^(NSError *error) {
+                if (error) {
+                    NSLog(@"Error, during should not crash with tons of requests test... : %@", error);
+                }
+                [exp fulfill];
+            }];
         }
-                                                timestampProvider:[EMSTimestampProvider new]
-                                                     uuidProvider:[EMSUUIDProvider new]];
-        [requestManager submitRequestModel:model
-                       withCompletionBlock:nil];
-    }
-    
-    EMSReachability *reachabilityOnlineMock = OCMClassMock([EMSReachability class]);
-    OCMStub([reachabilityOnlineMock currentReachabilityStatus]).andReturn(ReachableViaWiFi);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                        object:reachabilityOnlineMock];
+    }];
     
     [EMSWaiter waitForExpectations:@[exp]
                            timeout:60];
-    XCTAssertEqual(successCount, 100);
+    
+    XCTAssertEqual(successCount, requestCount);
     XCTAssertEqual(errorCount, 0);
 }
 
-- (EMSRequestManager *)createRequestManagerWithSuccessBlock:(CoreSuccessBlock)successBlock errorBlock:(CoreErrorBlock)errorBlock requestRepository:(EMSRequestModelRepository *)requestRepository shardRepository:(EMSShardRepository *)shardRepository {
+- (EMSRequestManager *)createRequestManagerWithSuccessBlock:(CoreSuccessBlock)successBlock
+                                                 errorBlock:(CoreErrorBlock)errorBlock
+                                          requestRepository:(EMSRequestModelRepository *)requestRepository
+                                            shardRepository:(EMSShardRepository *)shardRepository {
     EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                      errorBlock:errorBlock];
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -586,5 +585,14 @@
                                            proxyFactory:proxyFactory];
 }
 
+- (void)postReachabilityWithNetworkStatus:(EMSNetworkStatus)networkStatus {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        EMSReachability *reachabilityMock = OCMClassMock([EMSReachability class]);
+        OCMStub([reachabilityMock currentReachabilityStatus]).andReturn(networkStatus);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
+                                                            object:reachabilityMock];
+    });
+}
 
 @end
