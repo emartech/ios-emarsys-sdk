@@ -393,6 +393,38 @@ SPEC_BEGIN(EMSDeviceInfoTests)
                     [[result[@"providesAppNotificationSettings"] should] equal:@(YES)];
                 });
             }
+            if (@available(iOS 15.0, *)) {
+                it(@"should contain scheduledDeliverySettings enabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(scheduledDeliverySetting), UNNotificationSettingEnabled);
+
+                    [[result[@"scheduledDeliverySetting"] should] equal:@"enabled"];
+                });
+                it(@"should contain scheduledDeliverySettings disabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(scheduledDeliverySetting), UNNotificationSettingDisabled);
+
+                    [[result[@"scheduledDeliverySetting"] should] equal:@"disabled"];
+                });
+                it(@"should contain scheduledDeliverySettings notSupported", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(scheduledDeliverySetting), UNNotificationSettingNotSupported);
+
+                    [[result[@"scheduledDeliverySetting"] should] equal:@"notSupported"];
+                });
+                it(@"should contain timeSensitiveSetting enabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(timeSensitiveSetting), UNNotificationSettingEnabled);
+
+                    [[result[@"timeSensitiveSetting"] should] equal:@"enabled"];
+                });
+                it(@"should contain timeSensitiveSetting disabled", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(timeSensitiveSetting), UNNotificationSettingDisabled);
+
+                    [[result[@"timeSensitiveSetting"] should] equal:@"disabled"];
+                });
+                it(@"should contain timeSensitiveSetting notSupported", ^{
+                    NSDictionary *result = setupNotificationSetting(@selector(timeSensitiveSetting), UNNotificationSettingNotSupported);
+
+                    [[result[@"timeSensitiveSetting"] should] equal:@"notSupported"];
+                });
+            }
         });
 
         context(@"HWID", ^{

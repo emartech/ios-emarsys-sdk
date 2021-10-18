@@ -115,6 +115,10 @@
             pushSettings[@"criticalAlertSetting"] = [weakSelf notificationSettingStringRepresentation:settings.criticalAlertSetting];
             pushSettings[@"providesAppNotificationSettings"] = @(settings.providesAppNotificationSettings);
         }
+        if (@available(iOS 15.0, *)) {
+            pushSettings[@"scheduledDeliverySetting"] = [weakSelf notificationSettingStringRepresentation:settings.scheduledDeliverySetting];
+            pushSettings[@"timeSensitiveSetting"] =  [weakSelf notificationSettingStringRepresentation:settings.timeSensitiveSetting];
+        }
         dispatch_group_leave(dispatchGroup);
     }];
     dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
