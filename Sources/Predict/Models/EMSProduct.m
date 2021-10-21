@@ -4,6 +4,30 @@
 #import "EMSProduct.h"
 #import "EMSProduct+Emarsys.h"
 
+@interface EMSProduct()
+
+@property(nonatomic, strong) NSString *productId;
+@property(nonatomic, strong) NSString *title;
+@property(nonatomic, strong) NSURL *linkUrl;
+@property(nonatomic, strong) NSDictionary<NSString *, id> *customFields;
+@property(nonatomic, strong) NSString *feature;
+@property(nonatomic, strong) NSString *cohort;
+@property(nonatomic, strong, nullable) NSURL *imageUrl;
+@property(nonatomic, strong, nullable) NSURL *zoomImageUrl;
+@property(nonatomic, strong, nullable) NSString *categoryPath;
+@property(nonatomic, strong, nullable) NSNumber *available;
+@property(nonatomic, strong, nullable) NSString *productDescription;
+@property(nonatomic, strong, nullable) NSNumber *price;
+@property(nonatomic, strong, nullable) NSNumber *msrp;
+@property(nonatomic, strong, nullable) NSString *album;
+@property(nonatomic, strong, nullable) NSString *actor;
+@property(nonatomic, strong, nullable) NSString *artist;
+@property(nonatomic, strong, nullable) NSString *author;
+@property(nonatomic, strong, nullable) NSString *brand;
+@property(nonatomic, strong, nullable) NSNumber *year;
+
+@end
+
 @implementation EMSProduct
 
 + (instancetype)makeWithBuilder:(EMSProductBuilderBlock)builderBlock {

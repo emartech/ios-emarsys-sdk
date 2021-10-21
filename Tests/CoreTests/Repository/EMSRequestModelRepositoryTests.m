@@ -85,29 +85,29 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
             });
 
             it(@"should call notification block on the given operationQueue", ^{
+                __block NSOperationQueue *returnedOperationQueue = nil;
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
                 FakeDbHelper *dbHelper = [FakeDbHelper new];
                 NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
                 operationQueue.name = @"testOperationQueue";
                 EMSRequestModelRepository *requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
                                                                                                          operationQueue:operationQueue];
 
-                __block NSOperationQueue *returnedOperationQueue = nil;
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
-                dbHelper.closeOperationQueueBlock = ^(NSOperationQueue *operationQueue) {
-                    returnedOperationQueue = operationQueue;
-                    [expectation fulfill];
-                };
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    dbHelper.closeOperationQueueBlock = ^(NSOperationQueue *operationQueue) {
+                        returnedOperationQueue = operationQueue;
+                        [expectation fulfill];
+                    };
 
-                [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
-                                                                    object:nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
+                                                                        object:nil];
+                });
 
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                       timeout:5];
                 XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
                 XCTAssertEqualObjects(returnedOperationQueue, operationQueue);
-                XCTAssertNotNil(requestModelRepository);
             });
-
         });
 
         describe(@"query", ^{

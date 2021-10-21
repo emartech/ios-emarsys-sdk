@@ -32,6 +32,7 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSCartItemProtocol.h',
         'Sources/include/EMSCartItem.h',
         'Sources/include/EMSProduct.h',
+        'Sources/include/EMSProductProtocol.h',
         'Sources/include/EMSLogicProtocol.h',
         'Sources/include/EMSLogic.h',
         'Sources/include/EMSRecommendationFilter.h',

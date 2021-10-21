@@ -3,6 +3,7 @@
 //
 #import <Foundation/Foundation.h>
 #import "EMSCartItemProtocol.h"
+#import "EMSProductProtocol.h"
 
 @class EMSProduct;
 @class EMSLogic;
@@ -78,7 +79,7 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:filters:limit:availabilityZone:productsBlock:));
 
-- (void)trackRecommendationClick:(EMSProduct *)product
+- (void)trackRecommendationClick:(id <EMSProductProtocol>)product
     NS_SWIFT_NAME(trackRecommendationClick(product:));
 
 @end

@@ -273,7 +273,7 @@
                                 }];
 }
 
-- (void)trackRecommendationClick:(EMSProduct *)product {
+- (void)trackRecommendationClick:(id <EMSProductProtocol>)product {
     NSParameterAssert(product);
     _lastViewItemId = product.productId;
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {

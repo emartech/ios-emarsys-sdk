@@ -182,7 +182,7 @@
 }
 
 
-- (void)trackRecommendationClick:(EMSProduct *)product {
+- (void)trackRecommendationClick:(id <EMSProductProtocol>)product {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"product"] = product.description;
     EMSLog([[EMSMethodNotAllowed alloc] initWithProtocol:proto
