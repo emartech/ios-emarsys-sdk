@@ -20,6 +20,7 @@
 @property(nonatomic, strong) WKWebView *webView;
 
 - (void)fetchInlineInappMessage;
+
 - (void)closeInAppWithCompletionHandler:(EMSCompletion _Nullable)completionHandler;
 
 @end
@@ -132,11 +133,24 @@
                                                 errorBlock:[OCMArg any]]);
 
     EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
-    [inAppView loadInAppWithViewId:@"testViewId"];
-    [inAppView fetchInlineInappMessage];
+    EMSInlineInAppView *partialMock = OCMPartialMock(inAppView);
+    [partialMock loadInAppWithViewId:@"testViewId"];
 
-    OCMVerify([inAppView.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
-                                             baseURL:nil]);
+    XCTestExpectation *expectation= [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [partialMock setCompletionBlock:^(NSError *error) {
+            [expectation fulfill];
+        }];
+        [partialMock fetchInlineInappMessage];
+    });
+
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+            timeout:2];
+
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    OCMVerify([partialMock.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
+                                          baseURL:nil]);
 }
 
 - (void)testFetchInlineInappMessage_shouldCallCompletionBlockWithError_whenNoInAppMessageFound {

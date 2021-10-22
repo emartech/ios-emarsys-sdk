@@ -493,7 +493,6 @@
                                                                                  operationQueue:self.queue];
     
     CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-        NSLog(@"success");
         successCount++;
         if (successCount == changeToNotReachable) {
             [self postReachabilityWithNetworkStatus:NotReachable];
