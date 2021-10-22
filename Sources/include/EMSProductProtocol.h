@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSProductProtocol <NSObject>
 
 @property(nonatomic, readonly) NSString *productId;
@@ -26,5 +28,6 @@
 @property(nonatomic, readonly, nullable) NSString *brand;
 @property(nonatomic, readonly, nullable) NSNumber *year;
 
-
 @end
+
+NS_ASSUME_NONNULL_END
