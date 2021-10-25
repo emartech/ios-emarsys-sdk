@@ -13,6 +13,7 @@
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSRequestModel+RequestIds.h"
 #import "NSError+EMSCore.h"
+#import "XCTestCase+Helper.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue);
 
@@ -36,7 +37,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 @implementation EMSCoreCompletionHandlerMiddlewareTests
 
 - (void)setUp {
-    _operationQueue = [NSOperationQueue new];
+    _operationQueue = [self createTestOperationQueue];
     _mockCompletionProxy = OCMProtocolMock(@protocol(EMSRESTClientCompletionProxyProtocol));
     _mockWorker = OCMProtocolMock(@protocol(EMSWorkerProtocol));
     _mockRepository = OCMProtocolMock(@protocol(EMSRequestModelRepositoryProtocol));
@@ -56,7 +57,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)tearDown {
-    [self.operationQueue waitUntilAllOperationsAreFinished];
+    [self tearDownOperationQueue:self.operationQueue];
 }
 
 - (void)testInit_completionHandler_mustNotBeNull {

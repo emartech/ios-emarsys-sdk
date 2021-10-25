@@ -12,6 +12,7 @@
 #import "EMSRemoteConfig.h"
 #import "EMSLogLevel.h"
 #import "EMSWrapperChecker.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -80,6 +81,8 @@
     _mockLogEntry = nil;
     _mockStorage = nil;
     _operationQueue = nil;
+    [self tearDownOperationQueue:self.operationQueue];
+    [self tearDownOperationQueue:self.runnerQueue];
 }
 
 - (void)testInitShouldThrowExceptionWhenShardRepositoryIsNil {

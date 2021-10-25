@@ -17,7 +17,7 @@
 #import "EMSProductBuilder.h"
 #import "EMSProduct.h"
 #import "EMSProduct+Emarsys.h"
-#import "XCTestCase+Retry.h"
+#import "XCTestCase+Helper.h"
 
 @interface PredictIntegrationDependencyContainer : EMSDependencyContainer
 

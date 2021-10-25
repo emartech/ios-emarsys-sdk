@@ -12,6 +12,7 @@
 #import "EMSViewControllerProvider.h"
 #import "EMSCompletionBlockProvider.h"
 #import "EMSSceneProvider.h"
+#import "XCTestCase+Helper.h"
 
 SPEC_BEGIN(MEInAppTests)
 
@@ -51,8 +52,7 @@ SPEC_BEGIN(MEInAppTests)
                                                                               sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]] provideWindow]];
             displayedIAMRepository = [MEDisplayedIAMRepository nullMock];
 
-            operationQueue = [NSOperationQueue new];
-            operationQueue.name = @"operationQueueForTest";
+            operationQueue = [self createTestOperationQueue];
 
             inApp = [[MEInApp alloc] initWithWindowProvider:windowProvider
                                          mainWindowProvider:[EMSMainWindowProvider nullMock]
@@ -60,10 +60,13 @@ SPEC_BEGIN(MEInAppTests)
                                     completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:operationQueue]
                                      displayedIamRepository:displayedIAMRepository
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
-                                             operationQueue:[NSOperationQueue new]];
+                                             operationQueue:[self createTestOperationQueue]];
             [inApp setInAppTracker:inAppTracker];
         });
 
+        afterEach(^{
+            [self tearDownOperationQueue:operationQueue];
+        });
 
         describe(@"initWithWindowProvider:mainWindowProvider:iamViewControllerProvider:iamViewControllerProvider:timestampProvider:logRepository:displayedIamRepository:inAppTracker:", ^{
             it(@"should throw exception when windowProvider is nil", ^{

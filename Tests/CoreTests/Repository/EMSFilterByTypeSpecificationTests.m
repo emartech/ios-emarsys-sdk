@@ -11,25 +11,32 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
 @interface EMSFilterByTypeSpecificationTests : XCTestCase
 
 @property(nonatomic, strong) EMSRequestModelRepository *repository;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
 @implementation EMSFilterByTypeSpecificationTests
 
 - (void)setUp {
+    _queue = [self createTestOperationQueue];
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
     EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                              schemaDelegate:[EMSSqliteSchemaHandler new]];
     [helper open];
     _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                       operationQueue:[NSOperationQueue new]];
+                                                       operationQueue:self.queue];
+}
+
+- (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
 }
 
 - (void)testQueryShouldReturnWithTheExactRequstModels {

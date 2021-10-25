@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSStorage.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSStorage (Tests)
 
@@ -35,8 +36,7 @@ static NSString *const kTestValue2String = @"testValue2";
 
 - (void)setUp {
     [super setUp];
-    _queue = [NSOperationQueue new];
-    [self.queue setMaxConcurrentOperationCount:1];
+    _queue = [self createTestOperationQueue];
     _mockQueue = OCMPartialMock(self.queue);
 
     _testValue1 = [kTestValue1String dataUsingEncoding:NSUTF8StringEncoding];
@@ -58,7 +58,7 @@ static NSString *const kTestValue2String = @"testValue2";
 }
 
 - (void)tearDown {
-    [super tearDown];
+    [self tearDownOperationQueue:self.queue];
     NSDictionary *deleteQuery = @{
             (id) kSecClass: (id) kSecClassGenericPassword,
             (id) kSecAttrAccessible: (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,

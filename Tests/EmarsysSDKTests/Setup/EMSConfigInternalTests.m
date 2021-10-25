@@ -22,6 +22,7 @@
 #import "EMSInnerFeature.h"
 #import "EmarsysTestUtils.h"
 #import "EmarsysSDKVersion.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -77,8 +78,7 @@
     _mockCrypto = OCMClassMock([EMSCrypto class]);
     _mockDeviceInfoClient = OCMClassMock([EMSDeviceInfoV3ClientInternal class]);
     _waiter = [EMSDispatchWaiter new];
-    _queue = [NSOperationQueue new];
-    [self.queue setMaxConcurrentOperationCount:1];
+    _queue = [self createTestOperationQueue];
 
     OCMStub([self.mockMeRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     OCMStub([self.mockPushInternal deviceToken]).andReturn(self.deviceToken);
@@ -101,6 +101,7 @@
 }
 
 - (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
     [EmarsysTestUtils tearDownEmarsys];
 }
 

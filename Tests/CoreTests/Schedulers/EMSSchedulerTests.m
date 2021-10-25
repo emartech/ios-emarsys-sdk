@@ -6,6 +6,7 @@
 #import "EMSScheduler.h"
 #import "EMSWaiter.h"
 #import "EMSAgenda.h"
+#import "XCTestCase+Helper.h"
 
 SPEC_BEGIN(EMSSchedulerTests)
 
@@ -16,9 +17,7 @@ SPEC_BEGIN(EMSSchedulerTests)
         __block NSString *tag;
 
         beforeEach(^{
-            queue = [NSOperationQueue new];
-            [queue setName:@"SchedulerTestsOperationQueue"];
-            [queue setMaxConcurrentOperationCount:1];
+            queue = [self createTestOperationQueue];
             leevay = 1.0;
             delay = 1.0;
             tag = @"tag";
@@ -27,6 +26,7 @@ SPEC_BEGIN(EMSSchedulerTests)
         });
 
         afterEach(^{
+            [self tearDownOperationQueue:queue];
         });
 
         describe(@"initWithOperationQueue:leeway:", ^{
@@ -44,7 +44,7 @@ SPEC_BEGIN(EMSSchedulerTests)
 
             it(@"leeway should be greater than 0", ^{
                 @try {
-                    [[EMSScheduler alloc] initWithOperationQueue:[NSOperationQueue currentQueue]
+                    [[EMSScheduler alloc] initWithOperationQueue:queue
                                                           leeway:0];
                     fail(@"Expected exception when leeway is <= 0");
                 } @catch (NSException *exception) {
@@ -54,7 +54,7 @@ SPEC_BEGIN(EMSSchedulerTests)
             });
 
             it(@"scheduledAgendas should not be nil", ^{
-                EMSScheduler *emsScheduler = [[EMSScheduler alloc] initWithOperationQueue:[NSOperationQueue currentQueue]
+                EMSScheduler *emsScheduler = [[EMSScheduler alloc] initWithOperationQueue:queue
                                                                                    leeway:1.0];
                 [[emsScheduler.scheduledAgendas shouldNot] beNil];
             });
@@ -353,8 +353,7 @@ SPEC_BEGIN(EMSSchedulerTests)
             it(@"should trigger the triggerBlock on the given publicApiOperationQueue", ^{
                 __block int triggerCount = 0;
                 __block NSOperationQueue *returnedQueue;
-                NSOperationQueue *testQueue = [NSOperationQueue currentQueue];
-
+                
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
                 [scheduler scheduleTriggerWithTag:@"tag"
                                             delay:delay
@@ -369,7 +368,6 @@ SPEC_BEGIN(EMSSchedulerTests)
                                        timeout:10.0];
 
                 [[theValue(triggerCount) should] equal:theValue(1)];
-                [[returnedQueue shouldNot] equal:testQueue];
                 [[returnedQueue should] equal:queue];
             });
         });

@@ -9,6 +9,7 @@
 #import "EMSRequestManager.h"
 #import "EMSTimestampProvider.h"
 #import "NSDate+EMSCore.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSSessionTests : XCTestCase
 
@@ -28,12 +29,16 @@
     _mockRequestFactory = OCMClassMock([EMSRequestFactory class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _sessionIdHolder = [EMSSessionIdHolder new];
-    _operationQueue = [NSOperationQueue new];
+    _operationQueue = [self createTestOperationQueue];
     _session = [[EMSSession alloc] initWithSessionIdHolder:self.sessionIdHolder
                                             requestManager:self.mockRequestManager
                                             requestFactory:self.mockRequestFactory
                                             operationQueue:self.operationQueue
                                          timestampProvider:self.mockTimestampProvider];
+}
+
+- (void)tearDown {
+    [self tearDownOperationQueue:self.operationQueue];
 }
 
 - (void)testInit_sessionIdHolder_mustNotBeNil {

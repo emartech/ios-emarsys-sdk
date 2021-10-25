@@ -2,9 +2,9 @@
 // Copyright (c) 2021 Emarsys. All rights reserved.
 //
 
-#import "XCTestCase+Retry.h"
+#import "XCTestCase+Helper.h"
 
-@implementation XCTestCase (Retry)
+@implementation XCTestCase (Helper)
 
 - (void)retryWithRunnerBlock:(void (^)(XCTestExpectation *expectation))runnerBlock
               assertionBlock:(void (^)(XCTWaiterResult waiterResult))assertionBlock
@@ -35,6 +35,19 @@
     if (errorToThrow) {
         @throw(errorToThrow);
     }
+}
+
+- (NSOperationQueue *)createTestOperationQueue {
+    NSOperationQueue *operationQueue = [NSOperationQueue new];
+    [operationQueue setName:@"testOperationQueue"];
+    [operationQueue setMaxConcurrentOperationCount:1];
+    return operationQueue;
+}
+
+- (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue {
+    [operationQueue cancelAllOperations];
+    [operationQueue waitUntilAllOperationsAreFinished];
+    operationQueue = nil;
 }
 
 @end

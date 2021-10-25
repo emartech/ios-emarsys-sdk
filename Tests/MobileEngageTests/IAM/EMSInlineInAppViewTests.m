@@ -14,6 +14,7 @@
 #import "MeInapp.h"
 #import "NSError+EMSCore.h"
 #import "FakeRequestManager.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSInlineInAppView (Tests)
 
@@ -56,10 +57,8 @@
     [self.mockRequestManager stopMocking];
     [self.mockInapp stopMocking];
     [self.mockContainer stopMocking];
-    [self.publicApiOperationQueue waitUntilAllOperationsAreFinished];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
-    self.publicApiOperationQueue = nil;
-    self.operationQueue = nil;
+    [self tearDownOperationQueue:self.operationQueue];
+    [self tearDownOperationQueue:self.publicApiOperationQueue];
     [EMSDependencyInjection tearDown];
 }
 

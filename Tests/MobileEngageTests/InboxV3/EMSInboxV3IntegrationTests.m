@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "XCTestCase+Retry.h"
+#import "XCTestCase+Helper.h"
 #import "Emarsys.h"
 #import "EmarsysTestUtils.h"
 

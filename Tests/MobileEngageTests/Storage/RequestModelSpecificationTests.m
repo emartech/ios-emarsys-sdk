@@ -12,6 +12,7 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "EMSSQLiteHelper.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -19,6 +20,15 @@ SPEC_BEGIN(RequestModelSpecificationTests)
 
         __block EMSSQLiteHelper *_dbHelper;
         __block EMSRequestModelRepository *_repository;
+        __block NSOperationQueue *queue;
+
+        beforeEach(^{
+            queue = [self createTestOperationQueue];
+        });
+
+        afterEach(^{
+            [self tearDownOperationQueue:queue];
+        });
 
         id (^customEventRequestModel)(NSString *eventName, NSDictionary *eventAttributes) = ^id(NSString *eventName, NSDictionary *eventAttributes) {
             return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -57,7 +67,7 @@ SPEC_BEGIN(RequestModelSpecificationTests)
                                                            schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [_dbHelper open];
                 _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:_dbHelper
-                                                                   operationQueue:[NSOperationQueue new]];
+                                                                   operationQueue:queue];
             });
 
             afterEach(^{

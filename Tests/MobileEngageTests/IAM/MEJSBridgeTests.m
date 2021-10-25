@@ -6,6 +6,7 @@
 #import "MEIAMJSCommandFactory.h"
 #import "EMSWaiter.h"
 #import "FakeCommand.h"
+#import "XCTestCase+Helper.h"
 
 MEJSBridge *_meJsBridge;
 
@@ -55,8 +56,15 @@ MEJSBridge *_meJsBridge;
 
 SPEC_BEGIN(MEJSBridgeTests)
 
+    __block NSOperationQueue *queue;
+
     beforeEach(^{
+        queue = [self createTestOperationQueue];
         _meJsBridge = [MEJSBridge new];
+    });
+
+    afterEach(^{
+        [self tearDownOperationQueue:queue];
     });
 
     describe(@"jsCommandNames", ^{
@@ -120,7 +128,7 @@ SPEC_BEGIN(MEJSBridgeTests)
                             withArguments:MEIAMDidAppear.commandName];
 
             _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
-                                                        operationQueue:[NSOperationQueue new]];
+                                                        operationQueue:queue];
 
             NSDictionary *arguments = @{@"key": @"value"};
             WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
@@ -141,9 +149,8 @@ SPEC_BEGIN(MEJSBridgeTests)
                                 andReturn:command
                             withArguments:FakeCommand.commandName];
 
-            NSOperationQueue *operationQueue = [NSOperationQueue new];
             _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
-                                                        operationQueue:operationQueue];
+                                                        operationQueue:queue];
 
             NSDictionary *arguments = @{@"key": @"value"};
             WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
@@ -163,7 +170,7 @@ SPEC_BEGIN(MEJSBridgeTests)
             XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                                   timeout:5];
             XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-            XCTAssertEqualObjects(returnedQueue, operationQueue);
+            XCTAssertEqualObjects(returnedQueue, queue);
         });
 
         it(@"should call resultBlock when command's resultBlock called", ^{
@@ -175,10 +182,8 @@ SPEC_BEGIN(MEJSBridgeTests)
                                 andReturn:command
                             withArguments:MEIAMDidAppear.commandName];
 
-            NSOperationQueue *operationQueue = [NSOperationQueue new];
-            [operationQueue setMaxConcurrentOperationCount:1];
             _meJsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:factoryMock
-                                                        operationQueue:operationQueue];
+                                                        operationQueue:queue];
 
             WKScriptMessage *scriptMessageMock = [WKScriptMessage mock];
             [scriptMessageMock stub:@selector(name) andReturn:MEIAMDidAppear.commandName];
@@ -187,7 +192,7 @@ SPEC_BEGIN(MEJSBridgeTests)
             [_meJsBridge userContentController:[WKUserContentController mock]
                        didReceiveScriptMessage:scriptMessageMock];
 
-            [operationQueue addOperationWithBlock:^{
+            [queue addOperationWithBlock:^{
                 [command triggerResultBlockWithDictionary:expectedDictionary];
             }];
 

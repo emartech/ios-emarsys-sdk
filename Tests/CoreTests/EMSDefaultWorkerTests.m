@@ -15,6 +15,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSCoreCompletionHandlerMiddleware.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -27,7 +28,15 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
         __block EMSSQLiteHelper *helper;
         __block EMSRequestModelRepository *repository;
+        __block NSOperationQueue *queue;
 
+beforeEach(^{
+    queue = [self createTestOperationQueue];
+});
+
+afterEach(^{
+    [self tearDownOperationQueue:queue];
+});
 
         describe(@"init", ^{
 
@@ -36,7 +45,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                  operationQueue:[NSOperationQueue new]];
+                                                                  operationQueue:queue];
             });
 
             afterEach(^{
@@ -47,7 +56,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
 
             id (^createWorker)() = ^id() {
-                return [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:repository
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:[EMSRESTClient new]
@@ -129,7 +138,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                                         schemaDelegate:[EMSSqliteSchemaHandler new]];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                  operationQueue:[NSOperationQueue new]];
+                                                                  operationQueue:queue];
             });
 
             afterEach(^{
@@ -162,7 +171,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
                 [repository add:requestModel(@"https://url1.com", nil, NO)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchdog
                                                                                  restClient:[EMSRESTClient new]
@@ -181,7 +190,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [mockWatchdog stub:@selector(setConnectionChangeListener:)];
                 [[mockWatchdog shouldNot] receive:@selector(isConnected)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
@@ -197,7 +206,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [mockWatchdog stub:@selector(setConnectionChangeListener:)];
                 [[mockWatchdog should] receive:@selector(isConnected)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
@@ -214,7 +223,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
                 [watchdogMock stub:@selector(setConnectionChangeListener:)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repositoryMock
                                                                          connectionWatchdog:watchdogMock
                                                                                  restClient:restClient
@@ -241,7 +250,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                              andReturn:middleware];
                 [watchdogMock stub:@selector(setConnectionChangeListener:)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repositoryMock
                                                                          connectionWatchdog:watchdogMock
                                                                                  restClient:clientMock
@@ -286,7 +295,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:clientMock
@@ -326,7 +335,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                                withArguments:expectedModel, kw_any()];
 
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:clientMock
@@ -348,7 +357,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [watchDog stub:@selector(setConnectionChangeListener:)];
 
                 FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
                                                                          connectionWatchdog:watchDog
                                                                                  restClient:[EMSRESTClient nullMock]
@@ -365,7 +374,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
         describe(@"LockableProtocol", ^{
 
             id (^createWorker)() = ^id() {
-                return [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:[EMSRequestModelRepository mock]
                                                      connectionWatchdog:[EMSConnectionWatchdog new]
                                                              restClient:[EMSRESTClient new]
@@ -394,7 +403,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
 
             it(@"DefaultWorker should implement the connectionChangeListener by default", ^{
                 EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog new];
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:[EMSRequestModelRepository mock]
                                                                          connectionWatchdog:watchdog
                                                                                  restClient:[EMSRESTClient new]
@@ -409,7 +418,7 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
                 [mockWatchdog stub:@selector(setConnectionChangeListener:)];
                 [[mockWatchdog should] receive:@selector(isConnected)];
 
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue new]
+                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:[EMSRequestModelRepository nullMock]
                                                                          connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]

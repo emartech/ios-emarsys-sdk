@@ -21,6 +21,7 @@
 #import "EMSWaiter.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -30,13 +31,15 @@
 @property(nonatomic, strong) EMSRequestModelRepository *requestModelRepository;
 @property(nonatomic, strong) EMSShardRepository *shardRepository;
 @property(nonatomic, strong) EMSReachability *reachability;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
 @implementation OfflineTests
 
 - (void)setUp {
-    _reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:[self createTestQueue]];
+    _queue = [self createTestOperationQueue];
+    _reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.queue];
     
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
@@ -46,11 +49,12 @@
     [self.helper executeCommand:SQL_REQUEST_PURGE];
     
     _requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.helper
-                                                                   operationQueue:[NSOperationQueue new]];
+                                                                   operationQueue:self.queue];
     _shardRepository = [EMSShardRepository new];
 }
 
 - (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
     [self.helper close];
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
@@ -76,13 +80,12 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     
-    NSOperationQueue *operationQueue = [self createTestQueue];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
                                                                                  reachability:self.reachability
                                                                                   expectation:nil];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -125,16 +128,14 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     
-    NSOperationQueue *operationQueue = [self createTestQueue];
-    
     XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
     [watchdogExpectation setExpectedFulfillmentCount:3];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@NO, @NO, @NO]
                                                                                  reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -153,7 +154,7 @@
     XCTAssertEqualObjects(completionHandler.errorCount, @0);
     
     [self assertForItemsCountInDbWithExpectedItemsCount:3
-                                         operationQueue:operationQueue
+                                         operationQueue:self.queue
                                  requestModelRepository:self.requestModelRepository];
 }
 
@@ -176,16 +177,15 @@
     }
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
-    NSOperationQueue *operationQueue = [self createTestQueue];
     
     XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
     [watchdogExpectation setExpectedFulfillmentCount:3];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @NO]
                                                                                  reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -210,7 +210,7 @@
     XCTAssertEqualObjects(completionHandler.errorCount, @0);
     
     [self assertForItemsCountInDbWithExpectedItemsCount:1
-                                         operationQueue:operationQueue
+                                         operationQueue:self.queue
                                  requestModelRepository:self.requestModelRepository];
 }
 
@@ -235,16 +235,14 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     
-    NSOperationQueue *operationQueue = [self createTestQueue];
-    
     XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
     [watchdogExpectation setExpectedFulfillmentCount:2];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
                                                                                  reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -267,7 +265,7 @@
     XCTAssertEqualObjects(completionHandler.errorCount, @0);
     
     [self assertForItemsCountInDbWithExpectedItemsCount:2
-                                         operationQueue:operationQueue
+                                         operationQueue:self.queue
                                  requestModelRepository:self.requestModelRepository];
 }
 
@@ -291,16 +289,14 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     
-    NSOperationQueue *operationQueue = [self createTestQueue];
-    operationQueue.maxConcurrentOperationCount = 1;
     XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
     [watchdogExpectation setExpectedFulfillmentCount:4];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
                                                                                  reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -326,7 +322,7 @@
     XCTAssertEqualObjects(completionHandler.errorCount, @1);
     
     [self assertForItemsCountInDbWithExpectedItemsCount:0
-                                         operationQueue:operationQueue
+                                         operationQueue:self.queue
                                  requestModelRepository:self.requestModelRepository];
 }
 
@@ -351,15 +347,14 @@
                                              timestampProvider:[EMSTimestampProvider new]
                                                   uuidProvider:[EMSUUIDProvider new]];
     
-    NSOperationQueue *operationQueue = [self createTestQueue];
     XCTestExpectation *watchdogExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForConnectionWatchdog"];
     [watchdogExpectation setExpectedFulfillmentCount:2];
-    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:operationQueue
+    FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
                                                                                  reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
-    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:operationQueue
+    EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
                                                                    repository:self.requestModelRepository
                                                                      watchdog:watchdog
                                                                  successBlock:completionHandler.successBlock errorBlock:completionHandler.errorBlock];
@@ -383,7 +378,7 @@
     XCTAssertEqualObjects(completionHandler.errorCount, @0);
     
     [self assertForItemsCountInDbWithExpectedItemsCount:2
-                                         operationQueue:operationQueue
+                                         operationQueue:self.queue
                                  requestModelRepository:self.requestModelRepository];
 }
 
@@ -429,13 +424,6 @@
                                       requestRepository:repository
                                         shardRepository:[EMSShardRepository new]
                                            proxyFactory:proxyFactory];
-}
-
-- (NSOperationQueue *)createTestQueue {
-    NSOperationQueue *queue = [NSOperationQueue new];
-    queue.maxConcurrentOperationCount = 1;
-    queue.qualityOfService = NSQualityOfServiceUtility;
-    return queue;
 }
 
 - (void)assertForItemsCountInDbWithExpectedItemsCount:(int)expectedItemsCount

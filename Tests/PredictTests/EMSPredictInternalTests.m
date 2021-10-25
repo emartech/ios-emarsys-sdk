@@ -20,8 +20,19 @@
 #import "EMSProductMapper.h"
 #import "EMSLogic.h"
 #import "EMSRecommendationFilter.h"
+#import "XCTestCase+Helper.h"
 
 SPEC_BEGIN(EMSPredictInternalTests)
+
+__block NSOperationQueue *queue;
+
+    beforeEach(^{
+        queue = [self createTestOperationQueue];
+    });
+
+    afterEach(^{
+        [self tearDownOperationQueue:queue];
+    });
 
         describe(@"init", ^{
             it(@"should throw exception when requestManager is nil", ^{
@@ -696,7 +707,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                 [[mockProductMapper should] receive:@selector(mapFromResponse:)
                                           andReturn:@[expectedProduct]];
 
-                [[NSOperationQueue new] addOperationWithBlock:^{
+                [queue addOperationWithBlock:^{
                     KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
                                                                     atIndex:1];
 
@@ -726,7 +737,7 @@ SPEC_BEGIN(EMSPredictInternalTests)
                                            localizedDescription:@"Test Error"];
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];
 
-                [[NSOperationQueue new] addOperationWithBlock:^{
+                [queue addOperationWithBlock:^{
                     KWCaptureSpy *spy = [mockRequestManager captureArgument:@selector(submitRequestModelNow:successBlock:errorBlock:)
                                                                     atIndex:2];
 

@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "EMSOperationQueue.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSOperationQueueTests : XCTestCase
 
@@ -31,8 +32,8 @@
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
-
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    [self tearDownOperationQueue:operationQueue];
 }
 
 @end

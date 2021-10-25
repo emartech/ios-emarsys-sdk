@@ -21,6 +21,7 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSOperationQueue.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -39,16 +40,14 @@
 
 
 - (void)setUp {
-    _queue = [EMSOperationQueue new];
-    self.queue.maxConcurrentOperationCount = 1;
-    self.queue.qualityOfService = NSQualityOfServiceUtility;
+    _queue = [self createTestOperationQueue];
     
     EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                              schemaDelegate:[EMSSqliteSchemaHandler new]];
     [helper open];
     [helper executeCommand:SQL_REQUEST_PURGE];
     self.requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                       operationQueue:[NSOperationQueue new]];
+                                                                       operationQueue:self.queue];
     
     self.shardRepository = OCMClassMock([EMSShardRepository class]);
     CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
@@ -58,10 +57,11 @@
         
     };
     self.requestManager = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                                                                                                                               operationQueue:[NSOperationQueue new]] shardRepository:self.shardRepository];
+                                                                                                                                                               operationQueue:self.queue] shardRepository:self.shardRepository];
 }
 
 - (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
 }
@@ -513,7 +513,6 @@
 
     [self.queue addOperationWithBlock:^{
         for (int i = 0; i < requestCount; ++i) {
-            NSLog(@"I: %d", i);
             EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
                 [builder setMethod:HTTPMethodGET];

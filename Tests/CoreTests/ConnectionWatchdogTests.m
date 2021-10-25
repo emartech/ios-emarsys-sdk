@@ -6,6 +6,7 @@
 #import "EMSConnectionWatchdog.h"
 #import "FakeConnectionChangeListener.h"
 #import "EMSWaiter.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSConnectionWatchdog(Tests)
 
@@ -14,6 +15,16 @@
 @end
 
 SPEC_BEGIN(EMSConnectionWatchdogTest)
+
+    __block NSOperationQueue *queue;
+    
+    beforeEach(^{
+        queue = [self createTestOperationQueue];
+    });
+
+    afterEach(^{
+        [self tearDownOperationQueue:queue];
+    });
 
         void (^waitForOperationQueue)() = ^void() {
             XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationQueue"];
@@ -24,12 +35,6 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
                                                                   timeout:10];
             XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
         };
-
-        beforeEach(^{
-        });
-
-        afterEach(^{
-        });
 
         describe(@"init", ^{
             it(@"should throw exception when publicApiOperationQueue is nil", ^{
@@ -124,8 +129,6 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
         describe(@"connectionChangeListener", ^{
 
             it(@"should be called when connection status changes", ^{
-                NSOperationQueue *queue = [NSOperationQueue new];
-
                 EMSReachability *reachabilityMock = [EMSReachability mock];
                 [[reachabilityMock should] receive:@selector(startNotifier)
                                          andReturn:@YES];
@@ -156,8 +159,6 @@ SPEC_BEGIN(EMSConnectionWatchdogTest)
             });
 
             it(@"should be called on the set publicApiOperationQueue", ^{
-                NSOperationQueue *queue = [NSOperationQueue new];
-
                 EMSReachability *reachabilityMock = [EMSReachability mock];
                 [[reachabilityMock should] receive:@selector(startNotifier)
                                          andReturn:@YES];

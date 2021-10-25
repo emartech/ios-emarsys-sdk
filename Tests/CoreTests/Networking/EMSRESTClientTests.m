@@ -16,6 +16,7 @@
 #import "FakeRequestModelMapper.h"
 #import "EMSAbstractResponseHandler.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
+#import "XCTestCase+Helper.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
@@ -43,7 +44,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 
 - (void)setUp {
     _mockSession = OCMClassMock([NSURLSession class]);
-    _expectedOperationQueue = [EMSOperationQueue new];
+    _expectedOperationQueue = [self createTestOperationQueue];
     _mockQueue = OCMClassMock([NSOperationQueue class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockCoreCompletionHandler = OCMClassMock([EMSCoreCompletionHandler class]);
@@ -70,6 +71,10 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
                                      requestModelMappers:nil
                                         responseHandlers:nil
                                   mobileEngageBodyParser:self.mockMobileEngageBodyParser];
+}
+
+- (void)tearDown {
+    [self tearDownOperationQueue:self.expectedOperationQueue];
 }
 
 - (void)testInit_session_mustNotBeNil {

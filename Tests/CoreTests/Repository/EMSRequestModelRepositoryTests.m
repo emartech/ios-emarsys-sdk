@@ -24,18 +24,24 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
 
         __block EMSSQLiteHelper *helper;
         __block id <EMSRequestModelRepositoryProtocol> repository;
+        __block NSOperationQueue *testQueue;
 
         beforeEach(^{
+            testQueue = [[NSOperationQueue alloc] init];
+            [testQueue setMaxConcurrentOperationCount:1];
+            testQueue.name = @"testOperationQueue";
             [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                        error:nil];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                     schemaDelegate:[EMSSqliteSchemaHandler new]];
             [helper open];
             repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
-                                                              operationQueue:[NSOperationQueue new]];
+                                                              operationQueue:testQueue];
         });
 
         afterEach(^{
+            [testQueue cancelAllOperations];
+            [testQueue waitUntilAllOperationsAreFinished];
             [helper close];
         });
 
@@ -88,11 +94,8 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
                 __block NSOperationQueue *returnedOperationQueue = nil;
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
                 FakeDbHelper *dbHelper = [FakeDbHelper new];
-                NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-                operationQueue.name = @"testOperationQueue";
-                EMSRequestModelRepository *requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
-                                                                                                         operationQueue:operationQueue];
-
+                EMSRequestModelRepository *requestModelRepositoryToTriggerDBClose = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
+                                                                                                         operationQueue:testQueue];
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     dbHelper.closeOperationQueueBlock = ^(NSOperationQueue *operationQueue) {
                         returnedOperationQueue = operationQueue;
@@ -102,11 +105,11 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
                     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
                                                                         object:nil];
                 });
-
                 XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:5];
+                                                                      timeout:10];
                 XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                XCTAssertEqualObjects(returnedOperationQueue, operationQueue);
+                XCTAssertEqualObjects(returnedOperationQueue, testQueue);
+                XCTAssertNotNil(requestModelRepositoryToTriggerDBClose);
             });
         });
 

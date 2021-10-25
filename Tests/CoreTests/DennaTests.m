@@ -17,6 +17,7 @@
 #import "EMSOperationQueue.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
+#import "XCTestCase+Helper.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
@@ -29,15 +30,21 @@ SPEC_BEGIN(DennaTest)
         NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
         NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
 
+__block NSOperationQueue *queue;
+
+beforeEach(^{
+    queue = [self createTestOperationQueue];
+});
+
+afterEach(^{
+    [self tearDownOperationQueue:queue];
+});
+
         void (^shouldEventuallySucceed)(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) = ^(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) {
             __block NSString *checkableRequestId;
             __block NSString *resultMethod;
             __block BOOL expectedSubsetOfResultHeaders;
             __block NSDictionary<NSString *, id> *resultPayload;
-
-            NSOperationQueue *queue = [NSOperationQueue new];
-            queue.maxConcurrentOperationCount = 1;
-            queue.qualityOfService = NSQualityOfServiceUtility;
 
             EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                         checkableRequestId = requestId;
@@ -54,10 +61,10 @@ SPEC_BEGIN(DennaTest)
                                                                                                  NSLog(@"ERROR!");
                                                                                                  fail(@"errorblock invoked");
                                                                                              }];
-            NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
+
             EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                               schemaDelegate:[EMSSqliteSchemaHandler new]]
-                                                                                                operationQueue:operationQueue];
+                                                                                                operationQueue:queue];
             EMSShardRepository *shardRepository = [EMSShardRepository new];
 
 
@@ -66,19 +73,19 @@ SPEC_BEGIN(DennaTest)
             [sessionConfiguration setHTTPCookieStorage:nil];
             NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                                   delegate:nil
-                                                             delegateQueue:operationQueue];
+                                                             delegateQueue:queue];
 
             EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
 
             EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                         queue:operationQueue
+                                                                         queue:queue
                                                              timestampProvider:[EMSTimestampProvider new]
                                                              additionalHeaders:nil
                                                            requestModelMappers:nil
                                                               responseHandlers:nil
                                                         mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
             EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                        operationQueue:operationQueue
+                                                                                                                        operationQueue:queue
                                                                                                                    defaultSuccessBlock:middleware.successBlock
                                                                                                                      defaultErrorBlock:middleware.errorBlock];
 
@@ -126,9 +133,6 @@ SPEC_BEGIN(DennaTest)
                         }
                                                         timestampProvider:[EMSTimestampProvider new]
                                                              uuidProvider:[EMSUUIDProvider new]];
-                NSOperationQueue *queue = [NSOperationQueue new];
-                queue.maxConcurrentOperationCount = 1;
-                queue.qualityOfService = NSQualityOfServiceUtility;
 
                 EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
                             NSLog(@"ERROR!");
@@ -138,10 +142,9 @@ SPEC_BEGIN(DennaTest)
                                                                                                      NSLog(@"ERROR!");
                                                                                                      fail(@"errorblock invoked");
                                                                                                  }];
-                NSOperationQueue *operationQueue = [[EMSOperationQueue alloc] init];
                 EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
                                                                                                                                                   schemaDelegate:[EMSSqliteSchemaHandler new]]
-                                                                                                    operationQueue:operationQueue];
+                                                                                                    operationQueue:queue];
                 EMSShardRepository *shardRepository = [EMSShardRepository new];
 
                 NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -149,19 +152,19 @@ SPEC_BEGIN(DennaTest)
                 [sessionConfiguration setHTTPCookieStorage:nil];
                 NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                                       delegate:nil
-                                                                 delegateQueue:operationQueue];
+                                                                 delegateQueue:queue];
 
                 EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
 
                 EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                             queue:operationQueue
+                                                                             queue:queue
                                                                  timestampProvider:[EMSTimestampProvider new]
                                                                  additionalHeaders:nil
                                                                requestModelMappers:nil
                                                                   responseHandlers:nil
                                                             mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
                 EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                            operationQueue:operationQueue
+                                                                                                                            operationQueue:queue
                                                                                                                        defaultSuccessBlock:middleware.successBlock
                                                                                                                          defaultErrorBlock:middleware.errorBlock];
 

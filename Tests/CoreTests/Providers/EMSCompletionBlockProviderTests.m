@@ -5,15 +5,22 @@
 #import <XCTest/XCTest.h>
 #import "EMSCompletionBlockProvider.h"
 #import "EMSOperationQueue.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSCompletionBlockProviderTests : XCTestCase
+
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
 @implementation EMSCompletionBlockProviderTests
 
 - (void)setUp {
+    _queue = [self createTestOperationQueue];
+}
 
+- (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
 }
 
 - (void)testInit_operationQueue_mustNotBeNil {
@@ -26,10 +33,7 @@
 }
 
 - (void)testProvideCompletion {
-    EMSOperationQueue *expectedOperationQueue = [EMSOperationQueue new];
-    expectedOperationQueue.maxConcurrentOperationCount = 1;
-    expectedOperationQueue.qualityOfService = NSQualityOfServiceUtility;
-    EMSCompletionBlockProvider *provider = [[EMSCompletionBlockProvider alloc] initWithOperationQueue:expectedOperationQueue];
+    EMSCompletionBlockProvider *provider = [[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.queue];
 
     __block NSOperationQueue *usedOperationQueue;
 
@@ -47,7 +51,7 @@
                                                           timeout:10];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-    XCTAssertEqualObjects(usedOperationQueue, expectedOperationQueue);
+    XCTAssertEqualObjects(usedOperationQueue, self.queue);
 }
 
 @end

@@ -14,6 +14,7 @@
 #import "EMSWaiter.h"
 #import "EMSNotificationInformation.h"
 #import "EMSInAppInternal.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSPushV3Internal ()
 
@@ -61,7 +62,7 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
     _mockActionFactory = OCMClassMock([EMSActionFactory class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
     _mockInAppInternal = OCMClassMock([EMSInAppInternal class]);
-    _operationQueue = [NSOperationQueue new];
+    _operationQueue = [self createTestOperationQueue];
 
     _pushToken = @"pushTokenString";
     NSData *data = [NSData new];
@@ -78,6 +79,7 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 
 - (void)tearDown {
     [self.mockPushTokenData stopMocking];
+    [self tearDownOperationQueue:self.operationQueue];
     [super tearDown];
 }
 

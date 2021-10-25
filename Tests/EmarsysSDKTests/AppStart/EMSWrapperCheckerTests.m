@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import "EMSWrapperChecker.h"
 #import "EMSDispatchWaiter.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSWrapperCheckerTests : XCTestCase
 
@@ -18,13 +19,15 @@
 @implementation EMSWrapperCheckerTests
 
 - (void)setUp {
-    _queue = [NSOperationQueue new];
+    _queue = [self createTestOperationQueue];
+
     _waiter = [EMSDispatchWaiter new];
     _wrapperChecker = [[EMSWrapperChecker alloc] initWithOperationQueue:self.queue
                                                                  waiter:self.waiter];
 }
 
 - (void)tearDown {
+    [self tearDownOperationQueue:self.queue];
     if (self.observer) {
         [[NSNotificationCenter defaultCenter] removeObserver:self.observer];
         _observer = nil;
