@@ -133,7 +133,6 @@
 
     EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
     EMSInlineInAppView *partialMock = OCMPartialMock(inAppView);
-    [partialMock loadInAppWithViewId:@"testViewId"];
 
     XCTestExpectation *expectation= [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
 
@@ -141,11 +140,11 @@
         [partialMock setCompletionBlock:^(NSError *error) {
             [expectation fulfill];
         }];
-        [partialMock fetchInlineInappMessage];
+        [partialMock loadInAppWithViewId:@"testViewId"];
     });
 
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-            timeout:2];
+            timeout:5];
 
     XCTAssertEqual(result, XCTWaiterResultCompleted);
     OCMVerify([partialMock.webView loadHTMLString:@"<HTML><BODY></BODY></HTML>"
