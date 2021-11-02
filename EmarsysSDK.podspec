@@ -19,6 +19,8 @@ Pod::Spec.new do |spec|
         'Sources/include/EMSInAppProtocol.h',
         'Sources/include/EMSPredictProtocol.h',
         'Sources/include/EMSGeofenceProtocol.h',
+        'Sources/include/EMSGeofence.h',
+        'Sources/include/EMSGeofenceTrigger.h',
         'Sources/include/EMSPushNotificationProtocol.h',
         'Sources/include/EMSMessageInboxProtocol.h',
         'Sources/include/EMSInboxResult.h',
