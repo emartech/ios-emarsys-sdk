@@ -8,6 +8,7 @@
 @class EMSProduct;
 @class EMSLogic;
 @protocol EMSRecommendationFilterProtocol;
+@protocol EMSLogicProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,44 +36,44 @@ typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSEr
   withAttributes:(nullable NSDictionary<NSString *, NSString *> *)attributes
     NS_SWIFT_NAME(trackTag(tag:attributes:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:limit:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:filters:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:filters:limit:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                   availabilityZone:(nullable NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:availabilityZone:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(nullable NSNumber *)limit
                   availabilityZone:(nullable NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:limit:availabilityZone:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                   availabilityZone:(nullable NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock
     NS_SWIFT_NAME(recommendProducts(logic:filters:availabilityZone:productsBlock:));
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                   availabilityZone:(nullable NSString *)availabilityZone

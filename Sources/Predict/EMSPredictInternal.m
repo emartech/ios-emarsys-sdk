@@ -159,7 +159,7 @@
     [self.requestManager submitShard:shard];
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                      productsBlock:(EMSProductsBlock)productsBlock {
     [self recommendProductsWithLogic:logic
                              filters:nil
@@ -168,7 +168,7 @@
                        productsBlock:productsBlock];
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
     [self recommendProductsWithLogic:logic
@@ -178,7 +178,7 @@
                        productsBlock:productsBlock];
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock {
     [self recommendProductsWithLogic:logic
@@ -188,7 +188,7 @@
                        productsBlock:productsBlock];
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -199,7 +199,7 @@
                        productsBlock:productsBlock];
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
     [self recommendProductsWithLogic:logic
@@ -210,7 +210,7 @@
 
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(NSNumber *)limit
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -222,7 +222,7 @@
 
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(NSArray *)filters
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -234,7 +234,7 @@
 
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(NSArray *)filters
                              limit:(NSNumber *)limit
                   availabilityZone:(NSString *)availabilityZone

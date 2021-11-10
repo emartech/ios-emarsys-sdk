@@ -78,7 +78,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic productsBlock:(EMSProductsBlock)productsBlock {
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     parameters[@"productsBlock"] = @(productsBlock != nil);
     parameters[@"logic"] = logic;
@@ -87,7 +87,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
@@ -99,7 +99,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
@@ -111,7 +111,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(nullable NSArray<id <EMSRecommendationFilterProtocol>> *)filters
                              limit:(nullable NSNumber *)limit
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -125,7 +125,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
@@ -137,7 +137,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                              limit:(NSNumber *)limit
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -151,7 +151,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(NSArray *)filters
                   availabilityZone:(NSString *)availabilityZone
                      productsBlock:(EMSProductsBlock)productsBlock {
@@ -165,7 +165,7 @@
                                               parameters:parameters], LogLevelDebug);
 }
 
-- (void)recommendProductsWithLogic:(EMSLogic *)logic
+- (void)recommendProductsWithLogic:(id <EMSLogicProtocol>)logic
                            filters:(NSArray *)filters
                              limit:(NSNumber *)limit
                   availabilityZone:(NSString *)availabilityZone
