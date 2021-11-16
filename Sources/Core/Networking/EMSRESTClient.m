@@ -21,9 +21,6 @@
 @property(nonatomic, strong) NSURLSession *session;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
-@property(nonatomic, strong) NSArray<id <EMSRequestModelMapperProtocol>> *requestModelMappers;
-@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
-@property(nonatomic, strong) id <EMSResponseBodyParserProtocol>mobileEngageBodyParser;
 
 @end
 

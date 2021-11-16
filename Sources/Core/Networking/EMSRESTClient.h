@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSRESTClient : NSObject
 
 @property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *additionalHeaders;
+@property(nonatomic, strong) NSArray<id <EMSRequestModelMapperProtocol>> *requestModelMappers;
+@property(nonatomic, strong) NSArray<EMSAbstractResponseHandler *> *responseHandlers;
+@property(nonatomic, strong) id <EMSResponseBodyParserProtocol>mobileEngageBodyParser;
 
 - (instancetype)initWithSession:(NSURLSession *)session
                           queue:(NSOperationQueue *)queue
@@ -25,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
               additionalHeaders:(nullable NSDictionary<NSString *, NSString *> *)additionalHeaders
             requestModelMappers:(nullable NSArray<id <EMSRequestModelMapperProtocol>> *)requestModelMappers
                responseHandlers:(nullable NSArray<EMSAbstractResponseHandler *> *)responseHandlers
-         mobileEngageBodyParser:(id <EMSResponseBodyParserProtocol>)mobileEngageBodyParser;
+         mobileEngageBodyParser:(nullable id <EMSResponseBodyParserProtocol>)mobileEngageBodyParser;
 
 - (void)executeWithRequestModel:(EMSRequestModel *)requestModel
             coreCompletionProxy:(id <EMSRESTClientCompletionProxyProtocol>)completionProxy;
