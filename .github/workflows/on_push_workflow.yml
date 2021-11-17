@@ -15,7 +15,7 @@ jobs:
         run: pod install --no-repo-update --verbose
         shell: bash
       - name: Build And Test
-        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max' -derivedDataPath ~/tmp test
+        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max' -derivedDataPath ~/tmp test
         shell: bash
       - name: Trigger Sample App Build
         uses: peter-evans/repository-dispatch@v1
