@@ -29,7 +29,7 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                          endpoint:[EMSEndpoint mock]
                                                                                                    operationQueue:[NSOperationQueue mock]
                                                                                                           storage:[EMSStorage mock]];
-                [[factory.inApp shouldNot] beNil];
+                [[(id) factory.inApp shouldNot] beNil];
             });
 
             it(@"should set requestContext after init", ^{
@@ -43,7 +43,7 @@ SPEC_BEGIN(MERequestModelRepositoryFactoryTests)
                                                                                                          endpoint:[EMSEndpoint mock]
                                                                                                    operationQueue:[NSOperationQueue mock]
                                                                                                           storage:[EMSStorage mock]];
-                [[factory.inApp shouldNot] beNil];
+                [[(id) factory.inApp shouldNot] beNil];
             });
 
             it(@"should throw an exception when there is no inApp", ^{

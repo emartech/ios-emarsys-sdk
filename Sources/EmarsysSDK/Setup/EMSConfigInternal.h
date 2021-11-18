@@ -6,7 +6,9 @@
 #import "EMSConfigProtocol.h"
 #import "EMSConfig.h"
 
-@class EMSDeviceInfoV3ClientInternal;
+@protocol EMSDeviceInfoClientProtocol;
+@protocol EMSPushNotificationProtocol;
+@protocol EMSMobileEngageProtocol;
 @class EMSMobileEngageV3Internal;
 @class MERequestContext;
 @class EMSPushV3Internal;
@@ -27,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                       meRequestContext:(MERequestContext *)meRequestContext
                      preRequestContext:(PRERequestContext *)preRequestContext
-                          mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                          pushInternal:(EMSPushV3Internal *)pushInternal
+                          mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+                          pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
@@ -37,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
                                 crypto:(EMSCrypto *)crypto
                                  queue:(NSOperationQueue *)queue
                                 waiter:(EMSDispatchWaiter *)waiter
-                      deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient;
+                      deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 
 - (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 

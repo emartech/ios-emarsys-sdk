@@ -14,7 +14,7 @@
 
 @implementation MEIAMResponseHandler
 
-- (instancetype)initWithInApp:(MEInApp *)inApp {
+- (instancetype)initWithInApp:(id<EMSInAppProtocol, MEIAMProtocol>)inApp {
     NSParameterAssert(inApp);
     if (self = [super init]) {
         _inApp = inApp;

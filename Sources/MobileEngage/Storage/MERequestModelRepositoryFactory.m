@@ -14,7 +14,7 @@
 
 @implementation MERequestModelRepositoryFactory
 
-- (instancetype)initWithInApp:(MEInApp *)inApp
+- (instancetype)initWithInApp:(id<EMSInAppProtocol, MEIAMProtocol>)inApp
                requestContext:(MERequestContext *)requestContext
                      dbHelper:(EMSSQLiteHelper *)dbHelper
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository

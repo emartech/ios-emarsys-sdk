@@ -6,6 +6,8 @@
 #import "EMSSQLiteHelper.h"
 
 @protocol EMSRequestModelRepositoryProtocol;
+@protocol MEIAMProtocol;
+@protocol EMSInAppProtocol;
 @class MEInApp;
 @class MERequestContext;
 @class MEButtonClickRepository;
@@ -15,7 +17,7 @@
 
 @interface MERequestModelRepositoryFactory : NSObject
 
-@property(nonatomic, readonly) MEInApp *inApp;
+@property(nonatomic, readonly) id<EMSInAppProtocol, MEIAMProtocol> inApp;
 @property(nonatomic, readonly) MERequestContext *requestContext;
 @property(nonatomic, readonly) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, readonly) MEDisplayedIAMRepository *displayedIAMRepository;
@@ -24,7 +26,7 @@
 @property(nonatomic, readonly) NSOperationQueue *operationQueue;
 @property(nonatomic, readonly) EMSStorage *storage;
 
-- (instancetype)initWithInApp:(MEInApp *)inApp
+- (instancetype)initWithInApp:(id<EMSInAppProtocol, MEIAMProtocol>) inApp
                requestContext:(MERequestContext *)requestContext
                      dbHelper:(EMSSQLiteHelper *)dbHelper
         buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository

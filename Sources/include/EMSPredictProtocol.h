@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^EMSProductsBlock)(NSArray<EMSProduct *> *_Nullable products, NSError *_Nullable error);
+typedef void (^EMSProductsBlock)(NSArray<id<EMSProductProtocol>> *_Nullable products, NSError *_Nullable error);
 
 @protocol EMSPredictProtocol <NSObject>
 

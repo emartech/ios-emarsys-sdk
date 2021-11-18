@@ -5,10 +5,12 @@
 #import <Foundation/Foundation.h>
 #import "EMSAbstractResponseHandler.h"
 
+@protocol  EMSInAppProtocol;
+@protocol MEIAMProtocol;
 @class MEInApp;
 
 @interface MEIAMResponseHandler : EMSAbstractResponseHandler
 
-- (instancetype)initWithInApp:(MEInApp *)inApp;
+- (instancetype)initWithInApp:(id<EMSInAppProtocol, MEIAMProtocol>)inApp;
 
 @end

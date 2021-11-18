@@ -49,8 +49,8 @@
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                       meRequestContext:(MERequestContext *)meRequestContext
                      preRequestContext:(PRERequestContext *)preRequestContext
-                          mobileEngage:(EMSMobileEngageV3Internal *)mobileEngage
-                          pushInternal:(EMSPushV3Internal *)pushInternal
+                          mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+                          pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
             remoteConfigResponseMapper:(EMSRemoteConfigResponseMapper *)remoteConfigResponseMapper
@@ -59,7 +59,7 @@
                                 crypto:(EMSCrypto *)crypto
                                  queue:(NSOperationQueue *)queue
                                 waiter:(EMSDispatchWaiter *)waiter
-                      deviceInfoClient:(EMSDeviceInfoV3ClientInternal *)deviceInfoClient {
+                      deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient {
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
