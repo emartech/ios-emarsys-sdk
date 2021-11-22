@@ -47,19 +47,13 @@
                                       openIdToken:(NSString *)openIdToken
                                   completionBlock:(EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![openIdToken isEqualToString:self.requestContext.openIdToken];
-
+    
     [self.requestContext setContactFieldValue:nil];
     [self.requestContext setContactFieldId:contactFieldId];
     [self.requestContext setOpenIdToken:openIdToken];
-
-    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
-    [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:completionBlock];
-
-    if (shouldRestartSession) {
-        [self.session stopSession];
-        [self.session startSession];
-    }
+    
+    [self sendContactRequestWithShouldRestartSession:shouldRestartSession
+                                     completionBlock:completionBlock];
 }
 
 - (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
@@ -73,19 +67,33 @@
                    contactFieldValue:(nullable NSString *)contactFieldValue
                      completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
-
+    
     [self.requestContext setOpenIdToken:nil];
     [self.requestContext setContactFieldId:contactFieldId];
     [self.requestContext setContactFieldValue:contactFieldValue];
+    
+    [self sendContactRequestWithShouldRestartSession:shouldRestartSession
+                                     completionBlock:completionBlock];
+}
 
+- (void)sendContactRequestWithShouldRestartSession:(BOOL)shouldRestartSession
+                                   completionBlock:(EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
+    __weak typeof(self) weakSelf = self;
     [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:completionBlock];
-
-    if (shouldRestartSession) {
-        [self.session stopSession];
-        [self.session startSession];
-    }
+                        withCompletionBlock:^(NSError * _Nullable error) {
+        if (shouldRestartSession) {
+            [weakSelf.session stopSessionWithCompletionBlock:^(NSError * _Nullable error) {
+                [weakSelf.session startSessionWithCompletionBlock:completionBlock];
+            }];
+        } else {
+            if (completionBlock) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionBlock(error);
+                });
+            }
+        }
+    }];
 }
 
 - (void)clearContact {
@@ -93,14 +101,17 @@
 }
 
 - (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    [self.storage setData:nil
-                   forKey:kEMSPushTokenKey];
-    [self.requestContext reset];
-    [self.session stopSession];
-    [self setContactWithContactFieldId:nil
-                     contactFieldValue:nil
-                       completionBlock:completionBlock];
-    [self.session startSession];
+    __weak typeof(self) weakSelf = self;
+    [self.session stopSessionWithCompletionBlock:^(NSError * _Nullable error) {
+        [weakSelf.storage setData:nil
+                           forKey:kEMSPushTokenKey];
+        [weakSelf.requestContext reset];
+        [weakSelf setContactWithContactFieldId:nil
+                             contactFieldValue:nil
+                               completionBlock:^(NSError * _Nullable error) {
+            [weakSelf.session startSessionWithCompletionBlock:completionBlock];
+        }];
+    }];
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName

@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
                          operationQueue:(NSOperationQueue *)operationQueue
                       timestampProvider:(EMSTimestampProvider *)timestampProvider;
 
-- (void)startSession;
-- (void)stopSession;
+- (void)startSessionWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
+- (void)stopSessionWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
 

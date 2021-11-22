@@ -107,7 +107,7 @@
 }
 
 - (void)testStartSession_shouldGenerateSessionId {
-    [self.session startSession];
+    [self.session startSessionWithCompletionBlock:nil];
 
     XCTAssertNotNil(self.session.sessionIdHolder.sessionId);
 }
@@ -117,7 +117,7 @@
 
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(sessionStartTime);
 
-    [self.session startSession];
+    [self.session startSessionWithCompletionBlock:nil];
 
     XCTAssertEqualObjects(self.session.sessionStartTime, sessionStartTime);
 }
@@ -128,7 +128,7 @@
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"session:start"
                                                           eventAttributes:nil
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
-    [self.session startSession];
+    [self.session startSessionWithCompletionBlock:nil];
 
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:nil]);
@@ -139,7 +139,7 @@
 
     [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidBecomeActiveNotification
                                                                                        object:nil]];
-    OCMVerify([partialMockSession startSession]);
+    OCMVerify([partialMockSession startSessionWithCompletionBlock:nil]);
 }
 
 - (void)testDidEnterBackgroundNotification_shouldInvokeStopSession {
@@ -147,7 +147,7 @@
 
     [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidEnterBackgroundNotification
                                                                                        object:nil]];
-    OCMVerify([partialMockSession stopSession]);
+    OCMVerify([partialMockSession stopSessionWithCompletionBlock:nil]);
 }
 
 - (void)testStopSession_shouldSendSessionStopEvent {
@@ -159,7 +159,7 @@
     OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:@"session:end"
                                                           eventAttributes:@{@"duration": [[sessionStopTime numberValueInMillisFromDate:self.session.sessionStartTime] stringValue]}
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
-    [self.session stopSession];
+    [self.session stopSessionWithCompletionBlock:nil];
 
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:nil]);

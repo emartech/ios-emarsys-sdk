@@ -37,29 +37,30 @@
                                                         object:nil
                                                          queue:operationQueue
                                                     usingBlock:^(NSNotification *notification) {
-                                                        [weakSelf startSession];
-                                                    }];
+            [weakSelf startSessionWithCompletionBlock:nil];
+        }];
         [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidEnterBackgroundNotification
                                                         object:nil
                                                          queue:operationQueue
                                                     usingBlock:^(NSNotification *notification) {
-                                                        [weakSelf stopSession];
-                                                    }];
+            [weakSelf stopSessionWithCompletionBlock:nil];
+        }];
     }
     return self;
 }
 
-- (void)startSession {
+- (void)startSessionWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    
     self.sessionIdHolder.sessionId = [NSUUID UUID].UUIDString;
     self.sessionStartTime = [self.timestampProvider provideTimestamp];
     EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"session:start"
                                                                               eventAttributes:nil
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:nil];
+                        withCompletionBlock:completionBlock];
 }
 
-- (void)stopSession {
+- (void)stopSessionWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSDate *sessionStopTime = [self.timestampProvider provideTimestamp];
     NSString *elapsedTime = [[sessionStopTime numberValueInMillisFromDate:self.sessionStartTime] stringValue];
     NSMutableDictionary *eventAttributes = [NSMutableDictionary dictionary];
@@ -68,7 +69,7 @@
                                                                               eventAttributes:[NSDictionary dictionaryWithDictionary:eventAttributes]
                                                                                     eventType:EventTypeInternal];
     [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:nil];
+                        withCompletionBlock:completionBlock];
     self.sessionIdHolder.sessionId = nil;
 }
 
