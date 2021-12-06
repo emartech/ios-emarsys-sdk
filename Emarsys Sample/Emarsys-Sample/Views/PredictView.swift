@@ -176,7 +176,7 @@ struct PredictView: View {
         }
     }
     
-    private func convertProducts(products: [EMSProduct]) -> [Product]{
+    private func convertProducts(products: [EMSProductProtocol]) -> [Product]{
         var result : [Product] = []
         for product in products {
             let imageUrlString = product.imageUrl?.absoluteString
