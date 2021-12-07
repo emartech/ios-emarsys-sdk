@@ -121,6 +121,7 @@
                            items:(NSArray<id <EMSCartItemProtocol>> *)items {
     NSParameterAssert(orderId);
     NSParameterAssert(items);
+    NSParameterAssert(items.count > 0);
 
     [self.requestManager submitShard:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_purchase"];

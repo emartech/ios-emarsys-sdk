@@ -424,6 +424,17 @@ __block NSOperationQueue *queue;
                 }
             });
 
+            it(@"should throw exception when items is empty", ^{
+                @try {
+                    [[EMSPredictInternal new] trackPurchaseWithOrderId:@"orderId"
+                                                                 items: [NSArray new]];
+                    fail(@"Expected Exception when items is empty!");
+                } @catch (NSException *exception) {
+                    [[exception.reason should] equal:@"Invalid parameter not satisfying: items.count > 0"];
+                    [[theValue(exception) shouldNot] beNil];
+                }
+            });
+
             it(@"should submit the correct shard for purchase", ^{
                 NSDate *timestamp = [NSDate date];
                 NSString *const shardId = @"shardId";
