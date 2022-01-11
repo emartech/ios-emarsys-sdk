@@ -36,5 +36,5 @@ name: Last commit build
 'on':
   push:
     branches:
-      - master
+      - dev
   workflow_dispatch:
