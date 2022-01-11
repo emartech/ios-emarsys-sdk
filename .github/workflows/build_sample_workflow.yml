@@ -85,5 +85,5 @@ name: Sample App Build
   repository_dispatch:
     types: [ build-sample ]
     branches:
-      - master
+      - dev
   workflow_dispatch:
