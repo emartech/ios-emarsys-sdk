@@ -196,11 +196,11 @@
         if (!error) {
             self.meRequestContext.applicationCode = applicationCode;
             if (applicationCode) {
-                [self sendDeviceInfo];
+                error = [self sendDeviceInfo];
                 if (pushToken) {
                     error = [self sendPushToken:pushToken];
                 }
-                if (!hasContactIdentification) {
+                if (!error && !hasContactIdentification) {
                     error = [self clearContact];
                 }
             }

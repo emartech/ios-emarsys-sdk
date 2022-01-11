@@ -29,6 +29,12 @@
 - (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
                            completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
+- (NSError *)sendDeviceInfo;
+
+- (NSError *)sendPushToken:(NSData *)pushToken;
+
+- (NSError *)clearPushToken;
+
 @end
 
 @interface EMSConfigInternalTests : XCTestCase
@@ -529,9 +535,10 @@
     XCTAssertNil(returnedError);
 }
 
-- (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError {
+- (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError_onMainQueue {
     id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
+    __block NSOperationQueue *returnedQueue = nil;
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
     OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn((YES));
@@ -569,6 +576,7 @@
     [self.configInternal changeApplicationCode:@"newApplicationCode"
                                completionBlock:^(NSError *error) {
                                    returnedError = error;
+                                   returnedQueue = [NSOperationQueue currentQueue];
                                    [expectation fulfill];
                                }];
 
@@ -583,6 +591,82 @@
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqual(returnedError, inputError);
+    XCTAssertEqualObjects(returnedQueue, NSOperationQueue.mainQueue);
+}
+
+- (void)testChangeApplicationCode_shouldNotCallClearContact_whenSendDeviceInfoReturnsError {
+    NSError *error = [NSError errorWithCode:-1000 localizedDescription:@"testError"];
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+
+    OCMReject([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:self.mockMobileEngage
+                                                           pushInternal:OCMClassMock([EMSPushV3Internal class])
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory
+                                             remoteConfigResponseMapper:self.mockResponseMapper
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto
+                                                                  queue:self.queue
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+    OCMStub([partialMockConfigInternal sendDeviceInfo]).andReturn(error);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [partialMockConfigInternal changeApplicationCode:@"newApplicationCode"
+                                     completionBlock:^(NSError *error) {
+                                         [expectation fulfill];
+                                     }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:20];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testChangeApplicationCode_shouldNotCallClearContact_whenSendPushTokenReturnsError {
+    NSError *error = [NSError errorWithCode:-1000 localizedDescription:@"testError"];
+
+    OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
+
+    OCMReject([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+
+    _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
+                                                       meRequestContext:self.mockMeRequestContext
+                                                      preRequestContext:self.mockPreRequestContext
+                                                           mobileEngage:self.mockMobileEngage
+                                                           pushInternal:self.mockPushInternal
+                                                             deviceInfo:self.mockDeviceInfo
+                                                  emarsysRequestFactory:self.mockEmarsysRequestFactory
+                                             remoteConfigResponseMapper:self.mockResponseMapper
+                                                               endpoint:self.mockEndpoint
+                                                                 logger:self.mockLogger
+                                                                 crypto:self.mockCrypto
+                                                                  queue:self.queue
+                                                                 waiter:self.waiter
+                                                       deviceInfoClient:self.mockDeviceInfoClient];
+
+    EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
+    OCMStub([partialMockConfigInternal sendPushToken:self.deviceToken]).andReturn(error);
+    OCMStub([partialMockConfigInternal clearPushToken]).andReturn(nil);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    [partialMockConfigInternal changeApplicationCode:@"newApplicationCode"
+                                     completionBlock:^(NSError *error) {
+                                         [expectation fulfill];
+                                     }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:20];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)testChangeApplicationCode_setPushToken_shouldCallCompletionBlockWithError {
