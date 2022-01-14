@@ -10,9 +10,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Checkout dev
-        run: git checkout dev
-        shell: bash
+          ref: dev
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
