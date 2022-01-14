@@ -10,7 +10,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: dev
-      - name: Remove old d
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
