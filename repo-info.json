@@ -1,7 +1,7 @@
 {
   "is_in_production": true,
-  "is_scannable": false,
+  "is_scannable": true,
   "is_critical": false,
-  "contact": "",
+  "contact": "sdk-team@emarsys.com",
   "hosted": null
 }
