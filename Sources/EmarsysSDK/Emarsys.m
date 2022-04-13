@@ -20,6 +20,11 @@
 #define kSDKAlreadyInstalled @"kSDKAlreadyInstalled"
 @implementation Emarsys
 
++ (BOOL)alreadyInstalled {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    return [userDefaults boolForKey:kSDKAlreadyInstalled];
+}
+
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
 

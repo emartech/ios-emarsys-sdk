@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(class, nonatomic, readonly) id <EMSConfigProtocol> config;
 @property(class, nonatomic, readonly) id <EMSOnEventActionProtocol> onEventAction;
 
++ (BOOL)alreadyInstalled
+    NS_SWIFT_NAME(isAlreadyInstalled());
+
 + (void)setupWithConfig:(EMSConfig *)config
     NS_SWIFT_NAME(setup(config:));
 
