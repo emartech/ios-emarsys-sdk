@@ -8,6 +8,7 @@
 #import "EMSDeviceInfo.h"
 #import "EMSStorage.h"
 #import "EMSDeviceEventStateResponseHandler.h"
+#import "EMSStorageProtocol.h"
 
 
 @implementation EMSSdkStateLogger

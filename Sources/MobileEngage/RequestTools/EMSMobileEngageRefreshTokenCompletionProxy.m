@@ -8,6 +8,7 @@
 #import "EMSContactTokenResponseHandler.h"
 #import "EMSEndpoint.h"
 #import "EMSStorage.h"
+#import "EMSStorageProtocol.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 

@@ -12,6 +12,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSStorage.h"
 #import "EMSEndpoint.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSDeviceEventStateResponseHandlerTests : XCTestCase
 

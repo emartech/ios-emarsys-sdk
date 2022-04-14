@@ -21,6 +21,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "MEExperimental+Test.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 

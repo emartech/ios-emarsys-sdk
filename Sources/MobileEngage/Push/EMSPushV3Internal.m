@@ -15,6 +15,7 @@
 #import "EMSMacros.h"
 #import "EMSCrashLog.h"
 #import "EMSInAppInternal.h"
+#import "EMSStorageProtocol.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 

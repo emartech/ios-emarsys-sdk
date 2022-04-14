@@ -5,6 +5,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EMSStorage.h"
+#import "EMSStorageProtocol.h"
 
 SPEC_BEGIN(MERequestContextTests)
 

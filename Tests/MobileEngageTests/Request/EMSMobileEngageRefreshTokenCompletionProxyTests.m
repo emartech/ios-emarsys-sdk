@@ -13,6 +13,7 @@
 #import "EMSValueProvider.h"
 #import "NSError+EMSCore.h"
 #import "EMSStorage.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSMobileEngageRefreshTokenCompletionProxyTests : XCTestCase
 

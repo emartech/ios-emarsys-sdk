@@ -18,6 +18,7 @@
 #import "MEExperimental.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSGeofenceInternal ()
 

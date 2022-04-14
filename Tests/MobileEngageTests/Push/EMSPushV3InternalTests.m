@@ -15,6 +15,7 @@
 #import "EMSNotificationInformation.h"
 #import "EMSInAppInternal.h"
 #import "XCTestCase+Helper.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSPushV3Internal ()
 
@@ -366,7 +367,7 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 }
 
 - (void)testTrackMessageOpenWithUserInfo {
-    NSDictionary *testUserInfo = @{@"testKey": @"testValue"};
+    NSDictionary *testUserInfo = @{@"testDataKey": @"testValue"};
 
     id partialMockPush = OCMPartialMock(self.push);
 

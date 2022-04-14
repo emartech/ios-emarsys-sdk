@@ -7,6 +7,7 @@
 #import "MERequestContext.h"
 #import "EMSStorage.h"
 #import "EMSSession.h"
+#import "EMSStorageProtocol.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 
