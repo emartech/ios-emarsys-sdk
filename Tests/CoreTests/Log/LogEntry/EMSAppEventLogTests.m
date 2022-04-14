@@ -17,7 +17,7 @@
 
 - (void)setUp {
     _eventName = @"testEventName";
-    _payload = @{@"testKey": @"testValue"};
+    _payload = @{@"testDataKey": @"testValue"};
     _appEventLog = [[EMSAppEventLog alloc] initWithEventName:self.eventName
                                                   attributes:self.payload];
 }

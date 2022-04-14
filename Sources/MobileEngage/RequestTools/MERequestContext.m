@@ -8,6 +8,7 @@
 #import "EMSDeviceInfo.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSStorageProtocol.h"
 
 @implementation MERequestContext
 

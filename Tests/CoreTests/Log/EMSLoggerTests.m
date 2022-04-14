@@ -13,6 +13,7 @@
 #import "EMSLogLevel.h"
 #import "EMSWrapperChecker.h"
 #import "XCTestCase+Helper.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSLoggerTests : XCTestCase
 

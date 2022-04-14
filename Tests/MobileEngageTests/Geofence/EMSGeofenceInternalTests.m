@@ -21,6 +21,7 @@
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
 #import "EmarsysTestUtils.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSGeofenceInternalTests : XCTestCase
 

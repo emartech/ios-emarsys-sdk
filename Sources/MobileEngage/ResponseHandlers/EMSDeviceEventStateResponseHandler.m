@@ -8,6 +8,7 @@
 #import "EMSInnerFeature.h"
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSEndpoint.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSDeviceEventStateResponseHandler ()
 

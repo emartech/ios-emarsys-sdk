@@ -12,6 +12,7 @@
 #import "MERequestContext.h"
 #import "EMSStorage.h"
 #import "EMSSession.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSMobileEngageV3InternalTests : XCTestCase
 

@@ -18,6 +18,7 @@
 #import "EMSStorage.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSStorageProtocol.h"
 
 #define kDeviceEventStateKey @"DEVICE_EVENT_STATE_KEY"
 

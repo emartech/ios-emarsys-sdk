@@ -12,6 +12,7 @@
 #import "EMSLogLevel.h"
 #import "NSDictionary+EMSCore.h"
 #import "EMSWrapperChecker.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSLogger ()
 

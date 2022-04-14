@@ -20,7 +20,7 @@
 
 - (void)testHandleEventPayload_withBlock {
     NSString *eventName = @"testEventName";
-    NSDictionary *payload = @{@"testKey": @{}};
+    NSDictionary *payload = @{@"testDataKey": @{}};
 
     __block NSString *returnedEventName = nil;
     __block NSDictionary *returnedPayload = nil;
@@ -44,7 +44,7 @@
 
 - (void)testHandleEventPayload_withoutBlock_shouldNotCrash {
     NSString *eventName = @"testEventName";
-    NSDictionary *payload = @{@"testKey": @{}};
+    NSDictionary *payload = @{@"testDataKey": @{}};
 
     [self.eventHandlerImpl handleEvent:eventName
                                payload:payload];

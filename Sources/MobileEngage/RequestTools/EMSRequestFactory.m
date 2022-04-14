@@ -15,6 +15,7 @@
 #import "EMSStorage.h"
 #import "MEExperimental.h"
 #import "EMSInnerFeature.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSRequestFactory ()
 

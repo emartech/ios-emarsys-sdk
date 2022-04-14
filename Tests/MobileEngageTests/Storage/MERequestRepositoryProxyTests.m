@@ -26,6 +26,7 @@
 #import "EMSStorage.h"
 #import "MEExperimental+Test.h"
 #import "EMSInnerFeature.h"
+#import "EMSStorageProtocol.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 

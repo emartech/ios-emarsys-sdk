@@ -6,6 +6,7 @@
 #import <OCMock/OCMock.h>
 #import "EMSStorage.h"
 #import "XCTestCase+Helper.h"
+#import "EMSStorageProtocol.h"
 
 @interface EMSStorage (Tests)
 
