@@ -322,39 +322,6 @@ SPEC_BEGIN(MERequestRepositoryProxyTests)
                 ]];
             });
 
-            it(@"should add deviceEventState on the custom event requests", ^{
-                [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
-                NSDictionary *deviceEventState = @{
-                        @"key1" : @"value2",
-                        @"key2" : @"value1"
-                };
-                [[mockStorage should] receive:@selector(dictionaryForKey:) andReturn:deviceEventState];
-
-                EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
-
-                createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
-
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
-
-                [[[result[0] payload][@"deviceEventState"] should] equal:deviceEventState];
-            });
-
-            it(@"should NOT add deviceEventState on the custom event requests when not V4", ^{
-                NSDictionary *deviceEventState = @{
-                        @"key1" : @"value2",
-                        @"key2" : @"value1"
-                };
-                [[mockStorage should] receive:@selector(dictionaryForKey:) andReturn:deviceEventState];
-
-                EMSRequestModel *modelCustomEvent1 = customEventRequestModel(@"event1", nil, requestContext);
-
-                createFakeRequestRepository(@[modelCustomEvent1], @[modelCustomEvent1], @[modelCustomEvent1], [MEInApp new], requestContext);
-
-                NSArray<EMSRequestModel *> *result = [compositeRequestModelRepository query:[EMSFilterByNothingSpecification new]];
-
-                [[[result[0] payload][@"deviceEventState"] should] beNil];
-            });
-
             it(@"should add the element to the requestModelRepository", ^{
                 EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                             [builder setUrl:@"https://www.url.com"];

@@ -187,13 +187,9 @@
 
 - (EMSRequestModel *)createInlineInappRequestModelWithViewId:(NSString *)viewId {
     __weak typeof(self) weakSelf = self;
-    NSDictionary *deviceEventState = [self.storage dictionaryForKey:kDeviceEventStateKey];
     NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
     payload[@"viewIds"] = @[viewId];
     payload[@"clicks"] = [self clickRepresentations];
-    if([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] && deviceEventState) {
-        payload[@"deviceEventState"] = deviceEventState;
-    }
     EMSRequestModel *requestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 [builder setMethod:HTTPMethodPOST];

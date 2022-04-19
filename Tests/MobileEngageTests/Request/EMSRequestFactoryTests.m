@@ -440,47 +440,4 @@
     XCTAssertEqualObjects(result, expectedRequestModel);
 }
 
-- (void)testCreateInlineInappRequestModel_shouldIncludeDeviceEventState_whenV4IsEnabled {
-    [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
-    NSDictionary *deviceEventState = @{
-            @"key1": @"value1",
-            @"key2": @"value2"
-    };
-    NSArray<MEButtonClick *> *clicks = @[
-            [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
-                                             buttonId:@"buttonID"
-                                            timestamp:[NSDate date]],
-            [[MEButtonClick alloc] initWithCampaignId:@"campaignID2"
-                                             buttonId:@"buttonID2"
-                                            timestamp:[NSDate date]]
-    ];
-
-    OCMStub([self.mockButtonClickRepository query:[OCMArg any]]).andReturn(clicks);
-    OCMStub([self.mockStorage dictionaryForKey:[OCMArg any]]).andReturn(deviceEventState);
-
-    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
-                                                                             timestamp:self.timestamp
-                                                                                expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net/v4/apps/testApplicationCode/inline-messages"]
-                                                                                method:@"POST"
-                                                                               payload:@{
-                                                                                       @"viewIds": @[
-                                                                                               @"testViewId"
-                                                                                       ],
-                                                                                       @"clicks": @[
-                                                                                               @{@"campaignId": [clicks[0] campaignId], @"buttonId": [clicks[0] buttonId], @"timestamp": [clicks[0] timestamp].stringValueInUTC},
-                                                                                               @{@"campaignId": [clicks[1] campaignId], @"buttonId": [clicks[1] buttonId], @"timestamp": [clicks[1] timestamp].stringValueInUTC}
-                                                                                       ],
-                                                                                       @"deviceEventState": @{
-                                                                                               @"key1": @"value1",
-                                                                                               @"key2": @"value2"
-                                                                                       }
-                                                                               }
-                                                                               headers:nil
-                                                                                extras:nil];
-    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
-
-    XCTAssertEqualObjects(result, expectedRequestModel);
-}
-
 @end
