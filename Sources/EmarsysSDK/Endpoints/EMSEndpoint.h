@@ -34,6 +34,10 @@
 
 - (BOOL)isPushToInAppUrl:(NSString *)url;
 
+- (BOOL)isCustomEventUrl:(NSString *)url;
+
+- (BOOL)isInlineInAppUrl:(NSString *)url;
+
 - (NSString *)predictUrl;
 
 - (NSString *)deeplinkUrl;
