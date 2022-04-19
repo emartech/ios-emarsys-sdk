@@ -92,11 +92,6 @@
                 payload[@"viewedMessages"] = [self displayRepresentations];
                 payload[@"clicks"] = [self clickRepresentations];
 
-                NSDictionary *deviceEventState = [self.storage dictionaryForKey:kDeviceEventStateKey];
-                if ([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] && deviceEventState) {
-                    payload[@"deviceEventState"] = deviceEventState;
-                }
-
                 if ([self.inApp isPaused]) {
                     payload[@"dnd"] = @([self.inApp isPaused]);
                 }
