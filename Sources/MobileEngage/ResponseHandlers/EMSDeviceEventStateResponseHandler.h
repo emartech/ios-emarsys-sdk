@@ -7,14 +7,14 @@
 
 #define kDeviceEventStateKey @"DEVICE_EVENT_STATE_KEY"
 
-@class EMSStorage;
+@protocol EMSStorageProtocol;
 @class EMSEndpoint;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSDeviceEventStateResponseHandler : EMSAbstractResponseHandler
 
-- (instancetype)initWithStorage:(EMSStorage *)storage
+- (instancetype)initWithStorage:(id<EMSStorageProtocol>)storage
                        endpoint:(EMSEndpoint *)endpoint;
 
 @end

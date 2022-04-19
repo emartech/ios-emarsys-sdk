@@ -14,6 +14,7 @@
 @class MEDisplayedIAMRepository;
 @class EMSEndpoint;
 @class EMSStorage;
+@protocol EMSStorageProtocol;
 
 @interface MERequestModelRepositoryFactory : NSObject
 
@@ -24,7 +25,7 @@
 @property(nonatomic, readonly) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
 @property(nonatomic, readonly) NSOperationQueue *operationQueue;
-@property(nonatomic, readonly) EMSStorage *storage;
+@property(nonatomic, readonly) id<EMSStorageProtocol> storage;
 
 - (instancetype)initWithInApp:(id<EMSInAppProtocol, MEIAMProtocol>) inApp
                requestContext:(MERequestContext *)requestContext
@@ -33,7 +34,7 @@
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                      endpoint:(EMSEndpoint *)endpoint
                operationQueue:(NSOperationQueue *)operationQueue
-                      storage:(EMSStorage *)storage;
+                      storage:(id<EMSStorageProtocol>)storage;
 
 - (id <EMSRequestModelRepositoryProtocol>)createWithBatchCustomEventProcessing:(BOOL)batchProcessing;
 

@@ -9,6 +9,7 @@
 @class EMSUUIDProvider;
 @class EMSDeviceInfo;
 @class EMSStorage;
+@protocol EMSStorageProtocol;
 
 #define kEMSSuiteName @"com.emarsys.mobileengage"
 #define kMEID @"kMEID"
@@ -38,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                              deviceInfo:(EMSDeviceInfo *)deviceInfo
-                                storage:(EMSStorage *)storage;
+                                storage:(id<EMSStorageProtocol>)storage;
 
 - (BOOL)hasContactIdentification;
 

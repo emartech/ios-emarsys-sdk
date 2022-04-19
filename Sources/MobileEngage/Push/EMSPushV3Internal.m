@@ -24,7 +24,7 @@
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSInAppInternal *inAppInternal;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
@@ -37,7 +37,7 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage
+                               storage:(id<EMSStorageProtocol>)storage
                          inAppInternal:(EMSInAppInternal *)inAppInternal
                         operationQueue:(NSOperationQueue *)operationQueue {
     NSParameterAssert(requestFactory);

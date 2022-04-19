@@ -13,7 +13,7 @@
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSContactTokenResponseHandler *contactResponseHandler;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 
 @end
 
@@ -27,7 +27,7 @@
                            requestFactory:(EMSRequestFactory *)requestFactory
                    contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
                                  endpoint:(EMSEndpoint *)endpoint
-                                  storage:(EMSStorage *)storage {
+                                  storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(restClient);
     NSParameterAssert(requestFactory);
     NSParameterAssert(contactResponseHandler);

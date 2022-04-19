@@ -109,6 +109,7 @@
     XCTWaiterResult setCustomerResult = [XCTWaiter waitForExpectations:@[setCustomerExpectation]
                                                                timeout:TIMEOUT];
     XCTAssertEqual(setCustomerResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedErrorForSetCustomer);
 }
 
 + (void)waitForSetPushToken {
@@ -126,6 +127,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNil(returnedError);
 }
 
 @end

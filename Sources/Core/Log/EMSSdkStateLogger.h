@@ -7,19 +7,19 @@
 @class EMSEndpoint;
 @class MERequestContext;
 @class EMSConfig;
-@class EMSStorage;
+@protocol EMSStorageProtocol;
 
 
 @interface EMSSdkStateLogger : NSObject
-@property(nonatomic, strong, readonly) EMSEndpoint *endpoint;
-@property(nonatomic, strong, readonly) MERequestContext *meRequestContext;
-@property(nonatomic, strong, readonly) EMSConfig *config;
-@property(nonatomic, strong, readonly) EMSStorage *storage;
+@property(nonatomic, readonly) EMSEndpoint *endpoint;
+@property(nonatomic, readonly) MERequestContext *meRequestContext;
+@property(nonatomic, readonly) EMSConfig *config;
+@property(nonatomic, readonly) id<EMSStorageProtocol> storage;
 
 - (instancetype)initWithEndpoint:(EMSEndpoint *)endpoint
                 meRequestContext:(MERequestContext *)meRequestContext
                           config:(EMSConfig *)config
-                         storage:(EMSStorage *)storage;
+                         storage:(id<EMSStorageProtocol>)storage;
 
 - (void)log;
 @end

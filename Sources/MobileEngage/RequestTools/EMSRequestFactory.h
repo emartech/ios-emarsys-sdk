@@ -9,7 +9,7 @@
 @class EMSEndpoint;
 @class MEButtonClickRepository;
 @class EMSSessionIdHolder;
-@class EMSStorage;
+@protocol EMSStorageProtocol;
 
 typedef enum {
     EventTypeInternal,
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
                               endpoint:(EMSEndpoint *)endpoint
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                        sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
-                               storage:(EMSStorage *)storage;
+                               storage:(id<EMSStorageProtocol>)storage;
 
 - (EMSRequestModel *)createDeviceInfoRequestModel;
 

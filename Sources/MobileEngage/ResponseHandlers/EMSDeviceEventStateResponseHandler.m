@@ -12,14 +12,14 @@
 
 @interface EMSDeviceEventStateResponseHandler ()
 
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 
 @end
 
 @implementation EMSDeviceEventStateResponseHandler
 
-- (instancetype)initWithStorage:(EMSStorage *)storage
+- (instancetype)initWithStorage:(id<EMSStorageProtocol>)storage
                        endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(storage);
     NSParameterAssert(endpoint);

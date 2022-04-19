@@ -20,6 +20,6 @@
                            requestFactory:(EMSRequestFactory *)requestFactory
                    contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
                                  endpoint:(EMSEndpoint *)endpoint
-                                  storage:(EMSStorage *)storage;
+                                  storage:(id<EMSStorageProtocol>)storage;
 
 @end

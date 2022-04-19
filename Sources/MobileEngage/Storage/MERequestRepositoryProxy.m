@@ -30,7 +30,7 @@
                                          inApp:(MEInApp *)inApp
                                 requestContext:(MERequestContext *)requestContext
                                       endpoint:(EMSEndpoint *)endpoint
-                                       storage:(EMSStorage *)storage {
+                                       storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(requestModelRepository);
     NSParameterAssert(buttonClickRepository);
     NSParameterAssert(displayedIAMRepository);

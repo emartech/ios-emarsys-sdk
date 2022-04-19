@@ -7,7 +7,7 @@
 
 @interface EMSInMemoryStorage: NSObject <EMSStorageProtocol>
 
-@property(nonatomic, strong, readonly) NSDictionary<NSString *, id> *inMemoryStore;
+@property(nonatomic, readonly) NSDictionary<NSString *, id> *inMemoryStore;
 
 - (instancetype)initWithStorage:(id<EMSStorageProtocol>)storage;
 

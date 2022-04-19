@@ -16,7 +16,7 @@
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                              deviceInfo:(EMSDeviceInfo *)deviceInfo
-                                storage:(EMSStorage *)storage {
+                                storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(uuidProvider);
     NSParameterAssert(timestampProvider);
     NSParameterAssert(deviceInfo);
