@@ -94,13 +94,54 @@
 
 - (void)setNumber:(nullable NSNumber *)number
            forKey:(NSString *)key {
-    [self setData:[NSKeyedArchiver archivedDataWithRootObject:number]
+    NSError *error;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:number
+                                         requiringSecureCoding:NO
+                                                         error:&error];
+    if (error) {
+        NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+        parameterDictionary[@"number"] = number;
+        parameterDictionary[@"key"] = key;
+        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+        if (data) {
+            statusDictionary[@"data"] = [[NSString alloc] initWithData:data
+                                                              encoding:NSUTF8StringEncoding];
+        }
+        statusDictionary[@"error"] = error.localizedDescription;
+        EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                            sel:_cmd
+                                                     parameters:parameterDictionary
+                                                         status:statusDictionary];
+        EMSLog(log, LogLevelDebug);
+    }
+    [self setData:data
            forKey:key];
 }
 
 - (void)setDictionary:(nullable NSDictionary *)dictionary
                forKey:(NSString *)key {
-    [self setData:[NSKeyedArchiver archivedDataWithRootObject:dictionary]
+    NSError *error;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:dictionary
+                                         requiringSecureCoding:NO
+                                                         error:&error];
+    if (error) {
+        NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+        parameterDictionary[@"dictionary"] = dictionary;
+        parameterDictionary[@"key"] = key;
+        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+        if (data) {
+            statusDictionary[@"data"] = [[NSString alloc] initWithData:data
+                                                              encoding:NSUTF8StringEncoding];
+        }
+        statusDictionary[@"error"] = error.localizedDescription;
+        EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                            sel:_cmd
+                                                     parameters:parameterDictionary
+                                                         status:statusDictionary];
+        EMSLog(log, LogLevelDebug);
+    }
+
+    [self setData:data
            forKey:key];
 }
 
@@ -114,9 +155,47 @@
             if ([userDefaultsValue isKindOfClass:[NSString class]]) {
                 userDefaultsValue = [userDefaultsValue dataUsingEncoding:NSUTF8StringEncoding];
             } else if ([userDefaultsValue isKindOfClass:[NSNumber class]]) {
-                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue];
+                NSError *error;
+                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue
+                                                          requiringSecureCoding:NO
+                                                                          error:&error];
+                if (error) {
+                    NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+                    parameterDictionary[@"userDefaultsValue"] = userDefaultsValue;
+                    parameterDictionary[@"key"] = key;
+                    NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+                    if (userDefaultsValue) {
+                        statusDictionary[@"data"] = [[NSString alloc] initWithData:userDefaultsValue
+                                                                          encoding:NSUTF8StringEncoding];
+                    }
+                    statusDictionary[@"error"] = error.localizedDescription;
+                    EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                                        sel:_cmd
+                                                                 parameters:parameterDictionary
+                                                                     status:statusDictionary];
+                    EMSLog(log, LogLevelDebug);
+                }
             } else if ([userDefaultsValue isKindOfClass:[NSDictionary class]]) {
-                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue];
+                NSError *error;
+                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue
+                                                          requiringSecureCoding:NO
+                                                                          error:&error];
+                if (error) {
+                    NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+                    parameterDictionary[@"userDefaultsValue"] = userDefaultsValue;
+                    parameterDictionary[@"key"] = key;
+                    NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+                    if (userDefaultsValue) {
+                        statusDictionary[@"data"] = [[NSString alloc] initWithData:userDefaultsValue
+                                                                          encoding:NSUTF8StringEncoding];
+                    }
+                    statusDictionary[@"error"] = error.localizedDescription;
+                    EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                                        sel:_cmd
+                                                                 parameters:parameterDictionary
+                                                                     status:statusDictionary];
+                    EMSLog(log, LogLevelDebug);
+                }
             }
             if (userDefaultsValue) {
                 [userDefaults removeObjectForKey:key];
@@ -180,12 +259,48 @@
 
 - (nullable NSNumber *)numberForKey:(NSString *)key {
     NSData *data = [self dataForKey:key];
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSError *error;
+    NSNumber *result = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSNumber class]
+                                                         fromData:data
+                                                            error:&error];
+    if (error) {
+        NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+        parameterDictionary[@"key"] = key;
+        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+        if (result) {
+            statusDictionary[@"data"] = result;
+        }
+        statusDictionary[@"error"] = error.localizedDescription;
+        EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                            sel:_cmd
+                                                     parameters:parameterDictionary
+                                                         status:statusDictionary];
+        EMSLog(log, LogLevelDebug);
+    }
+    return result;
 }
 
 - (nullable NSDictionary *)dictionaryForKey:(NSString *)key {
     NSData *data = [self dataForKey:key];
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSError *error;
+    NSDictionary *result =  [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class]
+                                             fromData:data
+                                                error:&error];
+    if (error) {
+        NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+        parameterDictionary[@"key"] = key;
+        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+        if (result) {
+            statusDictionary[@"data"] = result;
+        }
+        statusDictionary[@"error"] = error.localizedDescription;
+        EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                            sel:_cmd
+                                                     parameters:parameterDictionary
+                                                         status:statusDictionary];
+        EMSLog(log, LogLevelDebug);
+    }
+    return result;
 }
 
 - (NSData *)objectForKeyedSubscript:(NSString *)key {
