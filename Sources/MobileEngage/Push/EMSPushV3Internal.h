@@ -24,7 +24,7 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage
+                               storage:(id<EMSStorageProtocol>)storage
                          inAppInternal:(EMSInAppInternal *)inAppInternal
                         operationQueue:(NSOperationQueue *)operationQueue;
 

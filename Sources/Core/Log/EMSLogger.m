@@ -20,7 +20,7 @@
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSWrapperChecker *wrapperChecker;
 
 @end
@@ -33,7 +33,7 @@
                          opertaionQueue:(NSOperationQueue *)operationQueue
                       timestampProvider:(EMSTimestampProvider *)timestampProvider
                            uuidProvider:(EMSUUIDProvider *)uuidProvider
-                                storage:(EMSStorage *)storage
+                                storage:(id<EMSStorageProtocol>)storage
                          wrapperChecker:(EMSWrapperChecker *)wrapperChecker {
     NSParameterAssert(shardRepository);
     NSParameterAssert(operationQueue);

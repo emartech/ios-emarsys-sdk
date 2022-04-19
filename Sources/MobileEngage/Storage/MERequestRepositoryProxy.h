@@ -13,6 +13,7 @@
 @class EMSDeviceInfo;
 @class EMSEndpoint;
 @class EMSStorage;
+@protocol EMSStorageProtocol;
 
 @interface MERequestRepositoryProxy : NSObject <EMSRequestModelRepositoryProtocol>
 
@@ -22,7 +23,7 @@
 @property(nonatomic, readonly) MEDisplayedIAMRepository *displayedIAMRepository;
 @property(nonatomic, readonly) MERequestContext *requestContext;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
-@property(nonatomic, readonly) EMSStorage *storage;
+@property(nonatomic, readonly) id<EMSStorageProtocol> storage;
 
 - (instancetype)initWithRequestModelRepository:(EMSRequestModelRepository *)requestModelRepository
                          buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
@@ -30,6 +31,6 @@
                                          inApp:(MEInApp *)inApp
                                 requestContext:(MERequestContext *)requestContext
                                       endpoint:(EMSEndpoint *)endpoint
-                                       storage:(EMSStorage *)storage;
+                                       storage:(id<EMSStorageProtocol>)storage;
 
 @end

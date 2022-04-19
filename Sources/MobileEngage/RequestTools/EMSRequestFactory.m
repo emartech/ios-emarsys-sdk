@@ -24,7 +24,7 @@
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, strong) EMSSessionIdHolder *sessionIdHolder;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 
 @end
 
@@ -35,7 +35,7 @@
                               endpoint:(EMSEndpoint *)endpoint
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                        sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
-                               storage:(EMSStorage *)storage {
+                               storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(requestContext);
     NSParameterAssert(endpoint);
     NSParameterAssert(buttonClickRepository);

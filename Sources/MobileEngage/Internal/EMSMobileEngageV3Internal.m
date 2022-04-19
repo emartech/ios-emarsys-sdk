@@ -16,7 +16,7 @@
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) MERequestContext *requestContext;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSSession *session;
 
 @end
@@ -26,7 +26,7 @@
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
-                               storage:(EMSStorage *)storage
+                               storage:(id<EMSStorageProtocol>)storage
                                session:(EMSSession *)session {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);

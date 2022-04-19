@@ -27,7 +27,7 @@
 @property(nonatomic, strong) EMSGeofenceResponseMapper *responseMapper;
 @property(nonatomic, strong) CLLocationManager *locationManager;
 @property(nonatomic, strong) EMSActionFactory *actionFactory;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, assign) BOOL didFireInitialEnterTrigger;
 
@@ -44,7 +44,7 @@
                         responseMapper:(EMSGeofenceResponseMapper *)responseMapper
                        locationManager:(CLLocationManager *)locationManager
                          actionFactory:(EMSActionFactory *)actionFactory
-                               storage:(EMSStorage *)storage
+                               storage:(id<EMSStorageProtocol>)storage
                                  queue:(NSOperationQueue *)queue {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);

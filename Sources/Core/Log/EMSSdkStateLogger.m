@@ -16,7 +16,7 @@
 - (instancetype)initWithEndpoint:(EMSEndpoint *)endpoint
                 meRequestContext:(MERequestContext *)meRequestContext
                           config:(EMSConfig *)config
-                         storage:(EMSStorage *)storage {
+                         storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(endpoint);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(config);

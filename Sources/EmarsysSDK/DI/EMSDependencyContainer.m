@@ -265,7 +265,7 @@
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
-                                                                  storage:self.storage
+                                                                  storage:storage
                                                              uuidProvider:self.uuidProvider];
 
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode

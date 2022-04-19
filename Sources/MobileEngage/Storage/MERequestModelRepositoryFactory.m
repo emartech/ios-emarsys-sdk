@@ -11,6 +11,7 @@
 #import "MERequestContext.h"
 #import "EMSEndpoint.h"
 #import "EMSStorage.h"
+#import "EMSStorageProtocol.h"
 
 @implementation MERequestModelRepositoryFactory
 
@@ -21,7 +22,7 @@
        displayedIAMRepository:(MEDisplayedIAMRepository *)displayedIAMRepository
                      endpoint:(EMSEndpoint *)endpoint
                operationQueue:(NSOperationQueue *)operationQueue
-                      storage:(EMSStorage *)storage {
+                      storage:(id<EMSStorageProtocol>)storage {
     NSParameterAssert(inApp);
     NSParameterAssert(requestContext);
     NSParameterAssert(dbHelper);

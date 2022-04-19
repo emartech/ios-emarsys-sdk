@@ -19,7 +19,7 @@
 @property(nonatomic, readonly) EMSRequestFactory *requestFactory;
 @property(nonatomic, readonly) EMSContactTokenResponseHandler *contactResponseHandler;
 @property(nonatomic, readonly) EMSEndpoint *endpoint;
-@property(nonatomic, readonly) EMSStorage *storage;
+@property(nonatomic, readonly) id<EMSStorageProtocol> storage;
 
 @property(nonatomic, strong) EMSRequestModel *originalRequestModel;
 
@@ -28,6 +28,6 @@
                          requestFactory:(EMSRequestFactory *)requestFactory
                  contactResponseHandler:(EMSContactTokenResponseHandler *)contactResponseHandler
                                endpoint:(EMSEndpoint *)endpoint
-                                storage:(EMSStorage *)storage;
+                                storage:(id<EMSStorageProtocol>)storage;
 
 @end
