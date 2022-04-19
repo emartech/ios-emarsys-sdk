@@ -88,6 +88,7 @@
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSWrapperChecker.h"
 #import "EMSSdkStateLogger.h"
+#import "EMSInMemoryStorage.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -126,7 +127,7 @@
 @property(nonatomic, strong) id <EMSDBTriggerProtocol> loggerTrigger;
 @property(nonatomic, strong) id <EMSDeviceInfoClientProtocol> deviceInfoClient;
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
-@property(nonatomic, strong) EMSStorage *storage;
+@property(nonatomic, strong) id <EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) EMSQueueDelegator *predictDelegator;
@@ -258,8 +259,9 @@
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
 
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage", @"com.emarsys.sdk"];
-    _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
+    EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
                                           accessGroup:config.sharedKeychainAccessGroup];
+    _storage = [[EMSInMemoryStorage alloc] initWithStorage:storage];
 
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
