@@ -111,7 +111,7 @@
 
 - (void)testShouldHandleResponse_shouldBeNo_whenV4IsEnabled_andDeviceEventStateIsEmpty {
     [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
-    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isCustomEventUrl:[OCMArg any]]).andReturn(YES);
 
     NSData *body = [NSJSONSerialization dataWithJSONObject:@{@"deviceEventState": @[@{}]}
                                                    options:0

@@ -130,6 +130,14 @@
     return [url hasPrefix:[self eventServiceUrl]] && [url containsString:@"/messages"];
 }
 
+- (BOOL)isCustomEventUrl:(NSString *)url {
+    return [url hasPrefix:[self eventServiceUrl]] && [url hasSuffix:@"/events"];
+}
+
+- (BOOL)isInlineInAppUrl:(NSString *)url {
+    return [url hasPrefix:[self eventServiceUrl]] && [url hasSuffix:@"/inline-messages"];
+}
+
 - (NSString *)predictUrl {
     return [self.predictUrlProvider provideValue];
 }

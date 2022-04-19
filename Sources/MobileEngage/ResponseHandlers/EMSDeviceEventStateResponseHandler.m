@@ -9,6 +9,8 @@
 #import "EMSResponseModel+EMSCore.h"
 #import "EMSEndpoint.h"
 #import "EMSStorageProtocol.h"
+#import "EMSStatusLog.h"
+#import "EMSMacros.h"
 
 @interface EMSDeviceEventStateResponseHandler ()
 
@@ -31,9 +33,30 @@
 }
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
+    NSString *url = response.requestModel.url.absoluteString;
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] &&
+            [response isSuccess] &&
+            [self.endpoint isMobileEngageUrl:url] &&
+            response.parsedBody[@"deviceEventState"]) {
+        if (!([self.endpoint isCustomEventUrl:url] || [self.endpoint isInlineInAppUrl:url])) {
+            NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
+            parameterDictionary[@"response"] = [response description];
+            NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+            statusDictionary[@"responseBody"] = response.parsedBody;
+            statusDictionary[@"responseHeaders"] = response.headers;
+            statusDictionary[@"requestModel"] = response.requestModel.description;
+            statusDictionary[@"requestId"] = response.requestModel.requestId;
+            statusDictionary[@"requestBody"] = response.requestModel.payload;
+            EMSStatusLog *log = [[EMSStatusLog alloc] initWithClass:self.class
+                                                                sel:_cmd
+                                                         parameters:parameterDictionary
+                                                             status:statusDictionary];
+            EMSLog(log, LogLevelDebug);
+        }
+    }
     return [MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4] &&
             [response isSuccess] &&
-            [self.endpoint isMobileEngageUrl:response.requestModel.url.absoluteString] &&
+            ([self.endpoint isCustomEventUrl:url] || [self.endpoint isInlineInAppUrl:url]) &&
             response.parsedBody[@"deviceEventState"];
 }
 

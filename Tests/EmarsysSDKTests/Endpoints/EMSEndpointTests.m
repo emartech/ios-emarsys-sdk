@@ -269,6 +269,30 @@ static NSString *const kApplicationCode = @"testApplicationCode";
     XCTAssertFalse([self.endpoint isPushToInAppUrl:url]);
 }
 
+- (void)testIsCustomEventUrl_shouldReturnYes {
+    NSString *url = [NSString stringWithFormat:@"%@/forTestPurpose/events", self.endpoint.eventServiceUrl];
+
+    XCTAssertTrue([self.endpoint isCustomEventUrl:url]);
+}
+
+- (void)testIsCustomEventUrl_shouldReturnNo {
+    NSString *url = [NSString stringWithFormat:@"%@/forTestPurpose/events", self.endpoint.clientServiceUrl];
+
+    XCTAssertFalse([self.endpoint isCustomEventUrl:url]);
+}
+
+- (void)testIsInlineInAppUrl_shouldReturnYes {
+    NSString *url = [NSString stringWithFormat:@"%@/forTestPurpose/inline-messages", self.endpoint.eventServiceUrl];
+
+    XCTAssertTrue([self.endpoint isInlineInAppUrl:url]);
+}
+
+- (void)testIsInlineInAppUrl_shouldReturnNo {
+    NSString *url = [NSString stringWithFormat:@"%@/forTestPurpose/inline-messages", self.endpoint.clientServiceUrl];
+
+    XCTAssertFalse([self.endpoint isInlineInAppUrl:url]);
+}
+
 - (void)testV3MessageInboxUrlWithApplicationCode {
     NSString *expectedUrl = [self v3MessageInboxUrl];
 
