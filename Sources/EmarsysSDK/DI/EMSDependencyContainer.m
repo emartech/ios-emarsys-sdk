@@ -89,6 +89,7 @@
 #import "EMSWrapperChecker.h"
 #import "EMSSdkStateLogger.h"
 #import "EMSInMemoryStorage.h"
+#import "EMSDeviceEventStateRequestMapper.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -380,7 +381,10 @@
                                              [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
                                                                                           endpoint:self.endpoint],
                                              [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                         endpoint:self.endpoint]]
+                                                                                         endpoint:self.endpoint],
+                                             [[EMSDeviceEventStateRequestMapper alloc] initWithEndpoint:self.endpoint
+                                                                                                storage:self.storage]
+                                     ]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
 
