@@ -60,16 +60,18 @@
 - (void)startObserving {
     __weak typeof(self) weakSelf = self;
     [self.operationQueue addOperationWithBlock:^{
-        weakSelf.notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:kEMSReachabilityChangedNotification
-                                                                                       object:nil
-                                                                                        queue:weakSelf.operationQueue
-                                                                                   usingBlock:^(NSNotification *note) {
-                                                                                       EMSNetworkStatus connectionStatus = [note.object currentReachabilityStatus];
-                                                                                       BOOL connected = connectionStatus == ReachableViaWiFi || connectionStatus == ReachableViaWWAN;
-                                                                                       [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:connectionStatus
-                                                                                                                                          connectionStatus:connected];
-                                                                                   }];
-    }];
+        weakSelf.notificationToken = [
+            [NSNotificationCenter defaultCenter] addObserverForName:kEMSReachabilityChangedNotification
+            object:nil
+            queue:nil
+            usingBlock:^(NSNotification *note) {
+                EMSNetworkStatus connectionStatus = [note.object currentReachabilityStatus];
+                BOOL connected = connectionStatus == ReachableViaWiFi || connectionStatus == ReachableViaWWAN;
+                [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:connectionStatus
+                                                                   connectionStatus:connected];
+            }];
+    }
+    ];
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf.reachability startNotifier];
     });
