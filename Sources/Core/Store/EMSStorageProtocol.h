@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol EMSStorageProtocol <NSObject>
 
 - (void)setData:(nullable NSData *)data
@@ -32,3 +34,5 @@
 forKeyedSubscript:(NSString *)key;
 
 @end
+
+NS_ASSUME_NONNULL_END

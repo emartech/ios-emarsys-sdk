@@ -28,6 +28,7 @@
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
 @property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
 @property(nonatomic, strong) EMSEventHandlerBlock innerEventHandler;
+@property(nonatomic, strong) NSMutableArray<MEInAppMessage *> *messages;
 
 @property(nonatomic, strong) EMSInAppLog *inAppLog;
 
@@ -69,6 +70,7 @@
                                                                                                                                                                         closeProtocol:self]
                                                                                                                           operationQueue:operationQueue]];
         _displayedIamRepository = displayedIamRepository;
+        _messages = [NSMutableArray array];
     }
     return self;
 }
@@ -107,6 +109,8 @@
                                    completionHandler();
                                }
                            }];
+        } else {
+            [weakSelf.messages addObject:message];
         }
     });
 }
@@ -151,6 +155,12 @@
                                                                       [weakSelf.originalWindow makeKeyAndVisible];
                                                                       weakSelf.originalWindow = nil;
 
+                                                                      MEInAppMessage *message = weakSelf.messages.firstObject;
+                                                                      if (message) {
+                                                                          [weakSelf.messages removeObject:message];
+                                                                          [weakSelf showMessage:message
+                                                                              completionHandler:nil];
+                                                                      }
                                                                       if (completionHandler) {
                                                                           completionHandler();
                                                                       }
