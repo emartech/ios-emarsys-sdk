@@ -861,11 +861,13 @@
 		FB89B0AF0F620F7567CC1571 /* EMSDeviceEventStateRequestMapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BC91ED93D32F5FA88457 /* EMSDeviceEventStateRequestMapperTests.m */; };
 		FB89B37B8A0045B91DFB3A99 /* EMSInMemoryStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BEC69AE117D6AD06D53C /* EMSInMemoryStorage.m */; };
 		FB89B46D848F9200CCD60CBE /* EMSInMemoryStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BF13DD348162B4C56EA6 /* EMSInMemoryStorageTests.m */; };
+		FB89B551F474028899C781C3 /* EMSInAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BE2EE5FF82438F1EB664 /* EMSInAppTests.m */; };
 		FB89B5DD0062A47FBF2F1C9C /* EMSStorageProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = FB89BEAA77794AF88CE88C55 /* EMSStorageProtocol.h */; };
 		FB89B6596327F93A0BBA7177 /* EMSDeviceEventStateRequestMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = FB89BFCB9693CC8B323B4BD4 /* EMSDeviceEventStateRequestMapper.h */; };
 		FB89B82E15F802A0CF8E73EA /* EMSDeviceEventStateRequestMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BB94819E1B841DF3100C /* EMSDeviceEventStateRequestMapper.m */; };
 		FB89B94B995C90A3E0A76384 /* EMSInMemoryStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = FB89BA95D27CC8A93CDEB1D2 /* EMSInMemoryStorage.h */; };
 		FB89BA2E067AE31507405FF9 /* EMSDeviceEventStateRequestMapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BC91ED93D32F5FA88457 /* EMSDeviceEventStateRequestMapperTests.m */; };
+		FB89BD943AFEE3FCDB5A5B88 /* EMSInAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BE2EE5FF82438F1EB664 /* EMSInAppTests.m */; };
 		FB89BFB7CC6622DB044E4122 /* EMSInMemoryStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89BF13DD348162B4C56EA6 /* EMSInMemoryStorageTests.m */; };
 		FB8A3F970B3F4169D596274F /* EMSProductProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = FB8A30B05CC2C6575FA5FB11 /* EMSProductProtocol.h */; };
 		FE26900D114D15D4DDBC1F29 /* EMSGeofence.h in Headers */ = {isa = PBXBuildFile; fileRef = FE26941FCF51341B3ABC5B43 /* EMSGeofence.h */; };
@@ -1650,6 +1652,7 @@
 		FB89BA95D27CC8A93CDEB1D2 /* EMSInMemoryStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInMemoryStorage.h; sourceTree = "<group>"; };
 		FB89BB94819E1B841DF3100C /* EMSDeviceEventStateRequestMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeviceEventStateRequestMapper.m; sourceTree = "<group>"; };
 		FB89BC91ED93D32F5FA88457 /* EMSDeviceEventStateRequestMapperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeviceEventStateRequestMapperTests.m; sourceTree = "<group>"; };
+		FB89BE2EE5FF82438F1EB664 /* EMSInAppTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInAppTests.m; sourceTree = "<group>"; };
 		FB89BEAA77794AF88CE88C55 /* EMSStorageProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSStorageProtocol.h; sourceTree = "<group>"; };
 		FB89BEC69AE117D6AD06D53C /* EMSInMemoryStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInMemoryStorage.m; sourceTree = "<group>"; };
 		FB89BF13DD348162B4C56EA6 /* EMSInMemoryStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInMemoryStorageTests.m; sourceTree = "<group>"; };
@@ -2143,6 +2146,7 @@
 				32C6F59C2482501CA719F9B0 /* MEInAppMessageTests.m */,
 				944931E68EDE76D77DC6F202 /* EMSInAppInternalTests.m */,
 				64259D6CA586BDE577D5679A /* EMSInlineInAppViewTests.m */,
+				FB89BE2EE5FF82438F1EB664 /* EMSInAppTests.m */,
 			);
 			path = IAM;
 			sourceTree = "<group>";
@@ -4327,6 +4331,7 @@
 				32C6F2814B77CD45F4D6A6FB /* EMSDismissActionModelTests.m in Sources */,
 				F2A21AF35CFCBF1CAF7194B9 /* FakeNotificationDelegate.m in Sources */,
 				FB89B0AF0F620F7567CC1571 /* EMSDeviceEventStateRequestMapperTests.m in Sources */,
+				FB89B551F474028899C781C3 /* EMSInAppTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4606,6 +4611,7 @@
 				642599F6C8E33393F9995FA5 /* EMSSdkStateLoggerTests.m in Sources */,
 				FB89B46D848F9200CCD60CBE /* EMSInMemoryStorageTests.m in Sources */,
 				FB89BA2E067AE31507405FF9 /* EMSDeviceEventStateRequestMapperTests.m in Sources */,
+				FB89BD943AFEE3FCDB5A5B88 /* EMSInAppTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
