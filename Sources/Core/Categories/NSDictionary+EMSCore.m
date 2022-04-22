@@ -136,9 +136,14 @@
 
 - (NSDictionary *)mergeWithDictionary:(NSDictionary *)dictionary {
     NSMutableDictionary *mutableSelf = [self mutableCopy];
-    for (id key in [dictionary allKeys]) {
-        mutableSelf[key] = dictionary[key];
-    }
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSDictionary *selfValue = mutableSelf[key];
+        if ([obj isKindOfClass:[NSDictionary class]] && selfValue) {
+            mutableSelf[key] = [selfValue mergeWithDictionary:obj];
+        } else {
+            mutableSelf[key] = obj;
+        };
+    }];
     return [NSDictionary dictionaryWithDictionary:mutableSelf];
 }
 
@@ -157,7 +162,7 @@
     NSMutableArray *mutableArray = [object mutableCopy];
     for (NSInteger i = mutableArray.count - 1; i >= 0; --i) {
         id value = [self valueWithAllowedTypes:allowedTypes
-                                       object:mutableArray[(NSUInteger) i]];
+                                        object:mutableArray[(NSUInteger) i]];
         mutableArray[(NSUInteger) i] = value;
     }
     return [NSArray arrayWithArray:mutableArray];

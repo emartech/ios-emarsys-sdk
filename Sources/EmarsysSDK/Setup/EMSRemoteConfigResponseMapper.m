@@ -31,11 +31,7 @@
     NSDictionary *parsedBody = [responseModel parsedBody];
     NSDictionary *hardwareIdSpecificConfig = parsedBody[@"overrides"][self.deviceInfo.hardwareId];
 
-
     NSMutableDictionary *activeConfig = [[parsedBody mergeWithDictionary:hardwareIdSpecificConfig] mutableCopy];
-    activeConfig[@"serviceUrls"] = [parsedBody[@"serviceUrls"] mergeWithDictionary:hardwareIdSpecificConfig[@"serviceUrls"]];
-    activeConfig[@"luckyLogger"] = [parsedBody[@"luckyLogger"] mergeWithDictionary:hardwareIdSpecificConfig[@"luckyLogger"]];
-    activeConfig[@"features"] = [parsedBody[@"features"] mergeWithDictionary:hardwareIdSpecificConfig[@"features"]];
 
     return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"eventService"]]
                                            clientService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"clientService"]]
