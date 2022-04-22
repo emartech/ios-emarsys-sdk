@@ -135,4 +135,55 @@
     XCTAssertEqualObjects(result, expected);
 }
 
+- (void)testDictionaryMergeWithDictionary {
+    NSDictionary *original = @{
+            @"key1": @"value1",
+            @"key2": @{
+                    @"key1": @"value1",
+                    @"key2": @"value2",
+                    @"key3": @{
+                            @"key1": @[
+                                    @"value1", @"value2"
+                                    ]
+                    }
+            },
+            @"key4": @"value4"
+    };
+    NSDictionary *overwriteDictionary = @{
+            @"key1": @"valueNew1",
+            @"key2": @{
+                    @"key1": @"value1",
+                    @"key2": @"newValue2",
+                    @"key3": @{
+                            @"key1": @[
+                                    @"value3", @"value4"
+                                    ],
+                            @"key2": @"value2"
+                    },
+                    @"key4": @"value4"
+            },
+            @"key3": @"value3"
+    };
+    NSDictionary *expected = @{
+            @"key1": @"valueNew1",
+            @"key2": @{
+                    @"key1": @"value1",
+                    @"key2": @"newValue2",
+                    @"key3": @{
+                            @"key1": @[
+                                    @"value3", @"value4"
+                            ],
+                            @"key2": @"value2"
+                    },
+                    @"key4": @"value4"
+            },
+            @"key3": @"value3",
+            @"key4": @"value4"
+    };
+
+    NSDictionary *result = [original mergeWithDictionary:overwriteDictionary];
+
+    XCTAssertEqualObjects(result, expected);
+}
+
 @end
