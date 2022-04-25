@@ -84,7 +84,9 @@
 
 + (void)tearDownEmarsys {
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
     [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
     [EMSDependencyInjection.dependencyContainer.dbHelper close];
     [self purge];
     [EMSDependencyInjection.dependencyContainer.endpoint reset];
