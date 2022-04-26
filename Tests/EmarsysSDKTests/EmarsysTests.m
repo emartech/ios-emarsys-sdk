@@ -44,7 +44,7 @@
 @implementation EmarsysTests
 
 - (void)tearDown {
-    [EMSDependencyInjection tearDown];
+    [EmarsysTestUtils tearDownEmarsys];
 }
 
 - (void)testShouldInitializeCategoryForPush {
@@ -857,6 +857,12 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
+    [EMSDependencyInjection tearDown];
 }
 
 - (void)testShouldNotResetContextOnSetupWhenItIsNotReinstall {
@@ -870,6 +876,12 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
+    [EMSDependencyInjection tearDown];
 }
 
 - (void)waitForSetup {
@@ -885,8 +897,6 @@
 - (void)setupContainerWithMocks:(void (^)(EMSDependencyContainer *partialMockContainer))partialMockContainerBlock
             mobileEngageEnabled:(BOOL)isMobileEngageEnabled
                  predictEnabled:(BOOL)isPredictEnabled {
-    [EmarsysTestUtils tearDownEmarsys];
-
     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
         if (isPredictEnabled) {
             [builder setMerchantId:@"14C19-A121F"];
@@ -898,8 +908,6 @@
     EMSDependencyContainer *container = [[EMSDependencyContainer alloc] initWithConfig:config];
 
     EMSDependencyContainer *partialMockContainer = OCMPartialMock(container);
-    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [ud removeObjectForKey:@"kSDKAlreadyInstalled"];
 
     partialMockContainerBlock(partialMockContainer);
 

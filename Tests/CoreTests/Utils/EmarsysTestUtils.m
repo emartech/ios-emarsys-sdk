@@ -76,6 +76,7 @@
     [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
     [userDefaults removeObjectForKey:kCLIENT_STATE];
     [userDefaults removeObjectForKey:kCONTACT_TOKEN];
+    [userDefaults removeObjectForKey:@"kSDKAlreadyInstalled"];
     [userDefaults synchronize];
 
     userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
