@@ -185,7 +185,6 @@
 
     [inlineInappPartialMock setCompletionBlock:completionBlock];
     [inlineInappPartialMock loadInAppWithViewId:@"testViewId"];
-    [inlineInappPartialMock fetchInlineInappMessage];
 
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:10];

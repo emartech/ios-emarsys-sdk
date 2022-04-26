@@ -42,7 +42,9 @@
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
     [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
     [EMSDependencyInjection.dependencyContainer.dbHelper close];
     [self purge];
 
@@ -101,8 +103,8 @@
                                                      localizedDescription:@"testErrorForSetCustomer"];
 
     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
-    [Emarsys setContactWithContactFieldId:@3
-                        contactFieldValue:@"test@test.com"
+    [Emarsys setContactWithContactFieldId:@2575
+                        contactFieldValue:@"test2@test.com"
                           completionBlock:^(NSError *error) {
                               returnedErrorForSetCustomer = error;
                               [setCustomerExpectation fulfill];
