@@ -183,7 +183,7 @@
                                                            storage:emptyMockStorage
                                                     wrapperChecker:self.mockWrapperChecker];
 
-    XCTAssertEqual(logger.logLevel, LogLevelDebug);
+    XCTAssertEqual(logger.logLevel, LogLevelError);
 }
 
 - (void)testLogShouldInsertEntryToShardRepository {
@@ -294,7 +294,7 @@
 
     OCMVerify([self.mockStorage setNumber:nil
                                    forKey:@"EMSLogLevelKey"]);
-    XCTAssertEqual(self.logger.logLevel, LogLevelDebug);
+    XCTAssertEqual(self.logger.logLevel, LogLevelError);
 }
 
 - (void)testShouldNotLog_whenLogLevelOfLogEntry_isBelowOfLogLevel {

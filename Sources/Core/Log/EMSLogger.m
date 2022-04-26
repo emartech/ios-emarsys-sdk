@@ -48,7 +48,7 @@
         _uuidProvider = uuidProvider;
         _storage = storage;
         NSNumber *logLevel = [storage numberForKey:kEMSLogLevelKey];
-        _logLevel = logLevel ? [logLevel intValue] : LogLevelDebug;
+        _logLevel = logLevel ? [logLevel intValue] : LogLevelError;
         _consoleLogLevels = @[EMSLogLevel.basic];
         _wrapperChecker = wrapperChecker;
     }
@@ -126,7 +126,7 @@
 }
 
 - (void)reset {
-    self.logLevel = LogLevelDebug;
+    self.logLevel = LogLevelError;
     [self.storage setNumber:nil
                      forKey:kEMSLogLevelKey];
 }

@@ -475,69 +475,6 @@
                               coreCompletionProxy:completionHandler]);
 }
 
-- (void)testShouldNotCrashWhenEmsRequestManagerCreatedOnThreadAAndReachabilityIsOfflineAndThereAreLotOfRequestInTheQueueAndReachabilityGoesOfflineAndStillALotOfRequestsTriggering {
-    NSUInteger requestCount = 100;
-    int changeToNotReachable = 30;
-    int changeToReachable = 70;
-    __block NSInteger successCount = 0;
-    __block NSInteger errorCount = 0;
-
-    XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
-    [exp setExpectedFulfillmentCount:requestCount];
-
-    EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
-    EMSUUIDProvider *uuidProvider = [EMSUUIDProvider new];
-    EMSSQLiteHelper *dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                               schemaDelegate:[EMSSqliteSchemaHandler new]];
-    EMSRequestModelRepository *repository = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
-                                                                                 operationQueue:self.queue];
-    
-    CoreSuccessBlock successBlock = ^(NSString *requestId, EMSResponseModel *response) {
-        successCount++;
-        if (successCount == changeToNotReachable) {
-            [self postReachabilityWithNetworkStatus:NotReachable];
-        }
-        if (successCount == changeToReachable) {
-            [self postReachabilityWithNetworkStatus:ReachableViaWiFi];
-        }
-    };
-    CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
-        errorCount++;
-    };
-    EMSRequestManager *requestManager = [self createRequestManagerWithSuccessBlock:successBlock
-                                                                        errorBlock:errorBlock
-                                                                 requestRepository:repository
-                                                                   shardRepository:[[EMSShardRepository alloc] initWithDbHelper:dbHelper]];
-
-    [self postReachabilityWithNetworkStatus:ReachableViaWiFi];
-
-    [self.queue addOperationWithBlock:^{
-        for (int i = 0; i < requestCount; ++i) {
-            EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:@"https://denna.gservice.emarsys.net/echo"];
-                [builder setMethod:HTTPMethodGET];
-            }
-                                                    timestampProvider:timestampProvider
-                                                         uuidProvider:uuidProvider];
-            
-            [NSThread sleepForTimeInterval:0.1];
-            [requestManager submitRequestModel:model
-                           withCompletionBlock:^(NSError *error) {
-                if (error) {
-                    NSLog(@"Error, during should not crash with tons of requests test... : %@", error);
-                }
-                [exp fulfill];
-            }];
-        }
-    }];
-    
-    [EMSWaiter waitForExpectations:@[exp]
-                           timeout:60];
-    
-    XCTAssertEqual(successCount, requestCount);
-    XCTAssertEqual(errorCount, 0);
-}
-
 - (EMSRequestManager *)createRequestManagerWithSuccessBlock:(CoreSuccessBlock)successBlock
                                                  errorBlock:(CoreErrorBlock)errorBlock
                                           requestRepository:(EMSRequestModelRepository *)requestRepository
@@ -545,7 +482,7 @@
     EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:successBlock
                                                                                      errorBlock:errorBlock];
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+    [sessionConfiguration setTimeoutIntervalForRequest:60.0];
     [sessionConfiguration setHTTPCookieStorage:nil];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil

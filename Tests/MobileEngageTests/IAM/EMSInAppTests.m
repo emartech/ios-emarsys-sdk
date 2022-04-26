@@ -68,6 +68,30 @@
     XCTAssertTrue([self.inApp.messages containsObject:message]);
 }
 
+- (void)testCloseInApp_shouldCall_onMainThread {
+    MEInApp *partialMockInApp = OCMPartialMock(self.inApp);
+
+    UIViewController *mockRootViewController = OCMClassMock([UIViewController class]);
+    UIWindow *mockWindow = OCMClassMock([UIWindow class]);
+    OCMStub(mockWindow.rootViewController).andReturn(mockRootViewController);
+    OCMStub([mockRootViewController dismissViewControllerAnimated:YES
+                                                       completion:[OCMArg invokeBlock]]);
+    [partialMockInApp setIamWindow:mockWindow];
+
+    __block NSOperationQueue *resultQueue = nil;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"];
+    [partialMockInApp closeInAppWithCompletionHandler:^{
+        resultQueue = [NSOperationQueue currentQueue];
+        [expectation fulfill];
+    }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqual(resultQueue, [NSOperationQueue mainQueue]);
+}
+
 - (void)testCloseInApp_shouldCallShowMessage_whenMessagesIsNotEmpty {
     MEInApp *partialMockInApp = OCMPartialMock(self.inApp);
 
