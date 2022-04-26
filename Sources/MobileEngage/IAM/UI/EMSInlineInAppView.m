@@ -186,10 +186,10 @@ didFinishNavigation:(WKNavigation *)navigation {
 
 - (void)fetchInlineInappMessage {
     if (self.viewId) {
+        __weak typeof(self) weakSelf = self;
         [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
             EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-            EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:self.viewId];
-            __weak typeof(self) weakSelf = self;
+            EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:weakSelf.viewId];
             [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
                                                                                 successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                                                                     MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];
@@ -203,8 +203,8 @@ didFinishNavigation:(WKNavigation *)navigation {
                                                                                         NSError *error = [NSError errorWithCode:-1400
                                                                                                            localizedDescription:@"Inline In-App HTML content must not be empty, please check your viewId!"];
                                                                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                            if (self.completionBlock) {
-                                                                                                self.completionBlock(error);
+                                                                                            if (weakSelf.completionBlock) {
+                                                                                                weakSelf.completionBlock(error);
                                                                                             }
                                                                                         });
                                                                                     }

@@ -393,34 +393,4 @@ SPEC_BEGIN(MEInAppTests)
             });
         });
 
-        describe(@"closeInAppWithCompletionHandler:", ^{
-
-            it(@"should close the inapp message on main thread", ^{
-                UIViewController *rootViewControllerMock = [UIViewController nullMock];
-                [[rootViewControllerMock should] receive:@selector(dismissViewControllerAnimated:completion:)];
-                KWCaptureSpy *spy = [rootViewControllerMock captureArgument:@selector(dismissViewControllerAnimated:completion:)
-                                                                    atIndex:1];
-
-                UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-                window.rootViewController = rootViewControllerMock;
-
-                inApp.iamWindow = window;
-
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"expectation"];
-
-                [((id <MEIAMProtocol>) inApp) closeInAppWithCompletionHandler:^{
-                    [expectation fulfill];
-                }];
-
-                [EMSWaiter waitForTimeout:@[expectation]
-                                  timeout:10];
-
-                void (^completionBlock)(void) = spy.argument;
-                completionBlock();
-
-                [[inApp.iamWindow should] beNil];
-            });
-
-        });
-
 SPEC_END
