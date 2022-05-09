@@ -9,7 +9,8 @@
 @protocol EMSResponseBodyParserProtocol <NSObject>
 
 - (BOOL)shouldParse:(EMSRequestModel *)requestModel
-       responseBody:(NSData *)responseBody;
+       responseBody:(NSData *)responseBody
+    httpUrlResponse:(NSHTTPURLResponse *)httpUrlResponse;
 
 - (id)parseWithRequestModel:(EMSRequestModel *)requestModel
                responseBody:(NSData *)responseBody;

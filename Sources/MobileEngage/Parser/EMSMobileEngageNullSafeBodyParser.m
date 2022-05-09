@@ -7,6 +7,7 @@
 #import "EMSMacros.h"
 #import "EMSResponseModel.h"
 #import "NSDate+EMSCore.h"
+#import "NSHTTPURLResponse+EMSCore.h"
 
 @interface EMSMobileEngageNullSafeBodyParser ()
 
@@ -25,9 +26,11 @@
 }
 
 - (BOOL)shouldParse:(EMSRequestModel *)requestModel
-       responseBody:(NSData *)responseBody {
+       responseBody:(NSData *)responseBody
+    httpUrlResponse:(NSHTTPURLResponse *)httpUrlResponse {
     return [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString]
             && ![self.endpoint isPushToInAppUrl:requestModel.url.absoluteString]
+            && [httpUrlResponse isSuccess]
             && responseBody
             && responseBody.length > 0;
 }

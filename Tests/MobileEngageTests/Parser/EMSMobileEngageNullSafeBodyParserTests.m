@@ -6,11 +6,13 @@
 #import "OCMock/OCMock.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "EMSRequestModel.h"
+#import "NSHTTPURLResponse+EMSCore.h"
 
 @interface EMSMobileEngageNullSafeBodyParserTests : XCTestCase
 
 @property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 @property(nonatomic, strong) EMSRequestModel *mockRequestModel;
+@property(nonatomic, strong) NSHTTPURLResponse *mockUrlResponse;
 @property(nonatomic, strong) EMSMobileEngageNullSafeBodyParser *parser;
 @property(nonatomic, strong) NSData *responseBody;
 
@@ -21,6 +23,7 @@
 - (void)setUp {
     _mockEndpoint = OCMClassMock([EMSEndpoint class]);
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    _mockUrlResponse = OCMClassMock([NSHTTPURLResponse class]);
     _parser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.mockEndpoint];
     _responseBody = [@"testData" dataUsingEncoding:NSUTF8StringEncoding];
 }
@@ -36,36 +39,55 @@
 
 - (void)testShouldParse_shouldReturnTrue_whenMobileEngageRequest {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
-                              responseBody:self.responseBody];
+                              responseBody:self.responseBody
+                           httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertTrue(result);
 }
 
 - (void)testShouldParse_shouldReturnFalse_whenNotMobileEngageRequest {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(NO);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
-                              responseBody:self.responseBody];
+                              responseBody:self.responseBody
+                           httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertFalse(result);
 }
 
 - (void)testShouldParse_shouldReturnFalse_whenResponseBodyIsEmpty {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
-                              responseBody:[NSData new]];
+                              responseBody:[NSData new]
+                           httpUrlResponse:self.mockUrlResponse];
+
+    XCTAssertFalse(result);
+}
+
+- (void)testShouldParse_shouldReturnFalse_whenResponseWasNotSuccessful {
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(NO);
+
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:self.responseBody
+                           httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertFalse(result);
 }
 
 - (void)testShouldParse_shouldReturnFalse_whenResponseBodyIsNil {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
-                              responseBody:nil];
+                              responseBody:nil
+                           httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertFalse(result);
 }
@@ -73,9 +95,11 @@
 - (void)testShouldParse_shouldReturnFalse_whenPush2InAppUrl {
     OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
     OCMStub([self.mockEndpoint isPushToInAppUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
-                              responseBody:self.responseBody];
+                              responseBody:self.responseBody
+                           httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertFalse(result);
 }
@@ -201,7 +225,7 @@
 
     NSDictionary *expected = @{
             @"k1": @[
-                    @[@"v1",@"v3"]
+                    @[@"v1", @"v3"]
             ]
     };
 
