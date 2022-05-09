@@ -70,7 +70,8 @@
 
                                                          id responseParsedBody = nil;
                                                          if ([self.mobileEngageBodyParser shouldParse:requestModel
-                                                                                         responseBody:data]) {
+                                                                                         responseBody:data
+                                                                                      httpUrlResponse:httpUrlResponse]) {
                                                              responseParsedBody = [self.mobileEngageBodyParser parseWithRequestModel:requestModel
                                                                                                                         responseBody:data];
                                                          }

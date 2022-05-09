@@ -7,7 +7,6 @@
 #import "EMSRESTClient.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
-#import "EMSOperationQueue.h"
 #import "EMSResponseModel.h"
 #import "NSURLRequest+EMSCore.h"
 #import "NSError+EMSCore.h"
@@ -192,7 +191,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     OCMStub([self.mockMobileEngageBodyParser parseWithRequestModel:[OCMArg any]
                                                       responseBody:self.data]).andReturn(nullsafeData);
     OCMStub([self.mockMobileEngageBodyParser shouldParse:[OCMArg any]
-                                            responseBody:[OCMArg any]]).andReturn(YES);
+                                            responseBody:[OCMArg any]
+                                         httpUrlResponse:[OCMArg any]]).andReturn(YES);
 
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
                                                                                    headers:[self.response allHeaderFields]
@@ -220,7 +220,8 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
     OCMStub([self.mockMobileEngageBodyParser parseWithRequestModel:[OCMArg any]
                                                       responseBody:self.data]).andReturn(nullsafeData);
     OCMStub([self.mockMobileEngageBodyParser shouldParse:[OCMArg any]
-                                            responseBody:nil]).andReturn(NO);
+                                            responseBody:nil
+                                         httpUrlResponse:[OCMArg any]]).andReturn(NO);
 
     EMSResponseModel *expectedResponseModel = [[EMSResponseModel alloc] initWithStatusCode:[self.response statusCode]
                                                                                    headers:[self.response allHeaderFields]
