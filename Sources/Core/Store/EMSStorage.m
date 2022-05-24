@@ -219,6 +219,7 @@
     mutableQuery[(id) kSecAttrAccount] = key;
     mutableQuery[(id) kSecReturnData] = (id) kCFBooleanTrue;
     mutableQuery[(id) kSecReturnAttributes] = (id) kCFBooleanTrue;
+    mutableQuery[(id) kSecAttrAccessible] = (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
 
     mutableQuery[(id) kSecAttrAccessGroup] = accessGroup;
 
