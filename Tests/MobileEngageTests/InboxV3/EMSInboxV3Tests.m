@@ -31,7 +31,7 @@
     _inbox = [[EMSInboxV3 alloc] initWithRequestFactory:self.mockRequestFactory
                                          requestManager:self.mockRequestManager
                                       inboxResultParser:self.mockInboxResultParser];
-    _testMessageId = [NSString stringWithFormat:@"%d",INT_MAX];
+    _testMessageId = [NSString stringWithFormat:@"%d", INT_MAX];
 }
 
 - (void)testInit_requestFactory_mustNotBeNil {
@@ -100,6 +100,7 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(result, expectedResult);
     XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
+    XCTAssertEqualObjects(self.inbox.messages, expectedResult.messages);
 }
 
 - (void)testFetchMessagesWithResultBlock_failure {
@@ -120,6 +121,7 @@
     __block NSOperationQueue *returnedOperationQueue = nil;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        self.inbox.messages = @[[self responseMessage]];
         [self.inbox fetchMessagesWithResultBlock:^(EMSInboxResult *inboxResult, NSError *error) {
             result = error;
             returnedOperationQueue = [NSOperationQueue currentQueue];
@@ -132,6 +134,7 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(result, expectedError);
     XCTAssertEqualObjects(returnedOperationQueue, [NSOperationQueue mainQueue]);
+    XCTAssertNil(self.inbox.messages);
 }
 
 - (void)testAddTag {
@@ -145,6 +148,120 @@
     OCMVerify([partialMockInbox addTag:tag
                             forMessage:self.testMessageId
                        completionBlock:nil]);
+}
+
+- (void)testAddTag_when_messageIsAvailable_tagIsNotAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:EventTypeInternal]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                    withCompletionBlock:[OCMArg invokeBlock]]);
+
+    NSArray *tags = @[@"nottesttag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(self.testMessageId);
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox addTag:tag
+            forMessage:self.testMessageId
+       completionBlock:^(NSError *error) {
+           [expectation fulfill];
+       }];
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                           timeout:2];
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testAddTag_when_messageIsAvailable_tagIsAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:[OCMArg any]]).andReturn(mockRequestModel);
+
+    NSArray *tags = @[@"testtag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(self.testMessageId);
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    OCMReject([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMReject([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox addTag:tag
+            forMessage:self.testMessageId
+       completionBlock:^(NSError *error) {
+           [expectation fulfill];
+       }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                           timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testAddTag_when_messageIsNotAvailable_tagIsNotAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:[OCMArg any]]).andReturn(mockRequestModel);
+
+    NSArray *tags = @[@"nottesttag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(@"notTestMessageId");
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    OCMReject([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMReject([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox addTag:tag
+            forMessage:self.testMessageId
+       completionBlock:^(NSError *error) {
+           [expectation fulfill];
+       }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+
 }
 
 - (void)testAddTag_tag_mustNotBeNil {
@@ -254,6 +371,122 @@
                                                                   eventType:EventTypeInternal]);
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:completionBlock]);
+}
+
+- (void)testRemoveTag_when_messageIsAvailable_tagIsAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:EventTypeInternal]).andReturn(mockRequestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                    withCompletionBlock:[OCMArg invokeBlock]]);
+
+    NSArray *tags = @[@"testtag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(self.testMessageId);
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox removeTag:tag
+            fromMessage:self.testMessageId
+       completionBlock:^(NSError *error) {
+           [expectation fulfill];
+       }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+
+
+    OCMVerify([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testRemoveTag_when_messageIsAvailable_tagIsNotAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:[OCMArg any]]).andReturn(mockRequestModel);
+
+    NSArray *tags = @[@"nottesttag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(self.testMessageId);
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    OCMReject([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMReject([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox removeTag:tag
+              fromMessage:self.testMessageId
+          completionBlock:^(NSError *error) {
+              [expectation fulfill];
+          }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+
+}
+
+- (void)testRemoveTag_when_messageIsNotAvailable_tagIsNotAvailable {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([self.mockRequestFactory createEventRequestModelWithEventName:[OCMArg any]
+                                                          eventAttributes:[OCMArg any]
+                                                                eventType:[OCMArg any]]).andReturn(mockRequestModel);
+
+    NSArray *tags = @[@"nottesttag"];
+    EMSMessage *mockMessage = OCMClassMock([EMSMessage class]);
+    OCMStub([mockMessage id]).andReturn(@"notTestMessageId");
+    OCMStub([mockMessage tags]).andReturn(tags);
+    NSArray *messages = @[mockMessage];
+
+    self.inbox.messages = messages;
+
+    NSString *tag = @"testTag";
+
+    OCMReject([self.mockRequestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                            eventAttributes:(@{
+                                                                    @"messageId": self.testMessageId,
+                                                                    @"tag": @"testtag"
+                                                            })
+                                                                  eventType:EventTypeInternal]);
+    OCMReject([self.mockRequestManager submitRequestModel:mockRequestModel
+                                      withCompletionBlock:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    [self.inbox removeTag:tag
+              fromMessage:self.testMessageId
+          completionBlock:^(NSError *error) {
+              [expectation fulfill];
+          }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2];
+
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+
 }
 
 - (EMSResponseModel *)responseModel {
