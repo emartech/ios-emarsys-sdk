@@ -8,6 +8,12 @@
 #import "EMSInboxResult.h"
 #import "EMSInboxResultParser.h"
 
+typedef BOOL (^EMSMessageConditionBlock)(EMSMessage *message);
+
+typedef void (^EMSRunnerBlock)();
+
+typedef void (^EMSRequestUnnecessaryBlock)();
+
 @interface EMSInboxV3 ()
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
@@ -35,16 +41,19 @@
 - (void)fetchMessagesWithResultBlock:(EMSInboxMessageResultBlock)resultBlock {
     NSParameterAssert(resultBlock);
     EMSRequestModel *requestModel = [self.requestFactory createMessageInboxRequestModel];
+    __weak typeof(self) weakSelf = self;
     [self.requestManager submitRequestModelNow:requestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                          EMSInboxResult *result = [self.inboxResultParser parseFromResponse:response];
+                                          EMSInboxResult *result = [weakSelf.inboxResultParser parseFromResponse:response];
+                                          weakSelf.messages = result.messages;
                                           if (resultBlock) {
                                               resultBlock(result, nil);
                                           }
                                       });
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
+                                        weakSelf.messages = nil;
                                         dispatch_async(dispatch_get_main_queue(), ^{
                                             if (resultBlock) {
                                                 resultBlock(nil, error);
@@ -65,14 +74,24 @@
 completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(tag);
     NSParameterAssert(messageId);
-    EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
-                                                                              eventAttributes:@{
-                                                                                      @"messageId": messageId,
-                                                                                      @"tag": [tag lowercaseString]
-                                                                              }
-                                                                                    eventType:EventTypeInternal];
-    [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:completionBlock];
+    __weak typeof(self) weakSelf = self;
+    [self updateTagWithConditionBlock:^BOOL(EMSMessage *message) {
+                return [message.id isEqualToString:messageId] && ![message.tags containsObject:[tag lowercaseString]];
+            }             runnerBlock:^{
+                EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"inbox:tag:add"
+                                                                                              eventAttributes:@{
+                                                                                                      @"messageId": messageId,
+                                                                                                      @"tag": [tag lowercaseString]
+                                                                                              }
+                                                                                                    eventType:EventTypeInternal];
+                [weakSelf.requestManager submitRequestModel:requestModel
+                                        withCompletionBlock:completionBlock];
+            }
+              requestUnnecessaryBlock:^{
+                  if (completionBlock) {
+                      completionBlock(nil);
+                  }
+              }];
 }
 
 - (void)removeTag:(NSString *)tag
@@ -87,14 +106,45 @@ completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
   completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(tag);
     NSParameterAssert(messageId);
-    EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
-                                                                              eventAttributes:@{
-                                                                                      @"messageId": messageId,
-                                                                                      @"tag": [tag lowercaseString]
-                                                                              }
-                                                                                    eventType:EventTypeInternal];
-    [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:completionBlock];
+    __weak typeof(self) weakSelf = self;
+    [self updateTagWithConditionBlock:^BOOL(EMSMessage *message) {
+                return [message.id isEqualToString:messageId] && [message.tags containsObject:[tag lowercaseString]];
+            }             runnerBlock:^{
+                EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"inbox:tag:remove"
+                                                                                              eventAttributes:@{
+                                                                                                      @"messageId": messageId,
+                                                                                                      @"tag": [tag lowercaseString]
+                                                                                              }
+                                                                                                    eventType:EventTypeInternal];
+                [weakSelf.requestManager submitRequestModel:requestModel
+                                        withCompletionBlock:completionBlock];
+            }
+              requestUnnecessaryBlock:^{
+                  if (completionBlock) {
+                      completionBlock(nil);
+                  }
+              }];
 }
+
+- (void)updateTagWithConditionBlock:(EMSMessageConditionBlock)conditionBlock
+                        runnerBlock:(EMSRunnerBlock)runnerBlock
+            requestUnnecessaryBlock:(EMSRequestUnnecessaryBlock)requestUnnecessaryBlock {
+    if (self.messages) {
+        BOOL isRunnerBlockWasExecuted = NO;
+        for (EMSMessage *message in self.messages) {
+            if (conditionBlock(message)) {
+                runnerBlock();
+                isRunnerBlockWasExecuted = YES;
+                break;
+            }
+        }
+        if (!isRunnerBlockWasExecuted) {
+            requestUnnecessaryBlock();
+        }
+    } else {
+        runnerBlock();
+    }
+}
+
 
 @end

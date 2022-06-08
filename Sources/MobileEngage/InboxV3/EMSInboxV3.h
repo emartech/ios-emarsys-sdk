@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EMSInboxV3 : NSObject <EMSMessageInboxProtocol>
 
+@property(nonatomic, strong) NSArray<EMSMessage *> *messages;
+
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
                         requestManager:(EMSRequestManager *)requestManager
                      inboxResultParser:(EMSInboxResultParser *)inboxResultParser;
