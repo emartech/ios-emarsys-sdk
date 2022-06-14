@@ -5,14 +5,13 @@
 #import "EMSInboxV3.h"
 #import "EMSRequestFactory.h"
 #import "EMSRequestManager.h"
-#import "EMSInboxResult.h"
 #import "EMSInboxResultParser.h"
 
 typedef BOOL (^EMSMessageConditionBlock)(EMSMessage *message);
 
-typedef void (^EMSRunnerBlock)();
+typedef void (^EMSRunnerBlock)(void);
 
-typedef void (^EMSRequestUnnecessaryBlock)();
+typedef void (^EMSRequestUnnecessaryBlock)(void);
 
 @interface EMSInboxV3 ()
 
