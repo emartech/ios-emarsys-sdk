@@ -807,8 +807,6 @@
 		8A6BEBB323E86B490066B13C /* EMSEmarsysRequestFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BEA4923E86B480066B13C /* EMSEmarsysRequestFactory.m */; };
 		8A6BEBB423E86B490066B13C /* EMSEmarsysRequestFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */; };
 		8A6BEBB523E86B490066B13C /* EMSDeepLinkInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BEA4C23E86B480066B13C /* EMSDeepLinkInternal.m */; };
-		8A6BEBB623E86B490066B13C /* EMSLoggingDeepLinkInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BEA4D23E86B480066B13C /* EMSLoggingDeepLinkInternal.m */; };
-		8A6BEBB723E86B490066B13C /* EMSLoggingDeepLinkInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */; };
 		8A6BEBB823E86B490066B13C /* EMSDeepLinkInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */; };
 		8A8532ED2668C96B00CFEC4D /* EMSCustomEventActionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A8532EC2668C96B00CFEC4D /* EMSCustomEventActionModel.h */; };
 		8A8532F62668C98400CFEC4D /* EMSCustomEventActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A8532F52668C98400CFEC4D /* EMSCustomEventActionModel.m */; };
@@ -3650,7 +3648,6 @@
 				8A6BEAC823E86B480066B13C /* EMSTrigger.h in Headers */,
 				8A6BEB6323E86B490066B13C /* MEIAMJSCommandFactory.h in Headers */,
 				8A6BEB4023E86B490066B13C /* MEButtonClick.h in Headers */,
-				8A6BEBB723E86B490066B13C /* EMSLoggingDeepLinkInternal.h in Headers */,
 				8A6BEB6123E86B490066B13C /* MEIAMTriggerMEEvent.h in Headers */,
 				8A6BEA6623E86B480066B13C /* EMSSQLSpecificationProtocol.h in Headers */,
 				8A6BEB3923E86B490066B13C /* EMSLoggingMobileEngageInternal.h in Headers */,
@@ -4797,7 +4794,6 @@
 				8A6BEAC323E86B480066B13C /* EMSDefaultWorker.m in Sources */,
 				8A6BEB0723E86B490066B13C /* EMSRecommendationFilter.m in Sources */,
 				8A6BEB7F23E86B490066B13C /* EMSMobileEngageMapper.m in Sources */,
-				8A6BEBB623E86B490066B13C /* EMSLoggingDeepLinkInternal.m in Sources */,
 				8A6BEBB523E86B490066B13C /* EMSDeepLinkInternal.m in Sources */,
 				8A6BEA9423E86B480066B13C /* EMSCompositeRequestModel.m in Sources */,
 				8A6BEAA623E86B480066B13C /* EMSCountPredicate.m in Sources */,

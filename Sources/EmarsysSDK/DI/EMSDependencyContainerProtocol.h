@@ -44,8 +44,6 @@
 
 - (id <EMSDeepLinkProtocol>)deepLink;
 
-- (id <EMSDeepLinkProtocol>)loggingDeepLink;
-
 - (id <EMSPushNotificationProtocol>)push;
 
 - (id <EMSPushNotificationProtocol>)loggingPush;

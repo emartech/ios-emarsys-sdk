@@ -26,7 +26,6 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSLoggingMobileEngageInternal.h"
 #import "EMSDeepLinkInternal.h"
-#import "EMSLoggingDeepLinkInternal.h"
 #import "EMSGeofenceInternal.h"
 #import "EMSLoggingGeofenceInternal.h"
 #import "EMSInboxV3.h"
@@ -808,15 +807,6 @@
                    predictEnabled:NO];
 
     XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
-}
-
-- (void)testShouldBeEMSLoggingDeepLinkInternal {
-    [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
-            }
-              mobileEngageEnabled:NO
-                   predictEnabled:NO];
-
-    XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.deepLink).instanceRouter.instance class], [EMSLoggingDeepLinkInternal class]);
 }
 
 - (void)testShouldBeEMSLoggingGeofenceInternal {

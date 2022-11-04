@@ -56,7 +56,6 @@
 #import "EMSLoggingPushInternal.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingMobileEngageInternal.h"
-#import "EMSLoggingDeepLinkInternal.h"
 #import "EMSLoggingOnEventActionInternal.h"
 #import "EMSPredictRequestModelBuilderProvider.h"
 #import "EMSProductMapper.h"
@@ -104,7 +103,6 @@
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> loggingMobileEngage;
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
-@property(nonatomic, strong) id <EMSDeepLinkProtocol> loggingDeepLink;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> loggingPush;
 @property(nonatomic, strong) id <EMSInAppProtocol, MEIAMProtocol> iam;
@@ -491,11 +489,13 @@
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                        mobileEngage:self.mobileEngage];
 
-    _loggingDeepLink = [EMSLoggingDeepLinkInternal new];
-    EMSInstanceRouter *deepLinkRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
-                                                                                                                                requestFactory:self.requestFactory]
-                                                                           loggingInstance:self.loggingDeepLink
-                                                                               routerLogic:self.mobileEngageRouterLogicBlock];
+    EMSDeepLinkInternal *deepLinkInternal = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
+                                                                                 requestFactory:self.requestFactory];
+    EMSInstanceRouter *deepLinkRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:deepLinkInternal
+                                                                           loggingInstance:deepLinkInternal
+                                                                               routerLogic:^BOOL{
+        return YES;
+    }];
 
     [self.deepLinkDelegator proxyWithInstanceRouter:deepLinkRouter];
 

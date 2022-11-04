@@ -10,7 +10,6 @@
 #import "EMSMobileEngageV3Internal.h"
 #import "EMSPushV3Internal.h"
 #import "EMSLoggingPushInternal.h"
-#import "EMSLoggingDeepLinkInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSLoggingInApp.h"
 #import "EMSLoggingPredictInternal.h"
@@ -137,17 +136,7 @@ SPEC_BEGIN(EMSDependencyInjectionTests)
             afterEach(^{
                 [EmarsysTestUtils tearDownEmarsys];
             });
-
-            it(@"should return with logging instance when mobileEngage is not enabled", ^{
-                [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                        }]
-                                     dependencyContainer:nil];
-
-                waitForSetup();
-
-                [[((NSObject *) EMSDependencyInjection.deepLink) should] beKindOfClass:[EMSLoggingDeepLinkInternal class]];
-            });
-
+            
             it(@"should return real instance when mobileEngage is enabled", ^{
                 [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                             [builder setMobileEngageApplicationCode:@"EMS11-C3FD3"];
