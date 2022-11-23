@@ -126,6 +126,8 @@
 		2356DE19BD2266CC7BF9A3C3 /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D27BAC0A2B5BF69C610971B5 /* libPods-MobileEngageTests.a */; };
 		26E5476CA1EE1FE298A293E7 /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF4C561C90CBB21FF262200 /* libPods-Tests.a */; };
 		2721C33EAF7C6B19A95EB39B /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 482B0C2D0697BA74AF4FAC1A /* libPods-CoreTests.a */; };
+		3260038F292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json in Resources */ = {isa = PBXBuildFile; fileRef = 3260038E292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json */; };
+		32600390292E2B3B004CF506 /* EMSOpenExternalUrlActionModel.json in Resources */ = {isa = PBXBuildFile; fileRef = 3260038E292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json */; };
 		32C6F002E8A228E697E142D4 /* EMSRESTClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F3B5678EFEE201A645D2 /* EMSRESTClientTests.m */; };
 		32C6F01B5AC66D072D5D9EBC /* EMSDependencyInjectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F9D95866503F93256683 /* EMSDependencyInjectionTests.m */; };
 		32C6F02A0FCE0C885640DA34 /* EMSCompletionBlockProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C6F823261C753235FAE3DA /* EMSCompletionBlockProviderTests.m */; };
@@ -941,6 +943,7 @@
 
 /* Begin PBXFileReference section */
 		167C9FD22118764100E01190 /* EMSTestPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSTestPrefixHeader.pch; sourceTree = "<group>"; };
+		3260038E292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = EMSOpenExternalUrlActionModel.json; sourceTree = "<group>"; };
 		32C6F01EBEC867A8F7697153 /* EMSCoreCompletionHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCoreCompletionHandlerTests.m; sourceTree = "<group>"; };
 		32C6F02C09C174632B057CF4 /* EMSAppEventActionModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSAppEventActionModelTests.m; sourceTree = "<group>"; };
 		32C6F02CE3E640F757B02675 /* EMSEventHandlerProtocolBlockConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEventHandlerProtocolBlockConverter.h; sourceTree = "<group>"; };
@@ -3228,6 +3231,7 @@
 				167C9FD22118764100E01190 /* EMSTestPrefixHeader.pch */,
 				32C6F6ADC35F47A802701975 /* XCTestCase+Helper.m */,
 				32C6FAEA936617701EF0B896 /* XCTestCase+Helper.h */,
+				3260038E292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -4081,6 +4085,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32C6F2B80F7CFF74BDB6678B /* EMS11-C3FD3.json in Resources */,
+				3260038F292E2B2F004CF506 /* EMSOpenExternalUrlActionModel.json in Resources */,
 				32C6F4143FD1C6E691D452CC /* EMS11-C3FD3.sig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4120,6 +4125,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32600390292E2B3B004CF506 /* EMSOpenExternalUrlActionModel.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

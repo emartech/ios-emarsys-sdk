@@ -8,6 +8,9 @@
 #import "EMSWaiter.h"
 #import "EMSRequestManager.h"
 #import "EMSRequestFactory.h"
+#import "EMSInboxResultParser.h"
+#import "EMSResponseModel.h"
+#import "EMSOpenExternalUrlActionModel.h"
 
 @interface EMSDeepLinkInternalTests : XCTestCase
 
@@ -27,6 +30,32 @@
                                                      requestFactory:self.mockRequestFactory];
 }
 
+- (void)testHandlesMalformedExternalUrl {
+    // prepare
+    NSString* path = [[NSBundle bundleForClass:[EMSDeepLinkInternalTests class]] pathForResource: @"EMSOpenExternalUrlActionModel" ofType: @"json"];
+    NSData *body = [[NSFileManager defaultManager] contentsAtPath:path];
+    EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
+    EMSResponseModel *mockResponse = [[EMSResponseModel alloc] initWithStatusCode:200
+                                                                          headers:[NSMutableDictionary dictionary]
+                                                                             body:body
+                                                                       parsedBody:nil
+                                                                     requestModel:requestModel
+                                                                        timestamp:[[NSDate alloc] init]];
+    NSDictionary *parsedBody = mockResponse.parsedBody;
+    EMSInboxResultParser* parser = [[EMSInboxResultParser alloc] init];
+    
+    // execute
+    EMSInboxResult* result = [parser parseFromResponse: mockResponse];
+
+    // verify
+    XCTAssertNotNil(result);
+    NSArray<EMSMessage *> *messages = result.messages;
+    XCTAssertNotNil(messages);
+    XCTAssertEqual([messages count], 1);
+    XCTAssertEqual([[messages firstObject].actions count], 1);
+    EMSOpenExternalUrlActionModel *action = [[messages firstObject].actions firstObject];
+    XCTAssertEqualObjects(action.url, [NSURL new], @"Malformed URL should result in empty URL object");
+}
 
 - (void)testInit_requestManager_mustNotBeNil {
     @try {

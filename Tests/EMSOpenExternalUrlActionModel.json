@@ -1,0 +1,27 @@
+{
+  "count": 1,
+  "messages": [
+    {
+      "id": "message_id",
+      "title": "Survey with malformed URL",
+      "body": "Will this crash the SDK?",
+      "campaignId": "123",
+      "receivedAt": 1669126825,
+      "updatedAt": 1669126825,
+      "tags": [],
+      "collapseId": "",
+      "properties": {},
+      "ems": {
+        "actions": [
+          {
+            "type": "OpenExternalUrl",
+            "id": "Tap to crash",
+            "title": "Tap to crash",
+            "name": "Crash",
+            "url": "https://server.com/malformed/url?\\||"
+          }
+        ]
+      }
+    }
+  ]
+}

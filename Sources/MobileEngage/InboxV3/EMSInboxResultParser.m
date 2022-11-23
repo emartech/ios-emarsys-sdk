@@ -68,8 +68,8 @@
             }
             [result setMessages:resultMessages];
         }
-
-
+        
+        
     }
     return result;
 }
@@ -83,10 +83,11 @@
                                                        name:actionDictionary[@"name"]
                                                     payload:actionDictionary[@"payload"]];
     } else if ([actionDictionary[@"type"] isEqualToString:@"OpenExternalUrl"]) {
+        NSURL *parsedURL = [self parseURL:actionDictionary[@"url"]];
         action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionDictionary[@"id"]
                                                              title:actionDictionary[@"title"]
                                                               type:actionDictionary[@"type"]
-        url:actionDictionary[@"url"] ? [[NSURL alloc] initWithString:actionDictionary[@"url"]] : [NSURL new]];
+                                                               url:parsedURL];
     } else if ([actionDictionary[@"type"] isEqualToString:@"MECustomEvent"]) {
         action = [[EMSCustomEventActionModel alloc] initWithId:actionDictionary[@"id"]
                                                          title:actionDictionary[@"title"]
@@ -99,6 +100,19 @@
                                                       type:actionDictionary[@"type"]];
     }
     return action;
+}
+
+- (NSURL *)parseURL:(NSString *)unsafeURL {
+    NSURL *result = [NSURL new];
+    if (unsafeURL != nil) {
+        NSURL *url = [[NSURL alloc] initWithString: unsafeURL];
+        // Malformed URL string will result in nil URL
+        if (url !=nil) {
+            result = url;
+        }
+    }
+    
+    return result;
 }
 
 @end
