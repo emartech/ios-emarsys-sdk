@@ -1,0 +1,6 @@
+name: ios-emarsys-sdk
+title: iOS Emarsys SDK
+version: master
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc

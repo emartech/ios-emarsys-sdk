@@ -1,0 +1,192 @@
+= Push
+
+== Rich Push
+
+Rich push messages can contain images, actions.
+The maximum number of actions in a push message is 3. See examples below.
+
+.App Event
+[source,json]
+----
+{
+  "aps": {
+      "alert": {
+        "title":"Hello Demo!",
+        "body":"This is a push message"
+	  },
+    "mutable-content": 1
+  },
+ "image_url":"https://firebase.google.com/images/social.png",
+ "u":{"sid":"asdf"},
+ "ems":{
+  "multichannelId":"campaignId",
+  "actions": [
+    {
+      "id": "id1",
+      "title": "App event",
+      "type": "MEAppEvent",
+      "name": "AppEventName",
+      "payload": {"key":"value", "key2":"vale"}
+     }
+    ]
+  },
+  "ems_msg": {}
+}
+----
+
+.ExternalUrl
+[source,json]
+----
+{
+  "aps": {
+      "alert": {
+        "title":"Hello Demo!",
+        "body":"This is a push message"
+	  },
+    "mutable-content": 1
+  },
+ "image_url":"https://firebase.google.com/images/social.png",
+ "u":{"sid":"asdf"},
+ "ems":{
+  "multichannelId":"campaignId",
+  "actions": [
+    {
+	  "id": "id1",
+	  "title": "External Url",
+	  "type": "OpenExternalUrl",
+	  "url": "https://www.emarsys.com"
+    }
+    ]
+  },
+  "ems_msg": {}
+}
+----
+
+.CustomEvent
+[source,json]
+----
+{
+  "aps": {
+      "alert": {
+        "title":"Hello Demo!",
+        "body":"This is a push message"
+	  },
+    "mutable-content": 1
+  },
+ "image_url":"https://firebase.google.com/images/social.png",
+ "u":{"sid":"asdf"},
+ "ems":{
+  "multichannelId":"campaignId",
+  "actions": [
+    {
+      "id": "id3",
+      "title": "Custom Event",
+      "type": "MECustomEvent",
+      "name": "testCustomEvent",
+      "payload": {"key":"value", "key2":"vale"}
+      }
+    ]
+  },
+  "ems_msg": {}
+}
+----
+
+.Dismiss
+[source,json]
+----
+{
+  "aps": {
+      "alert": {
+        "title":"Hello Demo!",
+        "body":"This is a push message"
+	  },
+    "mutable-content": 1
+  },
+ "image_url":"https://firebase.google.com/images/social.png",
+ "u":{"sid":"asdf"},
+ "ems":{
+  "multichannelId":"campaignId",
+  "actions": [
+    {
+      "id": "id1",
+      "title":"Dismiss button",
+      "type":"Dismiss"
+     }
+    ]
+  },
+  "ems_msg": {}
+}
+----
+
+=== Update/Delete
+
+The push request header should be extended with apns-collapse-id: <a String identifier for the notification>
+
+When we want to delete a notification, the push payload should contain content-available: 1 under aps and nothing more, also somewhere outside aps a del_id: <formerly sent id in apns-topic> key value pair.
+
+.Example for delete
+[source,json]
+----
+{
+  "aps":{
+      "content-available": 1
+  },
+  "del-id":"testId"
+}
+----
+
+== Silent Push
+
+No notification is going to be shown on the device but the SDK is going to trigger the app event at receive.
+
+.Example
+[source,json]
+----
+{
+  "aps":{
+      "content-available":1
+  },
+  "ems": {
+    "actions": [
+        {
+            "type": "MEAppEvent",
+            "name": "nameOfTheAppEvent",
+            "payload": {"":"", "":""}
+        },
+        {
+          "type": "BadgeCount",
+          "method": "<SET><ADD>",
+          "value": 12345678
+        }
+    ]
+  }
+}
+----
+
+== Push to in-app
+
+An in-app message is going to be shown at receive with the defined url.
+
+.Example
+[source,json]
+----
+{
+  "aps": {
+      "alert": {
+        "title":"Hello Demo!",
+        "body":"This is a push message"
+	  },
+    "mutable-content": 1
+  },
+ "image_url":"https://firebase.google.com/images/social.png",
+ "u":{"sid":"asdf"},
+ "ems":{
+  "multichannelId":"campaignId",
+         "inapp": {
+            "campaign_id": "222",
+            "url": "https://www.emarsys.com/"
+         }
+      },
+  "ems_msg": {}
+}
+----
