@@ -244,4 +244,85 @@
     XCTAssertEqualObjects(result, expectedResult);
 }
 
+- (void)testParseFromResponse_whenActionUrlIsInvalidInMessages {
+    NSString *bodyString = @"{\n"
+                           "  \"count\": 1,\n"
+                           "  \"messages\": [\n"
+                           "    {\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
+                           "        \"title\": \"title\",\n"
+                           "        \"body\": \"body\",\n"
+                           "        \"imageUrl\": \"https://example.com/image.jpg\",\n"
+                           "        \"receivedAt\": 142141412515,\n"
+                           "        \"updatedAt\": 142141412599,\n"
+                           "        \"expiresAt\": 142141412599,\n"
+                           "        \"tags\": [\"tag1\", \"tag2\"],\n"
+                           "        \"properties\": {"
+                           "            \"key1\": \"value1\","
+                           "            \"key2\": \"value2\"},"
+                           "         \"ems\":{"
+                           "            \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": \"https://www.emarsys.com\""
+                           "            },"
+                           "            {"
+                           "                \"id\": \"testId2\","
+                           "                \"title\": \"testTitle2\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": \"https://emarsys.invalid||/5%\""
+                           "            }"
+                           "        ]"
+                           "      }\n"
+                           "    }\n"
+                           "  ]"
+                           "}";
+
+    NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    NSDictionary *parsedBody = [NSJSONSerialization JSONObjectWithData:bodyData
+                                                               options:0
+                                                                 error:nil];
+    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
+
+
+    EMSInboxResult *expectedResult = [EMSInboxResult alloc];
+
+    EMSMessage *message = [[EMSMessage alloc] initWithId:@"ef14afa4"
+                                              campaignId:@"campaignId"
+                                              collapseId:@"collapseId"
+                                                   title:@"title"
+                                                    body:@"body"
+                                                imageUrl:@"https://example.com/image.jpg"
+                                              receivedAt:@(142141412515)
+                                               updatedAt:@(142141412599)
+                                               expiresAt:@(142141412599)
+                                                    tags:@[@"tag1", @"tag2"]
+                                              properties:@{
+                                                      @"key1": @"value1",
+                                                      @"key2": @"value2"}
+                                                 actions:@[
+                                                         [[EMSOpenExternalUrlActionModel alloc] initWithId:@"testId1"
+                                                                                                     title:@"testTitle1"
+                                                                                                      type:@"OpenExternalUrl"
+                                                                                                       url:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]],
+                                                         [[EMSOpenExternalUrlActionModel alloc] initWithId:@"testId2"
+                                                                                                     title:@"testTitle2"
+                                                                                                      type:@"OpenExternalUrl"
+                                                                                                       url:[NSURL new]
+                                                         ]]];
+
+    [expectedResult setMessages:@[message]];
+    EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
+
+    XCTAssertEqualObjects(result, expectedResult);
+}
+
 @end
