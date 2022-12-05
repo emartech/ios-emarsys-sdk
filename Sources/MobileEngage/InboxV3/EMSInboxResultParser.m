@@ -83,10 +83,11 @@
                                                        name:actionDictionary[@"name"]
                                                     payload:actionDictionary[@"payload"]];
     } else if ([actionDictionary[@"type"] isEqualToString:@"OpenExternalUrl"]) {
+        NSURL *url = [[NSURL alloc] initWithString:actionDictionary[@"url"]];
         action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionDictionary[@"id"]
                                                              title:actionDictionary[@"title"]
                                                               type:actionDictionary[@"type"]
-        url:actionDictionary[@"url"] ? [[NSURL alloc] initWithString:actionDictionary[@"url"]] : [NSURL new]];
+        url:url ? url : [NSURL new]];
     } else if ([actionDictionary[@"type"] isEqualToString:@"MECustomEvent"]) {
         action = [[EMSCustomEventActionModel alloc] initWithId:actionDictionary[@"id"]
                                                          title:actionDictionary[@"title"]
