@@ -1,0 +1,14 @@
+sourceryCommand: null
+sourceryTemplate: null
+EmarsysSDK:
+  sources:
+    include:
+    - ./Sources/
+  output: ./EmarsysSDKTests/Mock.generated.swift
+  targets:
+  - EmarsysSDKTests
+  testable:
+  - EmarsysSDK
+  - SwiftyMocky
+  import:
+  - Foundation

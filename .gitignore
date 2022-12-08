@@ -76,3 +76,5 @@ Pods/
 .swiftpm/
 
 Emarsys Sample/Emarsys-Sample/GoogleService-Info.plist
+/.build/
+.mocky*
