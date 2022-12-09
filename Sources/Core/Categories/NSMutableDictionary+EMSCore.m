@@ -9,6 +9,9 @@
 
 - (id)takeValueForKey:(NSString *)key {
     id value = self[key];
+    if ([value isMemberOfClass:[NSNull class]]) {
+        value = nil;
+    }
     [self removeObjectForKey:key];
     return value;
 }

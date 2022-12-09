@@ -19,7 +19,8 @@
                     @"innerKey1": @"innerValue1",
                     @"innerKey2": @"innerValue2"
             },
-            @"key4": @"value4"
+            @"key4": @"value4",
+            @"key5": [NSNull null]
     } mutableCopy];
     NSDictionary *expectedDictionary = @{
             @"key2": @[@"a", @"b", @"c"],
@@ -33,10 +34,12 @@
 
     NSString *returnedValue1 = [originalDictionary takeValueForKey:@"key1"];
     NSString *returnedValue2 = [originalDictionary takeValueForKey:@"key4"];
+    NSString *returnedValue3 = [originalDictionary takeValueForKey:@"key5"];
     NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:originalDictionary];
 
     XCTAssertEqualObjects(returnedValue1, expectedValue1);
     XCTAssertEqualObjects(returnedValue2, expectedValue2);
+    XCTAssertNil(returnedValue3);
     XCTAssertEqualObjects(resultDictionary, expectedDictionary);
 }
 
