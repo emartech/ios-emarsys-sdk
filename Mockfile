@@ -4,7 +4,7 @@ EmarsysSDK:
   sources:
     include:
     - ./Sources/
-  output: ./EmarsysSDKTests/Mock.generated.swift
+  output: ./Tests/EmarsysSDKTests/Mock.generated.swift
   targets:
   - EmarsysSDKTests
   testable:

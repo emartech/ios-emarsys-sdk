@@ -1,0 +1,9 @@
+//
+// Copyright © 2022. Emarsys-Technologies Kft. All rights reserved.
+//
+      
+"coreDataModelNotAvailable" = "CoreData Model doesn't available!";
+"cantCreateManagedObjectModel" = "Couldn't create ManagedObjectModel!";
+"sqliteNotAvailable" = "EmarsysSdk.sqlite doesn't available!";
+"savingItemFailed" = "Saving item failed: %@ with error: %@";
+"savingItemsFailed" = "Saving items failed: %@ with error: %@";
