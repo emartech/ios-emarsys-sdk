@@ -47,7 +47,7 @@ class Dao<T> where T: Stashable {
     
     func save(item: T) async throws {
         do {
-            let entity = try item.toEntity(mox: self.stash.mox)
+            _ = try item.toEntity(mox: self.stash.mox)
             try stash.mox.save()
         } catch {
             throw Errors.dbMethodFailed("savingItemFailed".localized(with: String(describing: item), error.localizedDescription))
@@ -56,7 +56,7 @@ class Dao<T> where T: Stashable {
     
     func save(items: [T]) async throws {
         do {
-            let entities = try items.map { stashable in
+            _ = try items.map { stashable in
                 try stashable.toEntity(mox: self.stash.mox)
             }
             try stash.mox.save()

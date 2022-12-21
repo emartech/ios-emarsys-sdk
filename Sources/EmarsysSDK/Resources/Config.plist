@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>clientServiceBaseUrl</key>
+	<string>https://me-client.eservice.emarsys.net</string>
+	<key>eventServiceBaseUrl</key>
+	<string>https://mobile-events.eservice.emarsys.net</string>
+	<key>predictBaseUrl</key>
+	<string>https://recommender.scarabresearch.com</string>
+	<key>deepLinkBaseUrl</key>
+	<string>https://deep-link.eservice.emarsys.net/api/clicks</string>
+	<key>inboxBaseUrl</key>
+	<string>https://me-inbox.eservice.emarsys.net</string>
+	<key>remoteConfigBaseUrl</key>
+	<string>https://mobile-sdk-config.gservice.emarsys.net</string>
+</dict>
+</plist>

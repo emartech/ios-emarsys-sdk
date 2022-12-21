@@ -3,6 +3,6 @@ import XCTest
 
 final class EmarsysSDKTests: XCTestCase {
     func testExample() throws {
-
+        
     }
 }

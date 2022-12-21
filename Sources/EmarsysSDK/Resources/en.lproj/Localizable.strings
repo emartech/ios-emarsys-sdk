@@ -7,3 +7,6 @@
 "sqliteNotAvailable" = "EmarsysSdk.sqlite doesn't available!";
 "savingItemFailed" = "Saving item failed: %@ with error: %@";
 "savingItemsFailed" = "Saving items failed: %@ with error: %@";
+"switchToStateFailed" = "Switch to state failed: %@";
+"resourceLoadingFailed" = "Couldn't load resource: %@";
+"secKeyCreationFailed" = "Couldn't create SecKey: %@"

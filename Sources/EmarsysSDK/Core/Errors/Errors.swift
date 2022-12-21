@@ -10,4 +10,6 @@ enum Errors: Error {
     case mappingFailed(String)
     case resourceNotAvailable(String)
     case dbMethodFailed(String)
+    case switchToStateFailed(String)
+    case secKeyCreationFailed(String)
 }
