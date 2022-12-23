@@ -11,6 +11,4 @@ protocol Core {
     
     func submit(event: Event)
     
-    
-    
 }

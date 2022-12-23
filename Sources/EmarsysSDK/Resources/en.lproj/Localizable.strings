@@ -9,4 +9,7 @@
 "savingItemsFailed" = "Saving items failed: %@ with error: %@";
 "switchToStateFailed" = "Switch to state failed: %@";
 "resourceLoadingFailed" = "Couldn't load resource: %@";
-"secKeyCreationFailed" = "Couldn't create SecKey: %@"
+"secKeyCreationFailed" = "Couldn't create SecKey: %@";
+"urlCreationFailed" = "Url creation failed: %@";
+"storingValueFailed" = "Storing value failed: %@";
+"retrievingValueFailed" = "Retrieving value failed: %@";

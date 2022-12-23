@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct DeviceInfo: Decodable {
+struct DeviceInfo: Encodable {
 
     let platform: String
     let applicationVersion: String
@@ -19,7 +19,7 @@ struct DeviceInfo: Decodable {
     
 }
 
-struct PushSettings: Decodable {
+struct PushSettings: Encodable {
     let authorizationStatus: String
     let soundSetting: String
     let badgeSetting: String

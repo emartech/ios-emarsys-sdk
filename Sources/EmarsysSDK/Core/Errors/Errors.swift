@@ -12,4 +12,7 @@ enum Errors: Error {
     case dbMethodFailed(String)
     case switchToStateFailed(String)
     case secKeyCreationFailed(String)
+    case urlCreationFailed(String)
+    case storingValueFailed(String)
+    case retrievingValueFailed(String)
 }

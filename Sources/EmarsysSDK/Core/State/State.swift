@@ -19,7 +19,7 @@ protocol State {
     
     func prepare()
     
-    func activate() async
+    func activate() async throws
     
     func relax()
     
@@ -55,7 +55,7 @@ class StateMachine: StateContext {
         currentState.relax()
         currentState.context = nil
         currentState = nextState
-        await currentState.activate()
+        try await currentState.activate()
     }
     
 }

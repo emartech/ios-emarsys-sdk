@@ -17,5 +17,6 @@ struct SetupOrganizer {
 enum SetupState: String {
     case fetchRemoteConfig
     case registerClient
+    case registerPushToken
     case setContact
 }
