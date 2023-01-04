@@ -6,10 +6,9 @@
 
 import Foundation
 
-@SdkActor
 struct SecStore {
     
-    func put(data: Data?, key: String, accessGroup: String?) async throws {
+    func put(data: Data?, key: String, accessGroup: String? = nil) throws {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
         query[kSecClass as String] = kSecClassGenericPassword
@@ -23,7 +22,7 @@ struct SecStore {
         }
     }
 
-    func get(key: String, accessGroup: String?) async throws -> Data? {
+    func get(key: String, accessGroup: String? = nil) throws -> Data? {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
         query[kSecClass as String] = kSecClassGenericPassword
@@ -46,6 +45,15 @@ struct SecStore {
             throw Errors.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
         }
         return data
+    }
+    
+    subscript(key: String, accessGroup: String? = nil) -> Data? {
+        get {
+            return try? get(key: key, accessGroup: accessGroup)
+        }
+        set {
+            try? put(data: newValue, key: key, accessGroup: accessGroup)
+        }
     }
     
 }

@@ -10,7 +10,7 @@ import Foundation
 struct RemoteConfigClient {
     
     let networkClient: NetworkClient
-    let applicationCode: String
+    let configContext: SdkContext
     let defaultValues: DefaultValues
     let crypto: Crypto
     
@@ -25,7 +25,7 @@ struct RemoteConfigClient {
     }
     
     private func fetchSignature() async throws -> Data {
-        let signatureUrlString = defaultValues.remoteConfigBaseUrl.appending("/signature/\(applicationCode)")
+        let signatureUrlString = defaultValues.remoteConfigBaseUrl.appending("/signature/\(configContext.config?.applicationCode)")
         guard let signatureUrl = URL(string: signatureUrlString) else {
             throw Errors.urlCreationFailed("urlCreationFailed".localized(with: signatureUrlString))
         }
@@ -37,7 +37,7 @@ struct RemoteConfigClient {
     }
     
     private func fetchConfig() async throws -> Data {
-        let remoteConfigUrlString = defaultValues.remoteConfigBaseUrl.appending("/\(applicationCode)")
+        let remoteConfigUrlString = defaultValues.remoteConfigBaseUrl.appending("/\(configContext.config?.applicationCode)")
         guard let remoteConfigUrl = URL(string: remoteConfigUrlString) else {
             throw Errors.urlCreationFailed("urlCreationFailed".localized(with: remoteConfigUrlString))
         }

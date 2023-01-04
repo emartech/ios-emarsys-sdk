@@ -9,7 +9,7 @@ import Foundation
 @SdkActor
 protocol ContactApi {
     
-    func linkContact(contactFiledId: Int, contactFieldValue: String) async throws
+    func linkContact(contactFieldId: Int, contactFieldValue: String) async throws
     
     func linkAuthenticatedContact(contactFieldId: Int, openIdToken: String) async throws
     

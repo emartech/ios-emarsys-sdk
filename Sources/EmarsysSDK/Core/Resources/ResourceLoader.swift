@@ -8,11 +8,9 @@ import Foundation
 
 protocol ResourceLoader {
     
-    associatedtype Content: Decodable
-    
     func resourceUrl(name: String, ext: String) throws -> URL
     
-    func loadPlist(name: String) throws -> Content
+    func loadPlist<T>(name: String) throws -> T where T: Decodable
     
 }
 
@@ -25,12 +23,12 @@ extension ResourceLoader {
         return result
     }
 
-    func loadPlist(name: String) throws -> Content {
+    func loadPlist<T>(name: String) throws -> T where T: Decodable {
         do {
             let url = try resourceUrl(name: name, ext: "plist")
             let data = try Data(contentsOf: url)
             let propertyListDecoder = PropertyListDecoder()
-            return try propertyListDecoder.decode(Content.self, from: data)
+            return try propertyListDecoder.decode(T.self, from: data)
         } catch {
             throw Errors.resourceNotAvailable("resourceLoadingFailed".localized(with: name))
         }

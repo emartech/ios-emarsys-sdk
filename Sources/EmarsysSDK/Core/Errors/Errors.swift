@@ -15,4 +15,5 @@ enum Errors: Error {
     case urlCreationFailed(String)
     case storingValueFailed(String)
     case retrievingValueFailed(String)
+    case preconditionFailed(String)
 }

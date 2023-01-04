@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum ApiState {
+enum SdkState {
     case active
     case onHold
     case inactive

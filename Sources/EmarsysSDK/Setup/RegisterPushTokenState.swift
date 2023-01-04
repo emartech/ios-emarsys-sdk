@@ -8,19 +8,18 @@ import Foundation
 
 @SdkActor
 struct RegisterPushTokenState: State {
-    
-    var context: StateContext?
-    
+        
     let pushClient: PushClient
     
     var name = SetupState.registerPushToken.rawValue
     
+    var nextStateName: String? = SetupState.linkContact.rawValue
+    
     func prepare() {
     }
     
-    func activate() async throws {
+    func active() async throws {
         try await pushClient.registerPushToken()
-        try! await self.context?.switchTo(stateName: SetupState.setContact.rawValue)
     }
     
     func relax() {

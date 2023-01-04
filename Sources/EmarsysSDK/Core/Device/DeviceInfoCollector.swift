@@ -13,4 +13,12 @@ struct DeviceInfoCollector {
         return "" as! DeviceInfo
     }
     
+    func deviceType() -> String {
+        return ""
+    }
+    
+    func osVersion() -> String {
+        return ""
+    }
+    
 }

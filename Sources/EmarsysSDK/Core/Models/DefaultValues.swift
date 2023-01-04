@@ -7,7 +7,7 @@
 import Foundation
 
 struct DefaultValues: Decodable {
-    
+    let version: String
     let clientServiceBaseUrl: String
     let eventServiceBaseUrl: String
     let predictBaseUrl: String

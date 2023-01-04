@@ -6,16 +6,23 @@
 
 import Foundation
 
-class Contact: ContactApi {
+class Contact: Api, ContactApi {
     
     let loggingContact: LoggingContact
     let gathererContact: GathererContact
     let contactInternal: ContactInternal
     
     var active: ContactApi
-    var apiState: ApiState {
-        didSet {
-            switch apiState {
+    var sdkContext: SdkContext
+    
+    init(loggingContact: LoggingContact, gathererContact: GathererContact, contactInternal: ContactInternal, sdkContext: SdkContext) {
+        self.loggingContact = loggingContact
+        self.gathererContact = gathererContact
+        self.contactInternal = contactInternal
+        self.sdkContext = sdkContext
+        self.active = loggingContact
+        sdkContext.$sdkState.sink { state in // TODO: handle warning
+            switch state {
             case .active:
                 self.active = contactInternal
             case .onHold:
@@ -26,16 +33,8 @@ class Contact: ContactApi {
         }
     }
     
-    init(loggingContact: LoggingContact, gathererContact: GathererContact, contactInternal: ContactInternal, apiState: ApiState) {
-        self.loggingContact = loggingContact
-        self.gathererContact = gathererContact
-        self.contactInternal = contactInternal
-        self.apiState = apiState
-        self.active = loggingContact
-    }
-    
-    func linkContact(contactFiledId: Int, contactFieldValue: String) async throws {
-        try await self.active.linkContact(contactFiledId: contactFiledId, contactFieldValue: contactFieldValue)
+    func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
+        try await self.active.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue)
     }
     
     func linkAuthenticatedContact(contactFieldId: Int, openIdToken: String) async throws {

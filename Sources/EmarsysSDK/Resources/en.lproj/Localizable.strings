@@ -13,3 +13,4 @@
 "urlCreationFailed" = "Url creation failed: %@";
 "storingValueFailed" = "Storing value failed: %@";
 "retrievingValueFailed" = "Retrieving value failed: %@";
+"preconditionFailed" = "Precondition failed: %@";

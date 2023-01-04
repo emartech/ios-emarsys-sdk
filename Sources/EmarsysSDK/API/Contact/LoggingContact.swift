@@ -8,7 +8,7 @@ import Foundation
 
 struct LoggingContact: ContactApi {
     
-    func linkContact(contactFiledId: Int, contactFieldValue: String) async throws {
+    func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
         // log call
     }
     

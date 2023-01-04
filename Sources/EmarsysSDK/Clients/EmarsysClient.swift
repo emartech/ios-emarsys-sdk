@@ -12,10 +12,10 @@ struct EmarsysClient {
     let networkClient: NetworkClient
     let deviceInfoCollector: DeviceInfoCollector
     let defaultValues: DefaultValues
-    let config: Config
+    let configContext: SdkContext
 
     func registerClient() async {
-        guard let clientRegistrationUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client")) else {
+        guard let clientRegistrationUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client")) else {
             return //TODO: error handling what to do
         }
         let deviceInfo = await deviceInfoCollector.collectInfo()

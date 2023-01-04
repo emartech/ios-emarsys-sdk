@@ -14,8 +14,8 @@ class GathererContact: ContactApi {
         self.contactContext = contactContext
     }
     
-    func linkContact(contactFiledId: Int, contactFieldValue: String) async throws {
-        contactContext.calls.append(.linkContact(contactFiledId, contactFieldValue))
+    func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
+        contactContext.calls.append(.linkContact(contactFieldId, contactFieldValue))
         //TODO: add call to callgatherer dependency
     }
     

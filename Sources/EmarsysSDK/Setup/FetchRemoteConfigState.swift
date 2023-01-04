@@ -8,19 +8,18 @@ import Foundation
 
 @SdkActor
 struct FetchRemoteConfigState: State {
-    
-    var context: StateContext?
-    
+
     let remoteConfigClient: RemoteConfigClient
         
     var name = SetupState.fetchRemoteConfig.rawValue
     
+    var nextStateName: String? = SetupState.registerClient.rawValue
+    
     func prepare() {
     }
     
-    func activate() async throws {
+    func active() async throws {
         try await remoteConfigClient.applyActiveConfig()
-        try await context?.switchTo(stateName: SetupState.registerClient.rawValue)
     }
     
     func relax() {

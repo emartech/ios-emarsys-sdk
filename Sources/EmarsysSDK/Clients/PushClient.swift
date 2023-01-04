@@ -11,7 +11,7 @@ struct PushClient {
     
     let networkClient: NetworkClient
     let defaultValues: DefaultValues
-    let config: Config
+    let configContext: SdkContext
     
     func registerPushToken() async throws {
         let body = ["pushToken": "value of the push token"] //TODO: use pushToken
@@ -31,8 +31,8 @@ struct PushClient {
     }
     
     private func pushTokenUrl() throws -> URL {
-        guard let pushTokenUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client/push-token")) else {
-            throw Errors.urlCreationFailed("urlCreationFailed".localized(with: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client/push-token"))) //TODO: error handling what to do
+        guard let pushTokenUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client/push-token")) else {
+            throw Errors.urlCreationFailed("urlCreationFailed".localized(with: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client/push-token"))) //TODO: error handling what to do
         }
         return pushTokenUrl
     }

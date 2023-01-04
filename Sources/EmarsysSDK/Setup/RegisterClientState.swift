@@ -9,18 +9,17 @@ import Foundation
 @SdkActor
 struct RegisterClientState: State {
     
-    var context: StateContext?
-    
     let emarsysClient: EmarsysClient
     
     var name = SetupState.registerClient.rawValue
     
+    var nextStateName: String? = SetupState.registerPushToken.rawValue
+    
     func prepare() {
     }
 
-    func activate() async throws {
+    func active() async throws {
         await emarsysClient.registerClient()
-        try! await self.context?.switchTo(stateName: SetupState.registerPushToken.rawValue)
     }
     
     func relax() {
