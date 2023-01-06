@@ -31,8 +31,16 @@ struct RemoteConfigClient {
         }
         let signatureRequest = URLRequest.create(url: signatureUrl)
         
-        let signature: Data = await networkClient.send(request: signatureRequest)
-        
+        let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: signatureRequest)
+        var signature: Data
+        switch result {
+        case .success(let response):
+            signature = response.data
+        case .failure(let error):
+            // TODO: error handling
+            print("error: \(error)")
+            throw error
+        }
         return signature
     }
     
@@ -43,8 +51,16 @@ struct RemoteConfigClient {
         }
         let remoteConfigRequest = URLRequest.create(url: remoteConfigUrl)
         
-        let remoteConfigData: Data = await networkClient.send(request: remoteConfigRequest)
-        
+        let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: remoteConfigRequest)
+        var remoteConfigData: Data
+        switch result {
+        case .success(let response):
+            remoteConfigData = response.data
+        case .failure(let error):
+            // TODO: error handling
+            print("error: \(error)")
+            throw error
+        }
         return remoteConfigData
     }
     

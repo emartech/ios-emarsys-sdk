@@ -8,6 +8,8 @@ import Foundation
 
 struct SecStore {
     
+    static let instance = SecStore()
+    
     func put(data: Data?, key: String, accessGroup: String? = nil) throws {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key

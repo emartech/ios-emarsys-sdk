@@ -14,3 +14,5 @@
 "storingValueFailed" = "Storing value failed: %@";
 "retrievingValueFailed" = "Retrieving value failed: %@";
 "preconditionFailed" = "Precondition failed: %@";
+"notHTTPUrlResponse" = "Response is not HTTPUrlResponse";
+"responseMappingFailed" = "Response mapping failed: %@";

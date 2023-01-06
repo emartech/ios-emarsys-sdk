@@ -18,18 +18,31 @@ class Deeplink: Api, DeeplinkApi {
         self.deeplinkInternal = deeplinkInternal
         self.sdkContext = sdkContext
         active = loggingDeeplink
-        sdkContext.$sdkState.sink { state in
-            switch state {
-            case .inactive:
-                self.active = loggingDeeplink
-            case .onHold, .active:
-                self.active = deeplinkInternal
-            }
+        sdkContext.$sdkState.sink { [unowned self] state in // TODO: handle warning
+            self.setActiveInstance(state: state, features: sdkContext.features)
+        }
+        sdkContext.$features.sink { [unowned self] features in
+            self.setActiveInstance(state: sdkContext.sdkState, features: features)
         }
     }
     
     func trackDeeplink(userActivity: NSUserActivity) async throws -> Bool {
         try await self.active.trackDeeplink(userActivity: userActivity)
+    }
+    
+    private func setActiveInstance(state: SdkState, features: [Feature]) {
+        guard features.contains(where: { feature in
+            feature == Feature.everything || feature == Feature.deeplink
+        }) else {
+            self.active = loggingDeeplink
+            return
+        }
+        switch state {
+        case .inactive:
+            self.active = loggingDeeplink
+        case .onHold, .active:
+            self.active = deeplinkInternal
+        }
     }
     
 }

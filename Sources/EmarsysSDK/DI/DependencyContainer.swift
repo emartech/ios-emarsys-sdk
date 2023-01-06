@@ -22,6 +22,11 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
     
     let sdkContext = SdkContext()
     
+    
+    lazy var timestampProvider: TimestampProvider = {
+        return TimestampProvider()
+    }()
+    
     lazy var defaultValues: DefaultValues = {
         return try! loadPlist(name: configPlistName)
     }()
@@ -34,9 +39,13 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
         return DeviceInfoCollector()
     }()
     
+    lazy var sessionHandler: SessionHandler = {
+        return SessionHandler(timestampProvider: timestampProvider)
+    }()
+    
     // MARK: Clients
     
-    lazy var networkClient: NetworkClient = {
+    lazy var standardNetworkClient: NetworkClient = {
         let urlConfiguration = URLSessionConfiguration.default
         urlConfiguration.timeoutIntervalForRequest = 60.0
         urlConfiguration.httpCookieStorage = nil
@@ -46,16 +55,20 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
         return DefaultNetworkClient(session: urlSession, decoder: jsonDecoder, encoder: jsonEncoder)
     }()
     
+    lazy var networkClient: NetworkClient = {
+        return emarsysClient
+    }()
+    
     lazy var contactClient: ContactClient = {
-        return ContactClient(networkClient: networkClient, defaultValues: defaultValues, sdkContext: sdkContext)
+        return ContactClient(networkClient: networkClient, defaultValues: defaultValues, sdkContext: sdkContext, sessionHandler: sessionHandler)
     }()
     
     lazy var remoteConfigClient: RemoteConfigClient = {
-        return RemoteConfigClient(networkClient: networkClient, configContext: sdkContext, defaultValues: defaultValues, crypto: crypto)
+        return RemoteConfigClient(networkClient: standardNetworkClient, configContext: sdkContext, defaultValues: defaultValues, crypto: crypto)
     }()
     
     lazy var emarsysClient: EmarsysClient = {
-        return EmarsysClient(networkClient: networkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, configContext: sdkContext)
+        return EmarsysClient(networkClient: standardNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionHandler: sessionHandler)
     }()
     
     lazy var pushClient: PushClient = {

@@ -21,15 +21,11 @@ class Contact: Api, ContactApi {
         self.contactInternal = contactInternal
         self.sdkContext = sdkContext
         self.active = loggingContact
-        sdkContext.$sdkState.sink { state in // TODO: handle warning
-            switch state {
-            case .active:
-                self.active = contactInternal
-            case .onHold:
-                self.active = gathererContact
-            case .inactive:
-                self.active = loggingContact
-            }
+        sdkContext.$sdkState.sink { [unowned self] state in // TODO: handle warning
+            self.setActiveInstance(state: state, features: sdkContext.features)
+        }
+        sdkContext.$features.sink { [unowned self] features in
+            self.setActiveInstance(state: sdkContext.sdkState, features: features)
         }
     }
     
@@ -43,6 +39,23 @@ class Contact: Api, ContactApi {
     
     func unlinkContact() async throws {
         try await self.active.unlinkContact()
+    }
+    
+    private func setActiveInstance(state: SdkState, features: [Feature]) {
+        guard features.contains(where: { feature in
+            feature == Feature.everything
+        }) else {
+            self.active = loggingContact
+            return
+        }
+        switch state {
+        case .active:
+            self.active = contactInternal
+        case .onHold:
+            self.active = gathererContact
+        case .inactive:
+            self.active = loggingContact
+        }
     }
     
 }

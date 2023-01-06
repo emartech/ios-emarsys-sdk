@@ -1,13 +1,15 @@
-public struct EmarsysSDK { //TODO: do we need static methods? probably.. but do we have convenient other ways?
-
+import Foundation
+public struct EmarsysSDK { //TODO: TBD: do we need static methods? probably.. but do we have convenient other ways?
+// TODO: TBD: what if customers don't want to await a function call? how they can do it if we have only async functions?
+    
     public static func initialize() async {
         let container = await DependencyContainer()
         DependencyInjection.setup(container)
+        await DependencyInjection.container?.sdkContext.setSdkState(sdkState: .onHold)
     }
     
     public static func enableTracking(applicationCode: String, features: [Feature] = [.everything]) async {
         await DependencyInjection.container?.sdkContext.setConfig(config: Config(applicationCode: applicationCode))
-        await DependencyInjection.container?.sdkContext.setSdkState(sdkState: .onHold)
         try? await DependencyInjection.container?.setupOrganizer.setup()
     }
 
@@ -27,13 +29,13 @@ public struct EmarsysSDK { //TODO: do we need static methods? probably.. but do 
         
     }
     
-    public static func trackDeeplink() async {
-        
+    public static func trackDeeplink(userActivity: NSUserActivity) async throws -> Bool {
+        return try! await DependencyInjection.container!.deeplinkApi.trackDeeplink(userActivity: userActivity)
     }
     
 }
 
-public enum Feature {
+public enum Feature: Equatable {
     case everything
     case push
     case inapp

@@ -16,4 +16,5 @@ enum Errors: Error {
     case storingValueFailed(String)
     case retrievingValueFailed(String)
     case preconditionFailed(String)
+    case tokenExpired
 }

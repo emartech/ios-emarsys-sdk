@@ -9,7 +9,7 @@ import Foundation
 @SdkActor
 struct RegisterClientState: State {
     
-    let emarsysClient: EmarsysClient
+    var emarsysClient: DeviceClient
     
     var name = SetupState.registerClient.rawValue
     
