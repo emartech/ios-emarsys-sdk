@@ -10,6 +10,7 @@
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMButtonClicked.h"
 #import "MEIAMTriggerMEEvent.h"
+#import "MEIAMCopyToClipboard.h"
 
 @interface MEJSBridge ()
 
@@ -54,7 +55,8 @@
         MEIAMClose.commandName,
         MEIAMTriggerAppEvent.commandName,
         MEIAMButtonClicked.commandName,
-        MEIAMTriggerMEEvent.commandName
+        MEIAMTriggerMEEvent.commandName,
+        MEIAMCopyToClipboard.commandName
     ];
 }
 

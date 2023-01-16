@@ -66,8 +66,9 @@
         };
         _iamViewControllerProvider = [[EMSIAMViewControllerProvider alloc] initWithJSBridge:[[MEJSBridge alloc] initWithJSCommandFactory:[[MEIAMJSCommandFactory alloc] initWithMEIAM:self
                                                                                                                                                                 buttonClickRepository:buttonClickRepository
-                        appEventHandlerBlock:self.innerEventHandler
-                                                                                                                                                                        closeProtocol:self]
+                                                                                                                                                                 appEventHandlerBlock:self.innerEventHandler
+                                                                                                                                                                        closeProtocol:self
+                                                                                                                                                                           pasteboard:[UIPasteboard generalPasteboard]]
                                                                                                                           operationQueue:operationQueue]];
         _displayedIamRepository = displayedIamRepository;
         _messages = [NSMutableArray array];

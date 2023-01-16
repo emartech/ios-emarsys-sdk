@@ -51,32 +51,33 @@
             weakSelf.eventHandler(eventName, payload);
         }
     };
-    
+
     [waiter enter];
-    
+
     [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
         weakSelf.commandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:EMSDependencyInjection.dependencyContainer.iam
                                                          buttonClickRepository:EMSDependencyInjection.dependencyContainer.buttonClickRepository
-                appEventHandlerBlock:weakSelf.innerEventHandler
-                                                                 closeProtocol:weakSelf];
+                                                          appEventHandlerBlock:weakSelf.innerEventHandler
+                                                                 closeProtocol:weakSelf
+                                                                    pasteboard:[UIPasteboard generalPasteboard]];
         weakSelf.jsBridge = [[MEJSBridge alloc] initWithJSCommandFactory:weakSelf.commandFactory
                                                           operationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
         [weakSelf.jsBridge setJsResultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
             [weakSelf respondToJS:result];
         }];
-        
+
         [waiter exit];
     }];
-    
+
     [waiter waitWithInterval:3];
     self.webView = [self createWebView];
     self.selfHeightConstraint = [NSLayoutConstraint constraintWithItem:self
-                                                                 attribute:NSLayoutAttributeHeight
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:nil
-                                                                 attribute:NSLayoutAttributeNotAnAttribute
-                                                                multiplier:1
-                                                                  constant:0];
+                                                             attribute:NSLayoutAttributeHeight
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:nil
+                                                             attribute:NSLayoutAttributeNotAnAttribute
+                                                            multiplier:1
+                                                              constant:0];
     self.selfHeightConstraint.priority = UILayoutPriorityRequired;
 }
 
@@ -141,7 +142,7 @@
     WKProcessPool *processPool = [WKProcessPool new];
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration new];
     [webViewConfiguration setProcessPool:processPool];
-    
+
     if (self.jsBridge) {
         [webViewConfiguration setUserContentController:self.jsBridge.userContentController];
     }
