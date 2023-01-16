@@ -9,6 +9,7 @@ import CoreData
 
 class EventEntity: NSManagedObject {
     
+    @NSManaged var type: String
     @NSManaged var name: String
     @NSManaged var payload: [String: String]?
     @NSManaged var timestamp: Date

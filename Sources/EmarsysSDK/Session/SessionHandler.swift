@@ -10,12 +10,23 @@ import Foundation
 class SessionHandler {
     
     let timestampProvider: TimestampProvider
+//    let secStore: SecStore
     
     var contactToken: String? = nil
+//    {
+//        didSet {
+//            if oldValue != contactToken {
+//                try? secStore.put(data: contactToken?.data(using: .utf8), key: "contactToken")
+//            }
+//        }
+//    }
+    
     var refreshToken: String? = nil
     
     var clientState: String? = nil
     var clientId: String? = nil
+    
+    var deviceEventState: [String: Any]? = nil
     
     init(timestampProvider: TimestampProvider) {
         self.timestampProvider = timestampProvider

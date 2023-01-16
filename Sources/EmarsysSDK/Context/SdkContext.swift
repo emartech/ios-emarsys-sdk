@@ -15,6 +15,8 @@ class SdkContext {
     @Published
     var features: [Feature] = [Feature]()
     
+    var inAppDnd: Bool = false
+    
     var config: Config? = nil // TODO: figure out smth better
     
     func setConfig(config: Config) {
