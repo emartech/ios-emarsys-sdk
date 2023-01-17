@@ -7,7 +7,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      with: 
+      with:
+        ref: dev
         fetch-depth: 0
     - name: Remove old directories
       run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
@@ -37,7 +38,7 @@ jobs:
         p12-file-base64: ${{ secrets.DEV_ACCOUNT_DIST_CERT_P12_BASE64 }}
         p12-password: ${{ secrets.DEV_ACCOUNT_DIST_CERT_PASS }}
     - name: Install Dependencies
-      run: cd Emarsys\ Sample && pod deintegrate && pod update
+      run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && pod update
       shell: bash
     - name: Clean project
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean

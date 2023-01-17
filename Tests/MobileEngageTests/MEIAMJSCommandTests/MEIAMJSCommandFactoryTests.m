@@ -7,6 +7,7 @@
 #import "MEIAMTriggerAppEvent.h"
 #import "MEIAMButtonClicked.h"
 #import "MEIAMTriggerMEEvent.h"
+#import "MEIAMCopyToClipboard.h"
 
 MEIAMJSCommandFactory *_factory;
 
@@ -16,6 +17,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
         __block id _meiam;
         __block id _inappCloseProtocol;
         __block EMSEventHandlerBlock eventHandler;
+        __block id mockPasteboard;
 
         beforeEach(^{
             currentInAppMessage = [[MEInAppMessage alloc] initWithCampaignId:@"123"
@@ -23,26 +25,21 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
                                                                          url:@"https://www.test.com"
                                                                         html:@"</HTML>"
                                                            responseTimestamp:[NSDate date]];
+            mockPasteboard = [UIPasteboard mock];
             _meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
             _inappCloseProtocol = [KWMock mockForProtocol:@protocol(EMSIAMCloseProtocol)];
             eventHandler = ^(NSString *eventName, NSDictionary<NSString *, id> *payload) {
             };
             [_meiam stub:@selector(currentInAppMessage) andReturn:currentInAppMessage];
             [_meiam stub:@selector(inAppTracker) andReturn:[KWMock mockForProtocol:@protocol(MEInAppTrackingProtocol)]];
-            _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
-                                              buttonClickRepository:[MEButtonClickRepository nullMock]
-                    appEventHandlerBlock:eventHandler
-                                                      closeProtocol:_inappCloseProtocol];
+            _factory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam buttonClickRepository:[MEButtonClickRepository nullMock] appEventHandlerBlock:eventHandler closeProtocol:_inappCloseProtocol pasteboard:mockPasteboard];
         });
 
         describe(@"initWithMEIAM:buttonClickRepository:appEventProtocol:closeProtocol:", ^{
 
             it(@"meIam should not be nil", ^{
                 @try {
-                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:nil
-                                           buttonClickRepository:nil
-                            appEventHandlerBlock:eventHandler
-                                                   closeProtocol:_inappCloseProtocol];
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:nil buttonClickRepository:nil appEventHandlerBlock:eventHandler closeProtocol:_inappCloseProtocol pasteboard:mockPasteboard];
                     fail(@"Expected exception when meIam is nil");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: meIam"];
@@ -52,10 +49,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
             it(@"appEventHandlerBlock should not be nil", ^{
                 @try {
-                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
-                                           buttonClickRepository:nil
-                            appEventHandlerBlock:nil
-                                                   closeProtocol:_inappCloseProtocol];
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam buttonClickRepository:nil appEventHandlerBlock:nil closeProtocol:_inappCloseProtocol pasteboard:mockPasteboard];
                     fail(@"Expected exception when appEventHandlerBlock is nil");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: appEventHandlerBlock"];
@@ -65,10 +59,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
             it(@"closeProtocol should not be nil", ^{
                 @try {
-                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam
-                                           buttonClickRepository:nil
-                            appEventHandlerBlock:eventHandler
-                                                   closeProtocol:nil];
+                    [[MEIAMJSCommandFactory alloc] initWithMEIAM:_meiam buttonClickRepository:nil appEventHandlerBlock:eventHandler closeProtocol:nil pasteboard:mockPasteboard];
                     fail(@"Expected exception when closeProtocol is nil");
                 } @catch (NSException *exception) {
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: closeProtocol"];
@@ -79,10 +70,7 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
 
             it(@"should initialize MEInApp property", ^{
                 id meiam = [KWMock mockForProtocol:@protocol(MEIAMProtocol)];
-                MEIAMJSCommandFactory *meiamjsCommandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:meiam
-                                                                                      buttonClickRepository:nil
-                        appEventHandlerBlock:eventHandler
-                                                                                              closeProtocol:_inappCloseProtocol];
+                MEIAMJSCommandFactory *meiamjsCommandFactory = [[MEIAMJSCommandFactory alloc] initWithMEIAM:meiam buttonClickRepository:nil appEventHandlerBlock:eventHandler closeProtocol:_inappCloseProtocol pasteboard:mockPasteboard];
 
                 [[@([meiamjsCommandFactory.meIam isEqual:meiam]) should] beYes];
             });
@@ -140,6 +128,12 @@ SPEC_BEGIN(MEIAMJSCommandFactoryTests)
             it(@"should return MEIAMTriggerMEEvent command when the given name is: triggerMEEvent", ^{
                 MEIAMTriggerMEEvent *command = [_factory commandByName:@"triggerMEEvent"];
                 [[command should] beKindOfClass:[MEIAMTriggerMEEvent class]];
+            });
+
+            it(@"should return MEIAMCopyToClipboard command when the given name is: copyToClipboard", ^{
+                MEIAMTriggerMEEvent *command = [_factory commandByName:@"copyToClipboard"];
+
+                [[command should] beKindOfClass:[MEIAMCopyToClipboard class]];
             });
         });
 

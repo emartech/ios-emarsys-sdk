@@ -11,6 +11,7 @@
 #import "EMSAppEventLog.h"
 #import "EMSGeofenceInternal.h"
 #import "EMSSdkStateLogger.h"
+#import "EMSStatusLog.h"
 
 @interface EMSAppStartBlockProvider ()
 
@@ -82,11 +83,20 @@
 - (MEHandlerBlock)createRemoteConfigEventBlock {
     __weak typeof(self) weakSelf = self;
     return ^{
-        [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
-            if ([self.logger logLevel] == LogLevelTrace) {
-                [self.sdkStateLogger log];
-            }
-        }];
+        if (![@[@"", @"0", @"null", @"nil"] containsObject:[self.requestContext.applicationCode lowercaseString]]) {
+            [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
+                if ([self.logger logLevel] == LogLevelTrace) {
+                    [self.sdkStateLogger log];
+                }
+            }];
+        } else {
+            NSLog(@"ApplicationCode is incorrect: %@", self.requestContext.applicationCode);
+            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                sel:_cmd
+                                                         parameters:@{@"applicationCode": self.requestContext.applicationCode}
+                                                             status:nil];
+            EMSLog(logEntry, LogLevelWarn);
+        }
     };
 }
 

@@ -76,7 +76,8 @@ SPEC_BEGIN(MEJSBridgeTests)
                     @"close",
                     @"triggerAppEvent",
                     @"buttonClicked",
-                    @"triggerMEEvent"
+                    @"triggerMEEvent",
+                    @"copyToClipboard"
             ]];
         });
     });

@@ -243,6 +243,15 @@
     OCMVerify([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg any]]);
 }
 
+- (void)testCreateRemoteConfigEventBlock_shouldNotInvokeRefreshConfig_whenAppCodeIsInvalid {
+    _appStartEventBlock = [self.appStartBlockProvider createRemoteConfigEventBlock];
+    self.requestContext.applicationCode = @"Nil";
+
+    OCMReject([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg any]]);
+
+    self.appStartEventBlock();
+}
+
 - (void)testCreateRemoteConfigEventBlock_refreshConfigBlockInvocation_triggersSdkStateLogger {
     OCMStub([self.mockLogger logLevel]).andReturn(LogLevelTrace);
     OCMStub([self.mockConfigInternal refreshConfigFromRemoteConfigWithCompletionBlock:[OCMArg invokeBlock]]);
