@@ -34,16 +34,13 @@
     };
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-    expectation.expectedFulfillmentCount = 2;
     __block NSDictionary *resultDict = nil;
     [self.command handleMessage:message
                     resultBlock:^(NSDictionary<NSString *, NSObject *> *result) {
                         resultDict = result;
                         [expectation fulfill];
                     }];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [expectation fulfill];
-    });
+
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
             timeout:5];
 

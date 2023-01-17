@@ -39,10 +39,7 @@
         resultBlock([MEIAMCommandResultUtils createErrorResultWith:eventId
                                                         errorArray:errors]);
     } else {
-        __weak typeof(self) weakSelf = self;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.pasteboard setString:message[@"text"]];
-        });
+        [self.pasteboard setString:message[@"text"]];
 
         NSDictionary *result = [MEIAMCommandResultUtils createSuccessResultWith:eventId];
         resultBlock(result);
