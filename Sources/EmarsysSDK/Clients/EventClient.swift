@@ -35,23 +35,23 @@ struct EventClient {
         body["deviceEventState"] = sessionHandler.deviceEventState
         
         let request = URLRequest.create(url: eventSendingUrl, method: .POST, body: body.toData())
-        let result = await networkClient.send(request: request)
-        switch result {
-        case .success(let response):
-            let body = response.data.toDict()
-            if let deviceEventState = body["deviceEventState"] as? [String: Any] {
-                self.sessionHandler.deviceEventState = deviceEventState
-            }
-            if let message = body["message"] as? [String: String] {
-                inAppMessage = message
-            }
-            if let actions = body["onEventAction"] as? [String: Any] {
-                onEventAction = actions
-            }
-        case .failure(let error):
-            // TODO: error handling
-            print("error: \(error)")
-        }
+        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
+//        switch result {
+//        case .success(let response):
+//            let body = response.data.toDict()
+//            if let deviceEventState = body["deviceEventState"] as? [String: Any] {
+//                self.sessionHandler.deviceEventState = deviceEventState
+//            }
+//            if let message = body["message"] as? [String: String] {
+//                inAppMessage = message
+//            }
+//            if let actions = body["onEventAction"] as? [String: Any] {
+//                onEventAction = actions
+//            }
+//        case .failure(let error):
+//            // TODO: error handling
+//            print("error: \(error)")
+//        }
         if inAppMessage == nil && onEventAction == nil {
             return nil
         }

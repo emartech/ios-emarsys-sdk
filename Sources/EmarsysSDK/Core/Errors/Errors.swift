@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum Errors: Error {
+enum Errors: Error, Equatable {
     case mappingFailed(String)
     case resourceNotAvailable(String)
     case dbMethodFailed(String)
@@ -17,4 +17,9 @@ enum Errors: Error {
     case retrievingValueFailed(String)
     case preconditionFailed(String)
     case tokenExpired
+    
+    enum NetworkingError: Error, Equatable {
+        case encodingFailed(String)
+        case decodingFailed(String)
+    }
 }

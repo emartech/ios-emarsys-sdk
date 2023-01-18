@@ -16,3 +16,7 @@
 "preconditionFailed" = "Precondition failed: %@";
 "notHTTPUrlResponse" = "Response is not HTTPUrlResponse";
 "responseMappingFailed" = "Response mapping failed: %@";
+
+// MARK: Networking
+"encodingFailed" = "Failed to encode type: %@";
+"decodingFailed" = "Failed to decode type: %@";

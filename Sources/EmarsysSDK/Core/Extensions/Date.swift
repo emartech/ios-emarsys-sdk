@@ -14,7 +14,7 @@ extension Date {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.calendar = Calendar.init(identifier: .gregorian)
-        return
+        return formatter
     }()
     
     func toUTC() -> String {

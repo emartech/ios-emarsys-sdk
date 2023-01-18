@@ -44,17 +44,17 @@ struct ContactClient {
     }
     
     private func sendContactRequest(request: URLRequest) async {
-        let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: request)
-        switch result {
-        case .success(let response):
-            if let body = response.data.toDict() as? [String: String] {
-                self.sessionHandler.contactToken = body["contactToken"]
-                self.sessionHandler.refreshToken = body["refreshToken"]
-            }
-        case .failure(let error):
-            // TODO: error handling
-            print("error: \(error)")
-        }
+        let result: (Data, HTTPURLResponse) = try! await networkClient.send(request: request)
+//        switch result {
+//        case .success(let response):
+//            if let body = response.data.toDict() as? [String: String] {
+//                self.sessionHandler.contactToken = body["contactToken"]
+//                self.sessionHandler.refreshToken = body["refreshToken"]
+//            }
+//        case .failure(let error):
+//            // TODO: error handling
+//            print("error: \(error)")
+//        }
     }
     
 }

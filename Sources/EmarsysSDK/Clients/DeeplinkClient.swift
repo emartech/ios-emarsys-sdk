@@ -25,7 +25,7 @@ struct DeeplinkClient {
         
         let request = URLRequest.create(url: url, method: .POST, headers:headers, body: body.toData())
         
-        let _ = await networkClient.send(request: request)
+        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
         
         // TODO: result?
     }

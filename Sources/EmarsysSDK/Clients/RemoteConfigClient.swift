@@ -31,17 +31,18 @@ struct RemoteConfigClient {
         }
         let signatureRequest = URLRequest.create(url: signatureUrl)
         
-        let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: signatureRequest)
-        var signature: Data
-        switch result {
-        case .success(let response):
-            signature = response.data
-        case .failure(let error):
-            // TODO: error handling
-            print("error: \(error)")
-            throw error
-        }
-        return signature
+        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: signatureRequest)
+//        var signature: Data
+//        switch result {
+//        case .success(let response):
+//            signature = response.data
+//        case .failure(let error):
+//            // TODO: error handling
+//            print("error: \(error)")
+//            throw error
+//        }
+//        return signature
+        return result.0
     }
     
     private func fetchConfig() async throws -> Data {
@@ -51,17 +52,18 @@ struct RemoteConfigClient {
         }
         let remoteConfigRequest = URLRequest.create(url: remoteConfigUrl)
         
-        let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: remoteConfigRequest)
-        var remoteConfigData: Data
-        switch result {
-        case .success(let response):
-            remoteConfigData = response.data
-        case .failure(let error):
-            // TODO: error handling
-            print("error: \(error)")
-            throw error
-        }
-        return remoteConfigData
+        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: remoteConfigRequest)
+//        var remoteConfigData: Data
+//        switch result {
+//        case .success(let response):
+//            remoteConfigData = response.data
+//        case .failure(let error):
+//            // TODO: error handling
+//            print("error: \(error)")
+//            throw error
+//        }
+//        return remoteConfigData
+        return result.0
     }
     
 }
