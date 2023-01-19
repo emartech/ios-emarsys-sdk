@@ -8,15 +8,34 @@ import XCTest
 
 final class StateTests: XCTestCase {
 
-    @SdkActor func testStateSwitching() async throws {
-        let testState1 = TestState1()
-        let testState2 = TestState2()
-        let machine = StateMachine(states: [testState1, testState2], currentState: testState1)
+    @SdkActor func testSingleStateSwitching() async throws {
+        let states:[State] = [TestState1()]
+        let machine = StateMachine(states: states)
 
+        try await machine.activate()
+        
+        XCTAssertEqual(machine.stateLifecycle?.name, "testState1")
+        XCTAssertEqual(machine.stateLifecycle?.lifecycle, .relaxed)
+    }
+    
+    @SdkActor func testMultipleStateSwitching() async throws {
+        let states:[State] = [TestState1(),TestState2()]
+        let machine = StateMachine(states: states)
+        
+        var sum = 0
+        _ = machine.$stateLifecycle.sink { stateLifecycle in
+            guard let stateLifecycle = stateLifecycle else {
+                return
+            }
+            print("stateLifecycle: \(stateLifecycle)")
+            sum += 1
+        }
+        
         try await machine.activate()
         
         XCTAssertEqual(machine.stateLifecycle?.name, "testState2")
         XCTAssertEqual(machine.stateLifecycle?.lifecycle, .relaxed)
+        XCTAssertEqual(sum, 6)
     }
 }
 
@@ -24,21 +43,14 @@ final class StateTests: XCTestCase {
 fileprivate struct TestState1: State {
     
     func active() async throws {
-        
     }
-    
-    var context: StateContext?
     
     var name = "testState1"
     
-    var nextStateName: String? = "testState2"
-    
     func prepare() {
-        
     }
     
     func relax() {
-        
     }
     
 }
@@ -47,21 +59,14 @@ fileprivate struct TestState1: State {
 fileprivate struct TestState2: State {
     
     func active() async throws {
-        
     }
-    
-    var context: StateContext?
-    
+
     var name = "testState2"
     
-    var nextStateName: String? = nil
-    
     func prepare() {
-        
     }
     
     func relax() {
-        
     }
     
 }
