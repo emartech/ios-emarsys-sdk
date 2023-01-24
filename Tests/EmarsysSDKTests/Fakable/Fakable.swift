@@ -2,14 +2,16 @@
 //
 // Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
 //
-        
+
 
 import Foundation
 
 typealias FakableFunction = (_ invocationNumber: Int, _ args: Any?...) -> (Any?)
 
 protocol Fakable {
-
+    
+    var instanceId: String { get }
+    
     func when(_ functionName: String, function: @escaping FakableFunction)
     
     func assertProp<T: Equatable>(_ propName: String, expectedValue: T) throws -> Bool
@@ -25,7 +27,6 @@ protocol Fakable {
 extension Fakable {
     
     func when(_ functionName: String, function: @escaping FakableFunction) {
-        let instanceId = instanceId()
         FunctionHolder.add(instanceId: instanceId, functionName: functionName, functionDetail: (0, function))
     }
     
@@ -45,7 +46,7 @@ extension Fakable {
     }
     
     func tearDown() {
-        FunctionHolder.remove(instanceId: instanceId())
+        FunctionHolder.remove(instanceId: instanceId)
     }
     
     func props() -> [String: Any?] {
@@ -58,7 +59,6 @@ extension Fakable {
     }
     
     func handleCall(_ functionName: String = #function, args: Any?...) -> Any? {
-        let instanceId = instanceId()
         guard let functionDetail = FunctionHolder.get(instanceId: instanceId, functionName: functionName) else {
             return nil
         }
@@ -67,10 +67,6 @@ extension Fakable {
         let function = functionDetail.1
         FunctionHolder.add(instanceId: instanceId, functionName: functionName, functionDetail: (funcInvocationCount, function))
         return function(funcInvocationCount, args)
-    }
-    
-    private func instanceId() -> String {
-        return String(format: "%p", unsafeBitCast(self, to: Int.self))
     }
     
 }
