@@ -23,7 +23,7 @@ final class StateTests: XCTestCase {
         let machine = StateMachine(states: states)
         
         var sum = 0
-        _ = machine.$stateLifecycle.sink { stateLifecycle in
+        let cancellable = machine.$stateLifecycle.sink { stateLifecycle in
             guard let stateLifecycle = stateLifecycle else {
                 return
             }
@@ -36,6 +36,8 @@ final class StateTests: XCTestCase {
         XCTAssertEqual(machine.stateLifecycle?.name, "testState2")
         XCTAssertEqual(machine.stateLifecycle?.lifecycle, .relaxed)
         XCTAssertEqual(sum, 6)
+        
+        cancellable.cancel()
     }
 }
 
