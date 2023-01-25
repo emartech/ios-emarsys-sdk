@@ -8,9 +8,7 @@ import Foundation
 
 struct FakeTimestampProvider: DateProvider, Fakable {
     
-    var instanceId: String = {
-        return UUID().description
-    }()
+    let instanceId = UUID().description
     
     func provide() async -> Date {
        return handleCall(args: nil) as! Date

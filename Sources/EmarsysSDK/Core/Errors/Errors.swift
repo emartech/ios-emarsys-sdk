@@ -17,6 +17,7 @@ enum Errors: Error, Equatable {
     case retrievingValueFailed(String)
     case preconditionFailed(String)
     case tokenExpired
+    case dataConversionFailed(String)
     
     enum NetworkingError: Error, Equatable {
         case encodingFailed(String)

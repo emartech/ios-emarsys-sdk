@@ -9,7 +9,7 @@ import Foundation
 struct LinkContactState: State {
     
     let contactClient: ContactClient
-    let secStore: SecStore
+    let secStore: SecureStorage
     
     var name = SetupState.linkContact.rawValue
     
@@ -19,7 +19,8 @@ struct LinkContactState: State {
     }
     
     func active() async throws {
-        if secStore["contactToken"]?.toString() == nil {
+        let contactToken: String? = try secStore.get(key: "contactToken")
+        if contactToken == nil {
             await contactClient.unlinkContact()
         }
     }

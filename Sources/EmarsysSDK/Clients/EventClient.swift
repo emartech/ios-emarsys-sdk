@@ -10,7 +10,7 @@ import Foundation
 struct EventClient {
     
     let networkClient: NetworkClient
-    let secStore: SecStore
+    let secStore: SecureStorage
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
     let sessionContext: SessionContext

@@ -6,11 +6,17 @@
 
 import Foundation
 
-struct SecStore {
+struct SecureStorage {
     
-    static let instance = SecStore()
-    
-    func put(data: Data?, key: String, accessGroup: String? = nil) throws {
+    func put<T: Storable>(item: T?, key: String, accessGroup: String? = nil) throws {
+        var data: Data?
+        
+        do {
+            data = item?.toData()
+        } catch {
+            // TODO LOG
+            throw Errors.dataConversionFailed("convertToDataFailed".localized(with: "item of type: \(T.self) with key: \(key)"))
+        }
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
         query[kSecClass as String] = kSecClassGenericPassword
@@ -24,7 +30,7 @@ struct SecStore {
         }
     }
 
-    func get(key: String, accessGroup: String? = nil) throws -> Data? {
+    func get<T: Storable>(key: String, accessGroup: String? = nil) throws -> T? {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
         query[kSecClass as String] = kSecClassGenericPassword
@@ -46,16 +52,16 @@ struct SecStore {
             // TODO: different error
             throw Errors.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
         }
-        return data
+        return data as? T
     }
     
-    subscript(key: String, accessGroup: String? = nil) -> Data? {
-        get {
-            return try? get(key: key, accessGroup: accessGroup)
-        }
-        set {
-            try? put(data: newValue, key: key, accessGroup: accessGroup)
-        }
-    }
+//    subscript<T: Storable>(key: String, accessGroup: String? = nil) -> T? {
+//        get {
+//            return try? get(key: key, accessGroup: accessGroup)
+//        }
+//        set {
+//            try? put(item: newValue, key: key, accessGroup: accessGroup)
+//        }
+//    }
     
 }
