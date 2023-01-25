@@ -9,6 +9,6 @@ protocol Storable {
 
     func toData() -> Data
     
-    func fromData(data: Data) -> Self
+    static func fromData(_ data: Data) -> Self
     
 }

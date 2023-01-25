@@ -2,7 +2,7 @@
 //
 // Copyright © 2022. Emarsys-Technologies Kft. All rights reserved.
 //
-        
+
 
 import Foundation
 
@@ -24,12 +24,9 @@ struct SecureStorage {
         query[kSecValueData as String] = data
         query[kSecAttrAccessGroup as String] = accessGroup
         
-        let status = SecItemAdd(query as CFDictionary, nil)
-        guard status == errSecSuccess else {
-            throw Errors.storingValueFailed("storingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
-        }
+        try storeItem(query: query)
     }
-
+    
     func get<T: Storable>(key: String, accessGroup: String? = nil) throws -> T? {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
@@ -42,26 +39,48 @@ struct SecureStorage {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         
-        // TODO: handle not found
-        
         guard status == errSecSuccess else {
-            throw Errors.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
+            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
         }
         
-        guard let data = item as? Data else {
-            // TODO: different error
-            throw Errors.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
+        guard let resultDict = item as? Dictionary<String, Any> else {
+            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key). Result can't be read as a Dictionary"))
         }
-        return data as? T
+        
+        
+        guard let data = resultDict[kSecValueData as String] as? Data else {
+            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key)"))
+        }
+        return T.fromData(data)
     }
     
-//    subscript<T: Storable>(key: String, accessGroup: String? = nil) -> T? {
-//        get {
-//            return try? get(key: key, accessGroup: accessGroup)
-//        }
-//        set {
-//            try? put(item: newValue, key: key, accessGroup: accessGroup)
-//        }
-//    }
+    private func storeItem(query: [String: Any]) throws {
+        let status = SecItemAdd(query as CFDictionary, nil)
+        
+        if status != errSecSuccess {
+            try handleStoringError(osStatus: status, query: query)
+        }
+    }
     
+    private func handleStoringError(osStatus: OSStatus, query: [String: Any]) throws {
+        if osStatus == errSecDuplicateItem {
+            var deleteQuery = query
+            deleteQuery.removeValue(forKey: kSecAttrAccessible as String)
+            
+            SecItemDelete(deleteQuery as CFDictionary)
+            
+            try storeItem(query: query)
+        } else {
+            throw Errors.StorageError.storingValueFailed("storingValueFailed".localized(with: "Key: \(String(describing: query[kSecAttrAccount as String])) OSStatus: \(osStatus)"))
+        }
+    }
+    
+    subscript<T: Storable>(key: String, accessGroup: String? = nil) -> T? {
+        get {
+            return try? get(key: key, accessGroup: accessGroup)
+        }
+        set {
+            try? put(item: newValue, key: key, accessGroup: accessGroup)
+        }
+    }
 }

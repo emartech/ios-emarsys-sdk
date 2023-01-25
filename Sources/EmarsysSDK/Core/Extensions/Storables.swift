@@ -11,8 +11,8 @@ extension Data: Storable {
         self
     }
     
-    func fromData(data: Data) -> Data {
-        self
+    static func fromData(_ data: Data) -> Data {
+        data
     }
 }
 
@@ -22,7 +22,7 @@ extension String: Storable {
         Data(self.utf8)
     }
     
-    func fromData(data: Data) -> String {
+    static func fromData(_ data: Data) -> String {
         return String(data: data, encoding: .utf8)!
     }
 }
@@ -34,7 +34,7 @@ extension Int: Storable {
         return dictionary.toData()
     }
     
-    func fromData(data: Data) -> Int {
+    static func fromData(_ data: Data) -> Int {
         let dictionary = data.toDict()
         return dictionary["value"] as! Int
     }
@@ -43,19 +43,24 @@ extension Int: Storable {
 extension Bool: Storable {
     
     func toData() -> Data {
-//        var _self = self
-//        let data = NSData(bytes: &_self, length: MemoryLayout.size(ofValue: self))
-//        return Data(referencing: data)
         let dictionary = ["value": self]
         return dictionary.toData()
         
     }
     
-    func fromData(data: Data) -> Bool {
-//        var value = false
-//        NSData(data: data).getBytes(&value, length: MemoryLayout<Bool>.size)
-//        return value
+    static func fromData(_ data: Data) -> Bool {
         let dictionary = data.toDict()
         return dictionary["value"] as! Bool
+    }
+}
+
+extension Dictionary: Storable {
+    
+    func toData() -> Data {
+        return try! JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+    }
+    
+    static func fromData<Key, Value>(_ data: Data) -> Dictionary<Key, Value> {
+        return try! JSONSerialization.jsonObject(with: data) as! [Key : Value]
     }
 }

@@ -13,8 +13,6 @@ enum Errors: Error, Equatable {
     case switchToStateFailed(String)
     case secKeyCreationFailed(String)
     case urlCreationFailed(String)
-    case storingValueFailed(String)
-    case retrievingValueFailed(String)
     case preconditionFailed(String)
     case tokenExpired
     case dataConversionFailed(String)
@@ -22,5 +20,11 @@ enum Errors: Error, Equatable {
     enum NetworkingError: Error, Equatable {
         case encodingFailed(String)
         case decodingFailed(String)
+    }
+
+    enum StorageError: Error, Equatable {
+        case storingValueFailed(String)
+        case retrievingValueFailed(String)
+        case conversionFailed(String)
     }
 }
