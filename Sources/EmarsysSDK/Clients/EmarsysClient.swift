@@ -16,30 +16,30 @@ struct EmarsysClient: NetworkClient {
     var sessionContext: SessionContext
     
     func send<Output>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output: Decodable {
-        let extendedRequest = await extendRequest(request: request)
-        var result: (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest)
-        if result.1.statusCode == 401 {
-            let contactToken = try await refreshToken()
-            sessionContext.contactToken = contactToken
-            let updatedRequest = await extendRequest(request: request)
-            result = try await networkClient.send(request: updatedRequest)
-        }
-        return result
+        return try await refreshToken() {
+            let extendedRequest = await extendRequest(request: request)
+            return try await networkClient.send(request: extendedRequest)
+        }        
     }
     
     func send<Output, Input>(request: URLRequest, body encodableBody: Input) async throws -> (Output, HTTPURLResponse) where Output : Decodable, Input : Encodable {
-        let extendedRequest = await extendRequest(request: request)
-        var result: (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest, body: encodableBody)
-        if result.1.statusCode == 401 {
-            let contactToken = try await refreshToken()
-            sessionContext.contactToken = contactToken
-            let updatedRequest = await extendRequest(request: request)
-            result = try await networkClient.send(request: updatedRequest, body: encodableBody)
+        return try await refreshToken() {
+            let extendedRequest = await extendRequest(request: request)
+            return try await networkClient.send(request: extendedRequest, body: encodableBody)
         }
-        return result
+    }
+
+    private func refreshToken<Output>(callback: @escaping () async throws ->(Output, HTTPURLResponse)) async throws -> (Output, HTTPURLResponse) where Output : Decodable {
+      var requestResult =  try await callback()
+        if requestResult.1.statusCode == 401 {
+            let contactToken = try await refreshContactToken()
+            sessionContext.contactToken = contactToken
+            requestResult = try await callback()
+        }
+        return requestResult
     }
     
-    private func refreshToken() async throws -> String {
+    private func refreshContactToken() async throws -> String {
         guard let config = sdkContext.config else {
             throw Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
         }
