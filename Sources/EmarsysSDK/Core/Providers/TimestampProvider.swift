@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-struct TimestampProvider: Provider {
+struct TimestampProvider: DateProvider {
     
     func provide() async -> Date {
         return Date()

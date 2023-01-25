@@ -39,8 +39,8 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
         return DeviceInfoCollector()
     }()
     
-    lazy var sessionHandler: SessionHandler = {
-        return SessionHandler(timestampProvider: timestampProvider)
+    lazy var sessionContext: SessionContext = {
+        return SessionContext(timestampProvider: timestampProvider)
     }()
     
     // MARK: Clients

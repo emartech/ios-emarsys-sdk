@@ -12,7 +12,7 @@ struct ContactClient {
     let networkClient: NetworkClient
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
-    var sessionHandler: SessionHandler
+    var sessionContext: SessionContext
     
     func linkContact(contactFieldId: Int, contactFieldValue: String? = nil, openIdToken: String? = nil) async throws {
         guard let contactLinkingUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(sdkContext.config?.applicationCode)/client/contact")) else {

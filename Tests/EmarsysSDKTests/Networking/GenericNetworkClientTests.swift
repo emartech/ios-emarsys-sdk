@@ -28,10 +28,10 @@ final class GenericNetworkClientTests: XCTestCase {
             testKey6: 123)
 
     let headers = [
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "headerName1": "headerValue1",
-        "headerName2": "headerValue2"
+        "content-type": "application/json",
+        "accept": "application/json",
+        "headername1": "headerValue1",
+        "headername2": "headerValue2"
     ]
 
     var networkClient: GenericNetworkClient!
@@ -53,7 +53,7 @@ final class GenericNetworkClientTests: XCTestCase {
         let resultBody = resultDict["body"] as! [String: Any]
 
         XCTAssertEqual(resultMethod, "POST")
-        XCTAssertTrue(headers.subDict(dict: resultHeaders))
+        XCTAssertTrue(resultHeaders.subDict(dict: headers))
         XCTAssertTrue(bodyDict.equals(dict: resultBody))
     }
 
@@ -66,7 +66,7 @@ final class GenericNetworkClientTests: XCTestCase {
         let resultBody = result.0.body
 
         XCTAssertEqual(resultMethod, "POST")
-        XCTAssertTrue(headers.subDict(dict: resultHeaders))
+        XCTAssertTrue(resultHeaders.subDict(dict: headers))
         XCTAssertEqual(resultBody, testBody)
     }
 
@@ -89,7 +89,7 @@ final class GenericNetworkClientTests: XCTestCase {
         let resultBody = resultDict["body"] as! [String: Any]
 
         XCTAssertEqual(resultMethod, "POST")
-        XCTAssertTrue(headers.subDict(dict: resultHeaders))
+        XCTAssertTrue(resultHeaders.subDict(dict: headers))
         XCTAssertTrue(bodyDict.equals(dict: resultBody))
     }
 
@@ -102,7 +102,7 @@ final class GenericNetworkClientTests: XCTestCase {
         let resultBody = result.0.body
 
         XCTAssertEqual(resultMethod, "POST")
-        XCTAssertTrue(headers.subDict(dict: resultHeaders))
+        XCTAssertTrue(resultHeaders.subDict(dict: headers))
         XCTAssertEqual(resultBody, testBody)
     }
 

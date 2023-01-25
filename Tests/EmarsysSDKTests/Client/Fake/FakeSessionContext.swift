@@ -13,7 +13,7 @@ class FakeSessionContext: SessionContext {
             return [
                 "X-Client-State": "testClientState",
                 "X-Client-Id": "testClientId",
-                "X-Contact-Token": "testContactToken",
+                "X-Contact-Token": self.contactToken!,
                 "X-Request-Order": "\(Date(timeIntervalSince1970: 50000))"
             ]
         }

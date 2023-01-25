@@ -7,9 +7,9 @@
 import Foundation
 
 @SdkActor
-class SessionHandler {
+class SessionContext {
     
-    let timestampProvider: TimestampProvider
+    let timestampProvider: any DateProvider
 //    let secStore: SecStore
     
     var contactToken: String? = nil
@@ -28,7 +28,7 @@ class SessionHandler {
     
     var deviceEventState: [String: Any]? = nil
     
-    init(timestampProvider: TimestampProvider) {
+    init(timestampProvider: any DateProvider) {
         self.timestampProvider = timestampProvider
     }
     

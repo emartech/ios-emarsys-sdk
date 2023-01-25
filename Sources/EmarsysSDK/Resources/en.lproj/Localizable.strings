@@ -15,6 +15,7 @@
 "retrievingValueFailed" = "Retrieving value failed: %@";
 "preconditionFailed" = "Precondition failed: %@";
 "notHTTPUrlResponse" = "Response is not HTTPUrlResponse";
+"mappingFailed" = "Mapping failed, parameter: %@, to type: %@";
 "responseMappingFailed" = "Response mapping failed: %@";
 
 // MARK: Networking

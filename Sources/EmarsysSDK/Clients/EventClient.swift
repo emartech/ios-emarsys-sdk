@@ -13,7 +13,7 @@ struct EventClient {
     let secStore: SecStore
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
-    let sessionHandler: SessionHandler
+    let sessionContext: SessionContext
     
     func sendEvents(events: [Event]) async throws -> (inAppMessage: [String: String]?, onEventAction: [String: Any]?)? {
         var inAppMessage: [String: String]? = nil
@@ -32,7 +32,7 @@ struct EventClient {
             eventDict["attributes"] = event.payload
             return eventDict
         }
-        body["deviceEventState"] = sessionHandler.deviceEventState
+        body["deviceEventState"] = sessionContext.deviceEventState
         
         let request = URLRequest.create(url: eventSendingUrl, method: .POST, body: body.toData())
         let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)

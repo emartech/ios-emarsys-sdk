@@ -7,138 +7,63 @@
 import Foundation
 
 @SdkActor
-struct EmarsysClient:  DeviceClient {
-    
+struct EmarsysClient: NetworkClient {
+  
     let networkClient: NetworkClient
     let deviceInfoCollector: DeviceInfoCollector
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
-    var sessionHandler: SessionHandler
+    var sessionContext: SessionContext
     
-//    func send<Output>(request: URLRequest) async -> Result<(response: HTTPURLResponse, parsedBody: Output), Error> where Output : Decodable {
-//        return try! await retry {
-//            let extendedRequest = await extendRequest(request: request)
-//            let result: Result<(response: HTTPURLResponse, parsedBody: Output), Error> = await networkClient.send(request: extendedRequest)
-//            handleResult(result: result)
-//            return result
-//        }
-//    }
-//
-//    func send<Output, Input>(request: URLRequest, encodableBody: Input) async -> Result<(response: HTTPURLResponse, parsedBody: Output), Error> where Output : Decodable, Input : Encodable {
-//        return try! await retry {
-//            let extendedRequest = await extendRequest(request: request)
-//            let result: Result<(response: HTTPURLResponse, parsedBody: Output), Error> = await networkClient.send(request: extendedRequest, encodableBody: encodableBody)
-//            handleResult(result: result)
-//            return result
-//        }
-//    }
-//
-//    func send(request: URLRequest) async -> Result<(response: HTTPURLResponse, data: Data), Error> {
-//        return try! await retry {
-//            let extendedRequest = await extendRequest(request: request)
-//            let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: extendedRequest)
-//            handleResult(result: result)
-//            return result
-//        }
-//    }
-//
-//    func send<Input>(request: URLRequest, encodableBody: Input) async -> Result<(response: HTTPURLResponse, data: Data), Error> where Input : Encodable {
-//        return try! await retry {
-//            let extendedRequest = await extendRequest(request: request)
-//            let result: Result<(response: HTTPURLResponse, data: Data), Error> = await networkClient.send(request: extendedRequest, encodableBody: encodableBody)
-//            return result
-//        }
-//    }
-    
-    func registerClient() async {
-//        guard let config = sdkContext.config else {
-//            return // TODO: error handling
-//        }
-//        guard let clientRegistrationUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client")) else {
-//            return // TODO: error handling
-//        }
-//        let deviceInfo = await deviceInfoCollector.collectInfo()
-//        let request = URLRequest.create(url: clientRegistrationUrl, method: .POST)
-//        let _ = await send(request: request, encodableBody: deviceInfo)
-    }
-    
-    private func refreshExpiredToken() async {
-//        guard let refreshToken = sessionHandler.refreshToken else {
-//            return  // TODO: error handling
-//        }
-//        guard let config = sdkContext.config else {
-//            return // TODO: error handling
-//        }
-//        guard let refreshTokenUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client/contact-token")) else {
-//            return // TODO: error handling
-//        }
-//        let request = URLRequest.create(url: refreshTokenUrl, method: .POST, body: ["refreshToken": refreshToken].toData())
-//        let result = await send(request: request)
-//        switch result {
-//        case .success(let response):
-//            if let body = response.data.toDict() as? [String: String] {
-//                self.sessionHandler.contactToken = body["contactToken"]
-//            }
-//        case .failure(let error):
-//            // TODO: error handling
-//            print("error: \(error)")
-//        }
-    }
-    
-    private func retry<T>(maxAttempts: Int = 3, handler: () async throws -> T) async throws -> T {
-        var result: T
-        do {
-            result = try await handler()
-        } catch Errors.tokenExpired {
-            let _ = await refreshExpiredToken()
-            if maxAttempts > 0 {
-                result = try await retry(maxAttempts: maxAttempts - 1, handler: handler)
-            } else {
-                throw Errors.tokenExpired
-                // TODO: handle error
-            }
-        } catch {
-            throw error
-            // TODO: handle error
+    func send<Output>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output: Decodable {
+        let extendedRequest = await extendRequest(request: request)
+        var result: (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest)
+        if result.1.statusCode == 401 {
+            let contactToken = try await refreshToken()
+            sessionContext.contactToken = contactToken
+            let updatedRequest = await extendRequest(request: request)
+            result = try await networkClient.send(request: updatedRequest)
         }
         return result
+    }
+    
+    func send<Output, Input>(request: URLRequest, body encodableBody: Input) async throws -> (Output, HTTPURLResponse) where Output : Decodable, Input : Encodable {
+        let extendedRequest = await extendRequest(request: request)
+        var result: (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest, body: encodableBody)
+        if result.1.statusCode == 401 {
+            let contactToken = try await refreshToken()
+            sessionContext.contactToken = contactToken
+            let updatedRequest = await extendRequest(request: request)
+            result = try await networkClient.send(request: updatedRequest, body: encodableBody)
+        }
+        return result
+    }
+    
+    private func refreshToken() async throws -> String {
+        guard let config = sdkContext.config else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
+        }
+        let url = defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client/contact-token")
+        guard let refreshTokenURL = URL(string: url) else {
+            throw Errors.urlCreationFailed("urlCreationFailed".localized(with: url))
+        }
+        let refreshTokenRequest = URLRequest.create(url: refreshTokenURL, method: .POST, body: ["refreshToken": sessionContext.refreshToken].toData())
+        let extendedRefreshTokenRequest = await extendRequest(request: refreshTokenRequest)
+        
+        let refreshResult: (Data, HTTPURLResponse) = try await networkClient.send(request: extendedRefreshTokenRequest)
+        
+        let contactToken = refreshResult.0.toDict()["contactToken"]
+        guard let contactToken = contactToken as? String else {
+            throw Errors.mappingFailed("mappingFailed".localized(with: String(describing: contactToken), String(describing: String.self)))
+        }
+        return contactToken
     }
     
     private func extendRequest(request: URLRequest) async -> URLRequest {
         var request = request
         let requestHeaders = request.allHTTPHeaderFields
-        let additionalHeaders = await sessionHandler.additionalHeaders
+        let additionalHeaders = await sessionContext.additionalHeaders
         request.allHTTPHeaderFields = requestHeaders == nil ? additionalHeaders : requestHeaders! + additionalHeaders
         return request
     }
-    
-    private func handleResult<T>(result: Result<(response: HTTPURLResponse, parsedBody: T), Error>) {
-        switch result {
-        case .success(let response):
-            storeClientState(response: response.response)
-        case .failure(let error):
-            handleError(error: error)
-        }
-    }
-    
-    private func handleResult(result: Result<(response: HTTPURLResponse, data: Data), Error>) {
-        switch result {
-        case .success(let response):
-            storeClientState(response: response.response)
-        case .failure(let error):
-            handleError(error: error)
-        }
-    }
-    
-    private func storeClientState(response: HTTPURLResponse) {
-        if let clientState = response.allHeaderFields["X-Client-State"] as? String {
-            sessionHandler.clientState = clientState
-        }
-    }
-    
-    private func handleError(error: Error) {
-        // TODO: error handling
-        print("error: \(error)")
-    }
-    
 }
