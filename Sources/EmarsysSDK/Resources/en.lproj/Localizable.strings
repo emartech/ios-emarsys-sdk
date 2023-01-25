@@ -17,6 +17,7 @@
 "notHTTPUrlResponse" = "Response is not HTTPUrlResponse";
 "mappingFailed" = "Mapping failed, parameter: %@, to type: %@";
 "responseMappingFailed" = "Response mapping failed: %@";
+"convertToDataFailed" = "Failed to convert: %@ to Data";
 
 // MARK: Networking
 "encodingFailed" = "Failed to encode type: %@";
