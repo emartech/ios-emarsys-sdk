@@ -15,7 +15,7 @@ struct DependencyInjection {
         }
     }
 
-    static func teardown() {
+    static func tearDown() {
         self.container = nil
     }
 }

@@ -7,24 +7,27 @@
 import Foundation
 
 class Contact: Api, ContactApi {
-    
-    let loggingContact: LoggingContact
-    let gathererContact: GathererContact
-    let contactInternal: ContactInternal
-    
+
+    let loggingContact: ContactApi
+    let gathererContact: ContactApi
+    let contactInternal: ContactApi
+
     var active: ContactApi
     var sdkContext: SdkContext
-    
-    init(loggingContact: LoggingContact, gathererContact: GathererContact, contactInternal: ContactInternal, sdkContext: SdkContext) {
+
+    init(loggingContact: ContactApi,
+         gathererContact: ContactApi,
+         contactInternal: ContactApi,
+         sdkContext: SdkContext) {
         self.loggingContact = loggingContact
         self.gathererContact = gathererContact
         self.contactInternal = contactInternal
         self.sdkContext = sdkContext
         self.active = loggingContact
-        sdkContext.$sdkState.sink { [unowned self] state in // TODO: handle warning
+        let _ = sdkContext.$sdkState.sink { [unowned self] state in
             self.setActiveInstance(state: state, features: sdkContext.features)
         }
-        sdkContext.$features.sink { [unowned self] features in
+        let _ = sdkContext.$features.sink { [unowned self] features in
             self.setActiveInstance(state: sdkContext.sdkState, features: features)
         }
     }

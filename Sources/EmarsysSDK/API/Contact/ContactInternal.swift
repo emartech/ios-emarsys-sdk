@@ -12,11 +12,11 @@ struct ContactInternal: ContactApi {
     let contactClient: ContactClient
     
     func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
-        try! await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue) // TODO: handle error
+        try! await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue, openIdToken: nil) // TODO: handle error
     }
     
     func linkAuthenticatedContact(contactFieldId: Int, openIdToken: String) async throws {
-        try! await contactClient.linkContact(contactFieldId: contactFieldId, openIdToken: openIdToken) // TODO: handle error
+        try! await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: nil, openIdToken: openIdToken) // TODO: handle error
     }
     
     func unlinkContact() async throws {

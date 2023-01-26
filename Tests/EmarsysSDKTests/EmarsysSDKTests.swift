@@ -4,10 +4,13 @@ import XCTest
 @SdkActor
 final class EmarsysSDKTests: XCTestCase {
     
-    func testInitialize_shouldSetSdkStateToOnHold() async throws {
-        let container = await DependencyContainer()
-        DependencyInjection.setup(container)
-        
+    override func tearDown() {
+        DependencyInjection.tearDown()
+    }
+
+    func testInitialize_shouldSetSdkStateToOnHold() async throws {       
+        await EmarsysSDK.initialize()
+       
         let resultState = DependencyInjection.container?.sdkContext.sdkState
         
         XCTAssertEqual(resultState, .onHold)
@@ -17,12 +20,12 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let loglevels: [LogLevel] = [.Metric, .Debug, .Error]
+        let logLevels: [LogLevel] = [.Metric, .Debug, .Error]
 
         let testEmarsysConfig = EmarsysConfig(
         applicationCode:testAppcode,
         merchantId:testMerchantId,
-        enabledLogLevels: loglevels
+        enabledLogLevels: logLevels
         )
         await EmarsysSDK.enableTracking(testEmarsysConfig)
 
@@ -33,12 +36,12 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let loglevels: [LogLevel] = [.Metric, .Debug, .Error]
+        let logLevels: [LogLevel] = [.Metric, .Debug, .Error]
 
         let testEmarsysConfig = EmarsysConfig(
         applicationCode:testAppcode,
         merchantId:testMerchantId,
-        enabledLogLevels: loglevels
+        enabledLogLevels: logLevels
         )
         await EmarsysSDK.enableTracking(testEmarsysConfig)
 
