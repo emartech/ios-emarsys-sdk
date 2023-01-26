@@ -204,7 +204,7 @@ final class EmarsysClientTests: XCTestCase {
     func testSend_withoutInput_shouldThrowUrlCreationFailedError() async throws {
         let testDefaultValues = DefaultValues(
             version: "1.0",
-            clientServiceBaseUrl: "url for error test",
+            clientServiceBaseUrl: "invalid%base%url",
             eventServiceBaseUrl: "www.event.service.url",
             predictBaseUrl: "www.predict.service.url",
             deepLinkBaseUrl: "www.deeplink.service.url",
@@ -226,7 +226,7 @@ final class EmarsysClientTests: XCTestCase {
             }
         }
         
-        let expectedError = Errors.urlCreationFailed("urlCreationFailed".localized(with: "url for error test/v3/apps/testAppCode/client/contact-token"))
+        let expectedError = Errors.urlCreationFailed("urlCreationFailed".localized(with: "invalid%base%url/v3/apps/testAppCode/client/contact-token"))
         
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
