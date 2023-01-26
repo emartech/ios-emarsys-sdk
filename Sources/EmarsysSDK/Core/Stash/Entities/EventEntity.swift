@@ -14,5 +14,5 @@ class EventEntity: NSManagedObject {
     @NSManaged var payload: [String: String]?
     @NSManaged var timestamp: Date
     @NSManaged var config: ConfigEntity
-    
+
 }

@@ -17,9 +17,9 @@ class SdkContext {
     
     var inAppDnd: Bool = false
     
-    var config: Config? = nil // TODO: figure out smth better
+    var config: EmarsysConfig? = nil // TODO: figure out smth better
     
-    func setConfig(config: Config) {
+    func setConfig(config: EmarsysConfig) {
         self.config = config
     }
     

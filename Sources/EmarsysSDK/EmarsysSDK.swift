@@ -8,10 +8,10 @@ public struct EmarsysSDK { //TODO: TBD: do we need static methods? probably.. bu
         await DependencyInjection.container?.sdkContext.setSdkState(sdkState: .onHold)
     }
     
-//    public static func enableTracking(applicationCode: String, features: [Feature] = [.everything]) async {
-//        await DependencyInjection.container?.sdkContext.setConfig(config: Config(applicationCode: applicationCode))
-//        try? await DependencyInjection.container?.setupOrganizer.setup()
-//    }
+    public static func enableTracking(_ config:EmarsysConfig) async {
+        await DependencyInjection.container?.sdkContext.setConfig(config: config)
+       // try? await DependencyInjection.container?.setupOrganizer.setup()
+    }
 //
 //    public static func linkContact(contactFieldId: Int, contactFieldValue: String) async {
 //        try? await DependencyInjection.container?.contactApi.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue)

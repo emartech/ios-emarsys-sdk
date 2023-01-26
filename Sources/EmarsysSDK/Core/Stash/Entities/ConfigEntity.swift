@@ -8,7 +8,6 @@ import Foundation
 import CoreData
 
 class ConfigEntity: NSManagedObject {
-    
-    @NSManaged var applicationCode: String
-    
+    @NSManaged var applicationCode: String?
+    @NSManaged var merchantId:String?
 }

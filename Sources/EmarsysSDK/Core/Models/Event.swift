@@ -12,22 +12,22 @@ struct Event {
     let name: String
     let payload: [String: String]?
     let timeStamp: Date
-    let config: Config
+    let config: EmarsysConfig
 }
 
 extension Event: Stashable {
     
     func toEntity(mox: NSManagedObjectContext) throws -> EventEntity {
-        var entity =  NSEntityDescription.insertNewObject(forEntityName: String(describing: self), into: mox) as! EventEntity
+        var entity: EventEntity =  NSEntityDescription.insertNewObject(forEntityName: String(describing: self), into: mox) as! EventEntity
         entity.type = type
         entity.name = name
         entity.payload = payload
         entity.timestamp = timeStamp
-        entity.config = try config.toEntity(mox: mox)
+        entity.config = try config.toEntity(mox: mox) as ConfigEntity
         return entity
     }
     
     static func fromEntity(entity: EventEntity) throws -> Event {
-        return Event(type: entity.type, name: entity.name, payload: entity.payload, timeStamp: entity.timestamp, config: try Config.fromEntity(entity: entity.config))
+        Event(type: entity.type, name: entity.name, payload: entity.payload, timeStamp: entity.timestamp, config: try! EmarsysConfig.fromEntity(entity: entity.config))
     }
 }

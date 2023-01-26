@@ -43,7 +43,10 @@ struct EmarsysClient: NetworkClient {
         guard let config = sdkContext.config else {
             throw Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
         }
-        let url = defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client/contact-token")
+        guard let applicationCode = config.applicationCode else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Application code must not be nil"))
+        }
+        let url = defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(applicationCode)/client/contact-token")
         guard let refreshTokenURL = URL(string: url) else {
             throw Errors.urlCreationFailed("urlCreationFailed".localized(with: url))
         }
