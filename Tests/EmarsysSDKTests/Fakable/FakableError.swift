@@ -10,4 +10,7 @@ enum FakableError: Error {
     case noPropertyFound(String)
     case assertionFailed(String)
     case typeMismatch(String)
+    case missingFunction(String)
+    case invalidParameter(String)
+    
 }

@@ -75,13 +75,17 @@ final class EmarsysClientTests: XCTestCase {
         emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
     }
 
+    override func tearDown() async throws {
+        fakeNetworkClient.tearDown()
+        fakeTimestampProvider.tearDown()
+    }
+
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
 
         var requestInNetworkCall: URLRequest!
-
-        fakeNetworkClient.when("send") { invocationNumber, args in
-            requestInNetworkCall = (args[0] as! Array<Any?>)[0] as? URLRequest
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
+            requestInNetworkCall = try args[0].unwrap()
             return (self.bodyDict.toData(), HTTPURLResponse())
         }
 
@@ -96,9 +100,8 @@ final class EmarsysClientTests: XCTestCase {
         let testDennaResponse = DennaResponse(method: "POST", headers: headers, body: testBody)
 
         var requestInNetworkCall: URLRequest!
-
-        fakeNetworkClient.when("send") { invocationNumber, args in
-            requestInNetworkCall = (args[0] as! Array<Any?>)[0] as? URLRequest
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
+            requestInNetworkCall = try args[0].unwrap()
             return (testDennaResponse, HTTPURLResponse())
         }
 
@@ -109,13 +112,14 @@ final class EmarsysClientTests: XCTestCase {
     }
     
     func testSend_withInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let body = bodyDict.toData()
+        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: body)
 
         var requestInNetworkCall: URLRequest!
 
-        fakeNetworkClient.when("send") { invocationNumber, args in
-            requestInNetworkCall = (args[0] as! Array<Any?>)[0] as? URLRequest
-            return (self.bodyDict.toData(), HTTPURLResponse())
+        fakeNetworkClient.when(\.sendWithBody) { invocationNumber, args in
+            requestInNetworkCall = try args[0].unwrap()
+            return (body, HTTPURLResponse())
         }
 
         let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request, body: testBody)
@@ -130,8 +134,8 @@ final class EmarsysClientTests: XCTestCase {
 
         var requestInNetworkCall: URLRequest!
 
-        fakeNetworkClient.when("send") { invocationNumber, args in
-            requestInNetworkCall = (args[0] as! Array<Any?>)[0] as? URLRequest
+        fakeNetworkClient.when(\.sendWithBody) { invocationNumber, args in
+            requestInNetworkCall = try args[0].unwrap()
             return (testDennaResponse, HTTPURLResponse())
         }
 
@@ -140,62 +144,62 @@ final class EmarsysClientTests: XCTestCase {
         XCTAssertEqual(testBody, result.0.body)
         XCTAssertTrue(requestInNetworkCall.allHTTPHeaderFields!.subDict(dict: requiredHeaders))
     }
-    
+
     func testSend_withoutInput_shouldRefreshTheContactToken_whenResponseStatus_is401() async throws {
         let testRefreshResponse = ["contactToken": "refreshedContactToken"]
         let finalResponseBody =  ["finalKey": "finalValue"]
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
-        
+
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
         let refreshResponse = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)
         let responseWithSuccess = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: headers)
-        
+
         var finalRequestInSend: URLRequest!
-        
-        fakeNetworkClient.when("send") { invocationNumber, args in
+
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
             switch (invocationNumber) {
             case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-                
+
             case 2: return (testRefreshResponse.toData(), refreshResponse)
-                
+
             case 3:
-                finalRequestInSend = (args[0] as! Array<Any?>)[0] as? URLRequest
+                finalRequestInSend = try args[0].unwrap()
                 return (finalResponseBody.toData(), responseWithSuccess)
-    
+
             default:
                 return (self.bodyDict.toData(), responseWithErrorStatus)
             }
         }
-        
+
         let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
-        
+
         let finalResult = result.0.toDict()["finalKey"] as! String
-        
+
         let expectedContactTokenHeader = ["X-Contact-Token": "refreshedContactToken"]
-        
+
         XCTAssertEqual(finalResult, "finalValue")
         XCTAssertTrue(finalRequestInSend.allHTTPHeaderFields!.subDict(dict: expectedContactTokenHeader))
     }
-    
+
     func testSend_withoutInput_shouldThrowPreconditionFailedError_whenConfigIsNil() async throws {
         let sdkContextWithEmptyConfig = SdkContext()
         sdkContextWithEmptyConfig.config = nil
         let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContextWithEmptyConfig, sessionContext: fakeSessionContext)
-        
+
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when("send") { invocationNumber, args in
+
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
             switch (invocationNumber) {
             case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-    
+
             default:
                 return (self.bodyDict.toData(), responseWithErrorStatus)
             }
         }
-        
+
         let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
-        
+
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
         }
@@ -205,28 +209,28 @@ final class EmarsysClientTests: XCTestCase {
         let testSdkContext = SdkContext()
         let emptyConfig = EmarsysConfig()
         testSdkContext.config = emptyConfig
-        
+
         let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: testSdkContext, sessionContext: fakeSessionContext)
-        
+
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when("send") { invocationNumber, args in
+
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
             switch (invocationNumber) {
             case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-    
+
             default:
                 return (self.bodyDict.toData(), responseWithErrorStatus)
             }
         }
-        
+
         let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Application code must not be nil"))
-        
+
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
         }
     }
-    
+
     func testSend_withoutInput_shouldThrowUrlCreationFailedError() async throws {
         let testDefaultValues = DefaultValues(
             version: "1.0",
@@ -237,48 +241,48 @@ final class EmarsysClientTests: XCTestCase {
             inboxBaseUrl: "www.inbox.service.url",
             remoteConfigBaseUrl: "www.remote.config.service.url"
         )
-        
+
         let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: testDefaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
-        
+
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when("send") { invocationNumber, args in
+
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
             switch (invocationNumber) {
             case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-    
+
             default:
                 return (self.bodyDict.toData(), responseWithErrorStatus)
             }
         }
-        
+
         let expectedError = Errors.urlCreationFailed("urlCreationFailed".localized(with: "invalid base.url/v3/apps/testAppCode/client/contact-token"))
-        
+
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
         }
     }
-    
+
     func testSend_withoutInput_shouldThrowMappingFailedError_ifNewContactTokenIsMissing() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
         let refreshResponse = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)
-        
+
         let testRefreshResponseWithMissingToken = ["contactToken": 123]
-        
-        fakeNetworkClient.when("send") { invocationNumber, args in
+
+        fakeNetworkClient.when(\.send) { invocationNumber, args in
             switch (invocationNumber) {
             case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-                
+
             case 2: return (testRefreshResponseWithMissingToken.toData(), refreshResponse)
-                
+
             default:
                 return (self.bodyDict.toData(), responseWithErrorStatus)
             }
         }
-        
+
         let expectedError = Errors.mappingFailed("mappingFailed".localized(with: "\(String(describing: testRefreshResponseWithMissingToken["contactToken"]))", "String"))
-        
+
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         }

@@ -8,16 +8,17 @@ import Foundation
 
 struct FakeGenericNetworkClient: NetworkClient, Fakable {
     
-    var instanceId: String = {
-        return UUID().description
-    }()
+    var instanceId = UUID().description
+    
+    var send: String = "send"
+    var sendWithBody: String = "sendWithBody"
     
     func send<Output>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output : Decodable {
-        handleCall(args: request) as! (Output, HTTPURLResponse)
+        return try handleCall(\.send, params: request)
     }
     
     func send<Input, Output>(request: URLRequest, body: Input) async throws -> (Output, HTTPURLResponse) where Input : Encodable, Output : Decodable {
-        handleCall(args: request, body) as! (Output, HTTPURLResponse)
+        return try handleCall(\.sendWithBody, params: request, body)
     }
     
 }

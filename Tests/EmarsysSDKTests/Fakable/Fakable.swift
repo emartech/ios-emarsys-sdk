@@ -6,13 +6,14 @@
 
 import Foundation
 
-typealias FakableFunction = (_ invocationNumber: Int, _ args: Any?...) -> (Any?)
+typealias FakableFunction = (_ invocationCount: Int, _ params: [FakeValueWrapper<Any?>]) throws -> (Any?)
 
 protocol Fakable {
     
     var instanceId: String { get }
     
-    func when(_ functionName: String, function: @escaping FakableFunction)
+    func when(_ fnName: String, function: @escaping FakableFunction)
+    func when(_ fnKeyPath: KeyPath<Self, String>, function: @escaping FakableFunction)
     
     func assertProp<T: Equatable>(_ propName: String, expectedValue: T) throws -> Bool
     
@@ -20,14 +21,22 @@ protocol Fakable {
     
     func props() -> [String: Any?]
     
-    func handleCall(_ functionName: String, args: Any?...) -> Any?
+    func handleCall<T>(_ fnName: String, params: Any?...) throws -> T
+    func handleCall<T>(_ fnKeyPath: KeyPath<Self, String>, params: Any?...) throws -> T
+    func handleCall<T>(_ fnName: String) throws -> T
+    func handleCall<T>(_ fnKeyPath: KeyPath<Self, String>) throws -> T
 }
 
 
 extension Fakable {
     
-    func when(_ functionName: String, function: @escaping FakableFunction) {
-        FunctionHolder.add(instanceId: instanceId, functionName: functionName, functionDetail: (0, function))
+    func when(_ fnName: String, function: @escaping FakableFunction) {
+        FunctionHolder.add(instanceId: instanceId, functionName: fnName, functionDetail: (0, function))
+    }
+    
+    func when(_ fnKeyPath: KeyPath<Self, String>, function: @escaping FakableFunction) {
+        let fnName = self[keyPath: fnKeyPath]
+        when(fnName, function: function)
     }
     
     func assertProp<T>(_ propName: String, expectedValue: T) throws -> Bool where T: Equatable {
@@ -58,15 +67,44 @@ extension Fakable {
         }
     }
     
-    func handleCall(_ functionName: String = #function, args: Any?...) -> Any? {
-        guard let functionDetail = FunctionHolder.get(instanceId: instanceId, functionName: functionName) else {
-            return nil
+    func handleCall<T>(_ fnName: String = #function, params: Any?...) throws -> T {
+        guard let functionDetail = FunctionHolder.get(instanceId: instanceId, functionName: fnName) else {
+            throw FakableError.missingFunction("No preregistered function found for function name: \(fnName)")
         }
-        var funcInvocationCount = functionDetail.0
-        funcInvocationCount += 1
+        
+        var invocationCount = functionDetail.0
+        invocationCount += 1
         let function = functionDetail.1
-        FunctionHolder.add(instanceId: instanceId, functionName: functionName, functionDetail: (funcInvocationCount, function))
-        return function(funcInvocationCount, args)
+        FunctionHolder.add(instanceId: instanceId, functionName: fnName, functionDetail: (invocationCount, function))
+        
+        var wrappedParams = [FakeValueWrapper<Any?>]()
+        
+        if params.count > 0 {
+            wrappedParams = params.map { param in
+                return wrap(param)
+            }
+        }
+        
+        let functionResult = try function(invocationCount, wrappedParams)
+        guard let result = functionResult as? T else {
+            throw FakableError.typeMismatch("Result type: \(T.self) doesn't match with stored funciton result type: \(type(of: functionResult))")
+        }
+        
+        return result
+    }
+    
+    func handleCall<T>(_ fnKeyPath: KeyPath<Self, String>, params: Any?...) throws -> T {
+        let fnName = self[keyPath: fnKeyPath]
+        return try handleCall(fnName, params: params)
+    }
+
+    func handleCall<T>(_ fnName: String = #function) throws -> T {
+        return try handleCall(fnName, params: nil)
+    }
+    
+    func handleCall<T>(_ fnKeyPath: KeyPath<Self, String>) throws -> T {
+        let fnName = self[keyPath: fnKeyPath]
+        return try handleCall(fnName, params: nil)
     }
     
 }
@@ -81,10 +119,7 @@ fileprivate struct FunctionHolder {
     
     static func get(instanceId: String, functionName: String) -> (Int, FakableFunction)? {
         let functionDetails = FunctionHolder.functionDetails[instanceId]
-        guard let key = functionDetails?.keys.first(where: { functionName.hasPrefix($0) }) else {
-            return nil
-        }
-        return functionDetails?[key]
+        return functionDetails?[functionName]
     }
     
     static func remove(instanceId: String) {

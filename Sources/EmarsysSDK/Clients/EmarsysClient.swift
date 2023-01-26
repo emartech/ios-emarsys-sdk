@@ -8,7 +8,7 @@ import Foundation
 
 @SdkActor
 struct EmarsysClient: NetworkClient {
-  
+    
     let networkClient: NetworkClient
     let deviceInfoCollector: DeviceInfoCollector
     let defaultValues: DefaultValues
@@ -19,7 +19,7 @@ struct EmarsysClient: NetworkClient {
         return try await refreshToken() {
             let extendedRequest = await extendRequest(request: request)
             return try await networkClient.send(request: extendedRequest)
-        }        
+        }
     }
     
     func send<Output, Input>(request: URLRequest, body encodableBody: Input) async throws -> (Output, HTTPURLResponse) where Output : Decodable, Input : Encodable {
@@ -28,9 +28,9 @@ struct EmarsysClient: NetworkClient {
             return try await networkClient.send(request: extendedRequest, body: encodableBody)
         }
     }
-
+    
     private func refreshToken<Output>(callback: @escaping () async throws ->(Output, HTTPURLResponse)) async throws -> (Output, HTTPURLResponse) where Output : Decodable {
-      var requestResult =  try await callback()
+        var requestResult =  try await callback()
         if requestResult.1.statusCode == 401 {
             let contactToken = try await refreshContactToken()
             sessionContext.contactToken = contactToken
