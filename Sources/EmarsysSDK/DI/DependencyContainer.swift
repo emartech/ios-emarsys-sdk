@@ -85,13 +85,13 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
     
     // MARK: Setup
     
-//    lazy var setupOrganizer: SetupOrganizer = {
-//        let fetchRemoteConfig = FetchRemoteConfigState(remoteConfigClient: remoteConfigClient)
-//        let registerClient = RegisterClientState(emarsysClient: emarsysClient)
-//        let registerPushToken = RegisterPushTokenState(pushClient: pushClient)
-//        let machine = StateMachine(states: [fetchRemoteConfig, registerClient, registerPushToken], currentState: fetchRemoteConfig)
-//        return SetupOrganizer(stateMachine: machine, sdkContext: sdkContext)
-//    }()
+    lazy var setupOrganizer: SetupOrganizer = {
+      //  let fetchRemoteConfig = FetchRemoteConfigState(remoteConfigClient: remoteConfigClient)
+      //  let registerClient = RegisterClientState(emarsysClient: emarsysClient)
+     //   let registerPushToken = RegisterPushTokenState(pushClient: pushClient)
+        let machine = StateMachine(states: [])
+        return SetupOrganizer(stateMachine: machine, sdkContext: sdkContext)
+    }()
 //    
 //    // MARK: Api
 //    

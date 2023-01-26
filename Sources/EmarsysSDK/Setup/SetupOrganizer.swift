@@ -15,9 +15,9 @@ struct SetupOrganizer {
     func setup() async throws { // TODO: handle errors
         try await stateMachine.activate()
         stateMachine.$stateLifecycle.sink { stateLifecycle in
-            if stateLifecycle!.name == SetupState.linkContact.rawValue && stateLifecycle!.lifecycle == .relaxed {
+           // if stateLifecycle!.name == SetupState.linkContact.rawValue && stateLifecycle!.lifecycle == .relaxed {
                 sdkContext.sdkState = .active
-            }
+            //}
         }
     }
     

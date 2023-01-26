@@ -28,5 +28,21 @@ final class EmarsysSDKTests: XCTestCase {
 
         XCTAssertEqual(DependencyInjection.container?.sdkContext.config, testEmarsysConfig) 
     }
+
+    func testEnableTracking_shouldCallSetupOnSetupOrganizer() async throws {
+        await EmarsysSDK.initialize()
+        let testAppcode = "testAppcode"
+        let testMerchantId = "testMerchantId"
+        let loglevels: [LogLevel] = [.Metric, .Debug, .Error]
+
+        let testEmarsysConfig = EmarsysConfig(
+        applicationCode:testAppcode,
+        merchantId:testMerchantId,
+        enabledLogLevels: loglevels
+        )
+        await EmarsysSDK.enableTracking(testEmarsysConfig)
+
+        XCTAssertEqual(DependencyInjection.container?.sdkContext.sdkState, .active) 
+    }
     
 }
