@@ -79,3 +79,4 @@ Emarsys Sample/Emarsys-Sample/GoogleService-Info.plist
 /.build/
 .mocky*
 .DS_Store
+.vscode/
