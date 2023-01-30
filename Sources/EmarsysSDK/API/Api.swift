@@ -5,9 +5,12 @@
         
 
 import Foundation
+import Combine
 
 protocol Api {
     
     var sdkContext: SdkContext { get }
+    
+    var cancellables: Set<AnyCancellable> { get set }
     
 }

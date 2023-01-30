@@ -101,7 +101,8 @@ struct DependencyContainer: ResourceLoader {
         let loggingContact = LoggingContact()
         let gathererContact = GathererContact(contactContext: contactContext)
         let contactInternal = ContactInternal(contactContext: contactContext, contactClient: defaultContactClient)
-        return Contact(loggingContact: loggingContact, gathererContact: gathererContact, contactInternal: contactInternal, sdkContext: sdkContext)
+        let predictContactInternal = PredictContactInternal(contactContext: contactContext)
+        return Contact(loggingContact: loggingContact, gathererContact: gathererContact, contactInternal: contactInternal, predictContactInternal: predictContactInternal, sdkContext: sdkContext)
     }()
 //    
 //    lazy var deeplinkApi: DeeplinkApi = {

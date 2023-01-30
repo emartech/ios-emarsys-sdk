@@ -34,12 +34,3 @@ public struct EmarsysSDK { //TODO: TBD: do we need static methods? probably.. bu
 //    }
 //
 }
-
-public enum Feature: Equatable {
-    case everything
-    case push
-    case inapp
-    case inbox
-    case deeplink
-    case predict(String)
-}

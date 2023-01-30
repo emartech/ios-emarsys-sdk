@@ -4,6 +4,7 @@
 //
         
 import Foundation
+import Combine
 
 class Deeplink: Api, DeeplinkApi {
     
@@ -13,6 +14,8 @@ class Deeplink: Api, DeeplinkApi {
     var active: DeeplinkApi
     var sdkContext: SdkContext
     
+    var cancellables = Set<AnyCancellable>()
+    
     init(loggingDeeplink: LoggingDeeplink, deeplinkInternal: DeeplinkInternal, sdkContext: SdkContext) {
         self.loggingDeeplink = loggingDeeplink
         self.deeplinkInternal = deeplinkInternal
@@ -20,10 +23,7 @@ class Deeplink: Api, DeeplinkApi {
         active = loggingDeeplink
         sdkContext.$sdkState.sink { [unowned self] state in // TODO: handle warning
             self.setActiveInstance(state: state, features: sdkContext.features)
-        }
-        sdkContext.$features.sink { [unowned self] features in
-            self.setActiveInstance(state: sdkContext.sdkState, features: features)
-        }
+        }.store(in: &cancellables)
     }
     
     func trackDeeplink(userActivity: NSUserActivity) async throws -> Bool {
@@ -31,12 +31,6 @@ class Deeplink: Api, DeeplinkApi {
     }
     
     private func setActiveInstance(state: SdkState, features: [Feature]) {
-        guard features.contains(where: { feature in
-            feature == Feature.everything || feature == Feature.deeplink
-        }) else {
-            self.active = loggingDeeplink
-            return
-        }
         switch state {
         case .inactive:
             self.active = loggingDeeplink

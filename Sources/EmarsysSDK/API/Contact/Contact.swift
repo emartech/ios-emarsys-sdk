@@ -5,31 +5,39 @@
         
 
 import Foundation
+import Combine
 
 class Contact: Api, ContactApi {
 
     let loggingContact: ContactApi
     let gathererContact: ContactApi
     let contactInternal: ContactApi
+    let predictContactInternal: ContactApi
 
     var active: ContactApi
     var sdkContext: SdkContext
+    
+    var cancellables = Set<AnyCancellable>()
 
     init(loggingContact: ContactApi,
          gathererContact: ContactApi,
          contactInternal: ContactApi,
+         predictContactInternal: ContactApi,
          sdkContext: SdkContext) {
         self.loggingContact = loggingContact
         self.gathererContact = gathererContact
         self.contactInternal = contactInternal
+        self.predictContactInternal = predictContactInternal
         self.sdkContext = sdkContext
         self.active = loggingContact
-        let _ = sdkContext.$sdkState.sink { [unowned self] state in
+        
+        sdkContext.$sdkState.sink { [unowned self] state in
             self.setActiveInstance(state: state, features: sdkContext.features)
-        }
-        let _ = sdkContext.$features.sink { [unowned self] features in
+        }.store(in: &cancellables)
+        
+        sdkContext.$features.sink { [unowned self] features in
             self.setActiveInstance(state: sdkContext.sdkState, features: features)
-        }
+        }.store(in: &cancellables)
     }
     
     func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
@@ -45,15 +53,13 @@ class Contact: Api, ContactApi {
     }
     
     private func setActiveInstance(state: SdkState, features: [Feature]) {
-        guard features.contains(where: { feature in
-            feature == Feature.everything
-        }) else {
-            self.active = loggingContact
-            return
-        }
         switch state {
         case .active:
-            self.active = contactInternal
+            if features.contains(Feature.mobileEngage) {
+                self.active = contactInternal
+            } else if features.contains(Feature.predict) {
+                self.active = predictContactInternal
+            }
         case .onHold:
             self.active = gathererContact
         case .inactive:
