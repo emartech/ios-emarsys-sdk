@@ -1,4 +1,8 @@
----
+name: Last commit build
+on:
+  push:
+    branches: [ swift ]
+  workflow_dispatch:
 env:
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 jobs:
@@ -24,9 +28,13 @@ jobs:
           message: 'Last push build failed! :sob:'
           user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
           user_name: Emarsys SDK - iOS
-name: Last commit build
-'on':
-  push:
-    branches:
-      - swift
-  workflow_dispatch:
+      - if: ${{ !failure() }}
+        name: Slack Notification On Success
+        uses: megamegax/slack_action@0.2.3
+        with:
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
+          channel: ${{ secrets.SLACK_CHANNEL }}
+          job_status: 'success'
+          message: 'Last push build successful! :man-gesturing-ok: :bananadance:'
+          user_icon: 'https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png'
+          user_name: Emarsys SDK - iOS
