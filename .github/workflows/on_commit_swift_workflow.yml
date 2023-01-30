@@ -16,7 +16,7 @@ jobs:
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
       - name: Build And Test
-        run: swift test
+        run: xcodebuild test -scheme EmarsysSDK -sdk iphonesimulator16.2 -destination "OS=16.2,name=iPhone 14"     
         shell: bash
       - if: ${{ failure() }}
         name: Slack Notification On Error
