@@ -41,7 +41,7 @@ jobs:
       run: pod repo update
       shell: bash
     - name: Install Dependencies
-      run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && pod update
+      run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && rm -f Podfile.lock && pod update
       shell: bash
     - name: Clean project
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
