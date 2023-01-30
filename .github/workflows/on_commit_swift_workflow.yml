@@ -1,0 +1,32 @@
+---
+env:
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+jobs:
+  build:
+    name: Build
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Remove old directories
+        run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
+        shell: bash
+      - name: Build And Test
+        run: swift test
+        shell: bash
+      - if: ${{ failure() }}
+        name: Slack Notification On Error
+        uses: megamegax/slack_action@0.2.3
+        with:
+          actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
+          channel: ${{ secrets.SLACK_CHANNEL }}
+          job_status: failure
+          message: 'Last push build failed! :sob:'
+          user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
+          user_name: Emarsys SDK - iOS
+name: Last commit build
+'on':
+  push:
+    branches:
+      - swift
+  workflow_dispatch:
