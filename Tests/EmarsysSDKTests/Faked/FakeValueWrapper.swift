@@ -12,7 +12,7 @@ struct FakeValueWrapper<T> {
     
     func unwrap<U>() throws -> U? {
         guard let value = value as? U else {
-            throw FakableError.typeMismatch("Expected type: \(T.self) doesn't match with value type: \(U.self)")
+            throw FakedError.typeMismatch("Expected type: \(T.self) doesn't match with value type: \(U.self)")
         }
         return value
     }

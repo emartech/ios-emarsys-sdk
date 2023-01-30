@@ -6,7 +6,7 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeTimestampProvider: DateProvider, Fakable {
+struct FakeTimestampProvider: DateProvider, Faked {
     
     let instanceId = UUID().description
     

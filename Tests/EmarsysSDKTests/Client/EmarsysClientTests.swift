@@ -55,7 +55,6 @@ final class EmarsysClientTests: XCTestCase {
             "X-Contact-Token": testContactToken,
             "X-Request-Order": testTimestamp
         ]
-
         fakeTimestampProvider = FakeTimestampProvider()
         fakeSessionContext = FakeSessionContext(timestampProvider: fakeTimestampProvider)
         fakeSessionContext.contactToken = testContactToken

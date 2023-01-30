@@ -6,7 +6,7 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeContactClient: ContactClient, Fakable {
+struct FakeContactClient: ContactClient, Faked {
     
     var instanceId: String = UUID().description
     let linkContact = "linkContact"

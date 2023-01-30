@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum FakableError: Error {
+enum FakedError: Error {
     case noPropertyFound(String)
     case assertionFailed(String)
     case typeMismatch(String)
