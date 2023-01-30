@@ -9,7 +9,7 @@ import Foundation
 typealias FakedFunction = (_ invocationCount: Int,
                              _ params: [FakeValueWrapper<Any?>]) throws -> (Any?)
 
-protocol Faked {
+protocol Faked: Equatable {
     
     var instanceId: String { get }
     
@@ -111,6 +111,10 @@ extension Faked {
     
     func tearDown() {
         FakedFunctionHolder.remove(instanceId: instanceId)
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.instanceId == rhs.instanceId
     }
     
 }

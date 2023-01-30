@@ -6,7 +6,7 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeContactApi: ContactApi, Faked, Equatable {
+struct FakeContactApi: ContactApi, Faked {
 
     var instanceId: String = UUID().description
     
@@ -24,10 +24,6 @@ struct FakeContactApi: ContactApi, Faked, Equatable {
     
     func unlinkContact() async throws {
         return try self.handleCall(\.unlinkContact)
-    }
-    
-    static func == (lhs: FakeContactApi, rhs: FakeContactApi) -> Bool {
-        return lhs.instanceId == rhs.instanceId
     }
     
 }
