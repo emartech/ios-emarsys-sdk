@@ -12,9 +12,9 @@ struct DependencyContainer: ResourceLoader {
 
     private let configPlistName = "Config"
     private let cryptoPublicKey = """
-                                  -----BEGIN PUBLIC KEY-----\n
-                                  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELjWEUIBX9zlm1OI4gF1hMCBLzpaB\n
-                                  wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==\n
+                                  -----BEGIN PUBLIC KEY-----
+                                  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELjWEUIBX9zlm1OI4gF1hMCBLzpaB
+                                  wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==
                                   -----END PUBLIC KEY-----
                                   """
 

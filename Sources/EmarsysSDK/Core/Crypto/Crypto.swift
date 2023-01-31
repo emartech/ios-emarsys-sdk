@@ -18,7 +18,7 @@ struct Crypto {
         return verify(content: content, signature: signature, publicKey: publicKey)
     }
     
-    func createSecKey(base64EncodedKey: String) throws -> SecKey {
+    private func createSecKey(base64EncodedKey: String) throws -> SecKey {
         let keyWithputHeader = self.base64encodedPublicKey.replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
         let keyWithoutFooter = keyWithputHeader.replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
         let keyWithoutLines = keyWithoutFooter.replacingOccurrences(of: "\n", with: "")
@@ -47,7 +47,7 @@ struct Crypto {
         return publicKey
     }
     
-    func verify(content: Data, signature: Data, publicKey: SecKey) -> Bool {
+    private func verify(content: Data, signature: Data, publicKey: SecKey) -> Bool {
         var result = false
         guard let decodedSignature = Data(base64Encoded: signature, options: .ignoreUnknownCharacters) else {
             return false
