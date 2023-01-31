@@ -8,12 +8,12 @@ import os
 struct LogEntry {
     public let topic: String
     public let data: Dictionary<String, Any>
-    public let logPrivate: Bool
+    public let hideSensitiveData: Bool
 
-    init(topic: String, data: Dictionary<String, Any>, logPrivate: Bool) {
+    init(topic: String, data: Dictionary<String, Any>, hideSensitiveData: Bool = false) {
         self.topic = topic
         self.data = data
-        self.logPrivate = logPrivate
+        self.hideSensitiveData = hideSensitiveData
     }
 }
 

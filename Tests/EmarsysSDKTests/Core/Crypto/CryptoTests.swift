@@ -22,10 +22,12 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==
     let signature = "MEYCIQDUi8+EW3gMkxqBtU3zMuI+lgZ3PfqHOb9Y+ASr9aw+sQIhAK1X6MbBDukxcYuNG3zRURi3jnI6YAguelcePFUEd8tj"
     var configData: Data!
     var crypto: Crypto!
+    var logger: SDKLogger!
     
     override func setUpWithError() throws {
         configData = Data(remoteConfigString.utf8)
-        crypto = Crypto(base64encodedPublicKey: publicKey)
+        logger = SDKLogger()
+        crypto = Crypto(base64encodedPublicKey: publicKey, sdkLogger: logger)
     }
 
     func testVerify() throws {

@@ -10,6 +10,7 @@ import Foundation
 struct Crypto {
     
     let base64encodedPublicKey: String
+    let sdkLogger: SDKLogger
     
     func verify(content: Data, signature: Data) -> Bool {
         guard let publicKey = try? createSecKey(base64EncodedKey: self.base64encodedPublicKey) else {
@@ -23,10 +24,22 @@ struct Crypto {
         let keyWithoutFooter = keyWithputHeader.replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
         let keyWithoutLines = keyWithoutFooter.replacingOccurrences(of: "\n", with: "")
         guard let publicKeyData = keyWithoutLines.data(using: .utf8) else {
-            throw Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: keyWithoutLines))
+            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: keyWithoutLines))
+            let logEntry = LogEntry(topic: "crypto",
+                                    data: ["key": keyWithoutLines,
+                                           "error": error.localizedDescription])
+            
+            sdkLogger.log(logEntry: logEntry, level: .Error)
+            throw error
         }
         guard let decodedDataBytes = Data(base64Encoded: publicKeyData, options: .ignoreUnknownCharacters) else {
-            throw Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: publicKeyData - base64EncodedKey\(base64EncodedKey)"))
+            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: publicKeyData - base64EncodedKey\(base64EncodedKey)"))
+            let logEntry = LogEntry(topic: "crypto",
+                                    data: ["data": publicKeyData,
+                                           "error": error.localizedDescription])
+            
+            sdkLogger.log(logEntry: logEntry, level: .Error)
+            throw error
         }
         let range = (decodedDataBytes.count - 65)..<decodedDataBytes.count
         let strippedData = decodedDataBytes.subdata(in: range)
@@ -41,7 +54,13 @@ struct Crypto {
         var error: Unmanaged<CFError>?
         
         guard let publicKey = SecKeyCreateWithData(strippedData as CFData, attributes, &error) else {
-            throw Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: SecKeyCreateWithData - base64EncodedKey\(base64EncodedKey)"))
+            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: SecKeyCreateWithData - base64EncodedKey\(base64EncodedKey)"))
+            let logEntry = LogEntry(topic: "crypto",
+                                    data: ["data": strippedData,
+                                           "error": error.localizedDescription])
+            
+            sdkLogger.log(logEntry: logEntry, level: .Error)
+            throw error
         }
         
         return publicKey

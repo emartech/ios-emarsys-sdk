@@ -32,7 +32,7 @@ struct DependencyContainer: ResourceLoader {
     }()
 
     lazy var crypto: Crypto = {
-        return Crypto(base64encodedPublicKey: cryptoPublicKey)
+        return Crypto(base64encodedPublicKey: cryptoPublicKey, sdkLogger: sdkLogger)
     }()
 
     lazy var deviceInfoCollector: DeviceInfoCollector = {
@@ -66,6 +66,8 @@ struct DependencyContainer: ResourceLoader {
                 sdkContext: sdkContext,
                 sessionContext: sessionContext)
     }()
+    
+    lazy var sdkLogger: SDKLogger = SDKLogger()
 //
 //    lazy var remoteConfigClient: RemoteConfigClient = {
 //        return RemoteConfigClient(networkClient: standardNetworkClient, configContext: sdkContext, defaultValues: defaultValues, crypto: crypto)
