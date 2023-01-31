@@ -16,17 +16,14 @@ class GathererContact: ContactApi {
     
     func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
         contactContext.calls.append(.linkContact(contactFieldId, contactFieldValue))
-        //TODO: add call to callgatherer dependency
     }
     
     func linkAuthenticatedContact(contactFieldId: Int, openIdToken: String) async throws {
         contactContext.calls.append(.linkAuthenticatedContact(contactFieldId, openIdToken))
-        //TODO: add call to callgatherer dependency
     }
     
     func unlinkContact() async throws {
-        contactContext.calls.append(.unlinkContact)
-        //TODO: add call to callgatherer dependency        
+        contactContext.calls.append(.unlinkContact)        
     }
     
 }

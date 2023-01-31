@@ -100,7 +100,7 @@ struct DependencyContainer: ResourceLoader {
     lazy var contactApi: ContactApi = {
         let contactContext = ContactContext()
 
-        let loggingContact = LoggingContact()
+        let loggingContact = LoggingContact(logger: sdkLogger)
         let gathererContact = GathererContact(contactContext: contactContext)
         let contactInternal = ContactInternal(contactContext: contactContext, contactClient: defaultContactClient)
         let predictContactInternal = PredictContactInternal(contactContext: contactContext)

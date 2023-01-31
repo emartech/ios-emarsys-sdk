@@ -7,15 +7,12 @@
 import Foundation
 
 @SdkActor
-struct ContactContext {
-    
+class ContactContext {
     var calls = [ContactCall]()
-    
 }
 
-enum ContactCall {
+enum ContactCall: Equatable {
     case linkContact(Int, String)
     case linkAuthenticatedContact(Int, String)
     case unlinkContact
 }
-

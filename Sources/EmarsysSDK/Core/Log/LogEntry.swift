@@ -6,14 +6,23 @@ import Foundation
 import os
 
 struct LogEntry {
-    public let topic: String
-    public let data: Dictionary<String, Any>
-    public let hideSensitiveData: Bool
-
-    init(topic: String, data: Dictionary<String, Any>, hideSensitiveData: Bool = false) {
-        self.topic = topic
-        self.data = data
-        self.hideSensitiveData = hideSensitiveData
-    }
+    let topic: String
+    let data: [String: Any]
+    let hideSensitiveData: Bool = false
 }
 
+extension LogEntry {
+    
+    static func createMethodNotAllowedEntry<T>(source: T, functionName: String = #function, params: [String: Any]? = nil) -> LogEntry {
+      var data: [String: Any] = [
+                    "className": String(describing: source.self),
+                    "methodName": functionName
+                ]
+        
+        if params != nil {
+            data["parameters"] = params
+        }
+
+        return LogEntry(topic: "log_method_not_allowed", data: data)
+    }
+}

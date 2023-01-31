@@ -19,9 +19,9 @@ class SDKLogger {
 
     init() {
         savedLogLevel = nil
-        loggerLogLevel = savedLogLevel != nil ? savedLogLevel! : LogLevel.Error
-        consoleLogLevels = [LogLevel.Warn, LogLevel.Error, LogLevel.Trace, LogLevel.Info,
-                            LogLevel.Debug]
+        loggerLogLevel = savedLogLevel != nil ? savedLogLevel! : LogLevel.error
+        consoleLogLevels = [LogLevel.warn, LogLevel.error, LogLevel.trace, LogLevel.info,
+                            LogLevel.debug]
     }
 
     private let logger = Logger(subsystem: subsystem, category: category)
@@ -31,7 +31,7 @@ class SDKLogger {
     }
 
     func resetLogLevel() {
-        loggerLogLevel = LogLevel.Error
+        loggerLogLevel = LogLevel.error
         savedLogLevel = nil
     }
 
@@ -45,15 +45,15 @@ class SDKLogger {
     }
 
     private func logToConsole(logEntry: LogEntry, level: LogLevel) {
-        if (consoleLogLevels.contains(LogLevel.Basic) && logEntry.topic == "log_method_not_allowed") {
+        if (consoleLogLevels.contains(LogLevel.basic) && logEntry.topic == "log_method_not_allowed") {
             debugLog(logEntry: logEntry)
         } else if (consoleLogLevels.contains(level)) {
             switch (level) {
-            case .Trace: traceLog(logEntry: logEntry)
-            case .Debug: debugLog(logEntry: logEntry)
-            case .Info: infoLog(logEntry: logEntry)
-            case .Warn: warningLog(logEntry: logEntry)
-            case .Error: errorLog(logEntry: logEntry)
+            case .trace: traceLog(logEntry: logEntry)
+            case .debug: debugLog(logEntry: logEntry)
+            case .info: infoLog(logEntry: logEntry)
+            case .warn: warningLog(logEntry: logEntry)
+            case .error: errorLog(logEntry: logEntry)
             default: return
             }
         }

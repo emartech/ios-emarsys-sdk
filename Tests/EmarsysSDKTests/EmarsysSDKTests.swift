@@ -20,7 +20,7 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let logLevels: [LogLevel] = [.Metric, .Debug, .Error]
+        let logLevels: [LogLevel] = [.metric, .debug, .error]
 
         let testEmarsysConfig = EmarsysConfig(
         applicationCode:testAppcode,
@@ -36,7 +36,7 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let logLevels: [LogLevel] = [.Metric, .Debug, .Error]
+        let logLevels: [LogLevel] = [.metric, .debug, .error]
 
         let testEmarsysConfig = EmarsysConfig(
         applicationCode:testAppcode,

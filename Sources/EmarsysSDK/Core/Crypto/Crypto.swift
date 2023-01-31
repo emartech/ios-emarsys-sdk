@@ -29,7 +29,7 @@ struct Crypto {
                                     data: ["key": keyWithoutLines,
                                            "error": error.localizedDescription])
             
-            sdkLogger.log(logEntry: logEntry, level: .Error)
+            sdkLogger.log(logEntry: logEntry, level: .error)
             throw error
         }
         guard let decodedDataBytes = Data(base64Encoded: publicKeyData, options: .ignoreUnknownCharacters) else {
@@ -38,7 +38,7 @@ struct Crypto {
                                     data: ["data": publicKeyData,
                                            "error": error.localizedDescription])
             
-            sdkLogger.log(logEntry: logEntry, level: .Error)
+            sdkLogger.log(logEntry: logEntry, level: .error)
             throw error
         }
         let range = (decodedDataBytes.count - 65)..<decodedDataBytes.count
@@ -59,7 +59,7 @@ struct Crypto {
                                     data: ["data": strippedData,
                                            "error": error.localizedDescription])
             
-            sdkLogger.log(logEntry: logEntry, level: .Error)
+            sdkLogger.log(logEntry: logEntry, level: .error)
             throw error
         }
         

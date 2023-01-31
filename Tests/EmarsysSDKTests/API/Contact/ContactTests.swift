@@ -12,10 +12,12 @@ final class ContactTests: XCTestCase {
     var sdkContext: SdkContext!
     var contactContext: ContactContext!
     var contact: Contact!
+    var sdkLogger:SDKLogger!
     
     override func setUp() async throws {
         contactContext = ContactContext()
-        loggingContact = LoggingContact()
+        sdkLogger = SDKLogger()
+        loggingContact = LoggingContact(logger: sdkLogger)
         fakeContactApi = FakeContactApi()
         predictInternalContact = PredictContactInternal(contactContext: contactContext)
         gatherer = GathererContact(contactContext: contactContext)
