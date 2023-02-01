@@ -8,21 +8,27 @@ import Foundation
 import Combine
 
 class Contact: Api, ContactApi {
-
-    let loggingContact: ContactApi
-    let gathererContact: ContactApi
-    let contactInternal: ContactApi
-    let predictContactInternal: ContactApi
-
-    var active: ContactApi
+    
+    let loggingContact: ActivatableContactApi
+    let gathererContact: ActivatableContactApi
+    let contactInternal: ActivatableContactApi
+    let predictContactInternal: ActivatableContactApi
+    
+    var active: ActivatableContactApi {
+        willSet {
+            Task {
+                try await newValue.activated()
+            }
+        }
+    }
     var sdkContext: SdkContext
     
     var cancellables = Set<AnyCancellable>()
-
-    init(loggingContact: ContactApi,
-         gathererContact: ContactApi,
-         contactInternal: ContactApi,
-         predictContactInternal: ContactApi,
+    
+    init(loggingContact: ActivatableContactApi,
+         gathererContact: ActivatableContactApi,
+         contactInternal: ActivatableContactApi,
+         predictContactInternal: ActivatableContactApi,
          sdkContext: SdkContext) {
         self.loggingContact = loggingContact
         self.gathererContact = gathererContact
@@ -66,5 +72,4 @@ class Contact: Api, ContactApi {
             self.active = loggingContact
         }
     }
-    
 }

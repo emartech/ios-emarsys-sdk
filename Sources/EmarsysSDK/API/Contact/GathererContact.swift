@@ -6,7 +6,7 @@
 
 import Foundation
 
-class GathererContact: ContactApi {
+class GathererContact: ActivatableContactApi {
     
     var contactContext: ContactContext
     

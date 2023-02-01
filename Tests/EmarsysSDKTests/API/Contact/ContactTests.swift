@@ -5,10 +5,11 @@ import XCTest
 final class ContactTests: XCTestCase {
     
     var fakeContactApi: FakeContactApi!
+    var fakePredictContactApi: FakePredictContactApi!
     
-    var loggingContact: ContactApi!
-    var predictInternalContact: ContactApi!
-    var gatherer: ContactApi!
+    var loggingContact: ActivatableContactApi!
+    
+    var gatherer: ActivatableContactApi!
     var sdkContext: SdkContext!
     var contactContext: ContactContext!
     var contact: Contact!
@@ -19,14 +20,14 @@ final class ContactTests: XCTestCase {
         sdkLogger = SDKLogger()
         loggingContact = LoggingContact(logger: sdkLogger)
         fakeContactApi = FakeContactApi()
-        predictInternalContact = PredictContactInternal(contactContext: contactContext)
+        fakePredictContactApi = FakePredictContactApi()
         gatherer = GathererContact(contactContext: contactContext)
         sdkContext = SdkContext()
         
         contact = Contact(loggingContact: loggingContact,
                           gathererContact: gatherer,
                           contactInternal: fakeContactApi,
-                          predictContactInternal: predictInternalContact,
+                          predictContactInternal: fakePredictContactApi,
                           sdkContext: sdkContext)
     }
     
@@ -40,7 +41,7 @@ final class ContactTests: XCTestCase {
             loggingContact: loggingContact,
             gathererContact: gatherer,
             contactInternal: fakeContactApi,
-            predictContactInternal: predictInternalContact,
+            predictContactInternal: fakePredictContactApi,
             sdkContext: sdkContext
         )
 
@@ -61,7 +62,7 @@ final class ContactTests: XCTestCase {
         sdkContext.setFeatures(features: [.predict])
         sdkContext.setSdkState(sdkState: .active)
       
-        XCTAssertTrue(contact.active is PredictContactInternal)
+        XCTAssertEqual(contact.active as? FakePredictContactApi, fakePredictContactApi)
     }
     
     func testActiveContact_shouldBeContactInternal_whenActiveFeaturesAreMobileEngageAndPredict() {

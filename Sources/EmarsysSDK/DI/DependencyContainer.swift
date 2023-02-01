@@ -104,7 +104,7 @@ struct DependencyContainer: ResourceLoader {
         let loggingContact = LoggingContact(logger: sdkLogger)
         let gathererContact = GathererContact(contactContext: contactContext)
         let contactInternal = ContactInternal(contactContext: contactContext, contactClient: defaultContactClient)
-        let predictContactInternal = PredictContactInternal(contactContext: contactContext)
+        let predictContactInternal = PredictContactInternal(contactContext: contactContext, contactClient: defaultContactClient)
         return Contact(loggingContact: loggingContact, gathererContact: gathererContact, contactInternal: contactInternal, predictContactInternal: predictContactInternal, sdkContext: sdkContext)
     }()
 //    
