@@ -124,7 +124,12 @@ fileprivate struct FakedFunctionHolder {
     private static var functionDetails = [String: [String: (Int, FakedFunction)]]()
     
     static func add(instanceId: String, functionName: String, functionDetail: (Int, FakedFunction)) {
-        FakedFunctionHolder.functionDetails[instanceId] = [functionName: functionDetail]
+        if var functionDetails = FakedFunctionHolder.functionDetails[instanceId] {
+            functionDetails[functionName] = functionDetail
+            FakedFunctionHolder.functionDetails[instanceId] = functionDetails
+        } else {
+            FakedFunctionHolder.functionDetails[instanceId] = [functionName: functionDetail]
+        }
     }
     
     static func get(instanceId: String, functionName: String) -> (Int, FakedFunction)? {
