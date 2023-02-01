@@ -21,7 +21,7 @@ struct LinkContactState: State {
     func active() async throws {
         let contactToken: String? = try secStore.get(key: "contactToken")
         if contactToken == nil {
-            await contactClient.unlinkContact()
+            try await contactClient.unlinkContact()
         }
     }
     

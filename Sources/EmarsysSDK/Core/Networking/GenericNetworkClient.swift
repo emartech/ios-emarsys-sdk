@@ -17,6 +17,11 @@ struct GenericNetworkClient: NetworkClient {
         guard let httpUrlResponse = response.1 as? HTTPURLResponse else {
             throw Errors.mappingFailed("notHTTPUrlResponse".localized())
         }
+        
+        if !httpUrlResponse.isOk() {
+            throw Errors.NetworkingError.failedRequest(httpUrlResponse)
+        }
+        
         var output: Output!
         if Output.self == Data.self {
             output = response.0 as? Output

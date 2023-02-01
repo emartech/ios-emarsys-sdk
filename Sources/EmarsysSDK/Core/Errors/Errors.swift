@@ -17,7 +17,12 @@ enum Errors: Error, Equatable {
     case tokenExpired
     case dataConversionFailed(String)
     
+    enum ContactRequestError: Error, Equatable {
+        case contactRequestFailed(String)
+    }
+    
     enum NetworkingError: Error, Equatable {
+        case failedRequest(HTTPURLResponse)
         case encodingFailed(String)
         case decodingFailed(String)
     }

@@ -20,7 +20,7 @@ struct ContactInternal: ContactApi {
     }
     
     func unlinkContact() async throws {
-        await contactClient.unlinkContact()
+       try await contactClient.unlinkContact()
     }
 
 }

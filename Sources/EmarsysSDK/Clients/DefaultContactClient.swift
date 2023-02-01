@@ -9,18 +9,25 @@ import Foundation
 @SdkActor
 struct DefaultContactClient: ContactClient {
 
-    let networkClient: NetworkClient
+    let emarsysClient: NetworkClient
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
     var sessionContext: SessionContext
+    let sdkLogger: SDKLogger
 
     func linkContact(contactFieldId: Int, contactFieldValue: String? = nil, openIdToken: String? = nil) async throws {
-        guard let contactLinkingUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(String(describing: sdkContext.config?.applicationCode))/client/contact")) else {
-            return //TODO: error handling what to do
+        guard let applicationCode = sdkContext.config?.applicationCode else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
         }
-        if !(contactFieldValue == nil || openIdToken == nil) {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "contactFieldValue: \(String(describing: contactFieldValue)) or openIdToken: \(String(describing: openIdToken)) must not be nil"))
+        guard let contactBaseUrl = URL(string: defaultValues.clientServiceBaseUrl) else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
         }
+        let contactLinkingUrl = contactBaseUrl.appending(path: "/v3/apps/\(applicationCode)/client/contact")
+        
+        if contactFieldValue == nil && openIdToken == nil {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Either contactFieldValue or openIdToken must not be nil"))
+        }
+
         var body = [String: String]()
         body["contactFieldId"] = "\(contactFieldId)"
         body["contactFieldValue"] = contactFieldValue
@@ -29,32 +36,41 @@ struct DefaultContactClient: ContactClient {
         url.add(queryParameters: ["anonymous": "\(false)"])
 
         let request = URLRequest.create(url: url, method: .POST, body: body.toData())
-        await sendContactRequest(request: request)
+        try await sendContactRequest(request: request)
     }
 
-    func unlinkContact() async {
-        guard let contactLinkingUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(sdkContext.config?.applicationCode)/client/contact")) else {
-            return //TODO: error handling what to do
+    func unlinkContact() async throws {
+        guard let applicationCode = sdkContext.config?.applicationCode else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
         }
+        guard let contactBaseUrl = URL(string: defaultValues.clientServiceBaseUrl) else {
+            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
+        }
+        let contactLinkingUrl = contactBaseUrl.appending(path: "/v3/apps/\(applicationCode)/client/contact")
+        
         let body = [String: String]()
         var url = contactLinkingUrl
         url.add(queryParameters: ["anonymous": "\(true)"])
         let request = URLRequest.create(url: url, method: .POST, body: body.toData())
-        await sendContactRequest(request: request)
+        try await sendContactRequest(request: request)
     }
 
-    private func sendContactRequest(request: URLRequest) async {
-        let result: (Data, HTTPURLResponse) = try! await networkClient.send(request: request)
-//        switch result {
-//        case .success(let response):
-//            if let body = response.data.toDict() as? [String: String] {
-//                self.sessionHandler.contactToken = body["contactToken"]
-//                self.sessionHandler.refreshToken = body["refreshToken"]
-//            }
-//        case .failure(let error):
-//            // TODO: error handling
-//            print("error: \(error)")
-//        }
+    private func sendContactRequest(request: URLRequest) async throws {
+        do {
+            let response: (ContactResponse, HTTPURLResponse) = try await emarsysClient.send(request: request)
+            sessionContext.contactToken = response.0.contactToken
+            sessionContext.refreshToken = response.0.refreshToken
+        } catch Errors.NetworkingError.failedRequest(let response){
+            sessionContext.contactToken = nil
+            sessionContext.refreshToken = nil
+            
+            let logEntry = LogEntry(topic: "default-contact-client",
+                                    data: [
+                                        "response": response
+                                    ])
+            sdkLogger.log(logEntry: logEntry, level: .debug)
+            throw Errors.ContactRequestError.contactRequestFailed("Link contact request failed.")
+        }
     }
 
 }

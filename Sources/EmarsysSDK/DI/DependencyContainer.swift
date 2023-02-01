@@ -61,10 +61,11 @@ struct DependencyContainer: ResourceLoader {
 
     lazy var defaultContactClient: ContactClient = {
         DefaultContactClient(
-                networkClient: genericNetworkClient,
+                emarsysClient: genericNetworkClient,
                 defaultValues: defaultValues,
                 sdkContext: sdkContext,
-                sessionContext: sessionContext)
+                sessionContext: sessionContext,
+                sdkLogger: sdkLogger)
     }()
     
     lazy var sdkLogger: SDKLogger = SDKLogger()

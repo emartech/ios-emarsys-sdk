@@ -22,3 +22,6 @@
 // MARK: Networking
 "encodingFailed" = "Failed to encode type: %@";
 "decodingFailed" = "Failed to decode type: %@";
+
+// MARK: Contact
+"linkContactRequestFailed" = "Link contact request failed: %@";
