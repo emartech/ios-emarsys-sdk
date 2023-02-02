@@ -2,26 +2,22 @@
 // Copyright © 2022. Emarsys-Technologies Kft. All rights reserved.
 //
       
-"coreDataModelNotAvailable" = "CoreData Model doesn't available!";
-"cantCreateManagedObjectModel" = "Couldn't create ManagedObjectModel!";
-"sqliteNotAvailable" = "EmarsysSdk.sqlite doesn't available!";
-"savingItemFailed" = "Saving item failed: %@ with error: %@";
-"savingItemsFailed" = "Saving items failed: %@ with error: %@";
-"switchToStateFailed" = "Switch to state failed: %@";
 "resourceLoadingFailed" = "Couldn't load resource: %@";
 "secKeyCreationFailed" = "Couldn't create SecKey: %@";
-"urlCreationFailed" = "Url creation failed: %@";
-"storingValueFailed" = "Storing value failed: %@";
-"retrievingValueFailed" = "Retrieving value failed: %@";
 "preconditionFailed" = "Precondition failed: %@";
-"notHTTPUrlResponse" = "Response is not HTTPUrlResponse";
-"mappingFailed" = "Mapping failed, parameter: %@, to type: %@";
-"responseMappingFailed" = "Response mapping failed: %@";
-"convertToDataFailed" = "Failed to convert: %@ to Data";
 
 // MARK: Networking
+"urlCreationFailed" = "Url creation failed: %@";
+
+// MARK: Contact
+"contactRequestFailed" = "Contact request failed for url: %@";
+
+// MARK: TypeError
+"mappingFailed" = "Mapping failed, parameter: %@, to type: %@";
 "encodingFailed" = "Failed to encode type: %@";
 "decodingFailed" = "Failed to decode type: %@";
 
-// MARK: Contact
-"linkContactRequestFailed" = "Link contact request failed: %@";
+// MARK: StorageError
+"savingItemFailed" = "Saving item failed: %@ with error: %@";
+"storingValueFailed" = "Storing value failed with key: %@ osStatus: %@";
+"retrievingValueFailed" = "Retrieving value failed: %@";

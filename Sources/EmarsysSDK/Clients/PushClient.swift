@@ -46,7 +46,7 @@ struct PushClient {
     
     private func pushTokenUrl() throws -> URL {
         guard let pushTokenUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client/push-token")) else {
-            throw Errors.urlCreationFailed("urlCreationFailed".localized(with: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client/push-token"))) //TODO: error handling what to do
+            throw Errors.NetworkingError.urlCreationFailed(url: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(configContext.config?.applicationCode)/client/push-token")) //TODO: error handling what to do
         }
         return pushTokenUrl
     }

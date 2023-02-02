@@ -15,11 +15,11 @@ struct GenericNetworkClient: NetworkClient {
     func send<Output: Decodable>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output: Decodable {
         let response = try await session.data(for: request)
         guard let httpUrlResponse = response.1 as? HTTPURLResponse else {
-            throw Errors.mappingFailed("notHTTPUrlResponse".localized())
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: response.1), toType: String(describing: HTTPURLResponse.self))
         }
         
         if !httpUrlResponse.isOk() {
-            throw Errors.NetworkingError.failedRequest(httpUrlResponse)
+            throw Errors.NetworkingError.failedRequest(response: httpUrlResponse)
         }
         
         var output: Output!
@@ -29,7 +29,7 @@ struct GenericNetworkClient: NetworkClient {
             do {
                 output = try decoder.decode(Output.self, from: response.0)
             } catch {
-                throw Errors.NetworkingError.decodingFailed("decodingFailed".localized(with: String(describing: Output.self)))
+                throw Errors.TypeError.decodingFailed(type: String(describing: Output.self))
             }
         }
         return (output, httpUrlResponse)
@@ -41,7 +41,7 @@ struct GenericNetworkClient: NetworkClient {
             let requestBody = try encoder.encode(body)
             mutableRequest.httpBody = requestBody
         } catch {
-            throw Errors.NetworkingError.encodingFailed("encodingFailed".localized(with: String(describing: Input.self)))
+            throw Errors.TypeError.encodingFailed(type: String(describing: Input.self))
         }
         return try await send(request: mutableRequest)
     }

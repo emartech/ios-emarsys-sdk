@@ -13,15 +13,13 @@ extension EmarsysConfig {
         let invalidCases = ["nil", "null", "", "0", "test"]
         
         if let applicationCode = applicationCode, invalidCases.contains(applicationCode.lowercased()) {
-            throw Errors.preconditionFailed(
-                "preconditionFailed".localized(with: "ApplicationCode should be valid."))
+            throw Errors.preconditionFailed(message: "ApplicationCode should be valid.")
         }
         if let merchantId = applicationCode, invalidCases.contains(merchantId.lowercased()) {
-            throw Errors.preconditionFailed(
-                "preconditionFailed".localized(with: "MerchantId should be valid."))
+            throw Errors.preconditionFailed(message: "MerchantId should be valid.")
         }
         if applicationCode == nil && merchantId == nil {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode or MerchantId must be present for Tracking"))
+            throw Errors.preconditionFailed(message: "ApplicationCode or MerchantId must be present for Tracking")
         }
         return true
     }
@@ -39,7 +37,7 @@ extension EmarsysConfig: Stashable {
     }
     
     static func fromEntity(entity: ConfigEntity) throws -> EmarsysConfig {
-        try EmarsysConfig(applicationCode: entity.applicationCode, merchantId: entity.merchantId)
+        EmarsysConfig(applicationCode: entity.applicationCode, merchantId: entity.merchantId)
     }
     
 }

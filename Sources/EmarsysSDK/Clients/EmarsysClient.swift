@@ -41,14 +41,14 @@ struct EmarsysClient: NetworkClient {
     
     private func refreshContactToken() async throws -> String {
         guard let config = sdkContext.config else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
+            throw Errors.preconditionFailed(message: "Config must not be nil")
         }
         guard let applicationCode = config.applicationCode else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Application code must not be nil"))
+            throw Errors.preconditionFailed(message: "Application code must not be nil")
         }
         let url = defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(applicationCode)/client/contact-token")
         guard let refreshTokenURL = URL(string: url) else {
-            throw Errors.urlCreationFailed("urlCreationFailed".localized(with: url))
+            throw Errors.NetworkingError.urlCreationFailed(url: url)
         }
         let refreshTokenRequest = URLRequest.create(url: refreshTokenURL, method: .POST, body: ["refreshToken": sessionContext.refreshToken].toData())
         let extendedRefreshTokenRequest = await extendRequest(request: refreshTokenRequest)
@@ -57,7 +57,7 @@ struct EmarsysClient: NetworkClient {
         
         let contactToken = refreshResult.0.toDict()["contactToken"]
         guard let contactToken = contactToken as? String else {
-            throw Errors.mappingFailed("mappingFailed".localized(with: String(describing: contactToken), String(describing: String.self)))
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: contactToken), toType: String(describing: String.self))
         }
         return contactToken
     }

@@ -65,7 +65,7 @@ final class EmarsysSDKTests: XCTestCase {
     func testEnableTracking_shouldThrowAnError_whenBothApplicationCodeAndMerchantId_areMissing() async throws {
         await EmarsysSDK.initialize()
         let config = EmarsysConfig()
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode or MerchantId must be present for Tracking"))
+        let expectedError = Errors.preconditionFailed(message: "ApplicationCode or MerchantId must be present for Tracking")
         
         await assertThrows( expectedError:expectedError ) {
             try await EmarsysSDK.enableTracking(config)

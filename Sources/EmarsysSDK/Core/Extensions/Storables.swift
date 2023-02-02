@@ -57,7 +57,7 @@ extension Bool: Storable {
 extension Dictionary: Storable {
     
     func toData() -> Data {
-        return try! JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+        return try! JSONSerialization.data(withJSONObject: self, options: .prettyPrinted) // TODO: handle error
     }
     
     static func fromData<Key, Value>(_ data: Data) -> Dictionary<Key, Value> {

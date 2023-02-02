@@ -6,30 +6,57 @@
 
 import Foundation
 
-enum Errors: Error, Equatable {
-    case mappingFailed(String)
-    case resourceNotAvailable(String)
-    case dbMethodFailed(String)
-    case switchToStateFailed(String)
-    case secKeyCreationFailed(String)
-    case urlCreationFailed(String)
-    case preconditionFailed(String)
-    case tokenExpired
-    case dataConversionFailed(String)
+enum Errors: SdkError {
+    case resourceLoadingFailed(resource: String)
+    case secKeyCreationFailed(secKey: String)
+    case preconditionFailed(message: String)
     
-    enum ContactRequestError: Error, Equatable {
-        case contactRequestFailed(String)
+    enum TypeError: SdkError {
+        case mappingFailed(parameter: String, toType: String)
+        case encodingFailed(type: String)
+        case decodingFailed(type: String)
     }
     
-    enum NetworkingError: Error, Equatable {
-        case failedRequest(HTTPURLResponse)
-        case encodingFailed(String)
-        case decodingFailed(String)
+    enum ContactRequestError: SdkError {
+        case contactRequestFailed(url: String)
+    }
+    
+    enum NetworkingError: SdkError {
+        case urlCreationFailed(url: String)
+        case failedRequest(response: HTTPURLResponse)
     }
 
-    enum StorageError: Error, Equatable {
-        case storingValueFailed(String)
-        case retrievingValueFailed(String)
-        case conversionFailed(String)
+    enum StorageError: SdkError {
+        case savingItemFailed(item: String, error: String)
+        case storingValueFailed(key: String, osStatus: String)
+        case retrievingValueFailed(key: String, osStatus: String)
     }
+}
+
+protocol SdkError: LocalizedError, Equatable {
+}
+
+extension SdkError {
+    
+    var errorDescription: String? {
+        var result: String?
+        let selfMirror = Mirror(reflecting: self)
+        guard let selfName = selfMirror.children.first?.label else {
+            return nil
+        }
+        if selfMirror.displayStyle == .enum, let associated = selfMirror.children.first  {
+            let values = Mirror(reflecting: associated.value).children
+            var args = [String]()
+            for case let item in values where item.label != nil {
+                if let value = item.value as? String {
+                    args.append(value)
+                }
+            }
+            result = selfName.localized(with: args)
+        } else {
+            result = selfName.localized()
+        }
+        return result
+    }
+    
 }

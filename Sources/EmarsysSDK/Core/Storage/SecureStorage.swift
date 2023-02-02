@@ -15,16 +15,16 @@ struct SecureStorage {
             data = item?.toData()
         } catch {
             // TODO LOG
-            throw Errors.dataConversionFailed("convertToDataFailed".localized(with: "item of type: \(T.self) with key: \(key)"))
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: item), toType: String(describing: Data.self))
+            var query = [String: Any]()
+            query[kSecAttrAccount as String] = key
+            query[kSecClass as String] = kSecClassGenericPassword
+            query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            query[kSecValueData as String] = data
+            query[kSecAttrAccessGroup as String] = accessGroup
+            
+            try storeItem(query: query)
         }
-        var query = [String: Any]()
-        query[kSecAttrAccount as String] = key
-        query[kSecClass as String] = kSecClassGenericPassword
-        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        query[kSecValueData as String] = data
-        query[kSecAttrAccessGroup as String] = accessGroup
-        
-        try storeItem(query: query)
     }
     
     func get<T: Storable>(key: String, accessGroup: String? = nil) throws -> T? {
@@ -40,16 +40,13 @@ struct SecureStorage {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         
         guard status == errSecSuccess else {
-            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key) OSStatus: \(status)"))
+            throw Errors.StorageError.retrievingValueFailed(key: key, osStatus: String(describing: status))
         }
-        
         guard let resultDict = item as? Dictionary<String, Any> else {
-            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key). Result can't be read as a Dictionary"))
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: item), toType: String(describing: Dictionary<String, Any>.self))
         }
-        
-        
         guard let data = resultDict[kSecValueData as String] as? Data else {
-            throw Errors.StorageError.retrievingValueFailed("retrievingValueFailed".localized(with: "Key: \(key)"))
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: resultDict[kSecValueData as String]), toType: String(describing: Data.self))
         }
         return T.fromData(data)
     }
@@ -71,7 +68,7 @@ struct SecureStorage {
             
             try storeItem(query: query)
         } else {
-            throw Errors.StorageError.storingValueFailed("storingValueFailed".localized(with: "Key: \(String(describing: query[kSecAttrAccount as String])) OSStatus: \(osStatus)"))
+            throw Errors.StorageError.storingValueFailed(key : String(describing: query[kSecAttrAccount as String]), osStatus: String(describing: osStatus))
         }
     }
     

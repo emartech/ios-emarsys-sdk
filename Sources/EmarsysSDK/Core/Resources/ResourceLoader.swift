@@ -18,7 +18,7 @@ extension ResourceLoader {
 
     func resourceUrl(name: String, ext: String) throws -> URL {
         guard let result = Bundle.module.url(forResource: name, withExtension:ext) else {
-            throw Errors.resourceNotAvailable("resourceLoadingFailed".localized(with: name))
+            throw Errors.resourceLoadingFailed(resource: name)
         }
         return result
     }
@@ -30,7 +30,7 @@ extension ResourceLoader {
             let propertyListDecoder = PropertyListDecoder()
             return try propertyListDecoder.decode(T.self, from: data)
         } catch {
-            throw Errors.resourceNotAvailable("resourceLoadingFailed".localized(with: name))
+            throw Errors.resourceLoadingFailed(resource: name)
         }
     }
     

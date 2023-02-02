@@ -19,13 +19,13 @@ struct DefaultStash: Stash {
     
     init() async throws {
         guard let modelURL = Bundle.module.url(forResource: "Model", withExtension:"momd") else {
-            throw Errors.resourceNotAvailable("coreDataModelNotAvailable".localized())
+            throw Errors.resourceLoadingFailed(resource: "ModelUrl")
         }
         guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
-            throw Errors.resourceNotAvailable("cantCreateManagedObjectModel".localized())
+            throw Errors.resourceLoadingFailed(resource: "model")
         }
         guard let dbUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last?.appendingPathComponent("EmarsysSdk.sqlite") else {
-            throw Errors.resourceNotAvailable("sqliteNotAvailable".localized())
+            throw Errors.resourceLoadingFailed(resource: "EmarsysSdk.sqlite")
         }
         let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
         
@@ -50,7 +50,8 @@ class Dao<T> where T: Stashable {
             _ = try item.toEntity(mox: self.stash.mox)
             try stash.mox.save()
         } catch {
-            throw Errors.dbMethodFailed("savingItemFailed".localized(with: String(describing: item), error.localizedDescription))
+            throw
+            Errors.StorageError.savingItemFailed(item: String(describing: item), error:  error.localizedDescription)
         }
     }
     
@@ -61,7 +62,7 @@ class Dao<T> where T: Stashable {
             }
             try stash.mox.save()
         } catch {
-            throw Errors.dbMethodFailed("savingItemsFailed".localized(with: String(describing: items), error.localizedDescription))
+            throw Errors.StorageError.savingItemFailed(item: String(describing: items), error:  error.localizedDescription)
         }
     }
     

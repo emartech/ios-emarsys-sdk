@@ -17,15 +17,15 @@ struct DefaultContactClient: ContactClient {
 
     func linkContact(contactFieldId: Int, contactFieldValue: String? = nil, openIdToken: String? = nil) async throws {
         guard let applicationCode = sdkContext.config?.applicationCode else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
+            throw Errors.preconditionFailed(message: "ApplicationCode should not be nil!")
         }
         guard let contactBaseUrl = URL(string: defaultValues.clientServiceBaseUrl) else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
+            throw Errors.preconditionFailed(message: "Url cannot be created for linkContactRequest!")
         }
         let contactLinkingUrl = contactBaseUrl.appending(path: "/v3/apps/\(applicationCode)/client/contact")
         
         if contactFieldValue == nil && openIdToken == nil {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Either contactFieldValue or openIdToken must not be nil"))
+            throw Errors.preconditionFailed(message: "Either contactFieldValue or openIdToken must not be nil")
         }
 
         var body = [String: String]()
@@ -41,10 +41,10 @@ struct DefaultContactClient: ContactClient {
 
     func unlinkContact() async throws {
         guard let applicationCode = sdkContext.config?.applicationCode else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
+            throw Errors.preconditionFailed(message: "ApplicationCode should not be nil!")
         }
         guard let contactBaseUrl = URL(string: defaultValues.clientServiceBaseUrl) else {
-            throw Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
+            throw Errors.preconditionFailed(message: "Url cannot be created for linkContactRequest!")
         }
         let contactLinkingUrl = contactBaseUrl.appending(path: "/v3/apps/\(applicationCode)/client/contact")
         
@@ -69,7 +69,7 @@ struct DefaultContactClient: ContactClient {
                                         "response": response
                                     ])
             sdkLogger.log(logEntry: logEntry, level: .debug)
-            throw Errors.ContactRequestError.contactRequestFailed("Link contact request failed.")
+            throw Errors.ContactRequestError.contactRequestFailed(url: String(describing: request.url))
         }
     }
 

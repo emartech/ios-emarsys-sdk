@@ -72,7 +72,7 @@ final class GenericNetworkClientTests: XCTestCase {
     
     func testSend_withoutInput_withThrowingDecodingFailedError() async throws {
         let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let expectedError = Errors.NetworkingError.decodingFailed("decodingFailed".localized(with: String(describing: DefaultValues.self)))
+        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultValues.self))
         
         await assertThrows(expectedError: expectedError) {
             let _: (DefaultValues, HTTPURLResponse) = try await networkClient.send(request: request)
@@ -82,7 +82,7 @@ final class GenericNetworkClientTests: XCTestCase {
     func testSend_withoutInput_shouldThrowFailedRequest_whenRequestWasNotSuccessfull() async throws {
         let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, method: .GET, headers: nil, body: Data())
         let expectedResponse = HTTPURLResponse(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, statusCode: 404, httpVersion: nil, headerFields: nil)!
-        let expectedError = Errors.NetworkingError.failedRequest(expectedResponse)
+        let expectedError = Errors.NetworkingError.failedRequest(response: expectedResponse)
         
         do {
             let _: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
@@ -120,7 +120,7 @@ final class GenericNetworkClientTests: XCTestCase {
     
     func testSend_withInput_withThrowingDecodingFailedError() async throws {
         let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let expectedError = Errors.NetworkingError.decodingFailed("decodingFailed".localized(with: String(describing: DefaultValues.self)))
+        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultValues.self))
         
         await assertThrows(expectedError: expectedError) {
             let _: (DefaultValues, HTTPURLResponse) = try await networkClient.send(request: request, body: testBody)

@@ -24,7 +24,7 @@ struct Crypto {
         let keyWithoutFooter = keyWithputHeader.replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
         let keyWithoutLines = keyWithoutFooter.replacingOccurrences(of: "\n", with: "")
         guard let publicKeyData = keyWithoutLines.data(using: .utf8) else {
-            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: keyWithoutLines))
+            let error = Errors.secKeyCreationFailed(secKey: keyWithoutLines)
             let logEntry = LogEntry(topic: "crypto",
                                     data: ["key": keyWithoutLines,
                                            "error": error.localizedDescription])
@@ -33,7 +33,7 @@ struct Crypto {
             throw error
         }
         guard let decodedDataBytes = Data(base64Encoded: publicKeyData, options: .ignoreUnknownCharacters) else {
-            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: publicKeyData - base64EncodedKey\(base64EncodedKey)"))
+            let error = Errors.secKeyCreationFailed(secKey: "line: publicKeyData - base64EncodedKey\(base64EncodedKey)")
             let logEntry = LogEntry(topic: "crypto",
                                     data: ["data": publicKeyData,
                                            "error": error.localizedDescription])
@@ -54,7 +54,7 @@ struct Crypto {
         var error: Unmanaged<CFError>?
         
         guard let publicKey = SecKeyCreateWithData(strippedData as CFData, attributes, &error) else {
-            let error = Errors.secKeyCreationFailed("secKeyCreationFailed".localized(with: "line: SecKeyCreateWithData - base64EncodedKey\(base64EncodedKey)"))
+            let error = Errors.secKeyCreationFailed(secKey:  "line: SecKeyCreateWithData - base64EncodedKey\(base64EncodedKey)")
             let logEntry = LogEntry(topic: "crypto",
                                     data: ["data": strippedData,
                                            "error": error.localizedDescription])

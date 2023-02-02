@@ -51,7 +51,7 @@ final class DefaultContactClientTests: XCTestCase {
     }
 
     func testLinkContact_shouldThrowErrorWhenApplicationCode_isNil() async throws {
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
+        let expectedError = Errors.preconditionFailed(message: "ApplicationCode should not be nil!")
         sdkContext.config?.applicationCode = nil
                 
         fakeEmarsysClient.when(\.send) { invocationCount, params in
@@ -78,7 +78,7 @@ final class DefaultContactClientTests: XCTestCase {
                                                  sdkContext: sdkContext,
                                                  sessionContext: sessionContext,
                                                  sdkLogger: sdkLogger)
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
+        let expectedError = Errors.preconditionFailed(message: "Url cannot be created for linkContactRequest!")
                 
         fakeEmarsysClient.when(\.send) { invocationCount, params in
             XCTAssertEqual(invocationCount, 0)
@@ -92,7 +92,7 @@ final class DefaultContactClientTests: XCTestCase {
     }
 
     func testLinkContact_shouldThrowErrorWhenContactFieldValueAndOpenIdToken_isNil() async throws {
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Either contactFieldValue or openIdToken must not be nil"))
+        let expectedError = Errors.preconditionFailed(message: "Either contactFieldValue or openIdToken must not be nil")
         
         fakeEmarsysClient.when(\.send) { invocationCount, params in
             XCTAssertEqual(invocationCount, 0)
@@ -166,14 +166,14 @@ final class DefaultContactClientTests: XCTestCase {
 
     func testLinkContact_shouldThrowOnErrorResponse() async throws {
         let errorResponse = HTTPURLResponse(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, statusCode: 404, httpVersion: nil, headerFields: nil)!
-        let expectedError = Errors.ContactRequestError.contactRequestFailed("Link contact request failed.")
+        let expectedError = Errors.ContactRequestError.contactRequestFailed(url: String(describing: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")))
         sessionContext.contactToken = contactToken
         sessionContext.refreshToken = refreshToken
         
         fakeEmarsysClient.when(\.send) { invocationCount, params in
             XCTAssertEqual(invocationCount, 1)
             
-            throw Errors.NetworkingError.failedRequest(errorResponse)
+            throw Errors.NetworkingError.failedRequest(response: errorResponse)
         }
         
         await assertThrows(expectedError: expectedError) {
@@ -185,7 +185,7 @@ final class DefaultContactClientTests: XCTestCase {
     }
     
     func testUnlinkContact_shouldThrowErrorWhenApplicationCode_isNil() async throws {
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "ApplicationCode should not be nil!"))
+        let expectedError = Errors.preconditionFailed(message: "ApplicationCode should not be nil!")
         sdkContext.config?.applicationCode = nil
                 
         fakeEmarsysClient.when(\.send) { invocationCount, params in
@@ -212,7 +212,7 @@ final class DefaultContactClientTests: XCTestCase {
                                                  sdkContext: sdkContext,
                                                  sessionContext: sessionContext,
                                                  sdkLogger: sdkLogger)
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Url cannot be created for linkContactRequest!"))
+        let expectedError = Errors.preconditionFailed(message: "Url cannot be created for linkContactRequest!")
                 
         fakeEmarsysClient.when(\.send) { invocationCount, params in
             XCTAssertEqual(invocationCount, 0)

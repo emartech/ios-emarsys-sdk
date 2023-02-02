@@ -197,7 +197,7 @@ final class EmarsysClientTests: XCTestCase {
             }
         }
 
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Config must not be nil"))
+        let expectedError = Errors.preconditionFailed(message: "Config must not be nil")
 
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
@@ -223,7 +223,7 @@ final class EmarsysClientTests: XCTestCase {
             }
         }
 
-        let expectedError = Errors.preconditionFailed("preconditionFailed".localized(with: "Application code must not be nil"))
+        let expectedError = Errors.preconditionFailed(message: "Application code must not be nil")
 
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
@@ -255,7 +255,7 @@ final class EmarsysClientTests: XCTestCase {
             }
         }
 
-        let expectedError = Errors.urlCreationFailed("urlCreationFailed".localized(with: "invalid base.url/v3/apps/testAppCode/client/contact-token"))
+        let expectedError = Errors.NetworkingError.urlCreationFailed(url: "invalid base.url/v3/apps/testAppCode/client/contact-token")
 
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
@@ -280,7 +280,7 @@ final class EmarsysClientTests: XCTestCase {
             }
         }
 
-        let expectedError = Errors.mappingFailed("mappingFailed".localized(with: "\(String(describing: testRefreshResponseWithMissingToken["contactToken"]))", "String"))
+        let expectedError = Errors.TypeError.mappingFailed(parameter: String(describing: testRefreshResponseWithMissingToken["contactToken"]), toType: String(describing: String.self))
 
         await assertThrows(expectedError: expectedError) {
             let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
