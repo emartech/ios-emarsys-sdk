@@ -19,7 +19,7 @@ struct RegisterPushTokenState: State {
     }
     
     func active() async throws {
-        try await pushClient.registerPushToken()
+        // try await pushClient.registerPushToken("")
     }
     
     func relax() {

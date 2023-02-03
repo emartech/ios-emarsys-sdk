@@ -25,7 +25,7 @@ class SessionContext {
     
     var clientState: String? = nil
     var clientId: String? = nil
-    
+
     var deviceEventState: [String: Any]? = nil
     
     init(timestampProvider: any DateProvider) {

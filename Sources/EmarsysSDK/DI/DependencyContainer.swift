@@ -74,13 +74,13 @@ struct DependencyContainer: ResourceLoader {
 //        return RemoteConfigClient(networkClient: standardNetworkClient, configContext: sdkContext, defaultValues: defaultValues, crypto: crypto)
 //    }()
 //
-//    lazy var emarsysClient: EmarsysClient = {
-//        return EmarsysClient(networkClient: standardNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionHandler: sessionHandler)
-//    }()
+    lazy var emarsysClient: EmarsysClient = {
+        return EmarsysClient(networkClient: genericNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionContext: sessionContext)
+    }()
 //
-//    lazy var pushClient: PushClient = {
-//        return PushClient(networkClient: networkClient, defaultValues: defaultValues, configContext: sdkContext)
-//    }()
+    lazy var pushClient: PushClient = {
+        return DefaultPushClient(emarsysClient: emarsysClient, defaultValues: defaultValues, sdkContext: sdkContext, sdkLogger: sdkLogger)
+    }()
 //
 //    lazy var deeplinkClient: DeeplinkClient = {
 //        return DeeplinkClient(networkClient: networkClient, defaultValues: defaultValues, deviceInfoCollector: deviceInfoCollector)
