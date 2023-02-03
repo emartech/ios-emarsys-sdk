@@ -18,17 +18,30 @@ struct EmarsysClient: NetworkClient {
     func send<Output>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output: Decodable {
         return try await refreshToken() {
             let extendedRequest = await extendRequest(request: request)
-            return try await networkClient.send(request: extendedRequest)
+            let response : (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest)
+            handleClientState(response)
+            return response
         }
     }
     
     func send<Output, Input>(request: URLRequest, body encodableBody: Input) async throws -> (Output, HTTPURLResponse) where Output : Decodable, Input : Encodable {
         return try await refreshToken() {
             let extendedRequest = await extendRequest(request: request)
-            return try await networkClient.send(request: extendedRequest, body: encodableBody)
+            let response : (Output, HTTPURLResponse) = try await networkClient.send(request: extendedRequest, body: encodableBody)
+            handleClientState(response)
+            return response
         }
     }
     
+    private func handleClientState<Output>(_ response: (Output, HTTPURLResponse)) {
+        let res = response.1
+        if res.isOk() {
+            //todo headers are caseless
+            if let clientState = res.allHeaderFields["X-Client-State"] as? String {
+                sessionContext.clientState = clientState
+            }
+        }
+    }
     private func refreshToken<Output>(callback: @escaping () async throws ->(Output, HTTPURLResponse)) async throws -> (Output, HTTPURLResponse) where Output : Decodable {
         var requestResult =  try await callback()
         if requestResult.1.statusCode == 401 {
