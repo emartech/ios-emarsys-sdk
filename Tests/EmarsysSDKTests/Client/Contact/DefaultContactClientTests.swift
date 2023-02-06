@@ -166,7 +166,7 @@ final class DefaultContactClientTests: XCTestCase {
 
     func testLinkContact_shouldThrowOnErrorResponse() async throws {
         let errorResponse = HTTPURLResponse(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, statusCode: 404, httpVersion: nil, headerFields: nil)!
-        let expectedError = Errors.ContactRequestError.contactRequestFailed(url: String(describing: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")))
+        let expectedError = Errors.UserFacingRequestError.contactRequestFailed(url: String(describing: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")))
         sessionContext.contactToken = contactToken
         sessionContext.refreshToken = refreshToken
         

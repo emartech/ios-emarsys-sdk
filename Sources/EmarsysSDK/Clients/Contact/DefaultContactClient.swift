@@ -69,7 +69,7 @@ struct DefaultContactClient: ContactClient {
                                         "response": response
                                     ])
             sdkLogger.log(logEntry: logEntry, level: .debug)
-            throw Errors.ContactRequestError.contactRequestFailed(url: String(describing: request.url))
+            throw Errors.UserFacingRequestError.contactRequestFailed(url: String(describing: request.url))
         }
     }
 

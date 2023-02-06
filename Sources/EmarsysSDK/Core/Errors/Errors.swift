@@ -17,8 +17,9 @@ enum Errors: SdkError {
         case decodingFailed(type: String)
     }
     
-    enum ContactRequestError: SdkError {
+    enum UserFacingRequestError: SdkError {
         case contactRequestFailed(url: String)
+        case registerClientFailed(url: String)
     }
     
     enum NetworkingError: SdkError {

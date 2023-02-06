@@ -10,16 +10,26 @@ struct DefaultDeviceClient: DeviceClient {
     let emarsysClient: NetworkClient
     let sdkContext: SdkContext
     let deviceInfoCollector: DeviceInfoCollector
+    let defaultValues: DefaultValues
     
-    func registerClient() async {
-//            guard let config = sdkContext.config else {
-//                return // TODO: error handling
-//            }
-//            guard let clientRegistrationUrl = URL(string: defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(config.applicationCode)/client")) else {
-//                return // TODO: error handling
-//            }
-//            let deviceInfo = await deviceInfoCollector.collectInfo()
-//            let request = URLRequest.create(url: clientRegistrationUrl, method: .POST)
-//            let _ = await send(request: request, encodableBody: deviceInfo)
+    func registerClient() async throws {
+        guard let config = sdkContext.config else {
+            throw Errors.preconditionFailed(message: "Config should not be nil!")
         }
+        guard let applicationCode = config.applicationCode else {
+            throw Errors.preconditionFailed(message: "ApplicationCode should not be nil!")
+        }
+        guard let clientRegistrationBaseUrl = URL(string: defaultValues.clientServiceBaseUrl) else {
+            throw Errors.preconditionFailed(message: "Url cannot be created for registerClientRequest!")
+        }
+        let url = clientRegistrationBaseUrl.appending(path: "/v3/apps/\(applicationCode)/client")
+        let deviceInfo = await deviceInfoCollector.collect()
+        let request = URLRequest.create(url: url, method: .POST)
+        
+        do {
+            let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request, body: deviceInfo)
+        } catch Errors.NetworkingError.failedRequest(let response) {
+            throw Errors.UserFacingRequestError.registerClientFailed(url: String(describing: response.url?.absoluteString))
+        }
+    }
 }

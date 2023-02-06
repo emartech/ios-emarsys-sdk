@@ -9,6 +9,6 @@ import Foundation
 @SdkActor
 protocol DeviceClient {
     
-    func registerClient() async
+    func registerClient() async throws
     
 }

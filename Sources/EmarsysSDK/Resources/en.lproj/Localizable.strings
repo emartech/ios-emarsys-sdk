@@ -9,8 +9,9 @@
 // MARK: Networking
 "urlCreationFailed" = "Url creation failed: %@";
 
-// MARK: Contact
+// MARK: UserFacing
 "contactRequestFailed" = "Contact request failed for url: %@";
+"registerClientFailed" = "RegisterClientFailed request failed for url: %@";
 
 // MARK: TypeError
 "mappingFailed" = "Mapping failed, parameter: %@, to type: %@";

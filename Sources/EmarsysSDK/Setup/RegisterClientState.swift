@@ -9,7 +9,7 @@ import Foundation
 @SdkActor
 struct RegisterClientState: State {
     
-    var emarsysClient: DeviceClient
+    var deviceClient: DeviceClient
     
     var name = SetupState.registerClient.rawValue
     
@@ -19,7 +19,7 @@ struct RegisterClientState: State {
     }
 
     func active() async throws {
-        await emarsysClient.registerClient()
+        try await deviceClient.registerClient()
     }
     
     func relax() {
