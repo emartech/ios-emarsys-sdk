@@ -36,7 +36,7 @@ struct DependencyContainer: ResourceLoader {
     }()
 
     lazy var deviceInfoCollector: DeviceInfoCollector = {
-        return DeviceInfoCollector()
+        return DefaultDeviceInfoCollector()
     }()
 
     lazy var sessionContext: SessionContext = {

@@ -1,24 +1,13 @@
 //
 //
-// Copyright © 2022. Emarsys-Technologies Kft. All rights reserved.
+// Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
 //
-        
 
 import Foundation
 
-@SdkActor
-struct DeviceInfoCollector {
+protocol DeviceInfoCollector {
     
-    func collectInfo() async -> DeviceInfo {
-        return "" as! DeviceInfo
-    }
-    
-    func deviceType() -> String {
-        return ""
-    }
-    
-    func osVersion() -> String {
-        return ""
-    }
-    
+    func collect() async -> DeviceInfo
+    func deviceType() -> String
+    func osVersion() -> String
 }

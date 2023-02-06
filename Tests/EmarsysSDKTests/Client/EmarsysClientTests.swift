@@ -59,7 +59,7 @@ final class EmarsysClientTests: XCTestCase {
         fakeSessionContext = FakeSessionContext(timestampProvider: fakeTimestampProvider)
         fakeSessionContext.contactToken = testContactToken
         fakeNetworkClient = FakeGenericNetworkClient()
-        deviceInfoCollector = DeviceInfoCollector()
+        deviceInfoCollector = DefaultDeviceInfoCollector()
         defaultValues = DefaultValues(
             version: "1.0",
             clientServiceBaseUrl: "www.client.service.url",
