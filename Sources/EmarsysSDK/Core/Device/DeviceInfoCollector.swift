@@ -5,6 +5,7 @@
 
 import Foundation
 
+@SdkActor
 protocol DeviceInfoCollector {
     
     func collect() async -> DeviceInfo
