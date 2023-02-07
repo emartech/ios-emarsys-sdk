@@ -30,6 +30,7 @@ struct DependencyContainer: ResourceLoader {
 
     lazy var sdkConfig: SdkConfig = {
         return try! loadPlist(name: sdkConfigPlistName)
+    }()
 
     lazy var uuidStringProvider: UuidStringProvider = {
         return UuidStringProvider()
@@ -78,7 +79,7 @@ struct DependencyContainer: ResourceLoader {
                              sdkLogger: sdkLogger)
     }()
     
-    lazy var sdkLogger: SDKLogger = SDKLogger()
+    lazy var sdkLogger: SdkLogger = SdkLogger()
     //
     //    lazy var remoteConfigClient: RemoteConfigClient = {
     //        return RemoteConfigClient(networkClient: standardNetworkClient, configContext: sdkContext, defaultValues: defaultValues, crypto: crypto)

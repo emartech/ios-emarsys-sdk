@@ -11,14 +11,14 @@ struct EventClient {
     
     let networkClient: NetworkClient
     let secStore: SecureStorage
-    let defaultValues: DefaultUrls
+    let defaultUrls: DefaultUrls
     let sdkContext: SdkContext
     let sessionContext: SessionContext
     
     func sendEvents(events: [Event]) async throws -> (inAppMessage: [String: String]?, onEventAction: [String: Any]?)? {
         var inAppMessage: [String: String]? = nil
         var onEventAction: [String: Any]? = nil
-        guard let eventSendingUrl = URL(string: defaultValues.eventServiceBaseUrl.appending("/v4/apps/\(sdkContext.config?.applicationCode)/client/events")) else {
+        guard let eventSendingUrl = URL(string: defaultUrls.eventServiceBaseUrl.appending("/v4/apps/\(sdkContext.config?.applicationCode)/client/events")) else {
             return nil //TODO: error handling what to do
         }
         var body = [String: Any]()

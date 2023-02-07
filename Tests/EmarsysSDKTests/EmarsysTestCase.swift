@@ -19,7 +19,7 @@ open class EmarsysTestCase: XCTestCase {
     var sdkConfig: SdkConfig!
     var emarsysConfig: EmarsysConfig!
     var sdkContext: SdkContext!
-    var sdkLogger: SDKLogger!
+    var sdkLogger: SdkLogger!
 
     open override func setUpWithError() throws {
         fakeNetworkClient = FakeGenericNetworkClient()
@@ -56,7 +56,7 @@ open class EmarsysTestCase: XCTestCase {
                                                            providesAppNotificationSettings: "testProvidesAppNotificationSettings",
                                                            scheduledDeliverySetting: "testScheduledDeliverySetting",
                                                            timeSensitiveSetting: "testTimeSensitiveSetting"))
-        sdkLogger = SDKLogger()
+        sdkLogger = SdkLogger()
     }
 
     open override func tearDownWithError() throws {
