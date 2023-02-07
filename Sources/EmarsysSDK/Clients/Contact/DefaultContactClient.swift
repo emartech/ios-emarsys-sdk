@@ -13,7 +13,7 @@ struct DefaultContactClient: ContactClient {
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
     var sessionContext: SessionContext
-    let sdkLogger: SDKLogger
+    let sdkLogger: SdkLogger
 
     func linkContact(contactFieldId: Int, contactFieldValue: String? = nil, openIdToken: String? = nil) async throws {
         guard let applicationCode = sdkContext.config?.applicationCode else {

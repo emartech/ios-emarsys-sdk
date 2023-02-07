@@ -11,7 +11,7 @@ final class DefaultPushClientTests: XCTestCase {
     var sdkContext: SdkContext!
     var fakeTimestampProvider: FakeTimestampProvider!
     var pushClient: PushClient!
-    var sdkLogger: SDKLogger!
+    var sdkLogger: SdkLogger!
     
     override func setUpWithError() throws {
         fakeEmarsysClient = FakeGenericNetworkClient()
@@ -26,7 +26,7 @@ final class DefaultPushClientTests: XCTestCase {
         sdkContext.config = EmarsysConfig()
         sdkContext.config?.applicationCode = "EMS11-C3FD3"
         fakeTimestampProvider = FakeTimestampProvider()
-        sdkLogger = SDKLogger()
+        sdkLogger = SdkLogger()
         pushClient = DefaultPushClient(emarsysClient: fakeEmarsysClient,
                                        defaultValues: defaultValues,
                                        sdkContext: sdkContext,

@@ -7,7 +7,7 @@
 import Foundation
 
 struct LoggingContact: ActivatableContactApi {
-    let logger: SDKLogger
+    let logger: SdkLogger
     
     func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
         let entry = LogEntry.createMethodNotAllowedEntry(source: self,

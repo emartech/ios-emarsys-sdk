@@ -8,12 +8,12 @@ final class DeviceInfoCollectorTests: XCTestCase {
     var fakeUuidProvider: FakeUuidStringProvider!
     var fakeSecureStorage: FakeSecureStorage!
     var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper!
-    var logger: SDKLogger!
+    var logger: SdkLogger!
     
     let testUuid = "testUuid"
     
     override func setUpWithError() throws {
-        logger = SDKLogger()
+        logger = SdkLogger()
         fakeSecureStorage = FakeSecureStorage()
         fakeUuidProvider = FakeUuidStringProvider(testUuid: testUuid)
         fakeNotificationCenterWrapper = FakeNotificationCenterWrapper()

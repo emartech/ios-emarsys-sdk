@@ -13,11 +13,11 @@ final class ContactTests: XCTestCase {
     var sdkContext: SdkContext!
     var contactContext: ContactContext!
     var contact: Contact!
-    var sdkLogger:SDKLogger!
+    var sdkLogger:SdkLogger!
     
     override func setUp() async throws {
         contactContext = ContactContext()
-        sdkLogger = SDKLogger()
+        sdkLogger = SdkLogger()
         loggingContact = LoggingContact(logger: sdkLogger)
         fakeContactApi = FakeContactApi()
         fakePredictContactApi = FakePredictContactApi()

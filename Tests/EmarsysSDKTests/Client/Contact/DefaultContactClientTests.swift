@@ -22,7 +22,7 @@ final class DefaultContactClientTests: XCTestCase {
     var sessionContext: SessionContext!
     var fakeTimestampProvider: FakeTimestampProvider!
     var contactClient: ContactClient!
-    var sdkLogger: SDKLogger!
+    var sdkLogger: SdkLogger!
 
     override func setUpWithError() throws {
         fakeEmarsysClient = FakeGenericNetworkClient()
@@ -38,7 +38,7 @@ final class DefaultContactClientTests: XCTestCase {
         sdkContext.config?.applicationCode = "EMS11-C3FD3"
         fakeTimestampProvider = FakeTimestampProvider()
         sessionContext = SessionContext(timestampProvider: fakeTimestampProvider)
-        sdkLogger = SDKLogger()
+        sdkLogger = SdkLogger()
         contactClient = DefaultContactClient(emarsysClient: fakeEmarsysClient,
                                             defaultValues: defaultValues,
                                             sdkContext: sdkContext,

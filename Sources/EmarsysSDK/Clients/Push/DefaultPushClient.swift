@@ -12,7 +12,7 @@ struct DefaultPushClient: PushClient {
     let emarsysClient: NetworkClient
     let defaultValues: DefaultValues
     let sdkContext: SdkContext
-    var sdkLogger: SDKLogger
+    var sdkLogger: SdkLogger
     
     func registerPushToken(_ pushToken: String) async throws {
         let body = ["pushToken": pushToken]

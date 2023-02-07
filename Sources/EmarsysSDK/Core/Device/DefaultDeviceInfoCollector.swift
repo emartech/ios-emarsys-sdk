@@ -14,7 +14,7 @@ struct DefaultDeviceInfoCollector: DeviceInfoCollector {
     let notificationCenterWrapper: NotificationCenterWrapper
     let secureStorage: SecureStorage
     let uuidProvider: any UuidProvider
-    let logger: SDKLogger
+    let logger: SdkLogger
     
     let hardwareIdKey = "kHardwareIdKey"
     let platform: String = "iOS"

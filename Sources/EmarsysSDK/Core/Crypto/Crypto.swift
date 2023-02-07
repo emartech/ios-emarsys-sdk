@@ -10,7 +10,7 @@ import Foundation
 struct Crypto {
     
     let base64encodedPublicKey: String
-    let sdkLogger: SDKLogger
+    let sdkLogger: SdkLogger
     
     func verify(content: Data, signature: Data) -> Bool {
         guard let publicKey = try? createSecKey(base64EncodedKey: self.base64encodedPublicKey) else {
