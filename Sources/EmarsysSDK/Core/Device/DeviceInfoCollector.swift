@@ -9,6 +9,6 @@ import Foundation
 protocol DeviceInfoCollector {
     
     func collect() async -> DeviceInfo
-    func deviceType() -> String
-    func osVersion() -> String
+    func deviceType() async -> String
+    func osVersion() async -> String
 }

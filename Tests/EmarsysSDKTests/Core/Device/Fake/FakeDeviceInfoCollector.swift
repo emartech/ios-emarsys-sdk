@@ -1,17 +1,13 @@
-//
-//
-// Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
-//
 
 import Foundation
 @testable import EmarsysSDK
 
+@SdkActor
 struct FakeDeviceInfoCollector: DeviceInfoCollector, Faked {
-    var instanceId: String = UUID().uuidString
     
-    let collect = "collect"
-    let deviceTypeFunc = "deviceType"
-    let osVersionFunc = "osVersion"
+    let instanceId = UUID().uuidString
+    
+    let collect: String = "collect"
     
     func collect() async -> DeviceInfo {
         return try! handleCall(\.collect)

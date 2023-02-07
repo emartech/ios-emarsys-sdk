@@ -18,7 +18,7 @@ struct DeeplinkClient {
             return //TODO: error handling what to do
         }
         
-        let userAgent = "Emarsys SDK \(defaultValues.version) \(deviceInfoCollector.deviceType()) \(deviceInfoCollector.osVersion())"
+        let userAgent = await "Emarsys SDK \(defaultValues.version) \(deviceInfoCollector.deviceType()) \(deviceInfoCollector.osVersion())"
 
         var body = ["ems_dl": trackingId]
         let headers = ["User-Agent": userAgent]

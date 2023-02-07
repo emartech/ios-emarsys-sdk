@@ -9,7 +9,7 @@ import Foundation
 struct LinkContactState: State {
     
     let contactClient: ContactClient
-    let secStore: SecureStorage
+    let secStore: DefaultSecureStorage
     
     var name = SetupState.linkContact.rawValue
     

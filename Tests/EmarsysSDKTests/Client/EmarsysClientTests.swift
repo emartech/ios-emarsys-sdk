@@ -13,6 +13,7 @@ final class EmarsysClientTests: XCTestCase {
     var fakeTimestampProvider: FakeTimestampProvider!
     var fakeSessionContext: SessionContext!
     var fakeNetworkClient: FakeGenericNetworkClient!
+    var fakeDeviceInfoCollector: FakeDeviceInfoCollector!
     var deviceInfoCollector: DeviceInfoCollector!
     var defaultValues: DefaultValues!
     var sdkContext: SdkContext!
@@ -59,7 +60,7 @@ final class EmarsysClientTests: XCTestCase {
         fakeSessionContext = FakeSessionContext(timestampProvider: fakeTimestampProvider)
         fakeSessionContext.contactToken = testContactToken
         fakeNetworkClient = FakeGenericNetworkClient()
-        deviceInfoCollector = DefaultDeviceInfoCollector()
+        fakeDeviceInfoCollector = FakeDeviceInfoCollector()
         defaultValues = DefaultValues(
             version: "1.0",
             clientServiceBaseUrl: "www.client.service.url",
@@ -71,12 +72,13 @@ final class EmarsysClientTests: XCTestCase {
         )
         sdkContext = SdkContext()
         sdkContext.config = EmarsysConfig(applicationCode: "testAppCode")
-        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
+        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
     }
     
     override func tearDown() async throws {
         fakeNetworkClient.tearDown()
         fakeTimestampProvider.tearDown()
+        fakeDeviceInfoCollector.tearDown()
     }
     
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
@@ -207,7 +209,7 @@ final class EmarsysClientTests: XCTestCase {
     func testSend_withoutInput_shouldThrowPreconditionFailedError_whenConfigIsNil() async throws {
         let sdkContextWithEmptyConfig = SdkContext()
         sdkContextWithEmptyConfig.config = nil
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContextWithEmptyConfig, sessionContext: fakeSessionContext)
+        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContextWithEmptyConfig, sessionContext: fakeSessionContext)
         
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
@@ -233,7 +235,7 @@ final class EmarsysClientTests: XCTestCase {
         let emptyConfig = EmarsysConfig()
         testSdkContext.config = emptyConfig
         
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: defaultValues, sdkContext: testSdkContext, sessionContext: fakeSessionContext)
+        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: testSdkContext, sessionContext: fakeSessionContext)
         
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
@@ -265,7 +267,7 @@ final class EmarsysClientTests: XCTestCase {
             remoteConfigBaseUrl: "www.remote.config.service.url"
         )
         
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: deviceInfoCollector, defaultValues: testDefaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
+        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: testDefaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
         
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)

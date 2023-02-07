@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 @SdkActor
 struct DependencyContainer: ResourceLoader {
@@ -26,6 +27,10 @@ struct DependencyContainer: ResourceLoader {
     lazy var timestampProvider: TimestampProvider = {
         return TimestampProvider()
     }()
+    
+    lazy var uuidStringProvider: UuidStringProvider = {
+        return UuidStringProvider()
+    }()
 
     lazy var defaultValues: DefaultValues = {
         return try! loadPlist(name: configPlistName)
@@ -34,9 +39,17 @@ struct DependencyContainer: ResourceLoader {
     lazy var crypto: Crypto = {
         return Crypto(base64encodedPublicKey: cryptoPublicKey, sdkLogger: sdkLogger)
     }()
+    
+    lazy var secureStorage: SecureStorage = {
+        return DefaultSecureStorage()
+    }()
+    
+    lazy var notificationCenterWrapper: NotificationCenterWrapper = {
+        return DefaultNotificationCenterWrapper(notificationCenter: UNUserNotificationCenter.current())
+    }()
 
     lazy var deviceInfoCollector: DeviceInfoCollector = {
-        return DefaultDeviceInfoCollector()
+        return DefaultDeviceInfoCollector(notificationCenterWrapper: notificationCenterWrapper, secureStorage: secureStorage, uuidProvider: uuidStringProvider, logger: sdkLogger)
     }()
 
     lazy var sessionContext: SessionContext = {

@@ -8,10 +8,10 @@ import XCTest
 
 final class SecureStorageTests: XCTestCase {
     let testKey = "test"
-    var secureStorage: SecureStorage!
+    var secureStorage: DefaultSecureStorage!
 
     override func setUpWithError() throws {
-        secureStorage = SecureStorage()
+        secureStorage = DefaultSecureStorage()
     }
     
     func skip_testData() throws {
