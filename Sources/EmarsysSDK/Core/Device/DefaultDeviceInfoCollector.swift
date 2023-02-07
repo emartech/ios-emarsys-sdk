@@ -92,94 +92,27 @@ struct DefaultDeviceInfoCollector: DeviceInfoCollector {
         
         let settings = await notificationCenterWrapper.notificationSettings()
         
-        return PushSettings(authorizationStatus: authorisationStatusToString(status: settings.authorizationStatus),
-                            soundSetting: settingToString(setting: settings.soundSetting),
-                            badgeSetting: settingToString(setting: settings.badgeSetting),
-                            alertSetting: settingToString(setting: settings.alertSetting),
-                            notificationCenterSetting: settingToString(setting: settings.notificationCenterSetting),
-                            lockScreenSetting: settingToString(setting: settings.lockScreenSetting),
-                            carPlaySetting: settingToString(setting: settings.carPlaySetting),
-                            alertStyle: alertStyleSettingToString(setting: settings.alertStyle),
-                            showPreviewsSetting: showPreviewSettingToString(setting: settings.showPreviewsSetting),
-                            criticalAlertSetting: settingToString(setting: settings.criticalAlertSetting),
+        return PushSettings(authorizationStatus: settings.authorizationStatus.asString(),
+                            soundSetting: settings.soundSetting.asString(),
+                            badgeSetting: settings.badgeSetting.asString(),
+                            alertSetting: settings.alertSetting.asString(),
+                            notificationCenterSetting: settings.notificationCenterSetting.asString(),
+                            lockScreenSetting: settings.lockScreenSetting.asString(),
+                            carPlaySetting: settings.carPlaySetting.asString(),
+                            alertStyle: settings.alertStyle.asString(),
+                            showPreviewsSetting: settings.showPreviewsSetting.asString(),
+                            criticalAlertSetting: settings.criticalAlertSetting.asString(),
                             providesAppNotificationSettings: settings.providesAppNotificationSettings.description,
-                            scheduledDeliverySetting: settingToString(setting: settings.scheduledDeliverySetting),
-                            timeSensitiveSetting: settingToString(setting: settings.timeSensitiveSetting)
+                            scheduledDeliverySetting: settings.scheduledDeliverySetting.asString(),
+                            timeSensitiveSetting: settings.timeSensitiveSetting.asString()
         )
-    }
-    
-    private func settingToString(setting: UNNotificationSetting) -> String {
-        var result = "notSupported"
-        
-        switch (setting) {
-        case UNNotificationSetting.enabled:
-            result = "enabled"
-        case UNNotificationSetting.disabled:
-            result = "disabled"
-        case UNNotificationSetting.notSupported:
-            result = "notSupported"
-        default: result = "notSupported"
-        }
-        
-        return result
-    }
-    
-    private func showPreviewSettingToString(setting: UNShowPreviewsSetting) -> String {
-        var result = "never"
-        
-        switch (setting) {
-        case UNShowPreviewsSetting.never:
-            result = "never"
-        case UNShowPreviewsSetting.whenAuthenticated:
-            result = "whenAuthenticated"
-        case UNShowPreviewsSetting.always:
-            result = "always"
-        default: result = "never"
-        }
-        
-        return result
-    }
-    
-    private func alertStyleSettingToString(setting: UNAlertStyle) -> String {
-        var alertStyle = "none"
-        
-        switch (setting) {
-        case UNAlertStyle.alert:
-            alertStyle = "alert"
-        case UNAlertStyle.banner:
-            alertStyle = "banner"
-        case UNAlertStyle.none:
-            alertStyle = "none"
-        default:alertStyle = "none"
-        }
-        
-        return alertStyle
-    }
-    
-    private func authorisationStatusToString(status: UNAuthorizationStatus) -> String {
-        var result = "notDetermined"
-        
-        if (status == UNAuthorizationStatus.authorized) {
-            result = "authorized"
-        } else if (status == UNAuthorizationStatus.denied) {
-            result = "denied"
-        } else if (status == UNAuthorizationStatus.notDetermined) {
-            result = "notDetermined"
-        } else if (status == UNAuthorizationStatus.ephemeral) {
-            result = "ephemeral"
-        } else if #available(iOS 12.0, *) {
-            if (status == UNAuthorizationStatus.provisional) {
-                result = "provisional"
-            }
-        }
-        return result
     }
     
     private func generateHardwareId() async -> String {
         await uuidProvider.provide()
     }
     
-    func loadHardwareId() -> String? {
+    private func loadHardwareId() -> String? {
         var result: String? = nil
         do {
             result = try secureStorage.get(key: hardwareIdKey, accessGroup: nil)
@@ -196,7 +129,4 @@ struct DefaultDeviceInfoCollector: DeviceInfoCollector {
             logger.log(logEntry: logEntry, level: .error)
         }
     }
-    
-    
-    
 }
