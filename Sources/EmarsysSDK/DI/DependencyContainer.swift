@@ -37,7 +37,7 @@ struct DependencyContainer: ResourceLoader {
     }()
 
     lazy var crypto: Crypto = {
-        return Crypto(base64encodedPublicKey: sdkConfig.cryptoPublicKey, sdkLogger: sdkLogger)
+        return DefaultCrypto(base64encodedPublicKey: sdkConfig.cryptoPublicKey, sdkLogger: sdkLogger)
     }()
 
     lazy var secureStorage: SecureStorage = {

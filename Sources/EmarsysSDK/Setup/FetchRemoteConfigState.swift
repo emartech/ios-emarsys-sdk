@@ -19,7 +19,7 @@ struct FetchRemoteConfigState: State {
     }
     
     func active() async throws {
-        try await remoteConfigClient.applyActiveConfig()
+       // try await remoteConfigClient.applyActiveConfig()
     }
     
     func relax() {

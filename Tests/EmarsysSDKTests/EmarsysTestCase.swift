@@ -2,7 +2,7 @@
 //
 // Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
 //
-        
+
 
 import XCTest
 @testable import EmarsysSDK
@@ -20,10 +20,12 @@ open class EmarsysTestCase: XCTestCase {
     var emarsysConfig: EmarsysConfig!
     var sdkContext: SdkContext!
     var sdkLogger: SdkLogger!
+    var fakeCrypto: FakeCrypto!
 
     open override func setUpWithError() throws {
         fakeNetworkClient = FakeGenericNetworkClient()
         fakeTimestampProvider = FakeTimestampProvider()
+        sdkLogger = SdkLogger()
 
         defaultUrls = DefaultUrls(clientServiceBaseUrl: "https://base.me-client.eservice.emarsys.net",
                                   eventServiceBaseUrl: "https://base.mobile-events.eservice.emarsys.net",
@@ -36,6 +38,7 @@ open class EmarsysTestCase: XCTestCase {
         sessionContext = SessionContext(timestampProvider: fakeTimestampProvider)
         sdkContext = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
         sdkContext.config = emarsysConfig
+        fakeCrypto = FakeCrypto()
         deviceInfo = DeviceInfo(platform: "iOS",
                                 applicationVersion: "testVersion",
                                 deviceModel: "iPhone14Pro",
@@ -56,12 +59,12 @@ open class EmarsysTestCase: XCTestCase {
                                                            providesAppNotificationSettings: "testProvidesAppNotificationSettings",
                                                            scheduledDeliverySetting: "testScheduledDeliverySetting",
                                                            timeSensitiveSetting: "testTimeSensitiveSetting"))
-        sdkLogger = SdkLogger()
     }
 
     open override func tearDownWithError() throws {
         fakeNetworkClient.tearDown()
         fakeTimestampProvider.tearDown()
+        fakeCrypto.tearDown()
     }
-    
+
 }

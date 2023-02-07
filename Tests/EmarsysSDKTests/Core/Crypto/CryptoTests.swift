@@ -27,7 +27,7 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==
     override func setUpWithError() throws {
         configData = Data(remoteConfigString.utf8)
         logger = SdkLogger()
-        crypto = Crypto(base64encodedPublicKey: publicKey, sdkLogger: logger)
+        crypto = DefaultCrypto(base64encodedPublicKey: publicKey, sdkLogger: logger)
     }
 
     func testVerify() throws {
