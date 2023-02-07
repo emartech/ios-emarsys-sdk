@@ -10,24 +10,24 @@ import Foundation
 struct DeeplinkClient {
     
     let networkClient: NetworkClient
-    let defaultValues: DefaultValues
+    let defaultUrls: DefaultUrls
     let deviceInfoCollector: DeviceInfoCollector
     
     func sendDeepLinkTrackingId(trackingId: String) async throws {
-        guard let url = URL(string: defaultValues.deepLinkBaseUrl) else {
-            return //TODO: error handling what to do
-        }
-        
-        let userAgent = await "Emarsys SDK \(defaultValues.version) \(deviceInfoCollector.deviceType()) \(deviceInfoCollector.osVersion())"
-
-        var body = ["ems_dl": trackingId]
-        let headers = ["User-Agent": userAgent]
-        
-        let request = URLRequest.create(url: url, method: .POST, headers:headers, body: body.toData())
-        
-        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
-        
-        // TODO: result?
+//        guard let url = URL(string: defaultValues.deepLinkBaseUrl) else {
+//            return //TODO: error handling what to do
+//        }
+//
+//        let userAgent = "Emarsys SDK \(defaultValues.version) \(deviceInfoCollector.deviceType()) \(deviceInfoCollector.osVersion())"
+//
+//        var body = ["ems_dl": trackingId]
+//        let headers = ["User-Agent": userAgent]
+//
+//        let request = URLRequest.create(url: url, method: .POST, headers:headers, body: body.toData())
+//
+//        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
+//
+//        // TODO: result?
     }
     
 }

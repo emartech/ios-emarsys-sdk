@@ -19,6 +19,15 @@ class SdkContext {
     
     var config: EmarsysConfig? = nil // TODO: figure out smth better
     
+    var defaultUrls: DefaultUrls
+    
+    var sdkConfig: SdkConfig
+    
+    init(sdkConfig: SdkConfig, defaultUrls: DefaultUrls) {
+        self.sdkConfig = sdkConfig
+        self.defaultUrls = defaultUrls
+    }
+        
     func setConfig(config: EmarsysConfig) {
         self.config = config
     }
@@ -30,5 +39,29 @@ class SdkContext {
     func setFeatures(features: [Feature]) {
         self.features = features
     }
-        
+}
+
+extension SdkContext {
+    
+    func createUrl(_ keyPath: KeyPath<DefaultUrls, String>, version: String = "v3", withAppCode: Bool = true, path: String? = nil) throws-> URL {
+        var url: String = defaultUrls[keyPath: keyPath]
+        url.append("/\(version)")
+        if withAppCode {
+            guard let config = config else {
+                throw Errors.preconditionFailed(message: "Config must not be nil")
+            }
+            guard let applicationCode = config.applicationCode else {
+                throw Errors.preconditionFailed(message: "Application code must not be nil")
+            }
+            url.append("/apps/\(applicationCode)")
+        }
+        if let pathComponent = path {
+            url.append(pathComponent)
+        }
+        guard let result = URL(string: url) else {
+            throw Errors.NetworkingError.urlCreationFailed(url: url)
+        }
+        return result
+    }
+    
 }

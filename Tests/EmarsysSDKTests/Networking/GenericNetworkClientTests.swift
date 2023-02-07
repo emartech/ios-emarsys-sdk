@@ -72,10 +72,10 @@ final class GenericNetworkClientTests: XCTestCase {
     
     func testSend_withoutInput_withThrowingDecodingFailedError() async throws {
         let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultValues.self))
+        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultUrls.self))
         
         await assertThrows(expectedError: expectedError) {
-            let _: (DefaultValues, HTTPURLResponse) = try await networkClient.send(request: request)
+            let _: (DefaultUrls, HTTPURLResponse) = try await networkClient.send(request: request)
         }
     }
     
@@ -120,10 +120,10 @@ final class GenericNetworkClientTests: XCTestCase {
     
     func testSend_withInput_withThrowingDecodingFailedError() async throws {
         let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultValues.self))
+        let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultUrls.self))
         
         await assertThrows(expectedError: expectedError) {
-            let _: (DefaultValues, HTTPURLResponse) = try await networkClient.send(request: request, body: testBody)
+            let _: (DefaultUrls, HTTPURLResponse) = try await networkClient.send(request: request, body: testBody)
         }
     }
 }

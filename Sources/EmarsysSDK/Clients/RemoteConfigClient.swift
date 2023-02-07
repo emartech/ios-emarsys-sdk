@@ -11,7 +11,7 @@ struct RemoteConfigClient {
     
     let networkClient: NetworkClient
     let configContext: SdkContext
-    let defaultValues: DefaultValues
+    let defaultValues: DefaultUrls
     let crypto: Crypto
     
     func applyActiveConfig() async throws {

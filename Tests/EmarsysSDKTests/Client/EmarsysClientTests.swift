@@ -7,16 +7,12 @@ import XCTest
 @testable import EmarsysSDK
 
 @SdkActor
-final class EmarsysClientTests: XCTestCase {
+final class EmarsysClientTests: EmarsysTestCase {
+
     var emarsysClient: EmarsysClient!
-    
-    var fakeTimestampProvider: FakeTimestampProvider!
+
     var fakeSessionContext: SessionContext!
-    var fakeNetworkClient: FakeGenericNetworkClient!
     var fakeDeviceInfoCollector: FakeDeviceInfoCollector!
-    var deviceInfoCollector: DeviceInfoCollector!
-    var defaultValues: DefaultValues!
-    var sdkContext: SdkContext!
     
     let headers = [
         "Content-Type": "application/json",
@@ -48,7 +44,9 @@ final class EmarsysClientTests: XCTestCase {
     var testTimestamp: String!
     var requiredHeaders: [String: String]!
     
-    override func setUp() async throws {
+    override func setUpWithError() throws {
+        try! super.setUpWithError()
+
         testTimestamp = "\(testDate)"
         requiredHeaders = [
             "X-Client-State": testClientState,
@@ -56,29 +54,10 @@ final class EmarsysClientTests: XCTestCase {
             "X-Contact-Token": testContactToken,
             "X-Request-Order": testTimestamp
         ]
-        fakeTimestampProvider = FakeTimestampProvider()
         fakeSessionContext = FakeSessionContext(timestampProvider: fakeTimestampProvider)
         fakeSessionContext.contactToken = testContactToken
-        fakeNetworkClient = FakeGenericNetworkClient()
         fakeDeviceInfoCollector = FakeDeviceInfoCollector()
-        defaultValues = DefaultValues(
-            version: "1.0",
-            clientServiceBaseUrl: "www.client.service.url",
-            eventServiceBaseUrl: "www.event.service.url",
-            predictBaseUrl: "www.predict.service.url",
-            deepLinkBaseUrl: "www.deeplink.service.url",
-            inboxBaseUrl: "www.inbox.service.url",
-            remoteConfigBaseUrl: "www.remote.config.service.url"
-        )
-        sdkContext = SdkContext()
-        sdkContext.config = EmarsysConfig(applicationCode: "testAppCode")
-        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
-    }
-    
-    override func tearDown() async throws {
-        fakeNetworkClient.tearDown()
-        fakeTimestampProvider.tearDown()
-        fakeDeviceInfoCollector.tearDown()
+        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultUrls: defaultUrls, sdkContext: sdkContext, sessionContext: fakeSessionContext)
     }
     
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
@@ -153,7 +132,7 @@ final class EmarsysClientTests: XCTestCase {
             return (self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ]))
         }
         
-        let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
+        let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         
         XCTAssertEqual(fakeSessionContext.clientState,"clientState")
     }
@@ -165,7 +144,7 @@ final class EmarsysClientTests: XCTestCase {
             return (self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ]))
         }
 
-        let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request,body: testBody)
+        let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request,body: testBody)
 
         XCTAssertEqual(fakeSessionContext.clientState,"clientState")
     }
@@ -205,89 +184,7 @@ final class EmarsysClientTests: XCTestCase {
         XCTAssertEqual(finalResult, "finalValue")
         XCTAssertTrue(finalRequestInSend.allHTTPHeaderFields!.subDict(dict: expectedContactTokenHeader))
     }
-    
-    func testSend_withoutInput_shouldThrowPreconditionFailedError_whenConfigIsNil() async throws {
-        let sdkContextWithEmptyConfig = SdkContext()
-        sdkContextWithEmptyConfig.config = nil
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: sdkContextWithEmptyConfig, sessionContext: fakeSessionContext)
-        
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-                
-            default:
-                return (self.bodyDict.toData(), responseWithErrorStatus)
-            }
-        }
-        
-        let expectedError = Errors.preconditionFailed(message: "Config must not be nil")
-        
-        await assertThrows(expectedError: expectedError) {
-            let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
-        }
-    }
-    
-    func testSend_withoutInput_shouldThrowPreconditionFailedError_whenAppcodeIsNil() async throws {
-        let testSdkContext = SdkContext()
-        let emptyConfig = EmarsysConfig()
-        testSdkContext.config = emptyConfig
-        
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: defaultValues, sdkContext: testSdkContext, sessionContext: fakeSessionContext)
-        
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-                
-            default:
-                return (self.bodyDict.toData(), responseWithErrorStatus)
-            }
-        }
-        
-        let expectedError = Errors.preconditionFailed(message: "Application code must not be nil")
-        
-        await assertThrows(expectedError: expectedError) {
-            let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
-        }
-    }
-    
-    func testSend_withoutInput_shouldThrowUrlCreationFailedError() async throws {
-        let testDefaultValues = DefaultValues(
-            version: "1.0",
-            clientServiceBaseUrl: "invalid base.url",
-            eventServiceBaseUrl: "www.event.service.url",
-            predictBaseUrl: "www.predict.service.url",
-            deepLinkBaseUrl: "www.deeplink.service.url",
-            inboxBaseUrl: "www.inbox.service.url",
-            remoteConfigBaseUrl: "www.remote.config.service.url"
-        )
-        
-        let emsClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultValues: testDefaultValues, sdkContext: sdkContext, sessionContext: fakeSessionContext)
-        
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
-        let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
-        
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
-                
-            default:
-                return (self.bodyDict.toData(), responseWithErrorStatus)
-            }
-        }
-        
-        let expectedError = Errors.NetworkingError.urlCreationFailed(url: "invalid base.url/v3/apps/testAppCode/client/contact-token")
-        
-        await assertThrows(expectedError: expectedError) {
-            let _: (Data, HTTPURLResponse) = try await emsClient.send(request: request)
-        }
-    }
-    
+
     func testSend_withoutInput_shouldThrowMappingFailedError_ifNewContactTokenIsMissing() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)

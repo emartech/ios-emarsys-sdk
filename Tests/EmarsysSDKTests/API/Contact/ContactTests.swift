@@ -22,7 +22,10 @@ final class ContactTests: XCTestCase {
         fakeContactApi = FakeContactApi()
         fakePredictContactApi = FakePredictContactApi()
         gatherer = GathererContact(contactContext: contactContext)
-        sdkContext = SdkContext()
+        
+        let sdkConfig = SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey")
+        let defaultUrls = DefaultUrls(clientServiceBaseUrl: "testClientServiceBaseUrl", eventServiceBaseUrl: "testEventServiceBaseUrl", predictBaseUrl: "testPredictBaseUrl", deepLinkBaseUrl: "testDeepLinkBaseUrl", inboxBaseUrl: "testInboxBaseUrl", remoteConfigBaseUrl: "testRemoteConfigBaseUrl")
+        sdkContext = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
         
         contact = Contact(loggingContact: loggingContact,
                           gathererContact: gatherer,

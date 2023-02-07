@@ -6,8 +6,7 @@
 
 import Foundation
 
-struct DefaultValues: Decodable {
-    let version: String
+struct DefaultUrls: Decodable {
     let clientServiceBaseUrl: String
     let eventServiceBaseUrl: String
     let predictBaseUrl: String

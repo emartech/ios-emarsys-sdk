@@ -11,7 +11,7 @@ struct EmarsysClient: NetworkClient {
     
     let networkClient: NetworkClient
     let deviceInfoCollector: DeviceInfoCollector
-    let defaultValues: DefaultValues
+    let defaultUrls: DefaultUrls
     let sdkContext: SdkContext
     var sessionContext: SessionContext
     
@@ -53,17 +53,8 @@ struct EmarsysClient: NetworkClient {
     }
     
     private func refreshContactToken() async throws -> String {
-        guard let config = sdkContext.config else {
-            throw Errors.preconditionFailed(message: "Config must not be nil")
-        }
-        guard let applicationCode = config.applicationCode else {
-            throw Errors.preconditionFailed(message: "Application code must not be nil")
-        }
-        let url = defaultValues.clientServiceBaseUrl.appending("/v3/apps/\(applicationCode)/client/contact-token")
-        guard let refreshTokenURL = URL(string: url) else {
-            throw Errors.NetworkingError.urlCreationFailed(url: url)
-        }
-        let refreshTokenRequest = URLRequest.create(url: refreshTokenURL, method: .POST, body: ["refreshToken": sessionContext.refreshToken].toData())
+        let url = try sdkContext.createUrl(\.clientServiceBaseUrl, path: "/client/contact-token")
+        let refreshTokenRequest = URLRequest.create(url: url, method: .POST, body: ["refreshToken": sessionContext.refreshToken].toData())
         let extendedRefreshTokenRequest = await extendRequest(request: refreshTokenRequest)
         
         let refreshResult: (Data, HTTPURLResponse) = try await networkClient.send(request: extendedRefreshTokenRequest)
