@@ -12,7 +12,7 @@ protocol DependencyContainer {
     var defaultUrls: DefaultUrls { mutating get set }
     var sdkConfig: SdkConfig { mutating get set }
     var uuidProvider: any StringProvider { mutating get set }
-    var crypto: Crypto { mutating get set }
+    var crypto: any Crypto { mutating get set }
     var secureStorage: SecureStorage { mutating get set }
     var notificationCenterWrapper: NotificationCenterWrapper { mutating get set }
     var deviceInfoCollector: DeviceInfoCollector { mutating get set }

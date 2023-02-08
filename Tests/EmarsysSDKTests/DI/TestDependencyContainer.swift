@@ -38,8 +38,8 @@ class TestDependencyContainer: DependencyContainer {
         return FakeUuidProvider()
     }()
     
-    lazy var crypto: Crypto = {
-        return Crypto(base64encodedPublicKey: sdkConfig.cryptoPublicKey, sdkLogger: sdkLogger)
+    lazy var crypto: any Crypto = {
+        return FakeCrypto()
     }()
     
     lazy var secureStorage: SecureStorage = {
