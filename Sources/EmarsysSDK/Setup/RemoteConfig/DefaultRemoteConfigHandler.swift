@@ -7,8 +7,8 @@
 import Foundation
 
 @SdkActor
-struct DeafultRemoteConfigHandler: RemoteConfigHandler {
-    let deviceInfo: DeviceInfoCollector
+struct DefaultRemoteConfigHandler: RemoteConfigHandler {
+    let deviceInfoCollector: DeviceInfoCollector
     
     func handle() -> [String : String]? {
         [:]

@@ -27,4 +27,7 @@ extension XCTestCase {
         }
     }
     
+    open override func tearDownWithError() throws {
+        tearDownFakes()
+    }
 }
