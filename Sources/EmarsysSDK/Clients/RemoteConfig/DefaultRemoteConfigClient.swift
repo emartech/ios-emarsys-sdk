@@ -5,9 +5,10 @@ struct DefaultRemoteConfigClient: RemoteConfigClient {
     let networkClient: NetworkClient
     let sdkContext: SdkContext
     let crypto: Crypto
+    let jsonDecoder: JSONDecoder
     let logger: SdkLogger
 
-    func fetchRemoteConfig() async throws -> Dictionary<String, String>? {
+    func fetchRemoteConfig() async throws -> RemoteConfigResponse? {
         guard let configData: Data = try await fetchConfig() else {
             return nil
         }
@@ -15,9 +16,15 @@ struct DefaultRemoteConfigClient: RemoteConfigClient {
             return nil
         }
         let verified = crypto.verify(content: configData, signature: signature)
-        var remoteConfig: Dictionary<String, String>? = nil
+        var remoteConfig: RemoteConfigResponse? = nil
+        
         if verified {
-            remoteConfig = try JSONSerialization.jsonObject(with: configData) as! Dictionary<String, String>
+            do {
+                remoteConfig = try jsonDecoder.decode(RemoteConfigResponse.self, from: configData)
+            } catch {
+                let logEntry = LogEntry(topic: "remote-config", data: ["error" : error.localizedDescription])
+                logger.log(logEntry: logEntry, level: .error)
+            }
         }
         return remoteConfig
     }

@@ -7,11 +7,12 @@
 import Foundation
 
 @SdkActor
-struct FetchRemoteConfigState: State {
+struct ApplyRemoteConfigState: State {
 
     let remoteConfigClient: RemoteConfigClient
+    let defaultRemoteConfigHandler: RemoteConfigHandler
         
-    var name = SetupState.fetchRemoteConfig.rawValue
+    var name = SetupState.applyRemoteConfig.rawValue
     
     var nextStateName: String? = SetupState.registerClient.rawValue
     

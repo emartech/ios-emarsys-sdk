@@ -10,15 +10,8 @@ import Foundation
 @SdkActor
 class TestDependencyContainer: DependencyContainer {
     
-    lazy var sdkContext: SdkContext = {
-        let emarsysConfig = EmarsysConfig(applicationCode: "EMS11-C3FD3")
-        var context = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
-        context.config = emarsysConfig
-        return context
-    }()
-    
-    lazy var timestampProvider: any DateProvider = {
-        return FakeTimestampProvider()
+    lazy var sdkConfig: SdkConfig = {
+        return SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey")
     }()
     
     lazy var defaultUrls: DefaultUrls = {
@@ -30,20 +23,62 @@ class TestDependencyContainer: DependencyContainer {
                            remoteConfigBaseUrl: "https://base.remote-config.eservice.emarsys.net")
     }()
     
-    lazy var sdkConfig: SdkConfig = {
-        return SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey")
+    lazy var sdkContext: SdkContext = {
+        let emarsysConfig = EmarsysConfig(applicationCode: "EMS11-C3FD3")
+        var context = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
+        context.config = emarsysConfig
+        return context
+    }()
+    
+    lazy var sessionContext: SessionContext = {
+        return SessionContext(timestampProvider: timestampProvider)
+    }()
+    
+    lazy var contactApi: ContactApi = {
+        return FakeContactApi()
+    }()
+    
+    //MARK: Clients
+    lazy var pushClient: PushClient = {
+        return DefaultPushClient(emarsysClient: emarsysClient, sdkContext: sdkContext, sdkLogger: sdkLogger)
+    }()
+    
+    lazy var contactClient: ContactClient = {
+        return FakeContactClient()
+    }()
+        
+    lazy var emarsysClient: NetworkClient = {
+        return FakeGenericNetworkClient()
+    }()
+    
+    lazy var remoteConfigClient: any RemoteConfigClient = {
+        return FakeRemoteConfigClient()
+    }()
+    
+    lazy var genericNetworkClient: NetworkClient = {
+        return FakeGenericNetworkClient()
+    }()
+    
+    
+    lazy var crypto: any Crypto = {
+        return FakeCrypto()
+    }()
+    
+    lazy var sdkLogger: SdkLogger = {
+        return SdkLogger()
+    }()
+    
+    lazy var secureStorage: SecureStorage = {
+        return FakeSecureStorage()
     }()
     
     lazy var uuidProvider: any StringProvider = {
         return FakeUuidProvider()
     }()
     
-    lazy var crypto: any Crypto = {
-        return FakeCrypto()
-    }()
     
-    lazy var secureStorage: SecureStorage = {
-        return FakeSecureStorage()
+    lazy var timestampProvider: any DateProvider = {
+        return FakeTimestampProvider()
     }()
     
     lazy var notificationCenterWrapper: NotificationCenterWrapper = {
@@ -54,36 +89,9 @@ class TestDependencyContainer: DependencyContainer {
         return FakeDeviceInfoCollector()
     }()
     
-    lazy var sessionContext: SessionContext = {
-        return SessionContext(timestampProvider: timestampProvider)
-    }()
-    
-    lazy var genericNetworkClient: NetworkClient = {
-        return FakeGenericNetworkClient()
-    }()
-    
-    lazy var contactClient: ContactClient = {
-        return FakeContactClient()
-    }()
-    
-    lazy var sdkLogger: SdkLogger = {
-        return SdkLogger()
-    }()
-    
-    lazy var emarsysClient: NetworkClient = {
-        return FakeGenericNetworkClient()
-    }()
-    
-    lazy var pushClient: PushClient = {
-        return DefaultPushClient(emarsysClient: emarsysClient, sdkContext: sdkContext, sdkLogger: sdkLogger)
-    }()
-    
+  
+    //MARK: Setup
     lazy var setupOrganizer: SetupOrganizer = {
         return SetupOrganizer(stateMachine: StateMachine(states: []), sdkContext: sdkContext)
     }()
-    
-    lazy var contactApi: ContactApi = {
-        return FakeContactApi()
-    }()
-
 }

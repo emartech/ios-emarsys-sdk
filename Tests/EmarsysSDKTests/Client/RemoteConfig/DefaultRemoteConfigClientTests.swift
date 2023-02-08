@@ -4,7 +4,7 @@ import XCTest
 @testable import EmarsysSDK
 
 @SdkActor
-final class RemoteConfigClient: XCTestCase {
+final class DefaultRemoteConfigClientTests: XCTestCase {
     
     @Inject(\.genericNetworkClient)
     var fakeNetworkClient: FakeGenericNetworkClient
@@ -22,13 +22,16 @@ final class RemoteConfigClient: XCTestCase {
     var defaultUrls: DefaultUrls
     
     var remoteConfigClient: DefaultRemoteConfigClient!
+    var jsonDecoder: JSONDecoder!
+    var jsonEncoder: JSONEncoder!
     
     override func setUpWithError() throws {
-        try! super.setUpWithError()
-        
+        jsonDecoder = JSONDecoder()
+        jsonEncoder = JSONEncoder()
         remoteConfigClient = DefaultRemoteConfigClient(networkClient: fakeNetworkClient,
                                                        sdkContext: sdkContext,
                                                        crypto: fakeCrypto,
+                                                       jsonDecoder: jsonDecoder,
                                                        logger: sdkLogger)
     }
     
@@ -104,10 +107,26 @@ final class RemoteConfigClient: XCTestCase {
         XCTAssertEqual(counter, 0)
     }
     
-    func testFetchRemoteConfig_shouldCall_verify_whenBothConfigAndSignatureFound() async throws {
-        let response = try JSONSerialization.data(withJSONObject: ["key":"value"])
+    func testFetchRemoteConfig_shouldReturnRemoteConfig_whenVerificationSucceeds() async throws {
+        let serviceUrls = ServiceUrls(eventService: "https://base.mobile-events.eservice.emarsys.net",
+                                      clientService: "https://base.me-client.eservice.emarsys.net",
+                                      predictService: "https://base.predict.eservice.emarsys.net",
+                                      deepLinkService: "https://base.deeplink.eservice.emarsys.net",
+                                      inboxService: "https://base.inbox.eservice.emarsys.net")
+        let loglevel = "warn"
+        let features1 = RemoteConfigFeatures(mobileEngage: true, predict: false)
+        let features2 = RemoteConfigFeatures(mobileEngage: false, predict: true)
+        
+        let overrideConfig = RemoteConfig(serviceUrls: serviceUrls, logLevel: "debug", features: features2)
+        let overridesDict = ["testHwId": overrideConfig]
+        let responseRemoteConfig = RemoteConfigResponse(serviceUrls: serviceUrls,
+                                                        logLevel: loglevel,
+                                                        features: features1,
+                                                        overrides: overridesDict)
+        
+        let responseData = try jsonEncoder.encode(responseRemoteConfig)
         fakeNetworkClient.when(\.send) { invocationCount, params in
-            return (response, HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
+            return (responseData, HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
         }
         
         var counter = 0
@@ -115,11 +134,11 @@ final class RemoteConfigClient: XCTestCase {
             counter = invocationCount
             return true
         }
-        let expected: Dictionary<String , String> = ["key":"value"]
-        let result :Dictionary<String , String>? = try await remoteConfigClient.fetchRemoteConfig()
+        
+        let result :RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
         
         XCTAssertEqual(counter, 1)
-        XCTAssertEqual(result, expected)
+        XCTAssertEqual(result, responseRemoteConfig)
     }
     
     func testFetchRemoteConfig_shouldReturnNil_whenVerifyFailed() async throws {
@@ -133,10 +152,10 @@ final class RemoteConfigClient: XCTestCase {
             counter = invocationCount
             return false
         }
-        let expected: Dictionary<String , String>? = nil
-        let result :Dictionary<String , String>? = try await remoteConfigClient.fetchRemoteConfig()
+
+        let result :RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
         
         XCTAssertEqual(counter, 1)
-        XCTAssertEqual(result, expected)
+        XCTAssertNil(result)
     }
 }
