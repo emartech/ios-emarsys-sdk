@@ -5,8 +5,17 @@ import XCTest
 
 
 @SdkActor
-final class DefaultPushClientTests: EmarsysTestCase {
+final class DefaultPushClientTests: XCTestCase {
 
+    @Inject(\.genericNetworkClient)
+    var fakeNetworkClient: FakeGenericNetworkClient
+    
+    @Inject(\.sdkContext)
+    var sdkContext: SdkContext
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger
+    
     var pushClient: PushClient!
     
     override func setUpWithError() throws {
@@ -16,5 +25,10 @@ final class DefaultPushClientTests: EmarsysTestCase {
                                        sdkContext: sdkContext,
                                        sdkLogger: sdkLogger)
     }
+    
+    override func tearDownWithError() throws {
+        tearDownFakes()
+    }
+    
 // TODO: tests
 }

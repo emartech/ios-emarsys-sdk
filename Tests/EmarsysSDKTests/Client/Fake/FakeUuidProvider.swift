@@ -3,13 +3,13 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeUuidStringProvider: UuidProvider {
+struct FakeUuidProvider: StringProvider, Faked {
     
     let instanceId = UUID().uuidString
     
-    var testUuid: String
+    let provide = "provide"
     
     func provide() async -> String {
-        return testUuid
+        return try! handleCall(\.provide)
     }
 }

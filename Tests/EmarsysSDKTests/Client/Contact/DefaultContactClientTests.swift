@@ -6,22 +6,37 @@
 import XCTest
 @testable import EmarsysSDK
 
-final class DefaultContactClientTests: EmarsysTestCase {
+final class DefaultContactClientTests: XCTestCase {
+    
     let contactFieldId = 123
     let contactFieldValue = "testContactFieldValue"
     let openIdToken = "testOpenIdToken"
     let contactToken = "testContactToken"
     let refreshToken = "testRefreshToken"
     
+    @Inject(\.genericNetworkClient)
+    var fakeNetworkClient: FakeGenericNetworkClient
+    
+    @Inject(\.sessionContext)
+    var sessionContext: SessionContext
+    
+    @Inject(\.sdkContext)
+    var sdkContext: SdkContext
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger
+    
     var contactClient: ContactClient!
     
     override func setUpWithError() throws {
-        try! super.setUpWithError()
-        
         contactClient = DefaultContactClient(emarsysClient: fakeNetworkClient,
                                              sdkContext: sdkContext,
                                              sessionContext: sessionContext,
                                              sdkLogger: sdkLogger)
+    }
+    
+    override func tearDownWithError() throws {
+        tearDownFakes()
     }
     
     func testLinkContact_shouldThrowErrorWhenContactFieldValueAndOpenIdToken_isNil() async throws {
@@ -57,7 +72,6 @@ final class DefaultContactClientTests: EmarsysTestCase {
         }
         
         try await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue, openIdToken: nil)
-        
     }
     
     func testLinkContact_shouldSendRequestWithEmarsysClient_includingOnlyOpenIdTokenIs_whenContactFieldValueIsNil() async throws {

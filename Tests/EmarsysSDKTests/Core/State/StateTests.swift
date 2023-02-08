@@ -6,9 +6,10 @@
 import XCTest
 @testable import EmarsysSDK
 
+@SdkActor
 final class StateTests: XCTestCase {
 
-    @SdkActor func testSingleStateSwitching() async throws {
+    func testSingleStateSwitching() async throws {
         let states:[State] = [TestState1()]
         let machine = StateMachine(states: states)
 
@@ -18,7 +19,7 @@ final class StateTests: XCTestCase {
         XCTAssertEqual(machine.stateLifecycle?.lifecycle, .relaxed)
     }
     
-    @SdkActor func testMultipleStateSwitching() async throws {
+    func testMultipleStateSwitching() async throws {
         let states:[State] = [TestState1(),TestState2()]
         let machine = StateMachine(states: states)
         

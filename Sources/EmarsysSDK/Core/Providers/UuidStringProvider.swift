@@ -2,7 +2,7 @@
 import Foundation
 
 @SdkActor
-struct UuidStringProvider: UuidProvider {
+struct UUIDProvider: StringProvider {
     
     func provide() async -> String {
         UUID().uuidString

@@ -13,7 +13,7 @@ import Combine
 struct DefaultDeviceInfoCollector: DeviceInfoCollector {
     let notificationCenterWrapper: NotificationCenterWrapper
     let secureStorage: SecureStorage
-    let uuidProvider: any UuidProvider
+    let uuidProvider: any StringProvider
     let logger: SdkLogger
     
     let hardwareIdKey = "kHardwareIdKey"

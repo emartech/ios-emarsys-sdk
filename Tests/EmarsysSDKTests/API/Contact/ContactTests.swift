@@ -4,29 +4,31 @@ import XCTest
 @SdkActor
 final class ContactTests: XCTestCase {
     
-    var fakeContactApi: FakeContactApi!
     var fakePredictContactApi: FakePredictContactApi!
     
     var loggingContact: ActivatableContactApi!
     
     var gatherer: ActivatableContactApi!
-    var sdkContext: SdkContext!
+
     var contactContext: ContactContext!
+    
     var contact: Contact!
-    var sdkLogger:SdkLogger!
+    
+    @Inject(\.contactApi)
+    var fakeContactApi: FakeContactApi
+    
+    @Inject(\.sdkContext)
+    var sdkContext: SdkContext
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger:SdkLogger
     
     override func setUp() async throws {
-        contactContext = ContactContext()
-        sdkLogger = SdkLogger()
-        loggingContact = LoggingContact(logger: sdkLogger)
-        fakeContactApi = FakeContactApi()
         fakePredictContactApi = FakePredictContactApi()
+        contactContext = ContactContext()
+        loggingContact = LoggingContact(logger: sdkLogger)
         gatherer = GathererContact(contactContext: contactContext)
-        
-        let sdkConfig = SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey")
-        let defaultUrls = DefaultUrls(clientServiceBaseUrl: "testClientServiceBaseUrl", eventServiceBaseUrl: "testEventServiceBaseUrl", predictBaseUrl: "testPredictBaseUrl", deepLinkBaseUrl: "testDeepLinkBaseUrl", inboxBaseUrl: "testInboxBaseUrl", remoteConfigBaseUrl: "testRemoteConfigBaseUrl")
-        sdkContext = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
-        
+
         contact = Contact(loggingContact: loggingContact,
                           gathererContact: gatherer,
                           contactInternal: fakeContactApi,
@@ -35,8 +37,7 @@ final class ContactTests: XCTestCase {
     }
     
     override func tearDown() {
-        fakeContactApi.tearDown()
-        DependencyInjection.tearDown()
+        tearDownFakes()
     }
 
     func testInit_shouldInitContact_withLoggingContactAsActive() {

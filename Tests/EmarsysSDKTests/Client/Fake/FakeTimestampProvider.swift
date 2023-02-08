@@ -10,7 +10,9 @@ struct FakeTimestampProvider: DateProvider, Faked {
     
     let instanceId = UUID().description
     
+    let provide = "provide"
+    
     func provide() async -> Date {
-       return try! handleCall()
+        return try! handleCall(\.provide)
     }
 }

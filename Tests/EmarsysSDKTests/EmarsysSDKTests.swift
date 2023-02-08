@@ -3,6 +3,7 @@ import XCTest
 
 @SdkActor
 final class EmarsysSDKTests: XCTestCase {
+    
     let applicationCode = "testApplicationCode"
     let merchantId = "testMerchantId"
     

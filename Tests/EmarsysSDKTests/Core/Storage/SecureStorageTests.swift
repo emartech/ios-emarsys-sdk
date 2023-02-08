@@ -7,6 +7,7 @@ import XCTest
 @testable import EmarsysSDK
 
 final class SecureStorageTests: XCTestCase {
+    
     let testKey = "test"
     var secureStorage: DefaultSecureStorage!
 

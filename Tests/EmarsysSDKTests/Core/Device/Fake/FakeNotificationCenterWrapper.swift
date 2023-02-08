@@ -7,7 +7,9 @@ struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Faked {
     
     let instanceId = UUID().uuidString
     
+    let notificationSettings = "notificationSettings"
+    
     func notificationSettings() async -> UNNotificationSettings {
-        return try! handleCall()
+        return try! handleCall(\.notificationSettings)
     }
 }

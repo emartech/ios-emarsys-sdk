@@ -4,19 +4,30 @@ import XCTest
 
 @SdkActor
 final class DeviceInfoCollectorTests: XCTestCase {
+    
+    @Inject(\.uuidProvider)
+    var fakeUuidProvider: FakeUuidProvider
+    
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage
+    
+    @Inject(\.notificationCenterWrapper)
+    var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
+    
+    @Inject(\.sdkLogger)
+    var logger: SdkLogger
+    
     var deviceInfoCollector: DefaultDeviceInfoCollector!
-    var fakeUuidProvider: FakeUuidStringProvider!
-    var fakeSecureStorage: FakeSecureStorage!
-    var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper!
-    var logger: SdkLogger!
     
     let testUuid = "testUuid"
     
     override func setUpWithError() throws {
         logger = SdkLogger()
-        fakeSecureStorage = FakeSecureStorage()
-        fakeUuidProvider = FakeUuidStringProvider(testUuid: testUuid)
-        fakeNotificationCenterWrapper = FakeNotificationCenterWrapper()
+        
+        fakeUuidProvider.when(\.provide) { [unowned self] invocationCount, params in
+            return self.testUuid
+        }
+        
         deviceInfoCollector = DefaultDeviceInfoCollector(notificationCenterWrapper: fakeNotificationCenterWrapper,
                                                          secureStorage: fakeSecureStorage,
                                                          uuidProvider: fakeUuidProvider,
@@ -25,7 +36,7 @@ final class DeviceInfoCollectorTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        fakeSecureStorage.tearDown()
+        tearDownFakes()
     }
     
     func testHardwareId_shouldReturnStoredValue() async throws {

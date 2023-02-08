@@ -3,7 +3,7 @@ public struct EmarsysSDK { //TODO: TBD: do we need static methods? probably.. bu
     // TODO: TBD: what if customers don't want to await a function call? how they can do it if we have only async functions?
     
     public static func initialize() async {
-        let container = await DependencyContainer()
+        let container = await DefaultDependencyContainer()
         DependencyInjection.setup(container)
         await DependencyInjection.container?.sdkContext.setSdkState(sdkState: .onHold)
     }

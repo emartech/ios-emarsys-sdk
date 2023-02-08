@@ -7,25 +7,50 @@ import XCTest
 @testable import EmarsysSDK
 
 @SdkActor
-final class DefaultDeviceClientTests: EmarsysTestCase {
-
-    var fakeDeviceInfoCollector: FakeDeviceInfoCollector!
+final class DefaultDeviceClientTests: XCTestCase {
+    
+    @Inject(\.deviceInfoCollector)
+    var fakeDeviceInfoCollector: FakeDeviceInfoCollector
+    
+    @Inject(\.genericNetworkClient)
+    var fakeNetworkClient: FakeGenericNetworkClient
+    
+    @Inject(\.sdkContext)
+    var sdkContext: SdkContext
+    
+    let deviceInfo = DeviceInfo(platform: "iOS",
+                                applicationVersion: "testVersion",
+                                deviceModel: "iPhone14Pro",
+                                osVersion: "16.1",
+                                sdkVersion: "4.0.0",
+                                language: "english",
+                                timezone: "testZone",
+                                pushSettings: PushSettings(authorizationStatus: "testAuthStatus",
+                                                           soundSetting: "testSoundSetting",
+                                                           badgeSetting: "testBadgeSetting",
+                                                           alertSetting: "testAlertSetting",
+                                                           notificationCenterSetting: "testNotificationSetting",
+                                                           lockScreenSetting: "testLockScreenSetting",
+                                                           carPlaySetting: "testCarPlaySetting",
+                                                           alertStyle: "testAlertStyle",
+                                                           showPreviewsSetting: "showPreviewSetting",
+                                                           criticalAlertSetting: "testCriticalSetting",
+                                                           providesAppNotificationSettings: "testProvidesAppNotificationSettings",
+                                                           scheduledDeliverySetting: "testScheduledDeliverySetting",
+                                                           timeSensitiveSetting: "testTimeSensitiveSetting"))
+    
     var defaultDeviceClient: DeviceClient!
     
     override func setUpWithError() throws {
-        try! super.setUpWithError()
-        fakeDeviceInfoCollector = FakeDeviceInfoCollector()
-        
         defaultDeviceClient = DefaultDeviceClient(emarsysClient: fakeNetworkClient,
                                                   sdkContext: sdkContext,
                                                   deviceInfoCollector: fakeDeviceInfoCollector)
     }
     
     override func tearDownWithError() throws {
-        try! super.tearDownWithError()
-        fakeDeviceInfoCollector.tearDown()
+        tearDownFakes()
     }
-
+    
     func testRegisterClient_shouldSendRequest_withEmarsysClient() async throws {
         let expectation = XCTestExpectation(description: "waitForExpectation")
         fakeDeviceInfoCollector.when(\.collect) { invocationCount, params in

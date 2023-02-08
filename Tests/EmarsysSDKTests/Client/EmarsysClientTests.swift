@@ -7,12 +7,27 @@ import XCTest
 @testable import EmarsysSDK
 
 @SdkActor
-final class EmarsysClientTests: EmarsysTestCase {
+final class EmarsysClientTests: XCTestCase {
 
+    @Inject(\.sessionContext)
+    var sessionContext: SessionContext
+    
+    @Inject(\.sdkContext)
+    var sdkContext: SdkContext
+    
+    @Inject(\.defaultUrls)
+    var defaultUrls: DefaultUrls
+    
+    @Inject(\.deviceInfoCollector)
+    var fakeDeviceInfoCollector: FakeDeviceInfoCollector
+    
+    @Inject(\.genericNetworkClient)
+    var fakeNetworkClient: FakeGenericNetworkClient
+    
+    @Inject(\.timestampProvider)
+    var fakeTimestampProvider: FakeTimestampProvider
+    
     var emarsysClient: EmarsysClient!
-
-    var fakeSessionContext: SessionContext!
-    var fakeDeviceInfoCollector: FakeDeviceInfoCollector!
     
     let headers = [
         "Content-Type": "application/json",
@@ -40,24 +55,29 @@ final class EmarsysClientTests: EmarsysTestCase {
     let testClientState = "testClientState"
     let testClientId = "testClientId"
     let testContactToken = "testContactToken"
-    let testDate = Date(timeIntervalSince1970: 50000)
-    var testTimestamp: String!
     var requiredHeaders: [String: String]!
     
     override func setUpWithError() throws {
         try! super.setUpWithError()
 
-        testTimestamp = "\(testDate)"
+        fakeTimestampProvider.when(\.provide) { invocationCount, params in
+            return Date(timeIntervalSince1970: 50000)
+        }
+        
         requiredHeaders = [
             "X-Client-State": testClientState,
             "X-Client-Id": testClientId,
             "X-Contact-Token": testContactToken,
-            "X-Request-Order": testTimestamp
+            "X-Request-Order": "\(Date(timeIntervalSince1970: 50000).timeIntervalSince1970 * 1000)"
         ]
-        fakeSessionContext = FakeSessionContext(timestampProvider: fakeTimestampProvider)
-        fakeSessionContext.contactToken = testContactToken
-        fakeDeviceInfoCollector = FakeDeviceInfoCollector()
-        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultUrls: defaultUrls, sdkContext: sdkContext, sessionContext: fakeSessionContext)
+        sessionContext.contactToken = testContactToken
+        sessionContext.clientId = testClientId
+        sessionContext.clientState = testClientState
+        emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultUrls: defaultUrls, sdkContext: sdkContext, sessionContext: sessionContext)
+    }
+    
+    override func tearDownWithError() throws {
+        tearDownFakes()
     }
     
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
@@ -134,7 +154,7 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         
-        XCTAssertEqual(fakeSessionContext.clientState,"clientState")
+        XCTAssertEqual(sessionContext.clientState,"clientState")
     }
 
     func testSend_withoutInput_withBody_shouldStoreClientState_toSessionContext_whenClientState_isPresent() async throws {
@@ -146,7 +166,7 @@ final class EmarsysClientTests: EmarsysTestCase {
 
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request,body: testBody)
 
-        XCTAssertEqual(fakeSessionContext.clientState,"clientState")
+        XCTAssertEqual(sessionContext.clientState,"clientState")
     }
 
     func testSend_withoutInput_shouldRefreshTheContactToken_whenResponseStatus_is401() async throws {

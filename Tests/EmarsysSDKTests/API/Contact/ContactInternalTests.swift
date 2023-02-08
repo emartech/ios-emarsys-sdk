@@ -12,6 +12,8 @@ final class ContactInternalTests: XCTestCase {
     
     var contactInternal: ContactInternal!
     var contactContext: ContactContext!
+    
+    @Inject(\.contactClient)
     var fakeContactClient: FakeContactClient!
     
     override func setUpWithError() throws {
@@ -21,7 +23,7 @@ final class ContactInternalTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        fakeContactClient.tearDown()
+        tearDownFakes()
     }
     
     func testLinkContact_shouldDelegateCallToClient() async throws {
