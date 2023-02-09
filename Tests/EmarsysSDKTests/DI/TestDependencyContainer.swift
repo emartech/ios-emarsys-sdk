@@ -80,7 +80,7 @@ class TestDependencyContainer: DependencyContainer {
     lazy var timestampProvider: any DateProvider = {
         return FakeTimestampProvider()
     }()
-    
+
     lazy var randomProvider: any DoubleProvider = {
         return FakeRandomProvider()
     }()
@@ -97,5 +97,9 @@ class TestDependencyContainer: DependencyContainer {
     //MARK: Setup
     lazy var setupOrganizer: SetupOrganizer = {
         return SetupOrganizer(stateMachine: StateMachine(states: []), sdkContext: sdkContext)
+    }()
+
+    lazy var remoteConfigHandler: RemoteConfigHandler = {
+        return FakeRemoteConfigHandler()
     }()
 }

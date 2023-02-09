@@ -116,4 +116,12 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         let machine = StateMachine(states: [])
         return SetupOrganizer(stateMachine: machine, sdkContext: sdkContext)
     }()
+
+    lazy var remoteConfigHandler: RemoteConfigHandler = {
+        return DefaultRemoteConfigHandler(deviceInfoCollector: deviceInfoCollector,
+                remoteConfigClient: remoteConfigClient,
+                sdkContext: sdkContext,
+                sdkLogger: sdkLogger,
+                randomProvider: RandomProvider(in: 0.0 ... 1.0))
+    }()
 }

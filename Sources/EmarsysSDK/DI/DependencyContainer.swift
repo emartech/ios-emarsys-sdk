@@ -29,4 +29,5 @@ protocol DependencyContainer {
     var deviceInfoCollector: DeviceInfoCollector { mutating get set }
 
     var setupOrganizer: SetupOrganizer { mutating get set }
+    var remoteConfigHandler: RemoteConfigHandler { mutating get set }
 }

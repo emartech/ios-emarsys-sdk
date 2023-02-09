@@ -2,9 +2,9 @@ import Foundation
 
 @SdkActor
 class RandomProvider: DoubleProvider {
-    let range: Range<Double>
+    let range: ClosedRange<Double>
 
-    init(in range: Range<Double>) {
+    init(in range: ClosedRange<Double>) {
         self.range = range
     }
 
