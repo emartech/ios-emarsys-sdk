@@ -5,6 +5,6 @@
 
 import Foundation
 
+@SdkActor
 protocol DateProvider: Provider where Value == Date {
-    
 }

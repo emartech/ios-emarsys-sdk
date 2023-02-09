@@ -2,7 +2,7 @@
 //
 // Copyright © 2022. Emarsys-Technologies Kft. All rights reserved.
 //
-        
+
 
 import Foundation
 
@@ -15,6 +15,7 @@ struct DeviceInfo: Encodable, Equatable {
     let language: String
     let timezone: String
     let pushSettings: PushSettings
+    let hardwareId: String
 }
 
 struct PushSettings: Encodable, Equatable {

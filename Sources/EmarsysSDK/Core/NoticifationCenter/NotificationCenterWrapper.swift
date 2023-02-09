@@ -4,5 +4,5 @@ import UserNotifications
 
 @SdkActor
 protocol NotificationCenterWrapper {
-    func notificationSettings() async -> UNNotificationSettings
+    func notificationSettings() async -> PushSettings
 }

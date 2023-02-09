@@ -6,10 +6,9 @@
 
 import Foundation
 
+@SdkActor
 protocol Provider {
-    
     associatedtype Value
     
-    func provide() async -> Value
-    
+    func provide() -> Value
 }

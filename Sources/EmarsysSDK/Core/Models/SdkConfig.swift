@@ -9,4 +9,5 @@ import Foundation
 struct SdkConfig: Decodable {
     let version: String
     let cryptoPublicKey: String
+    var remoteLogLevel: String
 }

@@ -9,7 +9,7 @@ struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Faked {
     
     let notificationSettings = "notificationSettings"
     
-    func notificationSettings() async -> UNNotificationSettings {
+    func notificationSettings() async -> PushSettings {
         return try! handleCall(\.notificationSettings)
     }
 }

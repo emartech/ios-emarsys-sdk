@@ -22,7 +22,7 @@ final class SdkContextTests: XCTestCase {
             inboxBaseUrl: "www.inbox.service.url",
             remoteConfigBaseUrl: "www.remote.config.service.url"
         )
-        let sdkConfig = SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey")
+        let sdkConfig = SdkConfig(version: "testVersion", cryptoPublicKey: "testCryptoPublicKey", remoteLogLevel: "testLogLevel")
         sdkContext = SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
         sdkContext.config = EmarsysConfig(applicationCode: "testApplicationCode")
     }

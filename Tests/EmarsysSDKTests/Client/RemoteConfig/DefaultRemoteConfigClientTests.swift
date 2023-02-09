@@ -121,6 +121,7 @@ final class DefaultRemoteConfigClientTests: XCTestCase {
         let overridesDict = ["testHwId": overrideConfig]
         let responseRemoteConfig = RemoteConfigResponse(serviceUrls: serviceUrls,
                                                         logLevel: loglevel,
+                                                        luckyLogger: nil,
                                                         features: features1,
                                                         overrides: overridesDict)
         

@@ -60,7 +60,7 @@ final class EmarsysClientTests: XCTestCase {
     override func setUpWithError() throws {
         try! super.setUpWithError()
 
-        fakeTimestampProvider.when(\.provide) { invocationCount, params in
+        fakeTimestampProvider.when(\.provideFuncName) { invocationCount, params in
             return Date(timeIntervalSince1970: 50000)
         }
         

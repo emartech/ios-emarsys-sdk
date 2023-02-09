@@ -3,13 +3,13 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeUuidProvider: StringProvider, Faked {
+struct FakeRandomProvider: DoubleProvider, Faked {
     
     let instanceId = UUID().uuidString
     
     let provideFuncName = "provide"
     
-    func provide() -> String {
+    func provide() -> Double {
         return try! handleCall(\.provideFuncName)
     }
 }
