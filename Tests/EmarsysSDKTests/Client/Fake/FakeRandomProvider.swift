@@ -5,7 +5,7 @@ import Foundation
 
 struct FakeRandomProvider: DoubleProvider, Faked {
     
-    let instanceId = UUID().uuidString
+    var faker = Faker()
     
     let provideFuncName = "provide"
     

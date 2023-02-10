@@ -35,10 +35,6 @@ final class ContactTests: XCTestCase {
                           predictContactInternal: fakePredictContactApi,
                           sdkContext: sdkContext)
     }
-    
-    override func tearDown() {
-        tearDownFakes()
-    }
 
     func testInit_shouldInitContact_withLoggingContactAsActive() {
         let testContact = Contact(

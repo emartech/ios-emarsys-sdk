@@ -17,17 +17,4 @@ extension XCTestCase {
             XCTAssertEqual(error as! ErrorType, expectedError)
         }
     }
-    
-    func tearDownFakes() {
-        let selfMirror = Mirror(reflecting: self)
-        selfMirror.children.forEach { child in
-            if let fake = child.value as? any Faked {
-                fake.tearDown()
-            }
-        }
-    }
-    
-    open override func tearDownWithError() throws {
-        tearDownFakes()
-    }
 }

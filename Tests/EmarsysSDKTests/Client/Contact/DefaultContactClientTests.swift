@@ -34,11 +34,7 @@ final class DefaultContactClientTests: XCTestCase {
                                              sessionContext: sessionContext,
                                              sdkLogger: sdkLogger)
     }
-    
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
+
     func testLinkContact_shouldThrowErrorWhenContactFieldValueAndOpenIdToken_isNil() async throws {
         let expectedError = Errors.preconditionFailed(message: "Either contactFieldValue or openIdToken must not be nil")
         

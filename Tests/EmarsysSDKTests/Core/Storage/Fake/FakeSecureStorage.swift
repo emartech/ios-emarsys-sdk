@@ -4,7 +4,7 @@ import Foundation
 
 struct FakeSecureStorage: SecureStorage, Faked {
 
-    let instanceId = UUID().uuidString
+    var faker = Faker()
     
     let put = "put"
     let get = "get"

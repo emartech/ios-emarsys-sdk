@@ -7,7 +7,8 @@ import Foundation
 @testable import EmarsysSDK
 
 struct FakePredictContactApi: ActivatableContactApi, Faked {
-    var instanceId: String = UUID().description
+    
+    var faker = Faker()
     
     let linkContact = "linkContact"
     let linkAuthenticatedContact = "linkAuthenticatedContact"

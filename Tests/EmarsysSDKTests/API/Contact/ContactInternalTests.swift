@@ -22,10 +22,6 @@ final class ContactInternalTests: XCTestCase {
         contactInternal = ContactInternal(contactContext: contactContext, contactClient: fakeContactClient)
     }
     
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
     func testLinkContact_shouldDelegateCallToClient() async throws {
         let testFieldId = 123
         let testFieldValue = "testContactFieldValue"

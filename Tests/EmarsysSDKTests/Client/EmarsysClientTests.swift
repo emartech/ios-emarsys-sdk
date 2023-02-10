@@ -75,11 +75,7 @@ final class EmarsysClientTests: XCTestCase {
         sessionContext.clientState = testClientState
         emarsysClient = EmarsysClient(networkClient: fakeNetworkClient, deviceInfoCollector: fakeDeviceInfoCollector, defaultUrls: defaultUrls, sdkContext: sdkContext, sessionContext: sessionContext)
     }
-    
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
+
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         

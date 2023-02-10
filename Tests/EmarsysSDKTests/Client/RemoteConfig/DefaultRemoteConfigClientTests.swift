@@ -34,11 +34,7 @@ final class DefaultRemoteConfigClientTests: XCTestCase {
                                                        jsonDecoder: jsonDecoder,
                                                        logger: sdkLogger)
     }
-    
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
+
     func testFetchRemoteConfig_shouldSendRequest_withRemoteConfigClient() async throws {
         let remoteConfigUrl = (defaultUrls.remoteConfigBaseUrl + "/\(sdkContext.config?.applicationCode ?? "")")
         let signatureUrl = (defaultUrls.remoteConfigBaseUrl + "/signature/\(sdkContext.config?.applicationCode ?? "")")

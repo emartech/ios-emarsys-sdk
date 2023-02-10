@@ -5,7 +5,7 @@ import Foundation
 
 struct FakeUuidProvider: StringProvider, Faked {
     
-    let instanceId = UUID().uuidString
+    var faker = Faker()
     
     let provideFuncName = "provide"
     

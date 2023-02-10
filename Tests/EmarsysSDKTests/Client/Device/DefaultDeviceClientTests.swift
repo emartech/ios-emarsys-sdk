@@ -48,10 +48,6 @@ final class DefaultDeviceClientTests: XCTestCase {
                 deviceInfoCollector: fakeDeviceInfoCollector)
     }
 
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-
     func testRegisterClient_shouldSendRequest_withEmarsysClient() async throws {
         let expectation = XCTestExpectation(description: "waitForExpectation")
         fakeDeviceInfoCollector.when(\.collect) { invocationCount, params in
@@ -77,6 +73,7 @@ final class DefaultDeviceClientTests: XCTestCase {
 
         wait(for: [expectation], timeout: 5)
     }
+    
 
     func testRegisterClient_shouldHandleFailedRequestAndThrow() async throws {
         let failedRequestUrl = URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client")

@@ -18,11 +18,7 @@ final class PredictContactInternalTests: XCTestCase {
         fakeContactClient = FakeContactClient()
         predictContactInternal = PredictContactInternal(contactContext: contactContext, contactClient: fakeContactClient)
     }
-    
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
+
     func testLinkContact_shouldDelegateCallToClient() async throws {
         
         var contactFieldId: Int? = nil

@@ -8,7 +8,8 @@ import Foundation
 
 struct FakeContactClient: ContactClient, Faked {
     
-    var instanceId: String = UUID().description
+    var faker = Faker()
+    
     let linkContact = "linkContact"
     let unlinkContact = "unlinkContact"
     

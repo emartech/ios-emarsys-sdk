@@ -36,10 +36,6 @@ final class DeviceInfoCollectorTests: XCTestCase {
         )
     }
 
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-
     func testHardwareId_shouldReturnStoredValue() async throws {
         let storedHardwareId: String = "stored hardware ID"
 

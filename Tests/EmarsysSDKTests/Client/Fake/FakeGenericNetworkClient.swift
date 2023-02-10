@@ -8,7 +8,7 @@ import Foundation
 
 struct FakeGenericNetworkClient: NetworkClient, Faked {
     
-    let instanceId = UUID().description
+    var faker = Faker()
     
     let send: String = "send"
     let sendWithBody: String = "sendWithBody"

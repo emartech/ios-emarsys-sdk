@@ -5,7 +5,7 @@ import Foundation
 @SdkActor
 struct FakeDeviceInfoCollector: DeviceInfoCollector, Faked {
     
-    let instanceId = UUID().uuidString
+    var faker = Faker()
     
     let collect: String = "collect"
     

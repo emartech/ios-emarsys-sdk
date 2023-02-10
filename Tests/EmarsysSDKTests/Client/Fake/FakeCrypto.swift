@@ -3,7 +3,7 @@ import Foundation
 
 struct FakeCrypto: Crypto, Faked {
 
-    let instanceId = UUID().description
+    var faker = Faker()
 
     let verify: String = "verify"
 

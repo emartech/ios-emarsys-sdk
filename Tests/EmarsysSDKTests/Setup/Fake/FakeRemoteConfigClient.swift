@@ -9,7 +9,7 @@ import Foundation
 
 struct FakeRemoteConfigClient: RemoteConfigClient, Faked {
     
-    var instanceId: String = UUID().uuidString
+    var faker = Faker()
     
     let fetchRemoteConfig = "fetchRemoteConfig"
     

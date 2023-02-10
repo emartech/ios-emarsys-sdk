@@ -5,13 +5,14 @@
 
 
 import Foundation
+import XCTest
 
 typealias FakedFunction = (_ invocationCount: Int,
                              _ params: [FakeValueWrapper<Any?>]) throws -> (Any?)
 
 protocol Faked: Equatable {
     
-    var instanceId: String { get }
+    var faker: Faker { get }
     
     func when(_ fnName: String,
               function: @escaping FakedFunction)
@@ -29,15 +30,13 @@ protocol Faked: Equatable {
     
     func assertProp<T: Equatable>(_ propName: String,
                                   expectedValue: T) throws -> Bool
-    
-    func tearDown()
 
 }
 
 extension Faked {
     
     func when(_ fnName: String, function: @escaping FakedFunction) {
-        FakedFunctionHolder.add(instanceId: instanceId, functionName: fnName, functionDetail: (0, function))
+        faker.add(functionName: fnName, functionDetail: (0, function))
     }
     
     func when(_ fnKeyPath: KeyPath<Self, String>, function: @escaping FakedFunction) {
@@ -46,14 +45,14 @@ extension Faked {
     }
     
     func handleCall<ReturnType>(_ fnName: String = #function, params: Any?...) throws -> ReturnType {
-        guard let functionDetail = FakedFunctionHolder.get(instanceId: instanceId, functionName: fnName) else {
+        guard let functionDetail = faker.get(functionName: fnName) else {
             throw FakedError.missingFunction("No preregistered function found for function name: \(fnName)")
         }
         
         var invocationCount = functionDetail.0
         invocationCount += 1
         let function = functionDetail.1
-        FakedFunctionHolder.add(instanceId: instanceId, functionName: fnName, functionDetail: (invocationCount, function))
+        faker.add(functionName: fnName, functionDetail: (invocationCount, function))
         
         var wrappedParams = [FakeValueWrapper<Any?>]()
         
@@ -108,37 +107,23 @@ extension Faked {
         }
         return true
     }
-    
-    func tearDown() {
-        FakedFunctionHolder.remove(instanceId: instanceId)
-    }
-    
+
     static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.instanceId == rhs.instanceId
+        return lhs.props().equals(dict: rhs.props() as [String : Any])
     }
     
 }
 
-fileprivate struct FakedFunctionHolder {
+internal class Faker {
     
-    private static var functionDetails = [String: [String: (Int, FakedFunction)]]()
+    private var functionDetails = [String: (Int, FakedFunction)]()
     
-    static func add(instanceId: String, functionName: String, functionDetail: (Int, FakedFunction)) {
-        if var functionDetails = FakedFunctionHolder.functionDetails[instanceId] {
-            functionDetails[functionName] = functionDetail
-            FakedFunctionHolder.functionDetails[instanceId] = functionDetails
-        } else {
-            FakedFunctionHolder.functionDetails[instanceId] = [functionName: functionDetail]
-        }
+    func add(functionName: String, functionDetail: (Int, FakedFunction)) {
+        functionDetails[functionName] = functionDetail
     }
     
-    static func get(instanceId: String, functionName: String) -> (Int, FakedFunction)? {
-        let functionDetails = FakedFunctionHolder.functionDetails[instanceId]
-        return functionDetails?[functionName]
+    func get(functionName: String) -> (Int, FakedFunction)? {
+        return functionDetails[functionName]
     }
-    
-    static func remove(instanceId: String) {
-        FakedFunctionHolder.functionDetails[instanceId] = nil
-    }
-    
+        
 }

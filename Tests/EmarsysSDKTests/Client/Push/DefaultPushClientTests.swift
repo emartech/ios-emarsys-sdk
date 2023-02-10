@@ -25,10 +25,6 @@ final class DefaultPushClientTests: XCTestCase {
                                        sdkContext: sdkContext,
                                        sdkLogger: sdkLogger)
     }
-    
-    override func tearDownWithError() throws {
-        tearDownFakes()
-    }
-    
+
 // TODO: tests
 }

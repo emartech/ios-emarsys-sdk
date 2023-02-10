@@ -8,7 +8,7 @@ import Foundation
 
 struct FakeTimestampProvider: DateProvider, Faked {
     
-    let instanceId = UUID().description
+    var faker = Faker()
     
     let provideFuncName = "provide"
     

@@ -5,7 +5,7 @@ import UserNotifications
 
 struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Faked {
     
-    let instanceId = UUID().uuidString
+    var faker = Faker()
     
     let notificationSettings = "notificationSettings"
     

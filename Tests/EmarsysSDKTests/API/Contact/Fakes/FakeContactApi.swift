@@ -8,7 +8,7 @@ import Foundation
 
 struct FakeContactApi: ActivatableContactApi, Faked {
 
-    var instanceId: String = UUID().description
+    var faker = Faker()
     
     let linkContact = "linkContact"
     let linkAuthenticatedContact = "linkAuthenticatedContact"

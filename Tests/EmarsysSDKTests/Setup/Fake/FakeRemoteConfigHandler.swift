@@ -3,7 +3,7 @@ import Foundation
 
 struct FakeRemoteConfigHandler: RemoteConfigHandler, Faked {
 
-    var instanceId: String = UUID().uuidString
+    var faker = Faker()
 
     let handle = "handle"
 
