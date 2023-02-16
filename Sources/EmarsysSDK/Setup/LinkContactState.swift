@@ -9,19 +9,24 @@ import Foundation
 struct LinkContactState: State {
     
     let contactClient: ContactClient
-    let secStore: DefaultSecureStorage
+    let secureStorage: SecureStorage
     
     var name = SetupState.linkContact.rawValue
-    
-    var nextStateName: String? = nil
     
     func prepare() {
     }
     
     func active() async throws {
-        let contactToken: String? = try secStore.get(key: "contactToken")
+        let contactToken: String? = secureStorage[Constants.Contact.contactToken.rawValue]
         if contactToken == nil {
-            try await contactClient.unlinkContact()
+            let contactFieldId: Int? = secureStorage[Constants.Contact.contactFieldId.rawValue]
+            let contactFieldValue: String? = secureStorage[Constants.Contact.contactFieldValue.rawValue]
+            let openIdToken: String? = secureStorage[Constants.Contact.openIdToken.rawValue]
+            if (contactFieldId != nil && contactFieldValue != nil) || (contactFieldId != nil && openIdToken != nil) {
+                try await contactClient.linkContact(contactFieldId: contactFieldId!, contactFieldValue: contactFieldValue, openIdToken: openIdToken)
+            } else {
+                try await contactClient.unlinkContact()
+            }
         }
     }
     

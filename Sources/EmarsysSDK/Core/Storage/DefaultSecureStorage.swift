@@ -72,12 +72,12 @@ struct DefaultSecureStorage: SecureStorage {
         }
     }
     
-    subscript<T: Storable>(key: String, accessGroup: String? = nil) -> T? {
+    subscript<T: Storable>(key: String) -> T? {
         get {
-            return try? get(key: key, accessGroup: accessGroup)
+            return try? get(key: key, accessGroup: nil)
         }
         set {
-            try? put(item: newValue, key: key, accessGroup: accessGroup)
+            try? put(item: newValue, key: key, accessGroup: nil)
         }
     }
 }

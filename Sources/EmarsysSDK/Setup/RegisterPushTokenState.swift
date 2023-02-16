@@ -23,14 +23,14 @@ class RegisterPushTokenState: State {
     }
     
     func active() async throws {
-        guard let pushToken: String = secureStorage["pushToken", nil] else {
+        guard let pushToken: String = secureStorage[Constants.Push.pushToken.rawValue] else {
             return
         }
-        var lastSentPushToken: String? = secureStorage["lastSentPushToken", nil]
+        let lastSentPushToken: String? = secureStorage[Constants.Push.lastSentPushToken.rawValue]
         
         if lastSentPushToken == nil || pushToken != lastSentPushToken {
             try await pushClient.registerPushToken(pushToken)
-            secureStorage["lastSentPushToken", nil] = pushToken
+            secureStorage[Constants.Push.lastSentPushToken.rawValue] = pushToken
         }
     }
     

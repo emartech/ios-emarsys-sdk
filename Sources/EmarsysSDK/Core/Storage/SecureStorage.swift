@@ -8,7 +8,7 @@ protocol SecureStorage {
     
     func get<T: Storable>(key: String, accessGroup: String?) throws -> T?
     
-    subscript<T: Storable>(key: String, accessGroup: String?) -> T? {
+    subscript<T: Storable>(key: String) -> T? {
         get set
     }
     
