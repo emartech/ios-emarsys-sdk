@@ -40,7 +40,7 @@ class TestDependencyContainer: DependencyContainer {
 
     //MARK: Clients
     lazy var pushClient: PushClient = {
-        return DefaultPushClient(emarsysClient: emarsysClient, sdkContext: sdkContext, sdkLogger: sdkLogger)
+        return FakePushClient()
     }()
 
     lazy var contactClient: ContactClient = {

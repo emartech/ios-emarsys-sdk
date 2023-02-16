@@ -17,4 +17,13 @@ struct FakeSecureStorage: SecureStorage, Faked {
         return try handleCall(\.get, params: key, accessGroup)
     }
     
+    subscript<T>(key: String, accessGroup: String? = nil) -> T? where T: Storable {
+        get {
+            return try? get(key: key, accessGroup: accessGroup)
+        }
+        set {
+            try? put(item: newValue, key: key, accessGroup: accessGroup)
+        }
+    }
+    
 }
