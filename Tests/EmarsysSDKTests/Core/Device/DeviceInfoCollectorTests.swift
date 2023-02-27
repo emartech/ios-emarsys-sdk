@@ -15,14 +15,15 @@ final class DeviceInfoCollectorTests: XCTestCase {
 
     @Inject(\.sdkLogger)
     var logger: SdkLogger
+    
+    @Inject(\.defaultUrls)
+    var defaultUrls: DefaultUrls
 
     var deviceInfoCollector: DefaultDeviceInfoCollector!
 
     let testUuid = "testUuid"
 
     override func setUpWithError() throws {
-        logger = SdkLogger()
-
         fakeUuidProvider.when(\.provideFuncName) { [unowned self] invocationCount, params in
             return self.testUuid
         }

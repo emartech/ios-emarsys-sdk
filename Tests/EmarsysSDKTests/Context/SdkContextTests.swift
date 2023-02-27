@@ -15,6 +15,7 @@ final class SdkContextTests: XCTestCase {
     
     override func setUpWithError() throws {
         defaultUrls = DefaultUrls(
+            loggingUrl: "https://log-dealer.eservice.emarsys.net/v1/log",
             clientServiceBaseUrl: "www.client.service.url",
             eventServiceBaseUrl: "www.event.service.url",
             predictBaseUrl: "www.predict.service.url",

@@ -5,6 +5,7 @@
 
 import Foundation
 import UserNotifications
+import os
 
 @SdkActor
 struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
@@ -16,6 +17,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     // MARK: Tools
     private let jsonDecoder = JSONDecoder()
     private let jsonEncoder = JSONEncoder()
+    private let logger = Logger(subsystem: Constants.Logger.subsystem, category: Constants.Logger.category)
     
     lazy var sdkConfig: SdkConfig = {
         return try! loadPlist(name: sdkConfigPlistName)
@@ -86,7 +88,9 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         return DefaultCrypto(base64encodedPublicKey: sdkConfig.cryptoPublicKey, sdkLogger: sdkLogger)
     }()
     
-    lazy var sdkLogger: SdkLogger = SdkLogger()
+    lazy var sdkLogger: SdkLogger = {
+        SdkLogger(defaultUrls: self.defaultUrls, logger: self.logger)
+    }()
     
     lazy var secureStorage: SecureStorage = {
         return DefaultSecureStorage()

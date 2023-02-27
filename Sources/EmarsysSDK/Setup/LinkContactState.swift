@@ -17,11 +17,11 @@ struct LinkContactState: State {
     }
     
     func active() async throws {
-        let contactToken: String? = secureStorage[Constants.Contact.contactToken.rawValue]
+        let contactToken: String? = secureStorage[Constants.Contact.contactToken]
         if contactToken == nil {
-            let contactFieldId: Int? = secureStorage[Constants.Contact.contactFieldId.rawValue]
-            let contactFieldValue: String? = secureStorage[Constants.Contact.contactFieldValue.rawValue]
-            let openIdToken: String? = secureStorage[Constants.Contact.openIdToken.rawValue]
+            let contactFieldId: Int? = secureStorage[Constants.Contact.contactFieldId]
+            let contactFieldValue: String? = secureStorage[Constants.Contact.contactFieldValue]
+            let openIdToken: String? = secureStorage[Constants.Contact.openIdToken]
             if (contactFieldId != nil && contactFieldValue != nil) || (contactFieldId != nil && openIdToken != nil) {
                 try await contactClient.linkContact(contactFieldId: contactFieldId!, contactFieldValue: contactFieldValue, openIdToken: openIdToken)
             } else {

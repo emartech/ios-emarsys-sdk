@@ -22,11 +22,15 @@ wgs9HlmSIBAqP4MDGy4ibOOV3FVDrnAY0Q34LZTbPBlp3gRNZJ19UoSy2Q==
     let signature = "MEYCIQDUi8+EW3gMkxqBtU3zMuI+lgZ3PfqHOb9Y+ASr9aw+sQIhAK1X6MbBDukxcYuNG3zRURi3jnI6YAguelcePFUEd8tj"
     var configData: Data!
     var crypto: Crypto!
-    var logger: SdkLogger!
+    
+    @Inject(\.defaultUrls)
+    var defaultUrls: DefaultUrls!
+    
+    @Inject(\.sdkLogger)
+    var logger: SdkLogger
     
     override func setUpWithError() throws {
         configData = Data(remoteConfigString.utf8)
-        logger = SdkLogger()
         crypto = DefaultCrypto(base64encodedPublicKey: publicKey, sdkLogger: logger)
     }
 

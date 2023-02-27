@@ -71,9 +71,9 @@ final class LinkContactStateTests: XCTestCase {
             let key: String! = try params[0].unwrap()
             var result: Any?
             switch key {
-            case Constants.Contact.contactFieldId.rawValue:
+            case Constants.Contact.contactFieldId:
                 result = 123
-            case Constants.Contact.contactFieldValue.rawValue:
+            case Constants.Contact.contactFieldValue:
                 result = "testContactFieldValue"
             default:
                 result = nil
@@ -105,9 +105,9 @@ final class LinkContactStateTests: XCTestCase {
             let key: String! = try params[0].unwrap()
             var result: Any?
             switch key {
-            case Constants.Contact.contactFieldId.rawValue:
+            case Constants.Contact.contactFieldId:
                 result = 123
-            case Constants.Contact.openIdToken.rawValue:
+            case Constants.Contact.openIdToken:
                 result = "testOpenIdToken"
             default:
                 result = nil

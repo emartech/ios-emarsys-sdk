@@ -100,7 +100,7 @@ final class DefaultRemoteConfigHandlerTests: XCTestCase {
     func testHandle_shouldOverrideConfig_whenServiceUrls_arePresent() async throws {
         try! await remoteConfigHandler.handle()
         
-        XCTAssertEqual(sdkContext.defaultUrls, DefaultUrls(clientServiceBaseUrl: "newClientService", eventServiceBaseUrl: "newEventService", predictBaseUrl: "newPredictService", deepLinkBaseUrl: "newDeepLinkService", inboxBaseUrl: "newInboxService", remoteConfigBaseUrl: sdkContext.defaultUrls.remoteConfigBaseUrl))
+        XCTAssertEqual(sdkContext.defaultUrls, DefaultUrls(loggingUrl: "https://log-dealer.eservice.emarsys.net/v1/log", clientServiceBaseUrl: "newClientService", eventServiceBaseUrl: "newEventService", predictBaseUrl: "newPredictService", deepLinkBaseUrl: "newDeepLinkService", inboxBaseUrl: "newInboxService", remoteConfigBaseUrl: sdkContext.defaultUrls.remoteConfigBaseUrl))
     }
     
     func testHandle_shouldOverrideConfig_whenLogLevel_isPresent() async throws {
@@ -197,7 +197,7 @@ final class DefaultRemoteConfigHandlerTests: XCTestCase {
         
         XCTAssertEqual(sdkContext.features.count, 1)
         XCTAssertTrue(sdkContext.features.contains(.mobileEngage))
-        XCTAssertEqual(sdkContext.defaultUrls, DefaultUrls(clientServiceBaseUrl: "newClientService", eventServiceBaseUrl: "HARDWARE_ID_OVERRIDE", predictBaseUrl: "newPredictService", deepLinkBaseUrl: "newDeepLinkService", inboxBaseUrl: "newInboxService", remoteConfigBaseUrl: sdkContext.defaultUrls.remoteConfigBaseUrl))
+        XCTAssertEqual(sdkContext.defaultUrls, DefaultUrls(loggingUrl: "https://log-dealer.eservice.emarsys.net/v1/log", clientServiceBaseUrl: "newClientService", eventServiceBaseUrl: "HARDWARE_ID_OVERRIDE", predictBaseUrl: "newPredictService", deepLinkBaseUrl: "newDeepLinkService", inboxBaseUrl: "newInboxService", remoteConfigBaseUrl: sdkContext.defaultUrls.remoteConfigBaseUrl))
         XCTAssertEqual(sdkContext.sdkConfig.remoteLogLevel, "HARDWARE_ID_OVERRIDE")
         
     }

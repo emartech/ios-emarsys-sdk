@@ -7,6 +7,7 @@
 import Foundation
 
 struct DefaultUrls: Decodable, Equatable {
+    let loggingUrl: String
     let clientServiceBaseUrl: String
     let eventServiceBaseUrl: String
     let predictBaseUrl: String
@@ -16,13 +17,21 @@ struct DefaultUrls: Decodable, Equatable {
 }
 
 extension DefaultUrls {
-    func copyWith(clientServiceBaseUrl: String? = nil, eventServiceBaseUrl: String? = nil, predictBaseUrl: String? = nil, deepLinkBaseUrl: String? = nil, inboxBaseUrl: String? = nil, remoteConfigBaseUrl: String? = nil) -> DefaultUrls {
-        return DefaultUrls(clientServiceBaseUrl: clientServiceBaseUrl ?? self.clientServiceBaseUrl,
-                eventServiceBaseUrl: eventServiceBaseUrl ?? self.eventServiceBaseUrl,
-                predictBaseUrl: predictBaseUrl ?? self.predictBaseUrl,
-                deepLinkBaseUrl: deepLinkBaseUrl ?? self.deepLinkBaseUrl,
-                inboxBaseUrl: inboxBaseUrl ?? self.inboxBaseUrl,
-                remoteConfigBaseUrl: remoteConfigBaseUrl ?? self.remoteConfigBaseUrl
+    func copyWith(loggingUrl: String? = nil,
+                  clientServiceBaseUrl: String? = nil,
+                  eventServiceBaseUrl: String? = nil,
+                  predictBaseUrl: String? = nil,
+                  deepLinkBaseUrl: String? = nil,
+                  inboxBaseUrl: String? = nil,
+                  remoteConfigBaseUrl: String? = nil) -> DefaultUrls {
+        return DefaultUrls(
+            loggingUrl: loggingUrl ?? self.loggingUrl,
+            clientServiceBaseUrl: clientServiceBaseUrl ?? self.clientServiceBaseUrl,
+            eventServiceBaseUrl: eventServiceBaseUrl ?? self.eventServiceBaseUrl,
+            predictBaseUrl: predictBaseUrl ?? self.predictBaseUrl,
+            deepLinkBaseUrl: deepLinkBaseUrl ?? self.deepLinkBaseUrl,
+            inboxBaseUrl: inboxBaseUrl ?? self.inboxBaseUrl,
+            remoteConfigBaseUrl: remoteConfigBaseUrl ?? self.remoteConfigBaseUrl
         )
     }
 }

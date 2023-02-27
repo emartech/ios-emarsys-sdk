@@ -6,18 +6,23 @@
 
 import Foundation
 
-enum Constants {
+struct Constants {
     
-    enum Push: String {
-        case pushToken
-        case lastSentPushToken
+    struct Push {
+        static let pushToken = "pushToken"
+        static let lastSentPushToken = "lastSentPushToken"
     }
     
-    enum Contact: String {
-        case contactToken
-        case contactFieldId
-        case contactFieldValue
-        case openIdToken
+    struct Contact {
+        static let contactToken = "contactToken"
+        static let contactFieldId = "contactFieldId"
+        static let contactFieldValue = "contactFieldValue"
+        static let openIdToken = "openIdToken"
     }
     
+    struct Logger {
+        static let category = "EmarsysSDK"
+        static let subsystem = "com.emarsys"
+        static let maxColumns = 8
+    }
 }
