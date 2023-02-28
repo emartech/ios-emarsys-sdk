@@ -23,12 +23,10 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let logLevels: [LogLevel] = [.metric, .debug, .error]
         
         let testEmarsysConfig = EmarsysConfig(
             applicationCode:testAppcode,
-            merchantId:testMerchantId,
-            enabledLogLevels: logLevels
+            merchantId:testMerchantId
         )
         try await EmarsysSDK.enableTracking(testEmarsysConfig)
         
@@ -39,12 +37,10 @@ final class EmarsysSDKTests: XCTestCase {
         await EmarsysSDK.initialize()
         let testAppcode = "testAppcode"
         let testMerchantId = "testMerchantId"
-        let logLevels: [LogLevel] = [.metric, .debug, .error]
         
         let testEmarsysConfig = EmarsysConfig(
             applicationCode:testAppcode,
-            merchantId:testMerchantId,
-            enabledLogLevels: logLevels
+            merchantId:testMerchantId
         )
         try await EmarsysSDK.enableTracking(testEmarsysConfig)
         

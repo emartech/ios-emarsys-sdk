@@ -4,7 +4,6 @@ import Foundation
 public struct EmarsysConfig: Equatable {
     var applicationCode: String?
     var merchantId: String?
-    var enabledLogLevels = [LogLevel]()
 }
 
 extension EmarsysConfig {
