@@ -10,10 +10,10 @@ import os
 @SdkActor
 struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     // MARK: Constants
-
+    
     private let defaultUrlsPlistName = "DefaultUrls"
     private let sdkConfigPlistName = "SdkConfig"
-
+    
     // MARK: Tools
     private let jsonDecoder = JSONDecoder()
     private let jsonEncoder = JSONEncoder()
@@ -26,20 +26,20 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     lazy var defaultUrls: DefaultUrls = {
         return try! loadPlist(name: defaultUrlsPlistName)
     }()
-
+    
     lazy var sdkContext: SdkContext = {
         return SdkContext(sdkConfig: sdkConfig, defaultUrls: defaultUrls)
     }()
     
     lazy var sessionContext: SessionContext = {
-        return SessionContext(timestampProvider: timestampProvider)
+        return SessionContext(timestampProvider: timestampProvider, deviceInfoCollector: deviceInfoCollector)
     }()
     
     // MARK: Api
     
     lazy var contactApi: ContactApi = {
         let contactContext = ContactContext()
-
+        
         let loggingContact = LoggingContact(logger: sdkLogger)
         let gathererContact = GathererContact(contactContext: contactContext)
         let contactInternal = ContactInternal(contactContext: contactContext, contactClient: contactClient)
@@ -48,13 +48,13 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     // MARK: Clients
-
+    
     lazy var pushClient: PushClient = {
         return DefaultPushClient(emarsysClient: emarsysClient, sdkContext: sdkContext, sdkLogger: sdkLogger)
     }()
     
     lazy var contactClient: ContactClient = {
-        DefaultContactClient(emarsysClient: genericNetworkClient,
+        DefaultContactClient(emarsysClient: emarsysClient,
                              sdkContext: sdkContext,
                              sessionContext: sessionContext,
                              sdkLogger: sdkLogger)
@@ -84,6 +84,10 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         return GenericNetworkClient(session: urlSession, decoder: jsonDecoder, encoder: jsonEncoder)
     }()
     
+    lazy var deviceClient: DeviceClient = {
+        return DefaultDeviceClient(emarsysClient: emarsysClient, sdkContext: sdkContext, deviceInfoCollector: deviceInfoCollector)
+    }()
+    
     lazy var crypto: any Crypto = {
         return DefaultCrypto(base64encodedPublicKey: sdkConfig.cryptoPublicKey, sdkLogger: sdkLogger)
     }()
@@ -103,29 +107,34 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     lazy var timestampProvider: any DateProvider = {
         return TimestampProvider()
     }()
-
+    
     lazy var notificationCenterWrapper: NotificationCenterWrapper = {
         return DefaultNotificationCenterWrapper(notificationCenter: UNUserNotificationCenter.current())
     }()
-
+    
     lazy var deviceInfoCollector: DeviceInfoCollector = {
-        return DefaultDeviceInfoCollector(notificationCenterWrapper: notificationCenterWrapper, secureStorage: secureStorage, uuidProvider: uuidProvider, logger: sdkLogger)
+        return DefaultDeviceInfoCollector(notificationCenterWrapper: notificationCenterWrapper,
+                                          secureStorage: secureStorage,
+                                          uuidProvider: uuidProvider,
+                                          sdkConfig: sdkConfig,
+                                          logger: sdkLogger)
     }()
-
+    
     // MARK: Setup
     lazy var setupOrganizer: SetupOrganizer = {
-        //  let fetchRemoteConfig = FetchRemoteConfigState(remoteConfigClient: remoteConfigClient)
-        //  let registerClient = RegisterClientState(emarsysClient: emarsysClient)
-        //   let registerPushToken = RegisterPushTokenState(pushClient: pushClient)
-        let machine = StateMachine(states: [])
+        let applyRemoteConfigState = ApplyRemoteConfigState(remoteConfigHandler: remoteConfigHandler)
+        let registerClientState = RegisterClientState(deviceClient: deviceClient)
+        let linkContactState = LinkContactState(contactClient: contactClient, secureStorage: secureStorage)
+        let registerPushTokenState = RegisterPushTokenState(pushClient: pushClient, secureStorage: secureStorage)
+        let machine = StateMachine(states: [applyRemoteConfigState, registerClientState, registerPushTokenState, linkContactState])
         return SetupOrganizer(stateMachine: machine, sdkContext: sdkContext)
     }()
-
+    
     lazy var remoteConfigHandler: RemoteConfigHandler = {
         return DefaultRemoteConfigHandler(deviceInfoCollector: deviceInfoCollector,
-                remoteConfigClient: remoteConfigClient,
-                sdkContext: sdkContext,
-                sdkLogger: sdkLogger,
-                randomProvider: RandomProvider(in: 0.0 ... 1.0))
+                                          remoteConfigClient: remoteConfigClient,
+                                          sdkContext: sdkContext,
+                                          sdkLogger: sdkLogger,
+                                          randomProvider: RandomProvider(in: 0.0 ... 1.0))
     }()
 }

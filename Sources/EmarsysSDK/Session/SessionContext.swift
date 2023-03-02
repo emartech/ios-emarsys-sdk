@@ -10,6 +10,7 @@ import Foundation
 class SessionContext {
     
     let timestampProvider: any DateProvider
+    let deviceInfoCollector: DeviceInfoCollector
 //    let secStore: SecStore
     
     var contactToken: String? = nil
@@ -24,12 +25,15 @@ class SessionContext {
     var refreshToken: String? = nil
     
     var clientState: String? = nil
-    var clientId: String? = nil
+    lazy var clientId: String? = {
+        deviceInfoCollector.hardwareId()
+    }()
 
     var deviceEventState: [String: Any]? = nil
     
-    init(timestampProvider: any DateProvider) {
+    init(timestampProvider: any DateProvider, deviceInfoCollector: DeviceInfoCollector) {
         self.timestampProvider = timestampProvider
+        self.deviceInfoCollector = deviceInfoCollector
     }
     
     var additionalHeaders: [String: String] {
@@ -38,7 +42,7 @@ class SessionContext {
             headers["X-Client-State"] = clientState
             headers["X-Client-Id"] = clientId
             headers["X-Contact-Token"] = contactToken
-            headers["X-Request-Order"] = "\(await timestampProvider.provide().timeIntervalSince1970 * 1000)"
+            headers["X-Request-Order"] = "\(timestampProvider.provide().timeIntervalSince1970 * 1000)"
             return headers
         }
     }

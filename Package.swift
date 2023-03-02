@@ -29,6 +29,7 @@ let package = Package(
         .testTarget(
             name: "EmarsysSDKTests",
             dependencies: ["EmarsysSDK"],
+            path: "./HostApp/HostAppTests/",
             resources: [
                 .process("Resources")
             ]

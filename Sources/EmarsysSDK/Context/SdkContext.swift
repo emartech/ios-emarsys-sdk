@@ -43,7 +43,7 @@ class SdkContext {
 
 extension SdkContext {
     
-    func createUrl(_ keyPath: KeyPath<DefaultUrls, String>, version: String = "v3", withAppCode: Bool = true, path: String? = nil) throws-> URL {
+    func createUrl(_ keyPath: KeyPath<DefaultUrls, String>, version: String = "v3", withAppCode: Bool = true, path: String? = nil) throws -> URL {
         var url: String = defaultUrls[keyPath: keyPath]
         url.append("/\(version)")
         if withAppCode {

@@ -18,6 +18,16 @@ struct DeviceInfo: Encodable, Equatable {
     let hardwareId: String
 }
 
+struct DeviceInfoRequestBody: Encodable, Equatable {
+    let platform: String
+    let applicationVersion: String
+    let deviceModel: String
+    let osVersion: String
+    let sdkVersion: String
+    let language: String
+    let timezone: String
+}
+
 struct PushSettings: Encodable, Equatable {
     let authorizationStatus: String
     let soundSetting: String

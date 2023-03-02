@@ -19,6 +19,7 @@ protocol DependencyContainer {
     var emarsysClient: NetworkClient { mutating get set }
     var remoteConfigClient: RemoteConfigClient { mutating get set }
     var genericNetworkClient: NetworkClient { mutating get set }
+    var deviceClient: DeviceClient { mutating get set }
 
     var crypto: any Crypto { mutating get set }
     var sdkLogger: SdkLogger { mutating get set }

@@ -13,9 +13,7 @@ struct DefaultSecureStorage: SecureStorage {
         
         do {
             data = item?.toData()
-        } catch {
-            // TODO LOG
-            throw Errors.TypeError.mappingFailed(parameter: String(describing: item), toType: String(describing: Data.self))
+            
             var query = [String: Any]()
             query[kSecAttrAccount as String] = key
             query[kSecClass as String] = kSecClassGenericPassword
@@ -24,6 +22,9 @@ struct DefaultSecureStorage: SecureStorage {
             query[kSecAttrAccessGroup as String] = accessGroup
             
             try storeItem(query: query)
+        } catch {
+            // TODO LOG
+            throw Errors.TypeError.mappingFailed(parameter: String(describing: item), toType: String(describing: Data.self))
         }
     }
     

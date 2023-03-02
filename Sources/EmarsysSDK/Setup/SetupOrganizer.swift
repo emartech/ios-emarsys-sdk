@@ -12,13 +12,9 @@ struct SetupOrganizer {
     let stateMachine: StateMachine
     let sdkContext: SdkContext
     
-    func setup() async throws { // TODO: handle errors
+    func setup() async throws {
         try await stateMachine.activate()
-        stateMachine.$stateLifecycle.sink { stateLifecycle in
-           // if stateLifecycle!.name == SetupState.linkContact.rawValue && stateLifecycle!.lifecycle == .relaxed {
-                sdkContext.sdkState = .active
-            //}
-        }
+        sdkContext.sdkState = .active
     }
     
 }

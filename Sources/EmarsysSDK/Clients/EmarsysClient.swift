@@ -36,9 +36,11 @@ struct EmarsysClient: NetworkClient {
     private func handleClientState<Output>(_ response: (Output, HTTPURLResponse)) {
         let res = response.1
         if res.isOk() {
-            //todo headers are caseless
-            if let clientState = res.allHeaderFields["X-Client-State"] as? String {
-                sessionContext.clientState = clientState
+            if let headers = res.allHeaderFields as? Dictionary<String, Any> {
+                let lowerCasedHeaders = headers.lowerCaseKeys()
+                if let clientState = lowerCasedHeaders["x-client-state"] as? String {
+                    sessionContext.clientState = clientState
+                }
             }
         }
     }

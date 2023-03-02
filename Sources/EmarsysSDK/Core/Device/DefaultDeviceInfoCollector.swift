@@ -14,30 +14,35 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
     private let notificationCenterWrapper: NotificationCenterWrapper
     private let secureStorage: SecureStorage
     private let uuidProvider: any StringProvider
+    private let sdkConfig: SdkConfig
     private let logger: SdkLogger
-
+    
     private let hardwareIdKey = "kHardwareIdKey"
-    private let platform: String = "iOS"
-    private let sdkVersion: String = ""
-
-    init(notificationCenterWrapper: NotificationCenterWrapper, secureStorage: SecureStorage, uuidProvider: any StringProvider, logger: SdkLogger) {
+    private let platform: String = "ios"
+    
+    init(notificationCenterWrapper: NotificationCenterWrapper,
+         secureStorage: SecureStorage,
+         uuidProvider: any StringProvider,
+         sdkConfig: SdkConfig,
+         logger: SdkLogger) {
         self.notificationCenterWrapper = notificationCenterWrapper
         self.secureStorage = secureStorage
         self.uuidProvider = uuidProvider
+        self.sdkConfig = sdkConfig
         self.logger = logger
     }
-
+    
     var timeZone: String {
         let formatter = DateFormatter()
         formatter.timeZone = NSTimeZone.local
         formatter.dateFormat = "xxxx"
         return formatter.string(from: Date())
     }
-
+    
     let languageCode: String = NSLocale.preferredLanguages[0]
-
+    
     let applicationVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-
+    
     var deviceModel: String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -47,60 +52,56 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
                 String(validatingUTF8: ptr)
             }
         }
-
+        
         return (model != nil) ? model! : "unknown model"
     }
-
+    
     @MainActor var systemName: String {
         UIDevice().systemName
     }
-
+    
+    func collect() async -> DeviceInfo {
+        return DeviceInfo(platform: platform,
+                          applicationVersion: applicationVersion,
+                          deviceModel: deviceModel,
+                          osVersion: await osVersion(),
+                          sdkVersion: sdkConfig.version,
+                          language: languageCode,
+                          timezone: timeZone,
+                          pushSettings: await getPushSettings(),
+                          hardwareId: hardwareId()
+        )
+    }
+    
+    func osVersion() async -> String {
+        await MainActor.run(body: {
+            UIDevice().systemVersion
+        })
+        
+    }
+    
     func deviceType() async -> String {
         await MainActor.run(body: {
             UIDevice().model
         })
     }
-
-    func osVersion() async -> String {
-        await MainActor.run(body: {
-            UIDevice().systemVersion
-        })
-
-    }
-
-    func getHardwareId() async -> String {
+    
+    func hardwareId() -> String {
         var hardwareId: String
         if let storedHardwareId = loadHardwareId() {
             hardwareId = storedHardwareId
         } else {
-            hardwareId = await generateHardwareId()
+            hardwareId = uuidProvider.provide()
             saveHardwareId(id: hardwareId)
         }
-
+        
         return hardwareId
     }
-
-    func collect() async -> DeviceInfo {
-        return await DeviceInfo(platform: platform,
-                applicationVersion: applicationVersion,
-                deviceModel: deviceModel,
-                osVersion: osVersion(),
-                sdkVersion: sdkVersion,
-                language: languageCode,
-                timezone: timeZone,
-                pushSettings: await getPushSettings(),
-                hardwareId: getHardwareId()
-        )
-    }
-
+    
     func getPushSettings() async -> PushSettings {
         return await notificationCenterWrapper.notificationSettings()
     }
-
-    private func generateHardwareId() async -> String {
-        await uuidProvider.provide()
-    }
-
+    
     private func loadHardwareId() -> String? {
         var result: String? = nil
         do {
@@ -109,7 +110,7 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
         }
         return result
     }
-
+    
     private func saveHardwareId(id: String) {
         do {
             try secureStorage.put(item: id, key: hardwareIdKey, accessGroup: nil)
