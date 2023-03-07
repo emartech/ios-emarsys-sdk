@@ -18,7 +18,6 @@ final class ContactInternalTests: EmarsysTestCase {
     
     override func setUpWithError() throws {
         contactContext = ContactContext()
-        fakeContactClient = FakeContactClient()
         contactInternal = ContactInternal(contactContext: contactContext, contactClient: fakeContactClient)
     }
     

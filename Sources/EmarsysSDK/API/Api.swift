@@ -7,6 +7,7 @@
 import Foundation
 import Combine
 
+@SdkActor
 protocol Api {
     
     var sdkContext: SdkContext { get }

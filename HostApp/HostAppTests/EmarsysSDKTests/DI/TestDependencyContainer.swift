@@ -51,6 +51,10 @@ class TestDependencyContainer: DependencyContainer {
         return FakeContactClient()
     }()
     
+    lazy var eventClient: EventClient = {
+        return FakeEventClient()
+    }()
+    
     lazy var emarsysClient: NetworkClient = {
         return FakeGenericNetworkClient()
     }()

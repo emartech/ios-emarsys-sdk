@@ -17,6 +17,7 @@ protocol DependencyContainer {
     var pushClient: PushClient { mutating get set }
     var contactClient: ContactClient { mutating get set }
     var emarsysClient: NetworkClient { mutating get set }
+    var eventClient: EventClient { mutating get set }
     var remoteConfigClient: RemoteConfigClient { mutating get set }
     var genericNetworkClient: NetworkClient { mutating get set }
     var deviceClient: DeviceClient { mutating get set }

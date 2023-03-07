@@ -6,6 +6,7 @@
 
 import Foundation
 
+@SdkActor
 struct LoggingContact: ActivatableContactApi {
     let logger: SdkLogger
     

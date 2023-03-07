@@ -7,6 +7,7 @@
 import Foundation
 import Combine
 
+@SdkActor
 class Contact: Api, ContactApi {
     
     let loggingContact: ActivatableContactApi
