@@ -13,7 +13,7 @@ struct EventInternal: ActivationAware, EventApi {
     let timestampProvider: any DateProvider
     
     func trackCustomEvent(name: String, attributes: [String : String]?) async throws {
-        let _ = try await self.eventClient.sendEvents(name: name, attributes: attributes) //TODO: handle result
+        let _ = try await self.eventClient.sendEvents(name: name, attributes: attributes, eventType: EventType.customEvent) //TODO: handle result
     }
     
     func activated() async throws {
@@ -24,7 +24,7 @@ struct EventInternal: ActivationAware, EventApi {
         for call in eventContext.calls {
             switch call {
             case .trackCustomEvent(let name, let attributes):
-                let _ = try await self.eventClient.sendEvents(name: name, attributes: attributes) //TODO: handle result
+                let _ = try await self.eventClient.sendEvents(name: name, attributes: attributes, eventType: EventType.customEvent) //TODO: handle result
             }
         }
     }

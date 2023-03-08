@@ -7,5 +7,5 @@ import Foundation
 
 @SdkActor
 protocol EventClient {
-    func sendEvents(name: String, attributes: [String: String]?) async throws -> EventResponse
+    func sendEvents(name: String, attributes: [String: String]?, eventType: EventType) async throws -> EventResponse
 }

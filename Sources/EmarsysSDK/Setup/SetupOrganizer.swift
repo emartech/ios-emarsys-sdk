@@ -24,4 +24,5 @@ enum SetupState: String {
     case registerClient
     case registerPushToken
     case linkContact
+    case appStart
 }

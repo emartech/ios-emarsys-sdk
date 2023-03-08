@@ -47,18 +47,21 @@ final class DefaultEventClientTests: EmarsysTestCase {
 
         var name: String? = nil
         var attributes: [String: String]? = nil
+        var type: String? = nil
 
         fakeNetworkClient.when(\.sendWithBody) { invocationCount, params in
             let body: EventRequest! = try params[1].unwrap()
             name = body.events.first?.name
             attributes = body.events.first?.attributes
+            type = body.events.first?.type
             return (expectedResponse, HTTPURLResponse())
         }
 
-        let result = try await defaultEventClient.sendEvents(name: eventName, attributes: eventAttributes)
+        let result = try await defaultEventClient.sendEvents(name: eventName, attributes: eventAttributes, eventType: EventType.internalEvent)
 
         XCTAssertEqual(name, eventName)
         XCTAssertEqual(attributes, eventAttributes)
+        XCTAssertEqual(type, "internal")
         XCTAssertEqual(result.message, testMessage)
         XCTAssertEqual(result.onEventAction?.campaignId, testCampaignId)
         XCTAssertEqual(result.deviceEventState, testDeviceEventState)

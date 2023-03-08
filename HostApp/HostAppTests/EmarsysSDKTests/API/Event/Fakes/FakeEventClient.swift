@@ -13,7 +13,7 @@ struct FakeEventClient: EventClient, Faked {
     
     let sendEvents = "sendEvents"
     
-    func sendEvents(name: String, attributes: [String: String]?) async throws -> EventResponse {
-        return try handleCall(\.sendEvents, params: name, attributes)
+    func sendEvents(name: String, attributes: [String: String]?, eventType: EventType) async throws -> EventResponse {
+        return try handleCall(\.sendEvents, params: name, attributes, eventType)
     }
 }

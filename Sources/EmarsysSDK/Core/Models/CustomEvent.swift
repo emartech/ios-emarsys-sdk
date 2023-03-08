@@ -29,3 +29,8 @@ extension CustomEvent: Stashable {
         CustomEvent(type: entity.type, name: entity.name, attributes: entity.payload, timeStamp: entity.timestamp)
     }
 }
+
+enum EventType: String {
+    case internalEvent = "internal"
+    case customEvent = "custom"
+}

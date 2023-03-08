@@ -8,6 +8,10 @@ import Foundation
 
 struct Constants {
     
+    struct AppStart {
+        static let appStartEventName = "app:start"
+    }
+    
     struct Push {
         static let pushToken = "pushToken"
         static let lastSentPushToken = "lastSentPushToken"

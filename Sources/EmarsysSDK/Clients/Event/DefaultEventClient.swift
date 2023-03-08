@@ -14,16 +14,17 @@ struct DefaultEventClient: EventClient {
     let sessionContext: SessionContext
     let timestampProvider: any DateProvider
     
-    func sendEvents(name: String, attributes: [String: String]?) async throws -> EventResponse {
+    func sendEvents(name: String, attributes: [String: String]?, eventType: EventType) async throws -> EventResponse {
         let url = try sdkContext.createUrl(\.clientServiceBaseUrl, version: "v4", path: "clients/events")
-        let eventRequest = EventRequest(dnd: sdkContext.inAppDnd,
-                                        events: [
-                                            CustomEvent(type: "custom",
-                                                        name: name,
-                                                        attributes: attributes,
-                                                        timeStamp: timestampProvider.provide())
-                                        ],
-                                        deviceEventState: sessionContext.deviceEventState)
+        let eventRequest = EventRequest(
+                                dnd: sdkContext.inAppDnd,
+                                events: [
+                                    CustomEvent(type: eventType.rawValue,
+                                                name: name,
+                                                attributes: attributes,
+                                                timeStamp: timestampProvider.provide())
+                                ],
+                                deviceEventState: sessionContext.deviceEventState)
         
         
         let request = URLRequest.create(url: url, method: .POST)

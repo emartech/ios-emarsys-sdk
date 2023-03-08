@@ -154,7 +154,8 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         let registerClientState = RegisterClientState(deviceClient: deviceClient)
         let linkContactState = LinkContactState(contactClient: contactClient, secureStorage: secureStorage)
         let registerPushTokenState = RegisterPushTokenState(pushClient: pushClient, secureStorage: secureStorage)
-        let machine = StateMachine(states: [applyRemoteConfigState, registerClientState, registerPushTokenState, linkContactState])
+        let appStartState = AppStartState(eventClient: eventClient)
+        let machine = StateMachine(states: [applyRemoteConfigState, registerClientState, registerPushTokenState, linkContactState, appStartState])
         return SetupOrganizer(stateMachine: machine, sdkContext: sdkContext)
     }()
     

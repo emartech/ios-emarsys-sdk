@@ -13,8 +13,6 @@ struct ApplyRemoteConfigState: State {
 
     var name = SetupState.applyRemoteConfig.rawValue
 
-    var nextStateName: String? = SetupState.registerClient.rawValue
-
     func prepare() {
     }
 

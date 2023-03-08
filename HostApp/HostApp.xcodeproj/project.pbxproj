@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */; };
 		57849F4229B72F300002CF62 /* GathererEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4129B72F300002CF62 /* GathererEventTests.swift */; };
 		57849F4429B7337F0002CF62 /* EventInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4329B7337F0002CF62 /* EventInternalTests.swift */; };
 		57849F4729B734AC0002CF62 /* FakeEventClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4629B734AC0002CF62 /* FakeEventClient.swift */; };
@@ -79,6 +80,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartStateTests.swift; sourceTree = "<group>"; };
 		57849F4129B72F300002CF62 /* GathererEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GathererEventTests.swift; sourceTree = "<group>"; };
 		57849F4329B7337F0002CF62 /* EventInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInternalTests.swift; sourceTree = "<group>"; };
 		57849F4629B734AC0002CF62 /* FakeEventClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeEventClient.swift; sourceTree = "<group>"; };
@@ -162,6 +164,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A385A5329B8C67600D3DC86 /* AppStart */ = {
+			isa = PBXGroup;
+			children = (
+				2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */,
+			);
+			path = AppStart;
+			sourceTree = "<group>";
+		};
 		57849F4029B72EAA0002CF62 /* Event */ = {
 			isa = PBXGroup;
 			children = (
@@ -374,6 +384,7 @@
 		5D38ABDA29B0D3E700C1AE4A /* Setup */ = {
 			isa = PBXGroup;
 			children = (
+				2A385A5329B8C67600D3DC86 /* AppStart */,
 				5D38ABDB29B0D3E700C1AE4A /* RemoteConfig */,
 				5D38ABDE29B0D3E700C1AE4A /* LinkContactState */,
 				5D38ABE029B0D3E700C1AE4A /* RegisterPushToken */,
@@ -684,6 +695,7 @@
 				5D38AC2129B0D3E700C1AE4A /* ContactInternalTests.swift in Sources */,
 				5D38AC1329B0D3E700C1AE4A /* DictionaryExtensionTests.swift in Sources */,
 				5D38AC3329B0D3E700C1AE4A /* FakePushClient.swift in Sources */,
+				2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */,
 				5D38AC2929B0D3E700C1AE4A /* FakeValueWrapper.swift in Sources */,
 				5D38AC0F29B0D3E700C1AE4A /* DennaResponse.swift in Sources */,
 				5D38AC1429B0D3E700C1AE4A /* LogEntryTests.swift in Sources */,
