@@ -15,11 +15,8 @@ jobs:
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
-      - name: Step into HostApp
-        run: cd HostApp && pwd && xcodebuild -list
-        shell: bash
       - name: Build And Test
-        run: git branch --show-current && xcodebuild test -scheme HostApp -sdk iphonesimulator16.2 -destination "OS=16.2,name=iPhone 14"
+        run: cd HostApp && xcodebuild test -scheme HostApp -sdk iphonesimulator16.2 -destination "OS=16.2,name=iPhone 14"
         shell: bash
       - if: ${{ failure() }}
         name: Slack Notification On Error
