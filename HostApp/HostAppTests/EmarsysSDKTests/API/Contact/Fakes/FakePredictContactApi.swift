@@ -6,7 +6,7 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakePredictContactApi: ActivatableContactApi, Faked {
+struct FakePredictContactApi: ContactInstance, Faked {
     
     var faker = Faker()
     

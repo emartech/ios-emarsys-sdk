@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct PredictContactInternal: ActivatableContactApi {
+struct PredictContactInternal: ContactInstance {
     
     let contactContext: ContactContext
     let contactClient: ContactClient

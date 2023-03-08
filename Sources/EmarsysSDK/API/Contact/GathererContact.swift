@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-class GathererContact: ActivatableContactApi {
+class GathererContact: ContactInstance {
     
     var contactContext: ContactContext
     

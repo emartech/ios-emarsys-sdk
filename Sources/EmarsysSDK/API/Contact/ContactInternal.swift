@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-struct ContactInternal: ActivatableContactApi {
+struct ContactInternal: ContactInstance {
     
     let contactContext: ContactContext
     let contactClient: ContactClient

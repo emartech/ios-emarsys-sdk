@@ -6,13 +6,13 @@ final class ContactTests: EmarsysTestCase {
     
     var fakePredictContactApi: FakePredictContactApi!
     
-    var loggingContact: ActivatableContactApi!
+    var loggingContact: ContactInstance!
     
-    var gatherer: ActivatableContactApi!
+    var gatherer: ContactInstance!
 
     var contactContext: ContactContext!
     
-    var contact: Contact!
+    var contact: Contact<LoggingContact, GathererContact, FakeContactApi>!
     
     @Inject(\.contactApi)
     var fakeContactApi: FakeContactApi
@@ -29,23 +29,15 @@ final class ContactTests: EmarsysTestCase {
         loggingContact = LoggingContact(logger: sdkLogger)
         gatherer = GathererContact(contactContext: contactContext)
 
-        contact = Contact(loggingContact: loggingContact,
-                          gathererContact: gatherer,
-                          contactInternal: fakeContactApi,
+        contact = Contact(loggingInstance: loggingContact as! LoggingContact,
+                          gathererInstance: gatherer as! GathererContact,
+                          internalInstance: fakeContactApi,
                           predictContactInternal: fakePredictContactApi,
                           sdkContext: sdkContext)
     }
 
     func testInit_shouldInitContact_withLoggingContactAsActive() {
-        let testContact = Contact(
-            loggingContact: loggingContact,
-            gathererContact: gatherer,
-            contactInternal: fakeContactApi,
-            predictContactInternal: fakePredictContactApi,
-            sdkContext: sdkContext
-        )
-
-        XCTAssertTrue(testContact.active is LoggingContact)
+        XCTAssertTrue(contact.active is LoggingContact)
     }
     
     func testActiveContact_shouldBeSet_basedOnSdkState() {

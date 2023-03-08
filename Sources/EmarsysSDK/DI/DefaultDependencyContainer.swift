@@ -44,7 +44,11 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         let gathererContact = GathererContact(contactContext: contactContext)
         let contactInternal = ContactInternal(contactContext: contactContext, contactClient: contactClient)
         let predictContactInternal = PredictContactInternal(contactContext: contactContext, contactClient: contactClient)
-        return Contact(loggingContact: loggingContact, gathererContact: gathererContact, contactInternal: contactInternal, predictContactInternal: predictContactInternal, sdkContext: sdkContext)
+        return Contact(loggingInstance: loggingContact,
+                       gathererInstance: gathererContact,
+                       internalInstance: contactInternal,
+                       predictContactInternal: predictContactInternal,
+                       sdkContext: sdkContext)
     }()
     
     lazy var eventApi: EventApi = {

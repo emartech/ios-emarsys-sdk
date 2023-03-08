@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-struct LoggingContact: ActivatableContactApi {
+struct LoggingContact: ContactInstance {
     let logger: SdkLogger
     
     func linkContact(contactFieldId: Int, contactFieldValue: String) async throws {
