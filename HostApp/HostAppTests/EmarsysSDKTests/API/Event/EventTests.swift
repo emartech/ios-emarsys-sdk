@@ -6,12 +6,12 @@
 import XCTest
 @testable import EmarsysSDK
 
-final class EventTests: EmarsysTestCase {
+class EventTests: EmarsysTestCase {
     
-    var event: Event!
-    var loggingEvent: ActivatableEventApi!
-    var gathererEvent: ActivatableEventApi!
-    var fakeEventInternal: ActivatableEventApi!
+    var event: Event<LoggingEvent, GathererEvent, FakeEventApi>!
+    var loggingEvent: EventInstance!
+    var gathererEvent: EventInstance!
+    var fakeEventInternal: EventInstance!
     var eventContext: EventContext!
     var timestampProvider: TimestampProvider!
     
@@ -20,7 +20,7 @@ final class EventTests: EmarsysTestCase {
     
     @Inject(\.sdkLogger)
     var sdkLogger:SdkLogger
-
+    
     override func setUpWithError() throws {
         timestampProvider = TimestampProvider()
         eventContext = EventContext()
@@ -28,7 +28,10 @@ final class EventTests: EmarsysTestCase {
         gathererEvent = GathererEvent(eventContext: eventContext)
         loggingEvent = LoggingEvent(logger: sdkLogger)
         
-        event = Event(sdkContext: sdkContext, eventInternal: fakeEventInternal, loggingEvent: loggingEvent, gathererEvent: gathererEvent)
+        event = Event(loggingInstance: loggingEvent as! LoggingEvent,
+                      gathererInstance: gathererEvent as! GathererEvent,
+                      internalInstance: fakeEventInternal as! FakeEventApi,
+                      sdkContext: sdkContext)
     }
 
     func testInit_shouldInitEvent_withLoggingEventAsActive() {

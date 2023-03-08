@@ -6,7 +6,7 @@
 import Foundation
 @testable import EmarsysSDK
 
-struct FakeEventApi: ActivatableEventApi, Faked {
+struct FakeEventApi: EventInstance, Faked {
     var faker = Faker()
     
     let trackCustomEvent = "trackCustomEvent"

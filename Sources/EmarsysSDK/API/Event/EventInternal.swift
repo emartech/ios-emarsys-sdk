@@ -6,7 +6,7 @@
 import Foundation
 
 @SdkActor
-struct EventInternal: ActivatableEventApi {
+struct EventInternal: ActivationAware, EventApi {
     
     let eventContext: EventContext
     let eventClient: EventClient

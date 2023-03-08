@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-class GathererEvent: ActivatableEventApi {
+class GathererEvent: EventInstance {
     
     var eventContext: EventContext
     

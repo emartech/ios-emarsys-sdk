@@ -7,7 +7,7 @@
 import Foundation
 
 @SdkActor
-struct LoggingEvent: ActivatableEventApi {
+struct LoggingEvent: EventInstance {
     
     let logger: SdkLogger
     
