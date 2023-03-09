@@ -11,22 +11,22 @@ struct CustomEvent: Codable {
     let type: String
     let name: String
     let attributes: [String: String]?
-    let timeStamp: Date
+    let timestamp: String
 }
 
 extension CustomEvent: Stashable {
 
     func toEntity(mox: NSManagedObjectContext) throws -> EventEntity {
-        var entity: EventEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: self), into: mox) as! EventEntity
+        let entity: EventEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: self), into: mox) as! EventEntity
         entity.type = type
         entity.name = name
         entity.payload = attributes
-        entity.timestamp = timeStamp
+//        entity.timestamp = timestamp
         return entity
     }
 
     static func fromEntity(entity: EventEntity) throws -> CustomEvent {
-        CustomEvent(type: entity.type, name: entity.name, attributes: entity.payload, timeStamp: entity.timestamp)
+        CustomEvent(type: entity.type, name: entity.name, attributes: entity.payload, timestamp: entity.timestamp.toUTC())
     }
 }
 

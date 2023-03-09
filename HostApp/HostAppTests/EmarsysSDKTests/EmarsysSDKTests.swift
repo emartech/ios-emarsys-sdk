@@ -7,10 +7,6 @@ final class EmarsysSDKTests: EmarsysTestCase {
     let applicationCode = "testApplicationCode"
     let merchantId = "testMerchantId"
     
-    override func tearDown() {
-        DependencyInjection.tearDown()
-    }
-    
     func testInitialize_shouldSetSdkStateToOnHold() async throws {
         await EmarsysSDK.initialize()
         

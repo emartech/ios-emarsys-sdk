@@ -7,7 +7,7 @@
 	<key>clientServiceBaseUrl</key>
 	<string>https://me-client.eservice.emarsys.net</string>
 	<key>eventServiceBaseUrl</key>
-	<string>https://mobile-events.eservice.emarsys.net</string>
+	<string>https://me-device-event.gservice.emarsys.net</string>
 	<key>predictBaseUrl</key>
 	<string>https://recommender.scarabresearch.com</string>
 	<key>deepLinkBaseUrl</key>

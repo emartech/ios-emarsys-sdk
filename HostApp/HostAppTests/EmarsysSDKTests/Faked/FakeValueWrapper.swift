@@ -8,9 +8,9 @@ import Foundation
 
 struct FakeValueWrapper<T> {
     
-    let value: T?
+    let value: T
     
-    func unwrap<U>() throws -> U? {
+    func unwrap<U>() throws -> U {
         guard let value = value as? U else {
             throw FakedError.typeMismatch("Expected type: \(T.self) doesn't match with value type: \(U.self)")
         }
@@ -19,6 +19,6 @@ struct FakeValueWrapper<T> {
     
 }
 
-func wrap<T>(_ value: T?) -> FakeValueWrapper<T> {
+func wrap<T>(_ value: T) -> FakeValueWrapper<T> {
     return FakeValueWrapper(value: value)
 }
