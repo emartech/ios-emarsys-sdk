@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */; };
+		5740256E29BF5FFE0014D9A6 /* RetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */; };
 		57849F4229B72F300002CF62 /* GathererEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4129B72F300002CF62 /* GathererEventTests.swift */; };
 		57849F4429B7337F0002CF62 /* EventInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4329B7337F0002CF62 /* EventInternalTests.swift */; };
 		57849F4729B734AC0002CF62 /* FakeEventClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4629B734AC0002CF62 /* FakeEventClient.swift */; };
@@ -81,6 +82,7 @@
 
 /* Begin PBXFileReference section */
 		2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartStateTests.swift; sourceTree = "<group>"; };
+		5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrierTests.swift; sourceTree = "<group>"; };
 		57849F4129B72F300002CF62 /* GathererEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GathererEventTests.swift; sourceTree = "<group>"; };
 		57849F4329B7337F0002CF62 /* EventInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInternalTests.swift; sourceTree = "<group>"; };
 		57849F4629B734AC0002CF62 /* FakeEventClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeEventClient.swift; sourceTree = "<group>"; };
@@ -172,6 +174,14 @@
 			path = AppStart;
 			sourceTree = "<group>";
 		};
+		5740256C29BF5FE20014D9A6 /* Retryable */ = {
+			isa = PBXGroup;
+			children = (
+				5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */,
+			);
+			path = Retryable;
+			sourceTree = "<group>";
+		};
 		57849F4029B72EAA0002CF62 /* Event */ = {
 			isa = PBXGroup;
 			children = (
@@ -261,6 +271,7 @@
 		5D38ABC029B0D3E700C1AE4A /* EmarsysSDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				5740256C29BF5FE20014D9A6 /* Retryable */,
 				5D38ABC129B0D3E700C1AE4A /* DI */,
 				5D38ABC329B0D3E700C1AE4A /* Context */,
 				5D38ABC529B0D3E700C1AE4A /* Core */,
@@ -702,6 +713,7 @@
 				5D38AC2C29B0D3E700C1AE4A /* EmarsysClientTests.swift in Sources */,
 				5D38AC2329B0D3E700C1AE4A /* FakePredictContactApi.swift in Sources */,
 				5D38AC0D29B0D3E700C1AE4A /* CryptoTests.swift in Sources */,
+				5740256E29BF5FFE0014D9A6 /* RetrierTests.swift in Sources */,
 				5D38AC3429B0D3E700C1AE4A /* FakeDeviceInfoClient.swift in Sources */,
 				5D38AC1929B0D3E700C1AE4A /* DefaultRemoteConfigHandlerTests.swift in Sources */,
 				5D38AC1F29B0D3E700C1AE4A /* Inject.swift in Sources */,
