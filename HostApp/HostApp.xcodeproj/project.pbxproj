@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */; };
 		5740256E29BF5FFE0014D9A6 /* RetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */; };
+		5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */; };
 		57849F4229B72F300002CF62 /* GathererEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4129B72F300002CF62 /* GathererEventTests.swift */; };
 		57849F4429B7337F0002CF62 /* EventInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4329B7337F0002CF62 /* EventInternalTests.swift */; };
 		57849F4729B734AC0002CF62 /* FakeEventClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4629B734AC0002CF62 /* FakeEventClient.swift */; };
@@ -83,6 +84,7 @@
 /* Begin PBXFileReference section */
 		2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartStateTests.swift; sourceTree = "<group>"; };
 		5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrierTests.swift; sourceTree = "<group>"; };
+		5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpURLResponseTests.swift; sourceTree = "<group>"; };
 		57849F4129B72F300002CF62 /* GathererEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GathererEventTests.swift; sourceTree = "<group>"; };
 		57849F4329B7337F0002CF62 /* EventInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInternalTests.swift; sourceTree = "<group>"; };
 		57849F4629B734AC0002CF62 /* FakeEventClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeEventClient.swift; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				5D38ABD229B0D3E700C1AE4A /* DictionaryExtensionTests.swift */,
+				5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -707,6 +710,7 @@
 				5D38AC1329B0D3E700C1AE4A /* DictionaryExtensionTests.swift in Sources */,
 				5D38AC3329B0D3E700C1AE4A /* FakePushClient.swift in Sources */,
 				2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */,
+				5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */,
 				5D38AC2929B0D3E700C1AE4A /* FakeValueWrapper.swift in Sources */,
 				5D38AC0F29B0D3E700C1AE4A /* DennaResponse.swift in Sources */,
 				5D38AC1429B0D3E700C1AE4A /* LogEntryTests.swift in Sources */,

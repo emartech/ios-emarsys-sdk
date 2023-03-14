@@ -10,6 +10,7 @@ enum Errors: SdkError {
     case resourceLoadingFailed(resource: String)
     case secKeyCreationFailed(secKey: String)
     case preconditionFailed(message: String)
+    case retryLimitReached(message: String)
     
     enum TypeError: SdkError {
         case mappingFailed(parameter: String, toType: String)

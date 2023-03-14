@@ -5,6 +5,7 @@
 "resourceLoadingFailed" = "Couldn't load resource: %@";
 "secKeyCreationFailed" = "Couldn't create SecKey: %@";
 "preconditionFailed" = "Precondition failed: %@";
+"retryLimitReached" = "Retry limit reached: %@";
 
 // MARK: Networking
 "urlCreationFailed" = "Url creation failed: %@";

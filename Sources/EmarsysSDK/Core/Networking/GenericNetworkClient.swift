@@ -6,17 +6,20 @@
 
 import Foundation
 
-struct GenericNetworkClient: NetworkClient {
-
+struct GenericNetworkClient: NetworkClient, Retrier {
+    
     let session: URLSession
     let decoder: JSONDecoder
     let encoder: JSONEncoder
-
+    
+    private let retryCount = 5
+    private let retryDelay: TimeInterval = 2
+    
     func send<Output: Decodable>(request: URLRequest) async throws -> (Output, HTTPURLResponse) where Output: Decodable {
-        let response = try await session.data(for: request)
-        guard let httpUrlResponse = response.1 as? HTTPURLResponse else {
-            throw Errors.TypeError.mappingFailed(parameter: String(describing: response.1), toType: String(describing: HTTPURLResponse.self))
+        let response = try await retry(retryCount, retryDelay, shouldRetry) {
+            try await session.data(for: request)
         }
+        let httpUrlResponse = try response.1.asHttpURLResponse()
         
         if !httpUrlResponse.isOk() {
             throw Errors.NetworkingError.failedRequest(response: httpUrlResponse)
@@ -45,5 +48,9 @@ struct GenericNetworkClient: NetworkClient {
         }
         return try await send(request: mutableRequest)
     }
-
+    
+    private func shouldRetry(result: (Data, URLResponse)) throws -> Bool {
+        let httpUrlResponse = try result.1.asHttpURLResponse()
+        return httpUrlResponse.isRetriable()
+    }
 }
