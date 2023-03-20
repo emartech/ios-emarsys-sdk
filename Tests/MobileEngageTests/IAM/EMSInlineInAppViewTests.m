@@ -195,6 +195,45 @@
     XCTAssertEqualObjects(returnedThread, NSThread.mainThread);
 }
 
+- (void)testFetchInlineInappMessage_shouldCallCompletionBlockWithError_fetchingFailed {
+    [self setupMockContainerWithRequestManager:self.mockRequestManager];
+    _inappView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
+
+    EMSInlineInAppView *inlineInappPartialMock = OCMPartialMock(self.inappView);
+    OCMReject([inlineInappPartialMock.webView loadHTMLString:[OCMArg any]
+                                                     baseURL:nil]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
+
+    NSError *expectedError = [NSError errorWithCode:-1400
+                               localizedDescription:@"Test error"];
+
+    OCMStub([self.mockRequestManager submitRequestModelNow:[OCMArg any]
+                                              successBlock:[OCMArg any]
+                                                errorBlock:([OCMArg invokeBlockWithArgs:@"testRequestId",
+                                                                                        expectedError,
+                                                                                        nil])]);
+
+    __block NSError *returnedError;
+    __block NSThread *returnedThread = nil;
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+        returnedError = error;
+        returnedThread = [NSThread currentThread];
+        [expectation fulfill];
+    };
+
+    [inlineInappPartialMock setCompletionBlock:completionBlock];
+    [inlineInappPartialMock loadInAppWithViewId:@"testViewId"];
+
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
+                                                    timeout:10];
+
+    XCTAssertEqual(result, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedError.localizedDescription, expectedError.localizedDescription);
+    XCTAssertEqual(returnedError.code, expectedError.code);
+    XCTAssertEqualObjects(returnedThread, NSThread.mainThread);
+}
+
 - (void)testCloseBlock_shouldNotCrash_whenMissing {
     [self setupMockContainerWithRequestManager:self.mockRequestManager];
     EMSInlineInAppView *inAppView = [[EMSInlineInAppView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];

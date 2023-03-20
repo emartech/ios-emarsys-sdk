@@ -213,6 +213,9 @@ didFinishNavigation:(WKNavigation *)navigation {
                                                                                   errorBlock:^(NSString *requestId, NSError *error) {
                                                                                       dispatch_async(dispatch_get_main_queue(), ^{
                                                                                           [weakSelf setHidden:YES];
+                                                                                          if (weakSelf.completionBlock) {
+                                                                                              weakSelf.completionBlock(error);
+                                                                                          }
                                                                                       });
                                                                                   }];
         }];
