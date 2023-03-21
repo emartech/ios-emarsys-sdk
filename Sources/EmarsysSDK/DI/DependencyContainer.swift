@@ -13,6 +13,7 @@ protocol DependencyContainer {
     var sessionContext: SessionContext { mutating get set }
 
     var contactApi: ContactApi { mutating get set }
+    var eventApi: EventApi { mutating get set }
 
     var pushClient: PushClient { mutating get set }
     var contactClient: ContactClient { mutating get set }

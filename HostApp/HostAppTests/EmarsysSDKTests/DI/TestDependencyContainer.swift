@@ -42,6 +42,10 @@ class TestDependencyContainer: DependencyContainer {
         return FakeContactApi()
     }()
     
+    lazy var eventApi: EventApi = {
+        return FakeEventApi()
+    }()
+    
     //MARK: Clients
     lazy var pushClient: PushClient = {
         return FakePushClient()

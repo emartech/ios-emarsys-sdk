@@ -29,4 +29,15 @@ struct Constants {
         static let subsystem = "com.emarsys"
         static let maxColumns = 8
     }
+
+    struct ActionTypes {
+        static let customEvent = "MECustomEvent"
+        static let appEvent = "MEAppEvent"
+        static let openExternalURL = "OpenExternalUrl"
+        static let buttonClicked = "ButtonClicked"
+        static let dismiss = "Dismiss"
+        static let requestPushPermission = "RequestPushPermission"
+        static let badgeCount = "BadgeCount"
+        static let copyToClipboard = "CopyToClipboard"
+    }
 }

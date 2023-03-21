@@ -26,4 +26,8 @@ class DefaultNotificationCenterWrapper: NotificationCenterWrapper {
                 timeSensitiveSetting: settings.timeSensitiveSetting.asString()
         )
     }
+    
+    func requestAuthorization() async throws -> Bool {
+        return try await notificationCenter.requestAuthorization(options: [UNAuthorizationOptions.sound, UNAuthorizationOptions.alert, UNAuthorizationOptions.badge])
+    }
 }
