@@ -1018,15 +1018,15 @@
 - (OCMArg *)argForRegion:(CLCircularRegion *)expectedRegion {
     return [OCMArg checkWithBlock:^BOOL(CLCircularRegion *region) {
         BOOL result = YES;
-        if (expectedRegion.center.latitude != region.center.latitude) {
+        if (![[self stringFromDouble:expectedRegion.center.latitude] isEqualToString:[self stringFromDouble:region.center.latitude]]) {
             result = NO;
             return result;
         }
-        if (expectedRegion.center.longitude != region.center.longitude) {
+        if (![[self stringFromDouble:expectedRegion.center.longitude] isEqualToString:[self stringFromDouble:region.center.longitude]]) {
             result = NO;
             return result;
         }
-        if (expectedRegion.radius != region.radius) {
+        if (![[self stringFromDouble:expectedRegion.radius] isEqualToString:[self stringFromDouble:region.radius]]) {
             result = NO;
             return result;
         }
@@ -1036,6 +1036,10 @@
         }
         return result;
     }];
+}
+
+- (NSString *)stringFromDouble:(double)num {
+    return [NSString stringWithFormat:@"%f", num];
 }
 
 - (void)waitForOperation {
