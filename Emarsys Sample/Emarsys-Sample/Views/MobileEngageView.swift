@@ -102,7 +102,6 @@ struct MobileEngageView: View {
             self.showingEmptyEventNameAlert = true
         } else {
             let eventAttributes = self.convertEventPayloadToJson()
-            print(eventAttributes?.description)
             Emarsys.trackCustomEvent(eventName: self.customEventName, eventAttributes: eventAttributes) { error in
                 if(error == nil) {
                     showMessage(successful: true)
