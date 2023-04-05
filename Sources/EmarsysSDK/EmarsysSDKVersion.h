@@ -1,1 +1,1 @@
-#define EMARSYS_SDK_VERSION @"3.3.0"
+#define EMARSYS_SDK_VERSION @"3.3.1"
