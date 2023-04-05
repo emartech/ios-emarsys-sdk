@@ -37,8 +37,11 @@ jobs:
         keychain-password: ${{ secrets.KEYCHAIN_PASS }}
         p12-file-base64: ${{ secrets.DEV_ACCOUNT_DIST_CERT_P12_BASE64 }}
         p12-password: ${{ secrets.DEV_ACCOUNT_DIST_CERT_PASS }}
+    - name: Pod repo update
+      run: pod repo update
+      shell: bash
     - name: Install Dependencies
-      run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && pod update
+      run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && rm -f Podfile.lock && pod update
       shell: bash
     - name: Clean project
       run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean

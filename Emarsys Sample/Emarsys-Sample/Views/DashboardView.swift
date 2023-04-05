@@ -58,7 +58,7 @@ struct DashboardView: View {
                     Text("Push token")
                         .bold()
                         .onReceive(NotificationCenter.default.publisher(for: .pushTokenReceived)) { object in
-                            self.deviceToken = object.userInfo?["push_token"] as! Data
+                            self.deviceToken = (object.userInfo?["push_token"] as! Data)
                         }
                     
                     HStack {
