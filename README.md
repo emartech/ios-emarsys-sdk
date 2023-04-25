@@ -1,3 +1,4 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/emartech/ios-emarsys-sdk)](https://api.reuse.software/info/github.com/emartech/ios-emarsys-sdk)
 #### Contents
 - [What is the Emarsys SDK?](#what-is-the-emarsys-sdk "What is EmarsysSDK?")
 - [Sample app](#sample-app "Sample app")
