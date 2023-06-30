@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class DefaultContactClientTests: EmarsysTestCase {
@@ -39,15 +40,13 @@ final class DefaultContactClientTests: EmarsysTestCase {
     func testLinkContact_shouldThrowErrorWhenContactFieldValueAndOpenIdToken_isNil() async throws {
         let expectedError = Errors.preconditionFailed(message: "Either contactFieldValue or openIdToken must not be nil")
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            XCTAssertEqual(invocationCount, 0)
-            
-            return (Data(), HTTPURLResponse())
-        }
-        
         await assertThrows(expectedError: expectedError) {
             try await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: nil, openIdToken: nil)
         }
+        
+        _ = try fakeNetworkClient
+            .verify(\.fnSend)
+            .times(times: .eq(0))
     }
     
     func testLinkContact_shouldSendRequestWithEmarsysClient_includingOnlyContactFieldValue_whenOpenIdTokenIsNil() async throws {
@@ -57,8 +56,8 @@ final class DefaultContactClientTests: EmarsysTestCase {
         ]
         let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict.toData())
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            let request: URLRequest! = try params[0].unwrap()
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
             let requestBodyDict = request.httpBody?.toDict() as! [String : String]
             
             XCTAssertEqual(request.url, expectedRequest.url)
@@ -78,8 +77,8 @@ final class DefaultContactClientTests: EmarsysTestCase {
         ]
         let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict.toData())
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            let request: URLRequest! = try params[0].unwrap()
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
             let requestBodyDict = request.httpBody?.toDict() as! [String : String]
             
             XCTAssertEqual(request.url, expectedRequest.url)
@@ -94,11 +93,9 @@ final class DefaultContactClientTests: EmarsysTestCase {
     
     
     func testLinkContact_shouldHandleSuccessResponse_andSetTokensOnSessionContext() async throws {
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            XCTAssertEqual(invocationCount, 1)
-            
-            return (ContactResponse(contactToken: self.contactToken, refreshToken: self.refreshToken), HTTPURLResponse())
-        }
+        fakeNetworkClient
+            .when(\.fnSend)
+            .thenReturn((ContactResponse(contactToken: self.contactToken, refreshToken: self.refreshToken), HTTPURLResponse()))
         
         try await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue, openIdToken: nil)
         
@@ -113,11 +110,9 @@ final class DefaultContactClientTests: EmarsysTestCase {
         sessionContext.contactToken = contactToken
         sessionContext.refreshToken = refreshToken
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            XCTAssertEqual(invocationCount, 1)
-            
-            throw Errors.NetworkingError.failedRequest(response: errorResponse)
-        }
+        fakeNetworkClient
+            .when(\.fnSend)
+            .thenThrow(error: Errors.NetworkingError.failedRequest(response: errorResponse))
         
         await assertThrows(expectedError: expectedError) {
             try await contactClient.linkContact(contactFieldId: contactFieldId, contactFieldValue: contactFieldValue, openIdToken: nil)
@@ -133,8 +128,8 @@ final class DefaultContactClientTests: EmarsysTestCase {
         let bodyDict = [String: String]()
         let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=true")!, body: bodyDict.toData())
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            let request: URLRequest! = try params[0].unwrap()
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
             let requestBodyDict = request.httpBody?.toDict() as! [String : String]
             
             XCTAssertEqual(request.url, expectedRequest.url)

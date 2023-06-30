@@ -31,16 +31,15 @@ final class DefaultPushClientTests: EmarsysTestCase {
         let pushToken = "testPushToken"
         let expectedBody = ["pushToken": pushToken].toData()
 
-        var count = 0
+        var count: Int = 0
         var requestUrl: String? = nil
         var sentBody: Data? = nil
-        
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            count = invocationCount
-            let request: URLRequest! = try params[0].unwrap()
-            
+
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
             requestUrl = request.url?.absoluteString
             sentBody = request.httpBody
+            count = invocationCount
             return (Data(), HTTPURLResponse())
         }
         
@@ -56,12 +55,11 @@ final class DefaultPushClientTests: EmarsysTestCase {
         var requestUrl: String? = nil
         var requestMethod: String? = nil
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            count = invocationCount
-            let request: URLRequest! = try params[0].unwrap()
-            
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
             requestUrl = request.url?.absoluteString
             requestMethod = request.httpMethod
+            count = invocationCount
             return (Data(), HTTPURLResponse())
         }
         

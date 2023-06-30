@@ -6,20 +6,19 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakePushClient: PushClient, Faked {
+struct FakePushClient: PushClient, Mimic {
     
-    let faker = Faker()
-    
-    let registerPushToken = "register"
-    let removePushToken = "remove"
+    let fnRegisterPushToken = Fn<()>()
+    let fnRemovePushToken = Fn<()>()
     
     func registerPushToken(_ pushToken: String) async throws {
-        return try handleCall(\.registerPushToken, params: pushToken)
+        return try fnRegisterPushToken.invoke(params: pushToken)
     }
     
     func removePushToken() async throws {
-        return try handleCall(\.removePushToken)
+        return try fnRemovePushToken.invoke()
     }
     
 }

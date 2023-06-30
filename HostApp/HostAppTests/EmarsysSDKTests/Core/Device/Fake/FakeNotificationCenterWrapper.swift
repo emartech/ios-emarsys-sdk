@@ -2,19 +2,18 @@
 import Foundation
 import UserNotifications
 @testable import EmarsysSDK
+import mimic
 
-struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Faked {
+struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Mimic {
     
-    var faker = Faker()
-    
-    let notificationSettings = "notificationSettings"
-    let requestAuthorization = "requestAuthorization"
+    let fnNotificationSettings = Fn<PushSettings>()
+    let fnRequestAuthorization = Fn<Bool>()
     
     func notificationSettings() async -> PushSettings {
-        return try! handleCall(\.notificationSettings)
+        return try! fnNotificationSettings.invoke()
     }
     
     func requestAuthorization() async throws -> Bool {
-        return try! handleCall(\.requestAuthorization)
+        return try! fnRequestAuthorization.invoke()
     }
 }

@@ -22,9 +22,9 @@ final class DefaultEventClientTests: EmarsysTestCase {
     var sdkContext: SdkContext
 
     override func setUpWithError() throws {
-        fakeTimeStampProvider.when(\.provideFuncName) { invocationCount, params in
-            return Date()
-        }
+        fakeTimeStampProvider
+            .when(\.fnProvide)
+            .thenReturn(Date())
 
         defaultEventClient = DefaultEventClient(networkClient: fakeNetworkClient,
                 sdkContext: sdkContext,
@@ -49,8 +49,8 @@ final class DefaultEventClientTests: EmarsysTestCase {
         var attributes: [String: String]? = nil
         var type: String? = nil
 
-        fakeNetworkClient.when(\.sendWithBody) { invocationCount, params in
-            let body: EventRequest! = try params[1].unwrap()
+        fakeNetworkClient.when(\.fnSendWithInput).replaceFunction { invocationCount, params in
+            let body: EventRequest! = params[1]
             name = body.events.first?.name
             attributes = body.events.first?.attributes
             type = body.events.first?.type

@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class DefaultDeviceClientTests: EmarsysTestCase {
@@ -56,28 +57,22 @@ final class DefaultDeviceClientTests: EmarsysTestCase {
     }
     
     func testRegisterClient_shouldSendRequest_withEmarsysClient() async throws {
-        let expectation = XCTestExpectation(description: "waitForExpectation")
-        fakeDeviceInfoCollector.when(\.collect) { invocationCount, params in
-            
-            XCTAssertEqual(invocationCount, 1)
-            return self.deviceInfo
-        }
+        fakeDeviceInfoCollector
+            .when(\.fnCollect)
+            .thenReturn(self.deviceInfo)
         
-        fakeNetworkClient.when(\.sendWithBody) { invocationCount, params in
-            let request: URLRequest! = try params[0].unwrap()
-            let requestBody: DeviceInfoRequestBody! = try params[1].unwrap()
+        fakeNetworkClient.when(\.fnSendWithInput).replaceFunction { invocationCount, params in
+            let request: URLRequest! = params[0]
+            let requestBody: DeviceInfoRequestBody! = params[1]
             
             XCTAssertEqual(invocationCount, 1)
             XCTAssertEqual(request.url?.absoluteString, "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client")
             XCTAssertEqual(requestBody, self.deviceInfoRequestBody)
             
-            expectation.fulfill()
             return (Data(), HTTPURLResponse())
         }
         
         try await defaultDeviceClient.registerClient()
-        
-        wait(for: [expectation], timeout: 5)
     }
     
     
@@ -88,24 +83,17 @@ final class DefaultDeviceClientTests: EmarsysTestCase {
                                        headerFields: [String: String]())!
         
         let expectedError = Errors.UserFacingRequestError.registerClientFailed(url: String(describing: failedRequestUrl?.absoluteString))
-        let expectation = XCTestExpectation(description: "waitForExpectation")
-        fakeDeviceInfoCollector.when(\.collect) { invocationCount, params in
-            
-            XCTAssertEqual(invocationCount, 1)
-            return self.deviceInfo
-        }
+
+        fakeDeviceInfoCollector
+            .when(\.fnCollect)
+            .thenReturn(self.deviceInfo)
         
-        fakeNetworkClient.when(\.sendWithBody) { invocationCount, params in
-            XCTAssertEqual(invocationCount, 1)
-            
-            expectation.fulfill()
-            throw Errors.NetworkingError.failedRequest(response: response)
-        }
+        fakeNetworkClient
+            .when(\.fnSendWithInput)
+            .thenThrow(error: Errors.NetworkingError.failedRequest(response: response))
         
         await assertThrows(expectedError: expectedError) {
             try await defaultDeviceClient.registerClient()
         }
-        
-        wait(for: [expectation], timeout: 5)
     }
 }

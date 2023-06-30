@@ -5,13 +5,13 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeEventApi: EventInstance, Faked {
-    var faker = Faker()
+struct FakeEventApi: EventInstance, Mimic {
     
-    let trackCustomEvent = "trackCustomEvent"
+    let fnCustomeEvent = Fn<()>()
     
     func trackCustomEvent(name: String, attributes: [String : String]?) async throws {
-        return try handleCall(\.trackCustomEvent, params: name, attributes)
+        return try fnCustomeEvent.invoke(params: name, attributes)
     }
 }

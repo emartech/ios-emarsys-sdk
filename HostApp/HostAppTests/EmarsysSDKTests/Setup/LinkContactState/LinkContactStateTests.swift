@@ -2,10 +2,11 @@
 //
 // Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
 //
-        
+
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class LinkContactStateTests: EmarsysTestCase {
     
@@ -16,94 +17,65 @@ final class LinkContactStateTests: EmarsysTestCase {
     var fakeSecureStorage: FakeSecureStorage
     
     var linkContactState: LinkContactState!
-
+    
     override func setUpWithError() throws {
         linkContactState = LinkContactState(contactClient: fakeContactClient, secureStorage: fakeSecureStorage)
+        fakeContactClient.when(\.fnLinkContact).thenReturn(())
+        fakeContactClient.when(\.fnUnlinkContact).thenReturn(())
     }
-
+    
     func testActive_whenContactTokenIsNotNil() async throws {
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            return "testContactToken"
-        }
-        
-        var contactClientWasCalled = false
-        let expectation = XCTestExpectation(description: "waitForContactClient")
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
-            contactClientWasCalled = true
-            expectation.fulfill()
-            return
-        }
-        fakeContactClient.when(\.unlinkContact) { invocationCount, params in
-            contactClientWasCalled = true
-            expectation.fulfill()
-            return
-        }
+        fakeSecureStorage.when(\.fnGet).thenReturn("testContactToken")
         
         try await linkContactState.active()
         
-        let waiterResult = XCTWaiter.wait(for: [expectation], timeout: 2)
-        
-        XCTAssertEqual(waiterResult, .timedOut)
-        XCTAssertFalse(contactClientWasCalled)
+        _ = try fakeContactClient.verify(\.fnLinkContact).times(times: .eq(0))
+        _ = try fakeContactClient.verify(\.fnUnlinkContact).times(times: .eq(0))
     }
     
     func testActive_whenContactCredentialsAreNil() async throws {
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            return nil
-        }
-        
-        var unlinkContactWasCalled = false
-        let expectation = XCTestExpectation(description: "waitForContactClient")
-        fakeContactClient.when(\.unlinkContact) { invocationCount, params in
-            unlinkContactWasCalled = true
-            expectation.fulfill()
-            return
-        }
+        fakeSecureStorage.when(\.fnGet).thenReturn(nil)
         
         try await linkContactState.active()
         
-        wait(for: [expectation], timeout: 2)
-        XCTAssertTrue(unlinkContactWasCalled)
+        _ = try fakeContactClient
+            .verify(\.fnLinkContact)
+            .times(times: .eq(0))
+        _ = try fakeContactClient
+            .verify(\.fnUnlinkContact)
+            .times(times: .eq(1))
     }
-
+    
     func testActive_whenContactFieldIdAndContactFieldValueIsNotNil() async throws {
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            let key: String! = try params[0].unwrap()
-            var result: Any?
-            switch key {
-            case Constants.Contact.contactFieldId:
-                result = 123
-            case Constants.Contact.contactFieldValue:
-                result = "testContactFieldValue"
-            default:
-                result = nil
+        fakeSecureStorage
+            .when(\.fnGet)
+            .replaceFunction { invocationCount, params in
+                let key: String! = params[0]
+                var result: Storable?
+                switch key {
+                case Constants.Contact.contactFieldId:
+                    result = 123
+                case Constants.Contact.contactFieldValue:
+                    result = "testContactFieldValue"
+                default:
+                    result = nil
+                }
+                return result
             }
-            return result
-        }
-        
-        var contactFieldIdParam: Int? = nil
-        var contactFieldValueParam: String? = nil
-        
-        let expectation = XCTestExpectation(description: "waitForContactClient")
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
-            contactFieldIdParam = try params[0].unwrap()
-            contactFieldValueParam = try params[1].unwrap()
-            expectation.fulfill()
-            return
-        }
         
         try await linkContactState.active()
         
-        wait(for: [expectation], timeout: 2)
-        
-        XCTAssertEqual(contactFieldIdParam, 123)
-        XCTAssertEqual(contactFieldValueParam, "testContactFieldValue")
+        _ = try fakeContactClient
+            .verify(\.fnLinkContact)
+            .wasCalled(Arg.eq(123), Arg.eq("testContactFieldValue"), Arg.nil)
     }
     
     func testActive_whenContactFieldIdAndOpenIdTokenValueIsNotNil() async throws {
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            let key: String! = try params[0].unwrap()
-            var result: Any?
+        fakeSecureStorage
+            .when(\.fnGet)
+            .replaceFunction { invocationCount, params in
+            let key: String! = params[0]
+            var result: Storable?
             switch key {
             case Constants.Contact.contactFieldId:
                 result = 123
@@ -114,24 +86,12 @@ final class LinkContactStateTests: EmarsysTestCase {
             }
             return result
         }
-        
-        var contactFieldIdParam: Int? = nil
-        var openIdTokenParam: String? = nil
-        
-        let expectation = XCTestExpectation(description: "waitForContactClient")
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
-            contactFieldIdParam = try params[0].unwrap()
-            openIdTokenParam = try params[2].unwrap()
-            expectation.fulfill()
-            return
-        }
-        
+
         try await linkContactState.active()
         
-        wait(for: [expectation], timeout: 2)
-        
-        XCTAssertEqual(contactFieldIdParam, 123)
-        XCTAssertEqual(openIdTokenParam, "testOpenIdToken")
+        _ = try fakeContactClient
+            .verify(\.fnLinkContact)
+            .wasCalled(Arg.eq(123), Arg.nil, Arg.eq("testOpenIdToken"))
     }
     
 }

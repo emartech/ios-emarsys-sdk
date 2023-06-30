@@ -6,6 +6,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class RegisterPushTokenStateTests: EmarsysTestCase {
@@ -20,48 +21,39 @@ final class RegisterPushTokenStateTests: EmarsysTestCase {
     
     override func setUpWithError() throws {
         registerPushTokenState = RegisterPushTokenState(pushClient: fakePushClient, secureStorage: fakeSecureStorage)
+        fakePushClient
+            .when(\.fnRegisterPushToken)
+            .thenReturn(())
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
     }
 
     func testActive_whenLastSentPushTokenIsMissing_pushTokenIsAvailable() async throws {
         let expectedPushToken = "testPushToken"
         
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            let key: String! = try params[0].unwrap()
-            var result: String? = nil
-            if key == "pushToken" {
-                result = expectedPushToken
-            }
-            return result
-        }
-        var pushTokenParam: String? = nil
-        var pushTokenToStore: String? = nil
-        
-        let expectation = XCTestExpectation(description: "waitForRegisterPushToken")
-        expectation.expectedFulfillmentCount = 2
-        fakePushClient.when(\.registerPushToken) { invocationCount, params in
-            pushTokenParam = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
-        fakeSecureStorage.when(\.put) { invocationCount, params in
-            pushTokenToStore = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
+        fakeSecureStorage
+            .when(\.fnGet)
+            .calledWith(Arg.eq(Constants.Push.pushToken), Arg.nil)
+            .thenReturn(expectedPushToken)
         
         _ = try await registerPushTokenState.active()
         
-        wait(for: [expectation], timeout: 2)
-        
-        XCTAssertEqual(pushTokenParam, expectedPushToken)
-        XCTAssertEqual(pushTokenToStore, expectedPushToken)
+        _ = try fakePushClient
+            .verify(\.fnRegisterPushToken)
+            .wasCalled(Arg.eq(expectedPushToken))
+        _ = try fakeSecureStorage
+            .verify(\.fnPut)
+            .wasCalled(Arg.eq(expectedPushToken), Arg.eq(Constants.Push.lastSentPushToken), Arg.nil)
     }
     
     func testActive_whenBothAvailable_butNotTheSame() async throws {
         let expectedPushToken = "testPushToken"
         
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            let key: String! = try params[0].unwrap()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .replaceFunction { invocationCount, params in
+            let key: String = params[0]
             var result: String? = nil
             if key == "pushToken" {
                 result = expectedPushToken
@@ -70,36 +62,26 @@ final class RegisterPushTokenStateTests: EmarsysTestCase {
             }
             return result
         }
-        var pushTokenParam: String? = nil
-        var pushTokenToStore: String? = nil
-        
-        let expectation = XCTestExpectation(description: "waitForRegisterPushToken")
-        expectation.expectedFulfillmentCount = 2
-        fakePushClient.when(\.registerPushToken) { invocationCount, params in
-            pushTokenParam = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
-        fakeSecureStorage.when(\.put) { invocationCount, params in
-            pushTokenToStore = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
         
         _ = try await registerPushTokenState.active()
         
-        wait(for: [expectation], timeout: 2)
+        _ = try fakePushClient
+            .verify(\.fnRegisterPushToken)
+            .wasCalled(Arg.eq(expectedPushToken))
         
-        XCTAssertEqual(pushTokenParam, expectedPushToken)
-        XCTAssertEqual(pushTokenToStore, expectedPushToken)
+        _ = try fakeSecureStorage
+            .verify(\.fnPut)
+            .wasCalled(Arg.eq(expectedPushToken), Arg.eq(Constants.Push.lastSentPushToken), Arg.nil)
     }
 
     
     func testActive_whenBothAvailable_andTheSame() async throws {
         let expectedPushToken = "testPushToken"
         
-        fakeSecureStorage.when(\.get) { invocationCount, params in
-            let key: String! = try params[0].unwrap()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .replaceFunction { invocationCount, params in
+            let key: String = params[0]
             var result: String? = nil
             if key == "pushToken" {
                 result = expectedPushToken
@@ -108,30 +90,16 @@ final class RegisterPushTokenStateTests: EmarsysTestCase {
             }
             return result
         }
-        var pushTokenParam: String? = nil
-        var pushTokenToStore: String? = nil
-        
-        let expectation = XCTestExpectation(description: "waitForRegisterPushToken")
-        expectation.expectedFulfillmentCount = 2
-        fakePushClient.when(\.registerPushToken) { invocationCount, params in
-            pushTokenParam = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
-        fakeSecureStorage.when(\.put) { invocationCount, params in
-            pushTokenToStore = try params[0].unwrap()
-            expectation.fulfill()
-            return
-        }
         
         _ = try await registerPushTokenState.active()
         
-        let waiterResult = XCTWaiter.wait(for: [expectation], timeout: 2)
+        _ = try fakePushClient
+            .verify(\.fnRegisterPushToken)
+            .times(times: .zero)
         
-        XCTAssertEqual(waiterResult, .timedOut)
-        XCTAssertNil(pushTokenParam)
-        XCTAssertNil(pushTokenToStore)
+        _ = try fakeSecureStorage
+            .verify(\.fnPut)
+            .times(times: .zero)
     }
-
     
 }

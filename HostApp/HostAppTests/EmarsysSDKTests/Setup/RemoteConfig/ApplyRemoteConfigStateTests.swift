@@ -14,12 +14,14 @@ final class ApplyRemoteConfigStateTests: EmarsysTestCase {
     var fakeRemoteConfigHandler: FakeRemoteConfigHandler
 
     func testActive_shouldCallRemoteConfigHandler() async throws {
-        var count = 0
-        fakeRemoteConfigHandler.when(\.handle) { invocationCount, params in
-            count = invocationCount
-        }
+        fakeRemoteConfigHandler
+            .when(\.fnHandle)
+            .thenReturn(())
+        
         try await ApplyRemoteConfigState(remoteConfigHandler: fakeRemoteConfigHandler).active()
 
-        XCTAssertEqual(count, 1)
+        _ = try fakeRemoteConfigHandler
+            .verify(\.fnHandle)
+            .times(times: .eq(1))
     }
 }

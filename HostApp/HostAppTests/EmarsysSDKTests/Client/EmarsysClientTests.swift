@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class EmarsysClientTests: EmarsysTestCase {
@@ -60,9 +61,9 @@ final class EmarsysClientTests: EmarsysTestCase {
     override func setUpWithError() throws {
         try! super.setUpWithError()
 
-        fakeTimestampProvider.when(\.provideFuncName) { invocationCount, params in
-            return Date(timeIntervalSince1970: 50000)
-        }
+        fakeTimestampProvider
+            .when(\.fnProvide)
+            .thenReturn(Date(timeIntervalSince1970: 50000))
         
         requiredHeaders = [
             "X-Client-State": testClientState,
@@ -80,8 +81,8 @@ final class EmarsysClientTests: EmarsysTestCase {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         
         var requestInNetworkCall: URLRequest!
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            requestInNetworkCall = try args[0].unwrap()
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
+            requestInNetworkCall = args[0]
             return (self.bodyDict.toData(), HTTPURLResponse())
         }
         
@@ -96,8 +97,8 @@ final class EmarsysClientTests: EmarsysTestCase {
         let testDennaResponse = DennaResponse(method: "POST", headers: headers, body: testBody)
         
         var requestInNetworkCall: URLRequest!
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            requestInNetworkCall = try args[0].unwrap()
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
+            requestInNetworkCall = args[0]
             return (testDennaResponse, HTTPURLResponse())
         }
         
@@ -113,8 +114,8 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         var requestInNetworkCall: URLRequest!
         
-        fakeNetworkClient.when(\.sendWithBody) { invocationNumber, args in
-            requestInNetworkCall = try args[0].unwrap()
+        fakeNetworkClient.when(\.fnSendWithInput).replaceFunction { invocationNumber, args in
+            requestInNetworkCall = args[0]
             return (body, HTTPURLResponse())
         }
         
@@ -130,8 +131,8 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         var requestInNetworkCall: URLRequest!
         
-        fakeNetworkClient.when(\.sendWithBody) { invocationNumber, args in
-            requestInNetworkCall = try args[0].unwrap()
+        fakeNetworkClient.when(\.fnSendWithInput).replaceFunction { invocationNumber, args in
+            requestInNetworkCall = args[0]
             return (testDennaResponse, HTTPURLResponse())
         }
         
@@ -144,9 +145,9 @@ final class EmarsysClientTests: EmarsysTestCase {
     func testSend_withoutInput_withData_shouldStoreClientState_toSessionContext_whenClientState_isPresent() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
         
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
-            return (self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ]))
-        }
+        fakeNetworkClient
+            .when(\.fnSend)
+            .thenReturn((self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
         
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         
@@ -156,9 +157,9 @@ final class EmarsysClientTests: EmarsysTestCase {
     func testSend_withoutInput_withBody_shouldStoreClientState_toSessionContext_whenClientState_isPresent() async throws {
         let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
 
-        fakeNetworkClient.when(\.sendWithBody) { invocationNumber, args in
-            return (self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ]))
-        }
+        fakeNetworkClient
+            .when(\.fnSendWithInput)
+            .thenReturn((self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
 
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request,body: testBody)
 
@@ -176,18 +177,18 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         var finalRequestInSend: URLRequest!
         
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
             switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
+            case 1: return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
                 
-            case 2: return (testRefreshResponse.toData(), refreshResponse)
+            case 2: return (testRefreshResponse.toData(), refreshResponse) as! (Decodable, HTTPURLResponse)
                 
             case 3:
-                finalRequestInSend = try args[0].unwrap()
-                return (finalResponseBody.toData(), responseWithSuccess)
+                finalRequestInSend = args[0]
+                return (finalResponseBody.toData(), responseWithSuccess) as! (Decodable, HTTPURLResponse)
                 
             default:
-                return (self.bodyDict.toData(), responseWithErrorStatus)
+                return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
             }
         }
         
@@ -208,14 +209,14 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         let testRefreshResponseWithMissingToken = ["contactToken": 123]
         
-        fakeNetworkClient.when(\.send) { invocationNumber, args in
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
             switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus)
+            case 1: return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
                 
-            case 2: return (testRefreshResponseWithMissingToken.toData(), refreshResponse)
+            case 2: return (testRefreshResponseWithMissingToken.toData(), refreshResponse) as! (Decodable, HTTPURLResponse)
                 
             default:
-                return (self.bodyDict.toData(), responseWithErrorStatus)
+                return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
             }
         }
         

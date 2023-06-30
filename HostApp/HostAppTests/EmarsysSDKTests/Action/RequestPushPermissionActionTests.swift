@@ -12,18 +12,17 @@ final class RequestPushPermissionActionTests: EmarsysTestCase {
     var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
     
     func testExecute_shouldCallRequestPermission_onNotificationCenter() async throws {
+        fakeNotificationCenterWrapper
+            .when(\.fnRequestAuthorization)
+            .thenReturn(false)
+        
         let application = await UIApplication.shared
         let testAction = RequestPushPermissionAction(application: application, notificationCenterWrapper: fakeNotificationCenterWrapper)
-        
-        var count: Int = 0
-        
-        fakeNotificationCenterWrapper.when(\.requestAuthorization) { invocationCount, params in
-            count = invocationCount
-            return true
-        }
-        
+
         try await testAction.execute()
-        
-        XCTAssertEqual(count, 1)
+
+        _ = try fakeNotificationCenterWrapper
+            .verify(\.fnRequestAuthorization)
+            .times(times: .eq(1))
     }
 }

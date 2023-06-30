@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class CustomEventActionTests: EmarsysTestCase {
     var customEventAction: CustomEventAction!
@@ -13,24 +14,20 @@ final class CustomEventActionTests: EmarsysTestCase {
     var fakeEventApi: FakeEventApi
 
     func testExecute_callsTrackCustomEvent_onEventApi() async throws {
+        fakeEventApi
+            .when(\.fnCustomeEvent)
+            .thenReturn(())
+        
         let testName = "test name"
         let testPayload = ["key":"value"]
         
         customEventAction = CustomEventAction(eventApi: fakeEventApi, name: testName, payload: testPayload)
-        
-        var eventName: String? = nil
-        var eventAttributes: [String:String]? = nil
-        
-        fakeEventApi.when(\.trackCustomEvent) { invocationCount, params in
-            eventName = try params[0].unwrap()
-            eventAttributes = try params[1].unwrap()
-            return
-        }
-        
+                
         try await customEventAction.execute()
-        
-        XCTAssertEqual(eventName, testName)
-        XCTAssertEqual(eventAttributes, testPayload)
+            
+        _ = try fakeEventApi
+            .verify(\.fnCustomeEvent)
+            .wasCalled(Arg.eq(testName), Arg.eq(testPayload))
     }
     
 }

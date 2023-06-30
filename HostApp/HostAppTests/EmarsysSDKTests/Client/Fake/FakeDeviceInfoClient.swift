@@ -6,13 +6,14 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
 
-struct FakeDeviceInfoClient: DeviceClient, Faked {
-    var faker = Faker()
-    let registerClient = "registerClient"
+struct FakeDeviceInfoClient: DeviceClient, Mimic {
+
+    let fnRegisterClient = Fn<()>()
     
     func registerClient() async throws {
-        return try handleCall(\.registerClient)
+        return try fnRegisterClient.invoke()
     }
 }

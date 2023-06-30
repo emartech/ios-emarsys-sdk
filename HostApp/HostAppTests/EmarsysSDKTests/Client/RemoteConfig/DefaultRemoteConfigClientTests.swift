@@ -41,13 +41,14 @@ final class DefaultRemoteConfigClientTests: EmarsysTestCase {
         
         var counter = 0
         
-        fakeNetworkClient.when(\.send) { invocationCount, params in
+        fakeCrypto.when(\.fnVerify).thenReturn(false)
+        fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
             switch invocationCount {
             case 1:
-                let request: URLRequest! = try params[0].unwrap()
+                let request: URLRequest! = params[0]
                 XCTAssertEqual(request.url?.absoluteString, remoteConfigUrl)
             case 2:
-                let request: URLRequest! = try params[0].unwrap()
+                let request: URLRequest! = params[0]
                 XCTAssertEqual(request.url?.absoluteString, signatureUrl)
             default:
                 return (Data(), HTTPURLResponse())
@@ -55,52 +56,39 @@ final class DefaultRemoteConfigClientTests: EmarsysTestCase {
             counter = invocationCount
             return (Data(), HTTPURLResponse())
         }
-        fakeCrypto.when(\.verify) { invocationCount, params in
-            return false
-        }
-        try await remoteConfigClient.fetchRemoteConfig()
+
+        _ = try await remoteConfigClient.fetchRemoteConfig()
         
         XCTAssertEqual(counter, 2)
     }
     
     func testFetchRemoteConfig_shouldNotCall_crypto_verify_whenSignatureNotFound() async throws {
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            if invocationCount == 2 {
-                return (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 404, httpVersion: nil, headerFields: nil))
-            } else {
-                return (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
-            }
-        }
-        var counter = 0
-        fakeCrypto.when(\.verify) { invocationCount, params in
-            counter = invocationCount
-            return false
-        }
+        let first = (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
+        let second = (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 404, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
+        let third = (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
+        
+        fakeNetworkClient.when(\.fnSend).thenReturns(first, second, third)
+        fakeCrypto.when(\.fnVerify).thenReturn(false)
         
         let result = try await remoteConfigClient.fetchRemoteConfig()
         
+        _ = try fakeCrypto.verify(\.fnVerify).times(times: .zero)
+        
         XCTAssertEqual(result, nil)
-        XCTAssertEqual(counter, 0)
     }
     
     func testFetchRemoteConfig_shouldNotCall_crypto_verify_whenConfigNotFound() async throws {
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            if invocationCount == 1 {
-                return (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 404, httpVersion: nil, headerFields: nil))
-            } else {
-                return (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
-            }
-        }
-        var counter = 0
-        fakeCrypto.when(\.verify) { invocationCount, params in
-            counter = invocationCount
-            return false
-        }
+        let first = (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 404, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
+        let second = (Data(), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
+        
+        fakeNetworkClient.when(\.fnSend).thenReturns(first, second)
+        fakeCrypto.when(\.fnVerify).thenReturn(false)
         
         let result = try await remoteConfigClient.fetchRemoteConfig()
         
+        _ = try fakeCrypto.verify(\.fnVerify).times(times: .zero)
+        
         XCTAssertEqual(result, nil)
-        XCTAssertEqual(counter, 0)
     }
     
     func testFetchRemoteConfig_shouldReturnRemoteConfig_whenVerificationSucceeds() async throws {
@@ -122,37 +110,29 @@ final class DefaultRemoteConfigClientTests: EmarsysTestCase {
                                                         overrides: overridesDict)
         
         let responseData = try jsonEncoder.encode(responseRemoteConfig)
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            return (responseData, HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
-        }
         
-        var counter = 0
-        fakeCrypto.when(\.verify) { invocationCount, params in
-            counter = invocationCount
-            return true
-        }
+        let response = (responseData, HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
         
-        let result :RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
+        fakeNetworkClient.when(\.fnSend).thenReturn(response)
+        fakeCrypto.when(\.fnVerify).thenReturn(true)
         
-        XCTAssertEqual(counter, 1)
+        let result: RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
+        
+        _ = try fakeCrypto.verify(\.fnVerify).times(times: .eq(1))
+        
         XCTAssertEqual(result, responseRemoteConfig)
     }
     
     func testFetchRemoteConfig_shouldReturnNil_whenVerifyFailed() async throws {
-        let response = try JSONSerialization.data(withJSONObject: ["key":"value"])
-        fakeNetworkClient.when(\.send) { invocationCount, params in
-            return (response, HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil))
-        }
+        let response = (try JSONSerialization.data(withJSONObject: ["key":"value"]), HTTPURLResponse(url: URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)) as! (Decodable, HTTPURLResponse)
         
-        var counter = 0
-        fakeCrypto.when(\.verify) { invocationCount, params in
-            counter = invocationCount
-            return false
-        }
-
-        let result :RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
+        fakeNetworkClient.when(\.fnSend).thenReturn(response)
+        fakeCrypto.when(\.fnVerify).thenReturn(false)
         
-        XCTAssertEqual(counter, 1)
+        let result: RemoteConfigResponse? = try await remoteConfigClient.fetchRemoteConfig()
+        
+        _ = try fakeCrypto.verify(\.fnVerify).times(times: .eq(1))
+        
         XCTAssertNil(result)
     }
 }

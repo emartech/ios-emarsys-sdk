@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class EventInternalTests: EmarsysTestCase {
@@ -25,23 +26,17 @@ final class EventInternalTests: EmarsysTestCase {
     func testTrackCustomEvent_shouldDelegateCallToEventClient() async throws {
         let eventName = "testName"
         let eventAttributes = ["key1":"value1"]
-        
-        var invocationCounter: Int = 0
-        var name: String? = nil
-        var attributes: [String:String]? = nil
-        
-        fakeEventClient.when(\.sendEvents) { invocationCount, params in
-            invocationCounter = invocationCount
-            name = try params[0].unwrap()
-            attributes = try params[1].unwrap()
-            return EventResponse(message: nil, onEventAction: nil, deviceEventState: nil)
-        }
-        
+
+        fakeEventClient
+            .when(\.fnSendEvents)
+            .thenReturn(EventResponse(message: nil, onEventAction: nil, deviceEventState: nil))
+
         try await eventInternal.trackCustomEvent(name: eventName, attributes: eventAttributes)
         
-        XCTAssertEqual(invocationCounter, 1)
-        XCTAssertEqual(name, eventName)
-        XCTAssertEqual(attributes, eventAttributes)
+        _ = try fakeEventClient
+            .verify(\.fnSendEvents)
+            .wasCalled(Arg.eq(eventName), Arg.eq(eventAttributes), Arg.eq(EventType.customEvent))
+            .times(times: .eq(1))
     }
 
     func testActivated_shouldSendGatheredCallsFirst() async throws {
@@ -66,19 +61,19 @@ final class EventInternalTests: EmarsysTestCase {
         var name3: String? = nil
         var attributes3: [String:String]? = nil
 
-        fakeEventClient.when(\.sendEvents) { invocationCount, params in
+        fakeEventClient.when(\.fnSendEvents).replaceFunction { invocationCount, params in
             switch invocationCount {
             case 1:
-                name = try params[0].unwrap()
-                attributes = try params[1].unwrap()
+                name = params[0]
+                attributes = params[1]
             case 2:
-                name2 = try params[0].unwrap()
-                attributes2 = try params[1].unwrap()
+                name2 = params[0]
+                attributes2 = params[1]
             case 3:
-                name3 = try params[0].unwrap()
-                attributes3 = try params[1].unwrap()
+                name3 = params[0]
+                attributes3 = params[1]
             default:
-                return
+                return EventResponse(message: nil, onEventAction: nil, deviceEventState: nil)
             }
             return EventResponse(message: nil, onEventAction: nil, deviceEventState: nil)
         }

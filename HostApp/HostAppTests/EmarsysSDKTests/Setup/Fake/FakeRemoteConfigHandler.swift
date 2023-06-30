@@ -1,13 +1,12 @@
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeRemoteConfigHandler: RemoteConfigHandler, Faked {
+struct FakeRemoteConfigHandler: RemoteConfigHandler, Mimic {
 
-    var faker = Faker()
-
-    let handle = "handle"
-
+    let fnHandle = Fn<()>()
+    
     func handle() async throws {
-        return try! handleCall(\.handle)
+        return try fnHandle.invoke()
     }
 }

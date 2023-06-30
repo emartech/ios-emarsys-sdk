@@ -6,11 +6,12 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 class EmarsysTestCase: XCTestCase {
 
-    override class func tearDown() {
+    override func tearDownWithError() throws {
         DependencyInjection.tearDown()
     }
     

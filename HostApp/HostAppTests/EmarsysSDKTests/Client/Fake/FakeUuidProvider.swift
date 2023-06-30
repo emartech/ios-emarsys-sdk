@@ -2,14 +2,13 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeUuidProvider: StringProvider, Faked {
+struct FakeUuidProvider: StringProvider, Mimic {
     
-    var faker = Faker()
-    
-    let provideFuncName = "provide"
+    let fnProvide = Fn<String>()
     
     func provide() -> String {
-        return try! handleCall(\.provideFuncName)
+        return try! fnProvide.invoke()
     }
 }

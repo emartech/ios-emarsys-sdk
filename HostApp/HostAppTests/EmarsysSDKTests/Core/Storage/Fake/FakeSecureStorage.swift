@@ -1,20 +1,19 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeSecureStorage: SecureStorage, Faked {
+struct FakeSecureStorage: SecureStorage, Mimic {
 
-    var faker = Faker()
+    let fnPut = Fn<()>()
+    let fnGet = Fn<Storable?>()
     
-    let put = "put"
-    let get = "get"
-    
-    func put<T>(item: T?, key: String, accessGroup: String?) throws where T : Storable {
-        return try handleCall(\.put, params: item, key, accessGroup)
+    func put<T>(item: T?, key: String, accessGroup: String? = nil) throws where T : Storable {
+        return try fnPut.invoke(params: item, key, accessGroup)
     }
     
-    func get<T>(key: String, accessGroup: String?) throws -> T? where T : Storable {
-        return try handleCall(\.get, params: key, accessGroup)
+    func get<T>(key: String, accessGroup: String? = nil) throws -> T? where T : Storable {
+        return try fnGet.invoke(params: key, accessGroup) as! T?
     }
     
     subscript<T>(key: String) -> T? where T: Storable {

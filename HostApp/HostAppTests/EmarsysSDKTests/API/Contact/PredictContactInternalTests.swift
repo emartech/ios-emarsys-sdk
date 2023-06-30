@@ -1,6 +1,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
 final class PredictContactInternalTests: EmarsysTestCase {
@@ -17,55 +18,36 @@ final class PredictContactInternalTests: EmarsysTestCase {
         contactContext = ContactContext()
         fakeContactClient = FakeContactClient()
         predictContactInternal = PredictContactInternal(contactContext: contactContext, contactClient: fakeContactClient)
+        fakeContactClient
+            .when(\.fnLinkContact)
+            .thenReturn(())
+        fakeContactClient
+            .when(\.fnUnlinkContact)
+            .thenReturn(())
     }
 
     func testLinkContact_shouldDelegateCallToClient() async throws {
-        
-        var contactFieldId: Int? = nil
-        var contactFieldValue: String? = nil
-        
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
-            contactFieldId = try params[0].unwrap()
-            contactFieldValue = try params[1].unwrap()
-            return
-        }
-        
         try await predictContactInternal.linkContact(contactFieldId: testFieldId, contactFieldValue: testFieldValue)
         
-        XCTAssertEqual(contactFieldId, testFieldId)
-        XCTAssertEqual(contactFieldValue, testFieldValue)
+        _ = try fakeContactClient
+            .verify(\.fnLinkContact)
+            .wasCalled(Arg.eq(testFieldId), Arg.eq(testFieldValue), Arg.nil)
     }
     
     func testLinkAuthenticatedContact_shouldDelegateCallToClient() async throws {
+       try await predictContactInternal.linkAuthenticatedContact(contactFieldId: testFieldId, openIdToken: testOpenIdToken)
         
-        var contactFieldId: Int? = nil
-        var openId: String? = nil
-        
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
-            contactFieldId = try params[0].unwrap()
-            openId =  try params[2].unwrap()
-            
-            return
-        }
-        
-        try await predictContactInternal.linkAuthenticatedContact(contactFieldId: testFieldId, openIdToken: testOpenIdToken)
-        
-        XCTAssertEqual(contactFieldId, testFieldId)
-        XCTAssertEqual(openId, testOpenIdToken)
+        _ = try fakeContactClient
+            .verify(\.fnLinkContact)
+            .wasCalled(Arg.eq(testFieldId), Arg.any, Arg.eq(testOpenIdToken))
     }
     
     func testUnlinkContact_shouldDelegateCallToClient() async throws {
-        
-        var callCounter: Int = 0
-        
-        fakeContactClient.when(\.unlinkContact) { invocationCount, params in
-            callCounter = invocationCount
-            return
-        }
-        
         try await predictContactInternal.unlinkContact()
 
-        XCTAssertEqual(callCounter, 1)
+        _ = try fakeContactClient
+            .verify(\.fnUnlinkContact)
+            .times(times: .eq(1))
     }
     
     func testActivated_shouldSendGatheredCallsFirst() async throws {
@@ -85,27 +67,20 @@ final class PredictContactInternalTests: EmarsysTestCase {
         var firstContactFieldId: Int! = 0
         var firstContactFieldValue: String? = nil
 
-        var secondCallCounter: Int = 0
-
         var thirdContactFieldId: Int! = 0
         var thirdOpenIdToken: String? = nil
 
-        fakeContactClient.when(\.linkContact) { invocationCount, params in
+        fakeContactClient.when(\.fnLinkContact).replaceFunction { invocationCount, params in
             switch invocationCount {
             case 1:
-                firstContactFieldId = try params[0].unwrap()
-                firstContactFieldValue = try params[1].unwrap()
+                firstContactFieldId = params[0]
+                firstContactFieldValue = params[1]
             case 2:
-                thirdContactFieldId = try params[0].unwrap()
-                thirdOpenIdToken = try params[2].unwrap()
+                thirdContactFieldId = params[0]
+                thirdOpenIdToken = params[2]
             default:
                 return
             }
-            return
-        }
-
-        fakeContactClient.when(\.unlinkContact) { invocationCount, params in
-            secondCallCounter = invocationCount
             return
         }
 
@@ -114,7 +89,9 @@ final class PredictContactInternalTests: EmarsysTestCase {
         XCTAssertEqual(firstContactFieldId, testCallContactId1)
         XCTAssertEqual(firstContactFieldValue, testCallContactFieldValue)
 
-        XCTAssertEqual(secondCallCounter, 1)
+        _ = try fakeContactClient
+            .verify(\.fnUnlinkContact)
+            .times(times: .eq(1))
 
         XCTAssertEqual(thirdContactFieldId, testCallContactId2)
         XCTAssertEqual(thirdOpenIdToken, testCallOpenIdToken)

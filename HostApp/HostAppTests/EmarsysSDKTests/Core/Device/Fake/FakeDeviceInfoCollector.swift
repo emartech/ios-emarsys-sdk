@@ -1,30 +1,29 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
 @SdkActor
-struct FakeDeviceInfoCollector: DeviceInfoCollector, Faked {
+struct FakeDeviceInfoCollector: DeviceInfoCollector, Mimic {
     
-    var faker = Faker()
-    
-    let collect: String = "collect"
-    let deviceTypeKey: String = "deviceType"
-    let osVersionKey: String = "osVersion"
-    let hardwareIdKey: String = "hardwareId"
+    let fnCollect = Fn<DeviceInfo>()
+    let fnDeviceType = Fn<String>()
+    let fnOsVersion = Fn<String>()
+    let fnHardwareId = Fn<String>()
     
     func collect() async -> DeviceInfo {
-        return try! handleCall(\.collect)
+        return try! fnCollect.invoke()
     }
     
     func deviceType() -> String {
-        return try! handleCall(\.deviceTypeKey)
+        return try! fnDeviceType.invoke()
     }
     
     func osVersion() -> String {
-        return try! handleCall(\.osVersionKey)
+        return try! fnOsVersion.invoke()
     }
     
     func hardwareId() -> String {
-        return try! handleCall(\.hardwareIdKey)
+        return try! fnHardwareId.invoke()
     }
 }

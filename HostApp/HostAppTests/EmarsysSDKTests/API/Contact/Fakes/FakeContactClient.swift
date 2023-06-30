@@ -5,19 +5,18 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeContactClient: ContactClient, Faked {
+struct FakeContactClient: ContactClient, Mimic {
     
-    var faker = Faker()
-    
-    let linkContact = "linkContact"
-    let unlinkContact = "unlinkContact"
+    let fnLinkContact = Fn<()>()
+    let fnUnlinkContact = Fn<()>()
     
     func linkContact(contactFieldId: Int, contactFieldValue: String? = nil, openIdToken: String? = nil) async throws {
-        return try handleCall(\.linkContact, params: contactFieldId, contactFieldValue, openIdToken)
+        return try fnLinkContact.invoke(params: contactFieldId, contactFieldValue, openIdToken)
     }
     
     func unlinkContact() async {
-        return try! handleCall(\.unlinkContact)
+        return try! fnUnlinkContact.invoke()
     }
 }

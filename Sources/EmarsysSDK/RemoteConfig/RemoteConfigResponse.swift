@@ -7,7 +7,7 @@
 import Foundation
 
 
-struct RemoteConfigResponse: Encodable, Decodable, Equatable {
+struct RemoteConfigResponse: Codable, Equatable {
     let serviceUrls: ServiceUrls?
     let logLevel: String?
     let luckyLogger: LuckyLogger?
@@ -15,7 +15,7 @@ struct RemoteConfigResponse: Encodable, Decodable, Equatable {
     var overrides: [String: RemoteConfig]? = nil
 }
 
-struct LuckyLogger: Encodable, Decodable, Equatable {
+struct LuckyLogger: Codable, Equatable {
     let logLevel: String
     let threshold: Double
 }

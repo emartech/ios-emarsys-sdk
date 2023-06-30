@@ -5,15 +5,13 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-
-struct FakeEventClient: EventClient, Faked {
+struct FakeEventClient: EventClient, Mimic {
     
-    var faker = Faker()
-    
-    let sendEvents = "sendEvents"
+    let fnSendEvents = Fn<EventResponse>()
     
     func sendEvents(name: String, attributes: [String: String]?, eventType: EventType) async throws -> EventResponse {
-        return try handleCall(\.sendEvents, params: name, attributes, eventType)
+        return try fnSendEvents.invoke(params: name, attributes, eventType)
     }
 }

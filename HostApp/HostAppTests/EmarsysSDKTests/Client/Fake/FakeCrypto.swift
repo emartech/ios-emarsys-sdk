@@ -1,13 +1,12 @@
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeCrypto: Crypto, Faked {
+struct FakeCrypto: Crypto, Mimic {
 
-    var faker = Faker()
-
-    let verify: String = "verify"
+    let fnVerify = Fn<Bool>()
 
     func verify(content: Data, signature: Data) -> Bool {
-        return try! handleCall(\.verify, params: content,signature)
+        return try! fnVerify.invoke(params: content, signature)
     }
 }

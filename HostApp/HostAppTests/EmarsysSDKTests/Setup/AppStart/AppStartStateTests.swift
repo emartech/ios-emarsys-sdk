@@ -6,6 +6,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class AppStartStateTests: EmarsysTestCase {
     private var state: AppStartState!
@@ -20,25 +21,16 @@ final class AppStartStateTests: EmarsysTestCase {
 
     func testActivate() async throws {
         let eventName = "app:start"
-        var invocations = 0
-        var name: String? = nil
-        var eventType: EventType? = nil
-        var eventAttributes: [String: String]? = nil
         
-        fakeEventClient.when(\.sendEvents) { invocationCount, params in
-            invocations = invocationCount
-            name = try params[0].unwrap()
-            eventAttributes = try params[1].unwrap()
-            eventType = try params[2].unwrap()
-            
-            return EventResponse(message: nil, onEventAction: nil, deviceEventState: nil)
-        }
+        fakeEventClient
+            .when(\.fnSendEvents)
+            .thenReturn(EventResponse(message: nil, onEventAction: nil, deviceEventState: nil))
         
         try await state.active()
         
-        XCTAssertEqual(invocations, 1)
-        XCTAssertEqual(name, eventName)
-        XCTAssertEqual(eventType, EventType.internalEvent)
-        XCTAssertNil(eventAttributes)
+        _ = try fakeEventClient
+            .verify(\.fnSendEvents)
+            .wasCalled(Arg.eq(eventName), Arg.nil, Arg.eq(EventType.internalEvent))
+            .times(times: .eq(1))
     }
 }

@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct DeviceInfo: Encodable, Equatable {
+struct DeviceInfo: Codable, Equatable {
     let platform: String
     let applicationVersion: String
     let deviceModel: String
@@ -28,7 +28,7 @@ struct DeviceInfoRequestBody: Encodable, Equatable {
     let timezone: String
 }
 
-struct PushSettings: Encodable, Equatable {
+struct PushSettings: Codable, Equatable {
     let authorizationStatus: String
     let soundSetting: String
     let badgeSetting: String

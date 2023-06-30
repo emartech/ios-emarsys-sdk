@@ -5,14 +5,13 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeTimestampProvider: DateProvider, Faked {
+struct FakeTimestampProvider: DateProvider, Mimic {
     
-    var faker = Faker()
-    
-    let provideFuncName = "provide"
+    let fnProvide = Fn<Date>()
     
     func provide() -> Date {
-        return try! handleCall(\.provideFuncName)
+        return try! fnProvide.invoke()
     }
 }

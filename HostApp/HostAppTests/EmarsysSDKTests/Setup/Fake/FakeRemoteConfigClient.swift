@@ -6,14 +6,13 @@
 
 import Foundation
 @testable import EmarsysSDK
+import mimic
 
-struct FakeRemoteConfigClient: RemoteConfigClient, Faked {
-    
-    var faker = Faker()
-    
-    let fetchRemoteConfig = "fetchRemoteConfig"
+struct FakeRemoteConfigClient: RemoteConfigClient, Mimic {
+        
+    let fnFetchRemoteConfig = Fn<RemoteConfigResponse?>()
     
     func fetchRemoteConfig() async throws -> RemoteConfigResponse? {
-        return try! handleCall(\.fetchRemoteConfig)
+        return try fnFetchRemoteConfig.invoke()
     }
 }

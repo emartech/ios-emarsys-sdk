@@ -12,26 +12,33 @@ import Foundation
 struct Inject<T, U> {
 
     private let keyPath: WritableKeyPath<TestDependencyContainer, T>
-    private var dependencyContainer: TestDependencyContainer
+    private var dependencyContainer: TestDependencyContainer {
+        get {
+            var result: TestDependencyContainer!
+            if let container = DependencyInjection.container as? TestDependencyContainer {
+                result = container
+            } else {
+                let testContainer = TestDependencyContainer()
+                DependencyInjection.tearDown()
+                DependencyInjection.setup(testContainer)
+                result = testContainer
+            }
+            return result
+        }
+    }
 
     var wrappedValue: U {
         get {
             return dependencyContainer[keyPath: keyPath] as! U
         }
         set {
-            dependencyContainer[keyPath: keyPath] = newValue as! T
+            var dc = self.dependencyContainer
+            dc[keyPath: keyPath] = newValue as! T
         }
     }
 
     init(_ keyPath: WritableKeyPath<TestDependencyContainer, T>) {
-        if let container = DependencyInjection.container as? TestDependencyContainer {
-            dependencyContainer = container
-        } else {
-            let testContainer = TestDependencyContainer()
-            DependencyInjection.tearDown()
-            DependencyInjection.setup(testContainer)
-            dependencyContainer = testContainer
-        }
         self.keyPath = keyPath
     }
+    
 }
