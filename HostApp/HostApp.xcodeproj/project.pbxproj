@@ -59,9 +59,6 @@
 		5D38AC2429B0D3E700C1AE4A /* FakeContactApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABEF29B0D3E700C1AE4A /* FakeContactApi.swift */; };
 		5D38AC2529B0D3E700C1AE4A /* FakeContactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF029B0D3E700C1AE4A /* FakeContactClient.swift */; };
 		5D38AC2629B0D3E700C1AE4A /* PredictContactInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF129B0D3E700C1AE4A /* PredictContactInternalTests.swift */; };
-		5D38AC2729B0D3E700C1AE4A /* FakedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF329B0D3E700C1AE4A /* FakedError.swift */; };
-		5D38AC2829B0D3E700C1AE4A /* Faked.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF429B0D3E700C1AE4A /* Faked.swift */; };
-		5D38AC2929B0D3E700C1AE4A /* FakeValueWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF529B0D3E700C1AE4A /* FakeValueWrapper.swift */; };
 		5D38AC2A29B0D3E700C1AE4A /* DefaultContactClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF829B0D3E700C1AE4A /* DefaultContactClientTests.swift */; };
 		5D38AC2B29B0D3E700C1AE4A /* DefaultRemoteConfigClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABFA29B0D3E700C1AE4A /* DefaultRemoteConfigClientTests.swift */; };
 		5D38AC2C29B0D3E700C1AE4A /* EmarsysClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABFB29B0D3E700C1AE4A /* EmarsysClientTests.swift */; };
@@ -78,6 +75,7 @@
 		5D38AC3729B0D3E700C1AE4A /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC0A29B0D3E700C1AE4A /* Dictionary.swift */; };
 		5D38AC3A29B0D44C00C1AE4A /* EmarsysSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 5D38AC3929B0D44C00C1AE4A /* EmarsysSDK */; };
 		5D38AC3E29B0E1B700C1AE4A /* EmarsysTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC3D29B0E1B700C1AE4A /* EmarsysTestCase.swift */; };
+		5D5ECD712A4E9BEE003E418E /* mimic in Frameworks */ = {isa = PBXBuildFile; productRef = 5D5ECD702A4E9BEE003E418E /* mimic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,7 +115,6 @@
 		5D38AB4C29B0D1EE00C1AE4A /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		5D38AB4F29B0D1EE00C1AE4A /* HostApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HostApp.xcdatamodel; sourceTree = "<group>"; };
 		5D38AB5529B0D1EE00C1AE4A /* HostAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HostAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D38AB7329B0D1FE00C1AE4A /* ios-emarsys-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-emarsys-sdk"; path = ..; sourceTree = "<group>"; };
 		5D38ABC229B0D3E700C1AE4A /* TestDependencyContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDependencyContainer.swift; sourceTree = "<group>"; };
 		5D38ABC429B0D3E700C1AE4A /* SdkContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SdkContextTests.swift; sourceTree = "<group>"; };
 		5D38ABC729B0D3E700C1AE4A /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
@@ -146,9 +143,6 @@
 		5D38ABEF29B0D3E700C1AE4A /* FakeContactApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeContactApi.swift; sourceTree = "<group>"; };
 		5D38ABF029B0D3E700C1AE4A /* FakeContactClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeContactClient.swift; sourceTree = "<group>"; };
 		5D38ABF129B0D3E700C1AE4A /* PredictContactInternalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictContactInternalTests.swift; sourceTree = "<group>"; };
-		5D38ABF329B0D3E700C1AE4A /* FakedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakedError.swift; sourceTree = "<group>"; };
-		5D38ABF429B0D3E700C1AE4A /* Faked.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Faked.swift; sourceTree = "<group>"; };
-		5D38ABF529B0D3E700C1AE4A /* FakeValueWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeValueWrapper.swift; sourceTree = "<group>"; };
 		5D38ABF829B0D3E700C1AE4A /* DefaultContactClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultContactClientTests.swift; sourceTree = "<group>"; };
 		5D38ABFA29B0D3E700C1AE4A /* DefaultRemoteConfigClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultRemoteConfigClientTests.swift; sourceTree = "<group>"; };
 		5D38ABFB29B0D3E700C1AE4A /* EmarsysClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmarsysClientTests.swift; sourceTree = "<group>"; };
@@ -165,6 +159,7 @@
 		5D38AC0A29B0D3E700C1AE4A /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		5D38AC3D29B0E1B700C1AE4A /* EmarsysTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmarsysTestCase.swift; sourceTree = "<group>"; };
 		5D38AC3F29B0E63C00C1AE4A /* HostApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HostApp.entitlements; sourceTree = "<group>"; };
+		5D5ECD742A4E9D33003E418E /* ios-emarsys-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-emarsys-sdk"; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D5ECD712A4E9BEE003E418E /* mimic in Frameworks */,
 				5D38AC3A29B0D44C00C1AE4A /* EmarsysSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,7 +294,7 @@
 		5D38AB7229B0D1FE00C1AE4A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				5D38AB7329B0D1FE00C1AE4A /* ios-emarsys-sdk */,
+				5D5ECD742A4E9D33003E418E /* ios-emarsys-sdk */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -315,7 +311,6 @@
 				5D38ABE529B0D3E700C1AE4A /* EmarsysSDKTests.swift */,
 				5D38ABE629B0D3E700C1AE4A /* TestTools */,
 				5D38ABE829B0D3E700C1AE4A /* API */,
-				5D38ABF229B0D3E700C1AE4A /* Faked */,
 				5D38ABF629B0D3E700C1AE4A /* Client */,
 				5D38AC0829B0D3E700C1AE4A /* TestExtensions */,
 			);
@@ -516,16 +511,6 @@
 			path = Fakes;
 			sourceTree = "<group>";
 		};
-		5D38ABF229B0D3E700C1AE4A /* Faked */ = {
-			isa = PBXGroup;
-			children = (
-				5D38ABF329B0D3E700C1AE4A /* FakedError.swift */,
-				5D38ABF429B0D3E700C1AE4A /* Faked.swift */,
-				5D38ABF529B0D3E700C1AE4A /* FakeValueWrapper.swift */,
-			);
-			path = Faked;
-			sourceTree = "<group>";
-		};
 		5D38ABF629B0D3E700C1AE4A /* Client */ = {
 			isa = PBXGroup;
 			children = (
@@ -633,12 +618,14 @@
 			buildRules = (
 			);
 			dependencies = (
-				5D38AC3C29B0D4D600C1AE4A /* PBXTargetDependency */,
+				5D5ECD762A4E9D40003E418E /* PBXTargetDependency */,
+				5D5ECD732A4E9C13003E418E /* PBXTargetDependency */,
 				5D38AB5729B0D1EE00C1AE4A /* PBXTargetDependency */,
 			);
 			name = HostAppTests;
 			packageProductDependencies = (
 				5D38AC3929B0D44C00C1AE4A /* EmarsysSDK */,
+				5D5ECD702A4E9BEE003E418E /* mimic */,
 			);
 			productName = HostAppTests;
 			productReference = 5D38AB5529B0D1EE00C1AE4A /* HostAppTests.xctest */;
@@ -672,6 +659,9 @@
 				Base,
 			);
 			mainGroup = 5D38AB3729B0D1EC00C1AE4A;
+			packageReferences = (
+				5D5ECD6F2A4E9B2F003E418E /* XCRemoteSwiftPackageReference "mimic" */,
+			);
 			productRefGroup = 5D38AB4129B0D1EC00C1AE4A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -734,12 +724,10 @@
 				5740257D29C4B0820014D9A6 /* BadgeCountActionTests.swift in Sources */,
 				5D38AC0C29B0D3E700C1AE4A /* SdkContextTests.swift in Sources */,
 				5D38AC2629B0D3E700C1AE4A /* PredictContactInternalTests.swift in Sources */,
-				5D38AC2729B0D3E700C1AE4A /* FakedError.swift in Sources */,
 				5D38AC1729B0D3E700C1AE4A /* DeviceInfoCollectorTests.swift in Sources */,
 				5D38AC1229B0D3E700C1AE4A /* SecureStorageTests.swift in Sources */,
 				5D38AC2229B0D3E700C1AE4A /* GathererContactTests.swift in Sources */,
 				5D38AC1A29B0D3E700C1AE4A /* LinkContactStateTests.swift in Sources */,
-				5D38AC2829B0D3E700C1AE4A /* Faked.swift in Sources */,
 				5D38AC1829B0D3E700C1AE4A /* ApplyRemoteConfigStateTests.swift in Sources */,
 				5D38AC1B29B0D3E700C1AE4A /* RegisterPushTokenStateTests.swift in Sources */,
 				57849F4E29B7489D0002CF62 /* DefaultEventClientTests.swift in Sources */,
@@ -753,7 +741,6 @@
 				5740257929C46E780014D9A6 /* GenericActionExtensionTests.swift in Sources */,
 				5740257329C352910014D9A6 /* ActionFactoryTests.swift in Sources */,
 				5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */,
-				5D38AC2929B0D3E700C1AE4A /* FakeValueWrapper.swift in Sources */,
 				5D38AC0F29B0D3E700C1AE4A /* DennaResponse.swift in Sources */,
 				5D38AC1429B0D3E700C1AE4A /* LogEntryTests.swift in Sources */,
 				5D38AC2C29B0D3E700C1AE4A /* EmarsysClientTests.swift in Sources */,
@@ -792,9 +779,13 @@
 			target = 5D38AB3F29B0D1EC00C1AE4A /* HostApp */;
 			targetProxy = 5D38AB5629B0D1EE00C1AE4A /* PBXContainerItemProxy */;
 		};
-		5D38AC3C29B0D4D600C1AE4A /* PBXTargetDependency */ = {
+		5D5ECD732A4E9C13003E418E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 5D38AC3B29B0D4D600C1AE4A /* EmarsysSDK */;
+			productRef = 5D5ECD722A4E9C13003E418E /* mimic */;
+		};
+		5D5ECD762A4E9D40003E418E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 5D5ECD752A4E9D40003E418E /* EmarsysSDK */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1045,12 +1036,33 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		5D5ECD6F2A4E9B2F003E418E /* XCRemoteSwiftPackageReference "mimic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/emartech/mimic";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		5D38AC3929B0D44C00C1AE4A /* EmarsysSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = EmarsysSDK;
 		};
-		5D38AC3B29B0D4D600C1AE4A /* EmarsysSDK */ = {
+		5D5ECD702A4E9BEE003E418E /* mimic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D5ECD6F2A4E9B2F003E418E /* XCRemoteSwiftPackageReference "mimic" */;
+			productName = mimic;
+		};
+		5D5ECD722A4E9C13003E418E /* mimic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D5ECD6F2A4E9B2F003E418E /* XCRemoteSwiftPackageReference "mimic" */;
+			productName = mimic;
+		};
+		5D5ECD752A4E9D40003E418E /* EmarsysSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = EmarsysSDK;
 		};
