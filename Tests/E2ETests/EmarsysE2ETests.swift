@@ -60,7 +60,7 @@ class EmarsysE2ETests: XCTestCase {
         retry { [unowned self] () in
             var returnedError: Error?
             let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
-            Emarsys.config.changeApplicationCode(applicationCode: code, contactFieldId: cId) { error in
+            Emarsys.config.changeApplicationCode(applicationCode: code) { error in
                 returnedError = error
                 changeAppCodeExpectation.fulfill()
             }
