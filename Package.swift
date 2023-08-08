@@ -25,7 +25,7 @@ let package = Package(
             name: "EmarsysSDK",
             path: "Sources",
             cSettings: [
-                .headerSearchPath("**")
+                .headerSearchPath("./Private/")
             ]
         )
     ]

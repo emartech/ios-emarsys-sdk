@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10A12A11042790B610A2A123 /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B7CB45C6A3BD122022A835A /* libPods-CoreTests.a */; };
 		165BF4312108972D00FA0F6A /* EmarsysSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEBEC5C210866C200FC6E83 /* EmarsysSDK.framework */; };
 		166B3F3B2119A840006CD35C /* EMSResponseModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99121075B270030E659 /* EMSResponseModelTests.m */; };
 		166B3F3C2119A840006CD35C /* EMSRequestModelRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2F99321075B270030E659 /* EMSRequestModelRepositoryTests.m */; };
@@ -387,6 +386,7 @@
 		568FEB0C233A0FF400901332 /* EMSWaiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460D89D66C18EBF3590970 /* EMSWaiter.m */; };
 		574DD0E9273283F8005F2750 /* EMSGeofenceTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */; };
 		574DD0EB2732843D005F2750 /* EMSGeofence.m in Sources */ = {isa = PBXBuildFile; fileRef = 574DD0EA2732843D005F2750 /* EMSGeofence.m */; };
+		6424B289AC7909621F1BB290 /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB7AD32D29ED8BE405E6598B /* libPods-Tests.a */; };
 		642590867F1D9665A69405B2 /* FakeDisplayedIAMRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6425981445EC441D5025D02A /* FakeDisplayedIAMRepository.swift */; };
 		642590A2729A4946FFFCDD17 /* EMSLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642594C044516E53D2877760 /* EMSLogicTests.m */; };
 		6425912A1561D7A4F6765FFF /* EMSAppEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259B9AFE68A274724F14B2 /* EMSAppEventActionTests.m */; };
@@ -447,7 +447,6 @@
 		64259E9951DF1C1476D457FC /* EMSInlineInAppView.h in Headers */ = {isa = PBXBuildFile; fileRef = 64259E07D567C02596450751 /* EMSInlineInAppView.h */; };
 		64259F27FD87816DA80A188F /* EMSCustomEventAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 642590C47F45DCCB47E7BC0A /* EMSCustomEventAction.m */; };
 		64259FA425362D2A801DC0DA /* EMSCustomEventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 64259852E6A4A27A6EAF02AE /* EMSCustomEventAction.h */; };
-		80BF7B3655F18A840772F7E8 /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB6AE4230D0D2BE23A30E44 /* libPods-PredictTests.a */; };
 		8A04DF312668C62F00FC4862 /* EMSDismissActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A04DF2D2668C62F00FC4862 /* EMSDismissActionModel.m */; };
 		8A04DF322668C62F00FC4862 /* EMSOpenExternalUrlActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A04DF2E2668C62F00FC4862 /* EMSOpenExternalUrlActionModel.m */; };
 		8A04DF332668C62F00FC4862 /* EMSAppEventActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A04DF2F2668C62F00FC4862 /* EMSAppEventActionModel.m */; };
@@ -843,9 +842,10 @@
 		94493C79A38278E2B53CF930 /* EMSRefreshTokenResponseHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 94493D6111536D01EFE2D6AE /* EMSRefreshTokenResponseHandlerTests.m */; };
 		94493D9EA2655A008BD5A078 /* EMSInAppInternalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 944931E68EDE76D77DC6F202 /* EMSInAppInternalTests.m */; };
 		94493DBABE1E24395EFDF39A /* EMSMobileEngageRefreshTokenCompletionProxyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 94493F38AD949B21234160CC /* EMSMobileEngageRefreshTokenCompletionProxyTests.m */; };
-		9594D66BC8784586D1D0B153 /* libPods-EmarsysSDKTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCFADA2EF668540B480D07D9 /* libPods-EmarsysSDKTests.a */; };
-		B48819C6045A0D099E2D37A3 /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2D1A8E414F2EB5BBB58FAFD /* libPods-MobileEngageTests.a */; };
-		B5A31D0C8EE6DD1A26C03208 /* libPods-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C96CBB29C1CADE3AB9944A56 /* libPods-Tests.a */; };
+		B866B1D13D78A818B4B78FAE /* libPods-PredictTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FE9BC5F24237DE93D9F364D /* libPods-PredictTests.a */; };
+		E72D4A106ECE2A21CE926FC1 /* libPods-MobileEngageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6909E0F2799C3BCC5A4A3444 /* libPods-MobileEngageTests.a */; };
+		E9E1E6C2A117F5D3D9768778 /* libPods-CoreTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F205B76DDC6F29702C9B00 /* libPods-CoreTests.a */; };
+		F1BD5E718BA503CAF8687A2D /* libPods-EmarsysSDKTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E451FCF8388D47EE63863AB /* libPods-EmarsysSDKTests.a */; };
 		F2A21028A513F7DA68C6F68B /* EMSRandomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */; };
 		F2A213DF1ABE3A5998EEC3B9 /* EMSRandomProviderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A21A1416C9F86971FAD6EF /* EMSRandomProviderTest.m */; };
 		F2A21551072282044E7BCDDE /* EMSIAMAppEventProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */; };
@@ -944,9 +944,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0085D90E76A466EA805A84AE /* Pods-EmarsysSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.release.xcconfig"; sourceTree = "<group>"; };
+		13F205B76DDC6F29702C9B00 /* libPods-CoreTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoreTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		167C9FD22118764100E01190 /* EMSTestPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSTestPrefixHeader.pch; sourceTree = "<group>"; };
-		2FA2EC94ADBDC596334F4622 /* Pods-PredictTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.debug.xcconfig"; sourceTree = "<group>"; };
+		328D182D6D1A65351F580868 /* Pods-PredictTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.debug.xcconfig"; sourceTree = "<group>"; };
 		32C6F01EBEC867A8F7697153 /* EMSCoreCompletionHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCoreCompletionHandlerTests.m; sourceTree = "<group>"; };
 		32C6F02C09C174632B057CF4 /* EMSAppEventActionModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSAppEventActionModelTests.m; sourceTree = "<group>"; };
 		32C6F02CE3E640F757B02675 /* EMSEventHandlerProtocolBlockConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEventHandlerProtocolBlockConverter.h; sourceTree = "<group>"; };
@@ -1025,7 +1025,7 @@
 		32C6F65A5A8B31DA7F928667 /* FakeDBTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeDBTrigger.m; sourceTree = "<group>"; };
 		32C6F674581A8BE9B3B83AF9 /* EMSAppEventLogTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSAppEventLogTests.m; sourceTree = "<group>"; };
 		32C6F687FB366F7DB4971F5D /* EMSOpenExternalUrlActionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSOpenExternalUrlActionModel.h; sourceTree = "<group>"; };
-		32C6F6892A9969DB03D04398 /* EMSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EMSCrypto.h; path = Crypto/EMSCrypto.h; sourceTree = "<group>"; };
+		32C6F6892A9969DB03D04398 /* EMSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCrypto.h; sourceTree = "<group>"; };
 		32C6F691CD32DB908E1216D4 /* EMSInboxV3Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInboxV3Tests.m; sourceTree = "<group>"; };
 		32C6F6AA173FC61B7931E48B /* EMSAppStartBlockProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSAppStartBlockProviderTests.m; sourceTree = "<group>"; };
 		32C6F6ADC35F47A802701975 /* XCTestCase+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+Helper.m"; sourceTree = "<group>"; };
@@ -1120,6 +1120,7 @@
 		32C6FFCB9FD09A45DAE2A3B1 /* NSData+MobileEngageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MobileEngageTest.m"; sourceTree = "<group>"; };
 		32C6FFE40B7734BA2DABF652 /* Jenkinsfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Jenkinsfile; path = "Emarsys Sample/Jenkinsfile"; sourceTree = "<group>"; };
 		32C6FFFE68373783444B4B99 /* EMSXPResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSXPResponseHandlerTests.m; sourceTree = "<group>"; };
+		32FF60B3365AEA98BEE1C478 /* Pods-MobileEngageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.release.xcconfig"; sourceTree = "<group>"; };
 		3746044C8EBC88A514308371 /* EMSWaiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSWaiter.h; sourceTree = "<group>"; };
 		374604BA7F9A098F99FC39B7 /* FakeTimeStampProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeTimeStampProvider.h; sourceTree = "<group>"; };
 		374609973B222C522AC186B1 /* FakeTimeStampProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FakeTimeStampProvider.m; sourceTree = "<group>"; };
@@ -1129,10 +1130,12 @@
 		37460F89F6C6CFDDD762FFF5 /* EMSCompletionMiddlewareTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EMSCompletionMiddlewareTests.m; path = Middlewares/EMSCompletionMiddlewareTests.m; sourceTree = "<group>"; };
 		37460FC10842C0A13863CF72 /* PRERequestContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PRERequestContextTests.m; sourceTree = "<group>"; };
 		37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EMSShardTests.m; path = Shard/EMSShardTests.m; sourceTree = "<group>"; };
-		3C0EFA43588AE3C220CDA87F /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
-		4CB9FE8B0533206B40A625FB /* Pods-CoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3FE9BC5F24237DE93D9F364D /* libPods-PredictTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PredictTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		450B10B838251FB270006E1A /* Pods-PredictTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.release.xcconfig"; sourceTree = "<group>"; };
+		4ED898709ED2AF69FED9CAC4 /* Pods-EmarsysSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceTrigger.h; sourceTree = "<group>"; };
 		574DD0EA2732843D005F2750 /* EMSGeofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofence.m; sourceTree = "<group>"; };
+		6009F321D926B9B5DF301CC1 /* Pods-EmarsysSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EmarsysSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-EmarsysSDKTests/Pods-EmarsysSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		6425900619382B0A3A232868 /* EMSActionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionProtocol.h; sourceTree = "<group>"; };
 		6425906591104A1F55339EEB /* EMSMobileEngageNullSafeBodyParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageNullSafeBodyParserTests.m; sourceTree = "<group>"; };
 		642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceInternal.h; sourceTree = "<group>"; };
@@ -1175,7 +1178,7 @@
 		64259E07D567C02596450751 /* EMSInlineInAppView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInlineInAppView.h; sourceTree = "<group>"; };
 		64259F0FBEBD47C620D00E87 /* EMSGeofenceInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofenceInternalTests.m; sourceTree = "<group>"; };
 		64259F636A22A38E65A4037F /* EMSOpenExternalUrlAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSOpenExternalUrlAction.m; sourceTree = "<group>"; };
-		7114CD10E360378EDDECA824 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		6909E0F2799C3BCC5A4A3444 /* libPods-MobileEngageTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileEngageTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8655CFBA670A36F4A00FE7AE /* EMSInboxTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInboxTag.h; sourceTree = "<group>"; };
 		8A04DF2D2668C62F00FC4862 /* EMSDismissActionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDismissActionModel.m; sourceTree = "<group>"; };
 		8A04DF2E2668C62F00FC4862 /* EMSOpenExternalUrlActionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSOpenExternalUrlActionModel.m; sourceTree = "<group>"; };
@@ -1528,7 +1531,7 @@
 		8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEmarsysRequestFactory.h; sourceTree = "<group>"; };
 		8A6BEA4C23E86B480066B13C /* EMSDeepLinkInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeepLinkInternal.m; sourceTree = "<group>"; };
 		8A6BEA4D23E86B480066B13C /* EMSLoggingDeepLinkInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLoggingDeepLinkInternal.m; sourceTree = "<group>"; };
-		8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSLoggingDeepLinkInternal.h; sourceTree = "<group>"; };
+		8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EMSLoggingDeepLinkInternal.h; path = ../EmarsysSDK/DeepLink/EMSLoggingDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA5023E86B480066B13C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EmarsysSDKTests-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -1629,20 +1632,19 @@
 		8AFCA45121393D640052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AFCA45721393D700052FEFA /* EmarsysTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysTests.m; sourceTree = "<group>"; };
 		8AFCA45821393D700052FEFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8B1000AF76D7850C81C9AEBB /* Pods-MobileEngageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8E451FCF8388D47EE63863AB /* libPods-EmarsysSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EmarsysSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		944930E87D0D6F8FE1F2C39F /* EMSContactTokenResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSContactTokenResponseHandlerTests.m; sourceTree = "<group>"; };
 		944931E68EDE76D77DC6F202 /* EMSInAppInternalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSInAppInternalTests.m; sourceTree = "<group>"; };
 		944935A0CF53029C7F7357E4 /* EMSCompletionProxyFactoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCompletionProxyFactoryTests.m; sourceTree = "<group>"; };
 		94493D6111536D01EFE2D6AE /* EMSRefreshTokenResponseHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRefreshTokenResponseHandlerTests.m; sourceTree = "<group>"; };
 		94493F38AD949B21234160CC /* EMSMobileEngageRefreshTokenCompletionProxyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageRefreshTokenCompletionProxyTests.m; sourceTree = "<group>"; };
 		94493F4061625CAA9B204AA4 /* EmarsysIntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmarsysIntegrationTests.m; sourceTree = "<group>"; };
-		99EF8A53020651C8D473402A /* Pods-PredictTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PredictTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PredictTests/Pods-PredictTests.release.xcconfig"; sourceTree = "<group>"; };
-		9B7CB45C6A3BD122022A835A /* libPods-CoreTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoreTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A07C43E6DA124FB995D8AF0F /* Pods-MobileEngageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.debug.xcconfig"; sourceTree = "<group>"; };
-		AFB6AE4230D0D2BE23A30E44 /* libPods-PredictTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PredictTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2D1A8E414F2EB5BBB58FAFD /* libPods-MobileEngageTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileEngageTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2DF206DB01544ABD25A5DF9 /* Pods-MobileEngageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileEngageTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileEngageTests/Pods-MobileEngageTests.release.xcconfig"; sourceTree = "<group>"; };
-		C36CA54ADC62E1820D2F6016 /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		C96CBB29C1CADE3AB9944A56 /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6A5CF29678A88E2524F84FB /* Pods-CoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.release.xcconfig"; sourceTree = "<group>"; };
+		BB50B51C79ACE26833834D0F /* Pods-CoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BB7AD32D29ED8BE405E6598B /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0B1F65D8C2E2C52FD8526F4 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		D69ABA358F0668BC9832BFBF /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMCloseProtocol.h; sourceTree = "<group>"; };
 		F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSRandomProvider.m; sourceTree = "<group>"; };
 		F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRandomProvider.h; sourceTree = "<group>"; };
@@ -1651,7 +1653,6 @@
 		F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSIAMAppEventProtocol.h; sourceTree = "<group>"; };
 		F2A21E6BD5CF6D49BBC101D9 /* FakeNotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeNotificationDelegate.h; sourceTree = "<group>"; };
 		F2A21F2BFED6C5FAE6BADC42 /* EMSPredictInternalProtocolTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSPredictInternalProtocolTests.m; sourceTree = "<group>"; };
-		F428053940D6A15FCED811B4 /* Pods-CoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CoreTests/Pods-CoreTests.release.xcconfig"; sourceTree = "<group>"; };
 		FB89B11F8629BB5C1BCF7660 /* MEIAMCopyToClipboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEIAMCopyToClipboard.m; sourceTree = "<group>"; };
 		FB89B47317B4DBA3C994DF51 /* MEIAMCopyToClipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MEIAMCopyToClipboard.h; sourceTree = "<group>"; };
 		FB89BA95D27CC8A93CDEB1D2 /* EMSInMemoryStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSInMemoryStorage.h; sourceTree = "<group>"; };
@@ -1666,7 +1667,6 @@
 		FB8A30B05CC2C6575FA5FB11 /* EMSProductProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSProductProtocol.h; sourceTree = "<group>"; };
 		FB8A341304DAD4F9F04AC015 /* NSHTTPURLResponse+EMSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSHTTPURLResponse+EMSCore.h"; sourceTree = "<group>"; };
 		FB8A35934808E998DA538E1C /* NSHTTPURLResponse+EMSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSHTTPURLResponse+EMSCore.m"; sourceTree = "<group>"; };
-		FCFADA2EF668540B480D07D9 /* libPods-EmarsysSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EmarsysSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE26941FCF51341B3ABC5B43 /* EMSGeofence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofence.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1676,7 +1676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A102D702112F3B50046BAFB /* EmarsysSDK.framework in Frameworks */,
-				B48819C6045A0D099E2D37A3 /* libPods-MobileEngageTests.a in Frameworks */,
+				E72D4A106ECE2A21CE926FC1 /* libPods-MobileEngageTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1685,7 +1685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A102E3F2112F7F90046BAFB /* EmarsysSDK.framework in Frameworks */,
-				10A12A11042790B610A2A123 /* libPods-CoreTests.a in Frameworks */,
+				E9E1E6C2A117F5D3D9768778 /* libPods-CoreTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1694,7 +1694,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				165BF4312108972D00FA0F6A /* EmarsysSDK.framework in Frameworks */,
-				B5A31D0C8EE6DD1A26C03208 /* libPods-Tests.a in Frameworks */,
+				6424B289AC7909621F1BB290 /* libPods-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1727,7 +1727,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AFCA41C21393CF30052FEFA /* EmarsysSDK.framework in Frameworks */,
-				80BF7B3655F18A840772F7E8 /* libPods-PredictTests.a in Frameworks */,
+				B866B1D13D78A818B4B78FAE /* libPods-PredictTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1736,7 +1736,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AFCA44721393CF60052FEFA /* EmarsysSDK.framework in Frameworks */,
-				9594D66BC8784586D1D0B153 /* libPods-EmarsysSDKTests.a in Frameworks */,
+				F1BD5E718BA503CAF8687A2D /* libPods-EmarsysSDKTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1749,16 +1749,16 @@
 				32C6FFE40B7734BA2DABF652 /* Jenkinsfile */,
 				64259D0FFCCA010F7BA3F5C1 /* nightly_build_worklow.yml */,
 				6425956678EBD2D0A1B8A3BF /* build_sample_workflow.yml */,
-				4CB9FE8B0533206B40A625FB /* Pods-CoreTests.debug.xcconfig */,
-				F428053940D6A15FCED811B4 /* Pods-CoreTests.release.xcconfig */,
-				3C0EFA43588AE3C220CDA87F /* Pods-EmarsysSDKTests.debug.xcconfig */,
-				0085D90E76A466EA805A84AE /* Pods-EmarsysSDKTests.release.xcconfig */,
-				A07C43E6DA124FB995D8AF0F /* Pods-MobileEngageTests.debug.xcconfig */,
-				B2DF206DB01544ABD25A5DF9 /* Pods-MobileEngageTests.release.xcconfig */,
-				2FA2EC94ADBDC596334F4622 /* Pods-PredictTests.debug.xcconfig */,
-				99EF8A53020651C8D473402A /* Pods-PredictTests.release.xcconfig */,
-				C36CA54ADC62E1820D2F6016 /* Pods-Tests.debug.xcconfig */,
-				7114CD10E360378EDDECA824 /* Pods-Tests.release.xcconfig */,
+				BB50B51C79ACE26833834D0F /* Pods-CoreTests.debug.xcconfig */,
+				A6A5CF29678A88E2524F84FB /* Pods-CoreTests.release.xcconfig */,
+				4ED898709ED2AF69FED9CAC4 /* Pods-EmarsysSDKTests.debug.xcconfig */,
+				6009F321D926B9B5DF301CC1 /* Pods-EmarsysSDKTests.release.xcconfig */,
+				8B1000AF76D7850C81C9AEBB /* Pods-MobileEngageTests.debug.xcconfig */,
+				32FF60B3365AEA98BEE1C478 /* Pods-MobileEngageTests.release.xcconfig */,
+				328D182D6D1A65351F580868 /* Pods-PredictTests.debug.xcconfig */,
+				450B10B838251FB270006E1A /* Pods-PredictTests.release.xcconfig */,
+				D69ABA358F0668BC9832BFBF /* Pods-Tests.debug.xcconfig */,
+				C0B1F65D8C2E2C52FD8526F4 /* Pods-Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1796,9 +1796,7 @@
 			isa = PBXGroup;
 			children = (
 				32C6F82B5FC958A59293B706 /* EMSEventHandlerProtocolImplementation.m */,
-				32C6F332E2161CD5AED5CC2D /* EMSEventHandlerProtocolImplementation.h */,
 				32C6F4CBB04AF8AAD0FCDB12 /* EMSEventHandlerProtocolBlockConverter.m */,
-				32C6F02CE3E640F757B02675 /* EMSEventHandlerProtocolBlockConverter.h */,
 			);
 			path = EventHandler;
 			sourceTree = "<group>";
@@ -1831,9 +1829,7 @@
 			isa = PBXGroup;
 			children = (
 				32C6F27568136D89D18D416E /* EMSSession.m */,
-				32C6F0E7F1A49E5E13240AD9 /* EMSSession.h */,
 				32C6F3D124708118C79A3950 /* EMSSessionIdHolder.m */,
-				32C6FC9E8E971468CE2A87DD /* EMSSessionIdHolder.h */,
 			);
 			path = Session;
 			sourceTree = "<group>";
@@ -1919,11 +1915,8 @@
 			children = (
 				32C6FF4EC8455C992239DFF6 /* Models */,
 				32C6F5F93AF4DACE41D2E01D /* EMSGeofenceResponseMapper.m */,
-				32C6F3A7A6D9296DD84B9274 /* EMSGeofenceResponseMapper.h */,
 				6425937474ED3809B1169901 /* EMSGeofenceInternal.m */,
-				642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */,
 				32C6F2E2DE33FA694BFE88AF /* EMSLoggingGeofenceInternal.m */,
-				32C6F7DB8BC4AB116DE076F5 /* EMSLoggingGeofenceInternal.h */,
 			);
 			path = Geofence;
 			sourceTree = "<group>";
@@ -2077,10 +2070,8 @@
 		32C6FD11057EE0B6973B29FA /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
-				32C6F4D808CD54C437521E7B /* EMSQueueDelegator.h */,
 				32C6F45E904B76485DB1944D /* EMSQueueDelegator.m */,
 				32C6F865998F726200967E7A /* EMSDispatchWaiter.m */,
-				32C6FB547AB9C97BDC4F354A /* EMSDispatchWaiter.h */,
 			);
 			path = Proxy;
 			sourceTree = "<group>";
@@ -2136,9 +2127,7 @@
 		32C6FEBFB4953A949A90EC43 /* OnEventAction */ = {
 			isa = PBXGroup;
 			children = (
-				8A271A2F255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h */,
 				8A271A30255AB7D500CB153E /* EMSLoggingOnEventActionInternal.m */,
-				8A54714D255EADED0080457D /* EMSOnEventActionInternal.h */,
 				8A54714E255EADED0080457D /* EMSOnEventActionInternal.m */,
 			);
 			path = OnEventAction;
@@ -2173,9 +2162,7 @@
 			children = (
 				574DD0EA2732843D005F2750 /* EMSGeofence.m */,
 				32C6FE07CDAC9BF6CCFE32EE /* EMSGeofenceResponse.m */,
-				32C6F6AFBBA511913817EC48 /* EMSGeofenceResponse.h */,
 				32C6F9DAC8F1A3ACE39AA242 /* EMSGeofenceGroup.m */,
-				32C6F3817419637612160CD0 /* EMSGeofenceGroup.h */,
 				32C6F64B018AF7B6D3694C02 /* EMSGeofenceTrigger.m */,
 			);
 			path = Models;
@@ -2186,12 +2173,9 @@
 			children = (
 				8A3DED8C2424DA9000CD3663 /* EMSInboxResult.m */,
 				32C6FE187E40CEB48AA83F6B /* EMSInboxV3.m */,
-				32C6F862F3FA0EAFEEDE484E /* EMSInboxV3.h */,
 				32C6FC30BA1785FB1A380935 /* EMSMessage.m */,
 				32C6FE5F0AD007AE178F7E2D /* EMSInboxResultParser.m */,
-				32C6F6DC0FC781D76CCF145B /* EMSInboxResultParser.h */,
 				32C6FE7C893EE08B3E357682 /* EMSLoggingInboxV3.m */,
-				32C6FFB4DEF3F8662EA46166 /* EMSLoggingInboxV3.h */,
 			);
 			path = InboxV3;
 			sourceTree = "<group>";
@@ -2202,6 +2186,225 @@
 				37460BEBB1F7EDC9835C24EA /* DbTriggerTests.m */,
 			);
 			path = Triggers;
+			sourceTree = "<group>";
+		};
+		5DF894CA2A812AED00803F2C /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				8A6BE8AE23E86B480066B13C /* EMSOperationQueue.h */,
+				32C6F4D808CD54C437521E7B /* EMSQueueDelegator.h */,
+				32C6FB547AB9C97BDC4F354A /* EMSDispatchWaiter.h */,
+				8A6BE8B023E86B480066B13C /* EMSCountMapper.h */,
+				8A6BE8B223E86B480066B13C /* EMSShardMapper.h */,
+				8A6BE8B323E86B480066B13C /* EMSSQLStatementFactory.h */,
+				8A6BE8B523E86B480066B13C /* EMSDBTriggerKey.h */,
+				8A6BE8B823E86B480066B13C /* EMSDBTrigger.h */,
+				8A6BE8B923E86B480066B13C /* EMSDBTriggerProtocol.h */,
+				8A6BE8BA23E86B480066B13C /* EMSModelMapperProtocol.h */,
+				8A6BE8BC23E86B480066B13C /* EMSRequestModelMapper.h */,
+				8A6BE8BF23E86B480066B13C /* EMSSQLiteHelper.h */,
+				8A6BE8C223E86B480066B13C /* EMSSqliteSchemaHandler.h */,
+				8A6BE8C323E86B480066B13C /* EMSSchemaContract.h */,
+				32C6FEDF6679354FA3379718 /* EMSSQLiteHelperProtocol.h */,
+				32C6FD6D9EDC581404151CB0 /* EMSSQLiteHelperSchemaHandlerProtocol.h */,
+				8A6BE8C523E86B480066B13C /* EMSSQLSpecificationProtocol.h */,
+				8A6BE8C723E86B480066B13C /* EMSQueryOldestRowSpecification.h */,
+				8A6BE8CA23E86B480066B13C /* EMSCommonSQLSpecification.h */,
+				8A6BE8CC23E86B480066B13C /* EMSFilterByTypeSpecification.h */,
+				8A6BE8CD23E86B480066B13C /* EMSFilterByValuesSpecification.h */,
+				8A6BE8CF23E86B480066B13C /* EMSFilterByNothingSpecification.h */,
+				8A6BE8D223E86B480066B13C /* EMSRequestModelRepositoryProtocol.h */,
+				8A6BE8D423E86B480066B13C /* EMSRequestModelRepository.h */,
+				8A6BE8D523E86B480066B13C /* EMSRepositoryProtocol.h */,
+				8A6BE8D723E86B480066B13C /* EMSShardRepository.h */,
+				8A6BE8D923E86B480066B13C /* EMSShardRepositoryProtocol.h */,
+				8A6BE8DB23E86B480066B13C /* EMSAbstractResponseHandler.h */,
+				8A6BE8DD23E86B480066B13C /* EMSAuthentication.h */,
+				8A6BE8DE23E86B480066B13C /* EMSRequestManager.h */,
+				8A6BE8E023E86B480066B13C /* EMSRESTClient.h */,
+				8A6BE8E423E86B480066B13C /* EMSCoreCompletionHandlerMiddleware.h */,
+				8A6BE8E623E86B480066B13C /* EMSRESTClientCompletionProxyFactory.h */,
+				8A6BE8E723E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h */,
+				8A6BE8E823E86B480066B13C /* EMSCoreCompletionHandler.h */,
+				8A6BE8EA23E86B480066B13C /* EMSUUIDProvider.h */,
+				8A6BE8EB23E86B480066B13C /* EMSCompletionBlockProvider.h */,
+				8A6BE8EF23E86B480066B13C /* EMSTimestampProvider.h */,
+				F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */,
+				8A6BE8F223E86B480066B13C /* MEExperimental.h */,
+				8A6BE8F523E86B480066B13C /* EMSConnectionWatchdog.h */,
+				8A6BE8F723E86B480066B13C /* EMSReachability.h */,
+				8A6BE8FA23E86B480066B13C /* EMSCompletionMiddleware.h */,
+				8A6BE8FC23E86B480066B13C /* EMSDeviceInfo.h */,
+				8A6BE90123E86B480066B13C /* EMSRequestModelBuilder.h */,
+				8A6BE90423E86B480066B13C /* EMSCompositeRequestModel.h */,
+				8A6BE90723E86B480066B13C /* EMSResponseModel.h */,
+				8A6BE90223E86B480066B13C /* EMSShardBuilder.h */,
+				8A6BE90023E86B480066B13C /* EMSRequestModel.h */,
+				8A6BE90523E86B480066B13C /* EMSShard.h */,
+				8A6BE90B23E86B480066B13C /* EMSBatchingShardTrigger.h */,
+				8A6BE90E23E86B480066B13C /* EMSCountPredicate.h */,
+				8A6BE91623E86B480066B13C /* EMSLogger.h */,
+				8A6BE91723E86B480066B13C /* EMSLogMapper.h */,
+				32C6F7CA095AA5603E992767 /* EMSLogEndpoints.h */,
+				8A6BE90C23E86B480066B13C /* EMSPredicate.h */,
+				8A6BE91B23E86B480066B13C /* EMSStatusLog.h */,
+				8A6BE92223E86B480066B13C /* EMSMethodNotAllowed.h */,
+				8A6BE91223E86B480066B13C /* EMSListChunker.h */,
+				8A6BE92523E86B480066B13C /* EMSOfflineQueueSize.h */,
+				8A6BE92723E86B480066B13C /* EMSLogEntryProtocol.h */,
+				8A6BE92823E86B480066B13C /* EMSCrashLog.h */,
+				32C6F7BA82A6C3D938AA29B2 /* EMSInAppLog.h */,
+				32C6FCFBC083E7F1B4735DEF /* EMSRequestLog.h */,
+				32C6F75553D88F59D1D56E50 /* EMSAppEventLog.h */,
+				6425957BB2D004885C6A2FB4 /* EMSSdkStateLogger.h */,
+				8A6BE92D23E86B480066B13C /* EMSRequestModelMapperProtocol.h */,
+				8A6BE92E23E86B480066B13C /* EMSRequestFromShardsMapperProtocol.h */,
+				8A6BE93523E86B480066B13C /* EMSLockableProtocol.h */,
+				8A6BE93423E86B480066B13C /* EMSDefaultWorker.h */,
+				8A6BE93623E86B480066B13C /* EMSWorkerProtocol.h */,
+				8A6BE93823E86B480066B13C /* EMSTrigger.h */,
+				8A6BE93723E86B480066B13C /* EMSCoreCompletion.h */,
+				8A6BE93123E86B480066B13C /* EMSDictionaryValidator.h */,
+				8A6BE93D23E86B480066B13C /* NSError+EMSCore.h */,
+				8A6BE93A23E86B480066B13C /* NSURL+EMSCore.h */,
+				8A6BE93E23E86B480066B13C /* NSDictionary+EMSCore.h */,
+				8A6BE94523E86B480066B13C /* NSMutableDictionary+EMSCore.h */,
+				8A6BE94223E86B480066B13C /* EMSResponseModel+EMSCore.h */,
+				8A6BE94123E86B480066B13C /* NSURLRequest+EMSCore.h */,
+				8A6BE94823E86B480066B13C /* NSDate+EMSCore.h */,
+				FB8A341304DAD4F9F04AC015 /* NSHTTPURLResponse+EMSCore.h */,
+				8A6BE94D23E86B480066B13C /* EMSAgenda.h */,
+				8A6BE94E23E86B480066B13C /* EMSScheduler.h */,
+				FB89BEAA77794AF88CE88C55 /* EMSStorageProtocol.h */,
+				8A6BE95023E86B480066B13C /* EMSStorage.h */,
+				FB89BA95D27CC8A93CDEB1D2 /* EMSInMemoryStorage.h */,
+				8A6BE94623E86B480066B13C /* EMSRequestModel+RequestIds.h */,
+				6425910D1EFEB7CE022C296E /* EMSInstanceRouter.h */,
+				642594FB34B7F6A972DA93B0 /* EMSResponseBodyParserProtocol.h */,
+				8A6BE96F23E86B480066B13C /* EMSXPResponseHandler.h */,
+				32C6F6892A9969DB03D04398 /* EMSCrypto.h */,
+				8A6BE97223E86B480066B13C /* PRERequestContext.h */,
+				8A6BE96E23E86B480066B13C /* EMSVisitorIdResponseHandler.h */,
+				8A6BE97723E86B480066B13C /* EMSLoggingPredictInternal.h */,
+				8A6BE97323E86B480066B13C /* EMSCartItemUtils.h */,
+				8A6BE97623E86B480066B13C /* EMSProductMapper.h */,
+				8A6BE97B23E86B480066B13C /* EMSProduct+Emarsys.h */,
+				8A6BE97E23E86B480066B13C /* EMSPredictMapper.h */,
+				8A6BE98523E86B480066B13C /* EMSPredictRequestModelBuilder.h */,
+				8A6BE97C23E86B480066B13C /* EMSProductBuilder.h */,
+				8A6BE98723E86B480066B13C /* EMSPredictInternal.h */,
+				8A6BE98423E86B480066B13C /* EMSPredictRequestModelBuilderProvider.h */,
+				8A6BE99323E86B480066B13C /* MEIAMCleanupResponseHandlerV3.h */,
+				8A6BE98F23E86B480066B13C /* EMSContactTokenResponseHandler.h */,
+				8A6BE99023E86B480066B13C /* EMSRefreshTokenResponseHandler.h */,
+				32C6FE96369A39B9B9270579 /* EMSDeviceEventStateResponseHandler.h */,
+				32C6FE36C4B04E51FEA6C852 /* MEIAMCleanupResponseHandlerV4.h */,
+				8A6BE99423E86B480066B13C /* MEIAMResponseHandler.h */,
+				8A6BE98E23E86B480066B13C /* EMSClientStateResponseHandler.h */,
+				8A54716C255EB3FA0080457D /* EMSOnEventResponseHandler.h */,
+				8A6BE9AA23E86B480066B13C /* EMSDeviceInfo+MEClientPayload.h */,
+				8A6BE9A623E86B480066B13C /* NSDictionary+MobileEngage.h */,
+				8A6BE9A823E86B480066B13C /* NSData+MobileEngine.h */,
+				8A6BE9AD23E86B480066B13C /* EMSNotificationCenterManager.h */,
+				8A6BE9B723E86B480066B13C /* EMSDeviceInfoClientProtocol.h */,
+				8A6BE9B623E86B480066B13C /* EMSDeviceInfoV3ClientInternal.h */,
+				8A6BE9B823E86B480066B13C /* EMSMobileEngageProtocol.h */,
+				8A6BE9BA23E86B480066B13C /* EMSLoggingMobileEngageInternal.h */,
+				8A6BE9B923E86B480066B13C /* EMSMobileEngageV3Internal.h */,
+				8A6BE9D323E86B480066B13C /* MERequestTools.h */,
+				8A6BE9C123E86B480066B13C /* MEButtonClickRepository.h */,
+				8A6BE9C423E86B480066B13C /* MEButtonClick.h */,
+				8A6BE9C323E86B480066B13C /* MEButtonClickContract.h */,
+				8A6BE9D123E86B480066B13C /* MERequestRepositoryProxy.h */,
+				8A6BE9C823E86B480066B13C /* MEButtonClickRepository+Private.h */,
+				8A6BE9CC23E86B480066B13C /* MEDisplayedIAMMapper.h */,
+				8A6BE9CD23E86B480066B13C /* MEDisplayedIAMContract.h */,
+				8A6BE9C623E86B480066B13C /* MEButtonClickMapper.h */,
+				8A6BE9BD23E86B480066B13C /* MERequestModelRepositoryFactory.h */,
+				8A6BE9CF23E86B480066B13C /* MEDisplayedIAM.h */,
+				6425900619382B0A3A232868 /* EMSActionProtocol.h */,
+				8A6BE9D523E86B480066B13C /* EMSLoggingPushInternal.h */,
+				6425921264B5E58D77B6ECC0 /* EMSOpenExternalUrlAction.h */,
+				642594C59C5EFF459584A660 /* EMSActionFactory.h */,
+				8A6BE9D723E86B480066B13C /* EMSPushV3Internal.h */,
+				8A6BE9DD23E86B480066B13C /* MEIAMViewController.h */,
+				64259AB6CBDF178F4292382C /* EMSAppEventAction.h */,
+				642592C425E5BA41A9A0977F /* EMSBadgeCountAction.h */,
+				64259852E6A4A27A6EAF02AE /* EMSCustomEventAction.h */,
+				8A6BE9DA23E86B480066B13C /* EMSInAppInternal.h */,
+				F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */,
+				8A6BE9DE23E86B480066B13C /* MEInAppMessage.h */,
+				F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */,
+				8A6BE9CE23E86B480066B13C /* MEDisplayedIAMRepository.h */,
+				8A6BE9E323E86B480066B13C /* MEIAMJSCommandProtocol.h */,
+				8A6BE9E123E86B480066B13C /* MEIAMButtonClicked.h */,
+				8A6BE9EA23E86B480066B13C /* MEIAMTriggerMEEvent.h */,
+				8A6BE9E423E86B480066B13C /* MEIAMRequestPushPermission.h */,
+				8A6BE9EE23E86B480066B13C /* MEIAMCommandResultUtils.h */,
+				8A6BE9EC23E86B480066B13C /* MEIAMJSCommandFactory.h */,
+				8A6BE9F023E86B480066B13C /* MEIAMOpenExternalLink.h */,
+				8A6BE9E923E86B480066B13C /* MEIAMTriggerAppEvent.h */,
+				FB89B47317B4DBA3C994DF51 /* MEIAMCopyToClipboard.h */,
+				8A6BE9EF23E86B480066B13C /* MEIAMClose.h */,
+				8A6BE9F323E86B480066B13C /* MEJSBridge.h */,
+				8A6BE9F223E86B480066B13C /* MEInAppTrackingProtocol.h */,
+				8A6BE9FA23E86B480066B13C /* EMSIAMViewControllerProvider.h */,
+				8A6BE9F723E86B480066B13C /* EMSViewControllerProvider.h */,
+				8A6BEA0223E86B480066B13C /* MEInApp.h */,
+				8A6BE9F423E86B480066B13C /* EMSLoggingInApp.h */,
+				FB89BFCB9693CC8B323B4BD4 /* EMSDeviceEventStateRequestMapper.h */,
+				8A6BE9FD23E86B480066B13C /* EMSMainWindowProvider.h */,
+				8A6BE9FB23E86B480066B13C /* EMSWindowProvider.h */,
+				8A6BEA0823E86B480066B13C /* EMSMobileEngageMapper.h */,
+				8A6BEA0923E86B480066B13C /* EMSContactTokenMapper.h */,
+				8A6BEA0323E86B480066B13C /* MEIAMProtocol.h */,
+				8A6BEA0D23E86B480066B13C /* EMSNotificationService+Attachment.h */,
+				8A6BEA1523E86B480066B13C /* MEDownloader.h */,
+				32C6F61F517617AB6732F1EC /* EMSOpenIdTokenMapper.h */,
+				8A6BE9FF23E86B480066B13C /* EMSSceneProvider.h */,
+				8A6BEA1D23E86B480066B13C /* MERequestContext.h */,
+				8A6BEA1723E86B480066B13C /* EMSNotificationService+PushToInApp.h */,
+				8A6BEA1923E86B480066B13C /* EMSMobileEngageRefreshTokenCompletionProxy.h */,
+				8A6BEA1423E86B480066B13C /* EMSServiceDictionaryValidator.h */,
+				8A6BEA2423E86B480066B13C /* EMSCompletionProxyFactory.h */,
+				8A6BEA1B23E86B480066B13C /* MEDefaultHeaders.h */,
+				8A6BEA0C23E86B480066B13C /* EMSNotificationService+Actions.h */,
+				8A6BEA1F23E86B480066B13C /* EMSRequestFactory.h */,
+				32C6F3A7A6D9296DD84B9274 /* EMSGeofenceResponseMapper.h */,
+				642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */,
+				32C6F3817419637612160CD0 /* EMSGeofenceGroup.h */,
+				32C6F7DB8BC4AB116DE076F5 /* EMSLoggingGeofenceInternal.h */,
+				32C6F6DC0FC781D76CCF145B /* EMSInboxResultParser.h */,
+				32C6F862F3FA0EAFEEDE484E /* EMSInboxV3.h */,
+				8A271A2F255AB7D500CB153E /* EMSLoggingOnEventActionInternal.h */,
+				8A54714D255EADED0080457D /* EMSOnEventActionInternal.h */,
+				32C6FFB4DEF3F8662EA46166 /* EMSLoggingInboxV3.h */,
+				32C6F0E7F1A49E5E13240AD9 /* EMSSession.h */,
+				64259C3478D23395AB676CDE /* EMSMobileEngageNullSafeBodyParser.h */,
+				32C6FC9E8E971468CE2A87DD /* EMSSessionIdHolder.h */,
+				32C6F6AFBBA511913817EC48 /* EMSGeofenceResponse.h */,
+				8A6BEA2923E86B480066B13C /* EMSInnerFeature.h */,
+				8A6BEA2C23E86B480066B13C /* EMSDependencyContainer.h */,
+				8A6BEA2E23E86B480066B13C /* EMSDependencyContainerProtocol.h */,
+				8A6BEA2F23E86B480066B13C /* EMSDependencyInjection.h */,
+				8A6BEA2723E86B480066B13C /* EmarsysSDKVersion.h */,
+				8A6BEA3523E86B480066B13C /* EMSRemoteConfigResponseMapper.h */,
+				8A6BEA3F23E86B480066B13C /* EMSMacros.h */,
+				8A6BEA3D23E86B480066B13C /* EMSValueProvider.h */,
+				8A6BEA3323E86B480066B13C /* EMSEndpoint.h */,
+				8A6BEA4223E86B480066B13C /* EMSPredictInternalProtocol.h */,
+				8A5D135E266F8FBD0066B735 /* EMSWrapperChecker.h */,
+				8A6BEA4123E86B480066B13C /* EMSDeepLinkProtocol.h */,
+				8A6BEA4423E86B480066B13C /* EMSAppStartBlockProvider.h */,
+				8A6BEA3E23E86B480066B13C /* EMSConfigInternal.h */,
+				8A6BEA3C23E86B480066B13C /* EMSRemoteConfig.h */,
+				32C6F332E2161CD5AED5CC2D /* EMSEventHandlerProtocolImplementation.h */,
+				8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */,
+				32C6F02CE3E640F757B02675 /* EMSEventHandlerProtocolBlockConverter.h */,
+				8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */,
+				8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */,
+			);
+			path = Private;
 			sourceTree = "<group>";
 		};
 		6425902F730BDBF32A1325AD /* Requests */ = {
@@ -2234,7 +2437,6 @@
 			isa = PBXGroup;
 			children = (
 				6425938C0ABA143B77AB7B1C /* EMSMobileEngageNullSafeBodyParser.m */,
-				64259C3478D23395AB676CDE /* EMSMobileEngageNullSafeBodyParser.h */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -2263,7 +2465,6 @@
 		64259AA03BC495443C2E54AA /* Router */ = {
 			isa = PBXGroup;
 			children = (
-				6425910D1EFEB7CE022C296E /* EMSInstanceRouter.h */,
 				642591A7A8681C063A1948AA /* EMSInstanceRouter.m */,
 			);
 			path = Router;
@@ -2273,16 +2474,10 @@
 			isa = PBXGroup;
 			children = (
 				642590E5232C5AA69A374A5E /* EMSActionFactory.m */,
-				642594C59C5EFF459584A660 /* EMSActionFactory.h */,
-				6425900619382B0A3A232868 /* EMSActionProtocol.h */,
 				6425949671A069F932FF8E7F /* EMSBadgeCountAction.m */,
-				642592C425E5BA41A9A0977F /* EMSBadgeCountAction.h */,
 				642597A99D66445442FFBE11 /* EMSAppEventAction.m */,
-				64259AB6CBDF178F4292382C /* EMSAppEventAction.h */,
 				64259F636A22A38E65A4037F /* EMSOpenExternalUrlAction.m */,
-				6425921264B5E58D77B6ECC0 /* EMSOpenExternalUrlAction.h */,
 				642590C47F45DCCB47E7BC0A /* EMSCustomEventAction.m */,
-				64259852E6A4A27A6EAF02AE /* EMSCustomEventAction.h */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -2307,7 +2502,6 @@
 		64259FAF9CA8825C6DDA2CC5 /* Parser */ = {
 			isa = PBXGroup;
 			children = (
-				642594FB34B7F6A972DA93B0 /* EMSResponseBodyParserProtocol.h */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -2316,11 +2510,11 @@
 			isa = PBXGroup;
 			children = (
 				8AEBEC552108657200FC6E83 /* libsqlite3.tbd */,
-				9B7CB45C6A3BD122022A835A /* libPods-CoreTests.a */,
-				FCFADA2EF668540B480D07D9 /* libPods-EmarsysSDKTests.a */,
-				B2D1A8E414F2EB5BBB58FAFD /* libPods-MobileEngageTests.a */,
-				AFB6AE4230D0D2BE23A30E44 /* libPods-PredictTests.a */,
-				C96CBB29C1CADE3AB9944A56 /* libPods-Tests.a */,
+				13F205B76DDC6F29702C9B00 /* libPods-CoreTests.a */,
+				8E451FCF8388D47EE63863AB /* libPods-EmarsysSDKTests.a */,
+				6909E0F2799C3BCC5A4A3444 /* libPods-MobileEngageTests.a */,
+				3FE9BC5F24237DE93D9F364D /* libPods-PredictTests.a */,
+				BB7AD32D29ED8BE405E6598B /* libPods-Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2342,6 +2536,7 @@
 		8A6BE8AA23E86B480066B13C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5DF894CA2A812AED00803F2C /* Private */,
 				8A6BE8AB23E86B480066B13C /* Core */,
 				8A6BE95323E86B480066B13C /* include */,
 				8A6BE96B23E86B480066B13C /* Predict */,
@@ -2358,14 +2553,11 @@
 				8A6BE8AF23E86B480066B13C /* Database */,
 				8A6BE8C423E86B480066B13C /* Repository */,
 				8A6BE8DA23E86B480066B13C /* ResponseHandlers */,
-				8A6BE8DD23E86B480066B13C /* EMSAuthentication.h */,
-				8A6BE8DE23E86B480066B13C /* EMSRequestManager.h */,
 				8A6BE8DF23E86B480066B13C /* Networking */,
 				8A6BE8E923E86B480066B13C /* Providers */,
 				8A6BE8F023E86B480066B13C /* Flipper */,
 				8A6BE8F323E86B480066B13C /* ConnectionWatchdog */,
 				8A6BE8F923E86B480066B13C /* Middlewares */,
-				8A6BE8FC23E86B480066B13C /* EMSDeviceInfo.h */,
 				8A6BE8FD23E86B480066B13C /* Models */,
 				8A6BE90A23E86B480066B13C /* Batch */,
 				8A6BE91323E86B480066B13C /* EMSRequestManager.m */,
@@ -2374,14 +2566,11 @@
 				8A6BE92C23E86B480066B13C /* Mappers */,
 				8A6BE92F23E86B480066B13C /* Validators */,
 				8A6BE93223E86B480066B13C /* Worker */,
-				8A6BE93723E86B480066B13C /* EMSCoreCompletion.h */,
-				8A6BE93823E86B480066B13C /* EMSTrigger.h */,
 				8A6BE93923E86B480066B13C /* Categories */,
 				8A6BE94A23E86B480066B13C /* Schedulers */,
 				8A6BE94F23E86B480066B13C /* Store */,
 				8A6BE95223E86B480066B13C /* EMSDeviceInfo.m */,
 				32C6F4FF6863B651D96B8BB4 /* EMSCrypto.m */,
-				32C6F6892A9969DB03D04398 /* EMSCrypto.h */,
 				64259AA03BC495443C2E54AA /* Router */,
 				64259FAF9CA8825C6DDA2CC5 /* Parser */,
 			);
@@ -2392,7 +2581,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE8AD23E86B480066B13C /* EMSOperationQueue.m */,
-				8A6BE8AE23E86B480066B13C /* EMSOperationQueue.h */,
 				32C6FD11057EE0B6973B29FA /* Proxy */,
 			);
 			path = Operation;
@@ -2401,23 +2589,13 @@
 		8A6BE8AF23E86B480066B13C /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8B023E86B480066B13C /* EMSCountMapper.h */,
 				8A6BE8B123E86B480066B13C /* EMSSQLiteHelper.m */,
-				8A6BE8B223E86B480066B13C /* EMSShardMapper.h */,
-				8A6BE8B323E86B480066B13C /* EMSSQLStatementFactory.h */,
 				8A6BE8B423E86B480066B13C /* Trigger */,
-				8A6BE8BA23E86B480066B13C /* EMSModelMapperProtocol.h */,
 				8A6BE8BB23E86B480066B13C /* EMSSqliteSchemaHandler.m */,
-				8A6BE8BC23E86B480066B13C /* EMSRequestModelMapper.h */,
 				8A6BE8BD23E86B480066B13C /* EMSShardMapper.m */,
 				8A6BE8BE23E86B480066B13C /* EMSSQLStatementFactory.m */,
-				8A6BE8BF23E86B480066B13C /* EMSSQLiteHelper.h */,
 				8A6BE8C023E86B480066B13C /* EMSCountMapper.m */,
 				8A6BE8C123E86B480066B13C /* EMSRequestModelMapper.m */,
-				8A6BE8C223E86B480066B13C /* EMSSqliteSchemaHandler.h */,
-				8A6BE8C323E86B480066B13C /* EMSSchemaContract.h */,
-				32C6FEDF6679354FA3379718 /* EMSSQLiteHelperProtocol.h */,
-				32C6FD6D9EDC581404151CB0 /* EMSSQLiteHelperSchemaHandlerProtocol.h */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -2425,11 +2603,8 @@
 		8A6BE8B423E86B480066B13C /* Trigger */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8B523E86B480066B13C /* EMSDBTriggerKey.h */,
 				8A6BE8B623E86B480066B13C /* EMSDBTrigger.m */,
 				8A6BE8B723E86B480066B13C /* EMSDBTriggerKey.m */,
-				8A6BE8B823E86B480066B13C /* EMSDBTrigger.h */,
-				8A6BE8B923E86B480066B13C /* EMSDBTriggerProtocol.h */,
 			);
 			path = Trigger;
 			sourceTree = "<group>";
@@ -2437,10 +2612,8 @@
 		8A6BE8C423E86B480066B13C /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8C523E86B480066B13C /* EMSSQLSpecificationProtocol.h */,
 				8A6BE8C623E86B480066B13C /* Specifications */,
 				8A6BE8D123E86B480066B13C /* RequestModel */,
-				8A6BE8D523E86B480066B13C /* EMSRepositoryProtocol.h */,
 				8A6BE8D623E86B480066B13C /* Shard */,
 			);
 			path = Repository;
@@ -2449,15 +2622,10 @@
 		8A6BE8C623E86B480066B13C /* Specifications */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8C723E86B480066B13C /* EMSQueryOldestRowSpecification.h */,
 				8A6BE8C823E86B480066B13C /* EMSFilterByValuesSpecification.m */,
 				8A6BE8C923E86B480066B13C /* EMSFilterByTypeSpecification.m */,
-				8A6BE8CA23E86B480066B13C /* EMSCommonSQLSpecification.h */,
 				8A6BE8CB23E86B480066B13C /* EMSFilterByNothingSpecification.m */,
-				8A6BE8CC23E86B480066B13C /* EMSFilterByTypeSpecification.h */,
-				8A6BE8CD23E86B480066B13C /* EMSFilterByValuesSpecification.h */,
 				8A6BE8CE23E86B480066B13C /* EMSQueryOldestRowSpecification.m */,
-				8A6BE8CF23E86B480066B13C /* EMSFilterByNothingSpecification.h */,
 				8A6BE8D023E86B480066B13C /* EMSCommonSQLSpecification.m */,
 			);
 			path = Specifications;
@@ -2466,9 +2634,7 @@
 		8A6BE8D123E86B480066B13C /* RequestModel */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8D223E86B480066B13C /* EMSRequestModelRepositoryProtocol.h */,
 				8A6BE8D323E86B480066B13C /* EMSRequestModelRepository.m */,
-				8A6BE8D423E86B480066B13C /* EMSRequestModelRepository.h */,
 			);
 			path = RequestModel;
 			sourceTree = "<group>";
@@ -2476,9 +2642,7 @@
 		8A6BE8D623E86B480066B13C /* Shard */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8D723E86B480066B13C /* EMSShardRepository.h */,
 				8A6BE8D823E86B480066B13C /* EMSShardRepository.m */,
-				8A6BE8D923E86B480066B13C /* EMSShardRepositoryProtocol.h */,
 			);
 			path = Shard;
 			sourceTree = "<group>";
@@ -2486,7 +2650,6 @@
 		8A6BE8DA23E86B480066B13C /* ResponseHandlers */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8DB23E86B480066B13C /* EMSAbstractResponseHandler.h */,
 				8A6BE8DC23E86B480066B13C /* EMSAbstractResponseHandler.m */,
 			);
 			path = ResponseHandlers;
@@ -2495,15 +2658,10 @@
 		8A6BE8DF23E86B480066B13C /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8E023E86B480066B13C /* EMSRESTClient.h */,
 				8A6BE8E123E86B480066B13C /* EMSCoreCompletionHandlerMiddleware.m */,
 				8A6BE8E223E86B480066B13C /* EMSRESTClientCompletionProxyFactory.m */,
 				8A6BE8E323E86B480066B13C /* EMSCoreCompletionHandler.m */,
-				8A6BE8E423E86B480066B13C /* EMSCoreCompletionHandlerMiddleware.h */,
 				8A6BE8E523E86B480066B13C /* EMSRESTClient.m */,
-				8A6BE8E623E86B480066B13C /* EMSRESTClientCompletionProxyFactory.h */,
-				8A6BE8E723E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h */,
-				8A6BE8E823E86B480066B13C /* EMSCoreCompletionHandler.h */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -2511,14 +2669,10 @@
 		8A6BE8E923E86B480066B13C /* Providers */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8EA23E86B480066B13C /* EMSUUIDProvider.h */,
-				8A6BE8EB23E86B480066B13C /* EMSCompletionBlockProvider.h */,
 				8A6BE8EC23E86B480066B13C /* EMSTimestampProvider.m */,
 				8A6BE8ED23E86B480066B13C /* EMSCompletionBlockProvider.m */,
 				8A6BE8EE23E86B480066B13C /* EMSUUIDProvider.m */,
-				8A6BE8EF23E86B480066B13C /* EMSTimestampProvider.h */,
 				F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */,
-				F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -2527,7 +2681,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE8F123E86B480066B13C /* MEExperimental.m */,
-				8A6BE8F223E86B480066B13C /* MEExperimental.h */,
 			);
 			path = Flipper;
 			sourceTree = "<group>";
@@ -2536,7 +2689,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE8F423E86B480066B13C /* EMSConnectionWatchdog.m */,
-				8A6BE8F523E86B480066B13C /* EMSConnectionWatchdog.h */,
 				8A6BE8F623E86B480066B13C /* ThirdParty */,
 			);
 			path = ConnectionWatchdog;
@@ -2545,7 +2697,6 @@
 		8A6BE8F623E86B480066B13C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8F723E86B480066B13C /* EMSReachability.h */,
 				8A6BE8F823E86B480066B13C /* EMSReachability.m */,
 			);
 			path = ThirdParty;
@@ -2554,7 +2705,6 @@
 		8A6BE8F923E86B480066B13C /* Middlewares */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE8FA23E86B480066B13C /* EMSCompletionMiddleware.h */,
 				8A6BE8FB23E86B480066B13C /* EMSCompletionMiddleware.m */,
 			);
 			path = Middlewares;
@@ -2565,14 +2715,8 @@
 			children = (
 				8A6BE8FE23E86B480066B13C /* EMSCompositeRequestModel.m */,
 				8A6BE8FF23E86B480066B13C /* EMSShard.m */,
-				8A6BE90023E86B480066B13C /* EMSRequestModel.h */,
-				8A6BE90123E86B480066B13C /* EMSRequestModelBuilder.h */,
-				8A6BE90223E86B480066B13C /* EMSShardBuilder.h */,
 				8A6BE90323E86B480066B13C /* EMSResponseModel.m */,
-				8A6BE90423E86B480066B13C /* EMSCompositeRequestModel.h */,
-				8A6BE90523E86B480066B13C /* EMSShard.h */,
 				8A6BE90623E86B480066B13C /* EMSShardBuilder.m */,
-				8A6BE90723E86B480066B13C /* EMSResponseModel.h */,
 				8A6BE90823E86B480066B13C /* EMSRequestModelBuilder.m */,
 				8A6BE90923E86B480066B13C /* EMSRequestModel.m */,
 			);
@@ -2582,14 +2726,10 @@
 		8A6BE90A23E86B480066B13C /* Batch */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE90B23E86B480066B13C /* EMSBatchingShardTrigger.h */,
-				8A6BE90C23E86B480066B13C /* EMSPredicate.h */,
 				8A6BE90D23E86B480066B13C /* EMSListChunker.m */,
-				8A6BE90E23E86B480066B13C /* EMSCountPredicate.h */,
 				8A6BE90F23E86B480066B13C /* EMSBatchingShardTrigger.m */,
 				8A6BE91023E86B480066B13C /* EMSPredicate.m */,
 				8A6BE91123E86B480066B13C /* EMSCountPredicate.m */,
-				8A6BE91223E86B480066B13C /* EMSListChunker.h */,
 			);
 			path = Batch;
 			sourceTree = "<group>";
@@ -2597,15 +2737,11 @@
 		8A6BE91523E86B480066B13C /* Log */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE91623E86B480066B13C /* EMSLogger.h */,
-				8A6BE91723E86B480066B13C /* EMSLogMapper.h */,
 				8A6BE91823E86B480066B13C /* EMSLogMapper.m */,
 				8A6BE91923E86B480066B13C /* EMSLogger.m */,
 				8A6BE91A23E86B480066B13C /* LogEntry */,
-				32C6F7CA095AA5603E992767 /* EMSLogEndpoints.h */,
 				32C6FAAF09BC7E16C81436BA /* EMSLogLevel.m */,
 				642592FC8F5F6174C333CCB5 /* EMSSdkStateLogger.m */,
-				6425957BB2D004885C6A2FB4 /* EMSSdkStateLogger.h */,
 			);
 			path = Log;
 			sourceTree = "<group>";
@@ -2613,21 +2749,13 @@
 		8A6BE91A23E86B480066B13C /* LogEntry */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE91B23E86B480066B13C /* EMSStatusLog.h */,
 				8A6BE91E23E86B480066B13C /* EMSOfflineQueueSize.m */,
 				8A6BE92023E86B480066B13C /* EMSCrashLog.m */,
-				8A6BE92223E86B480066B13C /* EMSMethodNotAllowed.h */,
 				8A6BE92423E86B480066B13C /* EMSStatusLog.m */,
-				8A6BE92523E86B480066B13C /* EMSOfflineQueueSize.h */,
-				8A6BE92723E86B480066B13C /* EMSLogEntryProtocol.h */,
-				8A6BE92823E86B480066B13C /* EMSCrashLog.h */,
 				8A6BE92A23E86B480066B13C /* EMSMethodNotAllowed.m */,
 				32C6FE262B4F0D51C7244050 /* EMSRequestLog.m */,
-				32C6FCFBC083E7F1B4735DEF /* EMSRequestLog.h */,
 				32C6FA794DF60CE293FA40C3 /* EMSInAppLog.m */,
-				32C6F7BA82A6C3D938AA29B2 /* EMSInAppLog.h */,
 				32C6F2CBC532207781373D34 /* EMSAppEventLog.m */,
-				32C6F75553D88F59D1D56E50 /* EMSAppEventLog.h */,
 			);
 			path = LogEntry;
 			sourceTree = "<group>";
@@ -2635,8 +2763,6 @@
 		8A6BE92C23E86B480066B13C /* Mappers */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE92D23E86B480066B13C /* EMSRequestModelMapperProtocol.h */,
-				8A6BE92E23E86B480066B13C /* EMSRequestFromShardsMapperProtocol.h */,
 			);
 			path = Mappers;
 			sourceTree = "<group>";
@@ -2645,7 +2771,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE93023E86B480066B13C /* EMSDictionaryValidator.m */,
-				8A6BE93123E86B480066B13C /* EMSDictionaryValidator.h */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -2654,9 +2779,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE93323E86B480066B13C /* EMSDefaultWorker.m */,
-				8A6BE93423E86B480066B13C /* EMSDefaultWorker.h */,
-				8A6BE93523E86B480066B13C /* EMSLockableProtocol.h */,
-				8A6BE93623E86B480066B13C /* EMSWorkerProtocol.h */,
 			);
 			path = Worker;
 			sourceTree = "<group>";
@@ -2664,24 +2786,15 @@
 		8A6BE93923E86B480066B13C /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE93A23E86B480066B13C /* NSURL+EMSCore.h */,
 				8A6BE93B23E86B480066B13C /* EMSResponseModel+EMSCore.m */,
 				8A6BE93C23E86B480066B13C /* NSMutableDictionary+EMSCore.m */,
-				8A6BE93D23E86B480066B13C /* NSError+EMSCore.h */,
-				8A6BE93E23E86B480066B13C /* NSDictionary+EMSCore.h */,
 				8A6BE93F23E86B480066B13C /* EMSRequestModel+RequestIds.m */,
 				8A6BE94023E86B480066B13C /* NSDate+EMSCore.m */,
-				8A6BE94123E86B480066B13C /* NSURLRequest+EMSCore.h */,
-				8A6BE94223E86B480066B13C /* EMSResponseModel+EMSCore.h */,
 				8A6BE94323E86B480066B13C /* NSURL+EMSCore.m */,
 				8A6BE94423E86B480066B13C /* NSError+EMSCore.m */,
-				8A6BE94523E86B480066B13C /* NSMutableDictionary+EMSCore.h */,
-				8A6BE94623E86B480066B13C /* EMSRequestModel+RequestIds.h */,
 				8A6BE94723E86B480066B13C /* NSDictionary+EMSCore.m */,
-				8A6BE94823E86B480066B13C /* NSDate+EMSCore.h */,
 				8A6BE94923E86B480066B13C /* NSURLRequest+EMSCore.m */,
 				FB8A35934808E998DA538E1C /* NSHTTPURLResponse+EMSCore.m */,
-				FB8A341304DAD4F9F04AC015 /* NSHTTPURLResponse+EMSCore.h */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2691,8 +2804,6 @@
 			children = (
 				8A6BE94B23E86B480066B13C /* EMSAgenda.m */,
 				8A6BE94C23E86B480066B13C /* EMSScheduler.m */,
-				8A6BE94D23E86B480066B13C /* EMSAgenda.h */,
-				8A6BE94E23E86B480066B13C /* EMSScheduler.h */,
 			);
 			path = Schedulers;
 			sourceTree = "<group>";
@@ -2700,11 +2811,8 @@
 		8A6BE94F23E86B480066B13C /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE95023E86B480066B13C /* EMSStorage.h */,
 				8A6BE95123E86B480066B13C /* EMSStorage.m */,
-				FB89BEAA77794AF88CE88C55 /* EMSStorageProtocol.h */,
 				FB89BEC69AE117D6AD06D53C /* EMSInMemoryStorage.m */,
-				FB89BA95D27CC8A93CDEB1D2 /* EMSInMemoryStorage.h */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -2757,15 +2865,10 @@
 			children = (
 				8A6BE96C23E86B480066B13C /* EMSPredictInternal.m */,
 				8A6BE96D23E86B480066B13C /* ResponseHandlers */,
-				8A6BE97223E86B480066B13C /* PRERequestContext.h */,
-				8A6BE97323E86B480066B13C /* EMSCartItemUtils.h */,
 				8A6BE97423E86B480066B13C /* Mapper */,
-				8A6BE97723E86B480066B13C /* EMSLoggingPredictInternal.h */,
 				8A6BE97823E86B480066B13C /* Models */,
-				8A6BE97E23E86B480066B13C /* EMSPredictMapper.h */,
 				8A6BE97F23E86B480066B13C /* Recommendations */,
 				8A6BE98223E86B480066B13C /* Requests */,
-				8A6BE98723E86B480066B13C /* EMSPredictInternal.h */,
 				8A6BE98823E86B480066B13C /* PRERequestContext.m */,
 				8A6BE98923E86B480066B13C /* EMSCartItemUtils.m */,
 				8A6BE98A23E86B480066B13C /* EMSPredictMapper.m */,
@@ -2777,8 +2880,6 @@
 		8A6BE96D23E86B480066B13C /* ResponseHandlers */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE96E23E86B480066B13C /* EMSVisitorIdResponseHandler.h */,
-				8A6BE96F23E86B480066B13C /* EMSXPResponseHandler.h */,
 				8A6BE97023E86B480066B13C /* EMSVisitorIdResponseHandler.m */,
 				8A6BE97123E86B480066B13C /* EMSXPResponseHandler.m */,
 			);
@@ -2789,7 +2890,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE97523E86B480066B13C /* EMSProductMapper.m */,
-				8A6BE97623E86B480066B13C /* EMSProductMapper.h */,
 			);
 			path = Mapper;
 			sourceTree = "<group>";
@@ -2799,8 +2899,6 @@
 			children = (
 				8A6BE97923E86B480066B13C /* EMSProductBuilder.m */,
 				8A6BE97A23E86B480066B13C /* EMSProduct.m */,
-				8A6BE97B23E86B480066B13C /* EMSProduct+Emarsys.h */,
-				8A6BE97C23E86B480066B13C /* EMSProductBuilder.h */,
 				8A6BE97D23E86B480066B13C /* EMSCartItem.m */,
 			);
 			path = Models;
@@ -2819,8 +2917,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE98323E86B480066B13C /* EMSPredictRequestModelBuilder.m */,
-				8A6BE98423E86B480066B13C /* EMSPredictRequestModelBuilderProvider.h */,
-				8A6BE98523E86B480066B13C /* EMSPredictRequestModelBuilder.h */,
 				8A6BE98623E86B480066B13C /* EMSPredictRequestModelBuilderProvider.m */,
 			);
 			path = Requests;
@@ -2853,17 +2949,12 @@
 		8A6BE98D23E86B480066B13C /* ResponseHandlers */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE98E23E86B480066B13C /* EMSClientStateResponseHandler.h */,
-				8A6BE98F23E86B480066B13C /* EMSContactTokenResponseHandler.h */,
-				8A6BE99023E86B480066B13C /* EMSRefreshTokenResponseHandler.h */,
 				8A6BE99123E86B480066B13C /* EMSRefreshTokenResponseHandler.m */,
 				8A6BE99223E86B480066B13C /* InappMessage */,
 				8A6BE99723E86B480066B13C /* EMSContactTokenResponseHandler.m */,
 				8A6BE99823E86B480066B13C /* EMSClientStateResponseHandler.m */,
-				8A54716C255EB3FA0080457D /* EMSOnEventResponseHandler.h */,
 				8A54716D255EB3FA0080457D /* EMSOnEventResponseHandler.m */,
 				32C6FA7BE0E0DC8B7616019A /* EMSDeviceEventStateResponseHandler.m */,
-				32C6FE96369A39B9B9270579 /* EMSDeviceEventStateResponseHandler.h */,
 			);
 			path = ResponseHandlers;
 			sourceTree = "<group>";
@@ -2871,12 +2962,9 @@
 		8A6BE99223E86B480066B13C /* InappMessage */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE99323E86B480066B13C /* MEIAMCleanupResponseHandlerV3.h */,
-				8A6BE99423E86B480066B13C /* MEIAMResponseHandler.h */,
 				8A6BE99523E86B480066B13C /* MEIAMCleanupResponseHandlerV3.m */,
 				8A6BE99623E86B480066B13C /* MEIAMResponseHandler.m */,
 				32C6F769C0C1DE422CDEB16B /* MEIAMCleanupResponseHandlerV4.m */,
-				32C6FE36C4B04E51FEA6C852 /* MEIAMCleanupResponseHandlerV4.h */,
 			);
 			path = InappMessage;
 			sourceTree = "<group>";
@@ -2885,11 +2973,8 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE9A523E86B480066B13C /* NSData+MobileEngine.m */,
-				8A6BE9A623E86B480066B13C /* NSDictionary+MobileEngage.h */,
 				8A6BE9A723E86B480066B13C /* EMSDeviceInfo+MEClientPayload.m */,
-				8A6BE9A823E86B480066B13C /* NSData+MobileEngine.h */,
 				8A6BE9A923E86B480066B13C /* NSDictionary+MobileEngage.m */,
-				8A6BE9AA23E86B480066B13C /* EMSDeviceInfo+MEClientPayload.h */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -2897,7 +2982,6 @@
 		8A6BE9AB23E86B480066B13C /* RichNotification */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE9AD23E86B480066B13C /* EMSNotificationCenterManager.h */,
 				8A6BE9B123E86B480066B13C /* EMSNotificationCenterManager.m */,
 			);
 			path = RichNotification;
@@ -2909,11 +2993,6 @@
 				8A6BE9B323E86B480066B13C /* EMSDeviceInfoV3ClientInternal.m */,
 				8A6BE9B423E86B480066B13C /* EMSMobileEngageV3Internal.m */,
 				8A6BE9B523E86B480066B13C /* EMSLoggingMobileEngageInternal.m */,
-				8A6BE9B623E86B480066B13C /* EMSDeviceInfoV3ClientInternal.h */,
-				8A6BE9B723E86B480066B13C /* EMSDeviceInfoClientProtocol.h */,
-				8A6BE9B823E86B480066B13C /* EMSMobileEngageProtocol.h */,
-				8A6BE9B923E86B480066B13C /* EMSMobileEngageV3Internal.h */,
-				8A6BE9BA23E86B480066B13C /* EMSLoggingMobileEngageInternal.h */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -2922,12 +3001,9 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE9BC23E86B480066B13C /* MERequestTools.m */,
-				8A6BE9BD23E86B480066B13C /* MERequestModelRepositoryFactory.h */,
 				8A6BE9BE23E86B480066B13C /* MERequestRepositoryProxy.m */,
 				8A6BE9BF23E86B480066B13C /* IAM */,
-				8A6BE9D123E86B480066B13C /* MERequestRepositoryProxy.h */,
 				8A6BE9D223E86B480066B13C /* MERequestModelRepositoryFactory.m */,
-				8A6BE9D323E86B480066B13C /* MERequestTools.h */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2944,14 +3020,9 @@
 		8A6BE9C023E86B480066B13C /* ButtonClick */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE9C123E86B480066B13C /* MEButtonClickRepository.h */,
 				8A6BE9C223E86B480066B13C /* MEButtonClickMapper.m */,
-				8A6BE9C323E86B480066B13C /* MEButtonClickContract.h */,
-				8A6BE9C423E86B480066B13C /* MEButtonClick.h */,
 				8A6BE9C523E86B480066B13C /* MEButtonClickRepository.m */,
-				8A6BE9C623E86B480066B13C /* MEButtonClickMapper.h */,
 				8A6BE9C723E86B480066B13C /* MEButtonClick.m */,
-				8A6BE9C823E86B480066B13C /* MEButtonClickRepository+Private.h */,
 			);
 			path = ButtonClick;
 			sourceTree = "<group>";
@@ -2961,10 +3032,6 @@
 			children = (
 				8A6BE9CA23E86B480066B13C /* MEDisplayedIAMRepository.m */,
 				8A6BE9CB23E86B480066B13C /* MEDisplayedIAM.m */,
-				8A6BE9CC23E86B480066B13C /* MEDisplayedIAMMapper.h */,
-				8A6BE9CD23E86B480066B13C /* MEDisplayedIAMContract.h */,
-				8A6BE9CE23E86B480066B13C /* MEDisplayedIAMRepository.h */,
-				8A6BE9CF23E86B480066B13C /* MEDisplayedIAM.h */,
 				8A6BE9D023E86B480066B13C /* MEDisplayedIAMMapper.m */,
 			);
 			path = DisplayedIAM;
@@ -2973,9 +3040,7 @@
 		8A6BE9D423E86B480066B13C /* Push */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE9D523E86B480066B13C /* EMSLoggingPushInternal.h */,
 				8A6BE9D623E86B480066B13C /* EMSPushV3Internal.m */,
-				8A6BE9D723E86B480066B13C /* EMSPushV3Internal.h */,
 				8A6BE9D823E86B480066B13C /* EMSLoggingPushInternal.m */,
 				64259D774B88380330D91996 /* Actions */,
 				8AB925D824CB0A8F003B69A1 /* EMSNotificationInformation.m */,
@@ -2986,19 +3051,12 @@
 		8A6BE9D923E86B480066B13C /* IAM */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BE9DA23E86B480066B13C /* EMSInAppInternal.h */,
 				8A6BE9DB23E86B480066B13C /* UI */,
-				8A6BE9DE23E86B480066B13C /* MEInAppMessage.h */,
 				8A6BE9DF23E86B480066B13C /* JSCommands */,
 				8A6BE9F123E86B480066B13C /* MEInApp.m */,
-				8A6BE9F223E86B480066B13C /* MEInAppTrackingProtocol.h */,
-				8A6BE9F323E86B480066B13C /* MEJSBridge.h */,
-				8A6BE9F423E86B480066B13C /* EMSLoggingInApp.h */,
 				8A6BE9F523E86B480066B13C /* Providers */,
 				8A6BEA0023E86B480066B13C /* MEInAppMessage.m */,
 				8A6BEA0123E86B480066B13C /* EMSInAppInternal.m */,
-				8A6BEA0223E86B480066B13C /* MEInApp.h */,
-				8A6BEA0323E86B480066B13C /* MEIAMProtocol.h */,
 				8A6BEA0423E86B480066B13C /* EMSLoggingInApp.m */,
 				8A6BEA0523E86B480066B13C /* MEJSBridge.m */,
 			);
@@ -3009,10 +3067,7 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE9DC23E86B480066B13C /* MEIAMViewController.m */,
-				8A6BE9DD23E86B480066B13C /* MEIAMViewController.h */,
 				32C6F507FC1D65382743B60F /* EMSInlineInAppView.m */,
-				F2A21141201F1E79EC38E556 /* EMSIAMCloseProtocol.h */,
-				F2A21D7CBC123DFD63755CA9 /* EMSIAMAppEventProtocol.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3021,24 +3076,14 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE9E023E86B480066B13C /* MEIAMTriggerAppEvent.m */,
-				8A6BE9E123E86B480066B13C /* MEIAMButtonClicked.h */,
 				8A6BE9E223E86B480066B13C /* MEIAMTriggerMEEvent.m */,
-				8A6BE9E323E86B480066B13C /* MEIAMJSCommandProtocol.h */,
-				8A6BE9E423E86B480066B13C /* MEIAMRequestPushPermission.h */,
 				8A6BE9E523E86B480066B13C /* MEIAMJSCommandFactory.m */,
 				8A6BE9E623E86B480066B13C /* MEIAMOpenExternalLink.m */,
 				8A6BE9E723E86B480066B13C /* MEIAMClose.m */,
 				8A6BE9E823E86B480066B13C /* MEIAMCommandResultUtils.m */,
-				8A6BE9E923E86B480066B13C /* MEIAMTriggerAppEvent.h */,
-				8A6BE9EA23E86B480066B13C /* MEIAMTriggerMEEvent.h */,
 				8A6BE9EB23E86B480066B13C /* MEIAMButtonClicked.m */,
-				8A6BE9EC23E86B480066B13C /* MEIAMJSCommandFactory.h */,
 				8A6BE9ED23E86B480066B13C /* MEIAMRequestPushPermission.m */,
-				8A6BE9EE23E86B480066B13C /* MEIAMCommandResultUtils.h */,
-				8A6BE9EF23E86B480066B13C /* MEIAMClose.h */,
-				8A6BE9F023E86B480066B13C /* MEIAMOpenExternalLink.h */,
 				FB89B11F8629BB5C1BCF7660 /* MEIAMCopyToClipboard.m */,
-				FB89B47317B4DBA3C994DF51 /* MEIAMCopyToClipboard.h */,
 			);
 			path = JSCommands;
 			sourceTree = "<group>";
@@ -3047,15 +3092,10 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE9F623E86B480066B13C /* EMSMainWindowProvider.m */,
-				8A6BE9F723E86B480066B13C /* EMSViewControllerProvider.h */,
 				8A6BE9F823E86B480066B13C /* EMSWindowProvider.m */,
 				8A6BE9F923E86B480066B13C /* EMSSceneProvider.m */,
-				8A6BE9FA23E86B480066B13C /* EMSIAMViewControllerProvider.h */,
-				8A6BE9FB23E86B480066B13C /* EMSWindowProvider.h */,
 				8A6BE9FC23E86B480066B13C /* EMSViewControllerProvider.m */,
-				8A6BE9FD23E86B480066B13C /* EMSMainWindowProvider.h */,
 				8A6BE9FE23E86B480066B13C /* EMSIAMViewControllerProvider.m */,
-				8A6BE9FF23E86B480066B13C /* EMSSceneProvider.h */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -3064,13 +3104,9 @@
 			isa = PBXGroup;
 			children = (
 				8A6BEA0723E86B480066B13C /* EMSContactTokenMapper.m */,
-				8A6BEA0823E86B480066B13C /* EMSMobileEngageMapper.h */,
-				8A6BEA0923E86B480066B13C /* EMSContactTokenMapper.h */,
 				8A6BEA0A23E86B480066B13C /* EMSMobileEngageMapper.m */,
 				32C6F571E75200C09DA9D57E /* EMSOpenIdTokenMapper.m */,
-				32C6F61F517617AB6732F1EC /* EMSOpenIdTokenMapper.h */,
 				FB89BB94819E1B841DF3100C /* EMSDeviceEventStateRequestMapper.m */,
-				FB89BFCB9693CC8B323B4BD4 /* EMSDeviceEventStateRequestMapper.h */,
 			);
 			path = Mappers;
 			sourceTree = "<group>";
@@ -3078,16 +3114,12 @@
 		8A6BEA0B23E86B480066B13C /* RichNotificationExtension */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA0C23E86B480066B13C /* EMSNotificationService+Actions.h */,
-				8A6BEA0D23E86B480066B13C /* EMSNotificationService+Attachment.h */,
 				8A6BEA0E23E86B480066B13C /* MEDownloader.m */,
 				8A6BEA0F23E86B480066B13C /* EMSNotificationService+PushToInApp.m */,
 				8A6BEA1023E86B480066B13C /* EMSNotificationService+Actions.m */,
 				8A6BEA1123E86B480066B13C /* EMSNotificationService+Attachment.m */,
 				8A6BEA1223E86B480066B13C /* Validators */,
-				8A6BEA1523E86B480066B13C /* MEDownloader.h */,
 				8A6BEA1623E86B480066B13C /* EMSNotificationService.m */,
-				8A6BEA1723E86B480066B13C /* EMSNotificationService+PushToInApp.h */,
 			);
 			path = RichNotificationExtension;
 			sourceTree = "<group>";
@@ -3096,7 +3128,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BEA1323E86B480066B13C /* EMSServiceDictionaryValidator.m */,
-				8A6BEA1423E86B480066B13C /* EMSServiceDictionaryValidator.h */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -3104,16 +3135,11 @@
 		8A6BEA1823E86B480066B13C /* RequestTools */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA1923E86B480066B13C /* EMSMobileEngageRefreshTokenCompletionProxy.h */,
 				8A6BEA1A23E86B480066B13C /* EMSRequestFactory.m */,
-				8A6BEA1B23E86B480066B13C /* MEDefaultHeaders.h */,
-				8A6BEA1D23E86B480066B13C /* MERequestContext.h */,
 				8A6BEA1E23E86B480066B13C /* EMSCompletionProxyFactory.m */,
-				8A6BEA1F23E86B480066B13C /* EMSRequestFactory.h */,
 				8A6BEA2023E86B480066B13C /* EMSMobileEngageRefreshTokenCompletionProxy.m */,
 				8A6BEA2223E86B480066B13C /* MEDefaultHeaders.m */,
 				8A6BEA2323E86B480066B13C /* MERequestContext.m */,
-				8A6BEA2423E86B480066B13C /* EMSCompletionProxyFactory.h */,
 			);
 			path = RequestTools;
 			sourceTree = "<group>";
@@ -3121,14 +3147,10 @@
 		8A6BEA2623E86B480066B13C /* EmarsysSDK */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA2723E86B480066B13C /* EmarsysSDKVersion.h */,
 				8A6BEA2823E86B480066B13C /* FlipperFeatures */,
 				8A6BEA2B23E86B480066B13C /* DI */,
 				8A6BEA3123E86B480066B13C /* Endpoints */,
 				8A6BEA3423E86B480066B13C /* Setup */,
-				8A6BEA3F23E86B480066B13C /* EMSMacros.h */,
-				8A6BEA4123E86B480066B13C /* EMSDeepLinkProtocol.h */,
-				8A6BEA4223E86B480066B13C /* EMSPredictInternalProtocol.h */,
 				8A6BEA4323E86B480066B13C /* AppStart */,
 				8A6BEA4623E86B480066B13C /* Emarsys.m */,
 				8A6BEA4723E86B480066B13C /* EMSAppDelegate.m */,
@@ -3143,7 +3165,6 @@
 		8A6BEA2823E86B480066B13C /* FlipperFeatures */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA2923E86B480066B13C /* EMSInnerFeature.h */,
 				8A6BEA2A23E86B480066B13C /* EMSInnerFeature.m */,
 			);
 			path = FlipperFeatures;
@@ -3152,10 +3173,7 @@
 		8A6BEA2B23E86B480066B13C /* DI */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA2C23E86B480066B13C /* EMSDependencyContainer.h */,
 				8A6BEA2D23E86B480066B13C /* EMSDependencyInjection.m */,
-				8A6BEA2E23E86B480066B13C /* EMSDependencyContainerProtocol.h */,
-				8A6BEA2F23E86B480066B13C /* EMSDependencyInjection.h */,
 				8A6BEA3023E86B480066B13C /* EMSDependencyContainer.m */,
 			);
 			path = DI;
@@ -3165,7 +3183,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BEA3223E86B480066B13C /* EMSEndpoint.m */,
-				8A6BEA3323E86B480066B13C /* EMSEndpoint.h */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -3173,16 +3190,12 @@
 		8A6BEA3423E86B480066B13C /* Setup */ = {
 			isa = PBXGroup;
 			children = (
-				8A6BEA3523E86B480066B13C /* EMSRemoteConfigResponseMapper.h */,
 				8A6BEA3623E86B480066B13C /* EMSValueProvider.m */,
 				8A6BEA3723E86B480066B13C /* EMSRemoteConfig.m */,
 				8A6BEA3823E86B480066B13C /* EMSConfig.m */,
 				8A6BEA3923E86B480066B13C /* EMSConfigInternal.m */,
 				8A6BEA3A23E86B480066B13C /* EMSRemoteConfigResponseMapper.m */,
 				8A6BEA3B23E86B480066B13C /* EMSConfigBuilder.m */,
-				8A6BEA3C23E86B480066B13C /* EMSRemoteConfig.h */,
-				8A6BEA3D23E86B480066B13C /* EMSValueProvider.h */,
-				8A6BEA3E23E86B480066B13C /* EMSConfigInternal.h */,
 			);
 			path = Setup;
 			sourceTree = "<group>";
@@ -3190,9 +3203,7 @@
 		8A6BEA4323E86B480066B13C /* AppStart */ = {
 			isa = PBXGroup;
 			children = (
-				8A5D135E266F8FBD0066B735 /* EMSWrapperChecker.h */,
 				8A5D135D266F8FBC0066B735 /* EMSWrapperChecker.m */,
-				8A6BEA4423E86B480066B13C /* EMSAppStartBlockProvider.h */,
 				8A6BEA4523E86B480066B13C /* EMSAppStartBlockProvider.m */,
 			);
 			path = AppStart;
@@ -3202,7 +3213,6 @@
 			isa = PBXGroup;
 			children = (
 				8A6BEA4923E86B480066B13C /* EMSEmarsysRequestFactory.m */,
-				8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */,
 			);
 			path = RequestTools;
 			sourceTree = "<group>";
@@ -3212,8 +3222,6 @@
 			children = (
 				8A6BEA4C23E86B480066B13C /* EMSDeepLinkInternal.m */,
 				8A6BEA4D23E86B480066B13C /* EMSLoggingDeepLinkInternal.m */,
-				8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */,
-				8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */,
 			);
 			path = DeepLink;
 			sourceTree = "<group>";
@@ -3842,7 +3850,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A102D732112F3B50046BAFB /* Build configuration list for PBXNativeTarget "MobileEngageTests" */;
 			buildPhases = (
-				6372EB3593C9A2AD62C1939D /* [CP] Check Pods Manifest.lock */,
+				A4B93C5E4E9B460AC5239C06 /* [CP] Check Pods Manifest.lock */,
 				8A102D1E2112F3B50046BAFB /* Sources */,
 				8A102D6F2112F3B50046BAFB /* Frameworks */,
 				8A102D722112F3B50046BAFB /* Resources */,
@@ -3861,7 +3869,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A102E422112F7F90046BAFB /* Build configuration list for PBXNativeTarget "CoreTests" */;
 			buildPhases = (
-				31DF82C9EE378736E0F27B5F /* [CP] Check Pods Manifest.lock */,
+				87491D122E14B3D4465D3FEB /* [CP] Check Pods Manifest.lock */,
 				8A102E062112F7F90046BAFB /* Sources */,
 				8A102E3E2112F7F90046BAFB /* Frameworks */,
 				8A102E412112F7F90046BAFB /* Resources */,
@@ -3880,7 +3888,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AB2F98E21075A8D0030E659 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
-				632A2CF815F4370B2546DCD6 /* [CP] Check Pods Manifest.lock */,
+				1715760F8E12F33B77A63590 /* [CP] Check Pods Manifest.lock */,
 				8AB2F98021075A8D0030E659 /* Sources */,
 				8AB2F98121075A8D0030E659 /* Frameworks */,
 				8AB2F98221075A8D0030E659 /* Resources */,
@@ -3954,7 +3962,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AFCA41F21393CF30052FEFA /* Build configuration list for PBXNativeTarget "PredictTests" */;
 			buildPhases = (
-				2915C4BA9E145A34254F7C91 /* [CP] Check Pods Manifest.lock */,
+				D716CD5CFFE830A94F203F3D /* [CP] Check Pods Manifest.lock */,
 				8AFCA3FD21393CF30052FEFA /* Sources */,
 				8AFCA41B21393CF30052FEFA /* Frameworks */,
 				8AFCA41E21393CF30052FEFA /* Resources */,
@@ -3973,7 +3981,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AFCA44A21393CF60052FEFA /* Build configuration list for PBXNativeTarget "EmarsysSDKTests" */;
 			buildPhases = (
-				EBF5BB4FAC17F1CA0B91F645 /* [CP] Check Pods Manifest.lock */,
+				F8D9DBA89F321A9047D45A9E /* [CP] Check Pods Manifest.lock */,
 				8AFCA42821393CF60052FEFA /* Sources */,
 				8AFCA44621393CF60052FEFA /* Frameworks */,
 				8AFCA44921393CF60052FEFA /* Resources */,
@@ -4137,51 +4145,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2915C4BA9E145A34254F7C91 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-PredictTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		31DF82C9EE378736E0F27B5F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CoreTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		632A2CF815F4370B2546DCD6 /* [CP] Check Pods Manifest.lock */ = {
+		1715760F8E12F33B77A63590 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4203,7 +4167,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6372EB3593C9A2AD62C1939D /* [CP] Check Pods Manifest.lock */ = {
+		87491D122E14B3D4465D3FEB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CoreTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A4B93C5E4E9B460AC5239C06 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4225,7 +4211,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EBF5BB4FAC17F1CA0B91F645 /* [CP] Check Pods Manifest.lock */ = {
+		D716CD5CFFE830A94F203F3D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PredictTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F8D9DBA89F321A9047D45A9E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5090,7 +5098,7 @@
 		};
 		8A102D742112F3B50046BAFB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A07C43E6DA124FB995D8AF0F /* Pods-MobileEngageTests.debug.xcconfig */;
+			baseConfigurationReference = 8B1000AF76D7850C81C9AEBB /* Pods-MobileEngageTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -5113,7 +5121,7 @@
 		};
 		8A102D752112F3B50046BAFB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B2DF206DB01544ABD25A5DF9 /* Pods-MobileEngageTests.release.xcconfig */;
+			baseConfigurationReference = 32FF60B3365AEA98BEE1C478 /* Pods-MobileEngageTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -5135,7 +5143,7 @@
 		};
 		8A102E432112F7F90046BAFB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4CB9FE8B0533206B40A625FB /* Pods-CoreTests.debug.xcconfig */;
+			baseConfigurationReference = BB50B51C79ACE26833834D0F /* Pods-CoreTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4J5FXBB97U;
@@ -5154,7 +5162,7 @@
 		};
 		8A102E442112F7F90046BAFB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F428053940D6A15FCED811B4 /* Pods-CoreTests.release.xcconfig */;
+			baseConfigurationReference = A6A5CF29678A88E2524F84FB /* Pods-CoreTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4J5FXBB97U;
@@ -5173,7 +5181,7 @@
 		};
 		8AB2F98C21075A8D0030E659 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C36CA54ADC62E1820D2F6016 /* Pods-Tests.debug.xcconfig */;
+			baseConfigurationReference = D69ABA358F0668BC9832BFBF /* Pods-Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -5199,7 +5207,7 @@
 		};
 		8AB2F98D21075A8D0030E659 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7114CD10E360378EDDECA824 /* Pods-Tests.release.xcconfig */;
+			baseConfigurationReference = C0B1F65D8C2E2C52FD8526F4 /* Pods-Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -5371,7 +5379,7 @@
 		};
 		8AFCA42021393CF30052FEFA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FA2EC94ADBDC596334F4622 /* Pods-PredictTests.debug.xcconfig */;
+			baseConfigurationReference = 328D182D6D1A65351F580868 /* Pods-PredictTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -5394,7 +5402,7 @@
 		};
 		8AFCA42121393CF30052FEFA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 99EF8A53020651C8D473402A /* Pods-PredictTests.release.xcconfig */;
+			baseConfigurationReference = 450B10B838251FB270006E1A /* Pods-PredictTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -5416,7 +5424,7 @@
 		};
 		8AFCA44B21393CF60052FEFA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C0EFA43588AE3C220CDA87F /* Pods-EmarsysSDKTests.debug.xcconfig */;
+			baseConfigurationReference = 4ED898709ED2AF69FED9CAC4 /* Pods-EmarsysSDKTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -5439,7 +5447,7 @@
 		};
 		8AFCA44C21393CF60052FEFA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0085D90E76A466EA805A84AE /* Pods-EmarsysSDKTests.release.xcconfig */;
+			baseConfigurationReference = 6009F321D926B9B5DF301CC1 /* Pods-EmarsysSDKTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
