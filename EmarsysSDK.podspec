@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysSDK'
-	spec.version              = '3.3.1'
+	spec.version              = '3.4.0'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
@@ -8,8 +8,8 @@ Pod::Spec.new do |spec|
 	spec.platform             = :ios, '11.0'
 	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
-	   'Sources/Private/**/*.{h,m}',
-       'Sources/**/*.{h,m}'
+	    'Sources/Private/**/*.{h,m}',
+        'Sources/**/*.{h,m}'
 	]
     spec.exclude_files	  = [
         'Sources/include/EMSNotificationService.h',
