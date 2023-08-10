@@ -10,6 +10,7 @@ Pod::Spec.new do |spec|
 	spec.source_files         = [
 	    'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}',
 		'Sources/Core/Categories/NSError*.{h,m}',
+        'Sources/Private/**/*.{h,m}',
 		'Sources/include/EMSNotificationService.h'
 	]
 	spec.public_header_files  = [
