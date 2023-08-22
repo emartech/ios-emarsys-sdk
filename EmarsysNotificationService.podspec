@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysNotificationService'
-	spec.version              = '3.4.0'
+	spec.version              = '3.4.1'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
@@ -8,13 +8,18 @@ Pod::Spec.new do |spec|
 	spec.platform             = :ios, '11.0'
 	spec.source               = { :git => 'https://github.com/emartech/ios-emarsys-sdk.git', :tag => spec.version }
 	spec.source_files         = [
-	    'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}',
-		'Sources/Core/Categories/NSError*.{h,m}',
-		'Sources/Private/**/*.{h,m}',
-		'Sources/include/EMSNotificationService.h'
-	]
-	spec.public_header_files  = [
-        'Sources/include/EMSNotificationService.h'
-	]
+            'Sources/include/EMSNotificationService.h',
+            'Sources/Private/NSError+EMSCore.h',
+            'Sources/Private/EMSServiceDictionaryValidator.h',
+            'Sources/Private/EMSNotificationService+Actions.h',
+            'Sources/Private/EMSNotificationService+Attachment.h',
+            'Sources/Private/EMSNotificationService+PushToInApp.h',
+            'Sources/Private/EMSNotificationService.h',
+            'Sources/Private/MEDownloader.h',
+            'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
+        ]
+    	spec.public_header_files  = [
+            'Sources/include/EMSNotificationService.h'
+    	]
 	spec.libraries = 'z', 'c++'
 end
