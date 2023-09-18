@@ -36,22 +36,28 @@
     return self;
 }
 
-- (EMSRequestModel *)createRemoteConfigRequestModel {
-    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodGET];
-                [builder setUrl:[self.endpoint remoteConfigUrl:self.requestContext.applicationCode]];
-            }
-                          timestampProvider:self.timestampProvider
-                               uuidProvider:self.uuidProvider];
+- (EMSRequestModel *_Nullable)createRemoteConfigRequestModel {
+    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setMethod:HTTPMethodGET];
+        [builder setUrl:[self.endpoint remoteConfigUrl:self.requestContext.applicationCode]];
+    }];
 }
 
-- (EMSRequestModel *)createRemoteConfigSignatureRequestModel {
-    return [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+- (EMSRequestModel *_Nullable)createRemoteConfigSignatureRequestModel {
+    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodGET];
                 [builder setUrl:[self.endpoint remoteConfigSignatureUrl:self.requestContext.applicationCode]];
-            }
-                          timestampProvider:self.timestampProvider
-                               uuidProvider:self.uuidProvider];
+            }];
+}
+
+- (EMSRequestModel *)requestModelWithBuilder:(EMSRequestBuilderBlock)builderBlock {
+    EMSRequestModel *result = nil;
+    if (self.requestContext.applicationCode) {
+        result = [EMSRequestModel makeWithBuilder:builderBlock
+                                timestampProvider:self.timestampProvider
+                                     uuidProvider:self.uuidProvider];
+    }
+    return result;
 }
 
 @end

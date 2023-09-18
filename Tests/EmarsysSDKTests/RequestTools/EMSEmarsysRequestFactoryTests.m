@@ -101,6 +101,12 @@
     XCTAssertEqualObjects(returnedRequestModel, expectedRequestModel);
 }
 
+- (void)testCreateRemoteConfigRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createRemoteConfigRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateRemoteConfigSignatureRequestModel {
     OCMStub([self.mockRequestContext applicationCode]).andReturn(@"testApplicationCode");
     OCMStub([self.mockEndpoint remoteConfigSignatureUrl:[OCMArg any]]).andReturn(@"https://test.sig.url");
@@ -117,6 +123,12 @@
     OCMVerify([self.mockEndpoint remoteConfigSignatureUrl:@"testApplicationCode"]);
 
     XCTAssertEqualObjects(returnedRequestModel, expectedRequestModel);
+}
+
+- (void)testCreateRemoteConfigSignatureRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createRemoteConfigSignatureRequestModel];
+
+    XCTAssertNil(result);
 }
 
 @end

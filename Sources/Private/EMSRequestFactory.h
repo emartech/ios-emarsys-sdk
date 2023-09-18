@@ -24,29 +24,29 @@ NS_ASSUME_NONNULL_BEGIN
                               endpoint:(EMSEndpoint *)endpoint
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                        sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
-                               storage:(id<EMSStorageProtocol>)storage;
+                               storage:(id <EMSStorageProtocol>)storage;
 
-- (EMSRequestModel *)createDeviceInfoRequestModel;
+- (EMSRequestModel *_Nullable)createDeviceInfoRequestModel;
 
-- (EMSRequestModel *)createPushTokenRequestModelWithPushToken:(NSString *)pushToken;
+- (EMSRequestModel *_Nullable)createPushTokenRequestModelWithPushToken:(NSString *)pushToken;
 
-- (EMSRequestModel *)createClearPushTokenRequestModel;
+- (EMSRequestModel *_Nullable)createClearPushTokenRequestModel;
 
-- (EMSRequestModel *)createContactRequestModel;
+- (EMSRequestModel *_Nullable)createContactRequestModel;
 
-- (EMSRequestModel *)createEventRequestModelWithEventName:(NSString *)eventName
-                                          eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
-                                                eventType:(EventType)eventType;
+- (EMSRequestModel *_Nullable)createEventRequestModelWithEventName:(NSString *)eventName
+                                                   eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
+                                                         eventType:(EventType)eventType;
 
-- (EMSRequestModel *)createRefreshTokenRequestModel;
+- (EMSRequestModel *_Nullable)createRefreshTokenRequestModel;
 
 - (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId;
 
-- (EMSRequestModel *)createGeofenceRequestModel;
+- (EMSRequestModel *_Nullable)createGeofenceRequestModel;
 
-- (EMSRequestModel *)createMessageInboxRequestModel;
+- (EMSRequestModel *_Nullable)createMessageInboxRequestModel;
 
-- (EMSRequestModel *)createInlineInappRequestModelWithViewId:(NSString *)viewId;
+- (EMSRequestModel *_Nullable)createInlineInappRequestModelWithViewId:(NSString *)viewId;
 
 @end
 

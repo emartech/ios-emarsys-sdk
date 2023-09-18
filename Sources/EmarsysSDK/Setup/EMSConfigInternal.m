@@ -187,7 +187,7 @@
     BOOL hasContactIdentification = self.meRequestContext.hasContactIdentification;
     __block NSError *error = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (pushToken) {
+        if (self.meRequestContext.applicationCode && pushToken) {
             error = [self clearPushToken];
         }
         if (!error && self.meRequestContext.applicationCode && [self.meRequestContext hasContactIdentification]) {

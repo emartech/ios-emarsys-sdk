@@ -4,6 +4,7 @@
 
 #import "EMSRequestManager.h"
 #import "EMSRESTClientCompletionProxyFactory.h"
+#import "NSError+EMSCore.h"
 
 typedef void (^RunnerBlock)(void);
 
@@ -53,13 +54,20 @@ typedef void (^RunnerBlock)(void);
 
 - (void)submitRequestModel:(EMSRequestModel *)model
        withCompletionBlock:(EMSCompletionBlock)completionBlock {
-    NSParameterAssert(model);
     __weak typeof(self) weakSelf = self;
     [self runInCoreQueueWithBlock:^{
-        [weakSelf.completionMiddleware registerCompletionBlock:completionBlock
-                                               forRequestModel:model];
-        [weakSelf.requestModelRepository add:model];
-        [weakSelf.worker run];
+        if (model) {
+            [weakSelf.completionMiddleware registerCompletionBlock:completionBlock
+                                                   forRequestModel:model];
+            [weakSelf.requestModelRepository add:model];
+            [weakSelf.worker run];
+        } else {
+            NSError *error = [NSError errorWithCode:-1412
+                               localizedDescription:@"Cannot send request - Missing ApplicationCode"];
+            if (completionBlock) {
+                completionBlock(error);
+            }
+        }
     }];
 }
 
@@ -78,14 +86,21 @@ typedef void (^RunnerBlock)(void);
 - (void)submitRequestModelNow:(EMSRequestModel *)model
                  successBlock:(CoreSuccessBlock)successBlock
                    errorBlock:(CoreErrorBlock)errorBlock {
-    NSParameterAssert(model);
     NSParameterAssert(successBlock);
     NSParameterAssert(errorBlock);
     [self runInCoreQueueWithBlock:^{
-        [self.restClient executeWithRequestModel:model
-                             coreCompletionProxy:[self.proxyFactory createWithWorker:nil
-                                                                        successBlock:successBlock
-                                                                          errorBlock:errorBlock]];
+        if (model) {
+            [self.restClient executeWithRequestModel:model
+                                 coreCompletionProxy:[self.proxyFactory createWithWorker:nil
+                                                                            successBlock:successBlock
+                                                                              errorBlock:errorBlock]];
+        } else {
+            NSError *error = [NSError errorWithCode:-1412
+                               localizedDescription:@"Cannot send request - Missing ApplicationCode"];
+            if (errorBlock) {
+                errorBlock(@"unknown request", error);
+            }
+        }
     }];
 }
 

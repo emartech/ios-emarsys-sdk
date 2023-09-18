@@ -9,6 +9,8 @@
 @class EMSEndpoint;
 @class MERequestContext;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface EMSEmarsysRequestFactory : NSObject
 
 - (instancetype)initWithTimestampProvider:(EMSTimestampProvider *)timestampProvider
@@ -16,7 +18,9 @@
                                  endpoint:(EMSEndpoint *)endpoint
                            requestContext:(MERequestContext *)requestContext;
 
-- (EMSRequestModel *)createRemoteConfigRequestModel;
-- (EMSRequestModel *)createRemoteConfigSignatureRequestModel;
+- (EMSRequestModel * _Nullable)createRemoteConfigRequestModel;
+- (EMSRequestModel * _Nullable)createRemoteConfigSignatureRequestModel;
 
 @end
+
+NS_ASSUME_NONNULL_END
