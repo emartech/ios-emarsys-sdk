@@ -74,7 +74,6 @@
     OCMStub(self.mockRequestContext.deviceInfo).andReturn(self.mockDeviceInfo);
     OCMStub(self.mockRequestContext.uuidProvider).andReturn(self.mockUUIDProvider);
     OCMStub(self.mockRequestContext.refreshToken).andReturn(@"testRefreshToken");
-    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
@@ -161,6 +160,8 @@
 }
 
 - (void)testCreateDeviceInfoRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     NSDictionary *payload = @{
             @"platform": @"ios",
             @"applicationVersion": @"0.0.1",
@@ -185,7 +186,15 @@
     XCTAssertEqualObjects(expectedRequestModel, requestModel);
 }
 
+- (void)testCreateDeviceInfoRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createDeviceInfoRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreatePushTokenRequestModelWithPushToken {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     NSString *const pushToken = @"awesdrxcftvgyhbj";
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -201,7 +210,16 @@
     XCTAssertEqualObjects(expectedRequestModel, requestModel);
 }
 
-- (void)testClearCreatePushTokenRequestModelWithPushToken {
+- (void)testCreatePushTokenRequestModelWithPushToken_when_ApplicationCode_isNil {
+    NSString *const pushToken = @"awesdrxcftvgyhbj";
+    EMSRequestModel *result = [self.requestFactory createPushTokenRequestModelWithPushToken:pushToken];
+
+    XCTAssertNil(result);
+}
+
+- (void)testCreateClearPushTokenRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -216,10 +234,17 @@
     XCTAssertEqualObjects(expectedRequestModel, requestModel);
 }
 
+- (void)testClearCreatePushTokenRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createClearPushTokenRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateContactRequestModel {
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(@"test@test.com");
     OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -238,9 +263,16 @@
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
 
+- (void)testCreateContactRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createContactRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateContactRequestModel_whenContactFieldValueIsNil {
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(@3);
     OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -260,6 +292,7 @@
 
 - (void)testCreateContactRequestModel_when_contactFieldValueIsNil {
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(nil);
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -276,6 +309,8 @@
 }
 
 - (void)testCreateEventRequestModel_with_eventName_eventAttributes_internalType {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     self.sessionIdHolder.sessionId = @"testSessionId";
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
@@ -313,7 +348,20 @@
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
 }
 
+- (void)testCreateEventRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createEventRequestModelWithEventName:@"testEventName"
+                                                                        eventAttributes:@{
+                                                                                @"testEventAttributeKey1": @"testEventAttributeValue1",
+                                                                                @"testEventAttributeKey2": @"testEventAttributeValue2"
+                                                                        }
+                                                                              eventType:EventTypeInternal];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateEventRequestModel_with_eventName_customType {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -341,6 +389,8 @@
 }
 
 - (void)testCreateRefreshTokenRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -355,6 +405,12 @@
     EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
+}
+
+- (void)testCreateRefreshTokenRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createRefreshTokenRequestModel];
+
+    XCTAssertNil(result);
 }
 
 - (void)testCreateDeepLinkRequestModel {
@@ -378,6 +434,8 @@
 }
 
 - (void)testCreateGeofenceRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -392,7 +450,15 @@
     XCTAssertEqualObjects(result, expectedRequestModel);
 }
 
+- (void)testCreateGeofenceRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createGeofenceRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateMessageInboxRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
@@ -407,7 +473,15 @@
     XCTAssertEqualObjects(result, expectedRequestModel);
 }
 
+- (void)testCreateMessageInboxRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createMessageInboxRequestModel];
+
+    XCTAssertNil(result);
+}
+
 - (void)testCreateInlineInappRequestModel {
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
     NSArray<MEButtonClick *> *clicks = @[
             [[MEButtonClick alloc] initWithCampaignId:@"campaignID"
                                              buttonId:@"buttonID"
@@ -438,6 +512,12 @@
     EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
 
     XCTAssertEqualObjects(result, expectedRequestModel);
+}
+
+- (void)testCreateInlineInappRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
+
+    XCTAssertNil(result);
 }
 
 @end
