@@ -255,6 +255,8 @@ SPEC_BEGIN(PredictIntegrationTests)
         });
 
         describe(@"recommendProducts", ^{
+            NSString *searchTerm = @"Ropa";
+            NSString *categoryPath = @"Ropa bebe nina>Ropa Interior";
 
             void (^assertWithLogic)(EMSLogic *logic, int expectedCount) = ^(EMSLogic *logic, int expectedCount) {
                 __block NSArray *returnedProducts = nil;
@@ -279,7 +281,7 @@ SPEC_BEGIN(PredictIntegrationTests)
                 __block NSArray *returnedProducts = nil;
 
                 XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-                [Emarsys.predict recommendProductsWithLogic:[EMSLogic searchWithSearchTerm:@"shirt"]
+                [Emarsys.predict recommendProductsWithLogic:[EMSLogic searchWithSearchTerm: searchTerm]
                                                     filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
                                                                                                       isValue:@""]]
                                                       limit:@2
@@ -294,7 +296,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
 
             it(@"search should recommend products by searchTerm", ^{
-                [Emarsys.predict trackSearchWithSearchTerm:@"shirt"];
+                [Emarsys.predict trackSearchWithSearchTerm: searchTerm];
 
                 __block NSArray *returnedProducts = nil;
 
@@ -350,7 +352,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
 
             it(@"category should recommend products by categoryPath with categoryPath", ^{
-                EMSLogic *logic = [EMSLogic categoryWithCategoryPath:@"MEN>Shirts"];
+                EMSLogic *logic = [EMSLogic categoryWithCategoryPath: categoryPath];
 
                 assertWithLogic(logic, 2);
             });
@@ -380,7 +382,7 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
 
             it(@"category should recommend products by categoryPath", ^{
-                [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
+                [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
 
                 assertWithLogic(EMSLogic.category, 2);
             });
@@ -398,13 +400,13 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
 
             it(@"popular should recommend products by categoryPath with categoryPath", ^{
-                EMSLogic *logic = [EMSLogic popularWithCategoryPath:@"MEN>Shirts"];
+                EMSLogic *logic = [EMSLogic popularWithCategoryPath: categoryPath];
 
                 assertWithLogic(logic, 2);
             });
 
             it(@"popular should recommend products by categoryPath", ^{
-                [Emarsys.predict trackCategoryViewWithCategoryPath:@"MEN>Shirts"];
+                [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
 
                 assertWithLogic(EMSLogic.popular, 2);
             });
