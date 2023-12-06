@@ -38,6 +38,8 @@
 
 - (BOOL)isInlineInAppUrl:(NSString *)url;
 
+- (BOOL)isRefreshContactTokenUrl:(NSURL *)url;
+
 - (NSString *)predictUrl;
 
 - (NSString *)deeplinkUrl;

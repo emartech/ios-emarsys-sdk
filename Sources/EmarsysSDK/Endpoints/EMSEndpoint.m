@@ -138,6 +138,10 @@
     return [url hasPrefix:[self eventServiceUrl]] && [url hasSuffix:@"/inline-messages"];
 }
 
+- (BOOL)isRefreshContactTokenUrl:(NSURL *)url {
+    return [url.absoluteString hasSuffix:@"contact-token"];
+}
+
 - (NSString *)predictUrl {
     return [self.predictUrlProvider provideValue];
 }

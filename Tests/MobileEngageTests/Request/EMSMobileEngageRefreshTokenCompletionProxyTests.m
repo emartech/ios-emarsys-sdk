@@ -15,6 +15,15 @@
 #import "EMSStorage.h"
 #import "EMSStorageProtocol.h"
 
+@interface EMSMobileEngageRefreshTokenCompletionProxy()
+
+@property(nonatomic, assign) NSInteger retryCount;
+@property(nonatomic, strong) EMSResponseModel *originalResponseModel;
+
+- (void)reset;
+
+@end
+
 @interface EMSMobileEngageRefreshTokenCompletionProxyTests : XCTestCase
 
 @property(nonatomic, strong) EMSRESTClient *mockRestClient;
@@ -143,7 +152,7 @@
 }
 
 - (void)testCompletionBlock_shouldDelegate_toCompletionProxy_whenOnSuccess {
-    EMSRequestModel *requestModel = [self generateRequestModel];
+    EMSRequestModel *requestModel = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
 
     __block EMSRequestModel *returnedRequestModel;
@@ -167,8 +176,68 @@
     XCTAssertEqualObjects(returnedError, self.error);
 }
 
+- (void)testCompletionBlock_should_call_completionBlock_and_reset_when_retry_count_overflows {
+    EMSRequestModel *requestModel = [self generateRequestModel: @""];
+    EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
+    EMSMobileEngageRefreshTokenCompletionProxy *partialMockProxy = OCMPartialMock(self.refreshCompletionProxy);
+    partialMockProxy.retryCount = 4;
+    partialMockProxy.originalRequestModel = requestModel;
+    partialMockProxy.originalResponseModel = responseModel;
+
+    __block EMSRequestModel *returnedRequestModel;
+    __block EMSResponseModel *returnedResponseModel;
+    __block NSError *returnedError;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    OCMStub([self.mockCompletionProxy completionBlock]).andReturn(^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+        returnedRequestModel = requestModel;
+        returnedResponseModel = responseModel;
+        returnedError = error;
+        [expectation fulfill];
+    });
+
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedRequestModel, requestModel);
+    XCTAssertEqual(returnedResponseModel.statusCode, 418);
+    XCTAssertEqualObjects(returnedError, self.error);
+    OCMVerify([partialMockProxy reset]);
+}
+
+- (void)testCompletionBlock_should_call_completionBlock_and_reset_when_error_happens_on_refresTokenRequest {
+    EMSRequestModel *requestModel = [self generateRequestModel: @"contact-token"];
+    EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
+    EMSMobileEngageRefreshTokenCompletionProxy *partialMockProxy = OCMPartialMock(self.refreshCompletionProxy);
+    
+    partialMockProxy.originalRequestModel = requestModel;
+    partialMockProxy.originalResponseModel = responseModel;
+
+    __block EMSRequestModel *returnedRequestModel;
+    __block EMSResponseModel *returnedResponseModel;
+    __block NSError *returnedError;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    OCMStub([self.mockCompletionProxy completionBlock]).andReturn(^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
+        returnedRequestModel = requestModel;
+        returnedResponseModel = responseModel;
+        returnedError = error;
+        [expectation fulfill];
+    });
+
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:10];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(returnedRequestModel, requestModel);
+    XCTAssertEqual(returnedResponseModel.statusCode, 418);
+    XCTAssertEqualObjects(returnedError, self.error);
+    OCMVerify([partialMockProxy reset]);
+}
+
 - (void)testCompletionBlock_delegateToCompletionProxy_when_statusCode401_andNotV3 {
-    EMSRequestModel *requestModel = [self generateRequestModel];
+    EMSRequestModel *requestModel = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
 
     OCMReject([self.mockResponseHandler processResponse:[OCMArg any]]);
@@ -187,7 +256,7 @@
 
 - (void)testCompletionBlock_shouldRefreshToken_when_requestIsV3 {
     EMSRequestModel *requestModel = [self generateRequestModelWithUrlString:[self.endpoint eventUrlWithApplicationCode:@"testApplicationCode"]];
-    EMSRequestModel *requestModelForRefresh = [self generateRequestModel];
+    EMSRequestModel *requestModelForRefresh = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
 
     OCMStub([self.mockRequestFactory createRefreshTokenRequestModel]).andReturn(requestModelForRefresh);
@@ -203,22 +272,21 @@
 }
 
 - (void)testCompletionBlock_shouldHandleResponse {
-    EMSRequestModel *requestModel = [self generateRequestModel];
-    EMSRequestModel *mockOriginalRequestModel = [self generateRequestModel];
+    EMSRequestModel *requestModel = [self generateRequestModel: @"contact-token"];
+    EMSRequestModel *mockOriginalRequestModel = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
 
     self.refreshCompletionProxy.originalRequestModel = mockOriginalRequestModel;
 
-    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, nil);
 
     OCMVerify([self.mockResponseHandler processResponse:responseModel]);
     OCMVerify([self.mockRestClient executeWithRequestModel:mockOriginalRequestModel
                                        coreCompletionProxy:self.refreshCompletionProxy]);
-    XCTAssertNil(self.refreshCompletionProxy.originalRequestModel);
 }
 
 - (void)testCompletionBlock_shouldNotHandleResponse_when_success_and_noOriginalRequestModel {
-    EMSRequestModel *requestModel = [self generateRequestModel];
+    EMSRequestModel *requestModel = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:200];
 
     OCMReject([self.mockResponseHandler processResponse:[OCMArg any]]);
@@ -235,8 +303,8 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
-- (EMSRequestModel *)generateRequestModel {
-    return [self generateRequestModelWithUrlString:@"https://www.emarsys.com"];
+- (EMSRequestModel *)generateRequestModel:(NSString*) urlPath {
+    return [self generateRequestModelWithUrlString:[NSString stringWithFormat:@"https://www.emarsys.com/%@", urlPath]];
 }
 
 - (EMSRequestModel *)generateRequestModelWithUrlString:(NSString *)url {
@@ -254,7 +322,7 @@
                                                 headers:@{@"responseHeaderKey": @"responseHeaderValue"}
                                                    body:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
                                              parsedBody:nil
-                                           requestModel:[self generateRequestModel]
+                                           requestModel:[self generateRequestModel: @""]
                                               timestamp:[[EMSTimestampProvider new] provideTimestamp]];
 }
 
