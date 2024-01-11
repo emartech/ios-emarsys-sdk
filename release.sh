@@ -21,7 +21,7 @@ function release {
 
   printf "Releasing version $VERSION_NUMBER\n";
 
-  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > Sources/EmarsysSDK/EmarsysSDKVersion.h
+  printf "#define EMARSYS_SDK_VERSION @\"$VERSION_NUMBER\"" > Sources/Private/EmarsysSDKVersion.h
 
   TEMPLATE="`cat EmarsysSDK.podspec.template`"
   PODSPEC="${TEMPLATE/<VERSION_NUMBER>/$VERSION_NUMBER}"
@@ -33,7 +33,7 @@ function release {
   NSPODSPEC="${NSPODSPEC/<COMMIT_REF>/:tag => spec.version}"
   printf "$NSPODSPEC" > EmarsysNotificationService.podspec
 
-  git add Sources/EmarsysSDK/EmarsysSDKVersion.h
+  git add Sources/Private/EmarsysSDKVersion.h
   git add EmarsysNotificationService.podspec
   git add EmarsysSDK.podspec
   git commit -m "chore(release): version set to $VERSION_NUMBER"
