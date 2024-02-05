@@ -4018,6 +4018,7 @@
 					};
 					8AB2F98321075A8D0030E659 = {
 						CreatedOnToolsVersion = 9.4.1;
+						DevelopmentTeam = 4J5FXBB97U;
 						LastSwiftMigration = 1200;
 						ProvisioningStyle = Manual;
 						TestTargetID = 8ADAA670210773D500B3AC44;
@@ -4035,6 +4036,7 @@
 					};
 					8AEBEC5B210866C200FC6E83 = {
 						CreatedOnToolsVersion = 9.4.1;
+						DevelopmentTeam = 4J5FXBB97U;
 						LastSwiftMigration = 1210;
 						ProvisioningStyle = Manual;
 					};
@@ -5184,9 +5186,12 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4J5FXBB97U;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 4J5FXBB97U;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -5211,9 +5216,12 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4J5FXBB97U;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 4J5FXBB97U;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Tests/EMSTestPrefixHeader.pch;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -5284,7 +5292,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SdkHostProvProf;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SdkHostProvisioningProf;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -5306,7 +5314,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emarsys.SdkHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SdkHostProvProf;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SdkHostProvisioningProf;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -5317,11 +5325,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4J5FXBB97U;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
