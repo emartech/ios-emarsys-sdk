@@ -67,8 +67,9 @@ jobs:
         api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
     - if: ${{ failure() }}
       name: Slack Notification On Error
-      uses: megamegax/slack_action@0.2.3
+      uses: megamegax/slack_action@0.3.1
       with:
+        webhook_url: '${{env.SLACK_WEBHOOK}}'
         actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
         channel: ${{ secrets.SLACK_CHANNEL }}
         job_status: failure
@@ -76,8 +77,9 @@ jobs:
         user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
         user_name: Emarsys SDK - iOS
     - name: Slack Notification
-      uses: megamegax/slack_action@0.2.3
+      uses: megamegax/slack_action@0.3.1
       with:
+        webhook_url: '${{env.SLACK_WEBHOOK}}'
         actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
         channel: ${{ secrets.SLACK_CHANNEL }}
         job_status: success

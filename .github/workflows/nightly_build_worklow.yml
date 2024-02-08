@@ -58,8 +58,9 @@ jobs:
           event-type: build-sample
       - if: ${{ failure() }}
         name: Slack Notification On Error
-        uses: megamegax/slack_action@0.2.3
+        uses: megamegax/slack_action@0.3.1
         with:
+          webhook_url: '${{env.SLACK_WEBHOOK}}'
           actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
