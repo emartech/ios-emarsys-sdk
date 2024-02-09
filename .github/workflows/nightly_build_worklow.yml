@@ -47,7 +47,7 @@ jobs:
       - name: Run tests on Firebase
         uses: nick-invision/retry@v2
         with:
-          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone11pro,version=16.5,locale=en_GB --device model=iphone13pro,version=15.7,locale=en_GB --device model=iphone11pro,version=14.7,locale=en_GB
+          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone14pro,version=16.6,locale=en_GB --device model=iphone13pro,version=15.7,locale=en_GB --device model=iphone11pro,version=14.7,locale=en_GB
           max_attempts: 3
           retry_on: error
           timeout_minutes: 30
@@ -58,8 +58,9 @@ jobs:
           event-type: build-sample
       - if: ${{ failure() }}
         name: Slack Notification On Error
-        uses: megamegax/slack_action@0.2.3
+        uses: megamegax/slack_action@0.3.1
         with:
+          webhook_url: '${{env.SLACK_WEBHOOK}}'
           actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
           channel: ${{ secrets.SLACK_CHANNEL }}
           job_status: failure
