@@ -1,9 +1,9 @@
 FROM ubuntu:22.04
 
-COPY . .
-
 RUN apt-get update
 RUN apt-get install -y ruby-full git curl build-essential
 RUN gem install cocoapods -v 1.10.0 
 
-CMD pod install --allow-root
+WORKDIR /workspace/source
+
+CMD pod install --allow-root && cat Podfile.lock
