@@ -6,4 +6,4 @@ RUN apt-get update
 RUN apt-get install -y ruby-full git curl build-essential
 RUN gem install cocoapods -v 1.10.0 
 
-RUN pod install --allow-root
+CMD pod install --allow-root
