@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-class DefaultNotificationCenterWrapper: NotificationCenterWrapper {
+class DefaultUserNotificationCenterWrapper: UserNotificationCenterWrapper {
 
     var notificationCenter: UNUserNotificationCenter
 

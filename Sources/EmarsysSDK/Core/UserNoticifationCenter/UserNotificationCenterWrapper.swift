@@ -3,7 +3,7 @@ import Foundation
 import UserNotifications
 
 @SdkActor
-protocol NotificationCenterWrapper {
+protocol UserNotificationCenterWrapper {
     func notificationSettings() async -> PushSettings
     
     func requestAuthorization() async throws -> Bool
