@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "mimic",
+      "kind" : "localSourceControl",
+      "location" : "/Users/i525390/Work/mimic",
+      "state" : {
+        "revision" : "b258d13c182232bee87b2c00e2f175dc8a2f3d89",
+        "version" : "0.1.0"
+      }
+    }
+  ],
+  "version" : 2
+}
