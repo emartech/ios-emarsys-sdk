@@ -9,15 +9,17 @@ import XCTest
 final class CopyToClipboardActionTests: EmarsysTestCase {
     
     func testExecute_shouldSetTextOnPasteboard() async throws {
-        throw XCTSkip("UIPateboard usage fails in test")
-        
-        let uiPasteboard =  UIPasteboard.general
+        throw XCTSkip("UIPasteboard usage fails in test")
+        let pasteboard =  UIPasteboard.general
         let text = "testText"
-        let testAction = CopyToClipboardAction(uiPasteBoard: uiPasteboard, text: text)
+        
+        let actionModel = CopyToClipboardActionModel(type: "", text: text)
+        
+        let testAction = CopyToClipboardAction(actionModel: actionModel, uiPasteBoard: pasteboard)
         
         try await testAction.execute()
         
-        let pasteBoardText = uiPasteboard.string
+        let pasteBoardText = pasteboard.string
         
         XCTAssertEqual(pasteBoardText, text)
     }

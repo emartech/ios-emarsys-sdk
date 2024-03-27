@@ -5,21 +5,23 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class DismissActionTests: EmarsysTestCase {
 
+    @Inject(\.notificationCenterWrapper)
+    var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
+    
     func testExecute_shouldCall_dismissHandler() async throws {
-        var counter = 0
+        let actionModel = DismissActionModel(type: "", topic: "testTopic")
         
-        let testHandler = {
-            counter = 1
-        }
+        fakeNotificationCenterWrapper.when(\.p).thenReturn(())
         
-        let testAction = DismissAction(dismissHandler: testHandler)
+        let action = DismissAction(actionModel: actionModel, notificationCenterWrapper: fakeNotificationCenterWrapper)
         
-        try await testAction.execute()
+        try await action.execute()
         
-        XCTAssertEqual(counter, 1)
+        _ = try fakeNotificationCenterWrapper.verify(\.p).wasCalled(Arg.eq("testTopic"), Arg.eq(()))
     }
 
 }

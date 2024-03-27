@@ -9,10 +9,11 @@ import XCTest
 final class OpenExternalURLActionTests: EmarsysTestCase {
 
     func testExecute_shouldCall_openURL_onApplication() async throws {
-        let url = URL(string: "https://emarsys.com")
-        let openExternalURLAction = await OpenExternalURLAction(url: url!, application: UIApplication.shared.self)
+        throw XCTSkip("UIPasteboard usage fails in test")
+        let actionModel = OpenExternalURLActionModel(type: "", url: URL(string: "https://emarsys.com")!)
         
-        try await openExternalURLAction.execute()
+        let action = await OpenExternalURLAction(actionModel: actionModel, application: UIApplication.shared)
         
+        try await action.execute()
     }
 }

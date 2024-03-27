@@ -8,22 +8,21 @@ import XCTest
 import mimic
 
 final class CustomEventActionTests: EmarsysTestCase {
-    var customEventAction: CustomEventAction!
 
     @Inject(\.eventApi)
     var fakeEventApi: FakeEventApi
-
+    
     func testExecute_callsTrackCustomEvent_onEventApi() async throws {
-        fakeEventApi
-            .when(\.fnCustomeEvent)
-            .thenReturn(())
-        
         let testName = "test name"
         let testPayload = ["key":"value"]
         
-        customEventAction = CustomEventAction(eventApi: fakeEventApi, name: testName, payload: testPayload)
+        fakeEventApi.when(\.fnCustomeEvent).thenReturn(())
+        
+        let actionModel = CustomEventActionModel(type: "", name: testName, payload: testPayload)
+        
+        let action = CustomEventAction(actionModel: actionModel, eventApi: fakeEventApi)
                 
-        try await customEventAction.execute()
+        try await action.execute()
             
         _ = try fakeEventApi
             .verify(\.fnCustomeEvent)

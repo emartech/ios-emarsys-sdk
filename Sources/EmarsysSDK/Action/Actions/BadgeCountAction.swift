@@ -7,16 +7,15 @@ import Foundation
 import UIKit
 
 struct BadgeCountAction: Action {
+    let actionModel: BadgeCountActionModel
     let application: UIApplication
-    let method: String
-    let value: Int
     
     @MainActor func execute() async throws {
-        if method == "add" {
+        if actionModel.method == "add" {
             let badgeNumber = application.applicationIconBadgeNumber
-            application.applicationIconBadgeNumber = badgeNumber + value
+            application.applicationIconBadgeNumber = badgeNumber + actionModel.value
         } else {
-            application.applicationIconBadgeNumber = value
+            application.applicationIconBadgeNumber = actionModel.value
         }
     }
 }

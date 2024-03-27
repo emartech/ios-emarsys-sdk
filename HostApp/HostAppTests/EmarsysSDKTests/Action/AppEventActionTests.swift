@@ -5,27 +5,26 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class AppEventActionTests: EmarsysTestCase {
+    
+    @Inject(\.notificationCenterWrapper)
+    var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
   
-    func testExecute_shouldCall_appEventHandler() async throws {
+    func testExecute() async throws {
         let testName = "testName"
         let testPayload = ["key":"value"]
         
-        var resultName: String? = nil
-        var resultPayload: [String:String]? = nil
+        fakeNotificationCenterWrapper.when(\.p).thenReturn(())
         
-        let testHandler: EventHandler = { name, payload in
-            resultName = name
-            resultPayload = payload
-        }
+        let actionModel = AppEventActionModel(type: "", name: testName, payload: testPayload)
         
-        let appEventAction = AppEventAction(appEventHandler: testHandler, name: testName, payload: testPayload)
+        let action = AppEventAction(actionModel: actionModel, notificationCenterWrapper: fakeNotificationCenterWrapper)
         
-        try await appEventAction.execute()
+        try await action.execute()
         
-        XCTAssertEqual(resultName, testName)
-        XCTAssertEqual(resultPayload, testPayload)
+        _ = try fakeNotificationCenterWrapper.verify(\.p).wasCalled(Arg.eq(ActionTopics.appEvent.rawValue), Arg.eq(Event(name: testName, attributes: testPayload)))
     }
 
 }

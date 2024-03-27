@@ -7,10 +7,10 @@ import Foundation
 import UIKit
 
 struct CopyToClipboardAction: Action {
+    let actionModel: CopyToClipboardActionModel
     let uiPasteBoard: UIPasteboard
-    let text: String
     
     func execute() async throws {
-        uiPasteBoard.string = text
+        uiPasteBoard.string = actionModel.text
     }
 }

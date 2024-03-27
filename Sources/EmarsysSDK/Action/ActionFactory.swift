@@ -8,5 +8,5 @@ import Foundation
 @SdkActor
 protocol ActionFactory {
     
-    func create(genericAction: GenericAction) throws -> Action
+    func create(_ actionModel: any ActionModellable) throws -> Action
 }

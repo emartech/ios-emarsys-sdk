@@ -6,54 +6,27 @@
 import Foundation
 import UIKit
 
-typealias EventHandler = (_ name: String, _ payLoad: [String:String]?) -> ()
-typealias DismissHandler = () -> ()
-
 @SdkActor
 struct DefaultActionFactory: ActionFactory {
+    
     let eventApi: EventApi
-    let eventHandler: EventHandler
-    let dismissHandler: DismissHandler
-    let notificationCenterWrapper: NotificationCenterWrapper
+    let userNotificationCenterWrapper: UserNotificationCenterWrapper
     let application: UIApplication
     let uiPasteBoard: UIPasteboard
+    let notificationCenterWrapper: NotificationCenterWrapperApi
     
-    func create(genericAction: GenericAction) throws -> Action {
-        var action: Action
-        switch genericAction.type {
-        case Constants.ActionTypes.customEvent:
-            let name = try genericAction.getSafeName()
-            action = CustomEventAction(eventApi: eventApi, name: name, payload: genericAction.payload)
-            
-        case Constants.ActionTypes.appEvent:
-            let name = try genericAction.getSafeName()
-            action =  AppEventAction(appEventHandler: eventHandler, name: name, payload: genericAction.payload)
-            
-        case Constants.ActionTypes.openExternalURL:
-            let url = try genericAction.getSafeURL()
-            action =  OpenExternalURLAction(url: url, application: application)
-
-        case Constants.ActionTypes.buttonClicked:
-            action =  ButtonClickedAction()
-            
-        case Constants.ActionTypes.dismiss:
-            action =  DismissAction(dismissHandler: dismissHandler)
-
-        case Constants.ActionTypes.requestPushPermission:
-            action =  RequestPushPermissionAction(application: application, notificationCenterWrapper: notificationCenterWrapper)
-            
-        case Constants.ActionTypes.badgeCount:
-            let method = try genericAction.getSafeMethod()
-            let value = try genericAction.getSafeValue()
-            action =  BadgeCountAction(application: application, method: method, value: value)
-            
-        case Constants.ActionTypes.copyToClipboard:
-            let text = try genericAction.getSafeText()
-            action =  CopyToClipboardAction(uiPasteBoard: uiPasteBoard, text: text)
-            
+    func create(_ actionModel: any ActionModellable) throws -> any Action {
+        switch actionModel {
+        case let model as AppEventActionModel: AppEventAction(actionModel: model, notificationCenterWrapper: notificationCenterWrapper)
+        case let model as CustomEventActionModel: CustomEventAction(actionModel: model, eventApi: eventApi)
+        case let model as BadgeCountActionModel: BadgeCountAction(actionModel: model, application: application)
+        case let model as OpenExternalURLActionModel: OpenExternalURLAction(actionModel: model, application: application)
+        case _ as RequestPushPermissionActionModel: RequestPushPermissionAction(application: application, notificationCenterWrapper: userNotificationCenterWrapper)
+        case let model as CopyToClipboardActionModel: CopyToClipboardAction(actionModel: model, uiPasteBoard: uiPasteBoard)
+        case let model as DismissActionModel: DismissAction(actionModel: model, notificationCenterWrapper: notificationCenterWrapper)
         default:
-            throw Errors.preconditionFailed(message: "Unknown action type: \(genericAction.type)")
+            throw Errors.preconditionFailed(message: "Unknown action type: \(actionModel)")
         }
-        return action
     }
+
 }

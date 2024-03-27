@@ -100,7 +100,11 @@ class TestDependencyContainer: DependencyContainer {
         return FakeRandomProvider()
     }()
     
-    lazy var notificationCenterWrapper: NotificationCenterWrapper = {
+    lazy var userNotificationCenterWrapper: UserNotificationCenterWrapper = {
+        return FakeUserNotificationCenterWrapper()
+    }()
+
+    lazy var notificationCenterWrapper: NotificationCenterWrapperApi = {
         return FakeNotificationCenterWrapper()
     }()
     

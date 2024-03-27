@@ -7,12 +7,12 @@ import Foundation
 import UIKit
 
 struct OpenExternalURLAction: Action {
-    let url: URL
+    let actionModel: OpenExternalURLActionModel
     let application: UIApplication
     
     @MainActor func execute() async throws {
-        if application.canOpenURL(url) {
-            await application.open(url)
+        if application.canOpenURL(actionModel.url) {
+            await application.open(actionModel.url)
         }
     }
 }

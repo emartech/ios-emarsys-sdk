@@ -6,11 +6,10 @@
 import Foundation
 
 struct CustomEventAction: Action {
+    let actionModel: CustomEventActionModel
     let eventApi: EventApi
-    let name: String
-    let payload: [String:String]?
     
     func execute() async throws {
-        try await eventApi.trackCustomEvent(name: name, attributes: payload)
+        try await eventApi.trackCustomEvent(name: actionModel.name, attributes: actionModel.payload)
     }
 }

@@ -4,7 +4,7 @@ import UserNotifications
 @testable import EmarsysSDK
 import mimic
 
-struct FakeNotificationCenterWrapper: NotificationCenterWrapper, Mimic {
+struct FakeUserNotificationCenterWrapper: UserNotificationCenterWrapper, Mimic {
     
     let fnNotificationSettings = Fn<PushSettings>()
     let fnRequestAuthorization = Fn<Bool>()

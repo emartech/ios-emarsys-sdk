@@ -9,7 +9,7 @@ import UIKit
 
 struct RequestPushPermissionAction: Action {
     let application: UIApplication
-    let notificationCenterWrapper: NotificationCenterWrapper
+    let notificationCenterWrapper: UserNotificationCenterWrapper
     
     func execute() async throws {
         await application.registerForRemoteNotifications()

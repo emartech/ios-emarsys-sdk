@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class BadgeCountActionTests: EmarsysTestCase {
     
@@ -12,9 +13,9 @@ final class BadgeCountActionTests: EmarsysTestCase {
     
     func testExecute_shouldIncreaseBadgeCount_byGivenValue() async throws {
         throw XCTSkip("UIApplication usage fails in test")
+        let actionModel = BadgeCountActionModel(type: "", method: "add", value: 2)
         
-        let testValue = 2
-        let badgeCountAction = BadgeCountAction(application: application, method: "add", value: testValue)
+        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: application)
         
         let startingBadgeCount = await application.applicationIconBadgeNumber
         
@@ -24,20 +25,20 @@ final class BadgeCountActionTests: EmarsysTestCase {
         
         let difference = finalBadgeCount - startingBadgeCount
         
-        XCTAssertEqual(difference, testValue)
+        XCTAssertEqual(difference, 2)
     }
     
     func testExecute_shouldSetValue_asBadgeCount_ifMethodIsNot_add() async throws {
         throw XCTSkip("UIApplication usage fails in test")
+        let actionModel = BadgeCountActionModel(type: "", method: "set", value: 8)
         
-        let testValue = 8
-        let badgeCountAction = BadgeCountAction(application: application, method: "set", value: testValue)
+        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: application)
         
         try await badgeCountAction.execute()
         
         let resultBadgeCount = await application.applicationIconBadgeNumber
         
-        XCTAssertEqual(resultBadgeCount, testValue)
+        XCTAssertEqual(resultBadgeCount, 8)
     }
     
 }
