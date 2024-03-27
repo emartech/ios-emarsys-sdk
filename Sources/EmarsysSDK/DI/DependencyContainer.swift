@@ -28,7 +28,8 @@ protocol DependencyContainer {
     var secureStorage: SecureStorage { mutating get set }
     var uuidProvider: any StringProvider { mutating get set }
     var timestampProvider: any DateProvider { mutating get set }
-    var notificationCenterWrapper: NotificationCenterWrapper { mutating get set }
+    var userNotificationCenterWrapper: UserNotificationCenterWrapper { mutating get set }
+    var notificationCenterWrapper: NotificationCenterWrapperApi { mutating get set }
     var deviceInfoCollector: DeviceInfoCollector { mutating get set }
 
     var setupOrganizer: SetupOrganizer { mutating get set }

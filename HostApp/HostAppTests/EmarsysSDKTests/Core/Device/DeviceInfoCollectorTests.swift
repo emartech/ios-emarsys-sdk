@@ -11,8 +11,8 @@ final class DeviceInfoCollectorTests: EmarsysTestCase {
     @Inject(\.secureStorage)
     var fakeSecureStorage: FakeSecureStorage
     
-    @Inject(\.notificationCenterWrapper)
-    var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
+    @Inject(\.userNotificationCenterWrapper)
+    var fakeUserNotificationCenterWrapper: FakeUserNotificationCenterWrapper
     
     @Inject(\.sdkLogger)
     var logger: SdkLogger
@@ -31,13 +31,13 @@ final class DeviceInfoCollectorTests: EmarsysTestCase {
         fakeUuidProvider
             .when(\.fnProvide)
             .thenReturn(self.testUuid)
-        fakeNotificationCenterWrapper
+        fakeUserNotificationCenterWrapper
             .when(\.fnNotificationSettings)
             .thenReturn(
                 PushSettings(authorizationStatus: "", soundSetting: "", badgeSetting: "", alertSetting: "", notificationCenterSetting: "", lockScreenSetting: "", carPlaySetting: "", alertStyle: "", showPreviewsSetting: "", criticalAlertSetting: "", providesAppNotificationSettings: "", scheduledDeliverySetting: "", timeSensitiveSetting: "")
             )
 
-        deviceInfoCollector = DefaultDeviceInfoCollector(notificationCenterWrapper: fakeNotificationCenterWrapper,
+        deviceInfoCollector = DefaultDeviceInfoCollector(notificationCenterWrapper: fakeUserNotificationCenterWrapper,
                                                          secureStorage: fakeSecureStorage,
                                                          uuidProvider: fakeUuidProvider,
                                                          sdkConfig: sdkConfig,

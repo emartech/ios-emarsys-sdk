@@ -38,8 +38,8 @@ final class DefaultEventClientTests: EmarsysTestCase {
 
         let eventAttributes = ["key1": "value1"]
         let testMessage = ["message": "content"]
-        let testDeviceEventState = Data(count: 10)
-        let testOnEventAction = OnEventActionResponse(campaignId: testCampaignId, actions: [GenericAction]())
+        let testDeviceEventState = "Data(count: 10)"
+        let testOnEventAction = OnEventActionResponse(campaignId: testCampaignId, actions: [ActionModel]())
 
         let expectedResponse = EventResponse(message: testMessage,
                 onEventAction: testOnEventAction,

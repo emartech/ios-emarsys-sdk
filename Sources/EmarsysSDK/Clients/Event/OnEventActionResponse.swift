@@ -6,8 +6,7 @@
 
 import Foundation
 
-@SdkActor
 struct OnEventActionResponse: Codable {
     let campaignId: String
-    let actions: [GenericAction]
+    let actions: [ActionModel]
 }

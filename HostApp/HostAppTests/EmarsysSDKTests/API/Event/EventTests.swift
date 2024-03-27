@@ -8,7 +8,7 @@ import XCTest
 
 class EventTests: EmarsysTestCase {
     
-    var event: Event<LoggingEvent, GathererEvent, FakeEventApi>!
+    var event: Events<LoggingEvent, GathererEvent, FakeEventApi>!
     var loggingEvent: EventInstance!
     var gathererEvent: EventInstance!
     var fakeEventInternal: EventInstance!
@@ -28,7 +28,7 @@ class EventTests: EmarsysTestCase {
         gathererEvent = GathererEvent(eventContext: eventContext)
         loggingEvent = LoggingEvent(logger: sdkLogger)
         
-        event = Event(loggingInstance: loggingEvent as! LoggingEvent,
+        event = Events(loggingInstance: loggingEvent as! LoggingEvent,
                       gathererInstance: gathererEvent as! GathererEvent,
                       internalInstance: fakeEventInternal as! FakeEventApi,
                       sdkContext: sdkContext)

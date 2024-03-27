@@ -9,6 +9,7 @@ import os
 
 @SdkActor
 struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
+    
     // MARK: Constants
     
     private let defaultUrlsPlistName = "DefaultUrls"
@@ -58,7 +59,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         let eventInternal = EventInternal(eventContext: eventContext,
                                           eventClient: eventClient,
                                           timestampProvider: timestampProvider)
-        return Event(loggingInstance: loggingEvent,
+        return Events(loggingInstance: loggingEvent,
                      gathererInstance: gathererEvent,
                      internalInstance: eventInternal,
                      sdkContext: sdkContext)
@@ -136,12 +137,21 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
         return TimestampProvider()
     }()
     
-    lazy var notificationCenterWrapper: NotificationCenterWrapper = {
-        return DefaultNotificationCenterWrapper(notificationCenter: UNUserNotificationCenter.current())
+    lazy var userNotificationCenterWrapper: UserNotificationCenterWrapper = {
+#if targetEnvironment(simulator)
+        return DefaultUserNotificationCenterWrapper(notificationCenter: nil)
+#else
+        return DefaultUserNotificationCenterWrapper(notificationCenter: UNUserNotificationCenter.current())
+#endif
+        
     }()
     
+    lazy var notificationCenterWrapper: NotificationCenterWrapperApi = {
+        return NotificationCenterWrapper()
+    }()
+
     lazy var deviceInfoCollector: DeviceInfoCollector = {
-        return DefaultDeviceInfoCollector(notificationCenterWrapper: notificationCenterWrapper,
+        return DefaultDeviceInfoCollector(notificationCenterWrapper: userNotificationCenterWrapper,
                                           secureStorage: secureStorage,
                                           uuidProvider: uuidProvider,
                                           sdkConfig: sdkConfig,

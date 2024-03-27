@@ -10,7 +10,7 @@ import Combine
 typealias EventInstance = ActivationAware & EventApi
 
 @SdkActor
-class Event<LoggingInstance: EventInstance, GathererInstance: EventInstance, InternalInstance: EventInstance>: GenericApi<LoggingInstance, GathererInstance, InternalInstance>, EventApi {
+class Events<LoggingInstance: EventInstance, GathererInstance: EventInstance, InternalInstance: EventInstance>: GenericApi<LoggingInstance, GathererInstance, InternalInstance>, EventApi {
         
     func trackCustomEvent(name: String, attributes: [String : String]?) async throws {
         guard let active = self.active as? EventApi else {
