@@ -15,8 +15,8 @@ class ConnectionWatchdog {
     
     let pathMonitor = NWPathMonitor()
     
-    func start() {
-        pathMonitor.pathUpdateHandler = { [unowned self] path in
+    func start() async {
+        await pathMonitor.updateHandler(SdkActor.shared) { [unowned self] path in
             if path.status == .satisfied && path.usesInterfaceType(.wifi) {
                 connectionStatus = .wifi
             } else if path.status == .satisfied && path.usesInterfaceType(.cellular) {
@@ -27,6 +27,16 @@ class ConnectionWatchdog {
         }
         
         pathMonitor.start(queue: DispatchQueue(label: "EmarsysSdk - Watchdog"))
+    }
+    
+}
+
+extension NWPathMonitor {
+    
+    func updateHandler(_ act: isolated Actor, _ operation: @escaping (_ newPath: NWPath) -> () ) async {
+        pathUpdateHandler = { path in
+            operation(path)
+        }
     }
     
 }
