@@ -75,7 +75,7 @@ SPEC_BEGIN(MEDownloaderTests)
                 __block NSURL *result;
 
                 XCTestExpectation *exp = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"]
+                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://mobile-sdk-config-staging.gservice.emarsys.com/testing/Emarsys.png"]
                                  completionHandler:^(NSURL *destinationUrl, NSError *error) {
                                      result = destinationUrl;
                                      [exp fulfill];
@@ -88,10 +88,10 @@ SPEC_BEGIN(MEDownloaderTests)
             });
 
             it(@"should not crash when download successfully finished and completionHandler doesn't exist", ^{
-                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png"]
+                [downloadUtils downloadFileFromUrl:[NSURL URLWithString:@"https://mobile-sdk-config-staging.gservice.emarsys.com/testing/Emarsys.png"]
                                  completionHandler:nil];
 
-                waitUntilNextFinishedDownload(@"https://s3-eu-west-1.amazonaws.com/ems-mobileteam-artifacts/test-resources/Emarsys.png");
+                waitUntilNextFinishedDownload(@"https://mobile-sdk-config-staging.gservice.emarsys.com/testing/Emarsys.png");
             });
         });
 
