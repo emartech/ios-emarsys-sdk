@@ -64,3 +64,16 @@ extension Dictionary: Storable {
         return try! JSONSerialization.jsonObject(with: data) as! [Key : Value]
     }
 }
+
+extension Array: Storable {
+    
+    func toData() -> Data  {
+        // TODO: handle error
+        return try! JSONSerialization.data(withJSONObject: self)
+    }
+    
+    static func fromData(_ data: Data) -> Array {
+        // TODO: handle error
+        return try! JSONSerialization.jsonObject(with: data) as! Array<Element>
+    }
+}
