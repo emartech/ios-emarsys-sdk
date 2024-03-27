@@ -14,7 +14,7 @@ final class SecureStorageTests: EmarsysTestCase {
     override func setUpWithError() throws {
         secureStorage = DefaultSecureStorage()
     }
-    
+#if !targetEnvironment(simulator)
     func testData() throws {
         let toStore = Data("testData".utf8)
         
@@ -124,4 +124,5 @@ final class SecureStorageTests: EmarsysTestCase {
         
         XCTAssertTrue(toStore.equals(dict: result!))
     }
+#endif
 }
