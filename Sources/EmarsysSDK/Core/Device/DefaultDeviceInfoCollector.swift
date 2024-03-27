@@ -6,12 +6,12 @@
 
 import Foundation
 import UserNotifications
-import UIKit
 import Combine
+import Darwin
 
 @SdkActor
 class DefaultDeviceInfoCollector: DeviceInfoCollector {
-    private let notificationCenterWrapper: NotificationCenterWrapper
+    private let notificationCenterWrapper: UserNotificationCenterWrapper
     private let secureStorage: SecureStorage
     private let uuidProvider: any StringProvider
     private let sdkConfig: SdkConfig
@@ -20,7 +20,7 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
     private let hardwareIdKey = "kHardwareIdKey"
     private let platform: String = "ios"
     
-    init(notificationCenterWrapper: NotificationCenterWrapper,
+    init(notificationCenterWrapper: UserNotificationCenterWrapper,
          secureStorage: SecureStorage,
          uuidProvider: any StringProvider,
          sdkConfig: SdkConfig,
@@ -56,8 +56,15 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
         return (model != nil) ? model! : "unknown model"
     }
     
-    @MainActor var systemName: String {
-        UIDevice().systemName
+    var systemName: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let modelCode = withUnsafePointer(to: &systemInfo.sysname) {
+            $0.withMemoryRebound(to: CChar.self, capacity:  1) {
+                ptr in String.init(validatingUTF8: ptr)
+            }
+        }
+        return modelCode ?? "Unknown Identifier"
     }
     
     func collect() async -> DeviceInfo {
@@ -74,16 +81,25 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
     }
     
     func osVersion() async -> String {
-        await MainActor.run(body: {
-            UIDevice().systemVersion
-        })
-        
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let modelCode = withUnsafePointer(to: &systemInfo.version) {
+            $0.withMemoryRebound(to: CChar.self, capacity:  1) {
+                ptr in String.init(validatingUTF8: ptr)
+            }
+        }
+        return modelCode ?? "Unknown Identifier"
     }
     
     func deviceType() async -> String {
-        await MainActor.run(body: {
-            UIDevice().model
-        })
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let modelCode = withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity:  1) {
+                ptr in String.init(validatingUTF8: ptr)
+            }
+        }
+        return modelCode ?? "Unknown Identifier"
     }
     
     func hardwareId() -> String {
