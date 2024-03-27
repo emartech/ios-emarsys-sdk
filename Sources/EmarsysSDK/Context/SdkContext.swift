@@ -58,7 +58,7 @@ extension SdkContext {
         if let pathComponent = path {
             url.append(pathComponent)
         }
-        guard let result = URL(string: url) else {
+        guard let result = URL(string: url, encodingInvalidCharacters: false) else {
             throw Errors.NetworkingError.urlCreationFailed(url: url)
         }
         return result

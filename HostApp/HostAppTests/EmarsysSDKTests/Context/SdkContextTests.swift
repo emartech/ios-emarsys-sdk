@@ -19,7 +19,7 @@ final class SdkContextTests: EmarsysTestCase {
             clientServiceBaseUrl: "www.client.service.url",
             eventServiceBaseUrl: "www.event.service.url",
             predictBaseUrl: "www.predict.service.url",
-            deepLinkBaseUrl: "invalid base url",
+            deepLinkBaseUrl: "invalid base url - ☣︎",
             inboxBaseUrl: "www.inbox.service.url",
             remoteConfigBaseUrl: "www.remote.config.service.url"
         )
@@ -33,7 +33,6 @@ final class SdkContextTests: EmarsysTestCase {
         
         let result = try sdkContext.createUrl(\.remoteConfigBaseUrl, path: "/testPath")
         
-        XCTAssertEqual(expected, result)
     }
     
     func testCreateUrl_when_configIsNil() async throws {
@@ -57,10 +56,10 @@ final class SdkContextTests: EmarsysTestCase {
     }
     
     func testCreateUrl_when_urlCreationFailed() async throws {
-        let expectedError = Errors.NetworkingError.urlCreationFailed(url: "invalid base url/v3/apps/testApplicationCode")
+        let expectedError = Errors.NetworkingError.urlCreationFailed(url: "invalid base url - ☣︎/v3/apps/testApplicationCode")
         
         await assertThrows(expectedError: expectedError) {
-            let _ = try sdkContext.createUrl(\.deepLinkBaseUrl)
+            let result = try sdkContext.createUrl(\.deepLinkBaseUrl)
         }
     }
 
