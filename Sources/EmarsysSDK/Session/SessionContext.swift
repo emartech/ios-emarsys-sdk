@@ -29,7 +29,7 @@ class SessionContext {
         deviceInfoCollector.hardwareId()
     }()
 
-    var deviceEventState: Data? = nil
+    var deviceEventState: String? = nil
     
     init(timestampProvider: any DateProvider, deviceInfoCollector: DeviceInfoCollector) {
         self.timestampProvider = timestampProvider
