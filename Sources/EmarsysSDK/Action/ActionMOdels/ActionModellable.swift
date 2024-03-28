@@ -47,7 +47,7 @@ enum ActionModel: Codable {
     }
     
     func encode(to encoder: Encoder) throws {
-        let container = encoder.singleValueContainer()
+        let _ = encoder.singleValueContainer()
         switch self {
         case .appEvent(let model):
             try model.encode(to: encoder)

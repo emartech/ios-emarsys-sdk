@@ -58,10 +58,17 @@ extension SdkContext {
         if let pathComponent = path {
             url.append(pathComponent)
         }
-        guard let result = URL(string: url, encodingInvalidCharacters: false) else {
-            throw Errors.NetworkingError.urlCreationFailed(url: url)
+        if #available(iOS 17.0, *) {
+            guard let result = URL(string: url, encodingInvalidCharacters: false) else {
+                throw Errors.NetworkingError.urlCreationFailed(url: url)
+            }
+            return result
+        } else {
+            guard let result = URL(string: url) else {
+                throw Errors.NetworkingError.urlCreationFailed(url: url)
+            }
+            return result
         }
-        return result
     }
     
 }
