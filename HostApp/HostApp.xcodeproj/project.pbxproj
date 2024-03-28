@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */; };
+		2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */; };
+		2ACAD5D02BB5C50E000962AF /* FakeApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */; };
+		2ACAD5D12BB5C50E000962AF /* FakeBadgeCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */; };
+		2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */; };
 		5740256E29BF5FFE0014D9A6 /* RetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */; };
 		5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */; };
 		5740257329C352910014D9A6 /* ActionFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257229C352910014D9A6 /* ActionFactoryTests.swift */; };
@@ -71,7 +75,7 @@
 		5D38AC3529B0D3E700C1AE4A /* FakeGenericNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC0729B0D3E700C1AE4A /* FakeGenericNetworkClient.swift */; };
 		5D38AC3629B0D3E700C1AE4A /* XCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC0929B0D3E700C1AE4A /* XCTestCase.swift */; };
 		5D38AC3729B0D3E700C1AE4A /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC0A29B0D3E700C1AE4A /* Dictionary.swift */; };
-		5D38AC3A29B0D44C00C1AE4A /* EmarsysSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 5D38AC3929B0D44C00C1AE4A /* EmarsysSDK */; };
+		5D38AC3A29B0D44C00C1AE4A /* EmarsysSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 5D38AC3929B0D44C00C1AE4A /* EmarsysSDK */; settings = {ATTRIBUTES = (Required, ); }; };
 		5D38AC3E29B0E1B700C1AE4A /* EmarsysTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AC3D29B0E1B700C1AE4A /* EmarsysTestCase.swift */; };
 		5D5ECD712A4E9BEE003E418E /* mimic in Frameworks */ = {isa = PBXBuildFile; productRef = 5D5ECD702A4E9BEE003E418E /* mimic */; };
 /* End PBXBuildFile section */
@@ -88,6 +92,10 @@
 
 /* Begin PBXFileReference section */
 		2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartStateTests.swift; sourceTree = "<group>"; };
+		2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeUserNotificationCenterWrapper.swift; path = HostAppTests/EmarsysSDKTests/Core/UserNotificationCenter/FakeUserNotificationCenterWrapper.swift; sourceTree = "<group>"; };
+		2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeApplication.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeApplication.swift; sourceTree = "<group>"; };
+		2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeBadgeCount.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeBadgeCount.swift; sourceTree = "<group>"; };
+		2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeNotificationCenterWrapper.swift; path = HostAppTests/EmarsysSDKTests/Core/NotificationCenter/FakeNotificationCenterWrapper.swift; sourceTree = "<group>"; };
 		5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrierTests.swift; sourceTree = "<group>"; };
 		5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpURLResponseTests.swift; sourceTree = "<group>"; };
 		5740257229C352910014D9A6 /* ActionFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionFactoryTests.swift; sourceTree = "<group>"; };
@@ -240,6 +248,10 @@
 		5D38AB3729B0D1EC00C1AE4A = {
 			isa = PBXGroup;
 			children = (
+				2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */,
+				2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */,
+				2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */,
+				2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */,
 				5D38AB7229B0D1FE00C1AE4A /* Packages */,
 				5D38AB4229B0D1EC00C1AE4A /* HostApp */,
 				5D38AB5829B0D1EE00C1AE4A /* HostAppTests */,
@@ -701,6 +713,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */,
+				2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */,
+				2ACAD5D02BB5C50E000962AF /* FakeApplication.swift in Sources */,
+				2ACAD5D12BB5C50E000962AF /* FakeBadgeCount.swift in Sources */,
 				575CDD4029C88E43005A1A1B /* DismissActionTests.swift in Sources */,
 				5D38AC1129B0D3E700C1AE4A /* FakeSecureStorage.swift in Sources */,
 				57849F4729B734AC0002CF62 /* FakeEventClient.swift in Sources */,
