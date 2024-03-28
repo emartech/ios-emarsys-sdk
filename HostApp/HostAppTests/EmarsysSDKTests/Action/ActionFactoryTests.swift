@@ -14,18 +14,15 @@ struct FakeActionModel: ActionModellable {
 final class ActionFactoryTests: EmarsysTestCase {
 
     var actionFactory: DefaultActionFactory!
-    
-    var pasteBoard: UIPasteboard = UIPasteboard()
-    @MainActor let application = UIApplication.shared
- 
+     
     @Inject(\.eventApi)
     var fakeEventApi: FakeEventApi
     
-    @Inject(\.userNotificationCenterWrapper)
-    var fakeUserNotificationCenterWrapper: FakeUserNotificationCenterWrapper
-
     @Inject(\.notificationCenterWrapper)
     var fakeNotificationCenterWrapper: FakeNotificationCenterWrapper
+    
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
     
     let testName = "testName"
     let testPayload = ["key":"value"]
@@ -33,9 +30,7 @@ final class ActionFactoryTests: EmarsysTestCase {
     override func setUpWithError() throws {
         actionFactory = DefaultActionFactory(
             eventApi: fakeEventApi,
-            userNotificationCenterWrapper: fakeUserNotificationCenterWrapper,
-            application: application,
-            uiPasteBoard: pasteBoard,
+            application: fakeApplication,
             notificationCenterWrapper: fakeNotificationCenterWrapper)
     }
     

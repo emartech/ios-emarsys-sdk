@@ -5,21 +5,23 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class CopyToClipboardActionTests: EmarsysTestCase {
     
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
+    
     func testExecute_shouldSetTextOnPasteboard() async throws {
-        throw XCTSkip("UIPasteboard usage fails in test")
-        let pasteboard =  UIPasteboard.general
         let text = "testText"
         
         let actionModel = CopyToClipboardActionModel(type: "", text: text)
         
-        let testAction = CopyToClipboardAction(actionModel: actionModel, uiPasteBoard: pasteboard)
+        let testAction = CopyToClipboardAction(actionModel: actionModel, application: fakeApplication)
         
         try await testAction.execute()
         
-        let pasteBoardText = pasteboard.string
+        let pasteBoardText = testAction.application.pasteboard
         
         XCTAssertEqual(pasteBoardText, text)
     }

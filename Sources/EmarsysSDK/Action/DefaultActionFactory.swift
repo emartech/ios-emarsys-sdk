@@ -4,15 +4,12 @@
 //
 
 import Foundation
-import UIKit
 
 @SdkActor
 struct DefaultActionFactory: ActionFactory {
     
     let eventApi: EventApi
-    let userNotificationCenterWrapper: UserNotificationCenterWrapper
-    let application: UIApplication
-    let uiPasteBoard: UIPasteboard
+    let application: ApplicationApi
     let notificationCenterWrapper: NotificationCenterWrapperApi
     
     func create(_ actionModel: any ActionModellable) throws -> any Action {
@@ -21,8 +18,8 @@ struct DefaultActionFactory: ActionFactory {
         case let model as CustomEventActionModel: CustomEventAction(actionModel: model, eventApi: eventApi)
         case let model as BadgeCountActionModel: BadgeCountAction(actionModel: model, application: application)
         case let model as OpenExternalURLActionModel: OpenExternalURLAction(actionModel: model, application: application)
-        case _ as RequestPushPermissionActionModel: RequestPushPermissionAction(application: application, notificationCenterWrapper: userNotificationCenterWrapper)
-        case let model as CopyToClipboardActionModel: CopyToClipboardAction(actionModel: model, uiPasteBoard: uiPasteBoard)
+        case _ as RequestPushPermissionActionModel: RequestPushPermissionAction(application: application)
+        case let model as CopyToClipboardActionModel: CopyToClipboardAction(actionModel: model, application: application)
         case let model as DismissActionModel: DismissAction(actionModel: model, notificationCenterWrapper: notificationCenterWrapper)
         default:
             throw Errors.preconditionFailed(message: "Unknown action type: \(actionModel)")

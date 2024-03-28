@@ -4,17 +4,11 @@
 //
 
 import Foundation
-import UserNotifications
-import UIKit
 
 struct RequestPushPermissionAction: Action {
-    let application: UIApplication
-    let notificationCenterWrapper: UserNotificationCenterWrapper
+    let application: ApplicationApi
     
     func execute() async throws {
-        await application.registerForRemoteNotifications()
-        
-        let _ = try await notificationCenterWrapper.requestAuthorization()
-        
+        await application.requestPushPermission()
     }
 }

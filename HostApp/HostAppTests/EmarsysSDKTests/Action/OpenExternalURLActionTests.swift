@@ -5,15 +5,22 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class OpenExternalURLActionTests: EmarsysTestCase {
+    
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
 
     func testExecute_shouldCall_openURL_onApplication() async throws {
-        throw XCTSkip("UIPasteboard usage fails in test")
         let actionModel = OpenExternalURLActionModel(type: "", url: URL(string: "https://emarsys.com")!)
         
-        let action = await OpenExternalURLAction(actionModel: actionModel, application: UIApplication.shared)
+        fakeApplication.when(\.fnOpenUrl).thenReturn(())
+        
+        let action = await OpenExternalURLAction(actionModel: actionModel, application: fakeApplication)
         
         try await action.execute()
+        
+        _ = try fakeApplication.verify(\.fnOpenUrl).wasCalled(Arg.eq(URL(string: "https://emarsys.com")!))
     }
 }

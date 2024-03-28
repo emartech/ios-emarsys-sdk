@@ -4,18 +4,16 @@
 //
 
 import Foundation
-import UIKit
 
 struct BadgeCountAction: Action {
     let actionModel: BadgeCountActionModel
-    let application: UIApplication
+    let application: ApplicationApi
     
-    @MainActor func execute() async throws {
+    func execute() async throws {
         if actionModel.method == "add" {
-            let badgeNumber = application.applicationIconBadgeNumber
-            application.applicationIconBadgeNumber = badgeNumber + actionModel.value
+            application.badgeCount.increase(actionModel.value)
         } else {
-            application.applicationIconBadgeNumber = actionModel.value
+            application.badgeCount.set(actionModel.value)
         }
     }
 }

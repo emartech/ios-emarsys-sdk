@@ -4,13 +4,17 @@
 //
 
 import Foundation
-import UIKit
 
-struct CopyToClipboardAction: Action {
+class CopyToClipboardAction: Action {
     let actionModel: CopyToClipboardActionModel
-    let uiPasteBoard: UIPasteboard
+    var application: ApplicationApi
+ 
+    init(actionModel: CopyToClipboardActionModel, application: ApplicationApi) {
+        self.actionModel = actionModel
+        self.application = application
+    }
     
     func execute() async throws {
-        uiPasteBoard.string = actionModel.text
+        application.pasteboard = actionModel.text
     }
 }

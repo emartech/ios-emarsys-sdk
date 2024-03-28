@@ -112,6 +112,9 @@ class TestDependencyContainer: DependencyContainer {
         return FakeDeviceInfoCollector()
     }()
     
+    lazy var application: any ApplicationApi = {
+        return FakeApplication()
+    }()
     
     //MARK: Setup
     lazy var setupOrganizer: SetupOrganizer = {

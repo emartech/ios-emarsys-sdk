@@ -5,24 +5,24 @@
 
 import XCTest
 @testable import EmarsysSDK
+import mimic
 
 final class RequestPushPermissionActionTests: EmarsysTestCase {
     
-    @Inject(\.userNotificationCenterWrapper)
-    var fakeUserNotificationCenterWrapper: FakeUserNotificationCenterWrapper
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
     
     func testExecute_shouldCallRequestPermission_onNotificationCenter() async throws {
-        fakeUserNotificationCenterWrapper
-            .when(\.fnRequestAuthorization)
-            .thenReturn(false)
+        fakeApplication
+            .when(\.fnRequestPushPermission)
+            .thenReturn(())
         
-        let application = await UIApplication.shared
-        let testAction = RequestPushPermissionAction(application: application, notificationCenterWrapper: fakeUserNotificationCenterWrapper)
+        let testAction = RequestPushPermissionAction(application: fakeApplication)
 
         try await testAction.execute()
 
-        _ = try fakeUserNotificationCenterWrapper
-            .verify(\.fnRequestAuthorization)
+        _ = try fakeApplication
+            .verify(\.fnRequestPushPermission)
             .times(times: .eq(1))
     }
 }

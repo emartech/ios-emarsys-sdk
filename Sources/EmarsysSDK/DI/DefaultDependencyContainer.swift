@@ -138,12 +138,15 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var userNotificationCenterWrapper: UserNotificationCenterWrapper = {
-#if targetEnvironment(simulator)
+#if targetEnvironment(simulator) || os(macOS)
         return DefaultUserNotificationCenterWrapper(notificationCenter: nil)
 #else
         return DefaultUserNotificationCenterWrapper(notificationCenter: UNUserNotificationCenter.current())
 #endif
-        
+    }()
+    
+    lazy var application: any ApplicationApi = {
+        return Application(badgeCount: BadgeCount())
     }()
     
     lazy var notificationCenterWrapper: NotificationCenterWrapperApi = {

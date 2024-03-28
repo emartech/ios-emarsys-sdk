@@ -31,6 +31,7 @@ protocol DependencyContainer {
     var userNotificationCenterWrapper: UserNotificationCenterWrapper { mutating get set }
     var notificationCenterWrapper: NotificationCenterWrapperApi { mutating get set }
     var deviceInfoCollector: DeviceInfoCollector { mutating get set }
+    var application: ApplicationApi { mutating get set }
 
     var setupOrganizer: SetupOrganizer { mutating get set }
     var remoteConfigHandler: RemoteConfigHandler { mutating get set }

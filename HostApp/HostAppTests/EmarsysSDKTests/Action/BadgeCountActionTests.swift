@@ -9,36 +9,31 @@ import mimic
 
 final class BadgeCountActionTests: EmarsysTestCase {
     
-    @MainActor let application = UIApplication.shared
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
     
     func testExecute_shouldIncreaseBadgeCount_byGivenValue() async throws {
-        throw XCTSkip("UIApplication usage fails in test")
         let actionModel = BadgeCountActionModel(type: "", method: "add", value: 2)
         
-        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: application)
+        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: fakeApplication)
         
-        let startingBadgeCount = await application.applicationIconBadgeNumber
-        
+        (fakeApplication.badgeCount as? FakeBadgeCount)?.when(\.fnIncrease).thenReturn(())
+
         try await badgeCountAction.execute()
-        
-        let finalBadgeCount = await application.applicationIconBadgeNumber
-        
-        let difference = finalBadgeCount - startingBadgeCount
-        
-        XCTAssertEqual(difference, 2)
+
+        _ = try (fakeApplication.badgeCount as? FakeBadgeCount)?.verify(\.fnIncrease).wasCalled(Arg.eq(2))
     }
     
     func testExecute_shouldSetValue_asBadgeCount_ifMethodIsNot_add() async throws {
-        throw XCTSkip("UIApplication usage fails in test")
         let actionModel = BadgeCountActionModel(type: "", method: "set", value: 8)
         
-        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: application)
+        let badgeCountAction = BadgeCountAction(actionModel: actionModel, application: fakeApplication)
         
+        (fakeApplication.badgeCount as? FakeBadgeCount)?.when(\.fnSet).thenReturn(())
+
         try await badgeCountAction.execute()
-        
-        let resultBadgeCount = await application.applicationIconBadgeNumber
-        
-        XCTAssertEqual(resultBadgeCount, 8)
+
+        _ = try (fakeApplication.badgeCount as? FakeBadgeCount)?.verify(\.fnSet).wasCalled(Arg.eq(8))
     }
     
 }

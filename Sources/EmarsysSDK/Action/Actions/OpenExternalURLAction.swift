@@ -4,15 +4,12 @@
 //
 
 import Foundation
-import UIKit
 
 struct OpenExternalURLAction: Action {
     let actionModel: OpenExternalURLActionModel
-    let application: UIApplication
+    let application: ApplicationApi
     
     @MainActor func execute() async throws {
-        if application.canOpenURL(actionModel.url) {
-            await application.open(actionModel.url)
-        }
+        application.openUrl(actionModel.url)
     }
 }
