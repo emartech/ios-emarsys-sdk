@@ -63,22 +63,15 @@ extension UNAlertStyle {
 extension UNAuthorizationStatus {
     
     func asString() -> String {
-        
-        var result = "notDetermined"
-        
-        if (self == UNAuthorizationStatus.authorized) {
-            result = "authorized"
-        } else if (self == UNAuthorizationStatus.denied) {
-            result = "denied"
-        } else if (self == UNAuthorizationStatus.notDetermined) {
-            result = "notDetermined"
-        } else if (self == UNAuthorizationStatus.ephemeral) {
-            result = "ephemeral"
-        } else if #available(iOS 12.0, *) {
-            if (self == UNAuthorizationStatus.provisional) {
-                result = "provisional"
-            }
+        return switch self {
+        case .authorized: "authorized"
+        case .notDetermined: "notDetermined"
+        case .denied: "denied"
+        case .provisional: "provisional"
+#if os(iOS)
+        case .ephemeral: "ephemeral"
+#endif
+        @unknown default: "notDetermined"
         }
-        return result
     }
 }

@@ -13,7 +13,6 @@
 		5740257329C352910014D9A6 /* ActionFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257229C352910014D9A6 /* ActionFactoryTests.swift */; };
 		5740257529C361E70014D9A6 /* CustomEventActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257429C361E70014D9A6 /* CustomEventActionTests.swift */; };
 		5740257729C369EB0014D9A6 /* AppEventActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257629C369EB0014D9A6 /* AppEventActionTests.swift */; };
-		5740257929C46E780014D9A6 /* GenericActionExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257829C46E780014D9A6 /* GenericActionExtensionTests.swift */; };
 		5740257B29C479AA0014D9A6 /* OpenExternalURLActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257A29C479A90014D9A6 /* OpenExternalURLActionTests.swift */; };
 		5740257D29C4B0820014D9A6 /* BadgeCountActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257C29C4B0820014D9A6 /* BadgeCountActionTests.swift */; };
 		575CDD3C29C8627F005A1A1B /* CopyToClipboardActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575CDD3B29C8627F005A1A1B /* CopyToClipboardActionTests.swift */; };
@@ -95,7 +94,6 @@
 		5740257229C352910014D9A6 /* ActionFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionFactoryTests.swift; sourceTree = "<group>"; };
 		5740257429C361E70014D9A6 /* CustomEventActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventActionTests.swift; sourceTree = "<group>"; };
 		5740257629C369EB0014D9A6 /* AppEventActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEventActionTests.swift; sourceTree = "<group>"; };
-		5740257829C46E780014D9A6 /* GenericActionExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericActionExtensionTests.swift; sourceTree = "<group>"; };
 		5740257A29C479A90014D9A6 /* OpenExternalURLActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenExternalURLActionTests.swift; sourceTree = "<group>"; };
 		5740257C29C4B0820014D9A6 /* BadgeCountActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeCountActionTests.swift; sourceTree = "<group>"; };
 		575CDD3B29C8627F005A1A1B /* CopyToClipboardActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyToClipboardActionTests.swift; sourceTree = "<group>"; };
@@ -394,7 +392,6 @@
 			children = (
 				5D38ABD229B0D3E700C1AE4A /* DictionaryExtensionTests.swift */,
 				5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */,
-				5740257829C46E780014D9A6 /* GenericActionExtensionTests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -738,7 +735,6 @@
 				5D38AC1329B0D3E700C1AE4A /* DictionaryExtensionTests.swift in Sources */,
 				5D38AC3329B0D3E700C1AE4A /* FakePushClient.swift in Sources */,
 				2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */,
-				5740257929C46E780014D9A6 /* GenericActionExtensionTests.swift in Sources */,
 				5740257329C352910014D9A6 /* ActionFactoryTests.swift in Sources */,
 				5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */,
 				5D38AC0F29B0D3E700C1AE4A /* DennaResponse.swift in Sources */,

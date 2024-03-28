@@ -12,13 +12,18 @@ class DefaultUserNotificationCenterWrapper: UserNotificationCenterWrapper {
     func notificationSettings() async -> PushSettings {
         if let notificationCenter = notificationCenter {
             let settings = await notificationCenter.notificationSettings()
+#if os(iOS)
+            let carPlaySettings = settings.carPlaySetting.asString()
+#elseif os(macOS)
+            let carPlaySettings = "not available on macOS"
+#endif
             return PushSettings(authorizationStatus: settings.authorizationStatus.asString(),
                                 soundSetting: settings.soundSetting.asString(),
                                 badgeSetting: settings.badgeSetting.asString(),
                                 alertSetting: settings.alertSetting.asString(),
                                 notificationCenterSetting: settings.notificationCenterSetting.asString(),
                                 lockScreenSetting: settings.lockScreenSetting.asString(),
-                                carPlaySetting: settings.carPlaySetting.asString(),
+                                carPlaySetting: carPlaySettings,
                                 alertStyle: settings.alertStyle.asString(),
                                 showPreviewsSetting: settings.showPreviewsSetting.asString(),
                                 criticalAlertSetting: settings.criticalAlertSetting.asString(),
