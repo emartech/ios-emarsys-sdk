@@ -16,7 +16,7 @@ jobs:
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
       - name: Build And Test
-        run: cd HostApp && xcodebuild test -scheme HostApp -sdk iphonesimulator17.4 -destination "OS=17.4,name=iPhone 15"
+        run: cd HostApp && xcodebuild test -scheme HostApp -sdk iphonesimulator17.2 -destination "OS=17.2,name=iPhone 15"
         shell: bash
       - if: ${{ failure() }}
         name: Slack Notification On Error
