@@ -9,5 +9,5 @@ import Foundation
 struct EventRequest: Codable {
     let dnd: Bool
     let events: [CustomEvent]
-    let deviceEventState: String?
+    let deviceEventState: Json?
 }

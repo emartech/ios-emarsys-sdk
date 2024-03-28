@@ -10,5 +10,5 @@ import Foundation
 struct EventResponse: Codable {
     let message: [String: String]?
     let onEventAction: OnEventActionResponse?
-    let deviceEventState: String?
+    let deviceEventState: Json?
 }
