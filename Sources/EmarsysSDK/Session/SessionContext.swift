@@ -8,28 +8,16 @@ import Foundation
 
 @SdkActor
 class SessionContext {
-    
     let timestampProvider: any DateProvider
     let deviceInfoCollector: DeviceInfoCollector
-//    let secStore: SecStore
-    
     var contactToken: String? = nil
-//    {
-//        didSet {
-//            if oldValue != contactToken {
-//                try? secStore.put(data: contactToken?.data(using: .utf8), key: "contactToken")
-//            }
-//        }
-//    }
-    
     var refreshToken: String? = nil
-    
     var clientState: String? = nil
     lazy var clientId: String? = {
         deviceInfoCollector.hardwareId()
     }()
-
     var deviceEventState: Json? = nil
+    var sessionId: String? = nil
     
     init(timestampProvider: any DateProvider, deviceInfoCollector: DeviceInfoCollector) {
         self.timestampProvider = timestampProvider
