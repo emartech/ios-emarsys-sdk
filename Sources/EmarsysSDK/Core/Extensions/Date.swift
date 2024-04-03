@@ -21,4 +21,8 @@ extension Date {
         return Date.utcFormatter.string(from: self)
     }
     
+    func timeElapsedInMillis(fromDate: Date) -> Int {
+        return Int(self.timeIntervalSince(fromDate) * 1000)
+    }
+    
 }

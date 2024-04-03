@@ -11,13 +11,14 @@ import mimic
 @SdkActor
 final class MobileEngageSessionTests: EmarsysTestCase {
     let testUuid = "testUuid"
-    let testDate = Date()
+    var testDate: Date!
+    var testEndDate: Date!
     
     @Inject(\.sessionContext)
-    var fakeSessionContext: SessionContext
+    var sessionContext: SessionContext
     
     @Inject(\.sdkContext)
-    var fakeSdkContext: SdkContext
+    var sdkContext: SdkContext
     
     @Inject(\.timestampProvider)
     var fakeTimestampProvider: FakeTimestampProvider
@@ -38,16 +39,19 @@ final class MobileEngageSessionTests: EmarsysTestCase {
     
     
     override func setUpWithError() throws {
+        testDate = Date()
+        testEndDate = testDate.addingTimeInterval(TimeInterval(300))
+        
         fakeEventClient.when(\.fnSendEvents).thenReturn(EventResponse(message: nil, onEventAction: nil, deviceEventState: nil))
         fakeUuidProvider.when(\.fnProvide).thenReturn(testUuid)
         fakeTimestampProvider.when(\.fnProvide).thenReturn(testDate)
         
-        self.fakeSessionContext.contactToken = "testContactToken"
+        self.sessionContext.contactToken = "testContactToken"
         let testConfig = EmarsysConfig(applicationCode: "testApplicationCode")
-        self.fakeSdkContext.config = testConfig
+        self.sdkContext.config = testConfig
         
-        self.session = MobileEngageSession(sessionContext: self.fakeSessionContext,
-                                           sdkContext: self.fakeSdkContext,
+        self.session = MobileEngageSession(sessionContext: self.sessionContext,
+                                           sdkContext: self.sdkContext,
                                            timestampProvider: self.fakeTimestampProvider,
                                            uuidProvider: self.fakeUuidProvider,
                                            eventClient: self.fakeEventClient,
@@ -67,13 +71,13 @@ final class MobileEngageSessionTests: EmarsysTestCase {
         
         await self.session.start()
         
-        XCTAssertNil(self.fakeSessionContext.sessionId)
+        XCTAssertNil(self.sessionContext.sessionId)
         XCTAssertNil(self.session.sessionStartTime)
     }
     
     func testStart_shouldNotSendEvent_whenApplicationCode_isNil() async throws {
         let testConfig = EmarsysConfig()
-        self.fakeSdkContext.config = testConfig
+        self.sdkContext.config = testConfig
         
         await self.session.start()
         
@@ -81,7 +85,7 @@ final class MobileEngageSessionTests: EmarsysTestCase {
     }
     
     func testStart_shouldNotSendEvent_contactToken_isNil() async throws {
-        self.fakeSessionContext.contactToken = nil
+        self.sessionContext.contactToken = nil
         
         await self.session.start()
         
@@ -91,7 +95,7 @@ final class MobileEngageSessionTests: EmarsysTestCase {
     func testStart_shouldSet_sessionId_onSessionContext() async {
         await self.session.start()
         
-        XCTAssertEqual(self.fakeSessionContext.sessionId, testUuid)
+        XCTAssertEqual(self.sessionContext.sessionId, testUuid)
     }
     
     func testStart_shouldSet_sessionStartTime() async {
@@ -100,4 +104,49 @@ final class MobileEngageSessionTests: EmarsysTestCase {
         XCTAssertEqual(self.session.sessionStartTime, self.testDate)
     }
     
+    func testStop_shouldSendInternalCustomEvent_andResetSessionId() async throws {
+        self.session.sessionStartTime = testDate
+        self.sessionContext.sessionId = testUuid
+        let expectedAttribute = ["duration":"300000"]
+        
+        fakeTimestampProvider.when(\.fnProvide).thenReturn(testEndDate)
+        
+        await self.session.stop()
+        
+        _ = try fakeEventClient.verify(\.fnSendEvents).wasCalled(Arg.eq("session:stop"), Arg.eq(expectedAttribute), Arg.eq(EventType.internalEvent))
+        XCTAssertNil(self.sessionContext.sessionId)
+    }
+    
+    func testStop_shouldNotSendInternalCustomEvent_whenSessionWasNotStartedBefore() async throws {
+        self.session.sessionStartTime = nil
+        
+        fakeTimestampProvider.when(\.fnProvide).thenReturn(testEndDate)
+        
+        await self.session.stop()
+        
+        _ = try fakeEventClient.verify(\.fnSendEvents).times(times: .zero)
+    }
+    
+    func testStop_shouldNotSendInternalCustomEvent_whenSessionId_isMissing() async throws {
+        self.session.sessionStartTime = testDate
+        sessionContext.sessionId = nil
+        
+        fakeTimestampProvider.when(\.fnProvide).thenReturn(testEndDate)
+        
+        await self.session.stop()
+        
+        _ = try fakeEventClient.verify(\.fnSendEvents).times(times: .zero)
+    }
+    
+    func testStop_should_reset_when_eventClient_throws() async throws {
+        self.session.sessionStartTime = testDate
+        self.sessionContext.sessionId = testUuid
+        let error = Errors.NetworkingError.failedRequest(response: HTTPURLResponse())
+        fakeEventClient.when(\.fnSendEvents).thenThrow(error: error)
+        
+        await self.session.stop()
+        
+        XCTAssertNil(self.sessionContext.sessionId)
+        XCTAssertNil(self.session.sessionStartTime)
+    }
 }

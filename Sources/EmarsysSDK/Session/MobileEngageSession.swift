@@ -39,15 +39,32 @@ class MobileEngageSession: SessionApi {
             do {
                 _ = try await eventClient.sendEvents(name: Constants.Session.sessionStart, attributes: nil, eventType: EventType.internalEvent)
             } catch {
-                self.sessionStartTime = nil
-                self.sessionContext.sessionId = nil
-                logger.log(logEntry: LogEntry(topic: "mobile-engage-session", data: ["error": error.localizedDescription]), level: .error)
+                resetSession()
+                logger.log(logEntry: LogEntry(topic: "mobile-engage-session-start", data: ["error": error.localizedDescription]), level: .error)
             }
         }
     }
     
     func stop() async {
+        let endTime = timestampProvider.provide()
+        guard let sessionStartTime, let _ = self.sessionContext.sessionId else {
+            return
+        }
+        
+        let attributes = ["duration":"\(endTime.timeElapsedInMillis(fromDate: sessionStartTime))"]
+        do {
+            defer {
+                resetSession()
+            }
+            _ = try await eventClient.sendEvents(name: Constants.Session.sessionStop, attributes: attributes, eventType: EventType.internalEvent)
+        } catch {
+            logger.log(logEntry: LogEntry(topic: "mobile-engage-session-stop", data: ["error": error.localizedDescription]), level: .error)
+        }
+    }
     
+    private func resetSession() {
+        self.sessionStartTime = nil
+        self.sessionContext.sessionId = nil
     }
     
     
