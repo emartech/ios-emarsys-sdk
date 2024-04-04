@@ -35,4 +35,7 @@ protocol DependencyContainer {
 
     var setupOrganizer: SetupOrganizer { mutating get set }
     var remoteConfigHandler: RemoteConfigHandler { mutating get set }
+    var session: any SessionApi { mutating get set }
+    
+    mutating func setup() async
 }

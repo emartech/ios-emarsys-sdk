@@ -179,4 +179,13 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
                                           sdkLogger: sdkLogger,
                                           randomProvider: RandomProvider(in: 0.0...1.0))
     }()
+    
+    lazy var session: any SessionApi = {
+        return MobileEngageSession(application: self.application, sessionContext: self.sessionContext, sdkContext: self.sdkContext, timestampProvider: self.timestampProvider, uuidProvider: self.uuidProvider, eventClient: self.eventClient, logger: self.sdkLogger)
+    }()
+    
+    mutating func setup() async {
+        self.sdkContext.setSdkState(sdkState: .onHold)
+        await self.session.registerForApplifecycleChanges()
+    }
 }

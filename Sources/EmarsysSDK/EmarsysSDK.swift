@@ -5,7 +5,7 @@ public struct EmarsysSDK { //TODO: TBD: do we need static methods? probably.. bu
     public static func initialize() async {
         let container = await DefaultDependencyContainer()
         DependencyInjection.setup(container)
-        await DependencyInjection.container?.sdkContext.setSdkState(sdkState: .onHold)
+        await DependencyInjection.container?.setup()
     }
     
     public static func enableTracking(_ config: EmarsysConfig) async throws {

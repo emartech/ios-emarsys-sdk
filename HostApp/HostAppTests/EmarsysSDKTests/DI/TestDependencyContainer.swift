@@ -124,4 +124,11 @@ class TestDependencyContainer: DependencyContainer {
     lazy var remoteConfigHandler: RemoteConfigHandler = {
         return FakeRemoteConfigHandler()
     }()
+    
+    lazy var session: any SessionApi = {
+       return FakeMobileEngageSession()
+    }()
+    
+    func setup() async {
+    }
 }
