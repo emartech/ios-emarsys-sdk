@@ -12,6 +12,7 @@
 		2ACAD5D02BB5C50E000962AF /* FakeApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */; };
 		2ACAD5D12BB5C50E000962AF /* FakeBadgeCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */; };
 		2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */; };
+		2AF4AF572BBEE54E0039D56D /* FakeMobileEngageSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF4AF562BBEE5490039D56D /* FakeMobileEngageSession.swift */; };
 		5740256E29BF5FFE0014D9A6 /* RetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */; };
 		5740257029C072730014D9A6 /* HttpURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */; };
 		5740257329C352910014D9A6 /* ActionFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5740257229C352910014D9A6 /* ActionFactoryTests.swift */; };
@@ -96,6 +97,7 @@
 		2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeApplication.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeApplication.swift; sourceTree = "<group>"; };
 		2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeBadgeCount.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeBadgeCount.swift; sourceTree = "<group>"; };
 		2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeNotificationCenterWrapper.swift; path = HostAppTests/EmarsysSDKTests/Core/NotificationCenter/FakeNotificationCenterWrapper.swift; sourceTree = "<group>"; };
+		2AF4AF562BBEE5490039D56D /* FakeMobileEngageSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeMobileEngageSession.swift; path = HostAppTests/EmarsysSDKTests/Session/FakeMobileEngageSession.swift; sourceTree = "<group>"; };
 		5740256D29BF5FFE0014D9A6 /* RetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrierTests.swift; sourceTree = "<group>"; };
 		5740256F29C072730014D9A6 /* HttpURLResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpURLResponseTests.swift; sourceTree = "<group>"; };
 		5740257229C352910014D9A6 /* ActionFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionFactoryTests.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 		5D38AB3729B0D1EC00C1AE4A = {
 			isa = PBXGroup;
 			children = (
+				2AF4AF562BBEE5490039D56D /* FakeMobileEngageSession.swift */,
 				2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */,
 				2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */,
 				2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */,
@@ -713,6 +716,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AF4AF572BBEE54E0039D56D /* FakeMobileEngageSession.swift in Sources */,
 				2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */,
 				2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */,
 				2ACAD5D02BB5C50E000962AF /* FakeApplication.swift in Sources */,
