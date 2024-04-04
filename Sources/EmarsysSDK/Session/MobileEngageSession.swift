@@ -5,9 +5,15 @@
 
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(Cocoa)
+import Cocoa
+#endif
 
-
+@SdkActor
 class MobileEngageSession: SessionApi {
+    let application: any ApplicationApi
     let sessionContext: SessionContext
     let sdkContext: SdkContext
     let timestampProvider: any DateProvider
@@ -17,13 +23,15 @@ class MobileEngageSession: SessionApi {
     
     var sessionStartTime: Date? = nil
     
-    init(sessionContext: SessionContext,
+    init(application: any ApplicationApi,
+         sessionContext: SessionContext,
          sdkContext: SdkContext,
          timestampProvider: any DateProvider,
          uuidProvider: any StringProvider,
          eventClient: any EventClient,
          logger: SdkLogger
     ) {
+        self.application = application
         self.sessionContext = sessionContext
         self.sdkContext = sdkContext
         self.timestampProvider = timestampProvider
@@ -48,6 +56,7 @@ class MobileEngageSession: SessionApi {
     func stop() async {
         let endTime = timestampProvider.provide()
         guard let sessionStartTime, let _ = self.sessionContext.sessionId else {
+            logger.log(logEntry: LogEntry(topic: "mobile-engage-session-stop", data: ["message": "Session must be started before calling stop!"]), level: .error)
             return
         }
         
@@ -67,5 +76,12 @@ class MobileEngageSession: SessionApi {
         self.sessionContext.sessionId = nil
     }
     
-    
+    func registerForApplifecycleChanges() async {
+        await self.application.registerForAppLifecycle(lifecycle: .didBecomeActive) {
+            await self.start()
+        }     
+        await self.application.registerForAppLifecycle(lifecycle: .didEnterBackground) {
+            await self.stop()
+        }
+    }
 }

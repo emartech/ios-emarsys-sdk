@@ -13,4 +13,6 @@ protocol SessionApi {
     func start() async
     
     func stop() async
+    
+    func registerForApplifecycleChanges() async
 }

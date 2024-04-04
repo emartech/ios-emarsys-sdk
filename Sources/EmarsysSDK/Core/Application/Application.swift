@@ -58,4 +58,33 @@ class Application: ApplicationApi {
         }
     }
     
+    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async {
+        let nofificationName: Notification.Name = await mapNotificationName(lifecycle: lifecycle)
+        let notifications = NotificationCenter.default.notifications(named: nofificationName)
+        for await notification in notifications {
+            await closure()
+        }
+    }
+    
+    private func mapNotificationName(lifecycle: AppLifecycle) async -> Notification.Name {
+        return switch lifecycle {
+        case .didBecomeActive: await {
+            #if os(iOS)
+            await UIApplication.didBecomeActiveNotification
+            #elseif os(macOS)
+            await NSApplication.didBecomeActiveNotification
+            #endif
+        }()
+            
+        case .didEnterBackground: await {
+            #if os(iOS)
+            await UIApplication.didEnterBackgroundNotification
+            #elseif os(macOS)
+            // TODO: check if we want to use didHideNotification
+            await NSApplication.didResignActiveNotification
+            #endif
+        }()
+        }
+    }
 }
+

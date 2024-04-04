@@ -32,6 +32,9 @@ final class MobileEngageSessionTests: EmarsysTestCase {
     @Inject(\.deviceInfoCollector)
     var fakeDeviceInfoCollector: FakeDeviceInfoCollector
     
+    @Inject(\.application)
+    var fakeApplication: FakeApplication
+    
     @Inject(\.sdkLogger)
     var logger: SdkLogger
     
@@ -45,12 +48,14 @@ final class MobileEngageSessionTests: EmarsysTestCase {
         fakeEventClient.when(\.fnSendEvents).thenReturn(EventResponse(message: nil, onEventAction: nil, deviceEventState: nil))
         fakeUuidProvider.when(\.fnProvide).thenReturn(testUuid)
         fakeTimestampProvider.when(\.fnProvide).thenReturn(testDate)
+        fakeApplication.when(\.fnRegisterForAppLifecycle).thenReturn(())
         
         self.sessionContext.contactToken = "testContactToken"
         let testConfig = EmarsysConfig(applicationCode: "testApplicationCode")
         self.sdkContext.config = testConfig
         
-        self.session = MobileEngageSession(sessionContext: self.sessionContext,
+        self.session = MobileEngageSession(application: self.fakeApplication,
+                                           sessionContext: self.sessionContext,
                                            sdkContext: self.sdkContext,
                                            timestampProvider: self.fakeTimestampProvider,
                                            uuidProvider: self.fakeUuidProvider,
@@ -148,5 +153,11 @@ final class MobileEngageSessionTests: EmarsysTestCase {
         
         XCTAssertNil(self.sessionContext.sessionId)
         XCTAssertNil(self.session.sessionStartTime)
+    }
+    
+    func testRegisterForApplifecycleChanges_shouldCallRegister_forDidBecomeActive_andDidEnterBackground() async throws {
+        await self.session.registerForApplifecycleChanges()
+        
+        _ = try fakeApplication.verify(\.fnRegisterForAppLifecycle).times(times: .eq(2))
     }
 }

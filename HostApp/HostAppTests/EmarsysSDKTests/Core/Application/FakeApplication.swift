@@ -15,6 +15,9 @@ struct FakeApplication: ApplicationApi, Mimic {
     
     let fnOpenUrl = Fn<()>()
     let fnRequestPushPermission = Fn<()>()
+    let fnRegisterForAppDidBecomeActive = Fn<()>()
+    let fnRegisterForAppDidEnterBackground = Fn<()>()
+    let fnRegisterForAppLifecycle = Fn<()>()
     
     func openUrl(_ url: URL) {
         return try! fnOpenUrl.invoke(params: url)
@@ -24,4 +27,7 @@ struct FakeApplication: ApplicationApi, Mimic {
         return try! fnRequestPushPermission.invoke()
     }
     
+    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async {
+        return try! fnRegisterForAppLifecycle.invoke(params: lifecycle)
+    }
 }
