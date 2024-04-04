@@ -15,7 +15,7 @@ protocol ApplicationApi {
     
     func requestPushPermission() async
     
-    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async
+    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @escaping @Sendable () async -> ()) async
 }
 
 protocol BadgeCountApi {

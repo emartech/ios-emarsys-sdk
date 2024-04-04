@@ -10,6 +10,7 @@ import UIKit
 import Cocoa
 import UserNotifications
 #endif
+import Combine
 
 class Application: ApplicationApi {
     
@@ -35,6 +36,7 @@ class Application: ApplicationApi {
 #endif
         }
     }
+    private var cancellables: [AnyCancellable] = []
     
     init(badgeCount: any BadgeCountApi) {
         self.badgeCount = badgeCount
@@ -57,13 +59,17 @@ class Application: ApplicationApi {
             // TODO: error?
         }
     }
-    
-    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async {
+        
+    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @escaping @Sendable () async -> ()) async {
         let nofificationName: Notification.Name = await mapNotificationName(lifecycle: lifecycle)
-        let notifications = NotificationCenter.default.notifications(named: nofificationName)
-        for await _ in notifications {
-            await closure()
-        }
+        let cancellable = NotificationCenter.default
+                .publisher(for: nofificationName)
+                .sink { _ in
+                    Task {
+                        await closure()
+                    }
+                }
+        self.cancellables.append(cancellable)
     }
     
     private func mapNotificationName(lifecycle: AppLifecycle) async -> Notification.Name {

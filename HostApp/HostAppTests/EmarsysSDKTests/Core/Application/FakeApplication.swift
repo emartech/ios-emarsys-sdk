@@ -27,7 +27,7 @@ struct FakeApplication: ApplicationApi, Mimic {
         return try! fnRequestPushPermission.invoke()
     }
     
-    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async {
+    func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @escaping @Sendable () async -> ()) async {
         return try! fnRegisterForAppLifecycle.invoke(params: lifecycle)
     }
 }
