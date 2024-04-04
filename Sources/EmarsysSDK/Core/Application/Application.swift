@@ -61,7 +61,7 @@ class Application: ApplicationApi {
     func registerForAppLifecycle(lifecycle: AppLifecycle, _ closure: @Sendable () async -> ()) async {
         let nofificationName: Notification.Name = await mapNotificationName(lifecycle: lifecycle)
         let notifications = NotificationCenter.default.notifications(named: nofificationName)
-        for await notification in notifications {
+        for await _ in notifications {
             await closure()
         }
     }

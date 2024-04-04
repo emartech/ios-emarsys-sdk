@@ -60,8 +60,8 @@ extension Dictionary: Storable {
         return try! JSONSerialization.data(withJSONObject: self, options: .prettyPrinted) // TODO: handle error
     }
     
-    static func fromData<Key, Value>(_ data: Data) -> Dictionary<Key, Value> {
-        return try! JSONSerialization.jsonObject(with: data) as! [Key : Value]
+    static func fromData<DataKey, DataValue>(_ data: Data) -> Dictionary<DataKey, DataValue> {
+        return try! JSONSerialization.jsonObject(with: data) as! [DataKey : DataValue]
     }
 }
 

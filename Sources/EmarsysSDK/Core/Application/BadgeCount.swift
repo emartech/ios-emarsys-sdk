@@ -30,7 +30,7 @@ struct BadgeCount: BadgeCountApi {
     
     func set(_ value: Int) {
 #if os(iOS)
-        let application = UIApplication.shared.applicationIconBadgeNumber = value
+        UIApplication.shared.applicationIconBadgeNumber = value
 #elseif os(macOS)
         NSApp.dockTile.badgeLabel = "\(value)"
 #endif
