@@ -4,6 +4,11 @@ import Foundation
 public struct EmarsysConfig: Equatable {
     var applicationCode: String?
     var merchantId: String?
+    
+    public init(applicationCode: String? = nil, merchantId: String? = nil) {
+        self.applicationCode = applicationCode
+        self.merchantId = merchantId
+    }
 }
 
 extension EmarsysConfig {
