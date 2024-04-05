@@ -41,7 +41,7 @@ class MobileEngageSession: SessionApi {
     }
     
     func start() async {
-        if ((self.sdkContext.config?.applicationCode != nil) && (self.sessionContext.contactToken != nil)) {
+        if (self.canStartSession()) {
             self.sessionStartTime = self.timestampProvider.provide()
             self.sessionContext.sessionId = self.uuidProvider.provide()
             do {
@@ -83,5 +83,12 @@ class MobileEngageSession: SessionApi {
         await self.application.registerForAppLifecycle(lifecycle: .didEnterBackground) {
             await self.stop()
         }
+    }
+    
+    private func canStartSession() -> Bool {
+        self.sdkContext.config?.applicationCode != nil &&
+        self.sessionContext.contactToken != nil &&
+        self.sessionContext.sessionId == nil &&
+        self.sessionStartTime == nil
     }
 }

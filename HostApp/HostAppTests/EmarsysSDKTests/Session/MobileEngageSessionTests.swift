@@ -97,6 +97,16 @@ final class MobileEngageSessionTests: EmarsysTestCase {
         _ = try fakeEventClient.verify(\.fnSendEvents).times(times: .eq(0))
     }
     
+    func testStart_shouldNotSendEvent_when_sessionWasAlreadyStarted() async throws {
+        self.sessionContext.contactToken = "testContactToken"
+        self.sessionContext.sessionId = testUuid
+        self.session.sessionStartTime = testDate
+        
+        await self.session.start()
+        
+        _ = try fakeEventClient.verify(\.fnSendEvents).times(times: .eq(0))
+    }
+    
     func testStart_shouldSet_sessionId_onSessionContext() async {
         await self.session.start()
         
