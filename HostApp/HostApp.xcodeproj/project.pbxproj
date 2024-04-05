@@ -29,6 +29,7 @@
 		57849F4929B73D580002CF62 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4829B73D580002CF62 /* EventTests.swift */; };
 		57849F4B29B73F8D0002CF62 /* FakeEventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4A29B73F8D0002CF62 /* FakeEventApi.swift */; };
 		57849F4E29B7489D0002CF62 /* DefaultEventClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57849F4D29B7489D0002CF62 /* DefaultEventClientTests.swift */; };
+		57E3060F2BC02FE700927C6B /* FakeConfigInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E3060E2BC02FE700927C6B /* FakeConfigInternal.swift */; };
 		5D38AB4429B0D1EC00C1AE4A /* HostAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AB4329B0D1EC00C1AE4A /* HostAppApp.swift */; };
 		5D38AB4629B0D1ED00C1AE4A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38AB4529B0D1ED00C1AE4A /* ContentView.swift */; };
 		5D38AB4829B0D1EE00C1AE4A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D38AB4729B0D1EE00C1AE4A /* Assets.xcassets */; };
@@ -114,6 +115,7 @@
 		57849F4829B73D580002CF62 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		57849F4A29B73F8D0002CF62 /* FakeEventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeEventApi.swift; sourceTree = "<group>"; };
 		57849F4D29B7489D0002CF62 /* DefaultEventClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEventClientTests.swift; sourceTree = "<group>"; };
+		57E3060E2BC02FE700927C6B /* FakeConfigInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeConfigInternal.swift; path = HostAppTests/EmarsysSDKTests/API/Config/FakeConfigInternal.swift; sourceTree = "<group>"; };
 		5D38AB4029B0D1EC00C1AE4A /* HostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D38AB4329B0D1EC00C1AE4A /* HostAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostAppApp.swift; sourceTree = "<group>"; };
 		5D38AB4529B0D1ED00C1AE4A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 		5D38AB3729B0D1EC00C1AE4A = {
 			isa = PBXGroup;
 			children = (
+				57E3060E2BC02FE700927C6B /* FakeConfigInternal.swift */,
 				2AF4AF562BBEE5490039D56D /* FakeMobileEngageSession.swift */,
 				2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */,
 				2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */,
@@ -716,6 +719,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57E3060F2BC02FE700927C6B /* FakeConfigInternal.swift in Sources */,
 				2AF4AF572BBEE54E0039D56D /* FakeMobileEngageSession.swift in Sources */,
 				2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */,
 				2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */,
