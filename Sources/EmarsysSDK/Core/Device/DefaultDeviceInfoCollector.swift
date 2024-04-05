@@ -39,8 +39,6 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
         return formatter.string(from: Date())
     }
     
-    let languageCode: String = NSLocale.preferredLanguages[0]
-    
     let applicationVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     
     var deviceModel: String {
@@ -73,9 +71,9 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
                           deviceModel: deviceModel,
                           osVersion: await osVersion(),
                           sdkVersion: sdkConfig.version,
-                          language: languageCode,
+                          language: languageCode(),
                           timezone: timeZone,
-                          pushSettings: await getPushSettings(),
+                          pushSettings: await pushSettings(),
                           hardwareId: hardwareId()
         )
     }
@@ -114,8 +112,12 @@ class DefaultDeviceInfoCollector: DeviceInfoCollector {
         return hardwareId
     }
     
-    func getPushSettings() async -> PushSettings {
+    func pushSettings() async -> PushSettings {
         return await notificationCenterWrapper.notificationSettings()
+    }
+    
+    func languageCode() -> String {
+        NSLocale.preferredLanguages[0]
     }
     
     private func loadHardwareId() -> String? {

@@ -7,7 +7,7 @@ import Foundation
 @testable import EmarsysSDK
 import mimic
 
-struct FakeContactApi: ContactInstance, Mimic {
+struct FakeContactInternal: ContactInstance, Mimic {
     
     let fnLinkContact = Fn<()>()
     let fnLinkAuthenticatedContact = Fn<()>()

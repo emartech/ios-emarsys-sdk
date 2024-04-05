@@ -5,11 +5,12 @@ import mimic
 
 @SdkActor
 struct FakeDeviceInfoCollector: DeviceInfoCollector, Mimic {
-    
     let fnCollect = Fn<DeviceInfo>()
     let fnDeviceType = Fn<String>()
     let fnOsVersion = Fn<String>()
     let fnHardwareId = Fn<String>()
+    let fnPushSettings = Fn<PushSettings>()
+    let fnLanguageCode = Fn<String>()
     
     func collect() async -> DeviceInfo {
         return try! fnCollect.invoke()
@@ -25,5 +26,13 @@ struct FakeDeviceInfoCollector: DeviceInfoCollector, Mimic {
     
     func hardwareId() -> String {
         return try! fnHardwareId.invoke()
+    }
+    
+    func pushSettings() async -> PushSettings {
+        return try! fnPushSettings.invoke()
+    }
+    
+    func languageCode() -> String {
+        return try! fnLanguageCode.invoke()
     }
 }

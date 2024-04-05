@@ -13,10 +13,10 @@ final class ContactTests: EmarsysTestCase {
     
     var contactContext: ContactContext!
     
-    var contact: Contact<LoggingContact, GathererContact, FakeContactApi>!
+    var contact: Contact<LoggingContact, GathererContact, FakeContactInternal>!
     
     @Inject(\.contactApi)
-    var fakeContactApi: FakeContactApi
+    var fakeContactApi: FakeContactInternal
     
     @Inject(\.sdkContext)
     var sdkContext: SdkContext
@@ -62,14 +62,14 @@ final class ContactTests: EmarsysTestCase {
         sdkContext.setFeatures(features: [.mobileEngage, .predict])
         sdkContext.setSdkState(sdkState: .active)
         
-        XCTAssertEqual(contact.active as? FakeContactApi, fakeContactApi)
+        XCTAssertEqual(contact.active as? FakeContactInternal, fakeContactApi)
     }
     
     func testActiveContact_shouldBeContactInternal_whenActiveFeatureIsMobileEngageOnly() {
         sdkContext.setFeatures(features: [.mobileEngage])
         sdkContext.setSdkState(sdkState: .active)
         
-        XCTAssertEqual(contact.active as? FakeContactApi, fakeContactApi)
+        XCTAssertEqual(contact.active as? FakeContactInternal, fakeContactApi)
     }
     
     func testLinkContact_shouldCallLinkContact_onActiveInstance() async throws {

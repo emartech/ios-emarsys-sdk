@@ -39,7 +39,7 @@ class TestDependencyContainer: DependencyContainer {
     }()
     
     lazy var contactApi: ContactApi = {
-        return FakeContactApi()
+        return FakeContactInternal()
     }()
     
     lazy var eventApi: EventApi = {
@@ -127,6 +127,10 @@ class TestDependencyContainer: DependencyContainer {
     
     lazy var session: any SessionApi = {
        return FakeMobileEngageSession()
+    }()
+    
+    lazy var configInternal: any ConfigInstance = {
+        return FakeConfigInternal()
     }()
     
     func setup() async {

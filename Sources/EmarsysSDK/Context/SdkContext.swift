@@ -17,6 +17,8 @@ class SdkContext {
     
     var inAppDnd: Bool = false
     
+    var contactFieldId: Int? = nil
+    
     var config: EmarsysConfig? = nil // TODO: figure out smth better
     
     var defaultUrls: DefaultUrls

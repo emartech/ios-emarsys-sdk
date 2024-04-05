@@ -45,4 +45,8 @@ struct Constants {
         static let sessionStart = "session:start"
         static let sessionStop = "session:stop"
     }
+    
+    struct InvalidCases {
+        static let configValue = ["nil", "null", "", "0", "test"]
+    }
 }

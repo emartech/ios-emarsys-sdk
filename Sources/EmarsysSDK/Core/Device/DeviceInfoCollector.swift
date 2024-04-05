@@ -7,9 +7,10 @@ import Foundation
 
 @SdkActor
 protocol DeviceInfoCollector {
-    
     func collect() async -> DeviceInfo
     func deviceType() async -> String
     func osVersion() async -> String
     func hardwareId() -> String
+    func pushSettings() async -> PushSettings
+    func languageCode() -> String
 }
