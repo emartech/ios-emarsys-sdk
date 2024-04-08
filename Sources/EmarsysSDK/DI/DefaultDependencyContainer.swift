@@ -60,9 +60,9 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
                                           eventClient: eventClient,
                                           timestampProvider: timestampProvider)
         return Events(loggingInstance: loggingEvent,
-                     gathererInstance: gathererEvent,
-                     internalInstance: eventInternal,
-                     sdkContext: sdkContext)
+                      gathererInstance: gathererEvent,
+                      internalInstance: eventInternal,
+                      sdkContext: sdkContext)
     }()
     
     // MARK: Clients
@@ -146,13 +146,18 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var application: any ApplicationApi = {
-        return Application(badgeCount: BadgeCount())
+        let badgeCount = BadgeCount()
+#if os(iOS)
+        return Application(badgeCount: badgeCount)
+#elseif os(macOS)
+        return MacOSApplication(badgeCount: badgeCount)
+#endif
     }()
     
     lazy var notificationCenterWrapper: NotificationCenterWrapperApi = {
         return NotificationCenterWrapper()
     }()
-
+    
     lazy var deviceInfoCollector: DeviceInfoCollector = {
         return DefaultDeviceInfoCollector(notificationCenterWrapper: userNotificationCenterWrapper,
                                           secureStorage: secureStorage,

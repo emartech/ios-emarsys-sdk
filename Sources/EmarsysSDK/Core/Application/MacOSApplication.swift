@@ -2,23 +2,27 @@
 //
 // Copyright © 2024 Emarsys-Technologies Kft. All rights reserved.
 //
-
 import Foundation
-#if canImport(UIKit)
-import UIKit
+#if canImport(Cocoa)
+import Cocoa
+import UserNotifications
 #endif
 
-#if os(iOS)
-class Application: ApplicationApi {
+#if os(macOS)
+class MacOSApplication: ApplicationApi {
     
     var badgeCount: any BadgeCountApi
     
     var pasteboard: String? {
         get {
-            UIPasteboard.general.string
+            NSPasteboard.general.string(forType: .string)
         }
         set {
-            UIPasteboard.general.string = newValue
+            if let newValue {
+                NSPasteboard.general.setString(newValue, forType: .string)
+            } else {
+                NSPasteboard.general.clearContents()
+            }
         }
     }
     
@@ -27,9 +31,7 @@ class Application: ApplicationApi {
     }
     
     func openUrl(_ url: URL) {
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        NSWorkspace.shared.open(url)
     }
     
     func requestPushPermission() async {
