@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A385A5529B8C69600D3DC86 /* AppStartStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */; };
 		2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */; };
+		2AB913B12BC42509006B941D /* FakeContactInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB913B02BC42509006B941D /* FakeContactInternal.swift */; };
 		2ACAD5D02BB5C50E000962AF /* FakeApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */; };
 		2ACAD5D12BB5C50E000962AF /* FakeBadgeCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */; };
 		2ACAD5D32BB5C53A000962AF /* FakeNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */; };
@@ -60,7 +61,6 @@
 		5D38AC2129B0D3E700C1AE4A /* ContactInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABEB29B0D3E700C1AE4A /* ContactInternalTests.swift */; };
 		5D38AC2229B0D3E700C1AE4A /* GathererContactTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABEC29B0D3E700C1AE4A /* GathererContactTests.swift */; };
 		5D38AC2329B0D3E700C1AE4A /* FakePredictContactApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABEE29B0D3E700C1AE4A /* FakePredictContactApi.swift */; };
-		5D38AC2429B0D3E700C1AE4A /* FakeContactApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABEF29B0D3E700C1AE4A /* FakeContactApi.swift */; };
 		5D38AC2529B0D3E700C1AE4A /* FakeContactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF029B0D3E700C1AE4A /* FakeContactClient.swift */; };
 		5D38AC2629B0D3E700C1AE4A /* PredictContactInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF129B0D3E700C1AE4A /* PredictContactInternalTests.swift */; };
 		5D38AC2A29B0D3E700C1AE4A /* DefaultContactClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38ABF829B0D3E700C1AE4A /* DefaultContactClientTests.swift */; };
@@ -95,6 +95,7 @@
 /* Begin PBXFileReference section */
 		2A385A5429B8C69600D3DC86 /* AppStartStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartStateTests.swift; sourceTree = "<group>"; };
 		2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeUserNotificationCenterWrapper.swift; path = HostAppTests/EmarsysSDKTests/Core/UserNotificationCenter/FakeUserNotificationCenterWrapper.swift; sourceTree = "<group>"; };
+		2AB913B02BC42509006B941D /* FakeContactInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeContactInternal.swift; path = HostAppTests/EmarsysSDKTests/API/Contact/Fakes/FakeContactInternal.swift; sourceTree = "<group>"; };
 		2ACAD5CE2BB5C50E000962AF /* FakeApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeApplication.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeApplication.swift; sourceTree = "<group>"; };
 		2ACAD5CF2BB5C50E000962AF /* FakeBadgeCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeBadgeCount.swift; path = HostAppTests/EmarsysSDKTests/Core/Application/FakeBadgeCount.swift; sourceTree = "<group>"; };
 		2ACAD5D22BB5C53A000962AF /* FakeNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FakeNotificationCenterWrapper.swift; path = HostAppTests/EmarsysSDKTests/Core/NotificationCenter/FakeNotificationCenterWrapper.swift; sourceTree = "<group>"; };
@@ -252,6 +253,7 @@
 		5D38AB3729B0D1EC00C1AE4A = {
 			isa = PBXGroup;
 			children = (
+				2AB913B02BC42509006B941D /* FakeContactInternal.swift */,
 				57E3060E2BC02FE700927C6B /* FakeConfigInternal.swift */,
 				2AF4AF562BBEE5490039D56D /* FakeMobileEngageSession.swift */,
 				2AA0284B2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift */,
@@ -719,6 +721,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AB913B12BC42509006B941D /* FakeContactInternal.swift in Sources */,
 				57E3060F2BC02FE700927C6B /* FakeConfigInternal.swift in Sources */,
 				2AF4AF572BBEE54E0039D56D /* FakeMobileEngageSession.swift in Sources */,
 				2AA0284C2BB5C62F00B028F3 /* FakeUserNotificationCenterWrapper.swift in Sources */,
@@ -749,7 +752,6 @@
 				5D38AC1829B0D3E700C1AE4A /* ApplyRemoteConfigStateTests.swift in Sources */,
 				5D38AC1B29B0D3E700C1AE4A /* RegisterPushTokenStateTests.swift in Sources */,
 				57849F4E29B7489D0002CF62 /* DefaultEventClientTests.swift in Sources */,
-				5D38AC2429B0D3E700C1AE4A /* FakeContactApi.swift in Sources */,
 				5D38AC1D29B0D3E700C1AE4A /* FakeRemoteConfigClient.swift in Sources */,
 				575CDD3E29C884A2005A1A1B /* RequestPushPermissionActionTests.swift in Sources */,
 				5D38AC2129B0D3E700C1AE4A /* ContactInternalTests.swift in Sources */,
