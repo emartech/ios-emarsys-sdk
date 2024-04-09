@@ -38,6 +38,19 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     
     // MARK: Api
     
+    lazy var configApi: ConfigApi = {
+        let configCalls = try! PersistentList<ConfigCall>(id: "configCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let configContext = ConfigContext(calls: configCalls)
+        let loggingConfig = LoggingConfig(logger: sdkLogger)
+        let gathererConfig = GathererConfig(configContext: configContext)
+        let configInternal = ConfigInternal()
+        return Config(loggingInstance: loggingConfig,
+                      gathererInstance: gathererConfig,
+                      internalInstance: configInternal,
+                      sdkContext: sdkContext,
+                      deviceInfoCollector: deviceInfoCollector)
+    }()
+    
     lazy var contactApi: ContactApi = {
         let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
         let contactContext = ContactContext(calls: contactCalls)

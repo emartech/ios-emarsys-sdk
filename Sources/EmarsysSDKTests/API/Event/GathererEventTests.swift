@@ -63,4 +63,5 @@ final class GathererEventTests: EmarsysTestCase {
         XCTAssertEqual(eventContext.calls.count, 3)
         XCTAssertEqual(expectedCalls, eventContext.calls)
     }
+    
 }

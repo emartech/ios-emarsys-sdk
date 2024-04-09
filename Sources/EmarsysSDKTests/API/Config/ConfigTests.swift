@@ -33,8 +33,12 @@ final class ConfigTests: EmarsysTestCase {
     @Inject(\.sdkContext)
     var sdkContext: SdkContext
     
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
     @Inject(\.sdkLogger)
-    var sdkLogger: SdkLogger
+    var sdkLogger: SdkLogger!
+
     
     @Inject(\.deviceInfoCollector)
     var fakeDeviceInfoCollector: FakeDeviceInfoCollector
@@ -45,6 +49,12 @@ final class ConfigTests: EmarsysTestCase {
     private var config: Config<LoggingConfig, GathererConfig, FakeConfigInternal>!
 
     override func setUpWithError() throws {
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
         self.sdkContext.config = testConfig
         self.sdkContext.contactFieldId = testContactFieldId
         self.sdkContext.setFeatures(features: [.mobileEngage])
@@ -54,7 +64,10 @@ final class ConfigTests: EmarsysTestCase {
         self.fakeDeviceInfoCollector.when(\.fnLanguageCode).thenReturn(testLanguageCode)
         self.fakeDeviceInfoCollector.when(\.fnPushSettings).thenReturn(testPushSettings)
         
-        self.config = Config(loggingInstance: LoggingConfig(logger: self.sdkLogger), gathererInstance: GathererConfig(), internalInstance: self.fakeConfigInternal, sdkContext: self.sdkContext, deviceInfoCollector: self.fakeDeviceInfoCollector)
+        let configCalls = try! PersistentList<ConfigCall>(id: "configCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        let configContext = ConfigContext(calls: configCalls)
+        
+        self.config = Config(loggingInstance: LoggingConfig(logger: self.sdkLogger), gathererInstance: GathererConfig(configContext: configContext), internalInstance: self.fakeConfigInternal, sdkContext: self.sdkContext, deviceInfoCollector: self.fakeDeviceInfoCollector)
     }
     
     func testContactFieldId_shouldReturnCorrectValue() throws {
