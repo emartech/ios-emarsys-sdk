@@ -53,6 +53,15 @@ final class EmarsysClientTests: EmarsysTestCase {
         "testKey6": 123
     ] as [String: Any]
     
+    lazy var bodyJson: Json = {
+        let json = try! JSONSerialization.data(withJSONObject: bodyDict, options: .prettyPrinted)
+        return try! JSONDecoder().decode(Json.self, from: json)
+    }()
+    
+    lazy var bodyData: Data = {
+        return try! JSONEncoder().encode(bodyJson)
+    }()
+    
     let testClientState = "testClientState"
     let testClientId = "testClientId"
     let testContactToken = "testContactToken"
@@ -78,22 +87,22 @@ final class EmarsysClientTests: EmarsysTestCase {
     }
 
     func testSend_withoutInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         
         var requestInNetworkCall: URLRequest!
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
             requestInNetworkCall = args[0]
-            return (self.bodyDict.toData(), HTTPURLResponse())
+            return (self.bodyData, HTTPURLResponse())
         }
         
         let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         
-        XCTAssertEqual(bodyDict.toData(), result.0)
+        XCTAssertEqual(bodyData, result.0)
         XCTAssertTrue(requestInNetworkCall.allHTTPHeaderFields!.subDict(dict: requiredHeaders))
     }
     
     func testSend_withoutInput_withDecodableValue_shouldExtendHeaders_withRequiredHeaders() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         let testDennaResponse = DennaResponse(method: "POST", headers: headers, body: testBody)
         
         var requestInNetworkCall: URLRequest!
@@ -109,24 +118,23 @@ final class EmarsysClientTests: EmarsysTestCase {
     }
     
     func testSend_withInput_withData_shouldExtendHeaders_withRequiredHeaders() async throws {
-        let body = bodyDict.toData()
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: body)
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         
         var requestInNetworkCall: URLRequest!
         
         fakeNetworkClient.when(\.fnSendWithInput).replaceFunction { invocationNumber, args in
             requestInNetworkCall = args[0]
-            return (body, HTTPURLResponse())
+            return (self.bodyData, HTTPURLResponse())
         }
         
         let result: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request, body: testBody)
         
-        XCTAssertEqual(bodyDict.toData(), result.0)
+        XCTAssertEqual(bodyData, result.0)
         XCTAssertTrue(requestInNetworkCall.allHTTPHeaderFields!.subDict(dict: requiredHeaders))
     }
     
     func testSend_withInput_withDecodableValue_shouldExtendHeaders_withRequiredHeaders() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         let testDennaResponse = DennaResponse(method: "POST", headers: headers, body: testBody)
         
         var requestInNetworkCall: URLRequest!
@@ -143,11 +151,11 @@ final class EmarsysClientTests: EmarsysTestCase {
     }
 
     func testSend_withoutInput_withData_shouldStoreClientState_toSessionContext_whenClientState_isPresent() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         
         fakeNetworkClient
             .when(\.fnSend)
-            .thenReturn((self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
+            .thenReturn((self.bodyData, HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
         
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
         
@@ -155,11 +163,11 @@ final class EmarsysClientTests: EmarsysTestCase {
     }
 
     func testSend_withoutInput_withBody_shouldStoreClientState_toSessionContext_whenClientState_isPresent() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
 
         fakeNetworkClient
             .when(\.fnSendWithInput)
-            .thenReturn((self.bodyDict.toData(), HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
+            .thenReturn((self.bodyData, HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: [  "X-Client-State": "clientState" ])) as! (Decodable, HTTPURLResponse))
 
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request,body: testBody)
 
@@ -168,8 +176,10 @@ final class EmarsysClientTests: EmarsysTestCase {
 
     func testSend_withoutInput_shouldRefreshTheContactToken_whenResponseStatus_is401() async throws {
         let testRefreshResponse = ["contactToken": "refreshedContactToken"]
+        let testRefreshResponseData = try JSONEncoder().encode(["contactToken": "refreshedContactToken"])
         let finalResponseBody =  ["finalKey": "finalValue"]
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let finalResponseBodyData = try JSONEncoder().encode(finalResponseBody)
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
         let refreshResponse = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)
@@ -179,16 +189,16 @@ final class EmarsysClientTests: EmarsysTestCase {
         
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
             switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
+            case 1: return (self.bodyData, responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
                 
-            case 2: return (testRefreshResponse.toData(), refreshResponse) as! (Decodable, HTTPURLResponse)
+            case 2: return (testRefreshResponseData, refreshResponse) as! (Decodable, HTTPURLResponse)
                 
             case 3:
                 finalRequestInSend = args[0]
-                return (finalResponseBody.toData(), responseWithSuccess) as! (Decodable, HTTPURLResponse)
+                return (finalResponseBodyData, responseWithSuccess) as! (Decodable, HTTPURLResponse)
                 
             default:
-                return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
+                return (self.bodyData, responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
             }
         }
         
@@ -203,20 +213,21 @@ final class EmarsysClientTests: EmarsysTestCase {
     }
 
     func testSend_withoutInput_shouldThrowMappingFailedError_ifNewContactTokenIsMissing() async throws {
-        let request = URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://emarsys.com")!, method: .POST, headers: headers, body: bodyJson)
         let responseWithErrorStatus = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)
         let refreshResponse = HTTPURLResponse(url:URL(string: "https://emarsys.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)
         
         let testRefreshResponseWithMissingToken = ["contactToken": 123]
+        let testRefreshResponseWithMissingTokenData = try JSONEncoder().encode(["contactToken": 123])
         
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationNumber, args in
             switch (invocationNumber) {
-            case 1: return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
+            case 1: return (self.bodyData, responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
                 
-            case 2: return (testRefreshResponseWithMissingToken.toData(), refreshResponse) as! (Decodable, HTTPURLResponse)
+            case 2: return (testRefreshResponseWithMissingTokenData, refreshResponse) as! (Decodable, HTTPURLResponse)
                 
             default:
-                return (self.bodyDict.toData(), responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
+                return (self.bodyData, responseWithErrorStatus) as! (Decodable, HTTPURLResponse)
             }
         }
         

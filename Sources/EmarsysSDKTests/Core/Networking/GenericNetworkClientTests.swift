@@ -21,6 +21,11 @@ final class GenericNetworkClientTests: EmarsysTestCase {
         "testKey6": 123
     ] as [String: Any]
     
+    lazy var bodyJson: Json = {
+        let json = try! JSONSerialization.data(withJSONObject: bodyDict, options: .prettyPrinted)
+        return try! JSONDecoder().decode(Json.self, from: json)
+    }()
+    
     let testBody = TestBody(testKey1: "testValue1",
                             testKey2: InnerObject(testKey3: "testValue3",
                                                   testKey4: ["1", "2", "3"]),
@@ -44,7 +49,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withoutInput_withData() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
         
         let resultDict = result.0.toDict()
@@ -58,7 +63,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withoutInput_withDecodableValue() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let result: (DennaResponse<TestBody>, HTTPURLResponse) = try await networkClient.send(request: request)
         
         let resultMethod = result.0.method
@@ -71,7 +76,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withoutInput_withThrowingDecodingFailedError() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultUrls.self))
         
         await assertThrows(expectedError: expectedError) {
@@ -80,7 +85,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withoutInput_shouldThrowFailedRequest_whenRequestWasNotSuccessfull() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, method: .GET, headers: nil, body: Data())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, method: .GET, headers: nil, body: nil)
         let expectedResponse = HTTPURLResponse(url: URL(string: "https://denna.gservice.emarsys.net/customResponseCode/404")!, statusCode: 404, httpVersion: nil, headerFields: nil)!
         let expectedError = Errors.NetworkingError.failedRequest(response: expectedResponse)
         
@@ -92,7 +97,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withInput_withData() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request, body: testBody)
         
         let resultDict = result.0.toDict()
@@ -106,7 +111,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withInput_withDecodableValue() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let result: (DennaResponse<TestBody>, HTTPURLResponse) = try await networkClient.send(request: request, body: testBody)
         
         let resultMethod = result.0.method
@@ -119,7 +124,7 @@ final class GenericNetworkClientTests: EmarsysTestCase {
     }
     
     func testSend_withInput_withThrowingDecodingFailedError() async throws {
-        let request = URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyDict.toData())
+        let request = try URLRequest.create(url: URL(string: "https://denna.gservice.emarsys.net/echo")!, method: .POST, headers: headers, body: bodyJson)
         let expectedError = Errors.TypeError.decodingFailed(type: String(describing: DefaultUrls.self))
         
         await assertThrows(expectedError: expectedError) {

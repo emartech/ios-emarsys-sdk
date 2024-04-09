@@ -56,7 +56,7 @@ struct EmarsysClient: NetworkClient {
     
     private func refreshContactToken() async throws -> String {
         let url = try sdkContext.createUrl(\.clientServiceBaseUrl, path: "/client/contact-token")
-        let refreshTokenRequest = URLRequest.create(url: url, method: .POST, body: ["refreshToken": sessionContext.refreshToken].toData())
+        let refreshTokenRequest = try URLRequest.create(url: url, method: .POST, body: ["refreshToken": sessionContext.refreshToken])
         let extendedRefreshTokenRequest = await extendRequest(request: refreshTokenRequest)
         
         let refreshResult: (Data, HTTPURLResponse) = try await networkClient.send(request: extendedRefreshTokenRequest)

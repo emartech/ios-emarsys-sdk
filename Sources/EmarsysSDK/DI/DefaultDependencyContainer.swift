@@ -126,7 +126,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var secureStorage: SecureStorage = {
-        return DefaultSecureStorage()
+        return DefaultSecureStorage(encoder: jsonEncoder, decoder: jsonDecoder)
     }()
     
     lazy var uuidProvider: any StringProvider = {

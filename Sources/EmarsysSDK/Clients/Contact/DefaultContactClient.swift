@@ -26,7 +26,7 @@ struct DefaultContactClient: ContactClient {
         body["contactFieldValue"] = contactFieldValue
         body["openIdToken"] = openIdToken
 
-        let request = URLRequest.create(url: url, method: .POST, body: body.toData())
+        let request = try URLRequest.create(url: url, method: .POST, body: body)
         try await sendContactRequest(request: request)
     }
 
@@ -35,7 +35,7 @@ struct DefaultContactClient: ContactClient {
         url.add(queryParameters: ["anonymous": "\(true)"])
         
         let body = [String: String]()
-        let request = URLRequest.create(url: url, method: .POST, body: body.toData())
+        let request = try URLRequest.create(url: url, method: .POST, body: body)
         try await sendContactRequest(request: request)
     }
 

@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum HttpMethod: String {
+enum HttpMethod: String, Codable {
     case GET
     case POST
     case PUT
@@ -14,12 +14,16 @@ enum HttpMethod: String {
 }
 
 extension URLRequest {
-    
-    static func create(url: URL, method: HttpMethod = .GET, headers: [String: String]? = nil, body: Data? = nil) -> URLRequest {
+
+    private static let encoder = JSONEncoder()
+
+    static func create(url: URL, method: HttpMethod = .GET, headers: [String: String]? = nil, body: (any Codable)? = nil) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers
-        request.httpBody = body
+        if let body {
+            request.httpBody = try encoder.encode(body)
+        }
         return request
     }
     

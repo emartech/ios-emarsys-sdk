@@ -27,7 +27,7 @@ struct DefaultEventClient: EventClient {
                                 deviceEventState: sessionContext.deviceEventState)
         
         
-        let request = URLRequest.create(url: url, method: .POST)
+        let request = try URLRequest.create(url: url, method: .POST)
         let result: (EventResponse, HTTPURLResponse) = try await networkClient.send(request: request, body: eventRequest)
         if let des = result.0.deviceEventState {
             self.sessionContext.deviceEventState = des

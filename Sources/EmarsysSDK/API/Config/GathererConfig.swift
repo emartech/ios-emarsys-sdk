@@ -2,7 +2,6 @@
 //
 // Copyright © 2024 Emarsys-Technologies Kft. All rights reserved.
 //
-        
 
 import Foundation
 
@@ -15,4 +14,9 @@ struct GathererConfig: ConfigInstance {
     func changeMerchantId(merchantId: String) async throws {
         
     }
+}
+
+enum ConfigCall: Codable {
+    case changeApplicationCode(applicationCode: String)
+    case changeMerchantId(merchantId: String)
 }

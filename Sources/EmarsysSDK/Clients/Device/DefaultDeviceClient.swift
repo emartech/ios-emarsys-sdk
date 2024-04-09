@@ -16,7 +16,7 @@ struct DefaultDeviceClient: DeviceClient {
         let deviceInfo = await deviceInfoCollector.collect()
         let deviceInfoRequestBody = DeviceInfoRequestBody(platform: deviceInfo.platform, applicationVersion: deviceInfo.applicationVersion, deviceModel: deviceInfo.deviceModel, osVersion: deviceInfo.osVersion, sdkVersion: deviceInfo.sdkVersion, language: deviceInfo.language, timezone: deviceInfo.timezone)
         
-        let request = URLRequest.create(url: url, method: .POST)
+        let request = try URLRequest.create(url: url, method: .POST)
         
         do {
             let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request, body: deviceInfoRequestBody)

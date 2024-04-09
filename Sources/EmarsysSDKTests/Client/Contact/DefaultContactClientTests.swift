@@ -54,7 +54,7 @@ final class DefaultContactClientTests: EmarsysTestCase {
             "contactFieldId": "\(contactFieldId)",
             "contactFieldValue": contactFieldValue
         ]
-        let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict.toData())
+        let expectedRequest = try URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict)
         
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
             let request: URLRequest! = params[0]
@@ -75,7 +75,7 @@ final class DefaultContactClientTests: EmarsysTestCase {
             "contactFieldId": "\(contactFieldId)",
             "openIdToken": openIdToken
         ]
-        let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict.toData())
+        let expectedRequest = try URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=false")!, body: bodyDict)
         
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
             let request: URLRequest! = params[0]
@@ -126,7 +126,7 @@ final class DefaultContactClientTests: EmarsysTestCase {
         sessionContext.contactToken = nil
         sessionContext.refreshToken = nil
         let bodyDict = [String: String]()
-        let expectedRequest = URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=true")!, body: bodyDict.toData())
+        let expectedRequest = try URLRequest.create(url: URL(string: "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/contact?anonymous=true")!, body: bodyDict)
         
         fakeNetworkClient.when(\.fnSend).replaceFunction { invocationCount, params in
             let request: URLRequest! = params[0]

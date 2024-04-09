@@ -16,13 +16,13 @@ struct DefaultPushClient: PushClient {
     func registerPushToken(_ pushToken: String) async throws {
         let url = try sdkContext.createUrl(\.clientServiceBaseUrl, path: "/client/push-token")
         let body = ["pushToken": pushToken]
-        let request = URLRequest.create(url: url, method: .PUT, body: body.toData())
+        let request = try URLRequest.create(url: url, method: .PUT, body: body)
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
     }
     
     func removePushToken() async throws {
         let url = try sdkContext.createUrl(\.clientServiceBaseUrl, path: "/client/push-token")
-        let request = URLRequest.create(url: url, method: .DELETE)
+        let request = try URLRequest.create(url: url, method: .DELETE)
         let _: (Data, HTTPURLResponse) = try await emarsysClient.send(request: request)
     }
     

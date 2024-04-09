@@ -51,7 +51,7 @@ final class LinkContactStateTests: EmarsysTestCase {
             .when(\.fnGet)
             .replaceFunction { invocationCount, params in
                 let key: String! = params[0]
-                var result: Storable?
+                var result: Codable?
                 switch key {
                 case Constants.Contact.contactFieldId:
                     result = 123
@@ -75,7 +75,7 @@ final class LinkContactStateTests: EmarsysTestCase {
             .when(\.fnGet)
             .replaceFunction { invocationCount, params in
             let key: String! = params[0]
-            var result: Storable?
+            var result: Codable?
             switch key {
             case Constants.Contact.contactFieldId:
                 result = 123

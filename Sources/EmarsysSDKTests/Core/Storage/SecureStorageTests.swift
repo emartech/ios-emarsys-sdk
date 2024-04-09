@@ -12,7 +12,7 @@ final class SecureStorageTests: EmarsysTestCase {
     var secureStorage: DefaultSecureStorage!
 
     override func setUpWithError() throws {
-        secureStorage = DefaultSecureStorage()
+        secureStorage = DefaultSecureStorage(encoder: JSONEncoder(), decoder: JSONDecoder())
     }
 #if !targetEnvironment(simulator)
     func testData() throws {
@@ -96,33 +96,35 @@ final class SecureStorageTests: EmarsysTestCase {
     }
 
     func testDictionary() throws {
-        let toStore: [String: Any] = [
+        let json = try! JSONSerialization.data(withJSONObject: [
             "key1": "testString",
             "key2": 123,
             "key3": true,
             "key4": ["1", "2"]
-        ]
+        ], options: .prettyPrinted)
+        let toStore = try! JSONDecoder().decode(Json.self, from: json)
         
         try secureStorage.put(item: toStore, key: testKey)
         
-        let result: [String: Any]? = try secureStorage.get(key: testKey)
+        let result: Json? = try secureStorage.get(key: testKey)
         
-        XCTAssertTrue(toStore.equals(dict: result!))
+        XCTAssertTrue(toStore == result!)
     }
     
     func testDictionary_withSubscript() throws {
-        let toStore: [String: Any] = [
+        let json = try! JSONSerialization.data(withJSONObject: [
             "key1": "testString",
             "key2": 123,
             "key3": true,
             "key4": ["1", "2"]
-        ]
+        ], options: .prettyPrinted)
+        let toStore = try! JSONDecoder().decode(Json.self, from: json)
         
         secureStorage[testKey] = toStore
         
-        let result: [String: Any]? = secureStorage[testKey]
+        let result: Json? = secureStorage[testKey]
         
-        XCTAssertTrue(toStore.equals(dict: result!))
+        XCTAssertTrue(toStore == result!)
     }
 #endif
 }

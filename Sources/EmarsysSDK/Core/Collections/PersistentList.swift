@@ -5,7 +5,7 @@
 
 import Foundation
 
-class PersistentList<T: Storable>: ModifiableCollection {
+class PersistentList<T: Codable>: ModifiableCollection {
     var id: String
     private var storage: SecureStorage
     private(set) var elements: [T]

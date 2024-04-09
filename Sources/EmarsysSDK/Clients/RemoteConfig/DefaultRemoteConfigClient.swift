@@ -32,7 +32,7 @@ struct DefaultRemoteConfigClient: RemoteConfigClient {
     private func fetchSignature() async throws -> Data? {
         let signatureUrlString = try sdkContext.createUrl(\.remoteConfigBaseUrl, version: "", withAppCode: false, path: "signature/\(sdkContext.config?.applicationCode ?? "")")
 
-        let signatureRequest = URLRequest.create(url: signatureUrlString)
+        let signatureRequest = try URLRequest.create(url: signatureUrlString)
 
         let result: (Data, HTTPURLResponse) = try await networkClient.send(request: signatureRequest)
         if result.1.isOk() {
@@ -45,7 +45,7 @@ struct DefaultRemoteConfigClient: RemoteConfigClient {
     private func fetchConfig() async throws -> Data? {
         let remoteConfigUrlString = try sdkContext.createUrl(\.remoteConfigBaseUrl, version: "", withAppCode: false, path: "\(sdkContext.config?.applicationCode ?? "")")
 
-        let remoteConfigRequest = URLRequest.create(url: remoteConfigUrlString)
+        let remoteConfigRequest = try URLRequest.create(url: remoteConfigUrlString)
         let result: (Data, HTTPURLResponse) = try await networkClient.send(request: remoteConfigRequest)
         if result.1.isOk() {
             return result.0

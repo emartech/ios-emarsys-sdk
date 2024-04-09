@@ -29,7 +29,8 @@ final class DefaultPushClientTests: EmarsysTestCase {
     
     func testRegisterPushToken_shouldRegisterTokenWithEmarsysClient() async throws {
         let pushToken = "testPushToken"
-        let expectedBody = ["pushToken": pushToken].toData()
+        let expectedBody = ["pushToken": pushToken]
+        let expectedData = try JSONEncoder().encode(expectedBody)
 
         var count: Int = 0
         var requestUrl: String? = nil
@@ -47,7 +48,7 @@ final class DefaultPushClientTests: EmarsysTestCase {
         
         XCTAssertEqual(count, 1)
         XCTAssertEqual(requestUrl, "https://base.me-client.eservice.emarsys.net/v3/apps/EMS11-C3FD3/client/push-token")
-        XCTAssertEqual(sentBody, expectedBody)
+        XCTAssertEqual(sentBody, expectedData)
     }
     
     func testRemovePushToken_shouldRemoveTokenWithEmarsysClient() async throws {

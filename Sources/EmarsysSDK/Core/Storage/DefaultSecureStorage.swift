@@ -7,12 +7,15 @@
 import Foundation
 
 struct DefaultSecureStorage: SecureStorage {
+
+    let encoder: JSONEncoder
+    let decoder: JSONDecoder
     
-    func put<T: Storable>(item: T?, key: String, accessGroup: String? = nil) throws {
+    func put<T: Codable>(item: T?, key: String, accessGroup: String? = nil) throws {
         var data: Data?
         
         do {
-            data = item?.toData()
+            data = try encoder.encode(item)
             
             var query = [String: Any]()
             query[kSecAttrAccount as String] = key
@@ -28,7 +31,7 @@ struct DefaultSecureStorage: SecureStorage {
         }
     }
     
-    func get<T: Storable>(key: String, accessGroup: String? = nil) throws -> T? {
+    func get<T: Codable>(key: String, accessGroup: String? = nil) throws -> T? {
         var query = [String: Any]()
         query[kSecAttrAccount as String] = key
         query[kSecClass as String] = kSecClassGenericPassword
@@ -49,7 +52,7 @@ struct DefaultSecureStorage: SecureStorage {
         guard let data = resultDict[kSecValueData as String] as? Data else {
             throw Errors.TypeError.mappingFailed(parameter: String(describing: resultDict[kSecValueData as String]), toType: String(describing: Data.self))
         }
-        return T.fromData(data)
+        return try decoder.decode(T.self, from: data)
     }
     
     private func storeItem(query: [String: Any]) throws {
@@ -73,7 +76,7 @@ struct DefaultSecureStorage: SecureStorage {
         }
     }
     
-    subscript<T: Storable>(key: String) -> T? {
+    subscript<T: Codable>(key: String) -> T? {
         get {
             return try? get(key: key, accessGroup: nil)
         }

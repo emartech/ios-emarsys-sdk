@@ -23,7 +23,7 @@ struct DeeplinkClient {
 //        var body = ["ems_dl": trackingId]
 //        let headers = ["User-Agent": userAgent]
 //
-//        let request = URLRequest.create(url: url, method: .POST, headers:headers, body: body.toData())
+//        let request = URLRequest.create(url: url, method: .POST, headers:headers, body: body)
 //
 //        let result: (Data, HTTPURLResponse) = try await networkClient.send(request: request)
 //
