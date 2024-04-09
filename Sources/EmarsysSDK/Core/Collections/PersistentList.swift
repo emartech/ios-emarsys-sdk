@@ -5,7 +5,8 @@
 
 import Foundation
 
-class PersistentList<T: Codable>: ModifiableCollection {
+class PersistentList<T: Codable & Equatable>: ModifiableCollection, Equatable {
+    
     var id: String
     private var storage: SecureStorage
     private(set) var elements: [T]
@@ -67,6 +68,10 @@ class PersistentList<T: Codable>: ModifiableCollection {
         var newElements = elements
         newElements.append(newElement)
         persistAndSet(newElements)
+    }
+    
+    static func == (lhs: PersistentList<T>, rhs: PersistentList<T>) -> Bool {
+        return lhs.elements == rhs.elements
     }
     
     private func persist() {
