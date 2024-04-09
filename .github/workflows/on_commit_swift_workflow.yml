@@ -1,4 +1,4 @@
-name: Last commit build
+name: Last commit build - Swift
 on:
   push:
     branches: [ swift ]
@@ -11,12 +11,12 @@ jobs:
     runs-on: macos-13
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
       - name: Build And Test
-        run: cd HostApp && xcodebuild test -scheme HostApp -destination "platform=iOS Simulator,name=iPhone 15,OS=17.2"
+        run: xcodebuild -scheme EmarsysSDK test -destination "platform=iOS Simulator,name=iPhone 15,OS=latest"
         shell: bash
       - if: ${{ failure() }}
         name: Slack Notification On Error
