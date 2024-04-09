@@ -21,12 +21,22 @@ final class ContactTests: EmarsysTestCase {
     @Inject(\.sdkContext)
     var sdkContext: SdkContext
     
-    @Inject(\.sdkLogger)
-    var sdkLogger:SdkLogger
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
     
-    override func setUp() async throws {
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger!
+    
+    override func setUpWithError() throws {
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        contactContext = ContactContext(calls: contactCalls)
         fakePredictContactApi = FakePredictContactApi()
-        contactContext = ContactContext()
         loggingContact = LoggingContact(logger: sdkLogger)
         gatherer = GathererContact(contactContext: contactContext)
         

@@ -14,8 +14,22 @@ final class PredictContactInternalTests: EmarsysTestCase {
     let testFieldValue = "testContactFieldValue"
     let testOpenIdToken = "testOpenIdToken"
     
+    
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger!
+    
     override func setUpWithError() throws {
-        contactContext = ContactContext()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        contactContext = ContactContext(calls: contactCalls)
         fakeContactClient = FakeContactClient()
         predictContactInternal = PredictContactInternal(contactContext: contactContext, contactClient: fakeContactClient)
         fakeContactClient
@@ -62,7 +76,9 @@ final class PredictContactInternalTests: EmarsysTestCase {
 
         let gatheredCalls =  [call1, call2, call3]
 
-        contactContext.calls = gatheredCalls
+        gatheredCalls.forEach { call in
+            contactContext.calls.append(call)
+        }
 
         var firstContactFieldId: Int! = 0
         var firstContactFieldValue: String? = nil

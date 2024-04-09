@@ -16,9 +16,22 @@ final class GathererContactTests: EmarsysTestCase {
     
     var contactContext: ContactContext!
     var gathererContact: GathererContact!
-
+    
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger!
+    
     override func setUpWithError() throws {
-        contactContext = ContactContext()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        contactContext = ContactContext(calls: contactCalls)
         gathererContact = GathererContact(contactContext: contactContext)
     }
 
@@ -53,11 +66,10 @@ final class GathererContactTests: EmarsysTestCase {
     }
     
     func testCallOrder() async throws {
-        let expectedCalls = [
-            ContactCall.linkAuthenticatedContact(testContactFieldId, testOpenIdToken),
-            ContactCall.unlinkContact,
-            ContactCall.linkContact(testContactFieldId, testContactFieldValue)
-        ]
+        let expectedCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        expectedCalls.append(ContactCall.linkAuthenticatedContact(testContactFieldId, testOpenIdToken))
+        expectedCalls.append(ContactCall.unlinkContact)
+        expectedCalls.append(ContactCall.linkContact(testContactFieldId, testContactFieldValue))
         
         try await gathererContact.linkAuthenticatedContact(contactFieldId: testContactFieldId, openIdToken: testOpenIdToken)
         try await gathererContact.unlinkContact()

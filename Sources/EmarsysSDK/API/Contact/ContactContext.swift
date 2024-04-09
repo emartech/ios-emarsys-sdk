@@ -7,10 +7,14 @@ import Foundation
 
 @SdkActor
 class ContactContext {
-    var calls = [ContactCall]()
+    let calls: PersistentList<ContactCall>
+    
+    init(calls: PersistentList<ContactCall>) {
+        self.calls = calls
+    }
 }
 
-enum ContactCall: Equatable {
+enum ContactCall: Codable, Equatable {
     case linkContact(Int, String)
     case linkAuthenticatedContact(Int, String)
     case unlinkContact
