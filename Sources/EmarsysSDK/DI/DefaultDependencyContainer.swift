@@ -39,7 +39,8 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     // MARK: Api
     
     lazy var contactApi: ContactApi = {
-        let contactContext = ContactContext()
+        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let contactContext = ContactContext(calls: contactCalls)
         
         let loggingContact = LoggingContact(logger: sdkLogger)
         let gathererContact = GathererContact(contactContext: contactContext)
@@ -53,7 +54,8 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var eventApi: EventApi = {
-        let eventContext = EventContext()
+        let eventCalls = try! PersistentList<EventCall>(id: "eventCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let eventContext = EventContext(calls: eventCalls)
         let loggingEvent = LoggingEvent(logger: sdkLogger)
         let gathererEvent = GathererEvent(eventContext: eventContext)
         let eventInternal = EventInternal(eventContext: eventContext,

@@ -10,9 +10,22 @@ import XCTest
 final class GathererEventTests: EmarsysTestCase {
     var gathererEvent: GathererEvent!
     var eventContext: EventContext!
-
+    
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger!
+    
     override func setUpWithError() throws {
-        eventContext = EventContext()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let eventCalls = try! PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        eventContext = EventContext(calls: eventCalls)
         gathererEvent = GathererEvent(eventContext: eventContext)
     }
 
@@ -36,11 +49,12 @@ final class GathererEventTests: EmarsysTestCase {
         let attributes2 = ["key2":"value2"]
         let eventName3 = "testName3"
         let attributes3 = ["key3":"value3"]
-        let expectedCalls = [
+        
+        let expectedCalls = try PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, elements: [
             EventCall.trackCustomEvent(eventName, attributes),
             EventCall.trackCustomEvent(eventName2, attributes2),
             EventCall.trackCustomEvent(eventName3, attributes3)
-        ]
+        ], sdkLogger: sdkLogger)
 
         try await gathererEvent.trackCustomEvent(name: eventName, attributes: attributes)
         try await gathererEvent.trackCustomEvent(name: eventName2, attributes: attributes2)

@@ -8,9 +8,13 @@ import Foundation
 
 @SdkActor
 class EventContext {
-    var calls = [EventCall]()
+    let calls: PersistentList<EventCall>
+    
+    init(calls: PersistentList<EventCall>) {
+        self.calls = calls
+    }
 }
 
-enum EventCall: Equatable {
+enum EventCall: Codable, Equatable {
     case trackCustomEvent(String, [String: String]?)
 }

@@ -18,12 +18,22 @@ class EventTests: EmarsysTestCase {
     @Inject(\.sdkContext)
     var sdkContext: SdkContext
     
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
     @Inject(\.sdkLogger)
-    var sdkLogger:SdkLogger
+    var sdkLogger: SdkLogger!
     
     override func setUpWithError() throws {
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let calls = try! PersistentList<EventCall>(id: "eventCalls", storage: self.fakeSecureStorage, sdkLogger: self.sdkLogger)
+        eventContext = EventContext(calls: calls)
         timestampProvider = TimestampProvider()
-        eventContext = EventContext()
         fakeEventInternal = FakeEventApi()
         gathererEvent = GathererEvent(eventContext: eventContext)
         loggingEvent = LoggingEvent(logger: sdkLogger)

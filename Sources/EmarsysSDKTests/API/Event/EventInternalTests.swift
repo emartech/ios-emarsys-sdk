@@ -16,9 +16,23 @@ final class EventInternalTests: EmarsysTestCase {
     
     @Inject(\.eventClient)
     var fakeEventClient: FakeEventClient!
-
+    
+    @Inject(\.secureStorage)
+    var fakeSecureStorage: FakeSecureStorage!
+    
+    @Inject(\.sdkLogger)
+    var sdkLogger: SdkLogger!
+    
     override func setUpWithError() throws {
-        eventContext = EventContext()
+        fakeSecureStorage
+            .when(\.fnGet)
+            .thenReturn(nil)
+        fakeSecureStorage
+            .when(\.fnPut)
+            .thenReturn(())
+        let calls = try! PersistentList<EventCall>(id: "eventCalls", storage: self.fakeSecureStorage, sdkLogger: self.sdkLogger)
+        eventContext = EventContext(calls: calls)
+        
         timeStampProvider = TimestampProvider()
         eventInternal = EventInternal(eventContext: eventContext, eventClient: fakeEventClient, timestampProvider: timeStampProvider)
     }
@@ -52,7 +66,9 @@ final class EventInternalTests: EmarsysTestCase {
             EventCall.trackCustomEvent(eventName3, eventAttributes3)
         ]
 
-        eventContext.calls = gatheredCalls
+        gatheredCalls.forEach { call in
+            eventContext.calls.append(call)
+        }
 
         var name: String? = nil
         var attributes: [String:String]? = nil
