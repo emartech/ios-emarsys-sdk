@@ -5,14 +5,14 @@
 
 import Foundation
 
-
+@SdkActor
 protocol PredictApi {
-    func track(cart items: [CartItem])
-    func track(purchase orderId: String, _ items: [CartItem])
-    func track(itemView itemId: String)
-    func track(categoryView categoryPath: String)
-    func track(searchTerm: String)
-    func track(_ tag: String, _ attributes: [String: String]?)
-    func track(recommendationClick product: Product)
-    func recommendProducts(_ logic: Logic, filters: [Filter]?, limit: Int?, availabilityZone: String?) async -> [Product]
+    func trackCart(items: [CartItem])
+    func trackPurchase(orderId: String, items: [CartItem])
+    func trackItemView(itemId: String)
+    func trackCategoryView(categoryPath: String)
+    func trackSearchTerm(_ searchTerm: String)
+    func trackTag(_ tag: String, attributes: [String: String]?)
+    func trackRecommendationClick(product: Product)
+    func recommendProducts(logic: Logic, filters: [Filter]?, limit: Int?, availabilityZone: String?) async -> [Product]
 }

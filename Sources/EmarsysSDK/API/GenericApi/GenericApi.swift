@@ -46,7 +46,7 @@ class GenericApi<LoggingApiInstance: ActivationAware, GathererApiInstance: Activ
     
     func internalInstance(features: [Feature]) -> ActivationAware {
         var result: ActivationAware = loggingInstance
-        if features.contains(.mobileEngage) {
+        if features.contains(.mobileEngage) || features.contains(.predict) {
             result = internalInstance
         }
         return result

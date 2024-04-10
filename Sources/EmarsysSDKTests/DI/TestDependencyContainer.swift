@@ -133,6 +133,10 @@ class TestDependencyContainer: DependencyContainer {
         return FakeConfigInternal()
     }()
     
+    lazy var predictInternal: any PredictInstance = {
+        return FakePredictApi()
+    }()
+    
     func setup() async {
     }
 }
