@@ -125,6 +125,33 @@ final class PredictTests: EmarsysTestCase {
             .verify(\.fnTrackRecommendationClick)
             .wasCalled(Arg.eq(product))
     }
+
+    func testRecommendProducts_shouldDelegateToInstance() async throws {
+        let logicName = "testLogic"
+        let data = ["key1": "value1"]
+        let variants = ["var1", "var2"]
+        let logic = Logic(logicName: logicName, data: data, variants: variants)
+        let filters = [Filter(type: .include, field: "testField", comparison: .in, value: "test")]
+        let limit = 100
+        let availabilityZone = "testZone"
+        let expectedProducts = [
+        RecommendedProduct(productId: "testId", title: "title", linkUrl: "linkURL", feature: "feature", cohort: "cohort"),
+        RecommendedProduct(productId: "testId2", title: "title2", linkUrl: "linkURL2", feature: "feature2", cohort: "cohort2")
+        ]
+       
+        self.fakePredictInternal.when(\.fnRecommendProducts).thenReturn(expectedProducts)
+        
+        let result = await self.predict.recommendProducts(logic: logic, filters: filters, limit: limit, availabilityZone: availabilityZone)
+        
+        let _ = try! self.fakePredictInternal
+            .verify(\.fnRecommendProducts)
+            .wasCalled(Arg.eq(logic),
+                       Arg.eq(filters),
+                       Arg.eq(limit),
+                       Arg.eq(availabilityZone)
+            )
+        XCTAssertEqual(result as! [RecommendedProduct], expectedProducts)
+    }
 }
 
 struct TestCartItem: CartItem {

@@ -6,7 +6,7 @@
 import Foundation
 
 
-struct RecommendedProduct: Product {
+struct RecommendedProduct: Product, Equatable {
     let productId: String
     let title: String
     let linkUrl: String

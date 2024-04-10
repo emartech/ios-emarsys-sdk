@@ -59,6 +59,10 @@ class Predict<LoggingInstance: PredictInstance, GathererInstance: PredictInstanc
     }
     
     func recommendProducts(logic: Logic, filters: [Filter]?, limit: Int?, availabilityZone: String?) async -> [any Product] {
-        return []
+        return if let active = self.active as? PredictApi {
+            await active.recommendProducts(logic: logic, filters: filters, limit: limit, availabilityZone: availabilityZone)
+        } else {
+            []
+        }
     }
 }
