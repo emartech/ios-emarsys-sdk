@@ -25,7 +25,7 @@ final class GathererConfigTests: EmarsysTestCase {
         fakeSecureStorage
             .when(\.fnPut)
             .thenReturn(())
-        let configCalls = try! PersistentList<ConfigCall>(id: "configCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        let configCalls = PersistentList<ConfigCall>(id: "configCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
         configContext = ConfigContext(calls: configCalls)
         gathererConfig = GathererConfig(configContext: configContext)
     }
@@ -50,16 +50,16 @@ final class GathererConfigTests: EmarsysTestCase {
 
 
     func testCallOrder() async throws {
-        let expectedCalls = try PersistentList<ConfigCall>(id: "configCalls", storage: fakeSecureStorage, elements: [
+        let expectedCalls = PersistentList<ConfigCall>(id: "configCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger, elements: [
             ConfigCall.changeMerchantId(merchantId: "testMerchantId"),
             ConfigCall.changeApplicationCode(applicationCode: "testApplicationCode")
-        ], sdkLogger: sdkLogger)
+        ])
 
         try await gathererConfig.changeMerchantId(merchantId: "testMerchantId")
         try await gathererConfig.changeApplicationCode(applicationCode: "testApplicationCode")
 
         XCTAssertEqual(configContext.calls.count, 2)
-        XCTAssertEqual(expectedCalls, configContext.calls)
+        XCTAssertEqual(expectedCalls, configContext.calls as! PersistentList<ConfigCall>)
     }
     
 }

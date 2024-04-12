@@ -7,8 +7,11 @@
 import Foundation
 
 @globalActor
-struct SdkActor {
-    actor ActorType { }
-
-    static let shared: ActorType = ActorType()
+actor SdkActor {
+    
+    static let shared = SdkActor()
+    
+    func run(_ runnable: () async -> (Void)) async {
+        await runnable()
+    }
 }

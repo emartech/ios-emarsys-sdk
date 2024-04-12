@@ -39,7 +39,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     // MARK: Api
     
     lazy var configApi: ConfigApi = {
-        let configCalls = try! PersistentList<ConfigCall>(id: "configCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let configCalls = PersistentList<ConfigCall>(id: "configCalls", storage: secureStorage, sdkLogger: sdkLogger)
         let configContext = ConfigContext(calls: configCalls)
         let loggingConfig = LoggingConfig(logger: sdkLogger)
         let gathererConfig = GathererConfig(configContext: configContext)
@@ -52,7 +52,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var contactApi: ContactApi = {
-        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let contactCalls = PersistentList<ContactCall>(id: "contactCalls", storage: secureStorage, sdkLogger: sdkLogger)
         let contactContext = ContactContext(calls: contactCalls)
         
         let loggingContact = LoggingContact(logger: sdkLogger)
@@ -67,7 +67,7 @@ struct DefaultDependencyContainer: DependencyContainer, ResourceLoader {
     }()
     
     lazy var eventApi: EventApi = {
-        let eventCalls = try! PersistentList<EventCall>(id: "eventCalls", storage: secureStorage, sdkLogger: sdkLogger) //TODO: error? try?
+        let eventCalls = PersistentList<EventCall>(id: "eventCalls", storage: secureStorage, sdkLogger: sdkLogger)
         let eventContext = EventContext(calls: eventCalls)
         let loggingEvent = LoggingEvent(logger: sdkLogger)
         let gathererEvent = GathererEvent(eventContext: eventContext)

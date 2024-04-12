@@ -30,7 +30,7 @@ final class GathererContactTests: EmarsysTestCase {
         fakeSecureStorage
             .when(\.fnPut)
             .thenReturn(())
-        let contactCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        let contactCalls = PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
         contactContext = ContactContext(calls: contactCalls)
         gathererContact = GathererContact(contactContext: contactContext)
     }
@@ -66,7 +66,7 @@ final class GathererContactTests: EmarsysTestCase {
     }
     
     func testCallOrder() async throws {
-        let expectedCalls = try! PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        var expectedCalls = PersistentList<ContactCall>(id: "contactCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
         expectedCalls.append(ContactCall.linkAuthenticatedContact(testContactFieldId, testOpenIdToken))
         expectedCalls.append(ContactCall.unlinkContact)
         expectedCalls.append(ContactCall.linkContact(testContactFieldId, testContactFieldValue))
@@ -76,7 +76,7 @@ final class GathererContactTests: EmarsysTestCase {
         try await gathererContact.linkContact(contactFieldId: testContactFieldId, contactFieldValue: testContactFieldValue)
         
         XCTAssertEqual(contactContext.calls.count, 3)
-        XCTAssertEqual(expectedCalls, contactContext.calls)
+        XCTAssertEqual(expectedCalls, contactContext.calls as! PersistentList<ContactCall>)
     }
 
 }

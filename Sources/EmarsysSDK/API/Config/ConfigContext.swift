@@ -8,9 +8,9 @@ import Foundation
 
 @SdkActor
 class ConfigContext {
-    let calls: PersistentList<ConfigCall>
+    var calls: any RangeReplaceableCollection<ConfigCall>
     
-    init(calls: PersistentList<ConfigCall>) {
+    init(calls: any RangeReplaceableCollection<ConfigCall>) {
         self.calls = calls
     }
 }

@@ -1,93 +1,114 @@
 //
 //
-// Copyright © 2023. Emarsys-Technologies Kft. All rights reserved.
+// Copyright © 2024. Emarsys-Technologies Kft. All rights reserved.
 //
 
 import Foundation
 
-class PersistentList<T: Codable & Equatable>: ModifiableCollection, Equatable {
+class PersistentList<Element: Codable & Equatable>: RandomAccessCollection & MutableCollection & Sequence & RangeReplaceableCollection, Equatable {
     
-    var id: String
-    private var storage: SecureStorage
-    private(set) var elements: [T]
-    var sdkLogger: SdkLogger
+    private var id: String?
+    private var storage: SecureStorage?
+    private var sdkLogger: SdkLogger?
     
+    private var elements: [Element]
+    
+    typealias Element = Element
     typealias Index = Int
-    typealias Element = T
     
-    init(id: String, storage: SecureStorage, sdkLogger: SdkLogger) throws {
+    init(id: String, storage: SecureStorage, sdkLogger: SdkLogger) {
         self.id = id
         self.storage = storage
         self.sdkLogger = sdkLogger
-        if let elements: [T] = try storage.get(key: id, accessGroup: nil) {
-            self.elements = elements
-        }
-        else {
-            self.elements = []
+        do {
+            if let elements: [Element] = try storage.get(key: id, accessGroup: nil) {
+                self.elements = elements
+            } else {
+                self.elements = [Element]()
+                persist()
+            }
+        } catch {
+            elements = [Element]()
             persist()
+            Task { @SdkActor in
+                let logEntry = LogEntry(topic: "PersistentList",
+                                        data: ["message": "Retrieving list failed.",
+                                               "error" : error.localizedDescription]
+                )
+                self.sdkLogger?.log(logEntry: logEntry, level: .error)
+            }
         }
     }
     
-    init(id: String, storage: SecureStorage, elements: [T], sdkLogger: SdkLogger) throws {
+    init(id: String, storage: SecureStorage, sdkLogger: SdkLogger, elements: [Element]) {
         self.id = id
         self.storage = storage
-        self.elements = elements
         self.sdkLogger = sdkLogger
+        self.elements = elements
         persist()
     }
     
+    required init() {
+        self.id = nil
+        self.storage = nil
+        self.sdkLogger = nil
+        self.elements = [Element]()
+        assert(false, "Init called unintentionally.")
+    }
+    
     var startIndex: Int {
-        get {
-            return elements.startIndex
-        }
+        elements.startIndex
     }
     
     var endIndex: Int {
-        get {
-            return elements.endIndex
+        elements.endIndex
+    }
+    
+    func replaceSubrange<C>(_ subrange: Range<Int>, with newElements: C) where C : Collection, Element == C.Element {
+        let elements = self.elements
+        self.elements.replaceSubrange(subrange, with: newElements)
+        persist() {
+            self.elements = elements
         }
+    }
+    
+    func removeAll(keepingCapacity keepCapacity: Bool) {
+        self.elements.removeAll(keepingCapacity: keepCapacity)
+        persist()
     }
     
     subscript(position: Index) -> Element {
         get {
             return elements[position]
         }
-        
         set {
-            var newElements = elements
-            newElements[position] = newValue
-            persistAndSet(newElements)
+            let elements = self.elements
+            self.elements[position] = newValue
+            persist() {
+                self.elements = elements
+            }
         }
     }
     
-    func index(after i: Int) -> Int {
-        elements.index(after: i)
-    }
-    
-    func append(_ newElement: Element) {
-        var newElements = elements
-        newElements.append(newElement)
-        persistAndSet(newElements)
-    }
-    
-    static func == (lhs: PersistentList<T>, rhs: PersistentList<T>) -> Bool {
+    static func == (lhs: PersistentList<Element>, rhs: PersistentList<Element>) -> Bool {
         return lhs.elements == rhs.elements
     }
     
-    private func persist() {
-        persistAndSet(elements)
-    }
-    
-    private func persistAndSet(_ newElements: [Element]) {
-        do {
-            try storage.put(item: newElements, key: id, accessGroup: nil)
-            elements = newElements
-        } catch {
-            let logEntry = LogEntry(topic: "PersistentList",
-                                    data: ["message": "persisting list failed.",
-                                           "error" : error.localizedDescription]
-            )
-            sdkLogger.log(logEntry: logEntry, level: .error)
+    private func persist(_ onError: (() -> ())? = nil) {
+        if let storage = self.storage, let id = self.id, let logger = self.sdkLogger {
+            do {
+                try storage.put(item: self.elements, key: id, accessGroup: nil)
+            } catch {
+                if let onError {
+                    onError()
+                }
+                Task { @SdkActor in
+                    let logEntry = LogEntry(topic: "PersistentList",
+                                            data: ["message": "persisting list failed.",
+                                                   "error" : error.localizedDescription])
+                    logger.log(logEntry: logEntry, level: .error)
+                }
+            }
         }
     }
     

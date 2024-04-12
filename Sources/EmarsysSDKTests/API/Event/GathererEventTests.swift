@@ -24,7 +24,7 @@ final class GathererEventTests: EmarsysTestCase {
         fakeSecureStorage
             .when(\.fnPut)
             .thenReturn(())
-        let eventCalls = try! PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
+        let eventCalls = PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger)
         eventContext = EventContext(calls: eventCalls)
         gathererEvent = GathererEvent(eventContext: eventContext)
     }
@@ -50,18 +50,18 @@ final class GathererEventTests: EmarsysTestCase {
         let eventName3 = "testName3"
         let attributes3 = ["key3":"value3"]
         
-        let expectedCalls = try PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, elements: [
+        let expectedCalls = PersistentList<EventCall>(id: "eventCalls", storage: fakeSecureStorage, sdkLogger: sdkLogger, elements: [
             EventCall.trackCustomEvent(eventName, attributes),
             EventCall.trackCustomEvent(eventName2, attributes2),
             EventCall.trackCustomEvent(eventName3, attributes3)
-        ], sdkLogger: sdkLogger)
+        ])
 
         try await gathererEvent.trackCustomEvent(name: eventName, attributes: attributes)
         try await gathererEvent.trackCustomEvent(name: eventName2, attributes: attributes2)
         try await gathererEvent.trackCustomEvent(name: eventName3, attributes: attributes3)
 
         XCTAssertEqual(eventContext.calls.count, 3)
-        XCTAssertEqual(expectedCalls, eventContext.calls)
+        XCTAssertEqual(expectedCalls, eventContext.calls as! PersistentList<EventCall>)
     }
     
 }

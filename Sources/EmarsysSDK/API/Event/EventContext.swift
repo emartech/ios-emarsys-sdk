@@ -8,9 +8,9 @@ import Foundation
 
 @SdkActor
 class EventContext {
-    let calls: PersistentList<EventCall>
+    var calls: any RangeReplaceableCollection<EventCall>
     
-    init(calls: PersistentList<EventCall>) {
+    init(calls: any RangeReplaceableCollection<EventCall>) {
         self.calls = calls
     }
 }

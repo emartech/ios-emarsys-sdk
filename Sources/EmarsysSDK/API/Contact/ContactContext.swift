@@ -7,9 +7,9 @@ import Foundation
 
 @SdkActor
 class ContactContext {
-    let calls: PersistentList<ContactCall>
+    var calls: any RangeReplaceableCollection<ContactCall>
     
-    init(calls: PersistentList<ContactCall>) {
+    init(calls: any RangeReplaceableCollection<ContactCall>) {
         self.calls = calls
     }
 }
