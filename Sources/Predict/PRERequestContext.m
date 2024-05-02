@@ -73,4 +73,9 @@
     }
 }
 
+- (void)reset {
+    self.contactFieldId = nil;
+    self.contactFieldValue = nil;
+}
+
 @end

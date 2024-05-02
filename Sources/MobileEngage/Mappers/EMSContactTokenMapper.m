@@ -20,7 +20,7 @@
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
-    return ![url hasSuffix:@"/client/contact-token"] && ([self.endpoint isMobileEngageUrl:url]);
+    return ((![url hasSuffix:@"/client/contact-token"] && ([self.endpoint isMobileEngageUrl:url])) || ([url hasPrefix:[self.endpoint contactUrlPredictOnly]]));
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {

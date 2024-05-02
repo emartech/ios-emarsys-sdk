@@ -89,6 +89,9 @@
 #import "EMSSdkStateLogger.h"
 #import "EMSInMemoryStorage.h"
 #import "EMSDeviceEventStateRequestMapper.h"
+#import "EMSContactClientInternal.h"
+#import "EMSLoggingContactClientInternal.h"
+#import "EMSMobileEngageV3Internal.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 
@@ -102,6 +105,8 @@
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> mobileEngage;
 @property(nonatomic, strong) id <EMSMobileEngageProtocol> loggingMobileEngage;
+@property(nonatomic, strong) id <EMSContactClientProtocol> contactClient;
+@property(nonatomic, strong) id <EMSContactClientProtocol> loggingContactClient;
 @property(nonatomic, strong) id <EMSDeepLinkProtocol> deepLink;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> push;
 @property(nonatomic, strong) id <EMSPushNotificationProtocol> loggingPush;
@@ -132,6 +137,7 @@
 @property(nonatomic, strong) EMSQueueDelegator *predictDelegator;
 
 @property(nonatomic, strong) EMSQueueDelegator *mobileEngageDelegator;
+@property(nonatomic, strong) EMSQueueDelegator *contactClientDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *deepLinkDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *pushDelegator;
 @property(nonatomic, strong) EMSQueueDelegator *notificationCenterDelegateDelegator;
@@ -148,6 +154,7 @@
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, copy) RouterLogicBlock mobileEngageRouterLogicBlock;
 @property(nonatomic, copy) RouterLogicBlock predictRouterLogicBlock;
+@property(nonatomic, copy) RouterLogicBlock contactRouterLogicBlock;
 @property(nonatomic, strong) EMSSession *session;
 
 - (void)initializeDependenciesWithConfig:(EMSConfig *)config;
@@ -163,60 +170,65 @@
         _publicApiOperationQueue.maxConcurrentOperationCount = 1;
         _publicApiOperationQueue.qualityOfService = NSQualityOfServiceUserInitiated;
         _publicApiOperationQueue.name = [NSString stringWithFormat:@"public_api_queue_%@",
-                                                                   [self.uuidProvider provideUUIDString]];
+                                         [self.uuidProvider provideUUIDString]];
         _coreOperationQueue = [EMSOperationQueue new];
         _coreOperationQueue.maxConcurrentOperationCount = 1;
         _coreOperationQueue.qualityOfService = NSQualityOfServiceUtility;
         _coreOperationQueue.name = [NSString stringWithFormat:@"core_sdk_queue_%@",
-                                                              [self.uuidProvider provideUUIDString]];
-
+                                    [self.uuidProvider provideUUIDString]];
+        
         _predictDelegator = [EMSQueueDelegator alloc];
         [self.predictDelegator setupWithQueue:self.publicApiOperationQueue
                                   emptyTarget:[EMSPredictInternal new]];
         _predict = (id <EMSPredictProtocol, EMSPredictInternalProtocol>) self.predictDelegator;
-
+        
         _mobileEngageDelegator = [EMSQueueDelegator alloc];
         [self.mobileEngageDelegator setupWithQueue:self.publicApiOperationQueue
                                        emptyTarget:[EMSMobileEngageV3Internal new]];
         _mobileEngage = (id <EMSMobileEngageProtocol>) self.mobileEngageDelegator;
-
+        
+        _contactClientDelegator = [EMSQueueDelegator alloc];
+        [self.contactClientDelegator setupWithQueue:self.publicApiOperationQueue
+                                        emptyTarget:[EMSContactClientInternal new]];
+        _contactClient = (id <EMSContactClientProtocol>) self.contactClientDelegator;
+        
         _deepLinkDelegator = [EMSQueueDelegator alloc];
         [self.deepLinkDelegator setupWithQueue:self.publicApiOperationQueue
                                    emptyTarget:[EMSDeepLinkInternal new]];
         _deepLink = (id <EMSDeepLinkProtocol>) self.deepLinkDelegator;
-
+        
         _pushDelegator = [EMSQueueDelegator alloc];
         [self.pushDelegator setupWithQueue:self.publicApiOperationQueue
                                emptyTarget:[EMSPushV3Internal new]];
         _push = (id <EMSPushNotificationProtocol>) self.pushDelegator;
-
+        
         _messageInboxDelegator = [EMSQueueDelegator alloc];
         [self.messageInboxDelegator setupWithQueue:self.publicApiOperationQueue
                                        emptyTarget:[EMSInboxV3 new]];
         _messageInbox = (id <EMSMessageInboxProtocol>) self.messageInboxDelegator;
-
+        
         _configDelegator = [EMSQueueDelegator alloc];
         [self.configDelegator setupWithQueue:self.publicApiOperationQueue
                                  emptyTarget:[EMSConfigInternal new]];
         _config = (id <EMSConfigProtocol>) self.configDelegator;
-
+        
         _geofenceDelegator = [EMSQueueDelegator alloc];
         [self.geofenceDelegator setupWithQueue:self.publicApiOperationQueue
                                    emptyTarget:[EMSGeofenceInternal new]];
         _geofence = (id <EMSGeofenceProtocol>) self.geofenceDelegator;
-
+        
         _iamDelegator = [EMSQueueDelegator alloc];
         [self.iamDelegator setupWithQueue:self.publicApiOperationQueue
                               emptyTarget:[MEInApp new]];
         _iam = (id <EMSInAppProtocol, MEIAMProtocol>) self.iamDelegator;
-
+        
         _onEventActionDelegator = [EMSQueueDelegator alloc];
         [self.onEventActionDelegator setupWithQueue:self.publicApiOperationQueue
                                         emptyTarget:[EMSOnEventActionInternal new]];
         _onEventAction = (id <EMSOnEventActionProtocol>) self.onEventActionDelegator;
-
+        
         _locationManager = [CLLocationManager new];
-
+        
         NSBlockOperation *initOperation = [NSBlockOperation blockOperationWithBlock:^{
             [self initializeDependenciesWithConfig:config];
         }];
@@ -237,36 +249,40 @@
                                                                                   valueKey:@"DEEPLINK_URL"];
     EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
-
+    
     UIApplication *application = [UIApplication sharedApplication];
-
+    
     _mobileEngageRouterLogicBlock = ^BOOL {
         return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
     };
-
+    
     _predictRouterLogicBlock = ^BOOL {
         return [MEExperimental isFeatureEnabled:[EMSInnerFeature predict]];
     };
-
+    
+    _contactRouterLogicBlock = ^BOOL {
+        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]] || [MEExperimental isFeatureEnabled:[EMSInnerFeature predict]];
+    };
+    
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
                                                    predictUrlProvider:predictUrlProvider
                                                   deeplinkUrlProvider:deeplinkUrlProvider
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
-
+    
     EMSRandomProvider *randomProvider = [EMSRandomProvider new];
     EMSTimestampProvider *timestampProvider = [EMSTimestampProvider new];
-
+    
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage", @"com.emarsys.sdk"];
     EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
-                                          accessGroup:config.sharedKeychainAccessGroup];
+                                                     accessGroup:config.sharedKeychainAccessGroup];
     _storage = [[EMSInMemoryStorage alloc] initWithStorage:storage];
-
+    
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:EMARSYS_SDK_VERSION
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
                                                                   storage:storage
                                                              uuidProvider:self.uuidProvider];
-
+    
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:config.applicationCode
                                                            uuidProvider:self.uuidProvider
                                                       timestampProvider:timestampProvider
@@ -281,14 +297,15 @@
                                                schemaDelegate:[EMSSqliteSchemaHandler new]];
     MEDisplayedIAMRepository *displayedIAMRepository = [[MEDisplayedIAMRepository alloc] initWithDbHelper:self.dbHelper];
     _buttonClickRepository = [[MEButtonClickRepository alloc] initWithDbHelper:self.dbHelper];
-
+    
     EMSSessionIdHolder *sessionIdHolder = [EMSSessionIdHolder new];
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.requestContext
+                                                  predictRequestContext:self.predictRequestContext
                                                                endpoint:self.endpoint
                                                   buttonClickRepository:self.buttonClickRepository
                                                         sessionIdHolder:sessionIdHolder
                                                                 storage:self.storage];
-
+    
     _loggingIam = [EMSLoggingInApp new];
     MEInApp *meInApp = [[MEInApp alloc] initWithWindowProvider:[[EMSWindowProvider alloc] initWithViewControllerProvider:[EMSViewControllerProvider new]
                                                                                                            sceneProvider:[[EMSSceneProvider alloc] initWithApplication:[UIApplication sharedApplication]]]
@@ -301,11 +318,11 @@
     EMSInstanceRouter *iamInstanceRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:meInApp
                                                                               loggingInstance:self.loggingIam
                                                                                   routerLogic:self.mobileEngageRouterLogicBlock];
-
+    
     [self.iamDelegator proxyWithInstanceRouter:iamInstanceRouter];
-
+    
     [_dbHelper open];
-
+    
     EMSShardRepository *shardRepository = [[EMSShardRepository alloc] initWithDbHelper:self.dbHelper];
     MERequestModelRepositoryFactory *requestRepositoryFactory = [[MERequestModelRepositoryFactory alloc] initWithInApp:self.iam
                                                                                                         requestContext:self.requestContext
@@ -315,9 +332,9 @@
                                                                                                               endpoint:self.endpoint
                                                                                                         operationQueue:self.coreOperationQueue
                                                                                                                storage:self.storage];
-
+    
     _requestRepository = [requestRepositoryFactory createWithBatchCustomEventProcessing:YES];
-
+    
     _logger = [[EMSLogger alloc] initWithShardRepository:shardRepository
                                           opertaionQueue:self.coreOperationQueue
                                        timestampProvider:timestampProvider
@@ -326,26 +343,26 @@
                                           wrapperChecker:[[EMSWrapperChecker alloc] initWithOperationQueue:self.coreOperationQueue
                                                                                                     waiter:[EMSDispatchWaiter new]]];
     [self.logger setConsoleLogLevels:config.enabledConsoleLogLevels];
-
+    
     EMSCompletionMiddleware *middleware = [self createMiddleware];
-
+    
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     [sessionConfiguration setTimeoutIntervalForRequest:30.0];
     [sessionConfiguration setHTTPCookieStorage:nil];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                           delegate:nil
                                                      delegateQueue:self.coreOperationQueue];
-
+    
     EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                               mobileEngage:self.mobileEngage];
-
+    
     EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSOnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
                                                                                 loggingInstance:[EMSLoggingOnEventActionInternal new]
                                                                                     routerLogic:^BOOL {
-                                                                                        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
-                                                                                    }];
+        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+    }];
     [self.onEventActionDelegator proxyWithInstanceRouter:onEventActionRouter];
-
+    
     EMSContactTokenResponseHandler *contactTokenResponseHandler = [[EMSContactTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                                                         endpoint:self.endpoint];
     _responseHandlers = [NSMutableArray array];
@@ -368,24 +385,24 @@
     [self.responseHandlers addObject:[[EMSRefreshTokenResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                                            endpoint:self.endpoint]];
     [self.responseHandlers addObject:contactTokenResponseHandler];
-
+    
     _restClient = [[EMSRESTClient alloc] initWithSession:session
                                                    queue:self.coreOperationQueue
                                        timestampProvider:timestampProvider
                                        additionalHeaders:[MEDefaultHeaders additionalHeaders]
                                      requestModelMappers:@[
-                                             [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                          endpoint:self.endpoint],
-                                             [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
-                                                                                          endpoint:self.endpoint],
-                                             [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
-                                                                                         endpoint:self.endpoint],
-                                             [[EMSDeviceEventStateRequestMapper alloc] initWithEndpoint:self.endpoint
-                                                                                                storage:self.storage]
-                                     ]
+        [[EMSContactTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                     endpoint:self.endpoint],
+        [[EMSMobileEngageMapper alloc] initWithRequestContext:self.requestContext
+                                                     endpoint:self.endpoint],
+        [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
+                                                    endpoint:self.endpoint],
+        [[EMSDeviceEventStateRequestMapper alloc] initWithEndpoint:self.endpoint
+                                                           storage:self.storage]
+    ]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
-
+    
     EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSCompletionProxyFactory alloc] initWithRequestRepository:self.requestRepository
                                                                                                       operationQueue:self.coreOperationQueue
                                                                                                  defaultSuccessBlock:middleware.successBlock
@@ -395,9 +412,9 @@
                                                                                               contactResponseHandler:contactTokenResponseHandler
                                                                                                             endpoint:self.endpoint
                                                                                                              storage:self.storage];
-
+    
     EMSReachability *reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.coreOperationQueue];
-
+    
     EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachability
                                                                            operationQueue:self.coreOperationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.coreOperationQueue
@@ -406,7 +423,7 @@
                                                                      restClient:self.restClient
                                                                      errorBlock:middleware.errorBlock
                                                                    proxyFactory:proxyFactory];
-
+    
     _requestManager = [[EMSRequestManager alloc] initWithCoreQueue:self.coreOperationQueue
                                               completionMiddleware:middleware
                                                         restClient:self.restClient
@@ -414,19 +431,19 @@
                                                  requestRepository:self.requestRepository
                                                    shardRepository:shardRepository
                                                       proxyFactory:proxyFactory];
-
+    
     _session = [[EMSSession alloc] initWithSessionIdHolder:sessionIdHolder
                                             requestManager:self.requestManager
                                             requestFactory:self.requestFactory
                                             operationQueue:self.coreOperationQueue
                                          timestampProvider:timestampProvider];
-
+    
     [self.responseHandlers addObject:[[EMSOnEventResponseHandler alloc] initWithRequestManager:self.requestManager
                                                                                 requestFactory:self.requestFactory
                                                                         displayedIAMRepository:displayedIAMRepository
                                                                                  actionFactory:onEventActionFactory
                                                                              timestampProvider:timestampProvider]];
-
+    
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
         _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                                 specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
@@ -443,7 +460,7 @@
                                    triggerEvent:EMSDBTriggerEvent.insertEvent
                                         trigger:self.predictTrigger];
     }
-
+    
     _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%%"
                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
@@ -459,12 +476,12 @@
                                 triggerType:EMSDBTriggerType.afterType
                                triggerEvent:EMSDBTriggerEvent.insertEvent
                                     trigger:self.loggerTrigger];
-
+    
     _deviceInfoClient = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                            deviceInfo:deviceInfo
                                                                        requestContext:self.requestContext];
-
+    
     EMSPredictRequestModelBuilderProvider *builderProvider = [[EMSPredictRequestModelBuilderProvider alloc] initWithRequestContext:self.predictRequestContext
                                                                                                                           endpoint:self.endpoint];
     _loggingPredict = [EMSLoggingPredictInternal new];
@@ -475,20 +492,22 @@
                                                                           loggingInstance:self.loggingPredict
                                                                               routerLogic:self.predictRouterLogicBlock];
     [self.predictDelegator proxyWithInstanceRouter:predictRouter];
-
+    
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     EMSInstanceRouter *mobileEngageRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                                                                                                                          requestManager:self.requestManager
-                                                                                                                                          requestContext:self.requestContext
-                                                                                                                                                 storage:self.storage
-                                                                                                                                                 session:self.session]
+                                                                                                                                          requestManager:self.requestManager]
                                                                                loggingInstance:self.loggingMobileEngage
                                                                                    routerLogic:self.mobileEngageRouterLogicBlock];
     [self.mobileEngageDelegator proxyWithInstanceRouter:mobileEngageRouter];
-
+    
+    _loggingContactClient = [EMSLoggingContactClientInternal new];
+    EMSInstanceRouter *contactClientRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSContactClientInternal alloc] initWithRequestFactory:self.requestFactory
+                                                                                                                                          requestManager:self.requestManager requestContext:self.requestContext predictRequestContext:self.predictRequestContext storage:self.storage session:self.session]  loggingInstance:self.loggingContactClient routerLogic:self.contactRouterLogicBlock];
+    [self.contactClientDelegator proxyWithInstanceRouter:contactClientRouter];
+    
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
                                                                        mobileEngage:self.mobileEngage];
-
+    
     EMSDeepLinkInternal *deepLinkInternal = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
                                                                                  requestFactory:self.requestFactory];
     EMSInstanceRouter *deepLinkRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:deepLinkInternal
@@ -496,15 +515,15 @@
                                                                                routerLogic:^BOOL{
         return YES;
     }];
-
+    
     [self.deepLinkDelegator proxyWithInstanceRouter:deepLinkRouter];
-
+    
     EMSInAppInternal *inAppInternal = [[EMSInAppInternal alloc] initWithRequestManager:self.requestManager
                                                                         requestFactory:self.requestFactory
                                                                                meInApp:meInApp
                                                                      timestampProvider:timestampProvider
                                                                           uuidProvider:self.uuidProvider];
-
+    
     _loggingPush = [EMSLoggingPushInternal new];
     EMSInstanceRouter *pushRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSPushV3Internal alloc] initWithRequestFactory:self.requestFactory
                                                                                                                           requestManager:self.requestManager
@@ -515,9 +534,9 @@
                                                                        loggingInstance:self.loggingPush
                                                                            routerLogic:self.mobileEngageRouterLogicBlock];
     [self.pushDelegator proxyWithInstanceRouter:pushRouter];
-
+    
     _loggingGeofence = [EMSLoggingGeofenceInternal new];
-
+    
     EMSGeofenceInternal *geofenceInternal = [[EMSGeofenceInternal alloc] initWithRequestFactory:self.requestFactory
                                                                                  requestManager:self.requestManager
                                                                                  responseMapper:[[EMSGeofenceResponseMapper alloc] init]
@@ -525,31 +544,31 @@
                                                                                   actionFactory:actionFactory
                                                                                         storage:self.storage
                                                                                           queue:self.coreOperationQueue];
-
+    
     EMSInstanceRouter *geofenceRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:geofenceInternal
                                                                            loggingInstance:self.loggingGeofence
                                                                                routerLogic:self.mobileEngageRouterLogicBlock];
-
+    
     _loggingMessageInbox = [EMSLoggingInboxV3 new];
     EMSInstanceRouter *messageInboxRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSInboxV3 alloc] initWithRequestFactory:self.requestFactory
                                                                                                                            requestManager:self.requestManager
                                                                                                                         inboxResultParser:[[EMSInboxResultParser alloc] init]]
                                                                                loggingInstance:self.loggingMessageInbox
                                                                                    routerLogic:^BOOL {
-                                                                                       return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
-                                                                                   }];
-
+        return [MEExperimental isFeatureEnabled:[EMSInnerFeature mobileEngage]];
+    }];
+    
     [self.messageInboxDelegator proxyWithInstanceRouter:messageInboxRouter];
-
+    
     EMSEmarsysRequestFactory *emarsysRequestFactory = [[EMSEmarsysRequestFactory alloc] initWithTimestampProvider:timestampProvider
                                                                                                      uuidProvider:self.uuidProvider
                                                                                                          endpoint:self.endpoint
                                                                                                    requestContext:self.requestContext];
-
+    
     EMSConfigInternal *configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.requestManager
                                                                          meRequestContext:self.requestContext
                                                                         preRequestContext:self.predictRequestContext
-                                                                             mobileEngage:self.mobileEngage
+                                                                            contactClient:self.contactClient
                                                                              pushInternal:self.push
                                                                                deviceInfo:deviceInfo
                                                                     emarsysRequestFactory:emarsysRequestFactory
@@ -561,17 +580,17 @@
                                                                                     queue:self.coreOperationQueue
                                                                                    waiter:[EMSDispatchWaiter new]
                                                                          deviceInfoClient:self.deviceInfoClient];
-
+    
     EMSInstanceRouter *configRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:configInternal
                                                                          loggingInstance:configInternal
                                                                              routerLogic:^BOOL {
-                                                                                 return YES;
-                                                                             }];
-
+        return YES;
+    }];
+    
     [self.configDelegator proxyWithInstanceRouter:configRouter];
-
+    
     [self.geofenceDelegator proxyWithInstanceRouter:geofenceRouter];
-
+    
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.requestManager
                                                                        requestFactory:self.requestFactory
                                                                        requestContext:self.requestContext
@@ -583,7 +602,7 @@
                                                                                                                            config:config
                                                                                                                           storage:self.storage]
                                                                                logger:self.logger];
-
+    
     [self.iam setInAppTracker:inAppInternal];
 }
 

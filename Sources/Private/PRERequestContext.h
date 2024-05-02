@@ -30,5 +30,6 @@
                                merchantId:(NSString *)merchantId
                                deviceInfo:(EMSDeviceInfo *)deviceInfo;
 
+- (void)reset;
 
 @end

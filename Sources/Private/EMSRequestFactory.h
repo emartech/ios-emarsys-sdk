@@ -5,6 +5,7 @@
 
 @class EMSRequestModel;
 @class MERequestContext;
+@class PRERequestContext;
 @class EMSDeviceInfo;
 @class EMSEndpoint;
 @class MEButtonClickRepository;
@@ -21,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSRequestFactory : NSObject
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                 predictRequestContext:(PRERequestContext *)predictRequestContext
                               endpoint:(EMSEndpoint *)endpoint
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                        sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
@@ -33,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (EMSRequestModel *_Nullable)createClearPushTokenRequestModel;
 
 - (EMSRequestModel *_Nullable)createContactRequestModel;
+
+- (EMSRequestModel *_Nullable)createClearContactRequestModel;
+
+- (EMSRequestModel *_Nullable)createPredictOnlyContactRequestModelWithRefresh:(BOOL)shouldRefresh;
+
+- (EMSRequestModel *_Nullable)createPredictOnlyClearContactRequestModel;
 
 - (EMSRequestModel *_Nullable)createEventRequestModelWithEventName:(NSString *)eventName
                                                    eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes

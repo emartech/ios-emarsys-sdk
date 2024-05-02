@@ -4,18 +4,12 @@
 #import <Foundation/Foundation.h>
 #import "EMSMobileEngageProtocol.h"
 
-@protocol EMSStorageProtocol;
 @class EMSRequestFactory;
 @class EMSRequestManager;
-@class MERequestContext;
-@class EMSSession;
 
 @interface EMSMobileEngageV3Internal : NSObject <EMSMobileEngageProtocol>
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
-                        requestManager:(EMSRequestManager *)requestManager
-                        requestContext:(MERequestContext *)requestContext
-                               storage:(id<EMSStorageProtocol>)storage
-                               session:(EMSSession *)session;
+                        requestManager:(EMSRequestManager *)requestManager;
 
 @end

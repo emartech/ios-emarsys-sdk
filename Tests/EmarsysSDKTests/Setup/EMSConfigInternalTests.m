@@ -6,7 +6,7 @@
 #import "EMSConfigInternal.h"
 #import "MERequestContext.h"
 #import "PRERequestContext.h"
-#import "EMSMobileEngageV3Internal.h"
+#import "EMSContactClientInternal.h"
 #import "NSError+EMSCore.h"
 #import "EMSPushV3Internal.h"
 #import "EMSDeviceInfo.h"
@@ -46,7 +46,7 @@
 @property(nonatomic, strong) EMSRequestManager *mockRequestManager;
 @property(nonatomic, strong) MERequestContext *mockMeRequestContext;
 @property(nonatomic, strong) PRERequestContext *mockPreRequestContext;
-@property(nonatomic, strong) EMSMobileEngageV3Internal *mockMobileEngage;
+@property(nonatomic, strong) EMSContactClientInternal *mockContactClient;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
 @property(nonatomic, strong) EMSPushV3Internal *mockPushInternal;
 @property(nonatomic, strong) EMSEmarsysRequestFactory *mockEmarsysRequestFactory;
@@ -74,7 +74,7 @@
     _mockRequestManager = OCMClassMock([EMSRequestManager class]);
     _mockMeRequestContext = OCMClassMock([MERequestContext class]);
     _mockPreRequestContext = OCMClassMock([PRERequestContext class]);
-    _mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
+    _mockContactClient = OCMClassMock([EMSContactClientInternal class]);
     _mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockEmarsysRequestFactory = OCMClassMock([EMSEmarsysRequestFactory class]);
@@ -93,7 +93,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:self.mockMobileEngage
+                                                          contactClient:self.mockContactClient
                                                            pushInternal:self.mockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -116,7 +116,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:nil
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -138,7 +138,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:nil
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -155,12 +155,12 @@
     }
 }
 
-- (void)testInit_mobileEngage_mustNotBeNil {
+- (void)testInit_contactClient_mustNotBeNil {
     @try {
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:nil
+                                            contactClient:nil
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -171,9 +171,9 @@
                                                     queue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
-        XCTFail(@"Expected Exception when mobileEngage is nil!");
+        XCTFail(@"Expected Exception when contactClient is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: mobileEngage");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: contactClient");
     }
 }
 
@@ -182,7 +182,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:nil
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -204,7 +204,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:nil
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -226,7 +226,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:nil
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -248,7 +248,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:nil
@@ -270,7 +270,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -292,7 +292,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -314,7 +314,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -336,7 +336,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -358,7 +358,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -380,7 +380,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -403,7 +403,7 @@
         [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                          meRequestContext:self.mockMeRequestContext
                                         preRequestContext:self.mockPreRequestContext
-                                             mobileEngage:self.mockMobileEngage
+                                            contactClient:self.mockContactClient
                                              pushInternal:self.mockPushInternal
                                                deviceInfo:self.mockDeviceInfo
                                     emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -421,7 +421,7 @@
 }
 
 - (void)testChangeApplicationCode_completionHandler_isNil {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
@@ -430,7 +430,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -443,7 +443,7 @@
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
@@ -463,12 +463,12 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
     OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
 
-    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
 
@@ -477,7 +477,7 @@
 }
 
 - (void)testChangeApplicationCode {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     id strictMockMeRequestContext = OCMStrictClassMock([MERequestContext class]);
     id strictMockDeviceInfoClient = OCMStrictClassMock([EMSDeviceInfoV3ClientInternal class]);
@@ -485,7 +485,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:strictMockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -503,7 +503,7 @@
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockMeRequestContext applicationCode]).andReturn(@"theOldAppCode");
     OCMStub([strictMockMeRequestContext contactFieldId]).andReturn(@3);
@@ -529,14 +529,14 @@
     OCMVerify([strictMockDeviceInfoClient sendDeviceInfoWithCompletionBlock:[OCMArg any]]);
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
 
 - (void)testChangeApplicationCode_clearContact_shouldCallCompletionBlockWithError_onMainQueue {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     __block NSOperationQueue *returnedQueue = nil;
 
@@ -550,7 +550,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -566,9 +566,9 @@
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
     OCMStub([self.mockMeRequestContext hasContactIdentification]).andReturn(YES);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:([OCMArg invokeBlockWithArgs:inputError,
                                                                                                  nil])]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMStub([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                contactFieldValue:self.contactFieldValue
                                                  completionBlock:[OCMArg invokeBlock]]);
 
@@ -584,8 +584,8 @@
                                                           timeout:10];
 
     OCMVerify([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg any]]);
-    OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
-    OCMReject([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMReject([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMReject([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                  contactFieldValue:self.contactFieldValue
                                                    completionBlock:[OCMArg any]]);
 
@@ -599,12 +599,12 @@
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
 
-    OCMReject([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMReject([self.mockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:self.mockMobileEngage
+                                                        contactClient:self.mockContactClient
                                                            pushInternal:OCMClassMock([EMSPushV3Internal class])
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -636,12 +636,12 @@
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
 
-    OCMReject([self.mockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMReject([self.mockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:self.mockMobileEngage
+                                                          contactClient:self.mockContactClient
                                                            pushInternal:self.mockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -670,7 +670,7 @@
 }
 
 - (void)testChangeApplicationCode_setPushToken_shouldCallCompletionBlockWithError {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
@@ -683,7 +683,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -697,7 +697,7 @@
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(self.applicationCode);
     OCMStub([strictMockPushInternal deviceToken]).andReturn(self.deviceToken);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal setPushToken:self.deviceToken
                                  completionBlock:([OCMArg invokeBlockWithArgs:inputError,
@@ -713,11 +713,11 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     OCMVerify([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
-    OCMReject([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMReject([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                  contactFieldValue:self.contactFieldValue
                                                    completionBlock:[OCMArg any]]);
 
@@ -726,8 +726,8 @@
 }
 
 - (void)testChangeApplicationCode_setPushToken_shouldNotBeCalled_afterContactFieldIdChange {
-    id mockMobileEngage = OCMClassMock([EMSMobileEngageV3Internal class]);
-    OCMStub([mockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    id mockContactClient = OCMClassMock([EMSContactClientInternal class]);
+    OCMStub([mockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
 
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
@@ -743,7 +743,7 @@
 
     __block NSError *returnedError = nil;
 
-    OCMReject([mockMobileEngage setContactWithContactFieldId:[OCMArg any]
+    OCMReject([mockContactClient setContactWithContactFieldId:[OCMArg any]
                                            contactFieldValue:[OCMArg any]
                                              completionBlock:^(NSError *error) {
                                              }]);
@@ -751,7 +751,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:mockMEContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:mockMobileEngage
+                                                          contactClient:mockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -778,7 +778,7 @@
 }
 
 - (void)testChangeApplicationCode_setPushToken_shouldNotBeCalled_whenPushTokenIsNil {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id strictMockPushInternal = OCMStrictClassMock([EMSPushV3Internal class]);
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
@@ -789,7 +789,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:strictMockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -802,8 +802,8 @@
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
     OCMStub([strictMockPushInternal deviceToken]).andReturn(nil);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                contactFieldValue:self.contactFieldValue
                                                  completionBlock:[OCMArg invokeBlock]]);
     OCMStub([strictMockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
@@ -818,7 +818,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMVerify([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     OCMReject([strictMockPushInternal setPushToken:self.deviceToken
                                    completionBlock:[OCMArg any]]);
@@ -828,7 +828,7 @@
 }
 
 - (void)testChangeApplicationCode_shouldCallSetPushTokenImmediately_whenApplicationCodeIsNil {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
@@ -839,7 +839,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:mockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -856,7 +856,7 @@
     OCMStub([mockPushInternal setPushToken:self.deviceToken
                            completionBlock:[OCMArg invokeBlock]]);
     OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
     [self.configInternal changeApplicationCode:@"newApplicationCode"
@@ -868,7 +868,7 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMReject([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     OCMVerify([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
@@ -878,7 +878,7 @@
 }
 
 - (void)testChangeApplicationCode_shouldCallSetContactImmediately_whenPushTokenIsNil {
-    id strictMockMobileEngage = OCMStrictClassMock([EMSMobileEngageV3Internal class]);
+    id strictMockContactClient = OCMStrictClassMock([EMSContactClientInternal class]);
     id mockPushInternal = OCMClassMock([EMSPushV3Internal class]);
 
     __block NSError *returnedError = nil;
@@ -886,7 +886,7 @@
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
                                                       preRequestContext:self.mockPreRequestContext
-                                                           mobileEngage:strictMockMobileEngage
+                                                          contactClient:strictMockContactClient
                                                            pushInternal:mockPushInternal
                                                              deviceInfo:self.mockDeviceInfo
                                                   emarsysRequestFactory:self.mockEmarsysRequestFactory
@@ -901,8 +901,8 @@
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(nil);
     OCMStub([mockPushInternal deviceToken]).andReturn(nil);
     OCMStub([mockPushInternal clearPushTokenWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMStub([strictMockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                contactFieldValue:self.contactFieldValue
                                                  completionBlock:[OCMArg invokeBlock]]);
 
@@ -916,11 +916,11 @@
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:10];
 
-    OCMReject([strictMockMobileEngage clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMReject([strictMockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
 
     OCMReject([mockPushInternal setPushToken:self.deviceToken
                              completionBlock:[OCMArg any]]);
-    OCMExpect([strictMockMobileEngage setContactWithContactFieldId:self.contactFieldId
+    OCMExpect([strictMockContactClient setContactWithContactFieldId:self.contactFieldId
                                                  contactFieldValue:self.contactFieldValue
                                                    completionBlock:[OCMArg any]]);
 

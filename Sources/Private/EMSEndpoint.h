@@ -20,6 +20,8 @@
 
 - (NSString *)clientUrlWithApplicationCode:(NSString *)applicationCode;
 
+- (NSString *)contactUrlPredictOnly;
+
 - (NSString *)pushTokenUrlWithApplicationCode:(NSString *)applicationCode;
 
 - (NSString *)contactUrlWithApplicationCode:(NSString *)applicationCode;
