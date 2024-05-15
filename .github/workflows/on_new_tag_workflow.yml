@@ -26,4 +26,4 @@ jobs:
           summary: |
             New Emarsys SDK release on iOS
           description: |
-            Emarsys SDK ${{ GITHUB_REF_NAME }} has been released!
+            Emarsys SDK ${{ env.GITHUB_REF_NAME }} has been released!
