@@ -5,6 +5,13 @@ on:
     tags:
       - '*.*.*'
 
+env:
+  JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+  JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+  JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+  JIRA_PROJECT: ${{ secrets.JIRA_PROJECT }}
+  JIRA_TICKET_JSON: ${{ secrets.JIRA_TICKET_JSON }}
+
 jobs:
   CreateJiraTicket:
     name: Create Jira ticket
@@ -13,16 +20,16 @@ jobs:
       - name: Login to Jira
         uses: atlassian/gajira-login@master
         env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ env.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ env.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ env.JIRA_API_TOKEN }}
       - name: Create a ticket
         id: create
         uses: atlassian/gajira-create@master
         with:
-          project: ${{ secrets.JIRA_PROJECT }}
+          project: ${{ env.JIRA_PROJECT }}
           issuetype: Product docs
-          fields: ${{ secrets.JIRA_TICKET_JSON }}
+          fields: ${{ env.JIRA_TICKET_JSON }}
           summary: |
             New Emarsys SDK release on iOS
           description: |
