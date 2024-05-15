@@ -216,7 +216,6 @@
         _onEventAction = (id <EMSOnEventActionProtocol>) self.onEventActionDelegator;
 
         _locationManager = [CLLocationManager new];
-        _locationManager.allowsBackgroundLocationUpdates = true;
 
         NSBlockOperation *initOperation = [NSBlockOperation blockOperationWithBlock:^{
             [self initializeDependenciesWithConfig:config];
