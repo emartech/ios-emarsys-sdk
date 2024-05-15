@@ -388,6 +388,7 @@
 		568FEB0C233A0FF400901332 /* EMSWaiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460D89D66C18EBF3590970 /* EMSWaiter.m */; };
 		574DD0E9273283F8005F2750 /* EMSGeofenceTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */; };
 		574DD0EB2732843D005F2750 /* EMSGeofence.m in Sources */ = {isa = PBXBuildFile; fileRef = 574DD0EA2732843D005F2750 /* EMSGeofence.m */; };
+		5D7EEE092BF4B4AB000E1558 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */; };
 		642590867F1D9665A69405B2 /* FakeDisplayedIAMRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6425981445EC441D5025D02A /* FakeDisplayedIAMRepository.swift */; };
 		642590A2729A4946FFFCDD17 /* EMSLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 642594C044516E53D2877760 /* EMSLogicTests.m */; };
 		6425912A1561D7A4F6765FFF /* EMSAppEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259B9AFE68A274724F14B2 /* EMSAppEventActionTests.m */; };
@@ -1131,6 +1132,7 @@
 		479AB440CAF529CAECC114AC /* libPods-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceTrigger.h; sourceTree = "<group>"; };
 		574DD0EA2732843D005F2750 /* EMSGeofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofence.m; sourceTree = "<group>"; };
+		5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6109AD73F06BE4FDAAE01F48 /* libPods-CoreTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CoreTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6425900619382B0A3A232868 /* EMSActionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionProtocol.h; sourceTree = "<group>"; };
 		6425906591104A1F55339EEB /* EMSMobileEngageNullSafeBodyParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageNullSafeBodyParserTests.m; sourceTree = "<group>"; };
@@ -2536,6 +2538,7 @@
 		8A6BE8AA23E86B480066B13C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */,
 				5DF894CA2A812AED00803F2C /* Private */,
 				8A6BE8AB23E86B480066B13C /* Core */,
 				8A6BE95323E86B480066B13C /* include */,
@@ -4100,6 +4103,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D7EEE092BF4B4AB000E1558 /* PrivacyInfo.xcprivacy in Resources */,
 				32C6F2B80F7CFF74BDB6678B /* EMS11-C3FD3.json in Resources */,
 				32C6F4143FD1C6E691D452CC /* EMS11-C3FD3.sig in Resources */,
 			);
