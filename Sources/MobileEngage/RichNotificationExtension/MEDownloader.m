@@ -21,7 +21,7 @@
         _session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                                  delegate:nil
                                             delegateQueue:operationQueue];
-
+        
     }
     return self;
 }
@@ -31,34 +31,40 @@
     if (sourceUrl) {
         NSURLSessionDownloadTask *task = [self.session downloadTaskWithURL:sourceUrl
                                                          completionHandler:^(NSURL *_Nullable location, NSURLResponse *_Nullable response, NSError *_Nullable error) {
-                                                             NSString *mimeType = [self valueWithDictionary:((NSHTTPURLResponse *) response).allHeaderFields
-                                                                                          forInsensitiveKey:@"content-type"];
-                                                             NSURL *mediaFileUrl = [self createLocalTempUrlWithFileType:mimeType];
-                                                             if (!error) {
-                                                                 if (location && mediaFileUrl) {
-                                                                     [[NSFileManager defaultManager] moveItemAtURL:location
-                                                                                                             toURL:mediaFileUrl
-                                                                                                             error:&error];
-                                                                     if (!error && completionHandler) {
-                                                                         completionHandler(mediaFileUrl, nil);
-                                                                         return;
-                                                                     }
-
-                                                                 } else {
-                                                                     error = [NSError errorWithCode:1415
-                                                                               localizedDescription:@"Unsupported file url."];
-                                                                 }
-                                                             }
-
-                                                             if (completionHandler) {
-                                                                 completionHandler(nil, error);
-                                                             }
-                                                         }];
+            NSString *mimeType = [self valueWithDictionary:((NSHTTPURLResponse *) response).allHeaderFields
+                                         forInsensitiveKey:@"content-type"];
+            NSURL *mediaFileUrl = [self createLocalTempUrlWithFileType:mimeType];
+            if (!error) {
+                if (location && mediaFileUrl) {
+                    [[NSFileManager defaultManager] moveItemAtURL:location
+                                                            toURL:mediaFileUrl
+                                                            error:&error];
+                    if (!error && completionHandler) {
+                        completionHandler(mediaFileUrl, nil);
+                        return;
+                    }
+                    
+                } else {
+                    error = [NSError errorWithDomain:@"com.emarsys.emarsys-sdk"
+                                                code:1415
+                                            userInfo:@{
+                        NSLocalizedDescriptionKey: @"Unsupported file url."
+                    }];
+                }
+            }
+            
+            if (completionHandler) {
+                completionHandler(nil, error);
+            }
+        }];
         [task resume];
     } else {
         if (completionHandler) {
-            completionHandler(nil, [NSError errorWithCode:1400
-                                     localizedDescription:@"Source url doesn't exist."]);
+            completionHandler(nil, [NSError errorWithDomain:@"com.emarsys.emarsys-sdk"
+                                                       code:1400
+                                                   userInfo:@{
+                NSLocalizedDescriptionKey: @"Source url doesn't exist."
+            }]);
         }
     }
 }
@@ -79,7 +85,7 @@
                              withIntermediateDirectories:YES
                                               attributes:nil
                                                    error:&directoryCreationError];
-
+    
     if (!directoryCreationError && tmpSubFolderName && mediaFileName) {
         mediaFileUrl = [tmpSubFolderUrl URLByAppendingPathComponent:mediaFileName];
     }
