@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL initialEnterTriggerEnabled;
 
 - (void)requestAlwaysAuthorization;
+- (void)requestWhenInUseAuthorization;
 - (NSArray <EMSGeofence *> *) registeredGeofences;
 
 - (void)enable;

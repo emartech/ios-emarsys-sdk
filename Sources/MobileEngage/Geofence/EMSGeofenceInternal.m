@@ -221,6 +221,10 @@
     [self.locationManager requestAlwaysAuthorization];
 }
 
+- (void)requestWhenInUseAuthorization {
+    [self.locationManager requestWhenInUseAuthorization];
+}
+
 - (NSArray <EMSGeofence *> *)registeredGeofences {
     return [self.registeredGeofencesDictionary allValues];
 }
@@ -242,9 +246,10 @@
 
     BOOL isAuthorized;
     if (@available(iOS 14.0, *)) {
-        isAuthorized = [self.locationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways;
+        CLAuthorizationStatus status = [self.locationManager authorizationStatus];
+        isAuthorized = status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse;
     } else {
-        isAuthorized = CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways;
+        isAuthorized = CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways || CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
     }
     if (isAuthorized) {
         self.recalculateable = YES;

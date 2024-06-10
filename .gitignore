@@ -76,3 +76,9 @@ Pods/
 .swiftpm/
 
 Emarsys Sample/Emarsys-Sample/GoogleService-Info.plist
+
+.DS_Store
+.build/*
+.vscode/*
+
+

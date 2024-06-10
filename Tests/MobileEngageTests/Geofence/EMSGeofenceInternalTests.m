@@ -259,6 +259,12 @@
     OCMVerify([self.mockLocationManager requestAlwaysAuthorization]);
 }
 
+- (void)testRequestWhenInUseAuthorization {
+    [self.geofenceInternal requestWhenInUseAuthorization];
+
+    OCMVerify([self.mockLocationManager requestWhenInUseAuthorization]);
+}
+
 - (void)testGeofenceLimit {
     XCTAssertEqual([self.geofenceInternal geofenceLimit], 20);
 }
