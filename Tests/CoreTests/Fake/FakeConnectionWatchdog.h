@@ -12,7 +12,6 @@
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
                    connectionResponses:(NSArray *)connectionResponses
-                          reachability:(EMSReachability *)reachability
                            expectation:(XCTestExpectation *)expectation;
 
 @end

@@ -89,8 +89,7 @@ afterEach(^{
                                                                                                                    defaultSuccessBlock:middleware.successBlock
                                                                                                                      defaultErrorBlock:middleware.errorBlock];
 
-            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
-                                                                                             operationQueue:queue];
+            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:queue];
 
             EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                       requestRepository:requestRepository
@@ -168,8 +167,7 @@ afterEach(^{
                                                                                                                        defaultSuccessBlock:middleware.successBlock
                                                                                                                          defaultErrorBlock:middleware.errorBlock];
 
-                EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:queue]
-                                                                                                 operationQueue:queue];
+                EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:queue];
 
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:requestRepository

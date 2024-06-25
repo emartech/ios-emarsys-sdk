@@ -396,10 +396,7 @@
                                                                                                             endpoint:self.endpoint
                                                                                                              storage:self.storage];
 
-    EMSReachability *reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.coreOperationQueue];
-
-    EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithReachability:reachability
-                                                                           operationQueue:self.coreOperationQueue];
+    EMSConnectionWatchdog *watchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.coreOperationQueue];
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.coreOperationQueue
                                                               requestRepository:self.requestRepository
                                                              connectionWatchdog:watchdog

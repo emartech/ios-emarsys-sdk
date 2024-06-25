@@ -539,13 +539,29 @@
 
     NSURLComponents *returnedUrlComponents = [NSURLComponents componentsWithURL:returnedRequestModel.url
                                                         resolvingAgainstBaseURL:NO];
-    NSSet *returnedQueryItems = [NSSet setWithArray:returnedUrlComponents.queryItems];
 
     NSURLComponents *expectedUrlComponents = [NSURLComponents componentsWithURL:expectedRequestModel.url
                                                         resolvingAgainstBaseURL:NO];
-    NSSet *expectedQueryItems = [NSSet setWithArray:expectedUrlComponents.queryItems];
 
+    NSMutableSet<NSDictionary<NSString *, NSString *> *> *returnedQueryItems = [self convertQueryItems:returnedUrlComponents.queryItems];
+    NSMutableSet<NSDictionary<NSString *, NSString *> *> *expectedQueryItems = [self convertQueryItems:expectedUrlComponents.queryItems];
+    
     XCTAssertEqualObjects(returnedQueryItems, expectedQueryItems);
 }
 
+- (NSMutableSet<NSDictionary<NSString *, NSString *> *> *)convertQueryItems:(NSArray<NSURLQueryItem *> *)queryItems {
+    NSMutableSet<NSDictionary<NSString *, NSString *> *> *result;
+    for (NSURLQueryItem *item in queryItems) {
+        if ([item.name isEqualToString:@"ex"]) {
+            NSArray *filters = [NSJSONSerialization JSONObjectWithData:[item.value dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+            result = [[NSSet setWithArray:filters] mutableCopy];
+            break;
+        } else {
+            [result addObject:@{item.name: item.value}];
+        }
+    }
+    return result;
+}
+
 @end
+

@@ -2,7 +2,12 @@
 //  Copyright (c) 2017 Emarsys. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import "EMSReachability.h"
+
+typedef enum : NSInteger {
+    NotReachable = 0,
+    ReachableViaWiFi,
+    ReachableViaWWAN
+} EMSNetworkStatus;
 
 @protocol EMSConnectionChangeListener
 
@@ -15,9 +20,7 @@
 
 @property(nonatomic, weak) id <EMSConnectionChangeListener> connectionChangeListener;
 
-
-- (instancetype)initWithReachability:(EMSReachability *)reachability
-                      operationQueue:(NSOperationQueue *)operationQueue;
+- (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue;
 
 - (EMSNetworkStatus)connectionState;
 
