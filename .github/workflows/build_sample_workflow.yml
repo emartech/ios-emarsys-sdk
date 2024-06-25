@@ -44,7 +44,7 @@ jobs:
       run: cd Emarsys\ Sample && export DEV=true && pod deintegrate && rm -f Podfile.lock && pod update
       shell: bash
     - name: Clean project
-      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release clean -quiet
       shell: bash
     - name: Set build number for EmarsysSample
       run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(( ${{github.run_number}} + 1000 ))" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist
@@ -53,10 +53,10 @@ jobs:
       run: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(($(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/Emarsys-Sample/Info.plist)))" ~/work/ios-emarsys-sdk/ios-emarsys-sdk/Emarsys\ Sample/NotificationService/Info.plist
       shell: bash
     - name: Archive project
-      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive clean
+      run: cd Emarsys\ Sample && xcodebuild -workspace Emarsys-Sample.xcworkspace -scheme Emarsys-Sample -destination generic/platform=iOS -configuration Release archive -archivePath ./Emarsys-Sample.xcarchive clean -quiet
       shell: bash
     - name: Export ipa
-      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates
+      run: cd Emarsys\ Sample && xcodebuild -exportArchive -archivePath ./Emarsys-Sample.xcarchive -exportOptionsPlist ./exportOptions.plist -exportPath ./ -allowProvisioningUpdates -quiet
       shell: bash
     - name: Upload app to TestFlight
       uses: apple-actions/upload-testflight-build@v1
