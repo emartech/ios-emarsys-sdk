@@ -79,7 +79,7 @@
         }
         [weakSelf.operationQueue addOperationWithBlock:^{
             [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:weakSelf.connectionStatus
-                                                               connectionStatus:weakSelf.connectionStatus != NotReachable];
+                                                               connectionStatus:(weakSelf.connectionStatus != NotReachable) && weakSelf.isSatisfied];
         }];
     });
     nw_path_monitor_start(self.pathMonitor);
