@@ -32,9 +32,7 @@
 }
 
 - (BOOL)isConnected {
-    EMSNetworkStatus state = [self connectionState];
-    BOOL result = (state != NotReachable) && self.isSatisfied;
-    return result;
+    return self.isSatisfied;
 }
 
 - (void)setConnectionChangeListener:(id <EMSConnectionChangeListener>)connectionChangeListener {
@@ -79,7 +77,7 @@
         }
         [weakSelf.operationQueue addOperationWithBlock:^{
             [weakSelf.connectionChangeListener connectionChangedToNetworkStatus:weakSelf.connectionStatus
-                                                               connectionStatus:(weakSelf.connectionStatus != NotReachable) && weakSelf.isSatisfied];
+                                                               connectionStatus:weakSelf.isSatisfied];
         }];
     });
     nw_path_monitor_start(self.pathMonitor);
