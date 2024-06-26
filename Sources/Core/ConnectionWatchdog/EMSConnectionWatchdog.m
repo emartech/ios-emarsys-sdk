@@ -21,7 +21,7 @@
     NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _pathMonitor = nw_path_monitor_create();
-        dispatch_queue_t queue = dispatch_queue_create("ems_queue", DISPATCH_QUEUE_CONCURRENT);
+        dispatch_queue_t queue = dispatch_queue_create("ems_queue", DISPATCH_QUEUE_SERIAL);
         nw_path_monitor_set_queue(self.pathMonitor, queue);
         _operationQueue = operationQueue;
         _isSatisfied = NO;
