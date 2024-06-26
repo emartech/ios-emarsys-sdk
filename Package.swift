@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
     name: "EmarsysSDK",
     platforms: [
-        .iOS(.v11),
+        .iOS(.v14),
     ],
     products: [
         .library(
