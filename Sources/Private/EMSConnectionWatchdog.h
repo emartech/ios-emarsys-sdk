@@ -6,7 +6,10 @@
 typedef enum : NSInteger {
     NotReachable = 0,
     ReachableViaWiFi,
-    ReachableViaWWAN
+    ReachableViaWWAN,
+    ReachableViaWire,
+    ReachableViaLoopback,
+    ReachableViaOther
 } EMSNetworkStatus;
 
 @protocol EMSConnectionChangeListener
