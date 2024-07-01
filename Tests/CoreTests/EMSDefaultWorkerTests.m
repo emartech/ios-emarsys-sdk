@@ -58,7 +58,7 @@ afterEach(^{
             id (^createWorker)() = ^id() {
                 return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:repository
-                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
                                                              }
@@ -99,7 +99,7 @@ afterEach(^{
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
-                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:nil
                                                              errorBlock:errorBlock
                                                            proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
@@ -108,7 +108,7 @@ afterEach(^{
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
-                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:nil
                                                            proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
@@ -117,7 +117,7 @@ afterEach(^{
             itShouldThrowException(@"should throw exception, when restClient is nil", ^{
                 (void) [[EMSDefaultWorker alloc] initWithOperationQueue:[NSOperationQueue mock]
                                                       requestRepository:repository
-                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:errorBlock
                                                            proxyFactory:nil];
@@ -165,7 +165,7 @@ afterEach(^{
                 [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
                              andReturn:middleware];
 
-                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog new];
+                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog mock];
                 [watchdog stub:@selector(isConnected)
                      andReturn:theValue(YES)];
 
@@ -376,7 +376,7 @@ afterEach(^{
             id (^createWorker)() = ^id() {
                 return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:[EMSRequestModelRepository mock]
-                                                     connectionWatchdog:[EMSConnectionWatchdog new]
+                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
                                                              }
@@ -402,7 +402,7 @@ afterEach(^{
         describe(@"ConnectionWatchdog", ^{
 
             it(@"DefaultWorker should implement the connectionChangeListener by default", ^{
-                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog new];
+                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog mock];
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:[EMSRequestModelRepository mock]
                                                                          connectionWatchdog:watchdog

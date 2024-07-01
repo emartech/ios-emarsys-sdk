@@ -24,7 +24,7 @@
         dispatch_queue_t queue = dispatch_queue_create("ems_queue", DISPATCH_QUEUE_SERIAL);
         nw_path_monitor_set_queue(self.pathMonitor, queue);
         _operationQueue = operationQueue;
-        _isSatisfied = NO;
+        _isSatisfied = YES;
     }
     return self;
 }
