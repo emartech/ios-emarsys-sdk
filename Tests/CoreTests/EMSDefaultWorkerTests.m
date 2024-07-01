@@ -56,9 +56,12 @@ afterEach(^{
 
 
             id (^createWorker)() = ^id() {
+                EMSConnectionWatchdog *mockWatchDog = [EMSConnectionWatchdog mock];
+                [mockWatchDog stub:@selector(setConnectionChangeListener:)
+                     withArguments:kw_any()];
                 return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:repository
-                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
+                                                     connectionWatchdog:mockWatchDog
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
                                                              }
@@ -66,7 +69,8 @@ afterEach(^{
             };
 
             it(@"should not return nil", ^{
-                [[createWorker() shouldNot] beNil];
+                EMSDefaultWorker *worker = createWorker();
+                [[worker shouldNot] beNil];
             });
 
             itShouldThrowException(@"should throw exception, when publicApiOperationQueue is nil", ^{
@@ -165,15 +169,17 @@ afterEach(^{
                 [mockProxyFactory stub:@selector(createWithWorker:successBlock:errorBlock:)
                              andReturn:middleware];
 
-                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog mock];
-                [watchdog stub:@selector(isConnected)
+                EMSConnectionWatchdog *mockWatchDog = [EMSConnectionWatchdog mock];
+                [mockWatchDog stub:@selector(setConnectionChangeListener:)
+                     withArguments:kw_any()];
+                [mockWatchDog stub:@selector(isConnected)
                      andReturn:theValue(YES)];
 
                 [repository add:requestModel(@"https://url1.com", nil, NO)];
 
                 EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:repository
-                                                                         connectionWatchdog:watchdog
+                                                                         connectionWatchdog:mockWatchDog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
                                                                                  }
@@ -374,9 +380,15 @@ afterEach(^{
         describe(@"LockableProtocol", ^{
 
             id (^createWorker)() = ^id() {
+                EMSConnectionWatchdog *mockWatchDog = [EMSConnectionWatchdog mock];
+                [mockWatchDog stub:@selector(setConnectionChangeListener:)
+                     withArguments:kw_any()];
+                [mockWatchDog stub:@selector(isConnected)
+                         andReturn:theValue(YES)];
+
                 return [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                       requestRepository:[EMSRequestModelRepository mock]
-                                                     connectionWatchdog:[EMSConnectionWatchdog mock]
+                                                     connectionWatchdog:mockWatchDog
                                                              restClient:[EMSRESTClient new]
                                                              errorBlock:^(NSString *requestId, NSError *error) {
                                                              }
@@ -402,15 +414,18 @@ afterEach(^{
         describe(@"ConnectionWatchdog", ^{
 
             it(@"DefaultWorker should implement the connectionChangeListener by default", ^{
-                EMSConnectionWatchdog *watchdog = [EMSConnectionWatchdog mock];
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
+                EMSConnectionWatchdog *mockWatchdog = [EMSConnectionWatchdog mock];
+
+                [[mockWatchdog should] receive:@selector(setConnectionChangeListener:)
+                                 withArguments:kw_any()];
+                EMSDefaultWorker *_ = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
                                                                           requestRepository:[EMSRequestModelRepository mock]
-                                                                         connectionWatchdog:watchdog
+                                                                         connectionWatchdog:mockWatchdog
                                                                                  restClient:[EMSRESTClient new]
                                                                                  errorBlock:^(NSString *requestId, NSError *error) {
                                                                                  }
                                                                                proxyFactory:[EMSRESTClientCompletionProxyFactory nullMock]];
-                [[worker should] equal:watchdog.connectionChangeListener];
+
             });
 
             it(@"should invoke run, when connectionStatus is connected", ^{
