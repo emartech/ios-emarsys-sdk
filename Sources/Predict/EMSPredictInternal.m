@@ -12,6 +12,7 @@
 #import "EMSProductMapper.h"
 #import "EMSLogic.h"
 #import "EMSProduct.h"
+#import "NSString+EMSCore.h"
 
 @interface EMSPredictInternal ()
 
@@ -81,7 +82,7 @@
                 [builder setType:@"predict_item_view"];
                 [builder addPayloadEntryWithKey:@"v"
                                           value:[NSString stringWithFormat:@"i:%@",
-                                                                           itemId]];
+                                                                           [itemId percentEncode]]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -109,7 +110,7 @@
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_search_term"];
                 [builder addPayloadEntryWithKey:@"q"
-                                          value:searchTerm];
+                                          value:[searchTerm percentEncode]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -128,7 +129,7 @@
                 [builder addPayloadEntryWithKey:@"co"
                                           value:[EMSCartItemUtils queryParamFromCartItems:items]];
                 [builder addPayloadEntryWithKey:@"oi"
-                                          value:orderId];
+                                          value:[orderId percentEncode]];
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
@@ -143,7 +144,7 @@
 
                 if (!attributes) {
                     [builder addPayloadEntryWithKey:@"t"
-                                              value:tag];
+                                              value:[tag percentEncode]];
                 } else {
                     NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes}
                                                                              options:0
@@ -151,7 +152,7 @@
                     NSString *payload = [[NSString alloc] initWithData:serializedData
                                                               encoding:NSUTF8StringEncoding];
                     [builder addPayloadEntryWithKey:@"ta"
-                                              value:payload];
+                                              value:[payload percentEncode]];
                 }
             }
                               timestampProvider:[self.requestContext timestampProvider]
@@ -281,9 +282,9 @@
                 [builder setType:@"predict_item_view"];
                 [builder addPayloadEntryWithKey:@"v"
                                           value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
-                                                                           product.productId,
-                                                                           product.feature,
-                                                                           product.cohort]];
+                                                                           [product.productId percentEncode],
+                                                                           [product.feature percentEncode],
+                                                                           [product.cohort percentEncode]]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
