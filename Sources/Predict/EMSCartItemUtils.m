@@ -3,7 +3,7 @@
 //
 
 #import "EMSCartItemUtils.h"
-
+#import "NSString+EMSCore.h"
 
 @implementation EMSCartItemUtils {
 
@@ -23,7 +23,7 @@
 
 + (NSString *)queryParamFromCartItem:(id <EMSCartItemProtocol>)cartItem {
     return [NSString stringWithFormat:@"i:%@,p:%@,q:%@",
-                                      [cartItem itemId],
+                                      [[cartItem itemId] percentEncode],
                                       @([cartItem price]).stringValue,
                                       @([cartItem quantity]).stringValue];
 }

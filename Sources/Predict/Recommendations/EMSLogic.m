@@ -5,6 +5,7 @@
 #import "EMSLogic.h"
 #import "EMSCartItemProtocol.h"
 #import "EMSCartItemUtils.h"
+#import "NSString+EMSCore.h"
 
 @interface EMSLogic ()
 
@@ -61,7 +62,7 @@
 + (EMSLogic *)relatedWithViewItemId:(nullable NSString *)itemId {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     if (itemId) {
-        data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
+        data[@"v"] = [NSString stringWithFormat:@"i:%@", [itemId percentEncode]];
     }
     return [[EMSLogic alloc] initWithLogic:@"RELATED"
                                       data:[NSDictionary dictionaryWithDictionary:data]
@@ -87,7 +88,7 @@
 + (EMSLogic *)alsoBoughtWithViewItemId:(nullable NSString *)itemId {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     if (itemId) {
-        data[@"v"] = [NSString stringWithFormat:@"i:%@", itemId];
+        data[@"v"] = [NSString stringWithFormat:@"i:%@", [itemId percentEncode]];
     }
     return [[EMSLogic alloc] initWithLogic:@"ALSO_BOUGHT"
                                       data:[NSDictionary dictionaryWithDictionary:data]

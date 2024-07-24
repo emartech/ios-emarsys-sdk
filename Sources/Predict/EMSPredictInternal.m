@@ -110,7 +110,7 @@
     EMSShard *shard = [EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
                 [builder setType:@"predict_search_term"];
                 [builder addPayloadEntryWithKey:@"q"
-                                          value:[searchTerm percentEncode]];
+                                          value:searchTerm];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -129,7 +129,7 @@
                 [builder addPayloadEntryWithKey:@"co"
                                           value:[EMSCartItemUtils queryParamFromCartItems:items]];
                 [builder addPayloadEntryWithKey:@"oi"
-                                          value:[orderId percentEncode]];
+                                          value:orderId];
             }
                                              timestampProvider:self.requestContext.timestampProvider
                                                   uuidProvider:self.requestContext.uuidProvider]];
@@ -144,7 +144,7 @@
 
                 if (!attributes) {
                     [builder addPayloadEntryWithKey:@"t"
-                                              value:[tag percentEncode]];
+                                              value:tag];
                 } else {
                     NSData *serializedData = [NSJSONSerialization dataWithJSONObject:@{@"name": tag, @"attributes": attributes}
                                                                              options:0
@@ -152,7 +152,7 @@
                     NSString *payload = [[NSString alloc] initWithData:serializedData
                                                               encoding:NSUTF8StringEncoding];
                     [builder addPayloadEntryWithKey:@"ta"
-                                              value:[payload percentEncode]];
+                                              value:payload];
                 }
             }
                               timestampProvider:[self.requestContext timestampProvider]
@@ -283,8 +283,8 @@
                 [builder addPayloadEntryWithKey:@"v"
                                           value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
                                                                            [product.productId percentEncode],
-                                                                           [product.feature percentEncode],
-                                                                           [product.cohort percentEncode]]];
+                                                                           product.feature,
+                                                                           product.cohort]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
