@@ -424,22 +424,20 @@
                                                                                  actionFactory:onEventActionFactory
                                                                              timestampProvider:timestampProvider]];
 
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
-        _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
-                                                                specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
-                                                                                                                         column:SHARD_COLUMN_NAME_TYPE]
-                                                                       mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext
-                                                                                                                      endpoint:self.endpoint]
-                                                                      chunker:[[EMSListChunker alloc] initWithChunkSize:1]
-                                                                    predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
-                                                               requestManager:self.requestManager
-                                                                   persistent:YES
-                                                           connectionWatchdog:watchdog];
-        [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
-                                    triggerType:EMSDBTriggerType.afterType
-                                   triggerEvent:EMSDBTriggerEvent.insertEvent
-                                        trigger:self.predictTrigger];
-    }
+    _predictTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
+                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"predict_%%"
+                                                                                                                     column:SHARD_COLUMN_NAME_TYPE]
+                                                                   mapper:[[EMSPredictMapper alloc] initWithRequestContext:self.predictRequestContext
+                                                                                                                  endpoint:self.endpoint]
+                                                                  chunker:[[EMSListChunker alloc] initWithChunkSize:1]
+                                                                predicate:[[EMSCountPredicate alloc] initWithThreshold:1]
+                                                           requestManager:self.requestManager
+                                                               persistent:YES
+                                                       connectionWatchdog:watchdog];
+    [_dbHelper registerTriggerWithTableName:SHARD_TABLE_NAME
+                                triggerType:EMSDBTriggerType.afterType
+                               triggerEvent:EMSDBTriggerEvent.insertEvent
+                                    trigger:self.predictTrigger];
 
     _loggerTrigger = [[EMSBatchingShardTrigger alloc] initWithRepository:shardRepository
                                                            specification:[[EMSFilterByTypeSpecification alloc] initWitType:@"log_%%"
