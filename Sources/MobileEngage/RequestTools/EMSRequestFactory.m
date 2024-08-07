@@ -115,7 +115,7 @@
                 [builder setUrl:[weakSelf.endpoint contactUrlPredictOnly]];
                 if (self.predictRequestContext.merchantId) {
                     [builder setHeaders:@{
-                        @"me-merchant-id": self.predictRequestContext.merchantId
+                        @"x-merchant-id": self.predictRequestContext.merchantId
                     }];
                 }
                 NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];

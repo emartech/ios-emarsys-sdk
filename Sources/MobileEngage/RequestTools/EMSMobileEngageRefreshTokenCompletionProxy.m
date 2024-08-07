@@ -62,10 +62,11 @@
             weakSelf.originalResponseModel = responseModel;
             [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
                                      coreCompletionProxy:weakSelf];
-        } else if (responseModel.isSuccess && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url]) {
+        } else if (responseModel.isSuccess && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url] && weakSelf.originalRequestModel) {
             [weakSelf.contactResponseHandler processResponse:responseModel];
             [NSThread sleepForTimeInterval:0.5f];
             weakSelf.retryCount += 1;
+            EMSRequestModel *requestModel = weakSelf.originalRequestModel;
             [weakSelf.restClient executeWithRequestModel:weakSelf.originalRequestModel
                                      coreCompletionProxy:weakSelf];
         } else {
