@@ -12,7 +12,9 @@
 
 @property(nonatomic, strong) NSUserDefaults *fallbackUserDefaults;
 
-- (OSStatus)storeInSecureStorageWithQuery:(NSDictionary *)query;
+- (OSStatus)setData:(nullable NSData *)data
+             forKey:(NSString *)key
+        accessGroup:(nullable NSString *)accessGroup;
 
 @end
 
@@ -136,7 +138,7 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testSetDataForKey_whenKeyChainIsUnavailable {
     EMSStorage *partialMockStorage = OCMPartialMock(self.storage);
 
-    OCMStub([partialMockStorage storeInSecureStorageWithQuery:[OCMArg any]]).andReturn(errSecItemNotFound);
+    OCMStub([partialMockStorage setData:[OCMArg any] forKey:[OCMArg any] accessGroup:[OCMArg any]]).andReturn(errSecItemNotFound);
 
     [partialMockStorage setData:self.testValue1
                          forKey:kTestKey];
