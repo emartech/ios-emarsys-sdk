@@ -40,10 +40,11 @@
 }
 
 - (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
+    __weak typeof(self) weakSelf = self;
     return ^(NSString *requestId, EMSResponseModel *response) {
         [super createSuccessBlock](requestId, response);
-        _lastResponseModel = response;
-        XCTestExpectation *expectation = [self popExpectation];
+        weakSelf.lastResponseModel = response;
+        XCTestExpectation *expectation = [weakSelf popExpectation];
         [expectation fulfill];
     };
 }
@@ -221,9 +222,10 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"visitorId", ^{
 
             it(@"should simulate login flow", ^{
+                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
                 XCTestExpectation *expectationSearchTerm1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
                 XCTestExpectation *expectationSearchTerm2 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
-                [dependencyContainer setExpectations:[@[expectationSearchTerm1, expectationSearchTerm2] mutableCopy]];
+                [dependencyContainer setExpectations:[@[expectationSearchTerm1, expectation, expectationSearchTerm2] mutableCopy]];
 
                 NSString *expectedQueryParams = @"q=searchTerm";
                 NSString *visitorId;
@@ -240,8 +242,12 @@ SPEC_BEGIN(PredictIntegrationTests)
 
                 [Emarsys clearContact];
 
-                [Emarsys setContactWithContactFieldId:@3
-                                    contactFieldValue:@"test@test.com"];
+                
+                [Emarsys setContactWithContactFieldId:@62470 
+                                    contactFieldValue:@"test2@test.com"
+                                      completionBlock:^(NSError * _Nullable error) {
+                    
+                }];
 
                 [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
                 [EMSWaiter waitForExpectations:@[expectationSearchTerm2]

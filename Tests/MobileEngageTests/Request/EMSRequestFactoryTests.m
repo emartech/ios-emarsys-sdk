@@ -445,7 +445,7 @@
                                                                                        @"refreshToken": @"testRefreshToken"
                                                                                }
                                                                                headers:@{
-        @"me-merchant-id": @"testMerchantId"
+        @"x-merchant-id": @"testMerchantId"
     }
                                                                                 extras:nil];
 
