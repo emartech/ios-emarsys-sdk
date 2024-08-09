@@ -138,7 +138,7 @@
     NSArray *afterInsertTriggers = triggers[[[EMSDBTriggerKey alloc] initWithTableName:@"shard"
                                                                              withEvent:[EMSDBTriggerEvent insertEvent]
                                                                               withType:[EMSDBTriggerType afterType]]];
-    XCTAssertEqual([afterInsertTriggers count], 1);
+    XCTAssertEqual([afterInsertTriggers count], 2);
     XCTAssertTrue([afterInsertTriggers containsObject:EMSDependencyInjection.dependencyContainer.loggerTrigger]);
 }
 

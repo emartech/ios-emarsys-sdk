@@ -191,7 +191,13 @@ struct DashboardView: View {
                     UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.applicationCode.rawValue)
                     UserDefaults.standard.set(nil, forKey: ConfigUserDefaultsKey.contactFieldId.rawValue)
                 }
-
+                Emarsys.config.changeMerchantId(merchantId: self.loginData.merchantId) { error in
+                    if (error == nil) {
+                        self.showMessage(successful: true)
+                    } else {
+                        self.showMessage(successful: true)
+                    }
+                }
             self.showSetupChangeMessage = true
         }
     }

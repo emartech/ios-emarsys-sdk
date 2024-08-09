@@ -259,6 +259,12 @@
     OCMVerify([self.mockLocationManager requestAlwaysAuthorization]);
 }
 
+- (void)testRequestWhenInUseAuthorization {
+    [self.geofenceInternal requestWhenInUseAuthorization];
+
+    OCMVerify([self.mockLocationManager requestWhenInUseAuthorization]);
+}
+
 - (void)testGeofenceLimit {
     XCTAssertEqual([self.geofenceInternal geofenceLimit], 20);
 }
@@ -313,7 +319,7 @@
     NSError *expectedError = [NSError errorWithCode:1401
                                localizedDescription:@"LocationManager authorization status must be AuthorizedAlways!"];
 
-    OCMStub([self.mockLocationManager authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedWhenInUse);
+    OCMStub([self.mockLocationManager authorizationStatus]).andReturn(kCLAuthorizationStatusRestricted);
     OCMReject([self.mockLocationManager startUpdatingLocation]);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForError"];

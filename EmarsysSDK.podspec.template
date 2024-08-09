@@ -21,6 +21,7 @@ Pod::Spec.new do |spec|
         'Sources/Private/MEDownloader.h',
         'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
     ]
+    spec.resource_bundles   = {'EmarsysSDK' => ['Sources/PrivacyInfo.xcprivacy']}
 	spec.public_header_files  = [
         'Sources/include/Emarsys.h',
         'Sources/include/EMSInAppProtocol.h',

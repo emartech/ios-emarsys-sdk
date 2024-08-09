@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysSDK'
-	spec.version              = '3.5.0'
+	spec.version              = '3.5.1'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
@@ -21,6 +21,7 @@ Pod::Spec.new do |spec|
         'Sources/Private/MEDownloader.h',
         'Sources/MobileEngage/RichNotificationExtension/**/*.{h,m}'
     ]
+    spec.resource_bundles   = {'EmarsysSDK' => ['Sources/PrivacyInfo.xcprivacy']}
 	spec.public_header_files  = [
         'Sources/include/Emarsys.h',
         'Sources/include/EMSInAppProtocol.h',

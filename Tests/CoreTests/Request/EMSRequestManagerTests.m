@@ -11,7 +11,6 @@
 #import "EMSRequestModelRepository.h"
 #import "EMSShardRepository.h"
 #import "EMSShard.h"
-#import "EMSReachability.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
 #import "EMSWaiter.h"
@@ -513,8 +512,7 @@
                                                                                                            defaultSuccessBlock:middleware.successBlock
                                                                                                              defaultErrorBlock:middleware.errorBlock];
 
-    EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithReachability:[EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.queue]
-                                                                                     operationQueue:self.queue];
+    EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.queue];
 
     EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.queue
                                                               requestRepository:requestRepository
@@ -529,16 +527,6 @@
                                       requestRepository:requestRepository
                                         shardRepository:shardRepository
                                            proxyFactory:proxyFactory];
-}
-
-- (void)postReachabilityWithNetworkStatus:(EMSNetworkStatus)networkStatus {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        EMSReachability *reachabilityMock = OCMClassMock([EMSReachability class]);
-        OCMStub([reachabilityMock currentReachabilityStatus]).andReturn(networkStatus);
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kEMSReachabilityChangedNotification
-                                                            object:reachabilityMock];
-    });
 }
 
 @end

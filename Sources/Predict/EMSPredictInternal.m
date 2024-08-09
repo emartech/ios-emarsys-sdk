@@ -12,6 +12,7 @@
 #import "EMSProductMapper.h"
 #import "EMSLogic.h"
 #import "EMSProduct.h"
+#import "NSString+EMSCore.h"
 
 @interface EMSPredictInternal ()
 
@@ -81,7 +82,7 @@
                 [builder setType:@"predict_item_view"];
                 [builder addPayloadEntryWithKey:@"v"
                                           value:[NSString stringWithFormat:@"i:%@",
-                                                                           itemId]];
+                                                                           [itemId percentEncode]]];
             }
                               timestampProvider:[self.requestContext timestampProvider]
                                    uuidProvider:[self.requestContext uuidProvider]];
@@ -281,7 +282,7 @@
                 [builder setType:@"predict_item_view"];
                 [builder addPayloadEntryWithKey:@"v"
                                           value:[NSString stringWithFormat:@"i:%@,t:%@,c:%@",
-                                                                           product.productId,
+                                                                           [product.productId percentEncode],
                                                                            product.feature,
                                                                            product.cohort]];
             }

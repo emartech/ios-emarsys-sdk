@@ -160,9 +160,9 @@ SPEC_BEGIN(PredictIntegrationTests)
         describe(@"trackItemViewWithItemId:", ^{
 
             it(@"should send request with item id", ^{
-                NSString *expectedQueryParams = @"v=i%3A2508";
+                NSString *expectedQueryParams = @"v=i%3A2508%252B";
 
-                [Emarsys.predict trackItemViewWithItemId:@"2508"];
+                [Emarsys.predict trackItemViewWithItemId:@"2508+"];
 
                 [EMSWaiter waitForExpectations:expectations
                                        timeout:10];

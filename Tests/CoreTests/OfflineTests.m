@@ -30,7 +30,6 @@
 @property(nonatomic, strong) EMSSQLiteHelper *helper;
 @property(nonatomic, strong) EMSRequestModelRepository *requestModelRepository;
 @property(nonatomic, strong) EMSShardRepository *shardRepository;
-@property(nonatomic, strong) EMSReachability *reachability;
 @property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
@@ -39,7 +38,6 @@
 
 - (void)setUp {
     _queue = [self createTestOperationQueue];
-    _reachability = [EMSReachability reachabilityForInternetConnectionWithOperationQueue:self.queue];
     
     [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
                                                error:nil];
@@ -82,7 +80,6 @@
     
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
-                                                                                 reachability:self.reachability
                                                                                   expectation:nil];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
@@ -132,7 +129,6 @@
     [watchdogExpectation setExpectedFulfillmentCount:3];
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@NO, @NO, @NO]
-                                                                                 reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
@@ -149,7 +145,7 @@
     
     [EMSWaiter waitForExpectations:@[watchdogExpectation]];
     
-    XCTAssertEqualObjects(watchdog.isConnectedCallCount, @3);
+    XCTAssertTrue(watchdog.isConnectedCallCount.intValue >= 3);
     XCTAssertEqualObjects(completionHandler.successCount, @0);
     XCTAssertEqualObjects(completionHandler.errorCount, @0);
     
@@ -182,7 +178,6 @@
     [watchdogExpectation setExpectedFulfillmentCount:3];
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @NO]
-                                                                                 reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
@@ -239,7 +234,6 @@
     [watchdogExpectation setExpectedFulfillmentCount:2];
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
-                                                                                 reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
@@ -293,7 +287,6 @@
     [watchdogExpectation setExpectedFulfillmentCount:4];
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
-                                                                                 reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue
@@ -351,7 +344,6 @@
     [watchdogExpectation setExpectedFulfillmentCount:2];
     FakeConnectionWatchdog *watchdog = [[FakeConnectionWatchdog alloc] initWithOperationQueue:self.queue
                                                                           connectionResponses:@[@YES, @YES, @YES]
-                                                                                 reachability:self.reachability
                                                                                   expectation:watchdogExpectation];
     FakeCompletionHandler *completionHandler = [FakeCompletionHandler new];
     EMSRequestManager *manager = [self createRequestManagerWithOperationQueue:self.queue

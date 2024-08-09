@@ -15,10 +15,8 @@
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue
                    connectionResponses:(NSArray *)connectionResponses
-                          reachability:(EMSReachability *)reachability
                            expectation:(XCTestExpectation *)expectation {
-    if (self = [super initWithReachability:reachability
-                            operationQueue:operationQueue]) {
+    if (self = [super initWithOperationQueue:operationQueue]) {
         _isConnectedCallCount = @0;
         _connectionResponses = [connectionResponses mutableCopy];
         _expectation = expectation;
