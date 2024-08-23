@@ -45,9 +45,6 @@ typedef void(^BindBlock)(sqlite3_stmt *statement);
 
 - (BOOL)executeCommand:(NSString *)command;
 
-- (BOOL)execute:(NSString *)command
-  withBindBlock:(BindBlock)bindBlock;
-
 - (NSArray *)executeQuery:(NSString *)query
                    mapper:(id <EMSModelMapperProtocol>)mapper;
 
