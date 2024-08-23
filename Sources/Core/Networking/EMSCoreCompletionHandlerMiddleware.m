@@ -33,7 +33,7 @@
     __weak typeof(self) weakSelf = self;
 
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
-        [weakSelf.operationQueue addOperationWithBlock:^{
+    [weakSelf.operationQueue addOperationWithBlock:^{
             if ([weakSelf shouldContinueWorkerWithResponseModel:responseModel
                                                           error:error]) {
                 [weakSelf.requestRepository remove:[[EMSFilterByValuesSpecification alloc] initWithValues:requestModel.requestIds

@@ -40,10 +40,11 @@
 }
 
 - (void (^)(NSString *, EMSResponseModel *))createSuccessBlock {
+    __weak typeof(self) weakSelf = self;
     return ^(NSString *requestId, EMSResponseModel *response) {
         [super createSuccessBlock](requestId, response);
-        _lastResponseModel = response;
-        XCTestExpectation *expectation = [self popExpectation];
+        weakSelf.lastResponseModel = response;
+        XCTestExpectation *expectation = [weakSelf popExpectation];
         [expectation fulfill];
     };
 }
@@ -62,32 +63,19 @@ SPEC_BEGIN(PredictIntegrationTests)
         __block PredictIntegrationDependencyContainer *dependencyContainer;
 
         beforeEach(^{
-            [EmarsysTestUtils tearDownEmarsys];
-
-            NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.predict"];
-            [userDefaults removeObjectForKey:@"contactFieldValue"];
-            [userDefaults removeObjectForKey:@"visitorId"];
-            [userDefaults synchronize];
-
             EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMerchantId:@"1428C8EE286EC34B"];
             }];
-            [MEExperimental enableFeature:EMSInnerFeature.predict];
 
             expectations = @[
                     [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
             dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
                                                                                    expectations:expectations];
-            [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
+            [EmarsysTestUtils setupEmarsysWithConfig:config 
+                                 dependencyContainer:dependencyContainer];
 
-            XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
-            [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
-                [expectation fulfill];
-            }];
-            XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                  timeout:10];
-
-            [Emarsys setupWithConfig:config];
+            [self waitATickOnOperationQueue:dependencyContainer.publicApiOperationQueue];
+            [self waitATickOnOperationQueue:dependencyContainer.coreOperationQueue];
         });
 
         afterEach(^{

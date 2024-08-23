@@ -16,6 +16,7 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSCoreCompletionHandlerMiddleware.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -29,29 +30,30 @@ SPEC_BEGIN(EMSDefaultWorkerTests)
         __block EMSSQLiteHelper *helper;
         __block EMSRequestModelRepository *repository;
         __block NSOperationQueue *queue;
+        __block NSOperationQueue *dbQueue;
 
 beforeEach(^{
     queue = [self createTestOperationQueue];
+    dbQueue = [self createTestOperationQueue];
 });
 
 afterEach(^{
-    [self tearDownOperationQueue:queue];
+    [EmarsysTestUtils tearDownOperationQueue:queue];
 });
 
         describe(@"init", ^{
 
-            beforeEach(^{
+            beforeAll(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                        schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                        operationQueue:dbQueue];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
                                                                   operationQueue:queue];
             });
 
             afterEach(^{
-                [helper close];
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                           error:nil];
+                [EmarsysTestUtils clearDb:helper];
             });
 
 
@@ -137,18 +139,17 @@ afterEach(^{
 
         describe(@"run", ^{
 
-            beforeEach(^{
+            beforeAll(^{
                 helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                        schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                        schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                        operationQueue:dbQueue];
                 [helper open];
                 repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
                                                                   operationQueue:queue];
             });
 
             afterEach(^{
-                [helper close];
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                           error:nil];
+                [EmarsysTestUtils clearDb:helper];
             });
 
             id (^requestModel)(NSString *url, NSDictionary *payload, BOOL expired) = ^id(NSString *url, NSDictionary *payload, BOOL expired) {

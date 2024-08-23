@@ -35,6 +35,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSInnerFeature.h"
 #import "MEExperimental.h"
+#import "XCTestCase+Helper.h"
 
 @interface EmarsysTests : XCTestCase
 
@@ -47,17 +48,17 @@
 }
 
 - (void)testShouldInitializeCategoryForPush {
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
-
     [EmarsysTestUtils setupEmarsysWithFeatures:@[]
                        withDependencyContainer:nil];
 
+    [self waitForSetup];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"testExpectation"];
     __block NSSet *categorySet = nil;
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *categories) {
         categorySet = categories;
         [expectation fulfill];
     }];
-
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
                                                     timeout:10];
 
@@ -102,7 +103,6 @@
 }
 
 - (void)testRegisterTriggers_when_PredictTurnedOn {
-    [EmarsysTestUtils tearDownEmarsys];
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"];
                 [builder setMerchantId:@"1428C8EE286EC34B"];
@@ -123,7 +123,6 @@
 }
 
 - (void)testRegisterTriggers {
-    [EmarsysTestUtils tearDownEmarsys];
     [EmarsysTestUtils setupEmarsysWithConfig:[EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
                 [builder setMobileEngageApplicationCode:@"14C19-A121F"];
             }]
@@ -248,6 +247,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     OCMVerify([mockProvider createAppStartEventBlock]);
     OCMVerify([mockProvider createDeviceInfoEventBlock]);
@@ -277,6 +277,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     OCMVerify([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:nil]);
     OCMVerify([mockMobileEngage setContactWithContactFieldId:nil
@@ -303,6 +304,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 }
 
 - (void)testSetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactTokenIsAvailable {
@@ -325,6 +327,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 }
 
 - (void)testShouldDelegateCallToDeeplink {
@@ -339,6 +342,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys trackDeepLinkWithUserActivity:mockUserActivity
                              sourceHandler:sourceHandler];
@@ -358,7 +362,8 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
-
+    [self waitForSetup];
+    
     [Emarsys trackCustomEventWithName:eventName
                       eventAttributes:eventAttributes];
 
@@ -380,7 +385,8 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
-
+    [self waitForSetup];
+    
     [Emarsys trackCustomEventWithName:eventName
                       eventAttributes:eventAttributes
                       completionBlock:completionBlock];
@@ -402,6 +408,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys setAuthenticatedContactWithContactFieldId:@3
                                            openIdToken:idToken
@@ -441,6 +448,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys setAuthenticatedContactWithContactFieldId:@3
                                            openIdToken:idToken
@@ -458,6 +466,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys setAuthenticatedContactWithContactFieldId:@3
                                            openIdToken:idToken
@@ -500,6 +509,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys setAuthenticatedContactWithContactFieldId:@3
                                            openIdToken:idToken];
@@ -541,6 +551,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys setContactWithContactFieldId:@3
                         contactFieldValue:@"contact"];
@@ -554,6 +565,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys setContactWithContactFieldId:@3
                         contactFieldValue:@"contact"];
@@ -574,6 +586,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys setContactWithContactFieldId:@3
                         contactFieldValue:@"contact"];
@@ -587,6 +600,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys setContactWithContactFieldId:@3
                         contactFieldValue:@"contact"];
@@ -609,6 +623,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys setContactWithContactFieldId:@3
                         contactFieldValue:@"contact"];
@@ -628,6 +643,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys clearContact];
 }
@@ -640,6 +656,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:YES];
+    [self waitForSetup];
 
     [Emarsys clearContact];
 
@@ -656,7 +673,8 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:YES];
-
+    [self waitForSetup];
+    
     [Emarsys clearContact];
 }
 
@@ -668,6 +686,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys clearContact];
 
@@ -686,6 +705,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     [Emarsys clearContact];
 
@@ -697,6 +717,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertTrue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]);
 }
@@ -706,6 +727,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertFalse([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]);
 }
@@ -715,6 +737,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSPushV3Internal class]);
 }
@@ -724,6 +747,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).instanceRouter.instance class], [MEInApp class]);
 }
@@ -733,6 +757,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 }
@@ -742,6 +767,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.mobileEngage).instanceRouter.instance class], [EMSMobileEngageV3Internal class]);
 }
@@ -751,6 +777,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.dependencyContainer.deepLink).instanceRouter.instance class], [EMSDeepLinkInternal class]);
 }
@@ -760,6 +787,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).instanceRouter.instance class], [EMSGeofenceInternal class]);
 }
@@ -769,6 +797,7 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:YES];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).instanceRouter.instance class], [EMSInboxV3 class]);
 }
@@ -778,7 +807,8 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
-
+    [self waitForSetup];
+    
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.push).instanceRouter.instance class], [EMSLoggingPushInternal class]);
 }
 
@@ -787,6 +817,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.inApp).instanceRouter.instance class], [EMSLoggingInApp class]);
 }
@@ -796,6 +827,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);
 }
@@ -805,7 +837,8 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
-
+    [self waitForSetup];
+    
     XCTAssertEqual([((EMSQueueDelegator *) EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
 }
 
@@ -814,6 +847,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.geofence).instanceRouter.instance class], [EMSLoggingGeofenceInternal class]);
 }
@@ -823,6 +857,7 @@
             }
               mobileEngageEnabled:NO
                    predictEnabled:NO];
+    [self waitForSetup];
 
     XCTAssertEqual([((EMSQueueDelegator *) Emarsys.messageInbox).instanceRouter.instance class], [EMSLoggingInboxV3 class]);
 }
@@ -834,12 +869,14 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
+    [self waitForSetup];
+    
     OCMVerify([mockContext reset]);
-
 }
 
 - (void)testShouldNotResetContextOnReinstallWhenContactFieldValueIsPresent {
     MERequestContext *mockContext = OCMClassMock([MERequestContext class]);
+    MERequestContext *mockContex2 = OCMClassMock([MERequestContext class]);
     OCMStub([mockContext contactFieldValue]).andReturn(@"teszt@teszt.kom");
     OCMReject([mockContext reset]);
     [self setupContainerWithMocks:^(EMSDependencyContainer *partialMockContainer) {
@@ -847,11 +884,8 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
-    
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
     [EMSDependencyInjection tearDown];
 }
 
@@ -866,22 +900,9 @@
             }
               mobileEngageEnabled:YES
                    predictEnabled:NO];
-    
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
     [EMSDependencyInjection tearDown];
-}
-
-- (void)waitForSetup {
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForDescription"];
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
-        [expectation fulfill];
-    }];
-    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
-    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)setupContainerWithMocks:(void (^)(EMSDependencyContainer *partialMockContainer))partialMockContainerBlock
@@ -905,6 +926,11 @@
                          dependencyContainer:partialMockContainer];
 
     [self waitForSetup];
+}
+
+- (void)waitForSetup {
+    [self waitATickOnOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [self waitATickOnOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
 }
 
 @end

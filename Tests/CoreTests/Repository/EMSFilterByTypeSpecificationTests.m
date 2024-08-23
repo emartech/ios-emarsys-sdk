@@ -12,6 +12,7 @@
 #import "EMSSqliteSchemaHandler.h"
 #import "EMSSchemaContract.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -19,6 +20,8 @@
 
 @property(nonatomic, strong) EMSRequestModelRepository *repository;
 @property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *dbQueue;
+@property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 
 @end
 
@@ -26,17 +29,18 @@
 
 - (void)setUp {
     _queue = [self createTestOperationQueue];
-    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                               error:nil];
-    EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                             schemaDelegate:[EMSSqliteSchemaHandler new]];
-    [helper open];
-    _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+    _dbQueue = [self createTestOperationQueue];
+    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                               schemaDelegate:[EMSSqliteSchemaHandler new]
+                                               operationQueue:self.dbQueue];
+    [self.dbHelper open];
+    _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
                                                        operationQueue:self.queue];
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
+    [EmarsysTestUtils clearDb:self.dbHelper];
 }
 
 - (void)testQueryShouldReturnWithTheExactRequstModels {

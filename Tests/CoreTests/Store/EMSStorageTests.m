@@ -7,6 +7,7 @@
 #import "EMSStorage.h"
 #import "XCTestCase+Helper.h"
 #import "EMSStorageProtocol.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSStorage (Tests)
 
@@ -57,11 +58,12 @@ static NSString *const kTestValue2String = @"testValue2";
     };
 
     _storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
-                                          accessGroup:@"7ZFXXDJH82.com.emarsys.SdkHostTestGroup"];
+                                          accessGroup:@"7ZFXXDJH82.com.emarsys.SdkHostTestGroup"
+                                       operationQueue:self.queue];
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
     NSDictionary *deleteQuery = @{
             (id) kSecClass: (id) kSecClassGenericPassword,
             (id) kSecAttrAccessible: (id) kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
@@ -83,17 +85,30 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testInit_suiteNames_mustNotBeNil {
     @try {
         [[EMSStorage alloc] initWithSuiteNames:nil
-                                   accessGroup:@"testAccessGroup"];
+                                   accessGroup:@"testAccessGroup"
+                                operationQueue:self.queue];
         XCTFail(@"Expected Exception when suiteNames is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: suiteNames");
     }
 }
 
+- (void)testInit_operationQueue_mustNotBeNil {
+    @try {
+        [[EMSStorage alloc] initWithSuiteNames:@[@""]
+                                   accessGroup:@"testAccessGroup"
+                                operationQueue:nil];
+        XCTFail(@"Expected Exception when operationQueue is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: operationQueue");
+    }
+}
+
 - (void)testInit_withAccessGroup {
     NSString *accessGroup = @"testAccessGroup";
     EMSStorage *storage = [[EMSStorage alloc] initWithSuiteNames:self.suiteNames
-                                                     accessGroup:accessGroup];
+                                                     accessGroup:accessGroup
+                                                  operationQueue:self.queue];
     XCTAssertEqualObjects(storage.accessGroup, accessGroup);
 }
 
@@ -203,7 +218,9 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testDataForKey_should_returnAndDeleteUserDefaultsValue_when_missingFromKeychain_withNumber {
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
     EMSStorage *mockStorage = OCMPartialMock(self.storage);
-    NSData *numberData = [NSKeyedArchiver archivedDataWithRootObject:self.testNumber];
+    NSData *numberData = [NSKeyedArchiver archivedDataWithRootObject:self.testNumber
+                                               requiringSecureCoding:NO
+                                                               error:nil];
 
     [userDefaults setObject:self.testNumber
                      forKey:kTestKey];
@@ -274,7 +291,9 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setNumber:self.testNumber
                      forKey:kTestKey];
 
-    NSNumber *result = [NSKeyedUnarchiver unarchiveObjectWithData:self.storage[kTestKey]];
+    NSNumber *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSDictionary class], [NSString class], [NSNumber class], [NSArray class], [NSNull class]]]
+                                                           fromData:self.storage[kTestKey]
+                                                              error:nil];
 
     XCTAssertEqualObjects(result, self.testNumber);
 }
@@ -298,7 +317,9 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setDictionary:self.testDictionary
                          forKey:kTestKey];
 
-    NSDictionary *result = [NSKeyedUnarchiver unarchiveObjectWithData:self.storage[kTestKey]];
+    NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSDictionary class], [NSString class], [NSNumber class], [NSArray class], [NSNull class]]]
+                                                               fromData:self.storage[kTestKey]
+                                                                  error:nil];
 
     XCTAssertEqualObjects(result, self.testDictionary);
 }

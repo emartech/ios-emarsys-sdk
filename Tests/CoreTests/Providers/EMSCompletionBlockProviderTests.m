@@ -3,9 +3,10 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "EMSCompletionBlockProvider.h"
+#import "EMSCompletionProvider.h"
 #import "EMSOperationQueue.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSCompletionBlockProviderTests : XCTestCase
 
@@ -20,12 +21,12 @@
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
 }
 
 - (void)testInit_operationQueue_mustNotBeNil {
     @try {
-        [[EMSCompletionBlockProvider alloc] initWithOperationQueue:nil];
+        [[EMSCompletionProvider alloc] initWithOperationQueue:nil];
         XCTFail(@"Expected Exception when operationQueue is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: operationQueue");
@@ -33,7 +34,7 @@
 }
 
 - (void)testProvideCompletion {
-    EMSCompletionBlockProvider *provider = [[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.queue];
+    EMSCompletionProvider *provider = [[EMSCompletionProvider alloc] initWithOperationQueue:self.queue];
 
     __block NSOperationQueue *usedOperationQueue;
 

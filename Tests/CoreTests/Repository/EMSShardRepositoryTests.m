@@ -14,6 +14,8 @@
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSFilterByTypeSpecification.h"
 #import "EMSSchemaContract.h"
+#import "EmarsysTestUtils.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -21,18 +23,19 @@ SPEC_BEGIN(EMSShardRepositoryTests)
 
         __block EMSSQLiteHelper *helper;
         __block id <EMSShardRepositoryProtocol> repository;
+        __block NSOperationQueue *queue;
 
-        beforeEach(^{
-            [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                       error:nil];
+        beforeAll(^{
+            queue = [self createTestOperationQueue];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                    schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                    schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                    operationQueue:queue];
             [helper open];
             repository = [[EMSShardRepository alloc] initWithDbHelper:helper];
         });
 
         afterEach(^{
-            [helper close];
+            [EmarsysTestUtils clearDb:helper];
         });
 
         EMSShard *(^createShardWithType)(NSString *type) = ^EMSShard *(NSString *type) {

@@ -14,6 +14,7 @@
 #import "EMSRequestModel+RequestIds.h"
 #import "NSError+EMSCore.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequestModel, EMSResponseModel *returnedResponseModel, NSError *returnedError, NSOperationQueue *returnedOperationQueue);
 
@@ -57,7 +58,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *returnedRequest
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.operationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.operationQueue];
 }
 
 - (void)testInit_completionHandler_mustNotBeNull {

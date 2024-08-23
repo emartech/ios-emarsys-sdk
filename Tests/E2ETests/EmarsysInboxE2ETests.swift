@@ -35,18 +35,16 @@ class EmarsysInboxE2ETests: XCTestCase {
 
     func testInboxTags_step2() {
         retry { [unowned self] () in
-
             let message = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
-            Emarsys.messageInbox.addTag(tag: "testtag", messageId: message.id)
+            addTag("testtag", message.id)
         }
     }
 
     func testInboxTags_step3() {
         var messageWithTag: EMSMessage?
 
-        retry { [unowned self] () in
-
+        retry(delay: 5.0) { [unowned self] () in
             messageWithTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
             if let tags = messageWithTag?.tags, !tags.contains("testtag") {
@@ -56,14 +54,13 @@ class EmarsysInboxE2ETests: XCTestCase {
 
         XCTAssertTrue(messageWithTag?.tags?.contains("testtag") ?? false)
 
-        Emarsys.messageInbox.removeTag(tag: "testtag", messageId: messageWithTag?.id ?? "")
+        removeTag("testtag", messageWithTag!.id)
     }
 
     func testInboxTags_step4() {
         var messageWithoutTag: EMSMessage?
 
         retry { [unowned self] () in
-
             messageWithoutTag = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
 
             if let tags = messageWithoutTag?.tags, tags.contains("testtag") {
@@ -108,6 +105,36 @@ class EmarsysInboxE2ETests: XCTestCase {
             if let _ = returnedError {
                 throw InboxError.assertionError(assertionMessage: "error is not nil")
             }
+        }
+    }
+    
+    func addTag(_ tag: String, _ messageId: String) {
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let expectation = XCTestExpectation(description: "waitForAddTag")
+            Emarsys.messageInbox.addTag(tag: "testtag", messageId: messageId) { error in
+                returnedError = error
+                expectation.fulfill()
+            }
+            if let returnedError {
+                throw InboxError.assertionError(assertionMessage: "error is not nil: \(returnedError)")
+            }
+            _ = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        }
+    }
+    
+    func removeTag(_ tag: String, _ messageId: String) {
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let expectation = XCTestExpectation(description: "waitForRemoveTag")
+            Emarsys.messageInbox.removeTag(tag: "testtag", messageId: messageId) { error in
+                returnedError = error
+                expectation.fulfill()
+            }
+            if let returnedError {
+                throw InboxError.assertionError(assertionMessage: "error is not nil: \(returnedError)")
+            }
+            _ = XCTWaiter.wait(for: [expectation], timeout: timeout)
         }
     }
 

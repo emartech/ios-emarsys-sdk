@@ -23,6 +23,7 @@
 #import "EmarsysTestUtils.h"
 #import "EmarsysSDKVersion.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSConfigInternal (Tests)
 
@@ -101,14 +102,13 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
-    [EmarsysTestUtils tearDownEmarsys];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -124,7 +124,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when requestManager is nil!");
@@ -146,7 +146,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when meRequestContext is nil!");
@@ -168,7 +168,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when mobileEngage is nil!");
@@ -190,7 +190,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when pushInternal is nil!");
@@ -212,7 +212,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when preRequestContext is nil!");
@@ -234,7 +234,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when deviceInfo is nil!");
@@ -256,7 +256,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when emarsysRequestFactory is nil!");
@@ -278,7 +278,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when remoteConfigResponseMapper is nil!");
@@ -300,7 +300,7 @@
                                                  endpoint:nil
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when endpoint is nil!");
@@ -322,7 +322,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:nil
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when logger is nil!");
@@ -344,7 +344,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:nil
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when crypto is nil!");
@@ -366,12 +366,12 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:nil
+                                                coreQueue:nil
                                                    waiter:self.waiter
                                          deviceInfoClient:self.mockDeviceInfoClient];
-        XCTFail(@"Expected Exception when queue is nil!");
+        XCTFail(@"Expected Exception when coreQueue is nil!");
     } @catch (NSException *exception) {
-        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: queue");
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: coreQueue");
     }
 }
 
@@ -388,7 +388,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:nil
                                          deviceInfoClient:self.mockDeviceInfoClient];
         XCTFail(@"Expected Exception when waiter is nil!");
@@ -411,7 +411,7 @@
                                                  endpoint:self.mockEndpoint
                                                    logger:self.mockLogger
                                                    crypto:self.mockCrypto
-                                                    queue:self.queue
+                                                    coreQueue:self.queue
                                                    waiter:self.waiter
                                          deviceInfoClient:nil];
         XCTFail(@"Expected Exception when deviceInfoClient is nil!");
@@ -438,7 +438,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -493,7 +493,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:strictMockDeviceInfoClient];
     EMSConfigInternal *partialMockConfigInternal = OCMPartialMock(self.configInternal);
@@ -558,7 +558,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -612,7 +612,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -649,7 +649,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -691,7 +691,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -759,7 +759,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -797,7 +797,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -847,7 +847,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 
@@ -894,7 +894,7 @@
                                                                endpoint:self.mockEndpoint
                                                                  logger:self.mockLogger
                                                                  crypto:self.mockCrypto
-                                                                  queue:self.queue
+                                                                  coreQueue:self.queue
                                                                  waiter:self.waiter
                                                        deviceInfoClient:self.mockDeviceInfoClient];
 

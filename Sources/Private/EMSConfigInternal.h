@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
                               endpoint:(EMSEndpoint *)endpoint
                                 logger:(EMSLogger *)logger
                                 crypto:(EMSCrypto *)crypto
-                                 queue:(NSOperationQueue *)queue
+                             coreQueue:(NSOperationQueue *)coreQueue
                                 waiter:(EMSDispatchWaiter *)waiter
                       deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient;
 

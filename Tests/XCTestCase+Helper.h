@@ -12,6 +12,7 @@
                   retryCount:(NSInteger)retryCount;
 
 - (NSOperationQueue *)createTestOperationQueue;
-- (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue;
+
+- (void)waitATickOnOperationQueue:(NSOperationQueue *)operationQueue;
 
 @end

@@ -11,6 +11,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSNotificationCenterManager.h"
+#import "EMSWrapperChecker.h"
+#import "EMSSession+Tests.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -41,18 +43,20 @@
 + (void)setupEmarsysWithFeatures:(NSArray <EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.dbHelper close];
     [self purge];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
 
     [EMSDependencyInjection tearDown];
+    
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+    [userDefaults setObject:@"none"
+                     forKey:kInnerWrapperKey];
+    [userDefaults synchronize];
+    
     if (dependencyContainer) {
         [EMSDependencyInjection setupWithDependencyContainer:dependencyContainer];
     }
-
     if (features) {
         EMSConfig *configWithFeatures = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
             [builder setMobileEngageApplicationCode:@"14C19-A121F"];
@@ -66,36 +70,46 @@
 }
 
 + (void)purge {
-    [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                               error:nil];
-    [[NSFileManager defaultManager] removeItemAtPath:REPOSITORY_DB_PATH
-                                               error:nil];
-    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-    [userDefaults removeObjectForKey:kMEID];
-    [userDefaults removeObjectForKey:kMEID_SIGNATURE];
-    [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
-    [userDefaults removeObjectForKey:kCLIENT_STATE];
-    [userDefaults removeObjectForKey:kCONTACT_TOKEN];
-    [userDefaults removeObjectForKey:@"kSDKAlreadyInstalled"];
-    [userDefaults synchronize];
+    [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
+        [EmarsysTestUtils clearDb:EMSDependencyInjection.dependencyContainer.dbHelper];
+        NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
+        [userDefaults removeObjectForKey:kMEID];
+        [userDefaults removeObjectForKey:kMEID_SIGNATURE];
+        [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
+        [userDefaults removeObjectForKey:kCLIENT_STATE];
+        [userDefaults removeObjectForKey:kCONTACT_TOKEN];
+        [userDefaults removeObjectForKey:@"kSDKAlreadyInstalled"];
+        [userDefaults removeObjectForKey:@"CLIENT_SERVICE_URL"];
+        [userDefaults removeObjectForKey:@"EVENT_SERVICE_URL"];
+        [userDefaults removeObjectForKey:@"PREDICT_URL"];
+        [userDefaults removeObjectForKey:@"DEEPLINK_URL"];
+        [userDefaults removeObjectForKey:@"V3_MESSAGE_INBOX_URL"];
+        [userDefaults synchronize];
 
-    userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-    [userDefaults setObject:@"IntegrationTests"
-                     forKey:@"kHardwareIdKey"];
-    [userDefaults synchronize];
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
+        [userDefaults setObject:@"IntegrationTests"
+                         forKey:@"kHardwareIdKey"];
+        [userDefaults synchronize];
+        
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.predict"];
+        [userDefaults removeObjectForKey:@"contactFieldValue"];
+        [userDefaults removeObjectForKey:@"visitorId"];
+        [userDefaults synchronize];
+    }];
 }
 
 + (void)tearDownEmarsys {
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.publicApiOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue waitUntilAllOperationsAreFinished];
-    [EMSDependencyInjection.dependencyContainer.coreOperationQueue cancelAllOperations];
-    [EMSDependencyInjection.dependencyContainer.dbHelper close];
-    [self purge];
+    for (id observer in EMSDependencyInjection.dependencyContainer.session.observers) {
+        [NSNotificationCenter.defaultCenter removeObserver:observer];
+    }
+    [EMSDependencyInjection.dependencyContainer.urlSession invalidateAndCancel];
     [EMSDependencyInjection.dependencyContainer.endpoint reset];
     [MEExperimental reset];
     [EMSDependencyInjection.dependencyContainer.requestContext reset];
     [EMSDependencyInjection.dependencyContainer.notificationCenterManager removeHandlers];
+    [self purge];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
     [EMSDependencyInjection tearDown];
 }
 
@@ -133,6 +147,19 @@
                                                           timeout:10];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
+}
+
++ (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue {
+    [operationQueue waitUntilAllOperationsAreFinished];
+    [operationQueue setSuspended:YES];
+    [operationQueue cancelAllOperations];
+}
+
++ (void)clearDb:(EMSSQLiteHelper *)dbHelper {
+    [dbHelper executeCommand:@"DELETE FROM request;"];
+    [dbHelper executeCommand:@"DELETE FROM shard;"];
+    [dbHelper executeCommand:@"DELETE FROM displayed_iam;"];
+    [dbHelper executeCommand:@"DELETE FROM button_click;"];
 }
 
 @end

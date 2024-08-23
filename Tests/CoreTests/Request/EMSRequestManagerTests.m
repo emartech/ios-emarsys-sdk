@@ -21,17 +21,19 @@
 #import "EMSOperationQueue.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
 
 @interface EMSRequestManagerTests : XCTestCase
 
-@property(nonatomic, strong) EMSSQLiteHelper *helper;
 @property(nonatomic, strong) EMSRequestModelRepository *requestModelRepository;
 @property(nonatomic, strong) EMSShardRepository *shardRepository;
 @property(nonatomic, strong) EMSRequestManager *requestManager;
 @property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *dbQueue;
+@property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 
 @end
 
@@ -40,12 +42,14 @@
 
 - (void)setUp {
     _queue = [self createTestOperationQueue];
+    _dbQueue = [self createTestOperationQueue];
 
-    EMSSQLiteHelper *helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                             schemaDelegate:[EMSSqliteSchemaHandler new]];
-    [helper open];
-    [helper executeCommand:SQL_REQUEST_PURGE];
-    self.requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
+    _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                               schemaDelegate:[EMSSqliteSchemaHandler new]
+                                               operationQueue:self.dbQueue];
+    [self.dbHelper open];
+    [self.dbHelper executeCommand:SQL_REQUEST_PURGE];
+    self.requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
                                                                        operationQueue:self.queue];
 
     self.shardRepository = OCMClassMock([EMSShardRepository class]);
@@ -55,14 +59,12 @@
     CoreErrorBlock errorBlock = ^(NSString *requestId, NSError *error) {
 
     };
-    self.requestManager = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:helper
+    self.requestManager = [self createRequestManagerWithSuccessBlock:successBlock errorBlock:errorBlock requestRepository:[[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
                                                                                                                                                                operationQueue:self.queue] shardRepository:self.shardRepository];
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
-    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                               error:nil];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
 }
 
 - (void)testShouldThrowAnExceptionWhenCoreQueueIsNil {

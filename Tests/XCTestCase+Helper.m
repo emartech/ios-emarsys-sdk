@@ -38,16 +38,21 @@
 }
 
 - (NSOperationQueue *)createTestOperationQueue {
+    NSString *queueName = [NSString stringWithFormat:@"EMSTestOperationQueue - %@", [NSUUID UUID].UUIDString];
     NSOperationQueue *operationQueue = [NSOperationQueue new];
-    [operationQueue setName:@"testOperationQueue"];
+    [operationQueue setName:queueName];
     [operationQueue setMaxConcurrentOperationCount:1];
     return operationQueue;
 }
 
-- (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue {
-    [operationQueue cancelAllOperations];
-    [operationQueue waitUntilAllOperationsAreFinished];
-    operationQueue = nil;
+- (void)waitATickOnOperationQueue:(NSOperationQueue *)operationQueue {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForOperationBlock"];
+    [operationQueue addOperationWithBlock:^{
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 @end
