@@ -12,6 +12,8 @@
 #import "EMSGeofenceInternal.h"
 #import "EMSSdkStateLogger.h"
 #import "EMSStatusLog.h"
+#import "EMSSQLiteHelper.h"
+#import "EMSCompletionBlockProvider.h"
 
 @interface EMSAppStartBlockProvider ()
 
@@ -23,6 +25,8 @@
 @property(nonatomic, strong) EMSGeofenceInternal *geofenceInternal;
 @property(nonatomic, strong) EMSSdkStateLogger *sdkStateLogger;
 @property(nonatomic, strong) EMSLogger *logger;
+@property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
+@property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
 
 @end
 
@@ -35,7 +39,9 @@
                         configInternal:(EMSConfigInternal *)configInternal
                       geofenceInternal:(EMSGeofenceInternal *)geofenceInternal
                         sdkStateLogger:(EMSSdkStateLogger *)sdkStateLogger
-                                logger:(EMSLogger *)logger {
+                                logger:(EMSLogger *)logger 
+                              dbHelper:(EMSSQLiteHelper *)dbHelper
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider {
     NSParameterAssert(requestManager);
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestContext);
@@ -44,6 +50,8 @@
     NSParameterAssert(geofenceInternal);
     NSParameterAssert(sdkStateLogger);
     NSParameterAssert(logger);
+    NSParameterAssert(dbHelper);
+    NSParameterAssert(completionBlockProvider);
     if (self = [super init]) {
         _requestManager = requestManager;
         _requestFactory = requestFactory;
@@ -53,6 +61,8 @@
         _geofenceInternal = geofenceInternal;
         _sdkStateLogger = sdkStateLogger;
         _logger = logger;
+        _dbHelper = dbHelper;
+        _completionBlockProvider = completionBlockProvider;
     }
     return self;
 }
@@ -67,8 +77,7 @@
                                                                                           eventAttributes:nil
                                                                                                 eventType:EventTypeInternal];
             [weakSelf.requestManager submitRequestModel:requestModel
-                                    withCompletionBlock:^(NSError *error) {
-                                    }];
+                                    withCompletionBlock:nil];
         }
     };
 }
@@ -84,11 +93,11 @@
     __weak typeof(self) weakSelf = self;
     return ^{
         if (![@[@"", @"0", @"null", @"nil"] containsObject:[self.requestContext.applicationCode lowercaseString]]) {
-            [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:^(NSError *error) {
-                if ([self.logger logLevel] == LogLevelTrace) {
-                    [self.sdkStateLogger log];
+            [weakSelf.configInternal refreshConfigFromRemoteConfigWithCompletionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError *error) {
+                if ([weakSelf.logger logLevel] == LogLevelTrace) {
+                    [weakSelf.sdkStateLogger log];
                 }
-            }];
+            }]];
         } else {
             NSLog(@"ApplicationCode is incorrect: %@", self.requestContext.applicationCode);
             EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
@@ -107,5 +116,11 @@
     };
 }
 
+- (MEHandlerBlock)createDbCloseEventBlock {
+    __weak typeof(self) weakSelf = self;
+    return ^{
+        [weakSelf.dbHelper close];
+    };
+}
 
 @end
