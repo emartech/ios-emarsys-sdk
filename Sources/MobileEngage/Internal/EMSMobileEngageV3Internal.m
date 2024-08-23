@@ -8,6 +8,7 @@
 #import "EMSStorage.h"
 #import "EMSSession.h"
 #import "EMSStorageProtocol.h"
+#import "EMSCompletionBlockProvider.h"
 
 #define kEMSPushTokenKey @"EMSPushTokenKey"
 
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) MERequestContext *requestContext;
 @property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSSession *session;
+@property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
 
 @end
 
@@ -27,12 +29,14 @@
                         requestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
                                storage:(id<EMSStorageProtocol>)storage
-                               session:(EMSSession *)session {
+                               session:(EMSSession *)session
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
     NSParameterAssert(requestContext);
     NSParameterAssert(storage);
     NSParameterAssert(session);
+    NSParameterAssert(completionBlockProvider);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
@@ -40,6 +44,7 @@
         _requestContext = requestContext;
         _storage = storage;
         _session = session;
+        _completionBlockProvider = completionBlockProvider;
     }
     return self;
 }
@@ -82,11 +87,11 @@
     EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
     __weak typeof(self) weakSelf = self;
     [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:^(NSError * _Nullable error) {
+                        withCompletionBlock:[self.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
         if (shouldRestartSession) {
-            [weakSelf.session stopSessionWithCompletionBlock:^(NSError * _Nullable error) {
+            [weakSelf.session stopSessionWithCompletionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
                 [weakSelf.session startSessionWithCompletionBlock:completionBlock];
-            }];
+            }]];
         } else {
             if (completionBlock) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -94,7 +99,7 @@
                 });
             }
         }
-    }];
+    }]];
 }
 
 - (void)clearContact {
@@ -103,16 +108,16 @@
 
 - (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
-    [self.session stopSessionWithCompletionBlock:^(NSError * _Nullable error) {
+    [self.session stopSessionWithCompletionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
         [weakSelf.storage setData:nil
                            forKey:kEMSPushTokenKey];
         [weakSelf.requestContext reset];
         [weakSelf setContactWithContactFieldId:nil
                              contactFieldValue:nil
-                               completionBlock:^(NSError * _Nullable error) {
+                               completionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
             [weakSelf.session startSessionWithCompletionBlock:completionBlock];
-        }];
-    }];
+        }]];
+    }]];
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName
