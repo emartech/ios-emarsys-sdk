@@ -5,6 +5,8 @@
 #import "EMSRequestModelBuilder.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
 
 @implementation EMSRequestModelBuilder
 
@@ -43,6 +45,13 @@
     NSURL *urlToCheck = [NSURL URLWithString:url];
     if (urlToCheck && urlToCheck.scheme && urlToCheck.host) {
         _requestUrl = urlToCheck;
+    } else {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"url"] = url;
+        EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
+                                               sel:_cmd
+                                        parameters:parameters
+                                            status:nil], LogLevelError);
     }
     return self;
 }
@@ -63,6 +72,14 @@
         }
         [components setQueryItems:queryItems];
         _requestUrl = [components URL];
+    } else {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"url"] = url;
+        parameters[@"queryParameters"] = queryParameters;
+        EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
+                                               sel:_cmd
+                                        parameters:parameters
+                                            status:nil], LogLevelError);
     }
     return self;
 }
