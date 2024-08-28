@@ -14,6 +14,8 @@
 @interface EMSActionFactory ()
 
 @property(nonatomic, strong) UIApplication *application;
+@property(nonatomic, strong) UNUserNotificationCenter *userNotificationCenter;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, weak) id <EMSMobileEngageProtocol> mobileEngage;
 
 @end
@@ -21,12 +23,18 @@
 @implementation EMSActionFactory
 
 - (instancetype)initWithApplication:(UIApplication *)application
-                       mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage {
+                       mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+             userNotificationCenter:(nonnull UNUserNotificationCenter *)userNotificationCenter
+                     operationQueue:(nonnull NSOperationQueue *)operationQueue {
     NSParameterAssert(application);
     NSParameterAssert(mobileEngage);
+    NSParameterAssert(userNotificationCenter);
+    NSParameterAssert(operationQueue);
     if (self = [super init]) {
         _application = application;
         _mobileEngage = mobileEngage;
+        _userNotificationCenter = userNotificationCenter;
+        _operationQueue = operationQueue;
     }
     return self;
 }
@@ -45,7 +53,9 @@
                 [validate valueExistsForKey:@"value" withType:[NSNumber class]];
             }];
             result = [badgeErrors count] == 0 ? [[EMSBadgeCountAction alloc] initWithActionDictionary:action
-                                                                                          application:self.application] : nil;
+                                                                                          application:self.application
+                                                                               userNotificationCenter:self.userNotificationCenter
+                                                                                       operationQueue:self.operationQueue] : nil;
         } else if ([actionType isEqualToString:@"MEAppEvent"]) {
             NSArray *appEventErrors = [action validate:^(EMSDictionaryValidator *validate) {
                 [validate valueExistsForKey:@"name" withType:[NSString class]];

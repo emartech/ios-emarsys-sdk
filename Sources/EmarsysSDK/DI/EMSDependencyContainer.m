@@ -347,7 +347,9 @@
                                            delegateQueue:self.coreOperationQueue];
 
     EMSActionFactory *onEventActionFactory = [[EMSActionFactory alloc] initWithApplication:application
-                                                                              mobileEngage:self.mobileEngage];
+                                                                              mobileEngage:self.mobileEngage
+                                                                    userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                            operationQueue:self.coreOperationQueue];
 
     EMSInstanceRouter *onEventActionRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSOnEventActionInternal alloc] initWithActionFactory:onEventActionFactory]
                                                                                 loggingInstance:[EMSLoggingOnEventActionInternal new]
@@ -492,7 +494,9 @@
     [self.mobileEngageDelegator proxyWithInstanceRouter:mobileEngageRouter];
 
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
-                                                                       mobileEngage:self.mobileEngage];
+                                                                       mobileEngage:self.mobileEngage
+                                                             userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
+                                                                     operationQueue:self.coreOperationQueue];
 
     EMSDeepLinkInternal *deepLinkInternal = [[EMSDeepLinkInternal alloc] initWithRequestManager:self.requestManager
                                                                                  requestFactory:self.requestFactory];
