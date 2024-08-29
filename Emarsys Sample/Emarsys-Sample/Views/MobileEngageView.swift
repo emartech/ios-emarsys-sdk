@@ -115,7 +115,7 @@ struct MobileEngageView: View {
     
     func convertEventPayloadToJson() -> Dictionary<String, String>? {
         var eventAttributes: [String: String]?
-        if let attributes = self.customEventPayload {
+        if let attributes = self.customEventPayload, !attributes.isEmpty {
             if let data = attributes.data(using: .utf8) {
                             do {
                                 eventAttributes = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String]

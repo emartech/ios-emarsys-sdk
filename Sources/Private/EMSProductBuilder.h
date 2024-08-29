@@ -35,9 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)setCustomFields:(NSDictionary<NSString *, NSString *> *)customFields;
 
-- (instancetype)setImageUrl:(NSURL *)imageUrl;
+- (instancetype)setImageUrl:(nullable NSURL *)imageUrl;
 
-- (instancetype)setZoomImageUrl:(NSURL *)zoomImageUrl;
+- (instancetype)setZoomImageUrl:(nullable NSURL *)zoomImageUrl;
 
 - (instancetype)setCategoryPath:(NSString *)categoryPath;
 

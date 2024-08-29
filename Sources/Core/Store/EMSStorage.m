@@ -69,8 +69,10 @@
                                       forKey:key];
         
         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-        parameters[@"data"] = [[NSString alloc] initWithData:data
-                                                    encoding:NSUTF8StringEncoding];
+        if (data) {
+            parameters[@"data"] = [[NSString alloc] initWithData:data
+                                                        encoding:NSUTF8StringEncoding];
+        }
         parameters[@"key"] = key;
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"osStatus"] = @(status);
@@ -416,8 +418,8 @@ forKeyedSubscript:(NSString *)key {
     __block OSStatus result;
     __weak typeof(self) weakSelf = self;
     [self.operationQueue addOperationWithBlock:^{
-        NSMutableDictionary *mutableQuery = [self createQueryWithKey:key
-                                                         accessGroup:accessGroup];
+        NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
+                                                             accessGroup:accessGroup];
         NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
         result = SecItemDelete((__bridge CFDictionaryRef) query);
     }];
