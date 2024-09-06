@@ -13,6 +13,8 @@
 #import "EMSUUIDProvider.h"
 #import "MEExperimental+Test.h"
 #import "EMSInnerFeature.h"
+#import "EmarsysTestUtils.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMIAMCleanup.db"]
 
@@ -25,6 +27,7 @@
 @property(nonatomic, strong) EMSRequestModel *requestModel;
 @property(nonatomic, strong) EMSSQLiteHelper *dbHelper;
 @property(nonatomic, strong) MEIAMCleanupResponseHandlerV3 *responseHandler;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
@@ -45,17 +48,16 @@
     _responseHandler = [[MEIAMCleanupResponseHandlerV3 alloc] initWithButtonClickRepository:self.mockButtonClickRepository
                                                                        displayIamRepository:self.mockDisplayIamRepository
                                                                                    endpoint:self.mockEndpoint];
-
-    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                               error:nil];
+    _operationQueue = [self createTestOperationQueue];
     _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                               schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                               schemaDelegate:[EMSSqliteSchemaHandler new]
+                                               operationQueue:self.operationQueue];
     [self.dbHelper open];
 }
 
 - (void)tearDown {
     [MEExperimental reset];
-    [self.dbHelper close];
+    [EmarsysTestUtils clearDb:self.dbHelper];
 }
 
 - (void)testInit_buttonClickRepository_mustNotBeNil {

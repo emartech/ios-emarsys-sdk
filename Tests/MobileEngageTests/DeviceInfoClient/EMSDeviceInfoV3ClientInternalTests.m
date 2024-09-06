@@ -14,6 +14,7 @@
 #import "EMSStorage.h"
 #import "NSError+EMSCore.h"
 #import "EMSUUIDProvider.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSDeviceInfoV3ClientInternalTests : XCTestCase
 
@@ -24,6 +25,7 @@
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) NSArray <NSString *> *suiteNames;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
@@ -35,12 +37,13 @@
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _uuidProvider = [EMSUUIDProvider new];
-
+    _queue = [self createTestOperationQueue];
+    
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:self.mockDeviceInfo
                                                                          requestContext:self.mockRequestContext];
-
+    
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
 }
 
@@ -99,20 +102,20 @@
     [userDefaults setObject:@{@"testStoredPayloadKey": @"testStoredPayloadValue"}
                      forKey:kDEVICE_INFO];
     [userDefaults synchronize];
-
+    
     NSDictionary *expectedDeviceInfoDict = @{
-            @"testPayloadKey": @"testPayloadValue",
-            @"testPayloadKey2": @"testPayloadValue2"
+        @"testPayloadKey": @"testPayloadValue",
+        @"testPayloadKey2": @"testPayloadValue2"
     };
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
-
+    
     OCMStub([self.mockDeviceInfo clientPayload]).andReturn(expectedDeviceInfoDict);
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
-
+    
     [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:completionBlock];
-
+    
     NSDictionary *storedDeviceInfoDict = [userDefaults dictionaryForKey:kDEVICE_INFO];
-
+    
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:completionBlock]);
     XCTAssertEqualObjects(storedDeviceInfoDict, expectedDeviceInfoDict);
@@ -120,29 +123,30 @@
 
 - (void)testSendDeviceInfo_shouldNotSubmit_whenDeviceInfoHasNotChanged {
     OCMStub(self.mockRequestContext.clientState).andReturn(@"testClientState");
-
+    
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
                                                                   storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames
-                                                                                                     accessGroup:nil]
+                                                                                                     accessGroup:nil
+                                                                                                  operationQueue:self.queue]
                                                              uuidProvider:self.uuidProvider];
-
+    
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo
                                                                          requestContext:self.mockRequestContext];
     OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
                                       withCompletionBlock:[OCMArg any]]);
-
+    
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
-
+    
     NSDictionary *deviceInfoDictionary = [deviceInfo clientPayload];
     [userDefaults setObject:deviceInfoDictionary
                      forKey:kDEVICE_INFO];
     [userDefaults synchronize];
-
+    
     __block NSError *returnedError = [NSError errorWithCode:-1400
-                               localizedDescription:@"testError"];
+                                       localizedDescription:@"testError"];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
     [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:^(NSError *error) {
         returnedError = error;
@@ -159,35 +163,36 @@
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
     OCMStub(self.mockRequestContext.clientState).andReturn(nil);
-
+    
     EMSDeviceInfo *deviceInfo = [[EMSDeviceInfo alloc] initWithSDKVersion:@"0.0.1"
                                                        notificationCenter:[UNUserNotificationCenter currentNotificationCenter]
                                                                   storage:[[EMSStorage alloc] initWithSuiteNames:self.suiteNames
-                                                                                                     accessGroup:nil]
+                                                                                                     accessGroup:nil
+                                                                                                  operationQueue:self.queue]
                                                              uuidProvider:self.uuidProvider];
     _deviceInfoInternal = [[EMSDeviceInfoV3ClientInternal alloc] initWithRequestManager:self.mockRequestManager
                                                                          requestFactory:self.mockRequestFactory
                                                                              deviceInfo:deviceInfo
                                                                          requestContext:self.mockRequestContext];
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
-
+    
     OCMStub([self.mockRequestFactory createDeviceInfoRequestModel]).andReturn(requestModel);
-
+    
     [self.deviceInfoInternal trackDeviceInfoWithCompletionBlock:completionBlock];
-
+    
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:completionBlock]);
 }
 
 - (void)testTrackDeviceInfo_shouldCallSendDeviceInfo {
     EMSDeviceInfoV3ClientInternal *partialDeviceInfoClient = OCMPartialMock(self.deviceInfoInternal);
-
+    
     EMSCompletionBlock completionBlock = ^(NSError *error) {
-
+        
     };
-
+    
     [partialDeviceInfoClient trackDeviceInfoWithCompletionBlock:completionBlock];
-
+    
     OCMVerify([partialDeviceInfoClient sendDeviceInfoWithCompletionBlock:completionBlock]);
 }
 

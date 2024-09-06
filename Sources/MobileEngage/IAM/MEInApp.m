@@ -14,7 +14,7 @@
 #import "MEJSBridge.h"
 #import "MEButtonClickRepository.h"
 #import "EMSMacros.h"
-#import "EMSCompletionBlockProvider.h"
+#import "EMSCompletionProvider.h"
 #import "EMSInAppLog.h"
 
 @interface MEInApp () <MEIAMProtocol>
@@ -26,7 +26,7 @@
 @property(nonatomic, strong) EMSWindowProvider *windowProvider;
 @property(nonatomic, strong) EMSIAMViewControllerProvider *iamViewControllerProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *displayedIamRepository;
-@property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
+@property(nonatomic, strong) EMSCompletionProvider *completionBlockProvider;
 @property(nonatomic, strong) EMSEventHandlerBlock innerEventHandler;
 @property(nonatomic, strong) NSMutableArray<MEInAppMessage *> *messages;
 
@@ -43,7 +43,7 @@
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider
+               completionBlockProvider:(EMSCompletionProvider *)completionBlockProvider
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                         operationQueue:(NSOperationQueue *)operationQueue {

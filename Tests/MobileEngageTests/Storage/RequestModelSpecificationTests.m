@@ -13,6 +13,7 @@
 #import "EMSSchemaContract.h"
 #import "EMSSQLiteHelper.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -27,7 +28,7 @@ SPEC_BEGIN(RequestModelSpecificationTests)
         });
 
         afterEach(^{
-            [self tearDownOperationQueue:queue];
+            [EmarsysTestUtils tearDownOperationQueue:queue];
         });
 
         id (^customEventRequestModel)(NSString *eventName, NSDictionary *eventAttributes) = ^id(NSString *eventName, NSDictionary *eventAttributes) {
@@ -61,17 +62,18 @@ SPEC_BEGIN(RequestModelSpecificationTests)
 
         describe(@"MERequestModelSelectEventsSpecification", ^{
 
-            beforeEach(^{
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH error:nil];
+            beforeAll(^{
+                NSOperationQueue *dbQueue = [self createTestOperationQueue];
                 _dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                           schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                           schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                           operationQueue:dbQueue];
                 [_dbHelper open];
                 _repository = [[EMSRequestModelRepository alloc] initWithDbHelper:_dbHelper
                                                                    operationQueue:queue];
             });
 
             afterEach(^{
-                [_dbHelper close];
+                [EmarsysTestUtils clearDb:_dbHelper];
             });
 
             it(@"should return all custom events", ^{

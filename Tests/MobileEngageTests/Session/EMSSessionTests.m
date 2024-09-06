@@ -10,6 +10,7 @@
 #import "EMSTimestampProvider.h"
 #import "NSDate+EMSCore.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSSessionTests : XCTestCase
 
@@ -38,7 +39,7 @@
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.operationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.operationQueue];
 }
 
 - (void)testInit_sessionIdHolder_mustNotBeNil {
@@ -109,6 +110,8 @@
 - (void)testStartSession_shouldGenerateSessionId {
     [self.session startSessionWithCompletionBlock:nil];
 
+    [self waitATickOnOperationQueue:self.operationQueue];
+    
     XCTAssertNotNil(self.session.sessionIdHolder.sessionId);
 }
 
@@ -118,6 +121,8 @@
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(sessionStartTime);
 
     [self.session startSessionWithCompletionBlock:nil];
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
 
     XCTAssertEqualObjects(self.session.sessionStartTime, sessionStartTime);
 }
@@ -129,25 +134,45 @@
                                                           eventAttributes:nil
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
     [self.session startSessionWithCompletionBlock:nil];
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
 
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:nil]);
 }
 
 - (void)testDidBecomeActiveNotification_shouldInvokeStartSession {
+    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidBecomeActiveNotification 
+                                                               object:nil
+                                                              handler:^BOOL(NSNotification * _Nonnull notification) {
+        return YES;
+    }];
     EMSSession *partialMockSession = OCMPartialMock(self.session);
 
     [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidBecomeActiveNotification
                                                                                        object:nil]];
     OCMVerify([partialMockSession startSessionWithCompletionBlock:nil]);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)testDidEnterBackgroundNotification_shouldInvokeStopSession {
+    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidEnterBackgroundNotification
+                                                               object:nil
+                                                              handler:^BOOL(NSNotification * _Nonnull notification) {
+        return YES;
+    }];
     EMSSession *partialMockSession = OCMPartialMock(self.session);
-
+    
     [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidEnterBackgroundNotification
                                                                                        object:nil]];
     OCMVerify([partialMockSession stopSessionWithCompletionBlock:nil]);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
 - (void)testStopSession_shouldSendSessionStopEvent {
@@ -161,6 +186,8 @@
                                                                 eventType:EventTypeInternal]).andReturn(mockRequestModel);
     [self.session stopSessionWithCompletionBlock:nil];
 
+    [self waitATickOnOperationQueue:self.operationQueue];
+    
     OCMVerify([self.mockRequestManager submitRequestModel:mockRequestModel
                                       withCompletionBlock:nil]);
     XCTAssertNil(self.sessionIdHolder.sessionId);

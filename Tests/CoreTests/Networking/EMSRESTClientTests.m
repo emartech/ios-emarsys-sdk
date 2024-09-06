@@ -16,6 +16,7 @@
 #import "EMSAbstractResponseHandler.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseModel *, NSError *, NSOperationQueue *operationQueue);
 
@@ -73,7 +74,7 @@ typedef void (^AssertionBlock)(XCTWaiterResult, EMSRequestModel *, EMSResponseMo
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.expectedOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.expectedOperationQueue];
 }
 
 - (void)testInit_session_mustNotBeNil {

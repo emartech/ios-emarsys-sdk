@@ -18,7 +18,7 @@
 @class EMSMainWindowProvider;
 @class EMSViewControllerProvider;
 @class MEButtonClickRepository;
-@class EMSCompletionBlockProvider;
+@class EMSCompletionProvider;
 
 typedef void (^MECompletionHandler)(void);
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithWindowProvider:(EMSWindowProvider *)windowProvider
                     mainWindowProvider:(EMSMainWindowProvider *)mainWindowProvider
                      timestampProvider:(EMSTimestampProvider *)timestampProvider
-               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider
+               completionBlockProvider:(EMSCompletionProvider *)completionBlockProvider
                 displayedIamRepository:(MEDisplayedIAMRepository *)displayedIamRepository
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                         operationQueue:(NSOperationQueue *)operationQueue;

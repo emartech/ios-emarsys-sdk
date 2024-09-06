@@ -7,6 +7,8 @@
 #import "EMSFilterByNothingSpecification.h"
 #import "EMSFilterByValuesSpecification.h"
 #import "EMSSchemaContract.h"
+#import "EmarsysTestUtils.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestMEDB.db"]
 
@@ -14,20 +16,19 @@ SPEC_BEGIN(MEButtonClickRepositoryTests)
 
         __block EMSSQLiteHelper *helper;
         __block MEButtonClickRepository *repository;
+        __block NSOperationQueue *queue;
 
-        beforeEach(^{
-            [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                       error:nil];
+        beforeAll(^{
+            queue = [self createTestOperationQueue];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                    schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                    schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                    operationQueue:queue];
             [helper open];
             repository = [[MEButtonClickRepository alloc] initWithDbHelper:helper];
         });
 
         afterEach(^{
-            [helper close];
-            [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                       error:nil];
+            [EmarsysTestUtils clearDb:helper];
         });
 
         describe(@"requestModelRepository", ^{

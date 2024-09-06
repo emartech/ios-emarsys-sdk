@@ -6,6 +6,8 @@
 #import "NSDictionary+EMSCore.h"
 #import "EMSShard.h"
 #import "EMSSchemaContract.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
 
 @interface EMSShardMapper ()
 
@@ -15,14 +17,16 @@
 - (BOOL)isNotNull:(sqlite3_stmt *)statement
           atIndex:(int)index;
 
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String;
+
 @end
 
 @implementation EMSShardMapper
 
 
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
-    NSString *shardId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
-    NSString *type = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 1)];
+    NSString *shardId = [self mapToString:sqlite3_column_text(statement, 0)];
+    NSString *type = [self mapToString:sqlite3_column_text(statement, 1)];
     NSDictionary<NSString *, id> *data;
     if ([self isNotNull:statement atIndex:2]) {
         data = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
@@ -33,6 +37,19 @@
     }
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 3)];
     NSTimeInterval ttl = sqlite3_column_double(statement, 4);
+    if (!shardId || !type || !data || !timestamp || !ttl) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"shardId"] = shardId;
+        parameters[@"type"] = type;
+        parameters[@"data"] = data;
+        parameters[@"timestamp"] = [timestamp description];
+        parameters[@"expiry"] = @(ttl);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:nil];
+        EMSLog(logEntry, LogLevelError);
+    }
     return [[EMSShard alloc] initWithShardId:shardId
                                         type:type
                                         data:data
@@ -75,5 +92,12 @@
     return 5;
 }
 
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String {
+    NSString *result = nil;
+    if (utf8String) {
+        result = [NSString stringWithUTF8String:(char *)utf8String];
+    }
+    return result;
+}
 
 @end

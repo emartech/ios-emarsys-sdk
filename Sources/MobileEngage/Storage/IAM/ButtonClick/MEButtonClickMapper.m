@@ -5,13 +5,32 @@
 #import "MEButtonClickMapper.h"
 #import "MEButtonClick.h"
 #import "MEButtonClickContract.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
+
+@interface MEButtonClickMapper()
+
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String;
+
+@end
 
 @implementation MEButtonClickMapper
 
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
-    NSString *campaignId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
-    NSString *buttonId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 1)];
+    NSString *campaignId = [self mapToString:sqlite3_column_text(statement, 0)];
+    NSString *buttonId = [self mapToString:sqlite3_column_text(statement, 1)];
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 2)];
+    if (!campaignId || !buttonId || !timestamp) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"campaignId"] = campaignId;
+        parameters[@"buttonId"] = buttonId;
+        parameters[@"timestamp"] = [timestamp description];
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:nil];
+        EMSLog(logEntry, LogLevelError);
+    }
     return [[MEButtonClick alloc] initWithCampaignId:campaignId
                                             buttonId:buttonId
                                            timestamp:timestamp];
@@ -31,6 +50,14 @@
 
 - (NSUInteger)fieldCount {
     return 3;
+}
+
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String {
+    NSString *result = nil;
+    if (utf8String) {
+        result = [NSString stringWithUTF8String:(char *)utf8String];
+    }
+    return result;
 }
 
 @end

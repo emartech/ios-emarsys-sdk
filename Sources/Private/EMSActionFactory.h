@@ -8,6 +8,7 @@
 
 @protocol EMSActionProtocol;
 @protocol EMSMobileEngageProtocol;
+@class UNUserNotificationCenter;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (instancetype)initWithApplication:(UIApplication *)application
-                       mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage;
+                       mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+             userNotificationCenter:(UNUserNotificationCenter *)userNotificationCenter
+                     operationQueue:(NSOperationQueue *)operationQueue;
 
 - (nullable id <EMSActionProtocol>)createActionWithActionDictionary:(NSDictionary<NSString *, id> *)action;
 

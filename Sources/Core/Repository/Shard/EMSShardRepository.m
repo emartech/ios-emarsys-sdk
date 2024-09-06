@@ -20,8 +20,6 @@
     if (self = [super init]) {
         _dbHelper = sqliteHelper;
         _mapper = [EMSShardMapper new];
-        _dbHelper = sqliteHelper;
-        [_dbHelper open];
     }
     return self;
 }

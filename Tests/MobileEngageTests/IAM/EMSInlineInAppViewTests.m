@@ -15,6 +15,7 @@
 #import "NSError+EMSCore.h"
 #import "FakeRequestManager.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSInlineInAppView (Tests)
 
@@ -57,8 +58,8 @@
     [self.mockRequestManager stopMocking];
     [self.mockInapp stopMocking];
     [self.mockContainer stopMocking];
-    [self tearDownOperationQueue:self.operationQueue];
-    [self tearDownOperationQueue:self.publicApiOperationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.operationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.publicApiOperationQueue];
     [EMSDependencyInjection tearDown];
 }
 

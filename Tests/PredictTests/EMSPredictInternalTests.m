@@ -21,6 +21,7 @@
 #import "EMSLogic.h"
 #import "EMSRecommendationFilter.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 SPEC_BEGIN(EMSPredictInternalTests)
 
@@ -31,7 +32,7 @@ __block NSOperationQueue *queue;
     });
 
     afterEach(^{
-        [self tearDownOperationQueue:queue];
+        [EmarsysTestUtils tearDownOperationQueue:queue];
     });
 
         describe(@"init", ^{

@@ -7,6 +7,7 @@
 #import "EMSWaiter.h"
 #import "EMSAgenda.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 SPEC_BEGIN(EMSSchedulerTests)
 
@@ -26,7 +27,7 @@ SPEC_BEGIN(EMSSchedulerTests)
         });
 
         afterEach(^{
-            [self tearDownOperationQueue:queue];
+            [EmarsysTestUtils tearDownOperationQueue:queue];
         });
 
         describe(@"initWithOperationQueue:leeway:", ^{

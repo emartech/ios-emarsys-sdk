@@ -22,6 +22,7 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -37,14 +38,15 @@
 @implementation OfflineTests
 
 - (void)setUp {
+    NSOperationQueue *dbQueue = [self createTestOperationQueue];
+    _helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                             schemaDelegate:[EMSSqliteSchemaHandler new]
+                                             operationQueue:dbQueue];
+    [self.helper open];
+    
     _queue = [self createTestOperationQueue];
     
-    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                               error:nil];
-    _helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                             schemaDelegate:[EMSSqliteSchemaHandler new]];
-    [self.helper open];
-    [self.helper executeCommand:SQL_REQUEST_PURGE];
+    [EmarsysTestUtils clearDb:self.helper];
     
     _requestModelRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.helper
                                                                    operationQueue:self.queue];
@@ -52,10 +54,12 @@
 }
 
 - (void)tearDown {
-    [self tearDownOperationQueue:self.queue];
-    [self.helper close];
-    [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                               error:nil];
+    __weak typeof(self) weakSelf = self;
+    [self.queue addOperationWithBlock:^{
+        [EmarsysTestUtils clearDb:weakSelf.helper];
+    }];
+    [self waitATickOnOperationQueue:self.queue];
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
 }
 
 - (void)testShouldReceive3Response_when3RequestHasBeenSent{

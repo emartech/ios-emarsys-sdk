@@ -12,6 +12,8 @@
 @class EMSGeofenceInternal;
 @class EMSSdkStateLogger;
 @class EMSLogger;
+@class EMSSQLiteHelper;
+@class EMSCompletionBlockProvider;
 
 @interface EMSAppStartBlockProvider : NSObject
 
@@ -22,7 +24,9 @@
                         configInternal:(EMSConfigInternal *)configInternal
                       geofenceInternal:(EMSGeofenceInternal *)geofenceInternal
                         sdkStateLogger:(EMSSdkStateLogger *)sdkStateLogger
-                                logger:(EMSLogger *)logger;
+                                logger:(EMSLogger *)logger
+                              dbHelper:(EMSSQLiteHelper *)dbHelper
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider;
 
 - (MEHandlerBlock)createAppStartEventBlock;
 
@@ -31,5 +35,7 @@
 - (MEHandlerBlock)createRemoteConfigEventBlock;
 
 - (MEHandlerBlock)createFetchGeofenceEventBlock;
+
+- (MEHandlerBlock)createDbCloseEventBlock;
 
 @end

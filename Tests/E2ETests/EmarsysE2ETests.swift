@@ -13,23 +13,28 @@ class EmarsysE2ETests: XCTestCase {
         case assertionError(assertionMessage: String)
     }
 
-    override class func tearDown() {
+    var timestamp: String!
+    
+    override func setUp() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        timestamp = dateFormatter.string(from: Date())
+    }
+    
+    override func tearDown() {
         EmarsysTestUtils.tearDownEmarsys()
     }
 
     func testChangeApplicationCodeFromNil() throws {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-        let timestamp = dateFormatter.string(from: Date())
         let config = EMSConfig.make { builder in
         }
 
         Emarsys.setup(config: config)
 
-        changeAppCode("EMS11-C3FD3", cId: 2575)
+        changeAppCode("EMS11-C3FD3")
 
-        setContact(cId: 3, "test@test.com")
+        setContact(cId: 2575, "test2@test.com")
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
@@ -37,26 +42,46 @@ class EmarsysE2ETests: XCTestCase {
     }
 
     func testChangeApplicationCode() throws {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-        let timestamp = dateFormatter.string(from: Date())
         let config = EMSConfig.make { builder in
             builder.setMobileEngageApplicationCode("14C19-A121F")
         }
 
         Emarsys.setup(config: config)
 
-        changeAppCode("EMS11-C3FD3", cId: 2575)
+        changeAppCode("EMS11-C3FD3")
 
-        setContact(cId: 3, "test@test.com")
+        setContact(cId: 2575, "test2@test.com")
 
         sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
 
         _ = filterForInboxMessage("iosE2EChangeAppCodeFromNil", body: timestamp)
     }
+    
+    func testChangeAppCodeShouldNotViolateDB() throws {
+        let config = EMSConfig.make { builder in
+        }
 
-    func changeAppCode(_ code: String, cId: NSNumber) {
+        Emarsys.setup(config: config)
+        changeAppCode("EMS11-C3FD3")
+        
+        setContact(cId: 2575, "test2@test.com")
+
+        sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
+        
+        clearContact()
+        
+        changeAppCode(nil)
+        
+        sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
+        
+        sendEvent("iosE2EChangeAppCodeFromNil", timestamp: timestamp)
+        
+        changeAppCode("EMS11-C3FD3")
+        
+        setContact(cId: 2575, "test2@test.com")
+    }
+
+    func changeAppCode(_ code: String?) {
         retry { [unowned self] () in
             var returnedError: Error?
             let changeAppCodeExpectation = XCTestExpectation(description: "waitForResult")
@@ -80,6 +105,21 @@ class EmarsysE2ETests: XCTestCase {
                 returnedError = error
                 contactExpectation.fulfill()
             }
+            _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
+            if let _ = returnedError {
+                throw E2EError.assertionError(assertionMessage: "error is not nil")
+            }
+        }
+    }
+
+    func clearContact() {
+        retry { [unowned self] () in
+            var returnedError: Error?
+            let contactExpectation = XCTestExpectation(description: "waitForResult")
+            Emarsys.clearContact(completionBlock: { error in
+                returnedError = error
+                contactExpectation.fulfill()
+            })
             _ = XCTWaiter.wait(for: [contactExpectation], timeout: timeout)
             if let _ = returnedError {
                 throw E2EError.assertionError(assertionMessage: "error is not nil")

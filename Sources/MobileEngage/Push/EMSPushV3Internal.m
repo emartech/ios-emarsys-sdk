@@ -83,16 +83,19 @@
         EMSRequestModel *requestModel;
         if (deviceToken && [deviceToken length] > 0) {
             requestModel = [self.requestFactory createPushTokenRequestModelWithPushToken:deviceToken];
+            __weak typeof(self) weakSelf = self;
             [self.requestManager submitRequestModel:requestModel
                                 withCompletionBlock:^(NSError *error) {
-                                    if (!error) {
-                                        [self.storage setData:pushToken
-                                                       forKey:kEMSPushTokenKey];
-                                    }
-                                    if (completionBlock) {
-                                        completionBlock(error);
-                                    }
-                                }];
+                [weakSelf.operationQueue addOperationWithBlock:^{
+                    if (!error) {
+                        [weakSelf.storage setData:pushToken
+                                           forKey:kEMSPushTokenKey];
+                    }
+                }];
+                if (completionBlock) {
+                    completionBlock(error);
+                }
+            }];
         }
     }
 }
@@ -122,18 +125,18 @@
 - (void)trackMessageOpenWithUserInfo:(NSDictionary *)userInfo
                      completionBlock:(EMSCompletionBlock)completionBlock {
     NSParameterAssert(userInfo);
-
+    
     NSString *sid = [userInfo messageId];
     if (sid) {
         EMSRequestModel *requestModel = [self.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                   eventAttributes:@{
-                                                                                          @"origin": @"main",
-                                                                                          @"sid": sid
-                                                                                  }
+            @"origin": @"main",
+            @"sid": sid
+        }
                                                                                         eventType:EventTypeInternal];
         [self.requestManager submitRequestModel:requestModel
                             withCompletionBlock:completionBlock];
-
+        
     } else if (completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^{
             completionBlock([NSError errorWithCode:1400
@@ -208,7 +211,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         if (userInfo[@"exception"]) {
             EMSLog([[EMSCrashLog alloc] initWithException:userInfo[@"exception"]], LogLevelError);
         }
-
+        
         NSString *campaignId = userInfo[@"ems"][@"multichannelId"];
         if (campaignId && weakSelf.notificationInformationBlock) {
             EMSNotificationInformation *notificationInformation = [[EMSNotificationInformation alloc] initWithCampaignId:campaignId];
@@ -216,20 +219,20 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                 weakSelf.notificationInformationBlock(notificationInformation);
             });
         }
-
+        
         NSDictionary *inApp = userInfo[@"ems"][@"inapp"];
         if (inApp) {
             [weakSelf.inAppInternal handleInApp:userInfo
                                           inApp:inApp];
         }
-
+        
         NSDictionary *action = [weakSelf actionFromResponse:response];
         if (action && action[@"id"]) {
             EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"push:click"
                                                                                           eventAttributes:@{
-                                                                                                  @"origin": @"button",
-                                                                                                  @"button_id": action[@"id"],
-                                                                                                  @"sid": [userInfo messageId]}
+                @"origin": @"button",
+                @"button_id": action[@"id"],
+                @"sid": [userInfo messageId]}
                                                                                                 eventType:EventTypeInternal];
             [weakSelf.requestManager submitRequestModel:requestModel
                                     withCompletionBlock:nil];

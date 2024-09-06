@@ -17,6 +17,7 @@
 @property(nonatomic, readonly) NSDictionary *registeredTriggers;
 
 - (instancetype)initWithDatabasePath:(NSString *)path
-                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandlerProtocol>)schemaDelegate;
+                      schemaDelegate:(id <EMSSQLiteHelperSchemaHandlerProtocol>)schemaDelegate
+                      operationQueue:(NSOperationQueue *)operationQueue;
 
 @end
