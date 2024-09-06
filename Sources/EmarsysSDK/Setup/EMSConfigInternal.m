@@ -273,14 +273,16 @@
          completionBlock:(EMSCompletionBlock)completionHandler {
     [self.waiter enter];
     __weak typeof(self) weakSelf = self;
-    [self.queue addOperationWithBlock:^{
+    [self.coreQueue addOperationWithBlock:^{
         [self.contactClient clearContact];
         self.preRequestContext.merchantId = merchantId;
         [weakSelf.waiter exit];
     }];
     [self.waiter waitWithInterval:5];
     if (completionHandler) {
-        completionHandler(nil);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(nil);
+        });
     }
 }
 

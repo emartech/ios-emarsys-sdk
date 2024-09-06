@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MERequestContext;
 @class EMSSession;
 @class PRERequestContext;
+@class EMSCompletionBlockProvider;
 
 @interface EMSContactClientInternal: NSObject <EMSContactClientProtocol>
 
@@ -22,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
                         requestContext:(MERequestContext *)requestContext
                  predictRequestContext:(PRERequestContext *)predictRequestContext
                                storage:(id<EMSStorageProtocol>)storage
-                               session:(EMSSession *)session;
+                               session:(EMSSession *)session
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider;
 
 @end
 

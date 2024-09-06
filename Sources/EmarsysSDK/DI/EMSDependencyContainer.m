@@ -501,18 +501,19 @@
 
     _loggingMobileEngage = [EMSLoggingMobileEngageInternal new];
     EMSInstanceRouter *mobileEngageRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSMobileEngageV3Internal alloc] initWithRequestFactory:self.requestFactory
-                                                                                                                                          requestManager:self.requestManager
-                                                                                                                                          requestContext:self.requestContext
-                                                                                                                                                 storage:self.storage
-                                                                                                                                                 session:self.session
-                                                                                               completionBlockProvider:self.completionBlockProvider]
+                                                                                                                                          requestManager:self.requestManager]
                                                                                loggingInstance:self.loggingMobileEngage
                                                                                    routerLogic:self.mobileEngageRouterLogicBlock];
     [self.mobileEngageDelegator proxyWithInstanceRouter:mobileEngageRouter];
 
     _loggingContactClient = [EMSLoggingContactClientInternal new];
     EMSInstanceRouter *contactClientRouter = [[EMSInstanceRouter alloc] initWithDefaultInstance:[[EMSContactClientInternal alloc] initWithRequestFactory:self.requestFactory
-                                                                                                                                          requestManager:self.requestManager requestContext:self.requestContext predictRequestContext:self.predictRequestContext storage:self.storage session:self.session]  loggingInstance:self.loggingContactClient routerLogic:self.contactRouterLogicBlock];
+                                                                                                                                          requestManager:self.requestManager
+                                                                                                                                          requestContext:self.requestContext
+                                                                                                                                   predictRequestContext:self.predictRequestContext
+                                                                                                                                                 storage:self.storage
+                                                                                                                                                 session:self.session
+                                                                                                                                 completionBlockProvider:self.completionBlockProvider]  loggingInstance:self.loggingContactClient routerLogic:self.contactRouterLogicBlock];
     [self.contactClientDelegator proxyWithInstanceRouter:contactClientRouter];
 
     EMSActionFactory *actionFactory = [[EMSActionFactory alloc] initWithApplication:application
