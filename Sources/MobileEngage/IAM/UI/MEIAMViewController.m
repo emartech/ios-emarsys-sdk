@@ -31,7 +31,7 @@
     [self.webView stopLoading];
     [self.webView setNavigationDelegate:nil];
     [self.webView.scrollView setDelegate:nil];
-    [self.webView.configuration.userContentController removeAllUserScripts];
+    [self.webView.configuration.userContentController removeAllScriptMessageHandlers];
     [self.webView.configuration setUserContentController:[WKUserContentController new]];
     [self.webView removeFromSuperview];
     self.webView = nil;

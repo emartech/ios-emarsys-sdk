@@ -76,6 +76,9 @@
             EMSLog(logEntry, LogLevelDebug);
         }
     }
+    if (publicKey) {
+        CFRelease(publicKey);
+    }
     return result;
 }
 

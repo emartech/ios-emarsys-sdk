@@ -9,6 +9,7 @@
 @class EMSRequestManager;
 @class MERequestContext;
 @class EMSSession;
+@class EMSCompletionBlockProvider;
 
 @interface EMSMobileEngageV3Internal : NSObject <EMSMobileEngageProtocol>
 
@@ -16,6 +17,7 @@
                         requestManager:(EMSRequestManager *)requestManager
                         requestContext:(MERequestContext *)requestContext
                                storage:(id<EMSStorageProtocol>)storage
-                               session:(EMSSession *)session;
+                               session:(EMSSession *)session
+               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider;
 
 @end

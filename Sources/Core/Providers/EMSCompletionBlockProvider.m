@@ -1,9 +1,13 @@
+////
 //
-// Copyright (c) 2019 Emarsys. All rights reserved.
+// Copyright © 2024 Emarsys-Technologies Kft. All rights reserved.
 //
-#import "EMSCompletionBlockProvider.h"
 
-@interface EMSCompletionBlockProvider ()
+#import "EMSCompletionBlockProvider.h"
+#import <Foundation/Foundation.h>
+#import "EMSBlocks.h"
+
+@interface EMSCompletionBlockProvider()
 
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
@@ -12,18 +16,18 @@
 @implementation EMSCompletionBlockProvider
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue {
-    NSParameterAssert(operationQueue);
-
     if (self = [super init]) {
         _operationQueue = operationQueue;
     }
     return self;
 }
 
-- (EMSCompletion)provideCompletion:(EMSCompletion)completionBlock {
+- (EMSCompletionBlock)provideCompletionBlock:(EMSCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
-    return ^{
-        [weakSelf.operationQueue addOperationWithBlock:completionBlock];
+    return ^(NSError * _Nullable error) {
+        [weakSelf.operationQueue addOperationWithBlock:^{
+            completionBlock(error);
+        }];
     };
 }
 

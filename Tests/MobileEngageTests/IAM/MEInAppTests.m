@@ -10,9 +10,10 @@
 #import "MEDisplayedIAMRepository.h"
 #import "FakeInAppTracker.h"
 #import "EMSViewControllerProvider.h"
-#import "EMSCompletionBlockProvider.h"
+#import "EMSCompletionProvider.h"
 #import "EMSSceneProvider.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 SPEC_BEGIN(MEInAppTests)
 
@@ -57,7 +58,7 @@ SPEC_BEGIN(MEInAppTests)
             inApp = [[MEInApp alloc] initWithWindowProvider:windowProvider
                                          mainWindowProvider:[EMSMainWindowProvider nullMock]
                                           timestampProvider:timestampProvider
-                                    completionBlockProvider:[[EMSCompletionBlockProvider alloc] initWithOperationQueue:operationQueue]
+                                    completionBlockProvider:[[EMSCompletionProvider alloc] initWithOperationQueue:operationQueue]
                                      displayedIamRepository:displayedIAMRepository
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:[self createTestOperationQueue]];
@@ -65,7 +66,7 @@ SPEC_BEGIN(MEInAppTests)
         });
 
         afterEach(^{
-            [self tearDownOperationQueue:operationQueue];
+            [EmarsysTestUtils tearDownOperationQueue:operationQueue];
         });
 
         describe(@"initWithWindowProvider:mainWindowProvider:iamViewControllerProvider:iamViewControllerProvider:timestampProvider:logRepository:displayedIamRepository:inAppTracker:", ^{
@@ -74,7 +75,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:nil
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:[NSOperationQueue mock]];
@@ -90,7 +91,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:nil];
@@ -106,7 +107,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:nil
                                           timestampProvider:[EMSTimestampProvider mock]
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:[NSOperationQueue mock]];
@@ -122,7 +123,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:nil
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:[NSOperationQueue mock]];
@@ -137,7 +138,7 @@ SPEC_BEGIN(MEInAppTests)
                 @try {
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
-                                          timestampProvider:[EMSCompletionBlockProvider mock]
+                                          timestampProvider:[EMSCompletionProvider mock]
                                     completionBlockProvider:nil
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
@@ -154,7 +155,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:nil
                                       buttonClickRepository:[MEDisplayedIAMRepository mock]
                                              operationQueue:[NSOperationQueue mock]];
@@ -170,7 +171,7 @@ SPEC_BEGIN(MEInAppTests)
                     [[MEInApp alloc] initWithWindowProvider:[EMSWindowProvider mock]
                                          mainWindowProvider:[EMSMainWindowProvider mock]
                                           timestampProvider:[EMSTimestampProvider mock]
-                                    completionBlockProvider:[EMSCompletionBlockProvider mock]
+                                    completionBlockProvider:[EMSCompletionProvider mock]
                                      displayedIamRepository:[MEDisplayedIAMRepository mock]
                                       buttonClickRepository:nil
                                              operationQueue:[NSOperationQueue mock]];

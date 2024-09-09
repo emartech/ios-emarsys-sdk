@@ -222,7 +222,13 @@
 		37460FE8E5129D15F541D35F /* PRERequestContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37460FC10842C0A13863CF72 /* PRERequestContextTests.m */; };
 		574DD0E9273283F8005F2750 /* EMSGeofenceTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */; };
 		574DD0EB2732843D005F2750 /* EMSGeofence.m in Sources */ = {isa = PBXBuildFile; fileRef = 574DD0EA2732843D005F2750 /* EMSGeofence.m */; };
+		5D3394D52C50E83A00E617E1 /* NSString+EMSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3394D42C50E83A00E617E1 /* NSString+EMSCore.m */; };
+		5D3394D62C50E83A00E617E1 /* NSString+EMSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D3394D32C50E83A00E617E1 /* NSString+EMSCore.h */; };
+		5D3E118A2C77265B00D26BB1 /* EMSCompletionBlockProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3E11892C77265B00D26BB1 /* EMSCompletionBlockProvider.m */; };
+		5D3E118B2C77265B00D26BB1 /* EMSCompletionBlockProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D3E11882C77265B00D26BB1 /* EMSCompletionBlockProvider.h */; };
 		5D7EEE092BF4B4AB000E1558 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */; };
+		5DF6FD1A2C6F392C0038790E /* EMSTestColumnInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF6FD192C6F392C0038790E /* EMSTestColumnInfo.m */; };
+		5DF6FD1D2C6F39710038790E /* EMSTestColumnInfoMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF6FD1C2C6F39710038790E /* EMSTestColumnInfoMapper.m */; };
 		642590867F1D9665A69405B2 /* FakeDisplayedIAMRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6425981445EC441D5025D02A /* FakeDisplayedIAMRepository.swift */; };
 		6425912A1561D7A4F6765FFF /* EMSAppEventActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64259B9AFE68A274724F14B2 /* EMSAppEventActionTests.m */; };
 		642591319BA14CA36E2171CE /* EMSActionFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 642594C59C5EFF459584A660 /* EMSActionFactory.h */; };
@@ -337,9 +343,9 @@
 		8A6BEA8323E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8E723E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h */; };
 		8A6BEA8423E86B480066B13C /* EMSCoreCompletionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8E823E86B480066B13C /* EMSCoreCompletionHandler.h */; };
 		8A6BEA8523E86B480066B13C /* EMSUUIDProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8EA23E86B480066B13C /* EMSUUIDProvider.h */; };
-		8A6BEA8623E86B480066B13C /* EMSCompletionBlockProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8EB23E86B480066B13C /* EMSCompletionBlockProvider.h */; };
+		8A6BEA8623E86B480066B13C /* EMSCompletionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8EB23E86B480066B13C /* EMSCompletionProvider.h */; };
 		8A6BEA8723E86B480066B13C /* EMSTimestampProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BE8EC23E86B480066B13C /* EMSTimestampProvider.m */; };
-		8A6BEA8823E86B480066B13C /* EMSCompletionBlockProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BE8ED23E86B480066B13C /* EMSCompletionBlockProvider.m */; };
+		8A6BEA8823E86B480066B13C /* EMSCompletionProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BE8ED23E86B480066B13C /* EMSCompletionProvider.m */; };
 		8A6BEA8923E86B480066B13C /* EMSUUIDProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BE8EE23E86B480066B13C /* EMSUUIDProvider.m */; };
 		8A6BEA8A23E86B480066B13C /* EMSTimestampProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A6BE8EF23E86B480066B13C /* EMSTimestampProvider.h */; };
 		8A6BEA8B23E86B480066B13C /* MEExperimental.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6BE8F123E86B480066B13C /* MEExperimental.m */; };
@@ -885,7 +891,16 @@
 		37460FC4B8A95C2256E40EC6 /* EMSShardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EMSShardTests.m; path = Shard/EMSShardTests.m; sourceTree = "<group>"; };
 		574DD0E8273283F8005F2750 /* EMSGeofenceTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceTrigger.h; sourceTree = "<group>"; };
 		574DD0EA2732843D005F2750 /* EMSGeofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSGeofence.m; sourceTree = "<group>"; };
+		5D15F9E92C75E90F0023AAC1 /* EMSSession+Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EMSSession+Tests.h"; sourceTree = "<group>"; };
+		5D3394D32C50E83A00E617E1 /* NSString+EMSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+EMSCore.h"; sourceTree = "<group>"; };
+		5D3394D42C50E83A00E617E1 /* NSString+EMSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+EMSCore.m"; sourceTree = "<group>"; };
+		5D3E11882C77265B00D26BB1 /* EMSCompletionBlockProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSCompletionBlockProvider.h; sourceTree = "<group>"; };
+		5D3E11892C77265B00D26BB1 /* EMSCompletionBlockProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSCompletionBlockProvider.m; sourceTree = "<group>"; };
 		5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5DF6FD182C6F392C0038790E /* EMSTestColumnInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSTestColumnInfo.h; sourceTree = "<group>"; };
+		5DF6FD192C6F392C0038790E /* EMSTestColumnInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSTestColumnInfo.m; sourceTree = "<group>"; };
+		5DF6FD1B2C6F39710038790E /* EMSTestColumnInfoMapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSTestColumnInfoMapper.h; sourceTree = "<group>"; };
+		5DF6FD1C2C6F39710038790E /* EMSTestColumnInfoMapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSTestColumnInfoMapper.m; sourceTree = "<group>"; };
 		6425900619382B0A3A232868 /* EMSActionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSActionProtocol.h; sourceTree = "<group>"; };
 		6425906591104A1F55339EEB /* EMSMobileEngageNullSafeBodyParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSMobileEngageNullSafeBodyParserTests.m; sourceTree = "<group>"; };
 		642590A6317E018602B6AF71 /* EMSGeofenceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSGeofenceInternal.h; sourceTree = "<group>"; };
@@ -1003,9 +1018,9 @@
 		8A6BE8E723E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSRESTClientCompletionProxyProtocol.h; sourceTree = "<group>"; };
 		8A6BE8E823E86B480066B13C /* EMSCoreCompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCoreCompletionHandler.h; sourceTree = "<group>"; };
 		8A6BE8EA23E86B480066B13C /* EMSUUIDProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSUUIDProvider.h; sourceTree = "<group>"; };
-		8A6BE8EB23E86B480066B13C /* EMSCompletionBlockProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCompletionBlockProvider.h; sourceTree = "<group>"; };
+		8A6BE8EB23E86B480066B13C /* EMSCompletionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSCompletionProvider.h; sourceTree = "<group>"; };
 		8A6BE8EC23E86B480066B13C /* EMSTimestampProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSTimestampProvider.m; sourceTree = "<group>"; };
-		8A6BE8ED23E86B480066B13C /* EMSCompletionBlockProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCompletionBlockProvider.m; sourceTree = "<group>"; };
+		8A6BE8ED23E86B480066B13C /* EMSCompletionProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSCompletionProvider.m; sourceTree = "<group>"; };
 		8A6BE8EE23E86B480066B13C /* EMSUUIDProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSUUIDProvider.m; sourceTree = "<group>"; };
 		8A6BE8EF23E86B480066B13C /* EMSTimestampProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSTimestampProvider.h; sourceTree = "<group>"; };
 		8A6BE8F123E86B480066B13C /* MEExperimental.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MEExperimental.m; sourceTree = "<group>"; };
@@ -1277,7 +1292,6 @@
 		8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSEmarsysRequestFactory.h; sourceTree = "<group>"; };
 		8A6BEA4C23E86B480066B13C /* EMSDeepLinkInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSDeepLinkInternal.m; sourceTree = "<group>"; };
 		8A6BEA4D23E86B480066B13C /* EMSLoggingDeepLinkInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMSLoggingDeepLinkInternal.m; sourceTree = "<group>"; };
-		8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EMSLoggingDeepLinkInternal.h; path = ../EmarsysSDK/DeepLink/EMSLoggingDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMSDeepLinkInternal.h; sourceTree = "<group>"; };
 		8A6BEA5023E86B480066B13C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A84D9A72546F3E20043BA4A /* EmarsysSDKTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EmarsysSDKTests-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -1670,6 +1684,10 @@
 				32C6F9B35971E5720FCAB213 /* EMSSQLiteHelper+Test.h */,
 				37460D08A2B28531BABDD7A8 /* Triggers */,
 				8A602294219C6EF4000080FC /* EMSSQLStatementFactoryTests.m */,
+				5DF6FD182C6F392C0038790E /* EMSTestColumnInfo.h */,
+				5DF6FD192C6F392C0038790E /* EMSTestColumnInfo.m */,
+				5DF6FD1B2C6F39710038790E /* EMSTestColumnInfoMapper.h */,
+				5DF6FD1C2C6F39710038790E /* EMSTestColumnInfoMapper.m */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -1880,6 +1898,7 @@
 		5DF894CA2A812AED00803F2C /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				5D3394D32C50E83A00E617E1 /* NSString+EMSCore.h */,
 				8A6BE8AE23E86B480066B13C /* EMSOperationQueue.h */,
 				32C6F4D808CD54C437521E7B /* EMSQueueDelegator.h */,
 				32C6FB547AB9C97BDC4F354A /* EMSDispatchWaiter.h */,
@@ -1916,7 +1935,7 @@
 				8A6BE8E723E86B480066B13C /* EMSRESTClientCompletionProxyProtocol.h */,
 				8A6BE8E823E86B480066B13C /* EMSCoreCompletionHandler.h */,
 				8A6BE8EA23E86B480066B13C /* EMSUUIDProvider.h */,
-				8A6BE8EB23E86B480066B13C /* EMSCompletionBlockProvider.h */,
+				8A6BE8EB23E86B480066B13C /* EMSCompletionProvider.h */,
 				8A6BE8EF23E86B480066B13C /* EMSTimestampProvider.h */,
 				F2A2154E820F2B973BB32EBF /* EMSRandomProvider.h */,
 				8A6BE8F223E86B480066B13C /* MEExperimental.h */,
@@ -2090,7 +2109,7 @@
 				8A6BEA4F23E86B480066B13C /* EMSDeepLinkInternal.h */,
 				32C6F02CE3E640F757B02675 /* EMSEventHandlerProtocolBlockConverter.h */,
 				8A6BEA4A23E86B480066B13C /* EMSEmarsysRequestFactory.h */,
-				8A6BEA4E23E86B480066B13C /* EMSLoggingDeepLinkInternal.h */,
+				5D3E11882C77265B00D26BB1 /* EMSCompletionBlockProvider.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -2187,13 +2206,6 @@
 			path = Recommendations;
 			sourceTree = "<group>";
 		};
-		64259FAF9CA8825C6DDA2CC5 /* Parser */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Parser;
-			sourceTree = "<group>";
-		};
 		88C68566D4B863A6407A0E21 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2248,7 +2260,6 @@
 				8A6BE91323E86B480066B13C /* EMSRequestManager.m */,
 				8A6BE91423E86B480066B13C /* EMSAuthentication.m */,
 				8A6BE91523E86B480066B13C /* Log */,
-				8A6BE92C23E86B480066B13C /* Mappers */,
 				8A6BE92F23E86B480066B13C /* Validators */,
 				8A6BE93223E86B480066B13C /* Worker */,
 				8A6BE93923E86B480066B13C /* Categories */,
@@ -2257,7 +2268,6 @@
 				8A6BE95223E86B480066B13C /* EMSDeviceInfo.m */,
 				32C6F4FF6863B651D96B8BB4 /* EMSCrypto.m */,
 				64259AA03BC495443C2E54AA /* Router */,
-				64259FAF9CA8825C6DDA2CC5 /* Parser */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2355,9 +2365,10 @@
 			isa = PBXGroup;
 			children = (
 				8A6BE8EC23E86B480066B13C /* EMSTimestampProvider.m */,
-				8A6BE8ED23E86B480066B13C /* EMSCompletionBlockProvider.m */,
+				8A6BE8ED23E86B480066B13C /* EMSCompletionProvider.m */,
 				8A6BE8EE23E86B480066B13C /* EMSUUIDProvider.m */,
 				F2A2153700FA19467DB3BBF3 /* EMSRandomProvider.m */,
+				5D3E11892C77265B00D26BB1 /* EMSCompletionBlockProvider.m */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -2436,13 +2447,6 @@
 			path = LogEntry;
 			sourceTree = "<group>";
 		};
-		8A6BE92C23E86B480066B13C /* Mappers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Mappers;
-			sourceTree = "<group>";
-		};
 		8A6BE92F23E86B480066B13C /* Validators */ = {
 			isa = PBXGroup;
 			children = (
@@ -2471,6 +2475,7 @@
 				8A6BE94723E86B480066B13C /* NSDictionary+EMSCore.m */,
 				8A6BE94923E86B480066B13C /* NSURLRequest+EMSCore.m */,
 				FB8A35934808E998DA538E1C /* NSHTTPURLResponse+EMSCore.m */,
+				5D3394D42C50E83A00E617E1 /* NSString+EMSCore.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2991,6 +2996,7 @@
 				3746044C8EBC88A514308371 /* EMSWaiter.h */,
 				32C6F40774A36CCD6E9A29D0 /* EmarsysTestUtils.m */,
 				32C6FD10D7BB83AE2C297792 /* EmarsysTestUtils.h */,
+				5D15F9E92C75E90F0023AAC1 /* EMSSession+Tests.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3280,10 +3286,12 @@
 				8A6BEB6D23E86B490066B13C /* EMSViewControllerProvider.h in Headers */,
 				8A6BEAD423E86B480066B13C /* NSMutableDictionary+EMSCore.h in Headers */,
 				8A6BEAEB23E86B480066B13C /* EMSLogic.h in Headers */,
+				5D3E118B2C77265B00D26BB1 /* EMSCompletionBlockProvider.h in Headers */,
 				8A6BEB7323E86B490066B13C /* EMSMainWindowProvider.h in Headers */,
 				8A6BEA7523E86B480066B13C /* EMSShardRepository.h in Headers */,
 				8A6BEAF523E86B480066B13C /* EMSConfigProtocol.h in Headers */,
 				8A6BEBA223E86B490066B13C /* EMSRemoteConfigResponseMapper.h in Headers */,
+				5D3394D62C50E83A00E617E1 /* NSString+EMSCore.h in Headers */,
 				8A6BEB3823E86B490066B13C /* EMSMobileEngageV3Internal.h in Headers */,
 				8A6BEA7B23E86B480066B13C /* EMSRequestManager.h in Headers */,
 				8A6BEB0323E86B480066B13C /* EMSProduct+Emarsys.h in Headers */,
@@ -3371,7 +3379,7 @@
 				8A6BEB6923E86B490066B13C /* MEInAppTrackingProtocol.h in Headers */,
 				8A6BEB8B23E86B490066B13C /* EMSMobileEngageRefreshTokenCompletionProxy.h in Headers */,
 				8A6BEB5123E86B490066B13C /* EMSPushV3Internal.h in Headers */,
-				8A6BEA8623E86B480066B13C /* EMSCompletionBlockProvider.h in Headers */,
+				8A6BEA8623E86B480066B13C /* EMSCompletionProvider.h in Headers */,
 				8A6BEA9623E86B480066B13C /* EMSRequestModel.h in Headers */,
 				8A6BEAE123E86B480066B13C /* EMSPushNotificationProtocol.h in Headers */,
 				8A6BEB8023E86B490066B13C /* EMSNotificationService+Actions.h in Headers */,
@@ -3755,6 +3763,7 @@
 				166B3F4D2119A840006CD35C /* EMSShardTests.m in Sources */,
 				166B3F4E2119A840006CD35C /* EMSSQLiteHelperTests.m in Sources */,
 				8A602295219C6EF4000080FC /* EMSSQLStatementFactoryTests.m in Sources */,
+				5DF6FD1D2C6F39710038790E /* EMSTestColumnInfoMapper.m in Sources */,
 				166B3F562119A840006CD35C /* MEIAMButtonClickedTests.m in Sources */,
 				8AFCA45221393D640052FEFA /* EMSPredictInternalTests.m in Sources */,
 				166B3F572119A840006CD35C /* MEIAMCloseTests.m in Sources */,
@@ -3839,6 +3848,7 @@
 				32C6FE0A6DE8D6BA043FAFEC /* EMSDeviceInfoV3ClientInternalTests.m in Sources */,
 				32C6FD6BDF2339C16189B100 /* EMSDeviceInfoClientV3InternalIntegrationTests.m in Sources */,
 				32C6F4CD0CC8E3A6770013C1 /* EMSConfigTests.m in Sources */,
+				5DF6FD1A2C6F392C0038790E /* EMSTestColumnInfo.m in Sources */,
 				32C6FA1F0B2342FB70614F36 /* BuilderTests.m in Sources */,
 				32C6FD891660AA75348DBA5C /* MEExperimentalTests.m in Sources */,
 				32C6F17935310941C4279011 /* FakeFlipperFeature.m in Sources */,
@@ -3955,6 +3965,7 @@
 				8A6BEA6E23E86B480066B13C /* EMSQueryOldestRowSpecification.m in Sources */,
 				8A6BEBA623E86B490066B13C /* EMSConfigInternal.m in Sources */,
 				8A6BEB3423E86B490066B13C /* EMSLoggingMobileEngageInternal.m in Sources */,
+				5D3E118A2C77265B00D26BB1 /* EMSCompletionBlockProvider.m in Sources */,
 				8A6BEABD23E86B480066B13C /* EMSMethodNotAllowed.m in Sources */,
 				8A6BEA8723E86B480066B13C /* EMSTimestampProvider.m in Sources */,
 				8A6BEB6223E86B490066B13C /* MEIAMButtonClicked.m in Sources */,
@@ -4026,8 +4037,9 @@
 				8A6BEB9023E86B490066B13C /* EMSCompletionProxyFactory.m in Sources */,
 				8A6BEB8523E86B490066B13C /* EMSNotificationService+Attachment.m in Sources */,
 				8A6BEB6F23E86B490066B13C /* EMSSceneProvider.m in Sources */,
-				8A6BEA8823E86B480066B13C /* EMSCompletionBlockProvider.m in Sources */,
+				8A6BEA8823E86B480066B13C /* EMSCompletionProvider.m in Sources */,
 				8A04DF332668C62F00FC4862 /* EMSAppEventActionModel.m in Sources */,
+				5D3394D52C50E83A00E617E1 /* NSString+EMSCore.m in Sources */,
 				8A6BEA6223E86B480066B13C /* EMSCountMapper.m in Sources */,
 				8A6BEB2823E86B490066B13C /* EMSDeviceInfo+MEClientPayload.m in Sources */,
 				8A6BEADA23E86B480066B13C /* EMSScheduler.m in Sources */,

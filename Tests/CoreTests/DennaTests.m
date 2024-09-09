@@ -2,7 +2,8 @@
 //  Copyright (c) 2017 Emarsys. All rights reserved.
 //
 
-#import "Kiwi.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "EMSRequestModel.h"
 #import "EMSRequestManager.h"
 #import "EMSResponseModel.h"
@@ -18,227 +19,247 @@
 #import "EMSRESTClientCompletionProxyFactory.h"
 #import "EMSMobileEngageNullSafeBodyParser.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 #define DennaUrl(ending) [NSString stringWithFormat:@"https://denna.gservice.emarsys.net%@", ending];
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
-#define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
 
-SPEC_BEGIN(DennaTest)
+@interface DennaTest : XCTestCase
 
-        NSString *error500 = DennaUrl(@"/customResponseCode/500");
-        NSString *echo = DennaUrl(@"/echo");
-        NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
-        NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
+@property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *dbQueue;
+@property (nonatomic, strong) EMSSQLiteHelper *dbHelper;
 
-__block NSOperationQueue *queue;
+@end
 
-beforeEach(^{
-    queue = [self createTestOperationQueue];
-});
+@implementation DennaTest
 
-afterEach(^{
-    [self tearDownOperationQueue:queue];
-});
+- (void)setUp {
+    [super setUp];
+    self.queue = [self createTestOperationQueue];
+    self.dbQueue = [self createTestOperationQueue];
+    self.dbHelper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
+                                                   schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                   operationQueue:self.dbQueue];
+    [self.dbHelper open];
+}
 
-        void (^shouldEventuallySucceed)(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) = ^(EMSRequestModel *model, NSString *method, NSDictionary<NSString *, NSString *> *headers, NSDictionary<NSString *, id> *body) {
-            __block NSString *checkableRequestId;
-            __block NSString *resultMethod;
-            __block BOOL expectedSubsetOfResultHeaders;
-            __block NSDictionary<NSString *, id> *resultPayload;
+- (void)tearDown {
+    [EmarsysTestUtils tearDownOperationQueue:self.queue];
+    [EmarsysTestUtils clearDb:self.dbHelper];
+    [super tearDown];
+}
 
-            EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                        checkableRequestId = requestId;
-                        NSDictionary<NSString *, id> *returnedPayload = [NSJSONSerialization JSONObjectWithData:response.body
-                                                                                                        options:NSJSONReadingFragmentsAllowed
-                                                                                                          error:nil];
-                        NSLog(@"RequestId: %@, responsePayload: %@", requestId, returnedPayload);
-                        resultMethod = returnedPayload[@"method"];
-                        expectedSubsetOfResultHeaders = [returnedPayload[@"headers"] subsetOfDictionary:headers];
-                        resultPayload = returnedPayload[@"body"];
+- (void)testError500 {
+    NSString *error500 = DennaUrl(@"/customResponseCode/500");
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:error500];
+        [builder setMethod:HTTPMethodGET];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+        XCTFail(@"successBlock invoked :'(");
+    }
+                                                                                     errorBlock:^(NSString *requestId, NSError *error) {
+        NSLog(@"ERROR!");
+        XCTFail(@"errorblock invoked");
+    }];
+    
+    EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
+                                                                                        operationQueue:self.queue];
+    EMSShardRepository *shardRepository = [EMSShardRepository new];
+    
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+    [sessionConfiguration setHTTPCookieStorage:nil];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                          delegate:nil
+                                                     delegateQueue:self.queue];
+    
+    EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:OCMClassMock([EMSEndpoint class])];
+    
+    EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                 queue:self.queue
+                                                     timestampProvider:[EMSTimestampProvider new]
+                                                     additionalHeaders:nil
+                                                   requestModelMappers:nil
+                                                      responseHandlers:nil
+                                                mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
+    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                operationQueue:self.queue
+                                                                                                           defaultSuccessBlock:middleware.successBlock
+                                                                                                             defaultErrorBlock:middleware.errorBlock];
+    
+    EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.queue];
+    
+    EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.queue
+                                                              requestRepository:requestRepository
+                                                             connectionWatchdog:connectionWatchdog
+                                                                     restClient:restClient
+                                                                     errorBlock:middleware.errorBlock
+                                                                   proxyFactory:proxyFactory];
+    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:self.queue
+                                                      completionMiddleware:middleware
+                                                                restClient:restClient
+                                                                    worker:worker
+                                                         requestRepository:requestRepository
+                                                           shardRepository:shardRepository
+                                                              proxyFactory:proxyFactory];
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
+    [core submitRequestModel:model
+         withCompletionBlock:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:10];
+    XCTAssertEqual(result, XCTWaiterResultTimedOut);
+}
 
-                    }
-                                                                                             errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                                 NSLog(@"ERROR!");
-                                                                                                 fail(@"errorblock invoked");
-                                                                                             }];
+- (void)testShouldRespondWithGetRequestHeadersBody {
+    NSString *echo = DennaUrl(@"/echo");
+    NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:echo];
+        [builder setMethod:HTTPMethodGET];
+        [builder setHeaders:inputHeaders];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    [self shouldEventuallySucceed:model method:@"GET" headers:inputHeaders body:nil];
+}
 
-            EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                                                                                              schemaDelegate:[EMSSqliteSchemaHandler new]]
-                                                                                                operationQueue:queue];
-            EMSShardRepository *shardRepository = [EMSShardRepository new];
+- (void)testShouldRespondWithPostRequestHeadersBody {
+    NSString *echo = DennaUrl(@"/echo");
+    NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
+    NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:echo];
+        [builder setMethod:HTTPMethodPOST];
+        [builder setHeaders:inputHeaders];
+        [builder setPayload:payload];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    [self shouldEventuallySucceed:model method:@"POST" headers:inputHeaders body:payload];
+}
 
+- (void)testShouldRespondWithPutRequestHeadersBody {
+    NSString *echo = DennaUrl(@"/echo");
+    NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
+    NSDictionary *payload = @{@"key1": @"val1", @"key2": @"val2", @"key3": @"val3"};
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:echo];
+        [builder setMethod:HTTPMethodPUT];
+        [builder setHeaders:inputHeaders];
+        [builder setPayload:payload];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    [self shouldEventuallySucceed:model method:@"PUT" headers:inputHeaders body:payload];
+}
 
-            NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-            [sessionConfiguration setTimeoutIntervalForRequest:30.0];
-            [sessionConfiguration setHTTPCookieStorage:nil];
-            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
-                                                                  delegate:nil
-                                                             delegateQueue:queue];
+- (void)testShouldRespondWithDeleteRequestHeadersBody {
+    NSString *echo = DennaUrl(@"/echo");
+    NSDictionary *inputHeaders = @{@"header1": @"value1", @"header2": @"value2"};
+    
+    EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
+        [builder setUrl:echo];
+        [builder setMethod:HTTPMethodDELETE];
+        [builder setHeaders:inputHeaders];
+    }
+                                            timestampProvider:[EMSTimestampProvider new]
+                                                 uuidProvider:[EMSUUIDProvider new]];
+    
+    [self shouldEventuallySucceed:model method:@"DELETE" headers:inputHeaders body:nil];
+}
 
-            EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
+- (void)shouldEventuallySucceed:(EMSRequestModel *)model
+                         method:(NSString *)method
+                        headers:(NSDictionary<NSString *, NSString *> *)headers
+                           body:(NSDictionary<NSString *, id> *)body {
+    __block NSString *checkableRequestId;
+    __block NSString *resultMethod;
+    __block BOOL expectedSubsetOfResultHeaders;
+    __block NSDictionary<NSString *, id> *resultPayload;
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForMiddleware"];
+    EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
+        checkableRequestId = requestId;
+        NSDictionary<NSString *, id> *returnedPayload = [NSJSONSerialization JSONObjectWithData:response.body
+                                                                                        options:NSJSONReadingFragmentsAllowed
+                                                                                          error:nil];
+        NSLog(@"RequestId: %@, responsePayload: %@", requestId, returnedPayload);
+        resultMethod = returnedPayload[@"method"];
+        expectedSubsetOfResultHeaders = [returnedPayload[@"headers"] subsetOfDictionary:headers];
+        resultPayload = returnedPayload[@"body"];
+        [expectation fulfill];
+    }
+                                                                                     errorBlock:^(NSString *requestId, NSError *error) {
+        NSLog(@"ERROR!");
+        XCTFail(@"errorblock invoked");
+    }];
+    
+    EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:self.dbHelper
+                                                                                        operationQueue:self.queue];
+    EMSShardRepository *shardRepository = [EMSShardRepository new];
+    
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    [sessionConfiguration setTimeoutIntervalForRequest:30.0];
+    [sessionConfiguration setHTTPCookieStorage:nil];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                          delegate:nil
+                                                     delegateQueue:self.queue];
+    
+    EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:OCMClassMock([EMSEndpoint class])];
+    
+    EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
+                                                                 queue:self.queue
+                                                     timestampProvider:[EMSTimestampProvider new]
+                                                     additionalHeaders:nil
+                                                   requestModelMappers:nil
+                                                      responseHandlers:nil
+                                                mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
+    EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
+                                                                                                                operationQueue:self.queue
+                                                                                                           defaultSuccessBlock:middleware.successBlock
+                                                                                                             defaultErrorBlock:middleware.errorBlock];
+    
+    EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:self.queue];
+    
+    EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:self.queue
+                                                              requestRepository:requestRepository
+                                                             connectionWatchdog:connectionWatchdog
+                                                                     restClient:restClient
+                                                                     errorBlock:middleware.errorBlock
+                                                                   proxyFactory:proxyFactory];
+    EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:self.queue
+                                                      completionMiddleware:middleware
+                                                                restClient:restClient
+                                                                    worker:worker
+                                                         requestRepository:requestRepository
+                                                           shardRepository:shardRepository
+                                                              proxyFactory:proxyFactory];
+    [core submitRequestModel:model
+         withCompletionBlock:nil];
+    
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation] 
+                                                          timeout:10.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqualObjects(resultMethod, method);
+    XCTAssertEqual(expectedSubsetOfResultHeaders, YES);
+    if (body) {
+        XCTAssertEqualObjects(resultPayload, body);
+    }
+    XCTAssertEqualObjects(model.requestId, checkableRequestId);
+}
 
-            EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                         queue:queue
-                                                             timestampProvider:[EMSTimestampProvider new]
-                                                             additionalHeaders:nil
-                                                           requestModelMappers:nil
-                                                              responseHandlers:nil
-                                                        mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
-            EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                        operationQueue:queue
-                                                                                                                   defaultSuccessBlock:middleware.successBlock
-                                                                                                                     defaultErrorBlock:middleware.errorBlock];
-
-            EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:queue];
-
-            EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
-                                                                      requestRepository:requestRepository
-                                                                     connectionWatchdog:connectionWatchdog
-                                                                             restClient:restClient
-                                                                             errorBlock:middleware.errorBlock
-                                                                           proxyFactory:proxyFactory];
-            EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
-                                                              completionMiddleware:middleware
-                                                                        restClient:restClient
-                                                                            worker:worker
-                                                                 requestRepository:requestRepository
-                                                                   shardRepository:shardRepository
-                                                                      proxyFactory:proxyFactory];
-            [core submitRequestModel:model
-                 withCompletionBlock:nil];
-
-            [[expectFutureValue(resultMethod) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:method];
-            [[theValue(expectedSubsetOfResultHeaders) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:theValue(YES)];
-            if (body) {
-                [[expectFutureValue(resultPayload) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:body];
-            }
-            [[expectFutureValue(model.requestId) shouldEventuallyBeforeTimingOutAfter(10.0)] equal:checkableRequestId];
-        };
-
-
-        describe(@"EMSRequestManager", ^{
-
-            beforeEach(^{
-                [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                           error:nil];
-                [[NSFileManager defaultManager] removeItemAtPath:DB_PATH
-                                                           error:nil];
-            });
-
-            it(@"should invoke errorBlock when calling error500 on Denna", ^{
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:error500];
-                            [builder setMethod:HTTPMethodGET];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-
-                EMSCompletionMiddleware *middleware = [[EMSCompletionMiddleware alloc] initWithSuccessBlock:^(NSString *requestId, EMSResponseModel *response) {
-                            NSLog(@"ERROR!");
-                            fail(@"successBlock invoked :'(");
-                        }
-                                                                                                 errorBlock:^(NSString *requestId, NSError *error) {
-                                                                                                     NSLog(@"ERROR!");
-                                                                                                     fail(@"errorblock invoked");
-                                                                                                 }];
-                EMSRequestModelRepository *requestRepository = [[EMSRequestModelRepository alloc] initWithDbHelper:[[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                                                                                                                  schemaDelegate:[EMSSqliteSchemaHandler new]]
-                                                                                                    operationQueue:queue];
-                EMSShardRepository *shardRepository = [EMSShardRepository new];
-
-                NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-                [sessionConfiguration setTimeoutIntervalForRequest:30.0];
-                [sessionConfiguration setHTTPCookieStorage:nil];
-                NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration
-                                                                      delegate:nil
-                                                                 delegateQueue:queue];
-
-                EMSMobileEngageNullSafeBodyParser *mobileEngageNullSafeBodyParser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:[EMSEndpoint nullMock]];
-
-                EMSRESTClient *restClient = [[EMSRESTClient alloc] initWithSession:session
-                                                                             queue:queue
-                                                                 timestampProvider:[EMSTimestampProvider new]
-                                                                 additionalHeaders:nil
-                                                               requestModelMappers:nil
-                                                                  responseHandlers:nil
-                                                            mobileEngageBodyParser:mobileEngageNullSafeBodyParser];
-                EMSRESTClientCompletionProxyFactory *proxyFactory = [[EMSRESTClientCompletionProxyFactory alloc] initWithRequestRepository:requestRepository
-                                                                                                                            operationQueue:queue
-                                                                                                                       defaultSuccessBlock:middleware.successBlock
-                                                                                                                         defaultErrorBlock:middleware.errorBlock];
-
-                EMSConnectionWatchdog *connectionWatchdog = [[EMSConnectionWatchdog alloc] initWithOperationQueue:queue];
-
-                EMSDefaultWorker *worker = [[EMSDefaultWorker alloc] initWithOperationQueue:queue
-                                                                          requestRepository:requestRepository
-                                                                         connectionWatchdog:connectionWatchdog
-                                                                                 restClient:restClient
-                                                                                 errorBlock:middleware.errorBlock
-                                                                               proxyFactory:proxyFactory];
-                EMSRequestManager *core = [[EMSRequestManager alloc] initWithCoreQueue:queue
-                                                                  completionMiddleware:middleware
-                                                                            restClient:restClient
-                                                                                worker:worker
-                                                                     requestRepository:requestRepository
-                                                                       shardRepository:shardRepository
-                                                                          proxyFactory:proxyFactory];
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForResult"];
-                [core submitRequestModel:model
-                     withCompletionBlock:^(NSError *error) {
-                         [expectation fulfill];
-                     }];
-                XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation]
-                                                                timeout:10];
-                [[theValue(result) should] equal:theValue(XCTWaiterResultTimedOut)];
-            });
-
-            it(@"should respond with the GET request's headers/body", ^{
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:echo];
-                            [builder setMethod:HTTPMethodGET];
-                            [builder setHeaders:inputHeaders];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-                shouldEventuallySucceed(model, @"GET", inputHeaders, nil);
-            });
-
-            it(@"should respond with the POST request's headers/body", ^{
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:echo];
-                            [builder setMethod:HTTPMethodPOST];
-                            [builder setHeaders:inputHeaders];
-                            [builder setPayload:payload];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-                shouldEventuallySucceed(model, @"POST", inputHeaders, payload);
-            });
-
-            it(@"should respond with the PUT request's headers/body", ^{
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:echo];
-                            [builder setMethod:HTTPMethodPUT];
-                            [builder setHeaders:inputHeaders];
-                            [builder setPayload:payload];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-                shouldEventuallySucceed(model, @"PUT", inputHeaders, payload);
-            });
-
-            it(@"should respond with the DELETE request's headers/body", ^{
-                EMSRequestModel *model = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
-                            [builder setUrl:echo];
-                            [builder setMethod:HTTPMethodDELETE];
-                            [builder setHeaders:inputHeaders];
-                        }
-                                                        timestampProvider:[EMSTimestampProvider new]
-                                                             uuidProvider:[EMSUUIDProvider new]];
-                shouldEventuallySucceed(model, @"DELETE", inputHeaders, nil);
-            });
-
-
-        });
-
-SPEC_END
+@end

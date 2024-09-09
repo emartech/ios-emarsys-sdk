@@ -38,7 +38,7 @@
 @property(nonatomic, strong) EMSLogger *logger;
 @property(nonatomic, strong) EMSRemoteConfigResponseMapper *remoteConfigResponseMapper;
 @property(nonatomic, strong) EMSCrypto *crypto;
-@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *coreQueue;
 @property(nonatomic, strong) EMSDispatchWaiter *waiter;
 @property(nonatomic, strong) EMSDeviceInfoV3ClientInternal *deviceInfoClient;
 
@@ -57,7 +57,7 @@
                               endpoint:(EMSEndpoint *)endpoint
                                 logger:(EMSLogger *)logger
                                 crypto:(EMSCrypto *)crypto
-                                 queue:(NSOperationQueue *)queue
+                             coreQueue:(NSOperationQueue *)coreQueue
                                 waiter:(EMSDispatchWaiter *)waiter
                       deviceInfoClient:(id <EMSDeviceInfoClientProtocol>)deviceInfoClient {
     NSParameterAssert(requestManager);
@@ -71,7 +71,7 @@
     NSParameterAssert(endpoint);
     NSParameterAssert(logger);
     NSParameterAssert(crypto);
-    NSParameterAssert(queue);
+    NSParameterAssert(coreQueue);
     NSParameterAssert(waiter);
     NSParameterAssert(deviceInfoClient);
     if (self = [super init]) {
@@ -86,7 +86,7 @@
         _endpoint = endpoint;
         _logger = logger;
         _crypto = crypto;
-        _queue = queue;
+        _coreQueue = coreQueue;
         _waiter = waiter;
         _deviceInfoClient = deviceInfoClient;
     }
@@ -186,27 +186,28 @@
     NSData *pushToken = self.pushInternal.deviceToken;
     BOOL hasContactIdentification = self.meRequestContext.hasContactIdentification;
     __block NSError *error = nil;
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (self.meRequestContext.applicationCode && pushToken) {
-            error = [self clearPushToken];
+        if (weakSelf.meRequestContext.applicationCode && pushToken) {
+            error = [weakSelf clearPushToken];
         }
-        if (!error && self.meRequestContext.applicationCode && [self.meRequestContext hasContactIdentification]) {
-            error = [self clearContact];
+        if (!error && weakSelf.meRequestContext.applicationCode && [weakSelf.meRequestContext hasContactIdentification]) {
+            error = [weakSelf clearContact];
         }
         if (!error) {
-            self.meRequestContext.applicationCode = applicationCode;
+            weakSelf.meRequestContext.applicationCode = applicationCode;
             if (applicationCode) {
-                error = [self sendDeviceInfo];
+                error = [weakSelf sendDeviceInfo];
                 if (pushToken) {
-                    error = [self sendPushToken:pushToken];
+                    error = [weakSelf sendPushToken:pushToken];
                 }
                 if (!error && !hasContactIdentification) {
-                    error = [self clearContact];
+                    error = [weakSelf clearContact];
                 }
             }
         }
         if (error) {
-            self.meRequestContext.applicationCode = nil;
+            weakSelf.meRequestContext.applicationCode = nil;
         }
         if (completionHandler) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -255,7 +256,9 @@
             result = error;
             [weakSelf.waiter exit];
         };
-        runnerBlock(completionBlock);
+        [self.coreQueue addOperationWithBlock:^{
+            runnerBlock(completionBlock);
+        }];
     }
     [self.waiter waitWithInterval:METHOD_TIMEOUT];
     return result;
@@ -270,7 +273,7 @@
     self.preRequestContext.merchantId = merchantId;
     [self.waiter enter];
     __weak typeof(self) weakSelf = self;
-    [self.queue addOperationWithBlock:^{
+    [self.coreQueue addOperationWithBlock:^{
         [weakSelf.waiter exit];
     }];
     [self.waiter waitWithInterval:5];

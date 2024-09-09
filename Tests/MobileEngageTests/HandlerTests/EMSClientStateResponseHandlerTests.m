@@ -12,6 +12,7 @@
 #import "EMSEndpoint.h"
 #import "EMSValueProvider.h"
 #import "EMSStorage.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSClientStateResponseHandlerTests : XCTestCase
 
@@ -45,6 +46,10 @@
 
     _responseHandler = [[EMSClientStateResponseHandler alloc] initWithRequestContext:self.requestContext
                                                                             endpoint:endpoint];
+}
+
+- (void)tearDown {
+    [EmarsysTestUtils tearDownEmarsys];
 }
 
 - (void)testInit_requestContext_mustNotBeNull {

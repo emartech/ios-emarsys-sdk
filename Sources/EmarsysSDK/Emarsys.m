@@ -162,6 +162,8 @@
                                forNotification:@"EmarsysSDKDidFinishSetupNotification"];
     [notificationCenterManager addHandlerBlock:[appStartBlockProvider createRemoteConfigEventBlock]
                                forNotification:@"EmarsysSDKDidFinishSetupNotification"];
+    [notificationCenterManager addHandlerBlock:[appStartBlockProvider createDbCloseEventBlock]
+                               forNotification:UIApplicationWillTerminateNotification];
 }
 
 + (id <EMSPushNotificationProtocol>)push {

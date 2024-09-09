@@ -16,6 +16,7 @@
 #import "EMSInAppInternal.h"
 #import "XCTestCase+Helper.h"
 #import "EMSStorageProtocol.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSPushV3Internal ()
 
@@ -80,7 +81,7 @@ id (^notificationResponseWithUserInfo)(NSDictionary *userInfo) = ^id(NSDictionar
 
 - (void)tearDown {
     [self.mockPushTokenData stopMocking];
-    [self tearDownOperationQueue:self.operationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.operationQueue];
     [super tearDown];
 }
 

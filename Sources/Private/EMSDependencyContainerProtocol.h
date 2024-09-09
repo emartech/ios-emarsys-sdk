@@ -33,6 +33,8 @@
 @class EMSEndpoint;
 @class MEButtonClickRepository;
 @protocol EMSOnEventActionProtocol;
+@class EMSWrapperChecker;
+@class EMSSession;
 
 @protocol EMSDependencyContainerProtocol <NSObject>
 
@@ -99,5 +101,11 @@
 - (EMSEndpoint *)endpoint;
 
 - (MEButtonClickRepository *)buttonClickRepository;
+
+- (NSURLSession *)urlSession;
+
+- (EMSWrapperChecker *)wrapperChecker;
+
+- (EMSSession *)session;
 
 @end

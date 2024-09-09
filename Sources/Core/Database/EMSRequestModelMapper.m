@@ -6,6 +6,9 @@
 #import "EMSRequestModel.h"
 #import "NSDictionary+EMSCore.h"
 #import "EMSSchemaContract.h"
+#import "EMSMacros.h"
+#import "EMSCrashLog.h"
+#import "EMSStatusLog.h"
 
 @interface EMSRequestModelMapper ()
 
@@ -14,6 +17,7 @@
 
 - (BOOL)isNotNull:(sqlite3_stmt *)statement
           atIndex:(int)index;
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String;
 
 @end
 
@@ -21,9 +25,9 @@
 
 
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
-    NSString *requestId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
-    NSString *method = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 1)];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 2)]];
+    NSString *requestId = [self mapToString:sqlite3_column_text(statement, 0)];
+    NSString *method = [self mapToString:sqlite3_column_text(statement, 1)];
+    NSURL *url = [NSURL URLWithString:[self mapToString:sqlite3_column_text(statement, 2)]];
     NSDictionary<NSString *, NSString *> *headers;
     if ([self isNotNull:statement atIndex:3]) {
         headers = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
@@ -36,6 +40,19 @@
     }
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 5)];
     NSTimeInterval expiry = sqlite3_column_double(statement, 6);
+    if (!requestId || !method || !url || !timestamp || !expiry) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"requestId"] = requestId;
+        parameters[@"method"] = method;
+        parameters[@"url"] = url;
+        parameters[@"timestamp"] = [timestamp description];
+        parameters[@"expiry"] = @(expiry);
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:nil];
+        EMSLog(logEntry, LogLevelError);
+    }
     return [[EMSRequestModel alloc] initWithRequestId:requestId
                                             timestamp:timestamp
                                                expiry:expiry
@@ -73,6 +90,14 @@
 - (BOOL)isNotNull:(sqlite3_stmt *)statement
           atIndex:(int)index {
     return sqlite3_column_type(statement, index) != SQLITE_NULL;
+}
+
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String {
+    NSString *result = nil;
+    if (utf8String) {
+        result = [NSString stringWithUTF8String:(char *)utf8String];
+    }
+    return result;
 }
 
 - (NSString *)tableName {

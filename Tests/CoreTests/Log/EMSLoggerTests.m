@@ -14,6 +14,7 @@
 #import "EMSWrapperChecker.h"
 #import "XCTestCase+Helper.h"
 #import "EMSStorageProtocol.h"
+#import "EmarsysTestUtils.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -82,8 +83,8 @@
     _mockLogEntry = nil;
     _mockStorage = nil;
     _operationQueue = nil;
-    [self tearDownOperationQueue:self.operationQueue];
-    [self tearDownOperationQueue:self.runnerQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.operationQueue];
+    [EmarsysTestUtils tearDownOperationQueue:self.runnerQueue];
 }
 
 - (void)testInitShouldThrowExceptionWhenShardRepositoryIsNil {

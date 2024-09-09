@@ -1,13 +1,19 @@
+////
 //
-// Copyright (c) 2019 Emarsys. All rights reserved.
+// Copyright © 2024 Emarsys-Technologies Kft. All rights reserved.
 //
+
 #import <Foundation/Foundation.h>
 #import "EMSBlocks.h"
 
-@interface EMSCompletionBlockProvider : NSObject
+NS_ASSUME_NONNULL_BEGIN
+
+@interface EMSCompletionBlockProvider: NSObject
 
 - (instancetype)initWithOperationQueue:(NSOperationQueue *)operationQueue;
 
-- (EMSCompletion)provideCompletion:(EMSCompletion)completionBlock;
+- (EMSCompletionBlock)provideCompletionBlock:(EMSCompletionBlock)completionBlock;
 
 @end
+
+NS_ASSUME_NONNULL_END

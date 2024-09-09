@@ -25,4 +25,8 @@
 + (void)waitForSetPushToken;
 + (void)waitForSetCustomer;
 
++ (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue;
+
++ (void)clearDb:(EMSSQLiteHelper *)dbHelper;
+
 @end

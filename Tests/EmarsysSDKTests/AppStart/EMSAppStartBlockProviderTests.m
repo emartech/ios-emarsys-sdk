@@ -16,6 +16,9 @@
 #import "EMSStorage.h"
 #import "EMSSdkStateLogger.h"
 #import "EMSLogger.h"
+#import "EMSSQLiteHelper.h"
+#import "EMSCompletionBlockProvider.h"
+#import "XCTestCase+Helper.h"
 
 @interface EMSAppStartBlockProviderTests : XCTestCase
 
@@ -33,11 +36,13 @@
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) EMSSdkStateLogger *mockSdkStateLogger;
 @property(nonatomic, strong) EMSLogger *mockLogger;
+@property(nonatomic, strong) EMSSQLiteHelper *mockDbHelper;
+@property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 
 @end
 
 @implementation EMSAppStartBlockProviderTests
-
 
 - (void)setUp {
     _applicationCode = @"testApplicationCode";
@@ -48,6 +53,7 @@
     _mockRequestContext = OCMClassMock([MERequestContext class]);
     _mockConfigInternal = OCMClassMock([EMSConfigInternal class]);
     _mockGeofenceInternal = OCMClassMock([EMSGeofenceInternal class]);
+    _mockDbHelper = OCMClassMock([EMSSQLiteHelper class]);
     _mockStorage = OCMClassMock([EMSStorage class]);
     _requestContext = [[MERequestContext alloc] initWithApplicationCode:self.applicationCode
                                                            uuidProvider:[EMSUUIDProvider new]
@@ -59,6 +65,9 @@
 
     _mockSdkStateLogger = OCMClassMock([EMSSdkStateLogger class]);
     _mockLogger = OCMClassMock([EMSLogger class]);
+    
+    _operationQueue = self.createTestOperationQueue;
+    _completionBlockProvider = [[EMSCompletionBlockProvider alloc] initWithOperationQueue:self.operationQueue];
 
     _appStartBlockProvider = [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
                                                                        requestFactory:self.mockRequestFactory
@@ -67,7 +76,9 @@
                                                                        configInternal:self.mockConfigInternal
                                                                      geofenceInternal:self.mockGeofenceInternal
                                                                        sdkStateLogger:self.mockSdkStateLogger
-                                                                               logger:self.mockLogger];
+                                                                               logger:self.mockLogger
+                                                                             dbHelper:self.mockDbHelper
+                                                              completionBlockProvider:self.completionBlockProvider];
     _appStartEventBlock = [self.appStartBlockProvider createAppStartEventBlock];
 }
 
@@ -84,7 +95,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when requestManager is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestManager");
@@ -100,7 +113,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when requestFactory is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestFactory");
@@ -116,7 +131,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when requestContext is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: requestContext");
@@ -132,7 +149,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when deviceInfoClient is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: deviceInfoClient");
@@ -148,7 +167,9 @@
                                                   configInternal:nil
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when configInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: configInternal");
@@ -164,7 +185,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:nil
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when geofenceInternal is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: geofenceInternal");
@@ -180,7 +203,9 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:nil
-                                                          logger:self.mockLogger];
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when sdkStateLogger is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: sdkStateLogger");
@@ -196,10 +221,48 @@
                                                   configInternal:self.mockConfigInternal
                                                 geofenceInternal:self.mockGeofenceInternal
                                                   sdkStateLogger:self.mockSdkStateLogger
-                                                          logger:nil];
+                                                          logger:nil
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:self.completionBlockProvider];
         XCTFail(@"Expected Exception when logger is nil!");
     } @catch (NSException *exception) {
         XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: logger");
+    }
+}
+
+- (void)testInit_dbHelper_mustNotBeNil {
+    @try {
+        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                  requestFactory:self.mockRequestFactory
+                                                  requestContext:self.mockRequestContext
+                                                deviceInfoClient:self.mockDeviceInfoClient
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger
+                                                        dbHelper:nil
+                                         completionBlockProvider:self.completionBlockProvider];
+        XCTFail(@"Expected Exception when dbHelper is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: dbHelper");
+    }
+}
+
+- (void)testInit_completionBlockProvider_mustNotBeNil {
+    @try {
+        [[EMSAppStartBlockProvider alloc] initWithRequestManager:self.mockRequestManager
+                                                  requestFactory:self.mockRequestFactory
+                                                  requestContext:self.mockRequestContext
+                                                deviceInfoClient:self.mockDeviceInfoClient
+                                                  configInternal:self.mockConfigInternal
+                                                geofenceInternal:self.mockGeofenceInternal
+                                                  sdkStateLogger:self.mockSdkStateLogger
+                                                          logger:self.mockLogger
+                                                        dbHelper:self.mockDbHelper
+                                         completionBlockProvider:nil];
+        XCTFail(@"Expected Exception when completionBlockProvider is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: completionBlockProvider");
     }
 }
 
@@ -258,6 +321,8 @@
     _appStartEventBlock = [self.appStartBlockProvider createRemoteConfigEventBlock];
 
     self.appStartEventBlock();
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
 
     OCMVerify([self.mockSdkStateLogger log]);
 }
@@ -278,6 +343,14 @@
     self.appStartEventBlock();
 
     OCMVerify([self.mockGeofenceInternal fetchGeofences]);
+}
+
+- (void)testCreateDbCloseEventBlock_shouldCloseDb {
+    _appStartEventBlock = [self.appStartBlockProvider createDbCloseEventBlock];
+    
+    self.appStartEventBlock();
+    
+    OCMVerify([self.mockDbHelper close]);
 }
 
 @end

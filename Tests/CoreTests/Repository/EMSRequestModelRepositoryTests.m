@@ -17,6 +17,8 @@
 #import "EMSSchemaContract.h"
 #import "EMSRequestModel+RequestIds.h"
 #import "FakeDbHelper.h"
+#import "EmarsysTestUtils.h"
+#import "XCTestCase+Helper.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -25,15 +27,14 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         __block EMSSQLiteHelper *helper;
         __block id <EMSRequestModelRepositoryProtocol> repository;
         __block NSOperationQueue *testQueue;
+        __block NSOperationQueue *queue;
 
-        beforeEach(^{
-            testQueue = [[NSOperationQueue alloc] init];
-            [testQueue setMaxConcurrentOperationCount:1];
-            testQueue.name = @"testOperationQueue";
-            [[NSFileManager defaultManager] removeItemAtPath:TEST_DB_PATH
-                                                       error:nil];
+        beforeAll(^{
+            testQueue = [self createTestOperationQueue];
+            queue = [self createTestOperationQueue];
             helper = [[EMSSQLiteHelper alloc] initWithDatabasePath:TEST_DB_PATH
-                                                    schemaDelegate:[EMSSqliteSchemaHandler new]];
+                                                    schemaDelegate:[EMSSqliteSchemaHandler new]
+                                                    operationQueue:queue];
             [helper open];
             repository = [[EMSRequestModelRepository alloc] initWithDbHelper:helper
                                                               operationQueue:testQueue];
@@ -42,7 +43,7 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
         afterEach(^{
             [testQueue cancelAllOperations];
             [testQueue waitUntilAllOperationsAreFinished];
-            [helper close];
+            [EmarsysTestUtils clearDb:helper];
         });
 
 
@@ -88,28 +89,6 @@ SPEC_BEGIN(EMSRequestModelRepositoryTests)
                     [[exception.reason should] equal:@"Invalid parameter not satisfying: operationQueue"];
                     [[theValue(exception) shouldNot] beNil];
                 }
-            });
-
-            it(@"should call notification block on the given operationQueue", ^{
-                __block NSOperationQueue *returnedOperationQueue = nil;
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForBlock"];
-                FakeDbHelper *dbHelper = [FakeDbHelper new];
-                EMSRequestModelRepository *requestModelRepositoryToTriggerDBClose = [[EMSRequestModelRepository alloc] initWithDbHelper:dbHelper
-                                                                                                         operationQueue:testQueue];
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    dbHelper.closeOperationQueueBlock = ^(NSOperationQueue *operationQueue) {
-                        returnedOperationQueue = operationQueue;
-                        [expectation fulfill];
-                    };
-
-                    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
-                                                                        object:nil];
-                });
-                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:10];
-                XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
-                XCTAssertEqualObjects(returnedOperationQueue, testQueue);
-                XCTAssertNotNil(requestModelRepositoryToTriggerDBClose);
             });
         });
 

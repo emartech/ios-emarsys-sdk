@@ -5,12 +5,30 @@
 #import "MEDisplayedIAMMapper.h"
 #import "MEDisplayedIAM.h"
 #import "MEDisplayedIAMContract.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
+
+@interface MEDisplayedIAMMapper()
+
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String;
+
+@end
 
 @implementation MEDisplayedIAMMapper
 
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
-    NSString *campaignId = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
+    NSString *campaignId = [self mapToString:sqlite3_column_text(statement, 0)];
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 1)];
+    if (!campaignId || !timestamp) {
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+        parameters[@"campaignId"] = campaignId;
+        parameters[@"timestamp"] = [timestamp description];
+        EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                 sel:_cmd
+                                                          parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                              status:nil];
+        EMSLog(logEntry, LogLevelError);
+    }
     return [[MEDisplayedIAM alloc] initWithCampaignId:campaignId timestamp:timestamp];
 }
 
@@ -29,5 +47,12 @@
     return 2;
 }
 
+- (nullable NSString *)mapToString:(const unsigned char *)utf8String {
+    NSString *result = nil;
+    if (utf8String) {
+        result = [NSString stringWithUTF8String:(char *)utf8String];
+    }
+    return result;
+}
 
 @end

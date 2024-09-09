@@ -28,16 +28,6 @@
     if (self = [super init]) {
         _dbHelper = sqliteHelper;
         _mapper = [EMSRequestModelMapper new];
-        _dbHelper = sqliteHelper;
-        [_dbHelper open];
-
-        __weak typeof(self) weakSelf = self;
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification
-                                                          object:nil
-                                                           queue:operationQueue
-                                                      usingBlock:^(NSNotification *note) {
-                                                          [weakSelf.dbHelper close];
-                                                      }];
     }
     return self;
 }

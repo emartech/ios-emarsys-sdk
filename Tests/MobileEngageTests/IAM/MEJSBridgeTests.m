@@ -7,6 +7,7 @@
 #import "EMSWaiter.h"
 #import "FakeCommand.h"
 #import "XCTestCase+Helper.h"
+#import "EmarsysTestUtils.h"
 
 MEJSBridge *_meJsBridge;
 
@@ -64,7 +65,7 @@ SPEC_BEGIN(MEJSBridgeTests)
     });
 
     afterEach(^{
-        [self tearDownOperationQueue:queue];
+        [EmarsysTestUtils tearDownOperationQueue:queue];
     });
 
     describe(@"jsCommandNames", ^{

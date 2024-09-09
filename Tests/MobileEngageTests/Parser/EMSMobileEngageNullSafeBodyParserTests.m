@@ -25,7 +25,7 @@
     _mockRequestModel = OCMClassMock([EMSRequestModel class]);
     _mockUrlResponse = OCMClassMock([NSHTTPURLResponse class]);
     _parser = [[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.mockEndpoint];
-    _responseBody = [@"testData" dataUsingEncoding:NSUTF8StringEncoding];
+    _responseBody = [@"{\"key\": \"value\"}" dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)testInit_endpointShouldNotBeNil {
@@ -99,6 +99,21 @@
 
     BOOL result = [self.parser shouldParse:self.mockRequestModel
                               responseBody:self.responseBody
+                           httpUrlResponse:self.mockUrlResponse];
+
+    XCTAssertFalse(result);
+}
+
+- (void)testShouldParse_shouldReturnFalse_whenDataIsNotAJson {
+    NSString *textData = @"testData";
+    NSData *data = [textData dataUsingEncoding:NSUTF8StringEncoding];
+    
+    OCMStub([self.mockEndpoint isMobileEngageUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockEndpoint isPushToInAppUrl:[OCMArg any]]).andReturn(YES);
+    OCMStub([self.mockUrlResponse isSuccess]).andReturn(YES);
+
+    BOOL result = [self.parser shouldParse:self.mockRequestModel
+                              responseBody:data
                            httpUrlResponse:self.mockUrlResponse];
 
     XCTAssertFalse(result);
@@ -184,7 +199,9 @@
                            "                    },\n"
                            "                    {\n"
                            "                            \"k5\": \"v5\",\n"
-                           "                            \"k6\": null\n"
+                           "                            \"k6\": {\n"
+                           "                                \"k7\": null,\n"
+                           "                            }\n"
                            "                    }\n"
                            "            ]\n"
                            "    }";
@@ -199,6 +216,7 @@
                     },
                     @{
                             @"k5": @"v5",
+                            @"k6": @{}
                     }
             ]
     };

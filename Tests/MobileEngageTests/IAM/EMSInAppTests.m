@@ -8,7 +8,7 @@
 #import "EMSWindowProvider.h"
 #import "EMSMainWindowProvider.h"
 #import "EMSTimestampProvider.h"
-#import "EMSCompletionBlockProvider.h"
+#import "EMSCompletionProvider.h"
 #import "MEDisplayedIAMRepository.h"
 #import "MEButtonClickRepository.h"
 #import "EMSOperationQueue.h"
@@ -26,7 +26,7 @@
 @property(nonatomic, strong) EMSWindowProvider *mockWindowProvider;
 @property(nonatomic, strong) EMSMainWindowProvider *mockMainWindowProvider;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
-@property(nonatomic, strong) EMSCompletionBlockProvider *mockCompletionBlockProvider;
+@property(nonatomic, strong) EMSCompletionProvider *mockCompletionBlockProvider;
 @property(nonatomic, strong) MEDisplayedIAMRepository *mockDisplayedIAMRepository;
 @property(nonatomic, strong) MEButtonClickRepository *mockButtonClickRepository;
 
@@ -38,7 +38,7 @@
     _mockWindowProvider = OCMClassMock([EMSWindowProvider class]);
     _mockMainWindowProvider = OCMClassMock([EMSMainWindowProvider class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
-    _mockCompletionBlockProvider = OCMClassMock([EMSCompletionBlockProvider class]);
+    _mockCompletionBlockProvider = OCMClassMock([EMSCompletionProvider class]);
     _mockDisplayedIAMRepository = OCMClassMock([MEDisplayedIAMRepository class]);
     _mockButtonClickRepository = OCMClassMock([MEButtonClickRepository class]);
     _inApp = [[MEInApp alloc] initWithWindowProvider:self.mockWindowProvider

@@ -28,11 +28,15 @@
 - (BOOL)shouldParse:(EMSRequestModel *)requestModel
        responseBody:(NSData *)responseBody
     httpUrlResponse:(NSHTTPURLResponse *)httpUrlResponse {
+    NSString *dataText = [[NSString alloc] initWithData:responseBody
+                                               encoding:NSUTF8StringEncoding];
     return [self.endpoint isMobileEngageUrl:requestModel.url.absoluteString]
             && ![self.endpoint isPushToInAppUrl:requestModel.url.absoluteString]
             && [httpUrlResponse isSuccess]
             && responseBody
-            && responseBody.length > 0;
+            && responseBody.length > 0
+            && dataText && 
+            ([dataText characterAtIndex:0] == '{' || [dataText characterAtIndex:0] == '[');
 }
 
 - (id)parseWithRequestModel:(EMSRequestModel *)requestModel
