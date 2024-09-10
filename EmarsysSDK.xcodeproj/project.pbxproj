@@ -1463,6 +1463,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2AA9C6682C9049120022821F /* Clients */ = {
+			isa = PBXGroup;
+			children = (
+				5D2CA12B2C8AEF4300BD8D5D /* EMSContactClientInternal.m */,
+				5D2CA12C2C8AEF4300BD8D5D /* EMSLoggingContactClientInternal.m */,
+			);
+			path = Clients;
+			sourceTree = "<group>";
+		};
 		2BE87FBF35F3C816B4001631 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2833,8 +2842,7 @@
 		8A6BEA2623E86B480066B13C /* EmarsysSDK */ = {
 			isa = PBXGroup;
 			children = (
-				5D2CA12B2C8AEF4300BD8D5D /* EMSContactClientInternal.m */,
-				5D2CA12C2C8AEF4300BD8D5D /* EMSLoggingContactClientInternal.m */,
+				2AA9C6682C9049120022821F /* Clients */,
 				8A6BEA2823E86B480066B13C /* FlipperFeatures */,
 				8A6BEA2B23E86B480066B13C /* DI */,
 				8A6BEA3123E86B480066B13C /* Endpoints */,
