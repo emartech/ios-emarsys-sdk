@@ -162,7 +162,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
 
                 [[requestModel.timestamp should] equal:timestamp];
                 [[requestModel.requestId should] equal:uuidString];
-                [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
+                [[requestModel.url.absoluteString should] equal:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue%3E%3E%3A%3A%2C%7C"];
             });
 
             it(@"should return with correct requestModel when the shard list contain only one shard and there is no visitorId", ^{
@@ -175,7 +175,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:uuidString
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
-                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&ci=3&dataKey=dataValue"]
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
                                                                                            headers:@{@"User-Agent": USER_AGENT}
@@ -199,7 +199,7 @@ SPEC_BEGIN(EMSPredictMapperTests)
                 EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:uuidString
                                                                                          timestamp:timestamp
                                                                                             expiry:42.0
-                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?vi=visitorId&cp=1&ci=3&dataKey=dataValue"]
+                                                                                               url:[NSURL URLWithString:@"https://recommender.scarabresearch.com/merchants/merchantId?cp=1&vi=visitorId&dataKey=dataValue"]
                                                                                             method:@"GET"
                                                                                            payload:nil
                                                                                            headers:@{@"User-Agent": USER_AGENT}

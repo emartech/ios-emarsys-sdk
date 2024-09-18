@@ -5,6 +5,7 @@
 #import "EMSRequestModel.h"
 #import "EMSTimestampProvider.h"
 #import "EMSUUIDProvider.h"
+#import "NSURL+EMSCore.h"
 
 
 @implementation
@@ -79,7 +80,7 @@ EMSRequestModel
         return NO;
     if (self.ttl != model.ttl)
         return NO;
-    if (self.url != model.url && ![self.url isEqual:model.url])
+    if (![self.url isEqualIgnoringQueryParamOrderTo:model.url])
         return NO;
     if (self.method != model.method && ![self.method isEqualToString:model.method])
         return NO;

@@ -91,5 +91,43 @@ SPEC_BEGIN(NSURLEMSCoreTests)
 
         });
 
+    describe(@"isEqualIgnoringQueryParamOrderTo:", ^{
+        
+        it(@"should should return NO when host is different", ^{
+            NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com"];
+            NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.notemarsys.com"];
+            BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+            [[theValue(result) should] beNo];
+        });
+        
+        it(@"should should return NO when path is different", ^{
+            NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path"];
+            NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/differentPath"];
+            BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+            [[theValue(result) should] beNo];
+        });
+        
+        it(@"should should return NO when queryParams are different", ^{
+            NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=original"];
+            NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=different"];
+            BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+            [[theValue(result) should] beNo];
+        });
+        
+        it(@"should should return YES when the urls are the same", ^{
+            NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+            NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+            BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+            [[theValue(result) should] beYes];
+        });
+        
+        it(@"should should return NO when queryParams are the same but the order is different", ^{
+            NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+            NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param2=same&param1=same"];
+            BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+            [[theValue(result) should] beYes];
+        });
+    });
+
 
 SPEC_END
