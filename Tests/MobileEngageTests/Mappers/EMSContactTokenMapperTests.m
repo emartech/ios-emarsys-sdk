@@ -22,15 +22,21 @@
 
 - (void)setUp {
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    OCMStub(self.mockRequestContext.contactToken).andReturn(@"testContactToken");
     EMSValueProvider *clientServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-client.eservice.emarsys.net"
                                                                                        valueKey:@"CLIENT_SERVICE_URL"];
     EMSValueProvider *eventServiceUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://mobile-events.eservice.emarsys.net"
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
+    EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
+                                                                                 valueKey:@"PREDICT_URL"];
+    EMSValueProvider *v3MessageInboxUrlProdider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
+                                                                                        valueKey:@"V3_MESSAGE_INBOX_URL"];
+
     EMSEndpoint *endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                                           eventServiceUrlProvider:eventServiceUrlProvider
-                                                               predictUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                               predictUrlProvider:predictUrlProvider
                                                               deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
-                                                        v3MessageInboxUrlProvider:OCMClassMock([EMSValueProvider class])];
+                                                        v3MessageInboxUrlProvider:v3MessageInboxUrlProdider];
 
     _contactTokenMapper = [[EMSContactTokenMapper alloc] initWithRequestContext:self.mockRequestContext
                                                                        endpoint:endpoint];
@@ -68,6 +74,15 @@
 - (void)testShouldHandleWithRequestModel_true_whenRequestIsMobileEngage_eventService {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
     OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://mobile-events.eservice.emarsys.net"]);
+
+    BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
+
+    XCTAssertTrue(result);
+}
+
+- (void)testShouldHandleWithRequestModel_true_whenRequestIsPredict {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://recommender.scarabresearch.com"]);
 
     BOOL result = [self.contactTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
