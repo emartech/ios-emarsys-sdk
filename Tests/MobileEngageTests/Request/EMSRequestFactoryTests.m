@@ -444,9 +444,7 @@
                                                                                payload:@{
                                                                                        @"refreshToken": @"testRefreshToken"
                                                                                }
-                                                                               headers:@{
-        @"x-merchant-id": @"testMerchantId"
-    }
+                                                                               headers:nil
                                                                                 extras:nil];
 
     EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];

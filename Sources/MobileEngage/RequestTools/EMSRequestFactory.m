@@ -102,9 +102,6 @@
                 [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
                 queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
                 [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
-                if (self.predictRequestContext.merchantId) {
-                    [builder setHeaders:@{@"X-Merchant-Id": self.predictRequestContext.merchantId}];
-                }
             }];
 }
 
@@ -113,11 +110,6 @@
     return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
                 [builder setUrl:[weakSelf.endpoint contactUrlPredictOnly]];
-                if (self.predictRequestContext.merchantId) {
-                    [builder setHeaders:@{
-                        @"x-merchant-id": self.predictRequestContext.merchantId
-                    }];
-                }
                 NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
         if (shouldRefresh) {
             if (weakSelf.requestContext.refreshToken) {

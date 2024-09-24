@@ -45,6 +45,7 @@
 #import "EMSCompletionProxyFactory.h"
 #import "EMSRefreshTokenResponseHandler.h"
 #import "EMSContactTokenMapper.h"
+#import "EMSMerchantIdMapper.h"
 #import "EMSDeviceInfoV3ClientInternal.h"
 #import "EMSDeepLinkInternal.h"
 #import "EMSMobileEngageV3Internal.h"
@@ -409,7 +410,9 @@
         [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.requestContext
                                                     endpoint:self.endpoint],
         [[EMSDeviceEventStateRequestMapper alloc] initWithEndpoint:self.endpoint
-                                                           storage:self.storage]
+                                                           storage:self.storage],
+        [[EMSMerchantIdMapper alloc] initWithRequestContext:self.predictRequestContext
+                                                   endpoint:self.endpoint]
     ]
                                         responseHandlers:self.responseHandlers
                                   mobileEngageBodyParser:[[EMSMobileEngageNullSafeBodyParser alloc] initWithEndpoint:self.endpoint]];
