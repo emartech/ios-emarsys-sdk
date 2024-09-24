@@ -55,7 +55,7 @@
             [weakSelf reset];
             [response setStatusCode:418];
             weakSelf.completionProxy.completionBlock(request, response, error);
-        } else if (responseModel.statusCode == 401 && [weakSelf.endpoint isMobileEngageUrl:requestModel.url.absoluteString]) {
+        } else if (responseModel.statusCode == 401 && ([weakSelf.endpoint isMobileEngageUrl:requestModel.url.absoluteString] || [weakSelf isPredictRequest:requestModel])) {
             [weakSelf.storage setData:nil
                                forKey:kEMSPushTokenKey];
             weakSelf.originalRequestModel = requestModel;
@@ -80,6 +80,11 @@
     self.originalRequestModel = nil;
     self.originalResponseModel = nil;
     self.retryCount = 0;
+}
+
+- (BOOL)isPredictRequest:(EMSRequestModel *)requestModel {
+    NSString *url = requestModel.url.absoluteString;
+    return [url hasPrefix:[self.endpoint predictUrl]];
 }
 
 @end

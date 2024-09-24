@@ -53,9 +53,11 @@
                                                                                       valueKey:@"EVENT_SERVICE_URL"];
     EMSValueProvider *v3MessageInboxUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://me-inbox.eservice.emarsys.net"
                                                                                         valueKey:@"V3_MESSAGE_INBOX_URL"];
+    EMSValueProvider *predictUrlProvider = [[EMSValueProvider alloc] initWithDefaultValue:@"https://recommender.scarabresearch.com"
+                                                                                 valueKey:@"PREDICT_URL"];
     _endpoint = [[EMSEndpoint alloc] initWithClientServiceUrlProvider:clientServiceUrlProvider
                                               eventServiceUrlProvider:eventServiceUrlProvider
-                                                   predictUrlProvider:OCMClassMock([EMSValueProvider class])
+                                                   predictUrlProvider:predictUrlProvider
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
 
@@ -236,7 +238,7 @@
     OCMVerify([partialMockProxy reset]);
 }
 
-- (void)testCompletionBlock_delegateToCompletionProxy_when_statusCode401_andNotV3 {
+- (void)testCompletionBlock_delegateToCompletionProxy_when_statusCode401_andNotV3_andNotPredict {
     EMSRequestModel *requestModel = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
 
@@ -256,6 +258,23 @@
 
 - (void)testCompletionBlock_shouldRefreshToken_when_requestIsV3 {
     EMSRequestModel *requestModel = [self generateRequestModelWithUrlString:[self.endpoint eventUrlWithApplicationCode:@"testApplicationCode"]];
+    EMSRequestModel *requestModelForRefresh = [self generateRequestModel: @""];
+    EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
+
+    OCMStub([self.mockRequestFactory createRefreshTokenRequestModel]).andReturn(requestModelForRefresh);
+
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
+
+    OCMVerify([self.mockRequestFactory createRefreshTokenRequestModel]);
+    OCMVerify([self.mockRestClient executeWithRequestModel:requestModelForRefresh
+                                       coreCompletionProxy:self.refreshCompletionProxy]);
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
+    XCTAssertEqualObjects(self.refreshCompletionProxy.originalRequestModel, requestModel);
+}
+
+- (void)testCompletionBlock_shouldRefreshToken_when_requestIsPredict {
+    EMSRequestModel *requestModel = [self generateRequestModelWithUrlString:[self.endpoint predictUrl]];
     EMSRequestModel *requestModelForRefresh = [self generateRequestModel: @""];
     EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
 
