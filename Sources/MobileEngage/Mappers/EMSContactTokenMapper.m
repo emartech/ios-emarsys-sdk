@@ -51,7 +51,7 @@
 - (BOOL)isNotSetContactAndNotRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
     return [self.endpoint isMobileEngageUrl:url] &&
-    ![url hasSuffix:@"/client/contact-token"] &&
+    ![url hasSuffix:@"/contact-token"] &&
     ![url hasSuffix:@"/client/contact"];
 }
 
