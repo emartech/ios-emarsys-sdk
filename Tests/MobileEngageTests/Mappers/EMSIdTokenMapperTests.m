@@ -35,6 +35,7 @@
                                                   deeplinkUrlProvider:OCMClassMock([EMSValueProvider class])
                                             v3MessageInboxUrlProvider:v3MessageInboxUrlProvider];
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(@"testIdToken");
     _idTokenMapper = [[EMSOpenIdTokenMapper alloc] initWithRequestContext:self.mockRequestContext
                                                              endpoint:self.endpoint];
 }
@@ -100,6 +101,20 @@
     BOOL result = [self.idTokenMapper shouldHandleWithRequestModel:mockRequestModel];
 
     XCTAssertTrue(result);
+}
+
+- (void)testShouldHandleWithRequestModel_NO_whenRequestIsMobileEngageURL_contactEndpoint_butOpenIdTokenIsNotPresentInContext {
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    MERequestContext *mockRequestContextWithoutOpenIdToken = OCMClassMock([MERequestContext class]);
+    OCMStub([mockRequestContextWithoutOpenIdToken openIdToken]).andReturn(nil);
+    EMSOpenIdTokenMapper *idTokenMapperWithoutOpenIdToken = [[EMSOpenIdTokenMapper alloc] initWithRequestContext:mockRequestContextWithoutOpenIdToken
+                                                                                      endpoint:self.endpoint];
+
+    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/apps/EMS11-C3FD3/client/contact/anonymous=true"]);
+
+    BOOL result = [idTokenMapperWithoutOpenIdToken shouldHandleWithRequestModel:mockRequestModel];
+
+    XCTAssertFalse(result);
 }
 
 - (void)testModelFromModel_when_contactTokenIsNotNil {

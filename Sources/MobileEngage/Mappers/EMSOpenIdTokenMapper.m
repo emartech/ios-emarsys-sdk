@@ -22,8 +22,7 @@
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
-    return ([self.endpoint isMobileEngageUrl:url] && [url containsString:@"/client/contact"]) ||
-    ([url hasPrefix:[self.endpoint contactUrlPredictOnly]]);
+    return [self.endpoint isMobileEngageUrl:url] && [url containsString:@"/client/contact"] && self.requestContext.openIdToken;
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {
