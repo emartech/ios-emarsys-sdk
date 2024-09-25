@@ -50,13 +50,15 @@
 
 - (BOOL)isSetContactOrRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
+    NSString *path = requestModel.url.path;
     return [self.endpoint isMobileEngageUrl:url] &&
-    ([url hasSuffix:@"/client/contact-token"] || [url hasSuffix:@"/client/contact"]);
+    ([path hasSuffix:@"/client/contact-token"] || [path hasSuffix:@"/client/contact"]);
 }
 
 - (BOOL)isPredictOnlySetContactRequest:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
-    return [self.endpoint isMobileEngageUrl:url] && [url hasSuffix:@"/contact-token"] && ![url containsString:@"apps"];
+    NSString *path = requestModel.url.path;
+    return [self.endpoint isMobileEngageUrl:url] && [path hasSuffix:@"/contact-token"] && ![path containsString:@"apps"];
 }
 
 @end

@@ -65,7 +65,7 @@
 
 - (void)testShouldHandleWithRequestModel_true_whenRequestIsMobileEngage_clientService_setContactEndpoint {
     EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
-    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/12345/client/contact"]);
+    OCMStub(mockRequestModel.url).andReturn([[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/12345/client/contact?anonymous=false"]);
 
     BOOL result = [self.merchantIdMapper shouldHandleWithRequestModel:mockRequestModel];
 
