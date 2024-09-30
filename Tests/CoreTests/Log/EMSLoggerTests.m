@@ -15,6 +15,7 @@
 #import "XCTestCase+Helper.h"
 #import "EMSStorageProtocol.h"
 #import "EmarsysTestUtils.h"
+#import "EMSMethodNotAllowed.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -23,6 +24,7 @@
 @property(nonatomic, strong) NSDate *timestamp;
 @property(nonatomic, strong) NSString *shardId;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
+@property(nonatomic, strong) EMSShardRepository *mockRepository;
 @property(nonatomic, strong) EMSUUIDProvider *mockUuidProvider;
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) id mockLogEntry;
@@ -64,8 +66,10 @@
     self.operationQueue.name = @"operationQueueForTesting";
     _runnerQueue = [NSOperationQueue new];
     self.runnerQueue.name = @"testRunnerQueue";
+    
+    _mockRepository = OCMClassMock([EMSShardRepository class]);
 
-    _logger = [[EMSLogger alloc] initWithShardRepository:OCMClassMock([EMSShardRepository class])
+    _logger = [[EMSLogger alloc] initWithShardRepository:self.mockRepository
                                           opertaionQueue:self.operationQueue
                                        timestampProvider:self.mockTimestampProvider
                                             uuidProvider:self.mockUuidProvider
@@ -215,6 +219,17 @@
                                                           @"queue": @"testRunnerQueue",
                                                           @"wrapper": @"testWrapper"
                                                   })]]);
+}
+
+- (void)testLogShouldNotInsertEntryToShardRepository {    
+    EMSMethodNotAllowed *logEntry = [[EMSMethodNotAllowed alloc] initWithClass:[self class]
+                                                                           sel:_cmd
+                                                                    parameters:nil];
+    
+    OCMReject([self.mockRepository add:[OCMArg any]]);
+
+    [self.logger log:logEntry
+               level:LogLevelError];
 }
 
 - (void)testLogShouldCallRepositoryOnTheGivenOperationQueue {

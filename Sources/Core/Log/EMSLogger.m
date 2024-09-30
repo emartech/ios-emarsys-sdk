@@ -13,6 +13,7 @@
 #import "NSDictionary+EMSCore.h"
 #import "EMSWrapperChecker.h"
 #import "EMSStorageProtocol.h"
+#import "EMSMethodNotAllowed.h"
 
 @interface EMSLogger ()
 
@@ -66,8 +67,8 @@
     [self consoleLogLogEntry:entry
                   entryLevel:level];
     id url = entry.data[@"url"];
-    if ((!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && level >= self.logLevel)
-            || [entry.topic isEqualToString:@"app:start"]) {
+    if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && (level >= self.logLevel || [entry.topic isEqualToString:@"app:start"]) &&
+        ![entry isKindOfClass:[EMSMethodNotAllowed class]]) {
         NSString *currentQueue = [NSOperationQueue currentQueue].name;
         __weak typeof(self) weakSelf = self;
         [self.operationQueue addOperationWithBlock:^{
