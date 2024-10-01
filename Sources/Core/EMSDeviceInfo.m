@@ -47,7 +47,7 @@
 }
 
 - (NSString *)languageCode {
-    return [NSLocale preferredLanguages][0];
+    return [NSBundle mainBundle].preferredLocalizations[0];
 }
 
 - (NSString *)applicationVersion {
