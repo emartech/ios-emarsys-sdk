@@ -26,6 +26,7 @@
 @property(nonatomic, strong) EMSCompletionBlockProvider *completionBlockProvider;
 @property(nonatomic, strong) EMSStorage *mockStorage;
 @property(nonatomic, strong) NSString *contactFieldValue;
+@property(nonatomic, strong) NSString *otherContactFieldValue;
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) EMSTimestampProvider *timestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
@@ -43,6 +44,7 @@
     _uuidProvider = [EMSUUIDProvider new];
 
     _contactFieldValue = @"testContactFieldValue";
+    _otherContactFieldValue = @"otherContactFieldValue";
     _contactFieldId = @3;
     _eventName = @"testEventName";
     _eventAttributes = @{
@@ -163,11 +165,12 @@
                                                 completionBlock:nil]);
 }
 
-- (void)testSetContactWithContactFieldValueCompletionBlock {
+- (void)testSetContactWithContactFieldIdWithNewContactFieldValueCompletionBlock {
     EMSRequestModel *requestModel = [self createRequestModel];
-
-    OCMReject([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
-    OCMReject([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    XCTestExpectation *expectation = [self expectationWithDescription:@"StartSession was called."];
+    
+    OCMStub([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]).andDo(^(NSInvocation *invocation) {[expectation fulfill];});
+    OCMStub([self.mockSession stopSessionWithCompletionBlock:[OCMArg invokeBlock]]);
 
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(self.contactFieldId);
     OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
@@ -176,27 +179,82 @@
                                     withCompletionBlock:[OCMArg invokeBlock]]);
 
     [self.internal setContactWithContactFieldId:self.contactFieldId
-                              contactFieldValue:self.contactFieldValue
+                              contactFieldValue:self.otherContactFieldValue
                                 completionBlock:self.completionBlock];
 
 
     OCMVerify([self.mockRequestFactory createContactRequestModel]);
     OCMVerify([self.mockRequestManager submitRequestModel:requestModel
                                       withCompletionBlock:[OCMArg any]]);
-    OCMVerify([self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:self.otherContactFieldValue]);
     OCMVerify([self.mockRequestContext setContactFieldId:self.contactFieldId]);
     OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
+    OCMVerify([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    OCMVerify([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
 }
 
-- (void)testSetAuthenticatedContactWithIdTokenCompletionBlock_setIdTokenOnRequestContext {
+- (void)testSetContactWithContactFieldIdWithNewContactFieldValueCompletionBlockAndError {
     EMSRequestModel *requestModel = [self createRequestModel];
-    NSString *newIdToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    NSError *testError = [NSError errorWithDomain:@"domain" code:500 userInfo:nil];
+    
+    OCMReject([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+    OCMReject([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+
+    OCMStub([self.mockRequestContext contactFieldId]).andReturn(self.contactFieldId);
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
+    OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:requestModel
+                                    withCompletionBlock:([OCMArg invokeBlockWithArgs:testError, nil])]);
+
+    [self.internal setContactWithContactFieldId:self.contactFieldId
+                              contactFieldValue:self.otherContactFieldValue
+                                completionBlock:self.completionBlock];
+
+
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:self.otherContactFieldValue]);
+    OCMVerify([self.mockRequestContext setContactFieldId:self.contactFieldId]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
+    OCMVerify([self.mockRequestContext resetPreviousContactValues]);
+    OCMVerify(never(), [self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testSetContactWithContactFieldIdWithSameContactFieldValueCompletionBlock {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"CompletionBlock was called."];
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+        [expectation fulfill];
+    };
+    
+    [self.internal setContactWithContactFieldId:self.contactFieldId
+                              contactFieldValue:self.contactFieldValue
+                                completionBlock:completionBlock];
+    
+    
+    OCMVerify(never(), [self.mockRequestFactory createContactRequestModel]);
+    OCMVerify(never(), [self.mockRequestManager submitRequestModel:requestModel
+                                               withCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockRequestContext setContactFieldValue:self.contactFieldValue]);
+    OCMVerify(never(), [self.mockRequestContext setContactFieldId:self.contactFieldId]);
+    OCMVerify(never(), [self.mockRequestContext setOpenIdToken:nil]);
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+}
+
+- (void)testSetAuthenticatedContactWithNewIdTokenCompletionBlock_setIdTokenOnRequestContext {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    NSString *newIdToken = @"newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken";
 
     OCMReject([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
     OCMReject([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
 
     OCMStub([self.mockRequestContext contactFieldId]).andReturn(self.contactFieldId);
-    OCMStub([self.mockRequestContext openIdToken]).andReturn(newIdToken);
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(idToken);
     OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
 
     [self.internal setAuthenticatedContactWithContactFieldId:@3
@@ -208,6 +266,54 @@
                                       withCompletionBlock:[OCMArg any]]);
     OCMVerify([self.mockRequestContext setOpenIdToken:newIdToken]);
     OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
+}
+
+- (void)testSetAuthenticatedContactWithNewIdTokenCompletionBlock_setIdTokenOnRequestContextWithError {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSError *testError = [NSError errorWithDomain:@"domain" code:500 userInfo:nil];
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    NSString *newIdToken = @"newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken_newTestIdToken";
+
+    OCMReject([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+    OCMReject([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+
+    OCMStub([self.mockRequestContext contactFieldId]).andReturn(self.contactFieldId);
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(idToken);
+    OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:requestModel
+                                    withCompletionBlock:([OCMArg invokeBlockWithArgs:testError, nil])]);
+
+    [self.internal setAuthenticatedContactWithContactFieldId:@3
+                                                 openIdToken:newIdToken
+                                             completionBlock:self.completionBlock];
+
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext resetPreviousContactValues]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
+    OCMVerify(never(), [self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testSetAuthenticatedContactWithSameIdTokenCompletionBlock_setIdTokenOnRequestContext {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    NSString *idToken = @"testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken_testIdToken";
+    XCTestExpectation *expectation = [self expectationWithDescription:@"CompletionBlock was called."];
+    EMSCompletionBlock completionBlock = ^(NSError *error) {
+        [expectation fulfill];
+    };
+
+    [self.internal setAuthenticatedContactWithContactFieldId:@3
+                                                 openIdToken:idToken
+                                             completionBlock:completionBlock];
+
+    OCMVerify(never(), [self.mockRequestFactory createContactRequestModel]);
+    OCMVerify(never(), [self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockRequestContext setOpenIdToken:idToken]);
+    OCMVerify(never(), [self.mockRequestContext setContactFieldValue:nil]);
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testSetAuthenticatedContactWithIdTokenCompletionBlock_resetSession {
@@ -265,24 +371,118 @@
     OCMVerify([partialMockInternal clearContactWithCompletionBlock:nil];);
 }
 
-- (void)testClearContactWithCompletionBlock {
-    EMSMobileEngageV3Internal *partialMockInternal = OCMPartialMock(self.internal);
+- (void)testClearContactWithCompletionBlockWhenContactTokenIsPresentAndContactIsSet {
+    NSString *testContactToken = @"testContactToken_testContactToken_testContactToken_testContactToken_testContactToken";
+    EMSRequestModel *requestModel = [self createRequestModel];
+    
+    OCMStub([self.mockRequestContext contactToken]).andReturn(testContactToken);
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:requestModel
+                                    withCompletionBlock:[OCMArg invokeBlock]]);
     OCMStub([self.mockSession stopSessionWithCompletionBlock:[OCMArg invokeBlock]]);
-    OCMStub([partialMockInternal setContactWithContactFieldId:nil
-                                            contactFieldValue:nil
-                                              completionBlock:[OCMArg invokeBlock]]);
+    OCMStub([self.mockSession startSessionWithCompletionBlock:[OCMArg invokeBlock]]);
 
-    [partialMockInternal clearContactWithCompletionBlock:self.completionBlock];
+    [self.internal clearContactWithCompletionBlock:self.completionBlock];
     
     [self waitATickOnOperationQueue:self.operationQueue];
 
     OCMVerify([self.mockStorage setData:nil
                                  forKey:@"EMSPushTokenKey"]);
-    OCMVerify([partialMockInternal setContactWithContactFieldId:nil
-                                              contactFieldValue:nil
-                                                completionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
+    OCMVerify([self.mockRequestContext setContactFieldId:nil]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
     OCMVerify([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
     OCMVerify([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+}
+
+-(void)testClearContactWithCompletionBlock_onErrorShouldResetRequestContextToPreviousValues {
+    NSError *testError = [NSError errorWithDomain:@"domain" code:500 userInfo:nil];
+    NSString *testContactToken = @"testContactToken_testContactToken_testContactToken_testContactToken_testContactToken";
+    EMSRequestModel *requestModel = [self createRequestModel];
+    
+    OCMStub([self.mockRequestContext contactToken]).andReturn(testContactToken);
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    OCMStub([self.mockRequestFactory createContactRequestModel])
+        .andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:requestModel
+                                    withCompletionBlock:([OCMArg invokeBlockWithArgs:testError,
+                                                          nil])]);
+
+    [self.internal clearContactWithCompletionBlock:self.completionBlock];
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
+
+    OCMVerify(never(), [self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
+    OCMVerify([self.mockRequestContext setContactFieldId:nil]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
+    OCMVerify(never(), [self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext resetPreviousContactValues]);
+}
+
+- (void)testClearContactWithCompletionBlockWhenContactTokenIsMissing {
+    EMSRequestModel *requestModel = [self createRequestModel];
+    
+    OCMStub([self.mockRequestContext contactToken]).andReturn(nil);
+    OCMStub([self.mockRequestFactory createContactRequestModel]).andReturn(requestModel);
+    OCMStub([self.mockRequestManager submitRequestModel:requestModel
+                                    withCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([self.mockSession stopSessionWithCompletionBlock:[OCMArg invokeBlock]]);
+    OCMStub([self.mockSession startSessionWithCompletionBlock:[OCMArg invokeBlock]]);
+
+    [self.internal clearContactWithCompletionBlock:self.completionBlock];
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
+
+    OCMVerify([self.mockStorage setData:nil
+                                 forKey:@"EMSPushTokenKey"]);
+    OCMVerify([self.mockRequestFactory createContactRequestModel]);
+    OCMVerify([self.mockRequestManager submitRequestModel:requestModel
+                                      withCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockRequestContext setContactFieldValue:nil]);
+    OCMVerify([self.mockRequestContext setContactFieldId:nil]);
+    OCMVerify([self.mockRequestContext setOpenIdToken:nil]);
+    OCMVerify([self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify([self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+}
+
+- (void)testClearContactWithCompletionBlockWhenAnonymousContactIsSet_shouldNotSendRequest {
+    NSString *anonymousContactToken = @"this is an anonymous contact token";
+    XCTestExpectation *expectation = [self expectationWithDescription:@"CallCompletion was called"];
+    EMSRequestModel *requestModel = [self createRequestModel];
+    
+    OCMStub([self.mockRequestContext contactToken])
+        .andReturn(anonymousContactToken);
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(NO);
+
+    [self.internal clearContactWithCompletionBlock:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitATickOnOperationQueue:self.operationQueue];
+
+    OCMVerify(never(), [self.mockStorage setData:nil
+                                          forKey:@"EMSPushTokenKey"]);
+    OCMVerify(never(), [self.mockRequestFactory createContactRequestModel]);
+    OCMVerify(never(), [self.mockRequestManager submitRequestModel:requestModel
+                         withCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(), [self.mockRequestContext setContactFieldValue:nil]);
+    OCMVerify(never(), [self.mockRequestContext setContactFieldId:nil]);
+    OCMVerify(never(), [self.mockRequestContext setOpenIdToken:nil]);
+    OCMVerify(never(),
+              [self.mockSession stopSessionWithCompletionBlock:[OCMArg any]]);
+    OCMVerify(never(),
+              [self.mockSession startSessionWithCompletionBlock:[OCMArg any]]);
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testTrackCustomEventWithNameEventAttributes_eventName_mustNotBeNil {

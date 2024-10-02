@@ -10,6 +10,14 @@
 #import "EMSInnerFeature.h"
 #import "EMSStorageProtocol.h"
 
+@interface MERequestContext()
+
+@property(nonatomic, strong, nullable) NSNumber *previousContactFieldId;
+@property(nonatomic, strong, nullable) NSString *previousContactFieldValue;
+@property(nonatomic, strong, nullable) NSString *previousOpenIdToken;
+
+@end
+
 @implementation MERequestContext
 
 - (instancetype)initWithApplicationCode:(NSString *)applicationCode
@@ -31,6 +39,9 @@
         _contactToken = [storage stringForKey:kCONTACT_TOKEN];
         _refreshToken = [storage stringForKey:kREFRESH_TOKEN];
         _contactFieldValue = [[[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName] stringForKey:kCONTACT_FIELD_VALUE];
+        _previousContactFieldId = _contactFieldId;
+        _previousContactFieldValue = _contactFieldValue;
+        _previousOpenIdToken = _openIdToken;
     }
     return self;
 }
@@ -56,11 +67,22 @@
 }
 
 - (void)setContactFieldValue:(NSString *)contactFieldValue {
+    _previousContactFieldValue = _contactFieldValue;
     _contactFieldValue = contactFieldValue;
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
     [userDefaults setObject:contactFieldValue
                      forKey:kCONTACT_FIELD_VALUE];
     [userDefaults synchronize];
+}
+
+-(void)setContactFieldId:(NSNumber *)contactFieldId {
+    _previousContactFieldId = _contactFieldId;
+    _contactFieldId = contactFieldId;
+}
+
+-(void)setOpenIdToken:(NSString *)openIdToken {
+    _previousOpenIdToken = _openIdToken;
+    _openIdToken = openIdToken;
 }
 
 - (void)setApplicationCode:(NSString *)applicationCode {
@@ -83,6 +105,12 @@
     self.contactToken = nil;
     self.refreshToken = nil;
     self.openIdToken = nil;
+}
+
+- (void)resetPreviousContactValues {
+    self.contactFieldId = _previousContactFieldId;
+    self.contactFieldValue = _previousContactFieldValue;
+    self.openIdToken = _previousOpenIdToken;
 }
 
 @end
