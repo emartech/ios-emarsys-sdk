@@ -230,11 +230,11 @@
     EMSCompletionBlock completionBlock = ^(NSError *error) {
         [expectation fulfill];
     };
+    OCMStub([self.mockRequestContext contactFieldValue]).andReturn(self.contactFieldValue);
     
     [self.internal setContactWithContactFieldId:self.contactFieldId
                               contactFieldValue:self.contactFieldValue
                                 completionBlock:completionBlock];
-    
     
     OCMVerify(never(), [self.mockRequestFactory createContactRequestModel]);
     OCMVerify(never(), [self.mockRequestManager submitRequestModel:requestModel
@@ -303,6 +303,7 @@
     EMSCompletionBlock completionBlock = ^(NSError *error) {
         [expectation fulfill];
     };
+    OCMStub([self.mockRequestContext openIdToken]).andReturn(idToken);
 
     [self.internal setAuthenticatedContactWithContactFieldId:@3
                                                  openIdToken:idToken
