@@ -11,8 +11,6 @@ jobs:
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
-      - name: Select Xcode version
-        run: sudo xcode-select -s '/Applications/Xcode_15.4.app/Contents/Developer'
       - name: Install Dependencies
         run: pod install --no-repo-update --verbose
         shell: bash
