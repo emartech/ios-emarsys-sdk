@@ -13,6 +13,7 @@
 #import "EMSNotificationCenterManager.h"
 #import "EMSWrapperChecker.h"
 #import "EMSSession+Tests.h"
+#import "Emarsys+Tests.h"
 
 #define DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"MEDB.db"]
 #define REPOSITORY_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"EMSSQLiteQueueDB.db"]
@@ -43,6 +44,7 @@
 + (void)setupEmarsysWithFeatures:(NSArray <EMSFlipperFeature> *)features
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
+    [Emarsys resetDispatchOnce];
     [self purge];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
@@ -99,6 +101,8 @@
 }
 
 + (void)tearDownEmarsys {
+    [Emarsys resetDispatchOnce];
+    
     for (id observer in EMSDependencyInjection.dependencyContainer.session.observers) {
         [NSNotificationCenter.defaultCenter removeObserver:observer];
     }

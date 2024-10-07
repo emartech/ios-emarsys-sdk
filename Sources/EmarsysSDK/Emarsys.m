@@ -19,11 +19,22 @@
 #import "MEExperimental.h"
 
 #define kSDKAlreadyInstalled @"kSDKAlreadyInstalled"
+
+@interface Emarsys()
+
+#ifdef DEBUG
++ (void)resetDispatchOnce;
+#endif
+
+@end
+
 @implementation Emarsys
+
+static dispatch_once_t once_token;
 
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
-
+dispatch_once(&once_token, ^{
     if (config.applicationCode) {
         [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
         [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
@@ -50,6 +61,7 @@
                                                             object:nil];
     }];
     [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+    });
 }
 
 + (void)resetRequestContextOnReinstall {
@@ -178,5 +190,11 @@
 + (id <EMSOnEventActionProtocol>)onEventAction {
     return EMSDependencyInjection.onEventAction;
 }
+
+#ifdef DEBUG
++ (void)resetDispatchOnce {
+    once_token = 0;
+}
+#endif
 
 @end
