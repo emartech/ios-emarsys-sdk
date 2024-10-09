@@ -11,6 +11,7 @@
 #define kEMSPredictSuiteName @"com.emarsys.predict"
 #define kEMSCustomerId @"customerId"
 #define kEMSContactFieldId @"contactFieldId"
+#define kEMSOpenIdToken @"openIdToken"
 #define kEMSVisitorId @"visitorId"
 #define kEMSXp @"xp"
 
@@ -18,6 +19,7 @@
 
 @property(nonatomic, strong) NSNumber *contactFieldId;
 @property(nonatomic, strong) NSString *contactFieldValue;
+@property(nonatomic, strong) NSString *openIdToken;
 @property(nonatomic, strong) NSString *visitorId;
 @property(nonatomic, strong) NSString *xp;
 @property(nonatomic, strong) NSString *merchantId;

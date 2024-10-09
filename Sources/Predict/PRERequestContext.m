@@ -22,6 +22,7 @@
         NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
         _contactFieldValue = [defaults objectForKey:kEMSCustomerId];
         _contactFieldId = [defaults objectForKey:kEMSContactFieldId];
+        _openIdToken = [defaults objectForKey:kEMSOpenIdToken];
         _visitorId = [defaults objectForKey:kEMSVisitorId];
         _xp = [defaults objectForKey:kEMSXp];
         _timestampProvider = timestampProvider;
@@ -45,6 +46,14 @@
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
     [userDefaults setObject:contactFieldValue
                      forKey:kEMSCustomerId];
+    [userDefaults synchronize];
+}
+
+- (void)setOpenIdToken:(NSString *)openIdToken {
+    _openIdToken = openIdToken;
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSPredictSuiteName];
+    [userDefaults setObject:openIdToken
+                     forKey:kEMSOpenIdToken];
     [userDefaults synchronize];
 }
 

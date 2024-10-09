@@ -116,7 +116,7 @@
                 mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
             }
         } else {
-            if (weakSelf.predictRequestContext.contactFieldId && [weakSelf.requestContext hasContactIdentification]) {
+            if (weakSelf.requestContext.contactFieldId && [weakSelf.requestContext hasContactIdentification]) {
                 mutablePayload[@"contactFieldId"] = weakSelf.requestContext.contactFieldId;
                 if (weakSelf.requestContext.contactFieldValue) {
                     mutablePayload[@"contactFieldValue"] = weakSelf.requestContext.contactFieldValue;

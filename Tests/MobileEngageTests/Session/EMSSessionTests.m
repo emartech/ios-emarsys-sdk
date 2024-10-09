@@ -11,6 +11,8 @@
 #import "NSDate+EMSCore.h"
 #import "XCTestCase+Helper.h"
 #import "EmarsysTestUtils.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSSessionTests : XCTestCase
 
@@ -142,7 +144,8 @@
 }
 
 - (void)testDidBecomeActiveNotification_shouldInvokeStartSession {
-    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidBecomeActiveNotification 
+    [MEExperimental enableFeature:[EMSInnerFeature mobileEngage]];
+    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidBecomeActiveNotification
                                                                object:nil
                                                               handler:^BOOL(NSNotification * _Nonnull notification) {
         return YES;
@@ -158,7 +161,26 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
+- (void)testDidBecomeActiveNotification_shouldNotInvokeStartSession_whenMobileEngageIsDisabled {
+    [MEExperimental disableFeature:[EMSInnerFeature mobileEngage]];
+    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidBecomeActiveNotification
+                                                               object:nil
+                                                              handler:^BOOL(NSNotification * _Nonnull notification) {
+        return YES;
+    }];
+    EMSSession *partialMockSession = OCMPartialMock(self.session);
+
+    [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidBecomeActiveNotification
+                                                                                       object:nil]];
+    OCMVerify(never(), [partialMockSession startSessionWithCompletionBlock:nil]);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
 - (void)testDidEnterBackgroundNotification_shouldInvokeStopSession {
+    [MEExperimental enableFeature:[EMSInnerFeature mobileEngage]];
     XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidEnterBackgroundNotification
                                                                object:nil
                                                               handler:^BOOL(NSNotification * _Nonnull notification) {
@@ -169,6 +191,24 @@
     [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidEnterBackgroundNotification
                                                                                        object:nil]];
     OCMVerify([partialMockSession stopSessionWithCompletionBlock:nil]);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:2.0];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+}
+
+- (void)testDidEnterBackgroundNotification_shouldNotInvokeStopSession_whenMobileEngageIsDisabled {
+    [MEExperimental disableFeature:[EMSInnerFeature mobileEngage]];
+    XCTestExpectation *expectation = [self expectationForNotification:UIApplicationDidEnterBackgroundNotification
+                                                               object:nil
+                                                              handler:^BOOL(NSNotification * _Nonnull notification) {
+        return YES;
+    }];
+    EMSSession *partialMockSession = OCMPartialMock(self.session);
+    
+    [NSNotificationCenter.defaultCenter postNotification:[NSNotification notificationWithName:UIApplicationDidEnterBackgroundNotification
+                                                                                       object:nil]];
+    OCMVerify(never(), [partialMockSession stopSessionWithCompletionBlock:nil]);
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:2.0];

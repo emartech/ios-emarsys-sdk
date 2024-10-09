@@ -19,6 +19,8 @@
 #import "EMSSQLiteHelper.h"
 #import "EMSCompletionBlockProvider.h"
 #import "XCTestCase+Helper.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSAppStartBlockProviderTests : XCTestCase
 
@@ -266,7 +268,8 @@
     }
 }
 
-- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock {
+- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldSubmitAppStartEvent_whenInvokingHandlerBlock_andContactTokenIsPresent_andMobileEngageIsEnabled {
+    [MEExperimental enableFeature:[EMSInnerFeature mobileEngage]];
     [self.requestContext setContactToken:@"testContactToken"];
 
     EMSRequestModel *requestModel = OCMClassMock([EMSRequestModel class]);
@@ -284,7 +287,16 @@
                                       withCompletionBlock:[OCMArg any]]);
 }
 
-- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldNotCallSubmit_whenThereIsNoContactToken {
+- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldNotCallSubmit_whenThereIsNoContactToken_andMobileEngageIsEnabled {
+    [MEExperimental enableFeature:[EMSInnerFeature mobileEngage]];
+    OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
+                                      withCompletionBlock:[OCMArg any]]);
+    self.appStartEventBlock();
+}
+
+- (void)testCreateAppStartBlockWithRequestManagerRequestContext_shouldNotCallSubmit_whenContactTokenIsPresent_andMobileEngageIsDisabled {
+    [self.requestContext setContactToken:@"testContactToken"];
+    [MEExperimental disableFeature:[EMSInnerFeature mobileEngage]];
     OCMReject([self.mockRequestManager submitRequestModel:[OCMArg any]
                                       withCompletionBlock:[OCMArg any]]);
     self.appStartEventBlock();

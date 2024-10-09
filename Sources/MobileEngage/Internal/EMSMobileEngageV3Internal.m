@@ -29,25 +29,12 @@
 @implementation EMSMobileEngageV3Internal
 
 - (instancetype)initWithRequestFactory:(EMSRequestFactory *)requestFactory
-                        requestManager:(EMSRequestManager *)requestManager
-                        requestContext:(MERequestContext *)requestContext
-                               storage:(id<EMSStorageProtocol>)storage
-                               session:(EMSSession *)session
-               completionBlockProvider:(EMSCompletionBlockProvider *)completionBlockProvider {
+                        requestManager:(EMSRequestManager *)requestManager {
     NSParameterAssert(requestFactory);
     NSParameterAssert(requestManager);
-    NSParameterAssert(requestContext);
-    NSParameterAssert(storage);
-    NSParameterAssert(session);
-    NSParameterAssert(completionBlockProvider);
     if (self = [super init]) {
         _requestFactory = requestFactory;
         _requestManager = requestManager;
-        _requestContext = requestContext;
-        _requestContext = requestContext;
-        _storage = storage;
-        _session = session;
-        _completionBlockProvider = completionBlockProvider;
     }
     return self;
 }
@@ -59,93 +46,6 @@
             completionBlock(error);
         });
     }
-}
-
-- (void)setAuthenticatedContactWithContactFieldId:(NSNumber *)contactFieldId
-                                      openIdToken:(NSString *)openIdToken
-                                  completionBlock:(EMSCompletionBlock)completionBlock {
-    BOOL shouldRestartSession = ![openIdToken isEqualToString:self.requestContext.openIdToken];
-    if (shouldRestartSession) {
-        [self sendContactRequestWithContactFieldId:contactFieldId
-                                 contactFieldValue:nil
-                                       openIdToken:openIdToken
-                                   completionBlock:completionBlock];
-    } else {
-        [self callCompletionWithCompletionBlock:completionBlock error:nil];
-    }
-}
-
-- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
-                   contactFieldValue:(nullable NSString *)contactFieldValue {
-    [self setContactWithContactFieldId:contactFieldId
-                     contactFieldValue:contactFieldValue
-                       completionBlock:nil];
-}
-
-- (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
-                   contactFieldValue:(nullable NSString *)contactFieldValue
-                     completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
-    if (shouldRestartSession) {
-        [self sendContactRequestWithContactFieldId:contactFieldId
-                                 contactFieldValue:contactFieldValue
-                                       openIdToken:nil
-                                   completionBlock:completionBlock];
-    } else {
-        [self callCompletionWithCompletionBlock:completionBlock error:nil];
-    }
-}
-
-- (void)sendContactRequestWithContactFieldId:(nullable NSNumber *)contactFieldId
-                           contactFieldValue:(nullable NSString *)contactFieldValue
-                                 openIdToken:(nullable NSString *)openIdToken
-                             completionBlock:(EMSCompletionBlock)completionBlock {
-    [self.requestContext setOpenIdToken:openIdToken];
-    [self.requestContext setContactFieldId:contactFieldId];
-    [self.requestContext setContactFieldValue:contactFieldValue];
-    EMSRequestModel *requestModel = [self.requestFactory createContactRequestModel];
-    __weak typeof(self) weakSelf = self;
-    [self.requestManager submitRequestModel:requestModel
-                        withCompletionBlock:[self.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
-        if (!error) {
-            [weakSelf.session stopSessionWithCompletionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
-                [weakSelf.session startSessionWithCompletionBlock:completionBlock];
-            }]];
-        } else {
-            [weakSelf.requestContext resetPreviousContactValues];
-            EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
-                                                   sel:_cmd
-                                            parameters:nil
-                                                status:nil], LogLevelError);
-            [weakSelf callCompletionWithCompletionBlock:completionBlock error:error];
-        }
-    }]];
-}
-
-- (void)clearContact {
-    [self clearContactWithCompletionBlock:nil];
-}
-
-- (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    __weak typeof(self) weakSelf = self;
-    BOOL shouldClearContact = !self.requestContext.contactToken || [self.requestContext hasContactIdentification];
-    if (shouldClearContact) {
-        [weakSelf sendContactRequestWithContactFieldId:nil
-                                     contactFieldValue:nil
-                                           openIdToken:nil
-                                       completionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
-            if(!error) {
-                [weakSelf.storage setData:nil
-                                   forKey:kEMSPushTokenKey];
-                [weakSelf callCompletionWithCompletionBlock:completionBlock error:nil];
-            } else {
-                [weakSelf callCompletionWithCompletionBlock:completionBlock error:error];
-            }
-        }]];
-    } else {
-        [weakSelf callCompletionWithCompletionBlock:completionBlock error:nil];
-    }
-
 }
 
 - (void)trackCustomEventWithName:(NSString *)eventName

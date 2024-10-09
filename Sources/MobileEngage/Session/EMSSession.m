@@ -6,6 +6,8 @@
 #import "EMSSession.h"
 #import "EMSTimestampProvider.h"
 #import "NSDate+EMSCore.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSSession ()
 
@@ -37,17 +39,22 @@
         _operationQueue = operationQueue;
         _observers = [NSMutableArray array];
         __weak typeof(self) weakSelf = self;
+        
         id becomeActiveObserver = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                                                   object:nil
                                                                                    queue:nil
                                                                               usingBlock:^(NSNotification *notification) {
-            [weakSelf startSessionWithCompletionBlock:nil];
+            if([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+                [weakSelf startSessionWithCompletionBlock:nil];
+            }
         }];
         id enterBackgroundObserver = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidEnterBackgroundNotification
                                                                                      object:nil
                                                                                       queue:nil
                                                                                  usingBlock:^(NSNotification *notification) {
-            [weakSelf stopSessionWithCompletionBlock:nil];
+            if([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+                [weakSelf stopSessionWithCompletionBlock:nil];
+            }
         }];
         [_observers addObject:becomeActiveObserver];
         [_observers addObject:enterBackgroundObserver];
