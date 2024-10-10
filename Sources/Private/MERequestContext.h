@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)reset;
 
+- (void)resetPreviousContactValues;
+
 NS_ASSUME_NONNULL_END
 
 @end

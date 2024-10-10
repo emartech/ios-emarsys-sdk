@@ -89,9 +89,9 @@
         accessGroup:(nullable NSString *)accessGroup {
     NSParameterAssert(key);
     OSStatus status = 0;
+    NSData *existingValue = [self readValueForKey:key
+                                  withAccessGroup:accessGroup];
     if (data) {
-        NSData *existingValue = [self readValueForKey:key
-                                      withAccessGroup:accessGroup];
         if (existingValue) {
             status = [self updateValue:data
                                 forKey:key
@@ -102,8 +102,10 @@
                        withAccessGroup:accessGroup];
         }
     } else {
-        status = [self deleteValueForKey:key
-                         withAccessGroup:accessGroup];
+        if (existingValue) {
+            status = [self deleteValueForKey:key
+                             withAccessGroup:accessGroup];
+        }
     }
     return status;
 }
