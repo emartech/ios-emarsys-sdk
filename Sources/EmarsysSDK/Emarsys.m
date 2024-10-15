@@ -54,8 +54,7 @@ static dispatch_once_t once_token;
             [Emarsys registerAppStartBlock];
             if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
                 [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
-                [dependencyContainer.mobileEngage setContactWithContactFieldId:nil
-                                                             contactFieldValue:nil];
+                [dependencyContainer.mobileEngage clearContact];
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
                                                                 object:nil];
