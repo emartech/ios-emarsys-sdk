@@ -4,7 +4,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     steps:
       - name: Checkout
         uses: actions/checkout@v4
