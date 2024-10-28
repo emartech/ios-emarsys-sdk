@@ -15,6 +15,8 @@
 #import "NSError+EMSCore.h"
 #import "EMSUUIDProvider.h"
 #import "XCTestCase+Helper.h"
+#import "MEExperimental+Test.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSDeviceInfoV3ClientInternalTests : XCTestCase
 
@@ -45,6 +47,11 @@
                                                                          requestContext:self.mockRequestContext];
     
     _suiteNames = @[@"com.emarsys.core", @"com.emarsys.predict", @"com.emarsys.mobileengage"];
+}
+
+- (void)tearDown {
+    [super tearDown];
+    [MEExperimental reset];
 }
 
 - (void)testInit_requestManager_mustNotBeNil {
@@ -96,6 +103,7 @@
 }
 
 - (void)testSendDeviceInfo_submitRequest {
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:kEMSSuiteName];
@@ -160,6 +168,7 @@
 }
 
 - (void)testSendDeviceInfo_shouldSubmit_whenClientStateIsMissing {
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
     EMSCompletionBlock completionBlock = ^(NSError *error) {
     };
     OCMStub(self.mockRequestContext.clientState).andReturn(nil);

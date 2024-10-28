@@ -525,7 +525,8 @@
     XCTAssertNil(result);
 }
 
-- (void)testCreateInlineInappRequestModel {
+- (void)testCreateInlineInappRequestModel_whenMobileEngageIsEnabled_andApplicationCodeIsSet {
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
     OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     NSArray<MEButtonClick *> *clicks = @[
@@ -561,6 +562,14 @@
 }
 
 - (void)testCreateInlineInappRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
+
+    XCTAssertNil(result);
+}
+
+- (void)testCreateInlineInappRequestModel_when_MobileEngageIsDisabled_isNil {
+    [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
+    
     EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
 
     XCTAssertNil(result);

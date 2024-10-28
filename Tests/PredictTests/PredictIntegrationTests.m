@@ -206,46 +206,59 @@ SPEC_BEGIN(PredictIntegrationTests)
             });
         });
 
-        describe(@"visitorId", ^{
+describe(@"visitorId",
+ ^{
 
-            it(@"should simulate login flow", ^{
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
-                XCTestExpectation *expectationSearchTerm1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
-                XCTestExpectation *expectationSearchTerm2 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
-                [dependencyContainer setExpectations:[@[expectationSearchTerm1, expectation, expectationSearchTerm2] mutableCopy]];
+    it(@"should simulate login flow",
+       ^{
+        XCTestExpectation *expectationSetContact = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
+        XCTestExpectation *expectationClearContact = [[XCTestExpectation alloc] initWithDescription:@"waitForClearContact"];
+        XCTestExpectation *expectationSearchTerm = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
+        XCTestExpectation *expectationTrackItemWithItemId = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackItemWithItemId"];
+        [dependencyContainer setExpectations:[@[expectationSearchTerm,
+                                                expectationClearContact,
+                                                expectationSetContact,
+                                                expectationTrackItemWithItemId] mutableCopy]];
 
-                NSString *expectedQueryParams = @"q=searchTerm";
-                NSString *visitorId;
-                NSString *visitorId2;
+        NSString *expectedQueryParams = @"q=searchTerm";
+        NSString *expectedTrackingQueryParams = @"v=i%3A2508%252B";
+        NSString *expectedContactUrl = @"contact-token";
+        NSString *visitorId;
+        NSString *visitorId2;
 
-                [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-                [EMSWaiter waitForExpectations:@[expectationSearchTerm1]
-                                       timeout:10];
+        [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
+        [EMSWaiter waitForExpectations:@[expectationSearchTerm]
+                               timeout:10];
 
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-                visitorId = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-                [[visitorId shouldNot] beNil];
+        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
+        visitorId = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+        [[visitorId shouldNot] beNil];
 
-                [Emarsys clearContact];
-
+        [Emarsys clearContact];
                 
-                [Emarsys setContactWithContactFieldId:@62470 
-                                    contactFieldValue:@"test2@test.com"
-                                      completionBlock:^(NSError * _Nullable error) {
+        [Emarsys setContactWithContactFieldId:@62470 
+                            contactFieldValue:@"test2@test.com"
+                              completionBlock:^(NSError * _Nullable error) {
                     
-                }];
+        }];
+                
+        [EMSWaiter waitForExpectations:@[expectationSetContact]
+                               timeout:10];
+                
+        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedContactUrl];
 
-                [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-                [EMSWaiter waitForExpectations:@[expectationSearchTerm2]
-                                       timeout:10];
+        [Emarsys.predict trackItemViewWithItemId:@"2508+"];
+        [EMSWaiter waitForExpectations:@[expectationTrackItemWithItemId]
+                               timeout:10];
 
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-                visitorId2 = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-                [[visitorId2 shouldNot] beNil];
-            });
-        });
+        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
+        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedTrackingQueryParams];
+        visitorId2 = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+        [[visitorId2 shouldNot] beNil];
+    });
+});
 
         describe(@"recommendProducts", ^{
             NSString *searchTerm = @"Ropa";
