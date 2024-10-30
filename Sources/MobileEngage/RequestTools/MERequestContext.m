@@ -86,6 +86,7 @@
 }
 
 - (void)setApplicationCode:(NSString *)applicationCode {
+    [self reset];
     _applicationCode = applicationCode;
     if (applicationCode) {
         [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];

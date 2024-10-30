@@ -7,6 +7,7 @@
 #import "EMSStorage.h"
 #import "EMSStorageProtocol.h"
 #import "XCTestCase+Helper.h"
+#import <OCMock/OCMock.h>
 
 SPEC_BEGIN(MERequestContextTests)
 
@@ -289,6 +290,22 @@ describe(@"requestContext",
             [context setApplicationCode:@"EMS11-C3FD3"];
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beYes];
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beYes];
+        });
+        
+        it(@"should call reset when appCode is set",
+           ^{
+            MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
+                                                                             uuidProvider:uuidProvider
+                                                                        timestampProvider:timestampProvider
+                                                                               deviceInfo:deviceInfo
+                                                                                  storage:storage];
+            
+            MERequestContext *partialMockContext = OCMPartialMock(context);
+            
+            [partialMockContext setApplicationCode:@"EMS11-C3FD3"];
+            [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beYes];
+            [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beYes];
+            OCMVerify([partialMockContext reset]);
         });
     });
     
