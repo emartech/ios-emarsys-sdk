@@ -4,6 +4,7 @@
 #import "EMSStorage.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
+#import "NSOperationQueue+EMSCore.h"
 
 @interface EMSStorage ()
 
@@ -358,7 +359,7 @@ forKeyedSubscript:(NSString *)key {
         withAccessGroup:(nullable NSString *)accessGroup {
     __block OSStatus result;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
                                                              accessGroup:accessGroup];
         mutableQuery = [weakSelf appendAccessModifierToQuery:mutableQuery];
@@ -367,7 +368,6 @@ forKeyedSubscript:(NSString *)key {
         NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
         result = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return result;
 }
 
@@ -375,7 +375,7 @@ forKeyedSubscript:(NSString *)key {
                      withAccessGroup:(nullable NSString *)accessGroup {
     __block NSData *result = nil;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
                                                              accessGroup:accessGroup];
         mutableQuery = [weakSelf appendResultAttributesToQuery:mutableQuery];
@@ -394,7 +394,6 @@ forKeyedSubscript:(NSString *)key {
             CFRelease(resultRef);
         }
     }];
-    [weakSelf.operationQueue waitUntilAllOperationsAreFinished];
     return result;
 }
 
@@ -403,7 +402,7 @@ forKeyedSubscript:(NSString *)key {
         withAccessGroup:(nullable NSString *)accessGroup {
     __block OSStatus result;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         NSDictionary *query = [weakSelf createQueryWithKey:key
                                                accessGroup:accessGroup];
         NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
@@ -411,7 +410,6 @@ forKeyedSubscript:(NSString *)key {
                                                       value:value];
         result = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) attributesDictionary);
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return result;
 }
 
@@ -419,13 +417,12 @@ forKeyedSubscript:(NSString *)key {
               withAccessGroup:(nullable NSString *)accessGroup {
     __block OSStatus result;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
                                                              accessGroup:accessGroup];
         NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
         result = SecItemDelete((__bridge CFDictionaryRef) query);
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return result;
 }
 
