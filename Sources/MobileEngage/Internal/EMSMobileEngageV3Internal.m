@@ -113,10 +113,15 @@
             }]];
         } else {
             [weakSelf.requestContext resetPreviousContactValues];
+            NSMutableDictionary *parameterDict = [NSMutableDictionary dictionary];
+            parameterDict[@"contactFieldId"] = contactFieldId;
+            parameterDict[@"contactFieldValue"] = contactFieldValue;
+            parameterDict[@"openIdToken"] = openIdToken;
             EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                    sel:_cmd
-                                            parameters:nil
-                                                status:nil], LogLevelError);
+                                            parameters: parameterDict
+                                                status:@{@"error": error.description}],
+                   LogLevelError);
             [weakSelf callCompletionWithCompletionBlock:completionBlock error:error];
         }
     }]];
