@@ -281,7 +281,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
                 [mapper bindStatement:statement
                             fromModel:model];
                 int stepResult = sqlite3_step(statement);
-                if (stepResult != SQLITE_DONE) {
+                if (stepResult != SQLITE_DONE && stepResult != SQLITE_FULL) {
                     result = NO;
                     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                     parameters[@"sql"] = insertSQL;
