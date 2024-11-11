@@ -226,6 +226,8 @@
 		5D3394D62C50E83A00E617E1 /* NSString+EMSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D3394D32C50E83A00E617E1 /* NSString+EMSCore.h */; };
 		5D3E118A2C77265B00D26BB1 /* EMSCompletionBlockProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3E11892C77265B00D26BB1 /* EMSCompletionBlockProvider.m */; };
 		5D3E118B2C77265B00D26BB1 /* EMSCompletionBlockProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D3E11882C77265B00D26BB1 /* EMSCompletionBlockProvider.h */; };
+		5D7CF8FB2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D7CF8FA2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.m */; };
+		5D7CF8FC2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7CF8F92CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.h */; };
 		5D7EEE092BF4B4AB000E1558 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */; };
 		5DF6FD1A2C6F392C0038790E /* EMSTestColumnInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF6FD192C6F392C0038790E /* EMSTestColumnInfo.m */; };
 		5DF6FD1D2C6F39710038790E /* EMSTestColumnInfoMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF6FD1C2C6F39710038790E /* EMSTestColumnInfoMapper.m */; };
@@ -898,6 +900,8 @@
 		5D3394D42C50E83A00E617E1 /* NSString+EMSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+EMSCore.m"; sourceTree = "<group>"; };
 		5D3E11882C77265B00D26BB1 /* EMSCompletionBlockProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSCompletionBlockProvider.h; sourceTree = "<group>"; };
 		5D3E11892C77265B00D26BB1 /* EMSCompletionBlockProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSCompletionBlockProvider.m; sourceTree = "<group>"; };
+		5D7CF8F92CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+EMSCore.h"; sourceTree = "<group>"; };
+		5D7CF8FA2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+EMSCore.m"; sourceTree = "<group>"; };
 		5D7EEE082BF4B4AB000E1558 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5DF6FD182C6F392C0038790E /* EMSTestColumnInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMSTestColumnInfo.h; sourceTree = "<group>"; };
 		5DF6FD192C6F392C0038790E /* EMSTestColumnInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMSTestColumnInfo.m; sourceTree = "<group>"; };
@@ -1899,6 +1903,7 @@
 		5DF894CA2A812AED00803F2C /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				5D7CF8F92CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.h */,
 				5D3394D32C50E83A00E617E1 /* NSString+EMSCore.h */,
 				8A6BE8AE23E86B480066B13C /* EMSOperationQueue.h */,
 				32C6F4D808CD54C437521E7B /* EMSQueueDelegator.h */,
@@ -2477,6 +2482,7 @@
 				8A6BE94923E86B480066B13C /* NSURLRequest+EMSCore.m */,
 				FB8A35934808E998DA538E1C /* NSHTTPURLResponse+EMSCore.m */,
 				5D3394D42C50E83A00E617E1 /* NSString+EMSCore.m */,
+				5D7CF8FA2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -3481,6 +3487,7 @@
 				32C6F38F9483E284AFBBEE82 /* EMSGeofenceResponse.h in Headers */,
 				32C6FCEEADE304159925A1D3 /* EMSGeofenceGroup.h in Headers */,
 				32C6F9B42C12B269BB77B1A0 /* EMSGeofenceResponseMapper.h in Headers */,
+				5D7CF8FC2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.h in Headers */,
 				64259CC38D5008984B2BAC84 /* EMSGeofenceInternal.h in Headers */,
 				32C6F02AF6D5DDBBD4B8A739 /* EMSGeofenceProtocol.h in Headers */,
 				32C6F4C02D790A1A37384336 /* EMSLoggingGeofenceInternal.h in Headers */,
@@ -4047,6 +4054,7 @@
 				8A6BEADA23E86B480066B13C /* EMSScheduler.m in Sources */,
 				8A6BEB5923E86B490066B13C /* MEIAMTriggerMEEvent.m in Sources */,
 				8A6BEB3A23E86B490066B13C /* MERequestTools.m in Sources */,
+				5D7CF8FB2CDCEAEF00CC91C5 /* NSOperationQueue+EMSCore.m in Sources */,
 				8A6BEB8323E86B490066B13C /* EMSNotificationService+PushToInApp.m in Sources */,
 				8A6BEA7923E86B480066B13C /* EMSAbstractResponseHandler.m in Sources */,
 				8A6BEB7623E86B490066B13C /* MEInAppMessage.m in Sources */,

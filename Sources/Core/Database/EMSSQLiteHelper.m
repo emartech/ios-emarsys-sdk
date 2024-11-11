@@ -10,6 +10,7 @@
 #import "EMSSQLiteHelperSchemaHandlerProtocol.h"
 #import "EMSStatusLog.h"
 #import "EMSMacros.h"
+#import "NSOperationQueue+EMSCore.h"
 
 typedef BOOL (^EMSSQLLiteTransactionBlock)(void);
 
@@ -83,7 +84,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
 
 - (void)open {
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         sqlite3_initialize();
         int sqlResult = sqlite3_open_v2([weakSelf.dbPath UTF8String], &self->_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
         if (sqlResult == SQLITE_OK) {
@@ -100,16 +101,14 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
             }
         }
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void)close {
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         sqlite3_close_v2(weakSelf.db);
         sqlite3_shutdown();
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void)registerTriggerWithTableName:(NSString *)tableName
@@ -167,7 +166,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
     
     __block BOOL success;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         success = [weakSelf executeTransaction:^BOOL{
             BOOL result = YES;
             sqlite3_stmt *statement;
@@ -203,7 +202,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
             return result;
         }];
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
 
     [self runTriggerWithTableName:tableName
                             event:[EMSDBTriggerEvent deleteEvent]
@@ -225,7 +223,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
                                                                         limit:limit];
     __block NSMutableArray *models = [NSMutableArray new];
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         [weakSelf executeTransaction:^BOOL{
             BOOL result = YES;
             sqlite3_stmt *statement;
@@ -266,7 +264,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
             return result;
         }];
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return [NSArray arrayWithArray:models];
 }
 
@@ -275,7 +272,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
              mapper:(id <EMSModelMapperProtocol>)mapper {
     __block BOOL success;
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         success = [weakSelf executeTransaction:^BOOL{
             BOOL result = YES;
             sqlite3_stmt *statement;
@@ -284,7 +281,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
                 [mapper bindStatement:statement
                             fromModel:model];
                 int stepResult = sqlite3_step(statement);
-                if (stepResult != SQLITE_DONE) {
+                if (stepResult != SQLITE_DONE && stepResult != SQLITE_FULL) {
                     result = NO;
                     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                     parameters[@"sql"] = insertSQL;
@@ -310,7 +307,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
             return result;
         }];
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return success;
 }
 
@@ -336,7 +332,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
                    mapper:(id <EMSModelMapperProtocol>)mapper {
     __block NSMutableArray *models = [NSMutableArray new];
     __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
+    [self.operationQueue runSynchronized:^{
         [weakSelf executeTransaction:^BOOL{
             BOOL result = YES;
             sqlite3_stmt *statement;
@@ -372,7 +368,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK;";
             return result;
         }];
     }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
     return [NSArray arrayWithArray:models];
 }
 

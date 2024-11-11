@@ -4,6 +4,7 @@
 #import "EMSStorage.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
+#import "NSOperationQueue+EMSCore.h"
 
 @interface EMSStorage ()
 
@@ -88,25 +89,27 @@
              forKey:(NSString *)key
         accessGroup:(nullable NSString *)accessGroup {
     NSParameterAssert(key);
-    OSStatus status = 0;
-    NSData *existingValue = [self readValueForKey:key
-                                  withAccessGroup:accessGroup];
-    if (data) {
-        if (existingValue) {
-            status = [self updateValue:data
-                                forKey:key
-                       withAccessGroup:accessGroup];
+    __block OSStatus status = 0;
+    [self.operationQueue runSynchronized:^{
+        NSData *existingValue = [self readValueForKey:key
+                                      withAccessGroup:accessGroup];
+        if (data) {
+            if (existingValue) {
+                status = [self updateValue:data
+                                    forKey:key
+                           withAccessGroup:accessGroup];
+            } else {
+                status = [self createValue:data
+                                    forKey:key
+                           withAccessGroup:accessGroup];
+            }
         } else {
-            status = [self createValue:data
-                                forKey:key
-                       withAccessGroup:accessGroup];
+            if (existingValue) {
+                status = [self deleteValueForKey:key
+                                 withAccessGroup:accessGroup];
+            }
         }
-    } else {
-        if (existingValue) {
-            status = [self deleteValueForKey:key
-                             withAccessGroup:accessGroup];
-        }
-    }
+    }];
     return status;
 }
 
@@ -238,8 +241,13 @@
 - (nullable NSData *)dataForKey:(NSString *)key
                     accessGroup:(nullable NSString *)accessGroup {
     NSParameterAssert(key);
-    return [self readValueForKey:key
-                 withAccessGroup:accessGroup];
+    __block NSData *result = nil;
+    [self.operationQueue runSynchronized:^{
+        result = [self readValueForKey:key
+                       withAccessGroup:accessGroup];
+        
+    }];
+    return result;
 }
 
 - (nullable NSString *)stringForKey:(NSString *)key {
@@ -356,76 +364,60 @@ forKeyedSubscript:(NSString *)key {
 - (OSStatus)createValue:(NSData *)value
                  forKey:(NSString *)key
         withAccessGroup:(nullable NSString *)accessGroup {
-    __block OSStatus result;
-    __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
-        NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
-                                                             accessGroup:accessGroup];
-        mutableQuery = [weakSelf appendAccessModifierToQuery:mutableQuery];
-        mutableQuery = [weakSelf appendValueToQuery:mutableQuery
-                                              value:value];
-        NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-        result = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
-    }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
+    OSStatus result;
+    NSMutableDictionary *mutableQuery = [self createQueryWithKey:key
+                                                     accessGroup:accessGroup];
+    mutableQuery = [self appendAccessModifierToQuery:mutableQuery];
+    mutableQuery = [self appendValueToQuery:mutableQuery
+                                      value:value];
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+    result = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
     return result;
 }
 
 - (nullable NSData *)readValueForKey:(NSString *)key
                      withAccessGroup:(nullable NSString *)accessGroup {
-    __block NSData *result = nil;
-    __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
-        NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
-                                                             accessGroup:accessGroup];
-        mutableQuery = [weakSelf appendResultAttributesToQuery:mutableQuery];
-        NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-        
-        CFTypeRef resultRef = NULL;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef) query, &resultRef);
-        if (status == errSecSuccess) {
-            NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
-            NSString *returnedAccessGroup = resultDict[(id) kSecAttrAccessGroup];
-            if ((!accessGroup && ![returnedAccessGroup isEqual:accessGroup]) || (accessGroup && [accessGroup isEqual:returnedAccessGroup])) {
-                result = resultDict[(id) kSecValueData];
-            }
+    NSData *result = nil;
+    NSMutableDictionary *mutableQuery = [self createQueryWithKey:key
+                                                     accessGroup:accessGroup];
+    mutableQuery = [self appendResultAttributesToQuery:mutableQuery];
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+    
+    CFTypeRef resultRef = NULL;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef) query, &resultRef);
+    if (status == errSecSuccess) {
+        NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
+        NSString *returnedAccessGroup = resultDict[(id) kSecAttrAccessGroup];
+        if ((!accessGroup && ![returnedAccessGroup isEqual:accessGroup]) || (accessGroup && [accessGroup isEqual:returnedAccessGroup])) {
+            result = resultDict[(id) kSecValueData];
         }
-        if (resultRef) {
-            CFRelease(resultRef);
-        }
-    }];
-    [weakSelf.operationQueue waitUntilAllOperationsAreFinished];
+    }
+    if (resultRef) {
+        CFRelease(resultRef);
+    }
     return result;
 }
 
 - (OSStatus)updateValue:(NSData *)value
                  forKey:(NSString *)key
         withAccessGroup:(nullable NSString *)accessGroup {
-    __block OSStatus result;
-    __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
-        NSDictionary *query = [weakSelf createQueryWithKey:key
-                                               accessGroup:accessGroup];
-        NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
-        attributesDictionary = [weakSelf appendValueToQuery:attributesDictionary
-                                                      value:value];
-        result = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) attributesDictionary);
-    }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
+    OSStatus result;
+    NSDictionary *query = [self createQueryWithKey:key
+                                       accessGroup:accessGroup];
+    NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
+    attributesDictionary = [self appendValueToQuery:attributesDictionary
+                                              value:value];
+    result = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) attributesDictionary);
     return result;
 }
 
 - (OSStatus)deleteValueForKey:(NSString *)key
               withAccessGroup:(nullable NSString *)accessGroup {
-    __block OSStatus result;
-    __weak typeof(self) weakSelf = self;
-    [self.operationQueue addOperationWithBlock:^{
-        NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
-                                                             accessGroup:accessGroup];
-        NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-        result = SecItemDelete((__bridge CFDictionaryRef) query);
-    }];
-    [self.operationQueue waitUntilAllOperationsAreFinished];
+    OSStatus result;
+    NSMutableDictionary *mutableQuery = [self createQueryWithKey:key
+                                                     accessGroup:accessGroup];
+    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+    result = SecItemDelete((__bridge CFDictionaryRef) query);
     return result;
 }
 

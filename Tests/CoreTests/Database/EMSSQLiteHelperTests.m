@@ -19,6 +19,7 @@
 #import "EMSTestColumnInfo.h"
 #import "EMSTestColumnInfoMapper.h"
 #import "XCTestCase+Helper.h"
+#import "NSOperationQueue+EMSCore.h"
 
 #define TEST_DB_PATH [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"TestDB.db"]
 
@@ -43,21 +44,31 @@
 }
 
 - (void)tearDown {
-    [self.dbHelper executeCommand:@"PRAGMA user_version=1;"];
-    [EmarsysTestUtils clearDb:self.dbHelper];
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        [weakSelf.dbHelper executeCommand:@"PRAGMA user_version=1;"];
+        [EmarsysTestUtils clearDb:weakSelf.dbHelper];
+    }];
     [super tearDown];
 }
 
 - (void)testGetVersion {
-    [self.dbHelper executeCommand:@"PRAGMA user_version=1;"];
-    XCTAssertEqual([self.dbHelper version], 1);
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        [weakSelf.dbHelper executeCommand:@"PRAGMA user_version=1;"];
+        XCTAssertEqual([weakSelf.dbHelper version], 1);
+    }];
 }
 
 - (void)testOpenDatabase {
-    [self.dbHelper executeCommand:@"PRAGMA user_version=0;"];
     EMSSqliteSchemaHandler *schemaDelegate = OCMClassMock([EMSSqliteSchemaHandler class]);
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        [weakSelf.dbHelper executeCommand:@"PRAGMA user_version=0;"];
+    }];
     self.dbHelper.schemaHandler = schemaDelegate;
     OCMExpect([schemaDelegate onCreateWithDbHelper:OCMOCK_ANY]);
+
     
     [self.dbHelper open];
     
@@ -65,7 +76,10 @@
 }
 
 - (void)testOpenDatabaseWithUpgrade {
-    [self.dbHelper executeCommand:@"PRAGMA user_version=2;"];
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        [weakSelf.dbHelper executeCommand:@"PRAGMA user_version=2;"];
+    }];
     EMSSqliteSchemaHandler *schemaDelegate = OCMClassMock([EMSSqliteSchemaHandler class]);
     self.dbHelper.schemaHandler = schemaDelegate;
     OCMStub([schemaDelegate schemaVersion]).andReturn(100);
@@ -77,8 +91,11 @@
 }
 
 - (void)testExecuteCommandFailure {
-    BOOL returnedValue = [self.dbHelper executeCommand:@"invalid sql;"];
-    XCTAssertFalse(returnedValue);
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        BOOL returnedValue = [weakSelf.dbHelper executeCommand:@"invalid sql;"];
+        XCTAssertFalse(returnedValue);
+    }];
 }
 
 - (void)testRemoveFromTableWithoutWhereClause {
@@ -221,14 +238,20 @@
     [self isEqualArrays:expectedRequestColumnInfos currentArray:currentRequestColumnInfos];
     [self isEqualArrays:expectedShardColumnInfos currentArray:currentShardColumnInfos];
     
-    XCTAssertEqual([self.dbHelper version], 1);
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        XCTAssertEqual([weakSelf.dbHelper version], 1);
+    }];
 }
 
 - (void)testSchemaMigration {
     [self tearDown];
-    [self.dbHelper executeCommand:@"DROP TABLE shard;"];
-    [self.dbHelper executeCommand:@"DROP TABLE request;"];
-    [self.dbHelper executeCommand:@"PRAGMA user_version=0;"];
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue runSynchronized:^{
+        [weakSelf.dbHelper executeCommand:@"DROP TABLE shard;"];
+        [weakSelf.dbHelper executeCommand:@"DROP TABLE request;"];
+        [weakSelf.dbHelper executeCommand:@"PRAGMA user_version=0;"];
+    }];
 
     NSArray<EMSTestColumnInfo *> *expectedRequestColumnInfos = @[
         [[EMSTestColumnInfo alloc] initWithColumnName:@"request_id" columnType:@"TEXT"],
@@ -261,7 +284,9 @@
     XCTAssertEqualObjects(expectedRequestColumnInfos, currentRequestColumnInfos);
     XCTAssertEqualObjects(expectedShardColumnInfos, currentShardColumnInfos);
     
-    XCTAssertEqual([self.dbHelper version], 1);
+    [self.operationQueue runSynchronized:^{
+        XCTAssertEqual([weakSelf.dbHelper version], 1);
+    }];
 
 }
 
