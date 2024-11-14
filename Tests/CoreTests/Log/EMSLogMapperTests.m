@@ -38,7 +38,7 @@
     OCMStub(self.deviceInfo.applicationVersion).andReturn(@"applicationVersion");
     OCMStub(self.deviceInfo.osVersion).andReturn(@"osVersion");
     OCMStub(self.deviceInfo.deviceModel).andReturn(@"deviceModel");
-    OCMStub(self.deviceInfo.hardwareId).andReturn(@"hardwareId");
+    OCMStub(self.deviceInfo.clientId).andReturn(@"hardwareId");
     OCMStub(self.deviceInfo.platform).andReturn(@"ios");
     OCMStub(self.deviceInfo.sdkVersion).andReturn(@"sdkVersion");
     OCMStub(self.requestContext.timestampProvider).andReturn(self.timestampProvider);

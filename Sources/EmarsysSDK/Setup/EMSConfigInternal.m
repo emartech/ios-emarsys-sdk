@@ -300,7 +300,11 @@
 }
 
 - (NSString *)hardwareId {
-    return [self.deviceInfo hardwareId];
+    return [self.deviceInfo clientId];
+}
+
+- (NSString *)clientId {
+    return [self.deviceInfo clientId];
 }
 
 - (NSString *)languageCode {

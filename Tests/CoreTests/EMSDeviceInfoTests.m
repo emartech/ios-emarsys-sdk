@@ -9,7 +9,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import "EMSUUIDProvider.h"
 
-#define kEMSHardwareIdKey @"kHardwareIdKey"
+#define kEMSClientIdKey @"kHardwareIdKey"
 
 @interface EMSDeviceInfoTests : XCTestCase
 
@@ -352,7 +352,7 @@
     NSData *dataHWID = [@"dataHWID" dataUsingEncoding:NSUTF8StringEncoding];
     OCMStub([self.mockStorage sharedDataForKey:@"kHardwareIdKey"]).andReturn(dataHWID);
     
-    NSString *result = self.deviceInfo.hardwareId;
+    NSString *result = self.deviceInfo.clientId;
     XCTAssertEqualObjects(result, @"dataHWID");
 }
     
@@ -363,7 +363,7 @@
     NSData *expectedDataHWID = [@"testHWID" dataUsingEncoding:NSUTF8StringEncoding];
     OCMExpect([self.mockStorage setSharedData:expectedDataHWID forKey:@"kHardwareIdKey"]);
 
-    NSString *result = self.deviceInfo.hardwareId;
+    NSString *result = self.deviceInfo.clientId;
     XCTAssertEqualObjects(result, @"testHWID");
 }
 

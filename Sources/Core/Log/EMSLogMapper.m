@@ -40,7 +40,7 @@
                 mutableDeviceInfoDictionary[@"sdkVersion"] = deviceInfo.sdkVersion;
                 mutableDeviceInfoDictionary[@"osVersion"] = deviceInfo.osVersion;
                 mutableDeviceInfoDictionary[@"model"] = deviceInfo.deviceModel;
-                mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.hardwareId;
+                mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.clientId;
                 mutableDeviceInfoDictionary[@"applicationCode"] = weakSelf.applicationCode;
                 mutableDeviceInfoDictionary[@"merchantId"] = weakSelf.merchantId;
 

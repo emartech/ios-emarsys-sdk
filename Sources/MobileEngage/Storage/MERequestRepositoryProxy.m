@@ -88,7 +88,7 @@
                 [builder setUrl:[[requestModel url] absoluteString]];
 
                 NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-                payload[@"hardware_id"] = self.requestContext.deviceInfo.hardwareId;
+                payload[@"hardware_id"] = self.requestContext.deviceInfo.clientId;
                 payload[@"viewedMessages"] = [self displayRepresentations];
                 payload[@"clicks"] = [self clickRepresentations];
 

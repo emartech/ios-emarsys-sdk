@@ -23,7 +23,7 @@
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
 @property(nonatomic, strong) NSString *clientState;
 @property(nonatomic, strong) NSDate *requestOrderTimestamp;
-@property(nonatomic, strong) NSString *hardwareId;
+@property(nonatomic, strong) NSString *clientId;
 @property(nonatomic, strong) EMSEndpoint *mockEndpoint;
 
 @end
@@ -42,7 +42,7 @@
             @"testHeaderKey": @"testHeaderValue"
     };
     _extras = @{@"testExtraKey": @"testExtraValue"};
-    _hardwareId = @"testHardwareId";
+    _clientId = @"testHardwareId";
 
     EMSTimestampProvider *mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     EMSDeviceInfo *mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
@@ -52,7 +52,7 @@
     OCMStub([self.mockRequestContext timestampProvider]).andReturn(mockTimestampProvider);
     OCMStub([self.mockRequestContext deviceInfo]).andReturn(mockDeviceInfo);
     OCMStub([mockTimestampProvider provideTimestamp]).andReturn(self.requestOrderTimestamp);
-    OCMStub([mockDeviceInfo hardwareId]).andReturn(self.hardwareId);
+    OCMStub([mockDeviceInfo clientId]).andReturn(self.clientId);
     OCMStub([self.mockEndpoint clientServiceUrl]).andReturn(@"https://me-client.eservice.emarsys.net");
     OCMStub([self.mockEndpoint eventServiceUrl]).andReturn(@"https://mobile-events.eservice.emarsys.net");
 
@@ -100,7 +100,7 @@
     _clientState = nil;
     NSMutableDictionary *mutableHeaders = [self.headers mutableCopy];
     mutableHeaders[@"X-Request-Order"] = [[self.requestOrderTimestamp numberValueInMillis] stringValue];
-    mutableHeaders[@"X-Client-Id"] = self.hardwareId;
+    mutableHeaders[@"X-Client-Id"] = self.clientId;
     NSDictionary *expectedHeaders = [NSDictionary dictionaryWithDictionary:mutableHeaders];
 
     EMSRequestModel *returnedModel = [self.mapper modelFromModel:[self createRequestModel]];
@@ -115,7 +115,7 @@
 
     NSMutableDictionary *mutableHeaders = [self.headers mutableCopy];
     mutableHeaders[@"X-Request-Order"] = [[self.requestOrderTimestamp numberValueInMillis] stringValue];
-    mutableHeaders[@"X-Client-Id"] = self.hardwareId;
+    mutableHeaders[@"X-Client-Id"] = self.clientId;
     mutableHeaders[@"X-Client-State"] = self.clientState;
     NSDictionary *expectedHeaders = [NSDictionary dictionaryWithDictionary:mutableHeaders];
 

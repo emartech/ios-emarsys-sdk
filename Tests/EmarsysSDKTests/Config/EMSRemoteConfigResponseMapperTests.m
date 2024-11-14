@@ -20,7 +20,7 @@
 
 - (void)setUp {
     _mockDeviceInfo = [OCMockObject mockForClass:[EMSDeviceInfo class]];
-    OCMStub([self.mockDeviceInfo hardwareId]).andReturn(@"testHWId");
+    OCMStub([self.mockDeviceInfo clientId]).andReturn(@"testHWId");
 }
 
 - (void)testInit_randomProvider_mustNotBeNil {

@@ -46,7 +46,7 @@
     NSMutableDictionary *mergedHeaders = [NSMutableDictionary dictionaryWithDictionary:requestModel.headers];
     mergedHeaders[@"X-Client-State"] = self.requestContext.clientState;
     mergedHeaders[@"X-Request-Order"] = [self requestOrder];
-    mergedHeaders[@"X-Client-Id"] = [self.requestContext.deviceInfo hardwareId];
+    mergedHeaders[@"X-Client-Id"] = [self.requestContext.deviceInfo clientId];
     NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mergedHeaders];
     return headers;
 }
