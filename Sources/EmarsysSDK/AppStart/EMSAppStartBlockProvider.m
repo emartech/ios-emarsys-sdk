@@ -104,7 +104,7 @@
                                                                 sel:_cmd
                                                          parameters:@{@"applicationCode": self.requestContext.applicationCode}
                                                              status:nil];
-            EMSLog(logEntry, LogLevelWarn);
+            EMSLog(logEntry, LogLevelError);
         }
     };
 }

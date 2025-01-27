@@ -22,6 +22,8 @@
 #import "EMSInnerFeature.h"
 #import "EMSRemoteConfig.h"
 #import "EmarsysSDKVersion.h"
+#import "EMSMacros.h"
+#import "EMSStatusLog.h"
 
 #define METHOD_TIMEOUT 60
 
@@ -41,6 +43,11 @@
 @property(nonatomic, strong) NSOperationQueue *coreQueue;
 @property(nonatomic, strong) EMSDispatchWaiter *waiter;
 @property(nonatomic, strong) EMSDeviceInfoV3ClientInternal *deviceInfoClient;
+
+- (void)handleErrorWithLabel:(NSString *)label
+             applicationCode:(NSString *)applicationCode
+                       error:(NSError *)error
+             completionBlock:(_Nullable EMSCompletionBlock)completionBlock;
 
 @end
 
@@ -96,19 +103,17 @@
 - (void)refreshConfigFromRemoteConfigWithCompletionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     if (self.meRequestContext.applicationCode) {
         EMSRequestModel *signatureRequestModel = [self.emarsysRequestFactory createRemoteConfigSignatureRequestModel];
+        __weak typeof(self) weakSelf = self;
         [self.requestManager submitRequestModelNow:signatureRequestModel
                                       successBlock:^(NSString *requestId, EMSResponseModel *response) {
-                                          [self fetchRemoteConfigWithSignatureData:response.body
-                                                                   completionBlock:completionBlock];
+                                          [weakSelf fetchRemoteConfigWithSignatureData:response.body
+                                                                       completionBlock:completionBlock];
                                       }
                                         errorBlock:^(NSString *requestId, NSError *error) {
-                                            if (completionBlock) {
-                                                completionBlock(error);
-                                            }
-                                            if (error) {
-                                                [self.endpoint reset];
-                                                [self.logger reset];
-                                            }
+                                            [weakSelf handleErrorWithLabel:@"remoteConfigSignatureFetchingFailed"
+                                                           applicationCode:self.meRequestContext.applicationCode
+                                                                     error:error
+                                                           completionBlock:completionBlock];
                                         }];
     } else {
         if (completionBlock) {
@@ -120,6 +125,7 @@
 - (void)fetchRemoteConfigWithSignatureData:(NSData *)signatureData
                            completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     EMSRequestModel *requestModel = [self.emarsysRequestFactory createRemoteConfigRequestModel];
+    __weak typeof(self) weakSelf = self;
     [self.requestManager submitRequestModelNow:requestModel
                                   successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                       if ([self.crypto verifyContent:response.body
@@ -133,30 +139,25 @@
                                                   completionBlock(nil);
                                               }
                                           } else {
-                                              if (completionBlock) {
-                                                  completionBlock([NSError errorWithCode:400
-                                                                    localizedDescription:@"No response"]);
-                                              }
-                                              [self.endpoint reset];
-                                              [self.logger reset];
+                                              [weakSelf handleErrorWithLabel:@"noResponse"
+                                                             applicationCode:self.meRequestContext.applicationCode
+                                                                       error:[NSError errorWithCode:400
+                                                                               localizedDescription:@"No response"]
+                                                             completionBlock:completionBlock];
                                           }
                                       } else {
-                                          if (completionBlock) {
-                                              completionBlock([NSError errorWithCode:500
-                                                                localizedDescription:@"Crypto error"]);
-                                          }
-                                          [self.endpoint reset];
-                                          [self.logger reset];
+                                          [weakSelf handleErrorWithLabel:@"signatureVerificationFailed"
+                                                         applicationCode:self.meRequestContext.applicationCode
+                                                                   error:[NSError errorWithCode:500
+                                                                           localizedDescription:@"Crypto error"]
+                                                         completionBlock:completionBlock];
                                       }
                                   }
                                     errorBlock:^(NSString *requestId, NSError *error) {
-                                        if (completionBlock) {
-                                            completionBlock(error);
-                                        }
-                                        if (error) {
-                                            [self.endpoint reset];
-                                            [self.logger reset];
-                                        }
+                                        [weakSelf handleErrorWithLabel:@"remoteConfigFetchingFailed"
+                                                       applicationCode:self.meRequestContext.applicationCode
+                                                                 error:error
+                                                       completionBlock:completionBlock];
                                     }];
 }
 
@@ -317,6 +318,26 @@
 
 - (NSString *)sdkVersion {
     return EMARSYS_SDK_VERSION;
+}
+
+- (void)handleErrorWithLabel:(NSString *)label
+    applicationCode:(NSString *)applicationCode
+              error:(NSError *)error
+    completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"source"] = label;
+    parameters[@"message"] = error.description;
+
+    EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
+                                           sel:@selector(handleErrorWithLabel:applicationCode:error:completionBlock:)
+                                    parameters:parameters
+                                        status:nil], LogLevelError);
+    [self.endpoint reset];
+    [self.logger reset];
+    NSLog(@"EmarsysSDK - ApplicationCode(%@) not found. Consult with your Implementation Consultant", applicationCode);
+    if (completionBlock) {
+        completionBlock(error);
+    }
 }
 
 @end
