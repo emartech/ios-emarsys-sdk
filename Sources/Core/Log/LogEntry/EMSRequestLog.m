@@ -7,7 +7,7 @@
 
 @interface EMSRequestLog ()
 
-@property(nonatomic, strong) NSDictionary<NSString *, id> *data;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 
 @end
 
@@ -24,16 +24,44 @@
 
         mutableData[@"requestId"] = responseModel.requestModel.requestId;
         mutableData[@"url"] = [responseModel.requestModel.url absoluteString];
-        mutableData[@"statusCode"] = @(responseModel.statusCode);
-        mutableData[@"inDbStart"] = [responseModel.requestModel.timestamp numberValueInMillis];
-        mutableData[@"inDbEnd"] = [networkingStartTime numberValueInMillis];
-        mutableData[@"inDbDuration"] = [networkingStartTime numberValueInMillisFromDate:responseModel.requestModel.timestamp];
-        mutableData[@"networkingStart"] = [networkingStartTime numberValueInMillis];
-        mutableData[@"networkingEnd"] = [responseModel.timestamp numberValueInMillis];
-        mutableData[@"networkingDuration"] = [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime];
-        mutableData[@"headers"] = headers;
-        mutableData[@"payload"] = payload;
+        mutableData[@"statusCode"] = [NSString stringWithFormat:@"%@", @(responseModel.statusCode)];
+        mutableData[@"inDbStart"] = [NSString stringWithFormat:@"%@", [responseModel.requestModel.timestamp numberValueInMillis]];
+        mutableData[@"inDbEnd"] = [NSString stringWithFormat:@"%@", [networkingStartTime numberValueInMillis]];
+        mutableData[@"inDbDuration"] = [NSString stringWithFormat:@"%@", [networkingStartTime numberValueInMillisFromDate:responseModel.requestModel.timestamp]];
+        mutableData[@"networkingStart"] = [NSString stringWithFormat:@"%@", [networkingStartTime numberValueInMillis]];
+        mutableData[@"networkingEnd"] = [NSString stringWithFormat:@"%@", [responseModel.timestamp numberValueInMillis]];
+        mutableData[@"networkingDuration"] = [NSString stringWithFormat:@"%@", [responseModel.timestamp numberValueInMillisFromDate:networkingStartTime]];
+        NSString *jsonHeaders = nil;
+        if (headers) {
+            NSError *error;
+            NSData *headersData = [NSJSONSerialization dataWithJSONObject:headers
+                                                                 options:NSJSONWritingPrettyPrinted
+                                                                   error:&error];
+            if (headersData) {
+                jsonHeaders = [[NSString alloc] initWithData:headersData
+                                                    encoding:NSUTF8StringEncoding];
+            }
+            if (error) {
+                mutableData[@"headersJsonError"] = error.description;
+            }
+        }
+        mutableData[@"headers"] = jsonHeaders;
+        NSString *jsonPayload = nil;
+        if (payload) {
+            NSError *error;
+            NSData *payloadData = [NSJSONSerialization dataWithJSONObject:payload
+                                                                  options:NSJSONWritingPrettyPrinted
+                                                                    error:&error];
 
+            if (payloadData) {
+                jsonPayload = [[NSString alloc] initWithData:payloadData
+                                                    encoding:NSUTF8StringEncoding];
+            }
+            if (error) {
+                mutableData[@"payloadJsonError"] = error.description;
+            }
+        }
+        mutableData[@"payload"] = jsonPayload;
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
     return self;

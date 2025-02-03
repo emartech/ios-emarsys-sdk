@@ -5,14 +5,14 @@
 
 @interface EMSAppEventLog ()
 
-@property(nonatomic, strong) NSDictionary<NSString *, id> *data;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 
 @end
 
 @implementation EMSAppEventLog
 
 - (instancetype)initWithEventName:(NSString *)eventName
-                       attributes:(nullable NSDictionary<NSString *, id> *)attributes {
+                       attributes:(nullable NSDictionary<NSString *, NSString *> *)attributes {
     NSParameterAssert(eventName);
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];

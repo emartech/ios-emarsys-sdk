@@ -7,7 +7,7 @@
 
 @interface EMSInAppLog ()
 
-@property(nonatomic, strong) NSDictionary<NSString *, id> *data;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 
 @end
 
@@ -24,9 +24,9 @@
         } else {
             mutableDictionary[@"requestId"] = [[NSUUID UUID] UUIDString];
         }
-        mutableDictionary[@"loadingTimeStart"] = [message.responseTimestamp numberValueInMillis];
-        mutableDictionary[@"loadingTimeEnd"] = [loadingTimeEnd numberValueInMillis];
-        mutableDictionary[@"loadingTimeDuration"] = [loadingTimeEnd numberValueInMillisFromDate:message.responseTimestamp];
+        mutableDictionary[@"loadingTimeStart"] = [NSString stringWithFormat:@"%@", [message.responseTimestamp numberValueInMillis]];
+        mutableDictionary[@"loadingTimeEnd"] = [NSString stringWithFormat:@"%@", [loadingTimeEnd numberValueInMillis]];
+        mutableDictionary[@"loadingTimeDuration"] = [NSString stringWithFormat:@"%@", [loadingTimeEnd numberValueInMillisFromDate:message.responseTimestamp]];
         mutableDictionary[@"campaignId"] = message.campaignId;
 
         _data = [NSDictionary dictionaryWithDictionary:mutableDictionary];
@@ -38,7 +38,7 @@
 - (void)setOnScreenTimeStart:(NSDate *)onScreenTimeStart {
     NSParameterAssert(onScreenTimeStart);
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:self.data];
-    mutableDictionary[@"onScreenTimeStart"] = [onScreenTimeStart numberValueInMillis];
+    mutableDictionary[@"onScreenTimeStart"] = [NSString stringWithFormat:@"%@", [onScreenTimeStart numberValueInMillis]];
 
     _data = [NSDictionary dictionaryWithDictionary:mutableDictionary];
 
@@ -47,8 +47,8 @@
 - (void)setOnScreenTimeEnd:(NSDate *)onScreenTimeEnd {
     NSParameterAssert(onScreenTimeEnd);
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:self.data];
-    mutableDictionary[@"onScreenTimeEnd"] = [onScreenTimeEnd numberValueInMillis];
-    mutableDictionary[@"onScreenTimeDuration"] = @([[onScreenTimeEnd numberValueInMillis] intValue] - [mutableDictionary[@"onScreenTimeStart"] intValue]);
+    mutableDictionary[@"onScreenTimeEnd"] = [NSString stringWithFormat:@"%@", [onScreenTimeEnd numberValueInMillis]];
+    mutableDictionary[@"onScreenTimeDuration"] = [NSString stringWithFormat:@"%@", @([[onScreenTimeEnd numberValueInMillis] intValue] - [mutableDictionary[@"onScreenTimeStart"] intValue])];
 
     _data = [NSDictionary dictionaryWithDictionary:mutableDictionary];
 }

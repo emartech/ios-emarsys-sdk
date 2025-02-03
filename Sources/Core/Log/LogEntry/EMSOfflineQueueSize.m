@@ -1,12 +1,11 @@
 //
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
-#import <Social/Social.h>
 #import "EMSOfflineQueueSize.h"
 
 @interface EMSOfflineQueueSize ()
 
-@property(nonatomic, strong) NSDictionary<NSString *, id> *data;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 
 @end
 
@@ -15,7 +14,7 @@
 - (instancetype)initWithQueueSize:(NSUInteger)queueSize {
     if (self = [super init]) {
         NSMutableDictionary *mutableData = [NSMutableDictionary dictionary];
-        mutableData[@"offlineQueueSize"] = @(queueSize);
+        mutableData[@"offlineQueueSize"] = [NSString stringWithFormat:@"%@", @(queueSize)];
         _data = [NSDictionary dictionaryWithDictionary:mutableData];
     }
     return self;

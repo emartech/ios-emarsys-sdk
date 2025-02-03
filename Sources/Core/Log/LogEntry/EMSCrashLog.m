@@ -6,7 +6,7 @@
 
 @interface EMSCrashLog ()
 
-@property(nonatomic, strong) NSDictionary<NSString *, id> *data;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 
 @end
 
@@ -16,14 +16,27 @@
     NSParameterAssert(exception);
     NSMutableDictionary *crashInfos = [NSMutableDictionary dictionary];
     if (self = [super init]) {
-        crashInfos[@"exception"] = exception.name;
-        crashInfos[@"stackTrace"] = exception.callStackSymbols;
+        NSString *exceptionName = nil;
+        if (exception.name) {
+            exceptionName = [NSString stringWithFormat:@"%@", exception.name ];
+        }
+        crashInfos[@"exception"] = exceptionName;
+        NSString *stackTrace = nil;
+        if (exception.callStackSymbols) {
+            NSMutableString *callStackSymbols = [[NSMutableString alloc] init];
+            for (NSString *line in exception.callStackSymbols) {
+                [callStackSymbols appendString:line];
+                [callStackSymbols appendString:@"\n"];
+            }
+            stackTrace = [NSString stringWithString:callStackSymbols];
+        }
+        crashInfos[@"stackTrace"] = stackTrace;
     }
     if (exception.reason) {
         crashInfos[@"reason"] = exception.reason;
     }
     if (exception.userInfo) {
-        crashInfos[@"userInfo"] = exception.userInfo;
+        crashInfos[@"userInfo"] = [NSString stringWithFormat:@"%@", exception.userInfo];
     }
     _data = [NSDictionary dictionaryWithDictionary:crashInfos];
     return self;

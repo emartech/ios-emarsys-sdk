@@ -7,6 +7,6 @@
 
 - (NSString *)topic;
 
-- (NSDictionary<NSString *, id> *)data;
+- (NSDictionary<NSString *, NSString *> *)data;
 
 @end
