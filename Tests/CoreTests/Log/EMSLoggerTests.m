@@ -16,6 +16,7 @@
 #import "EMSStorageProtocol.h"
 #import "EmarsysTestUtils.h"
 #import "EMSMethodNotAllowed.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -217,7 +218,8 @@
     OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
                                                   additionalData:(@{
                                                           @"queue": @"testRunnerQueue",
-                                                          @"wrapper": @"testWrapper"
+                                                          @"wrapper": @"testWrapper",
+                                                          @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]])
                                                   })]]);
 }
 
@@ -378,6 +380,7 @@
     mutableData[@"level"] = @"INFO";
     mutableData[@"queue"] = @"testRunnerQueue";
     mutableData[@"wrapper"] = @"testWrapper";
+    mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]];
 
     OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
                                                                       type:@"app:start"
@@ -429,6 +432,7 @@
     mutableData[@"level"] = @"INFO";
     mutableData[@"queue"] = @"testRunnerQueue";
     mutableData[@"wrapper"] = @"testWrapper";
+    mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]];
 
     OCMVerify([partialMockRepository add:[[EMSShard alloc] initWithShardId:self.shardId
                                                                       type:@"testTopic"

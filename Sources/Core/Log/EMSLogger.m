@@ -14,6 +14,7 @@
 #import "EMSWrapperChecker.h"
 #import "EMSStorageProtocol.h"
 #import "EMSMethodNotAllowed.h"
+#import "NSDate+EMSCore.h"
 
 @interface EMSLogger ()
 
@@ -77,6 +78,7 @@
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
                         mutableData[@"level"] = [weakSelf logLevelStringFromLogLevel:level];
                         mutableData[@"queue"] = currentQueue;
+                        mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[[self.timestampProvider provideTimestamp] numberValueInMillis]];
                         if (![weakSelf.wrapperChecker.wrapper isEqualToString:@"none"]) {
                             mutableData[@"wrapper"] = weakSelf.wrapperChecker.wrapper;
                         }
