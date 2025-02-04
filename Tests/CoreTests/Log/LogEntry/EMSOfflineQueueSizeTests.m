@@ -18,7 +18,7 @@
 
 - (void)testData {
     NSDictionary *expectedData = @{
-        @"offlineQueueSize": @1,
+        @"offlineQueueSize": @"1",
     };
 
     EMSOfflineQueueSize *queueSize = [[EMSOfflineQueueSize alloc] initWithQueueSize:1];

@@ -8,6 +8,7 @@
 @interface EMSInAppLog ()
 
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
+@property(nonatomic, strong) NSNumber *onScreenTimeStartValue;
 
 @end
 
@@ -38,7 +39,8 @@
 - (void)setOnScreenTimeStart:(NSDate *)onScreenTimeStart {
     NSParameterAssert(onScreenTimeStart);
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:self.data];
-    mutableDictionary[@"onScreenTimeStart"] = [NSString stringWithFormat:@"%@", [onScreenTimeStart numberValueInMillis]];
+    self.onScreenTimeStartValue = [onScreenTimeStart numberValueInMillis];
+    mutableDictionary[@"onScreenTimeStart"] = [NSString stringWithFormat:@"%@", self.onScreenTimeStartValue];
 
     _data = [NSDictionary dictionaryWithDictionary:mutableDictionary];
 
@@ -48,7 +50,8 @@
     NSParameterAssert(onScreenTimeEnd);
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:self.data];
     mutableDictionary[@"onScreenTimeEnd"] = [NSString stringWithFormat:@"%@", [onScreenTimeEnd numberValueInMillis]];
-    mutableDictionary[@"onScreenTimeDuration"] = [NSString stringWithFormat:@"%@", @([[onScreenTimeEnd numberValueInMillis] intValue] - [mutableDictionary[@"onScreenTimeStart"] intValue])];
+    
+    mutableDictionary[@"onScreenTimeDuration"] = [NSString stringWithFormat:@"%@", @([[onScreenTimeEnd numberValueInMillis] intValue] - [self.onScreenTimeStartValue intValue])];
 
     _data = [NSDictionary dictionaryWithDictionary:mutableDictionary];
 }

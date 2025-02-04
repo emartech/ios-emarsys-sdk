@@ -41,9 +41,9 @@
         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
         parameters[@"shardId"] = shardId;
         parameters[@"type"] = type;
-        parameters[@"data"] = data;
+        parameters[@"data"] = [data asJSONString];
         parameters[@"timestamp"] = [timestamp description];
-        parameters[@"expiry"] = @(ttl);
+        parameters[@"expiry"] = [NSString stringWithFormat:@"%@", @(ttl)];
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parameters]

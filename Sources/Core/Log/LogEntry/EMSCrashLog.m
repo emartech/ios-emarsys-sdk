@@ -35,9 +35,26 @@
     if (exception.reason) {
         crashInfos[@"reason"] = exception.reason;
     }
+    NSString *jsonUserInfo = nil;
     if (exception.userInfo) {
-        crashInfos[@"userInfo"] = [NSString stringWithFormat:@"%@", exception.userInfo];
+        NSError *error;
+        @try {
+            NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:exception.userInfo
+                                                                   options:NSJSONWritingPrettyPrinted
+                                                                     error:&error];
+            if (userInfoData) {
+                jsonUserInfo = [[NSString alloc] initWithData:userInfoData
+                                                     encoding:NSUTF8StringEncoding];
+            }
+        } @catch (NSException *exception) {
+            crashInfos[@"userInfoJsonException"] = exception.reason;
+        } @finally {
+            if (error) {
+                crashInfos[@"userInfoJsonError"] = error.description;
+            }
+        }
     }
+    crashInfos[@"userInfo"] = jsonUserInfo;
     _data = [NSDictionary dictionaryWithDictionary:crashInfos];
     return self;
 }

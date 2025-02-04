@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)dictionaryWithAllowedTypes:(NSSet<Class> *)allowedTypes;
 
+- (nullable NSString *)asJSONString;
+
 @end
 
 NS_ASSUME_NONNULL_END

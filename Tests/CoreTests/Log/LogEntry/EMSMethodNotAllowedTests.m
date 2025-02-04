@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "EMSMethodNotAllowed.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSMethodNotAllowedTests : XCTestCase
 
@@ -66,7 +67,7 @@
     NSDictionary *expectedDataDictionary = @{
         @"className": @"NSObject",
         @"methodName": @"testData",
-        @"parameters": @{@"param1": @"value1"}
+        @"parameters": [@{@"param1": @"value1"} asJSONString]
     };
     EMSMethodNotAllowed *methodNotAllowed = [[EMSMethodNotAllowed alloc] initWithClass:[NSObject class]
                                                                                    sel:_cmd

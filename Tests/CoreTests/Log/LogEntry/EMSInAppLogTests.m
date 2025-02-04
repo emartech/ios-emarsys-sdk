@@ -90,12 +90,12 @@
     [self.inappLog setOnScreenTimeEnd:self.onScreenTimeEnd];
 
     XCTAssertNotNil(self.inappLog.data[@"requestId"]);
-    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeStart"], [self.loadingTimeStart numberValueInMillis]);
-    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeEnd"], [self.loadingTimeEnd numberValueInMillis]);
-    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeDuration"], [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart]);
-    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeStart"], [self.onScreenTimeStart numberValueInMillis]);
-    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeEnd"], [self.onScreenTimeEnd numberValueInMillis]);
-    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeDuration"], [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart]);
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeStart"], ([NSString stringWithFormat:@"%@", [self.loadingTimeStart numberValueInMillis]]));
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeEnd"], ([NSString stringWithFormat:@"%@", [self.loadingTimeEnd numberValueInMillis]]));
+    XCTAssertEqualObjects(self.inappLog.data[@"loadingTimeDuration"], ([NSString stringWithFormat:@"%@", [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart]]));
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeStart"], ([NSString stringWithFormat:@"%@", [self.onScreenTimeStart numberValueInMillis]]));
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeEnd"], ([NSString stringWithFormat:@"%@", [self.onScreenTimeEnd numberValueInMillis]]));
+    XCTAssertEqualObjects(self.inappLog.data[@"onScreenTimeDuration"], ([NSString stringWithFormat:@"%@", [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart]]));
     XCTAssertEqualObjects(self.inappLog.data[@"campaignId"], self.inAppMessage.campaignId);
 }
 
@@ -116,12 +116,12 @@
                                                   loadingTimeEnd:self.loadingTimeEnd];
     NSDictionary *expectedData = @{
             @"requestId": @"testRequestId",
-            @"loadingTimeStart": [self.loadingTimeStart numberValueInMillis],
-            @"loadingTimeEnd": [self.loadingTimeEnd numberValueInMillis],
-            @"loadingTimeDuration": [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart],
-            @"onScreenTimeStart": [self.onScreenTimeStart numberValueInMillis],
-            @"onScreenTimeEnd": [self.onScreenTimeEnd numberValueInMillis],
-            @"onScreenTimeDuration": [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart],
+            @"loadingTimeStart": ([NSString stringWithFormat:@"%@", [self.loadingTimeStart numberValueInMillis]]),
+            @"loadingTimeEnd": ([NSString stringWithFormat:@"%@", [self.loadingTimeEnd numberValueInMillis]]),
+            @"loadingTimeDuration": ([NSString stringWithFormat:@"%@", [self.loadingTimeEnd numberValueInMillisFromDate:self.loadingTimeStart]]),
+            @"onScreenTimeStart": ([NSString stringWithFormat:@"%@", [self.onScreenTimeStart numberValueInMillis]]),
+            @"onScreenTimeEnd": ([NSString stringWithFormat:@"%@", [self.onScreenTimeEnd numberValueInMillis]]),
+            @"onScreenTimeDuration": ([NSString stringWithFormat:@"%@", [self.onScreenTimeEnd numberValueInMillisFromDate:self.onScreenTimeStart]]),
             @"campaignId": self.inAppMessage.campaignId
     };
 

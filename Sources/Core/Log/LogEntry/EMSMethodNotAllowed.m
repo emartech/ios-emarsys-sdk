@@ -45,16 +45,21 @@
         NSString *jsonParameters = nil;
         if (parameters) {
             NSError *error;
-            NSData *parametersData = [NSJSONSerialization dataWithJSONObject:parameters
-                                                                     options:NSJSONWritingPrettyPrinted
-                                                                       error:&error];
+            @try {
+                NSData *parametersData = [NSJSONSerialization dataWithJSONObject:parameters
+                                                                         options:NSJSONWritingPrettyPrinted
+                                                                           error:&error];
 
-            if (parametersData) {
-                jsonParameters = [[NSString alloc] initWithData:parametersData
-                                                       encoding:NSUTF8StringEncoding];
-            }
-            if (error) {
-                mutableData[@"parametersJsonError"] = error.description;
+                if (parametersData) {
+                    jsonParameters = [[NSString alloc] initWithData:parametersData
+                                                           encoding:NSUTF8StringEncoding];
+                }
+            } @catch (NSException *exception) {
+                mutableData[@"parametersJsonException"] = exception.reason;
+            } @finally {
+                if (error) {
+                    mutableData[@"parametersJsonError"] = error.description;
+                }
             }
         }
         mutableData[@"parameters"] = jsonParameters;

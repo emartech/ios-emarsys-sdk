@@ -34,31 +34,41 @@
         NSString *jsonHeaders = nil;
         if (headers) {
             NSError *error;
-            NSData *headersData = [NSJSONSerialization dataWithJSONObject:headers
-                                                                 options:NSJSONWritingPrettyPrinted
-                                                                   error:&error];
-            if (headersData) {
-                jsonHeaders = [[NSString alloc] initWithData:headersData
-                                                    encoding:NSUTF8StringEncoding];
-            }
-            if (error) {
-                mutableData[@"headersJsonError"] = error.description;
+            @try {
+                NSData *headersData = [NSJSONSerialization dataWithJSONObject:headers
+                                                                     options:NSJSONWritingPrettyPrinted
+                                                                       error:&error];
+                if (headersData) {
+                    jsonHeaders = [[NSString alloc] initWithData:headersData
+                                                        encoding:NSUTF8StringEncoding];
+                }
+            } @catch (NSException *exception) {
+                mutableData[@"headersJsonException"] = exception.reason;
+            } @finally {
+                if (error) {
+                    mutableData[@"headersJsonError"] = error.description;
+                }
             }
         }
         mutableData[@"headers"] = jsonHeaders;
         NSString *jsonPayload = nil;
         if (payload) {
             NSError *error;
-            NSData *payloadData = [NSJSONSerialization dataWithJSONObject:payload
-                                                                  options:NSJSONWritingPrettyPrinted
-                                                                    error:&error];
+            @try {
+                NSData *payloadData = [NSJSONSerialization dataWithJSONObject:payload
+                                                                      options:NSJSONWritingPrettyPrinted
+                                                                        error:&error];
 
-            if (payloadData) {
-                jsonPayload = [[NSString alloc] initWithData:payloadData
-                                                    encoding:NSUTF8StringEncoding];
-            }
-            if (error) {
-                mutableData[@"payloadJsonError"] = error.description;
+                if (payloadData) {
+                    jsonPayload = [[NSString alloc] initWithData:payloadData
+                                                        encoding:NSUTF8StringEncoding];
+                }
+            } @catch (NSException *exception) {
+                mutableData[@"payloadJsonException"] = exception.reason;
+            } @finally {
+                if (error) {
+                    mutableData[@"payloadJsonError"] = error.description;
+                }
             }
         }
         mutableData[@"payload"] = jsonPayload;
