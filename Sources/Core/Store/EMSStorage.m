@@ -12,8 +12,9 @@
 @property(nonatomic, strong) NSUserDefaults *fallbackUserDefaults;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 
-- (NSMutableDictionary *)createQueryWithKey:(NSString *)key
-                                accessGroup:(nullable NSString *)accessGroup;
+- (OSStatus)createValue:(NSData *)value
+                 forKey:(NSString *)key
+        withAccessGroup:(nullable NSString *)accessGroup;
 
 - (nullable NSData *)readValueForKey:(NSString *)key
                      withAccessGroup:(nullable NSString *)accessGroup;
@@ -25,6 +26,10 @@
 - (OSStatus)deleteValueForKey:(NSString *)key
               withAccessGroup:(nullable NSString *)accessGroup;
 
+
+- (NSMutableDictionary *)createQueryWithKey:(NSString *)key
+                                accessGroup:(nullable NSString *)accessGroup;
+
 - (NSMutableDictionary *)appendAccessModifierToQuery:(NSMutableDictionary *)query;
 
 - (NSMutableDictionary *)appendResultAttributesToQuery:(NSMutableDictionary *)query;
@@ -32,9 +37,11 @@
 - (NSMutableDictionary *)appendValueToQuery:(NSMutableDictionary *)query
                                       value:(NSData *)value;
 
-- (OSStatus)createValue:(NSData *)value
-                 forKey:(NSString *)key
-        withAccessGroup:(nullable NSString *)accessGroup;
+
+- (OSStatus)duplicateItemRemovingMethodExecution:(NSData *)value
+                                             key:(NSString *)key
+                                     accessGroup:(nullable NSString *)accessGroup
+                                     methodBlock:(OSStatus(^)(NSData *value, NSString *key,  NSString * _Nullable accessGroup))methodBlock;
 
 @end
 
@@ -364,15 +371,21 @@ forKeyedSubscript:(NSString *)key {
 - (OSStatus)createValue:(NSData *)value
                  forKey:(NSString *)key
         withAccessGroup:(nullable NSString *)accessGroup {
-    OSStatus result;
-    NSMutableDictionary *mutableQuery = [self createQueryWithKey:key
-                                                     accessGroup:accessGroup];
-    mutableQuery = [self appendAccessModifierToQuery:mutableQuery];
-    mutableQuery = [self appendValueToQuery:mutableQuery
-                                      value:value];
-    NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
-    result = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
-    return result;
+    __weak typeof(self) weakSelf = self;
+    return [self duplicateItemRemovingMethodExecution:value
+                                                  key:key
+                                          accessGroup:accessGroup
+                                          methodBlock:^OSStatus(NSData *value, NSString *key, NSString * _Nullable accessGroup) {
+        OSStatus result;
+        NSMutableDictionary *mutableQuery = [weakSelf createQueryWithKey:key
+                                                             accessGroup:accessGroup];
+        mutableQuery = [weakSelf appendAccessModifierToQuery:mutableQuery];
+        mutableQuery = [weakSelf appendValueToQuery:mutableQuery
+                                              value:value];
+        NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
+        result = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
+        return result;
+    }];
 }
 
 - (nullable NSData *)readValueForKey:(NSString *)key
@@ -388,8 +401,20 @@ forKeyedSubscript:(NSString *)key {
     if (status == errSecSuccess) {
         NSDictionary *resultDict = (__bridge NSDictionary *) resultRef;
         NSString *returnedAccessGroup = resultDict[(id) kSecAttrAccessGroup];
-        if ((!accessGroup && ![returnedAccessGroup isEqual:accessGroup]) || (accessGroup && [accessGroup isEqual:returnedAccessGroup])) {
+        if ((accessGroup && [returnedAccessGroup isEqual:accessGroup]) || !accessGroup) {
             result = resultDict[(id) kSecValueData];
+        } else {
+            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+            parameters[@"key"] = key;
+            parameters[@"accessGroup"] = accessGroup;
+            NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+            statusDict[@"osStatus"] = [NSString stringWithFormat:@"%d", status];
+            statusDict[@"returnedAccessGroup"] = returnedAccessGroup;
+            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                     sel:_cmd
+                                                              parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                                  status:[NSDictionary dictionaryWithDictionary:statusDict]];
+            EMSLog(logEntry, LogLevelError);
         }
     }
     if (resultRef) {
@@ -401,14 +426,20 @@ forKeyedSubscript:(NSString *)key {
 - (OSStatus)updateValue:(NSData *)value
                  forKey:(NSString *)key
         withAccessGroup:(nullable NSString *)accessGroup {
-    OSStatus result;
-    NSDictionary *query = [self createQueryWithKey:key
-                                       accessGroup:accessGroup];
-    NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
-    attributesDictionary = [self appendValueToQuery:attributesDictionary
-                                              value:value];
-    result = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) attributesDictionary);
-    return result;
+    __weak typeof(self) weakSelf = self;
+    return [self duplicateItemRemovingMethodExecution:value
+                                                  key:key
+                                          accessGroup:accessGroup
+                                          methodBlock:^OSStatus(NSData *value, NSString *key, NSString * _Nullable accessGroup) {
+        OSStatus result;
+        NSDictionary *query = [weakSelf createQueryWithKey:key
+                                               accessGroup:accessGroup];
+        NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
+        attributesDictionary = [weakSelf appendValueToQuery:attributesDictionary
+                                                      value:value];
+        result = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) attributesDictionary);
+        return result;
+    }];
 }
 
 - (OSStatus)deleteValueForKey:(NSString *)key
@@ -418,6 +449,34 @@ forKeyedSubscript:(NSString *)key {
                                                      accessGroup:accessGroup];
     NSDictionary *query = [NSDictionary dictionaryWithDictionary:mutableQuery];
     result = SecItemDelete((__bridge CFDictionaryRef) query);
+    return result;
+}
+
+- (OSStatus)duplicateItemRemovingMethodExecution:(NSData *)value
+                                             key:(NSString *)key
+                                     accessGroup:(nullable NSString *)accessGroup
+                                     methodBlock:(OSStatus(^)(NSData *value, NSString *key,  NSString * _Nullable accessGroup))methodBlock {
+    OSStatus result = methodBlock(value, key, accessGroup);
+    if (result == errSecDuplicateItem) {
+        OSStatus deleteResult = [self deleteValueForKey:key
+                                        withAccessGroup:accessGroup];
+        if (deleteResult == errSecSuccess) {
+            result = methodBlock(value, key, accessGroup);
+        } else {
+            NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+            parameters[@"key"] = key;
+            parameters[@"value"] = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+            parameters[@"accessGroup"] = accessGroup;
+            NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
+            statusDict[@"deleteOsStatus"] = [NSString stringWithFormat:@"%d", deleteResult];
+            statusDict[@"osStatus"] = [NSString stringWithFormat:@"%d", result];;
+            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                     sel:_cmd
+                                                              parameters:[NSDictionary dictionaryWithDictionary:parameters]
+                                                                  status:[NSDictionary dictionaryWithDictionary:statusDict]];
+            EMSLog(logEntry, LogLevelError);
+        }
+    }
     return result;
 }
 
