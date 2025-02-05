@@ -112,6 +112,7 @@
             @"hwId": @"hardwareId",
             @"applicationCode": _applicationCode,
             @"merchantId": _merchantId,
+            @"isDebugMode": @"true"
     };
 
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -164,6 +165,7 @@
             @"model": @"deviceModel",
             @"hwId": @"hardwareId",
             @"applicationCode": _applicationCode,
+            @"isDebugMode": @"true"
     };
 
     EMSLogMapper *logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:self.applicationCode merchantId:nil];
