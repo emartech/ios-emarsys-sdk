@@ -130,9 +130,9 @@
 - (void)setNumber:(nullable NSNumber *)number
            forKey:(NSString *)key {
     NSError *error;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:number
-                                         requiringSecureCoding:NO
-                                                         error:&error];
+    NSString *numberString = [number stringValue];
+    NSData *data = [numberString dataUsingEncoding:NSUTF8StringEncoding];
+
     if (error) {
         NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
         parameterDictionary[@"number"] = number;
@@ -191,9 +191,9 @@
                 userDefaultsValue = [userDefaultsValue dataUsingEncoding:NSUTF8StringEncoding];
             } else if ([userDefaultsValue isKindOfClass:[NSNumber class]]) {
                 NSError *error;
-                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue
-                                                          requiringSecureCoding:NO
-                                                                          error:&error];
+                NSString *stringValue = [userDefaultsValue stringValue];
+                userDefaultsValue = [stringValue dataUsingEncoding: NSUTF8StringEncoding];
+
                 if (error) {
                     NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
                     parameterDictionary[@"userDefaultsValue"] = userDefaultsValue;
@@ -267,9 +267,16 @@
 - (nullable NSNumber *)numberForKey:(NSString *)key {
     NSData *data = [self dataForKey:key];
     NSError *error;
-    NSNumber *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
-                                                           fromData:data
-                                                              error:&error];;
+    NSNumber *result = nil;
+    if (data) {
+        NSString *numberString = [[NSString alloc] initWithData:data
+                                                       encoding:NSUTF8StringEncoding];
+
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.numberStyle = NSNumberFormatterDecimalStyle;
+        result = [formatter numberFromString:numberString];
+    }
+
     if (error) {
         NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
         parameterDictionary[@"key"] = key;

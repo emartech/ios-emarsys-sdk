@@ -218,9 +218,9 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testDataForKey_should_returnAndDeleteUserDefaultsValue_when_missingFromKeychain_withNumber {
     NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:self.suiteNames[1]];
     EMSStorage *mockStorage = OCMPartialMock(self.storage);
-    NSData *numberData = [NSKeyedArchiver archivedDataWithRootObject:self.testNumber
-                                               requiringSecureCoding:NO
-                                                               error:nil];
+
+    NSString *numberString = [self.testNumber stringValue];
+    NSData *numberStringData = [numberString dataUsingEncoding:NSUTF8StringEncoding];
 
     [userDefaults setObject:self.testNumber
                      forKey:kTestKey];
@@ -229,9 +229,9 @@ static NSString *const kTestValue2String = @"testValue2";
 
     NSData *userDefaultsResult = [userDefaults dataForKey:kTestKey];
 
-    OCMVerify([mockStorage setData:numberData
+    OCMVerify([mockStorage setData:numberStringData
                             forKey:kTestKey];);
-    XCTAssertEqualObjects(result, numberData);
+    XCTAssertEqualObjects(result, numberStringData);
     XCTAssertNil(userDefaultsResult);
 }
 
@@ -290,12 +290,28 @@ static NSString *const kTestValue2String = @"testValue2";
 - (void)testSetNumberForKey {
     [self.storage setNumber:self.testNumber
                      forKey:kTestKey];
-
-    NSNumber *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSDictionary class], [NSString class], [NSNumber class], [NSArray class], [NSNull class]]]
-                                                           fromData:self.storage[kTestKey]
-                                                              error:nil];
+    
+    NSNumber *result = [self.storage numberForKey:kTestKey];
 
     XCTAssertEqualObjects(result, self.testNumber);
+}
+
+- (void)testSetNumberForKey_withBoolValue {
+    [self.storage setNumber:@(NO)
+                     forKey:kTestKey];
+
+    NSNumber *result = [self.storage numberForKey:kTestKey];
+
+    XCTAssertEqual([result boolValue], NO);
+}
+
+- (void)testSetNumberForKey_withNil {
+    [self.storage setNumber:nil
+                     forKey:kTestKey];
+
+    NSNumber *result = [self.storage numberForKey:kTestKey];
+
+    XCTAssertNil(result);
 }
 
 - (void)testNumberForKey {
