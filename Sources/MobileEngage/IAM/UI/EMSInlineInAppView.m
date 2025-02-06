@@ -96,8 +96,11 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self addSubview:self.webView];
-    [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    if (self.webView) {
+        [self addSubview:self.webView];
+        [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    }
 
     NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.webView
                                                            attribute:NSLayoutAttributeTop
