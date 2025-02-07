@@ -100,40 +100,41 @@
     if (self.webView) {
         [self addSubview:self.webView];
         [self.webView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    }
-
-    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.webView
-                                                           attribute:NSLayoutAttributeTop
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:self
-                                                           attribute:NSLayoutAttributeTop
-                                                          multiplier:1
-                                                            constant:0];
-    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.webView
-                                                              attribute:NSLayoutAttributeBottom
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1
-                                                               constant:0];
-    NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:self.webView
-                                                               attribute:NSLayoutAttributeLeading
+        
+        
+        NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.webView
+                                                               attribute:NSLayoutAttributeTop
                                                                relatedBy:NSLayoutRelationEqual
                                                                   toItem:self
-                                                               attribute:NSLayoutAttributeLeading
+                                                               attribute:NSLayoutAttributeTop
                                                               multiplier:1
                                                                 constant:0];
-    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:self.webView
-                                                                attribute:NSLayoutAttributeTrailing
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:self
-                                                                attribute:NSLayoutAttributeTrailing
-                                                               multiplier:1
-                                                                 constant:0];
-
-
-    [NSLayoutConstraint activateConstraints:@[top, bottom, leading, trailing, self.selfHeightConstraint]];
-    [self layoutIfNeeded];
+        NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.webView
+                                                                  attribute:NSLayoutAttributeBottom
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:self
+                                                                  attribute:NSLayoutAttributeBottom
+                                                                 multiplier:1
+                                                                   constant:0];
+        NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:self.webView
+                                                                   attribute:NSLayoutAttributeLeading
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self
+                                                                   attribute:NSLayoutAttributeLeading
+                                                                  multiplier:1
+                                                                    constant:0];
+        NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:self.webView
+                                                                    attribute:NSLayoutAttributeTrailing
+                                                                    relatedBy:NSLayoutRelationEqual
+                                                                       toItem:self
+                                                                    attribute:NSLayoutAttributeTrailing
+                                                                   multiplier:1
+                                                                     constant:0];
+        
+        
+        [NSLayoutConstraint activateConstraints:@[top, bottom, leading, trailing, self.selfHeightConstraint]];
+        [self layoutIfNeeded];
+    }
 }
 
 - (void)awakeFromNib {
