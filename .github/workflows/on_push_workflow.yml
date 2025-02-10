@@ -11,11 +11,14 @@ jobs:
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
+      - name: Erase simulator
+        run: xcrun simctl erase "iPhone 16 Pro"
+        shell: bash
       - name: Install Dependencies
         run: pod install --no-repo-update --verbose
         shell: bash
       - name: Build And Test
-        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.0' -derivedDataPath ~/tmp test -quiet
+        run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16 Pro' -derivedDataPath ~/tmp test -quiet
         shell: bash
       - name: Trigger Sample App Build
         uses: peter-evans/repository-dispatch@v1
