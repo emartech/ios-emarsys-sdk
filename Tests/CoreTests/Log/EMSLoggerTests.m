@@ -17,6 +17,8 @@
 #import "EmarsysTestUtils.h"
 #import "EMSMethodNotAllowed.h"
 #import "NSDate+EMSCore.h"
+#import "EMSStatusLog.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSLoggerTests : XCTestCase
 
@@ -41,28 +43,28 @@
 - (void)setUp {
     _topic = @"general_topic";
     _data = @{
-            @"key1": @"value1"
+        @"key1": @"value1"
     };
     _timestamp = [NSDate date];
     _shardId = @"shardId";
-
+    
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     OCMStub([self.mockTimestampProvider provideTimestamp]).andReturn(self.timestamp);
     _mockUuidProvider = OCMClassMock([EMSUUIDProvider class]);
     OCMStub([self.mockUuidProvider provideUUIDString]).andReturn(self.shardId);
     _mockStorage = OCMClassMock([EMSStorage class]);
     OCMStub([self.mockStorage numberForKey:@"EMSLogLevelKey"]).andReturn(@(LogLevelDebug));
-
+    
     _mockWrapperChecker = OCMClassMock([EMSWrapperChecker class]);
     OCMStub([self.mockWrapperChecker wrapper]).andReturn(@"testWrapper");
-
+    
     id logEntry = OCMProtocolMock(@protocol(EMSLogEntryProtocol));
-
+    
     OCMStub([logEntry data]).andReturn(self.data);
     OCMStub([logEntry topic]).andReturn(self.topic);
-
+    
     _mockLogEntry = logEntry;
-
+    
     _operationQueue = [NSOperationQueue new];
     self.operationQueue.name = @"operationQueueForTesting";
     _runnerQueue = [NSOperationQueue new];
@@ -221,6 +223,106 @@
                                                           @"wrapper": @"testWrapper",
                                                           @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]])
                                                   })]]);
+}
+
+- (void)testLogShouldInsertEntryToShardRepository_withBreadcrumbs {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    EMSStorage *mockStorage = OCMClassMock([EMSStorage class]);
+    OCMStub([mockStorage numberForKey:@"EMSLogLevelKey"]).andReturn(@(LogLevelInfo));
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:mockStorage
+                                                    wrapperChecker:self.mockWrapperChecker];
+    
+    EMSStatusLog *infoLog = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                            sel:_cmd
+                                                     parameters:@{@"key": @"value"}
+                                                         status:nil];
+    [logger log:infoLog level:LogLevelDebug];
+    
+    NSMutableDictionary* expectedBreadcrumbDict = [[infoLog data] mutableCopy];
+    expectedBreadcrumbDict[@"topic"] = [infoLog topic];
+
+    NSString *expectedBreadcrumb = [[[NSDictionary alloc] initWithDictionary:expectedBreadcrumbDict] asJSONString];
+
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:self.mockLogEntry
+              level:LogLevelError];
+    }];
+
+    [EMSWaiter waitForExpectations:@[expectation]];
+    NSDictionary *expectedAdditionalData = @{
+        @"queue": @"testRunnerQueue",
+        @"wrapper": @"testWrapper",
+        @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]]),
+        @"breadcrumbs": @[expectedBreadcrumb]
+    };
+
+    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
+                                                  additionalData:(expectedAdditionalData)]]);
+}
+
+- (void)testLogShouldInsertEntryToShardRepository_withCorrectBreadcrumbs {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletion"];
+    EMSStorage *mockStorage = OCMClassMock([EMSStorage class]);
+    OCMStub([mockStorage numberForKey:@"EMSLogLevelKey"]).andReturn(@(LogLevelInfo));
+
+    FakeShardRepository *shardRepository = [[FakeShardRepository alloc] initWithCompletionBlock:^(NSOperationQueue *currentQueue) {
+        [expectation fulfill];
+    }];
+
+    EMSShardRepository *partialMockRepository = OCMPartialMock(shardRepository);
+
+    EMSLogger *logger = [[EMSLogger alloc] initWithShardRepository:partialMockRepository
+                                                    opertaionQueue:self.operationQueue
+                                                 timestampProvider:self.mockTimestampProvider
+                                                      uuidProvider:self.mockUuidProvider
+                                                           storage:mockStorage
+                                                    wrapperChecker:self.mockWrapperChecker];
+    
+    NSMutableArray *expectedBreadcrumbs = [self createBreadcrumbDataFor:logger];
+    [expectedBreadcrumbs removeLastObject];
+    [expectedBreadcrumbs removeLastObject];
+    [expectedBreadcrumbs removeLastObject];
+    
+    
+    EMSStatusLog *differentBreadcrumbLog = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                            sel:_cmd
+                                                     parameters:@{@"differentKey": @"differentValue"}
+                                                         status:nil];
+    
+    [logger log:differentBreadcrumbLog level:LogLevelDebug];
+    
+    NSMutableDictionary* differentLogDict = [[differentBreadcrumbLog data] mutableCopy];
+    differentLogDict[@"topic"] = [differentBreadcrumbLog topic];
+
+    NSString *differentLogString = [[[NSDictionary alloc] initWithDictionary:differentLogDict] asJSONString];
+    [expectedBreadcrumbs insertObject:differentLogString atIndex:0];
+
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:self.mockLogEntry
+              level:LogLevelError];
+    }];
+
+    [EMSWaiter waitForExpectations:@[expectation]];
+    NSDictionary *expectedAdditionalData = @{
+        @"queue": @"testRunnerQueue",
+        @"wrapper": @"testWrapper",
+        @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]]),
+        @"breadcrumbs": expectedBreadcrumbs
+    };
+
+    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
+                                                  additionalData:(expectedAdditionalData)]]);
 }
 
 - (void)testLogShouldNotInsertEntryToShardRepository {    
@@ -463,6 +565,23 @@
                                         data:[NSDictionary dictionaryWithDictionary:mutableData]
                                    timestamp:self.timestamp
                                          ttl:FLT_MAX];
+}
+
+- (NSMutableArray *)createBreadcrumbDataFor:(EMSLogger *)logger {
+    NSMutableArray *breadcrumbStrings = [NSMutableArray new];
+    for(int i = 0; i <12; i++) {
+        EMSStatusLog *infoLog = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                sel:_cmd
+                                                         parameters:@{@"key": [NSString stringWithFormat:@"value %d", i]}
+                                                             status:nil];
+        [logger log:infoLog level:LogLevelDebug];
+
+        NSMutableDictionary *logEntryData = [[infoLog data] mutableCopy];
+        logEntryData[@"topic"] = [infoLog topic];
+        
+        [breadcrumbStrings insertObject:[logEntryData asJSONString] atIndex:0];
+    }
+    return breadcrumbStrings;
 }
 
 @end
