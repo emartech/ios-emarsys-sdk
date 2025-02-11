@@ -245,12 +245,9 @@
     EMSLog(logEntry, LogLevelDebug);
 
     BOOL isAuthorized;
-    if (@available(iOS 14.0, *)) {
-        CLAuthorizationStatus status = [self.locationManager authorizationStatus];
-        isAuthorized = status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse;
-    } else {
-        isAuthorized = CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways || CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
-    }
+    CLAuthorizationStatus status = [self.locationManager authorizationStatus];
+    isAuthorized = status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse;
+
     if (isAuthorized) {
         self.recalculateable = YES;
         [self.locationManager setDelegate:self];
