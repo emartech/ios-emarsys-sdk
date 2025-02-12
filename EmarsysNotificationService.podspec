@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
 	spec.name                 = 'EmarsysNotificationService'
-	spec.version              = '3.7.3'
+	spec.version              = '3.7.4'
 	spec.homepage             = 'https://github.com/emartech/ios-emarsys-sdk'
 	spec.license              = 'Mozilla Public License 2.0'
     spec.author               = { 'Emarsys Technologies' => 'mobile-team@emarsys.com' }
