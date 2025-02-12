@@ -300,9 +300,12 @@
     self.meRequestContext.contactFieldId = contactFieldId;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (NSString *)hardwareId {
     return [self.deviceInfo clientId];
 }
+#pragma clang diagnostic pop
 
 - (NSString *)clientId {
     return [self.deviceInfo clientId];
