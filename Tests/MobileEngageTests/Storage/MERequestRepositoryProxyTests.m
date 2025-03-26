@@ -381,7 +381,7 @@ describe(@"MERequestRepositoryProxy", ^{
             [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:@{
-                @"hardware_id": deviceInfo.hardwareId,
+
                 @"viewedMessages": @[],
                 @"clicks": @[],
                 @"events": @[
@@ -416,7 +416,7 @@ describe(@"MERequestRepositoryProxy", ^{
             [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:@{
-                @"hardware_id": deviceInfo.hardwareId,
+
                 @"viewedMessages": @[],
                 @"clicks": @[],
                 @"events": @[
@@ -460,7 +460,7 @@ describe(@"MERequestRepositoryProxy", ^{
             [builder setUrl:@"https://mobile-events.eservice.emarsys.net/v3/apps/testAppplicationCode/client/events"];
             [builder setMethod:HTTPMethodPOST];
             [builder setPayload:@{
-                @"hardware_id": deviceInfo.hardwareId,
+
                 @"viewedMessages": @[],
                 @"clicks": @[],
                 @"events": @[

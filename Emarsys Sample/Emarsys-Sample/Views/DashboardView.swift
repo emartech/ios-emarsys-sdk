@@ -81,21 +81,18 @@ struct DashboardView: View {
                     Button(action: self.requestLocationPermission) {
                         Text("Request location permissions")
                     }
-                    HStack {
-                        Text("Enabled")
-                        Toggle("Enabled", isOn: $isGeofenceEnabled).labelsHidden().onTapGesture {
-                            if(self.isGeofenceEnabled) {
-                                Emarsys.geofence.disable()
-                            } else {
-                                Emarsys.geofence.enable()
-                            }
+                    Toggle(isOn: $isGeofenceEnabled) {
+                        HStack {
+                            Spacer()
+                            Text("Enabled").bold()
+                            Spacer()
                         }
                     }
                     Text("Registered geofences").bold()
                     Button(action: self.getRegisteredGeofences) {
                         Text("Get registered geofences")
                     }
-                }
+                }.padding()
                 
                 Divider().background(Color.black).padding(.horizontal)
                 
@@ -133,6 +130,13 @@ struct DashboardView: View {
                         }
                 }
                 .padding()
+            }
+        }
+        .onChange(of: self.isGeofenceEnabled) { newValue in
+            if(newValue) {
+                Emarsys.geofence.enable()
+            } else {
+                Emarsys.geofence.disable()
             }
         }
     }
@@ -265,7 +269,7 @@ struct DashboardView: View {
     }
     
     func getRegisteredGeofences() {
-        if (loginData.isLoggedIn == true && isGeofenceEnabled == true) {
+        if (isGeofenceEnabled == true) {
             let registeredGeofences = Emarsys.geofence.registeredGeofences()
             print(registeredGeofences)
         }

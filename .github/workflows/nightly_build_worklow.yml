@@ -4,7 +4,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: macos-13
+    runs-on: macos-15-xlarge
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
       - name: Run tests on Firebase
         uses: nick-invision/retry@v2
         with:
-          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone14pro,version=16.6,locale=en_GB --device model=iphone13pro,version=15.7,locale=en_GB --device model=iphone11pro,version=14.7,locale=en_GB
+          command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone13pro,version=16.6,locale=en_GB --device model=iphone8,version=15.7,locale=en_GB --device model=iphone12pro,version=14.8,locale=en_GB
           max_attempts: 3
           retry_on: error
           timeout_minutes: 30

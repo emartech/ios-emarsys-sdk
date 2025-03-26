@@ -27,7 +27,8 @@
 - (id)modelFromStatement:(sqlite3_stmt *)statement {
     NSString *requestId = [self mapToString:sqlite3_column_text(statement, 0)];
     NSString *method = [self mapToString:sqlite3_column_text(statement, 1)];
-    NSURL *url = [NSURL URLWithString:[self mapToString:sqlite3_column_text(statement, 2)]];
+    NSString *urlString = [self mapToString:sqlite3_column_text(statement, 2)];
+    NSURL *url = [NSURL URLWithString:urlString];
     NSDictionary<NSString *, NSString *> *headers;
     if ([self isNotNull:statement atIndex:3]) {
         headers = [NSDictionary dictionaryWithData:[self dataFromStatement:statement
@@ -45,8 +46,17 @@
         parameters[@"requestId"] = requestId;
         parameters[@"method"] = method;
         parameters[@"url"] = url;
+        parameters[@"urlString"] = urlString;
         parameters[@"timestamp"] = [timestamp description];
-        parameters[@"expiry"] = @(expiry);
+        parameters[@"expiry"] = [NSString stringWithFormat:@"%@", @(expiry)];
+        if (headers) {
+            parameters[@"headers_exists"] = @"YES";
+            parameters[@"headers"] = [headers asJSONString];
+        }
+        if (payload) {
+            parameters[@"payload_exists"] = @"YES";
+            parameters[@"payload"] = [payload asJSONString];
+        }
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parameters]

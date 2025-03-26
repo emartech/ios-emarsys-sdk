@@ -34,33 +34,33 @@ static dispatch_once_t once_token;
 
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
-dispatch_once(&once_token, ^{
-    if (config.applicationCode) {
-        [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
-        [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
-    }
-    if (config.merchantId) {
-        [MEExperimental enableFeature:EMSInnerFeature.predict];
-    }
 
-    [self initializeDefaultCategory];
-
-    [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
-
-    EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
-
-    [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
-        [Emarsys resetRequestContextOnReinstall];
-        [Emarsys registerAppStartBlock];
-        if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
-            [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
-            [dependencyContainer.contactClient setContactWithContactFieldId:nil
-                                                          contactFieldValue:nil];
+    dispatch_once(&once_token, ^{
+        if (config.applicationCode) {
+            [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+            [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
-                                                            object:nil];
-    }];
-    [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
+        if (config.merchantId) {
+            [MEExperimental enableFeature:EMSInnerFeature.predict];
+        }
+
+        [self initializeDefaultCategory];
+
+        [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
+
+        EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
+
+        [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
+            [Emarsys resetRequestContextOnReinstall];
+            [Emarsys registerAppStartBlock];
+            if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
+                [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
+                [dependencyContainer.contactClient clearContact];
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
+                                                                object:nil];
+        }];
+        [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
     });
 }
 

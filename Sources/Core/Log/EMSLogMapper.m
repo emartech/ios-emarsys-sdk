@@ -40,9 +40,14 @@
                 mutableDeviceInfoDictionary[@"sdkVersion"] = deviceInfo.sdkVersion;
                 mutableDeviceInfoDictionary[@"osVersion"] = deviceInfo.osVersion;
                 mutableDeviceInfoDictionary[@"model"] = deviceInfo.deviceModel;
-                mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.hardwareId;
+                mutableDeviceInfoDictionary[@"hwId"] = deviceInfo.clientId;
                 mutableDeviceInfoDictionary[@"applicationCode"] = weakSelf.applicationCode;
                 mutableDeviceInfoDictionary[@"merchantId"] = weakSelf.merchantId;
+                #if DEBUG
+                    mutableDeviceInfoDictionary[@"isDebugMode"] = @"true";
+                #else
+                    mutableDeviceInfoDictionary[@"isDebugMode"] = @"false";
+                #endif
 
                 for (EMSShard *shard in shards) {
                     NSMutableDictionary<NSString *, id> *shardData = [NSMutableDictionary dictionaryWithDictionary:shard.data];

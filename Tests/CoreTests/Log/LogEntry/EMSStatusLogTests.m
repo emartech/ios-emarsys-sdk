@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "EMSStatusLog.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSStatusLogTests : XCTestCase
 
@@ -47,8 +48,8 @@
     NSDictionary *expectedDataDictionary = @{
         @"className": @"NSObject",
         @"methodName": @"testData",
-        @"parameters": @{@"param1": @"value1"},
-        @"status": @{@"status1": @"statusValue1"}
+        @"parameters": [@{@"param1": @"value1"} asJSONString] ,
+        @"status": [@{@"status1": @"statusValue1"} asJSONString]
     };
     EMSStatusLog *statusLog = [[EMSStatusLog alloc] initWithClass:[NSObject class]
                                                               sel:_cmd

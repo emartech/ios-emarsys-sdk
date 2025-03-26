@@ -15,7 +15,7 @@
 
 @implementation EMSDeviceInfo
 
-#define kEMSHardwareIdKey @"kHardwareIdKey"
+#define kEMSClientIdKey @"kHardwareIdKey"
 #define kEMSSuiteName @"com.emarsys.core"
 
 - (instancetype)initWithSDKVersion:(NSString *)sdkVersion
@@ -80,20 +80,20 @@
     return [UIDevice currentDevice].systemName;
 }
 
-- (NSString *)hardwareId {
-    if (!_hardwareId) {
-        NSData *hardwareIdData = [self.storage sharedDataForKey:kEMSHardwareIdKey];
-        if (hardwareIdData) {
-            _hardwareId = [[NSString alloc] initWithData:hardwareIdData
+- (NSString *)clientId {
+    if (!_clientId) {
+        NSData *clientIdData = [self.storage sharedDataForKey:kEMSClientIdKey];
+        if (clientIdData) {
+            _clientId = [[NSString alloc] initWithData:clientIdData
                                                 encoding:NSUTF8StringEncoding];
         }
-        if (!_hardwareId) {
-            _hardwareId = [self.uuidProvider provideUUIDString];
-            [self.storage setSharedData:[_hardwareId dataUsingEncoding:NSUTF8StringEncoding]
-                                 forKey:kEMSHardwareIdKey];
+        if (!_clientId) {
+            _clientId = [self.uuidProvider provideUUIDString];
+            [self.storage setSharedData:[_clientId dataUsingEncoding:NSUTF8StringEncoding]
+                                 forKey:kEMSClientIdKey];
         }
     }
-    return _hardwareId;
+    return _clientId;
 }
 
 - (NSDictionary *)pushSettings {

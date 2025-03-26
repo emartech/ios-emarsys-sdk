@@ -29,9 +29,9 @@
 
 - (EMSRemoteConfig *)map:(EMSResponseModel *)responseModel {
     NSDictionary *parsedBody = [responseModel parsedBody];
-    NSDictionary *hardwareIdSpecificConfig = parsedBody[@"overrides"][self.deviceInfo.hardwareId];
+    NSDictionary *clientIdSpecificConfig = parsedBody[@"overrides"][self.deviceInfo.clientId];
 
-    NSMutableDictionary *activeConfig = [[parsedBody mergeWithDictionary:hardwareIdSpecificConfig] mutableCopy];
+    NSMutableDictionary *activeConfig = [[parsedBody mergeWithDictionary:clientIdSpecificConfig] mutableCopy];
 
     return [[EMSRemoteConfig alloc] initWithEventService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"eventService"]]
                                            clientService:[self validateEmarsysUrl:activeConfig[@"serviceUrls"][@"clientService"]]

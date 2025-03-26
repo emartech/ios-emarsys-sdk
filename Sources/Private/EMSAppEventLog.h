@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EMSAppEventLog : NSObject <EMSLogEntryProtocol>
 
 - (instancetype)initWithEventName:(NSString *)eventName
-                       attributes:(nullable NSDictionary<NSString *, id> *)attributes;
+                       attributes:(nullable NSDictionary<NSString *, NSString *> *)attributes;
 
 @end
 

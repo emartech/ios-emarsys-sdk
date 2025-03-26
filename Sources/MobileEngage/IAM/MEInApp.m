@@ -29,7 +29,7 @@
 @property(nonatomic, strong) EMSCompletionProvider *completionBlockProvider;
 @property(nonatomic, strong) EMSEventHandlerBlock innerEventHandler;
 @property(nonatomic, strong) NSMutableArray<MEInAppMessage *> *messages;
-
+@property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) EMSInAppLog *inAppLog;
 
 @property(nonatomic, assign) BOOL paused;
@@ -72,6 +72,7 @@
                                                                                                                           operationQueue:operationQueue]];
         _displayedIamRepository = displayedIamRepository;
         _messages = [NSMutableArray array];
+        _operationQueue = operationQueue;
     }
     return self;
 }
@@ -100,16 +101,16 @@
             MEIAMViewController *meiamViewController = [weakSelf.iamViewControllerProvider provideViewController];
             [meiamViewController loadMessage:message.html
                            completionHandler:^{
-                               if (message.response && weakSelf.timestampProvider) {
-                                   weakSelf.inAppLog = [[EMSInAppLog alloc] initWithMessage:message
-                                                                             loadingTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
-                               }
-                               [weakSelf displayInAppViewController:message
-                                                     viewController:meiamViewController];
-                               if (completionHandler) {
-                                   completionHandler();
-                               }
-                           }];
+                if (message.response && weakSelf.timestampProvider) {
+                    weakSelf.inAppLog = [[EMSInAppLog alloc] initWithMessage:message
+                                                              loadingTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
+                }
+                [weakSelf displayInAppViewController:message
+                                      viewController:meiamViewController];
+                if (completionHandler) {
+                    completionHandler();
+                }
+            }];
         } else {
             [weakSelf.messages addObject:message];
         }
@@ -122,16 +123,16 @@
                     viewController:(MEIAMViewController *)meiamViewController {
     NSPredicate *isKeyWindow = [NSPredicate predicateWithFormat:@"isKeyWindow == YES"];
     self.originalWindow = [[[UIApplication sharedApplication] windows] filteredArrayUsingPredicate:isKeyWindow].firstObject;
-
+    
     [self.iamWindow makeKeyAndVisible];
-
+    
     __weak typeof(self) weakSelf = self;
     [self.iamWindow.rootViewController presentViewController:meiamViewController
                                                     animated:YES
                                                   completion:[self.completionBlockProvider provideCompletion:^{
-                                                      [weakSelf.inAppLog setOnScreenTimeStart:[weakSelf.timestampProvider provideTimestamp]];
-                                                      [weakSelf trackIAMDisplay:message];
-                                                  }]];
+        [weakSelf.inAppLog setOnScreenTimeStart:[weakSelf.timestampProvider provideTimestamp]];
+        [weakSelf trackIAMDisplay:message];
+    }]];
 }
 
 - (void)trackIAMDisplay:(MEInAppMessage *)message {
@@ -145,27 +146,29 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf.iamWindow.rootViewController dismissViewControllerAnimated:YES
                                                                   completion:^{
-                                                                      if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
-                                                                          [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
-                                                                          EMSLog(weakSelf.inAppLog, LogLevelMetric);
-                                                                      }
-                                                                      weakSelf.iamWindow.windowLevel = UIWindowLevelNormal;
-                                                                      weakSelf.iamWindow.frame = CGRectMake(0, 0, 0, 0);
-                                                                      weakSelf.iamWindow = nil;
-
-                                                                      [weakSelf.originalWindow makeKeyAndVisible];
-                                                                      weakSelf.originalWindow = nil;
-
-                                                                      MEInAppMessage *message = weakSelf.messages.firstObject;
-                                                                      if (message) {
-                                                                          [weakSelf.messages removeObject:message];
-                                                                          [weakSelf showMessage:message
-                                                                              completionHandler:nil];
-                                                                      }
-                                                                      if (completionHandler) {
-                                                                          completionHandler();
-                                                                      }
-                                                                  }];
+            [weakSelf.operationQueue addOperationWithBlock:^{
+                if (weakSelf.currentInAppMessage && weakSelf.timestampProvider) {
+                    [weakSelf.inAppLog setOnScreenTimeEnd:[weakSelf.timestampProvider provideTimestamp]];
+                    EMSLog(weakSelf.inAppLog, LogLevelMetric);
+                }
+            }];
+            weakSelf.iamWindow.windowLevel = UIWindowLevelNormal;
+            weakSelf.iamWindow.frame = CGRectMake(0, 0, 0, 0);
+            weakSelf.iamWindow = nil;
+            
+            [weakSelf.originalWindow makeKeyAndVisible];
+            weakSelf.originalWindow = nil;
+            
+            MEInAppMessage *message = weakSelf.messages.firstObject;
+            if (message) {
+                [weakSelf.messages removeObject:message];
+                [weakSelf showMessage:message
+                    completionHandler:nil];
+            }
+            if (completionHandler) {
+                completionHandler();
+            }
+        }];
     });
 }
 

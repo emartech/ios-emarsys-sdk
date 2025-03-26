@@ -10,8 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithClass:(Class)klass
                           sel:(SEL)sel
-                   parameters:(nullable NSDictionary<NSString *, id> *)parameters
-                       status:(nullable NSDictionary<NSString *, id> *)status;
+                   parameters:(nullable NSDictionary<NSString *, NSString *> *)parameters
+                       status:(nullable NSDictionary<NSString *, NSString *> *)status;
 
 @end
 

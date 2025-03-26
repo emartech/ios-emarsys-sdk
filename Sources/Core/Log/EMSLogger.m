@@ -14,6 +14,8 @@
 #import "EMSWrapperChecker.h"
 #import "EMSStorageProtocol.h"
 #import "EMSMethodNotAllowed.h"
+#import "NSDate+EMSCore.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSLogger ()
 
@@ -23,6 +25,7 @@
 @property(nonatomic, strong) EMSUUIDProvider *uuidProvider;
 @property(nonatomic, strong) id<EMSStorageProtocol> storage;
 @property(nonatomic, strong) EMSWrapperChecker *wrapperChecker;
+@property(nonatomic, strong) NSMutableArray *breadCrumbsQueue;
 
 @end
 
@@ -52,6 +55,7 @@
         _logLevel = logLevel ? [logLevel intValue] : LogLevelError;
         _consoleLogLevels = @[EMSLogLevel.basic];
         _wrapperChecker = wrapperChecker;
+        _breadCrumbsQueue = [NSMutableArray array];
     }
     return self;
 }
@@ -67,6 +71,13 @@
     [self consoleLogLogEntry:entry
                   entryLevel:level];
     id url = entry.data[@"url"];
+    if (level == LogLevelDebug || level == LogLevelInfo) {
+        if ([self.breadCrumbsQueue count] >= 10) {
+            [self.breadCrumbsQueue removeLastObject];
+        }
+        [self.breadCrumbsQueue insertObject:entry atIndex:0];
+    }
+    
     if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && (level >= self.logLevel || [entry.topic isEqualToString:@"app:start"]) &&
         ![entry isKindOfClass:[EMSMethodNotAllowed class]]) {
         NSString *currentQueue = [NSOperationQueue currentQueue].name;
@@ -77,17 +88,34 @@
                         NSMutableDictionary *mutableData = [entry.data mutableCopy];
                         mutableData[@"level"] = [weakSelf logLevelStringFromLogLevel:level];
                         mutableData[@"queue"] = currentQueue;
+                        mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[[weakSelf.timestampProvider provideTimestamp] numberValueInMillis]];
                         if (![weakSelf.wrapperChecker.wrapper isEqualToString:@"none"]) {
                             mutableData[@"wrapper"] = weakSelf.wrapperChecker.wrapper;
                         }
+                
+                        if (level == LogLevelError) {
+                            mutableData[@"breadcrumbs"] = [weakSelf collectBreadcrumbs];
+                        }
+                
                         [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
                     }
-                                                  timestampProvider:self.timestampProvider
-                                                       uuidProvider:self.uuidProvider]];
+                                                  timestampProvider:weakSelf.timestampProvider
+                                                       uuidProvider:weakSelf.uuidProvider]];
         }];
     } else {
         return;
     }
+}
+
+- (NSArray *)collectBreadcrumbs {
+    NSMutableArray *result = [NSMutableArray new];
+    for (id <EMSLogEntryProtocol> logEntry in self.breadCrumbsQueue) {
+        NSMutableDictionary *logEntryData = [[logEntry data] mutableCopy];
+        logEntryData[@"topic"] = [logEntry topic];
+        
+        [result addObject:[logEntryData asJSONString]];
+    }
+    return [result count] > 0 ? result : nil;
 }
 
 - (void)consoleLogLogEntry:(id <EMSLogEntryProtocol>)entry

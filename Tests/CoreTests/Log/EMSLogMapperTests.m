@@ -38,7 +38,7 @@
     OCMStub(self.deviceInfo.applicationVersion).andReturn(@"applicationVersion");
     OCMStub(self.deviceInfo.osVersion).andReturn(@"osVersion");
     OCMStub(self.deviceInfo.deviceModel).andReturn(@"deviceModel");
-    OCMStub(self.deviceInfo.hardwareId).andReturn(@"hardwareId");
+    OCMStub(self.deviceInfo.clientId).andReturn(@"hardwareId");
     OCMStub(self.deviceInfo.platform).andReturn(@"ios");
     OCMStub(self.deviceInfo.sdkVersion).andReturn(@"sdkVersion");
     OCMStub(self.requestContext.timestampProvider).andReturn(self.timestampProvider);
@@ -112,6 +112,7 @@
             @"hwId": @"hardwareId",
             @"applicationCode": _applicationCode,
             @"merchantId": _merchantId,
+            @"isDebugMode": @"true"
     };
 
     EMSRequestModel *expectedRequestModel = [EMSRequestModel makeWithBuilder:^(EMSRequestModelBuilder *builder) {
@@ -164,6 +165,7 @@
             @"model": @"deviceModel",
             @"hwId": @"hardwareId",
             @"applicationCode": _applicationCode,
+            @"isDebugMode": @"true"
     };
 
     EMSLogMapper *logMapper = [[EMSLogMapper alloc] initWithRequestContext:self.requestContext applicationCode:self.applicationCode merchantId:nil];

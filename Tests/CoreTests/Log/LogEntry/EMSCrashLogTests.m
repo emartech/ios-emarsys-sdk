@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "EMSCrashLog.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSCrashLogTests : XCTestCase
 
@@ -41,10 +42,10 @@
     NSDictionary *expectedData = @{
         @"exception": @"exceptionName",
         @"reason": @"reasonOfTheException",
-        @"stackTrace": @[@"stack1", @"stack2", @"stack3"],
-        @"userInfo": @{
+        @"stackTrace": @"stack1\nstack2\nstack3\n",
+        @"userInfo": [@{
             @"userInfoKey": @"userInfoValue"
-        }
+        } asJSONString]
     };
     XCTAssertEqualObjects(self.logCrash.data, expectedData);
 }

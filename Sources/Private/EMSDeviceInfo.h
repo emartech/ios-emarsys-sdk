@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) UNUserNotificationCenter *notificationCenter;
 @property(nonatomic, readonly) EMSStorage *storage;
 @property(nonatomic, readonly) EMSUUIDProvider *uuidProvider;
-@property(nonatomic, strong) NSString *hardwareId;
+@property(nonatomic, strong) NSString *clientId;
 
 - (instancetype)initWithSDKVersion:(NSString *)sdkVersion
                 notificationCenter:(UNUserNotificationCenter *)notificationCenter

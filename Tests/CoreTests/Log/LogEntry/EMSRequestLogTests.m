@@ -76,13 +76,13 @@
     NSDictionary *expectedData = @{
         @"requestId": self.responseModel.requestModel.requestId,
         @"url": [self.responseModel.requestModel.url absoluteString],
-        @"statusCode": @(self.responseModel.statusCode),
-        @"inDbStart": [self.responseModel.requestModel.timestamp numberValueInMillis],
-        @"inDbEnd": [self.timestamp numberValueInMillis],
-        @"inDbDuration": [self.timestamp numberValueInMillisFromDate:self.responseModel.requestModel.timestamp],
-        @"networkingStart": [self.timestamp numberValueInMillis],
-        @"networkingEnd": [self.responseModel.timestamp numberValueInMillis],
-        @"networkingDuration": [self.responseModel.timestamp numberValueInMillisFromDate:self.timestamp]
+        @"statusCode": [NSString stringWithFormat:@"%@", @(self.responseModel.statusCode)],
+        @"inDbStart": [NSString stringWithFormat:@"%@", [self.responseModel.requestModel.timestamp numberValueInMillis]],
+        @"inDbEnd": [NSString stringWithFormat:@"%@", [self.timestamp numberValueInMillis]],
+        @"inDbDuration": [NSString stringWithFormat:@"%@", [self.timestamp numberValueInMillisFromDate:self.responseModel.requestModel.timestamp]],
+        @"networkingStart": [NSString stringWithFormat:@"%@", [self.timestamp numberValueInMillis]],
+        @"networkingEnd": [NSString stringWithFormat:@"%@", [self.responseModel.timestamp numberValueInMillis]],
+        @"networkingDuration": [NSString stringWithFormat:@"%@", [self.responseModel.timestamp numberValueInMillisFromDate:self.timestamp]]
     };
 
     XCTAssertEqualObjects(self.requestLog.data, expectedData);

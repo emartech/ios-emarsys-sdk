@@ -281,8 +281,7 @@
     [self waitForSetup];
 
     OCMVerify([mockDeviceInfoClient trackDeviceInfoWithCompletionBlock:nil]);
-    OCMVerify([mockContactClient setContactWithContactFieldId:nil
-                                           contactFieldValue:nil]);
+    OCMVerify([mockContactClient clearContact]);
 }
 
 - (void)testSetupWithConfigShouldNotSendDeviceInfoAndLogin_when_contactFieldValueIsAvailable {

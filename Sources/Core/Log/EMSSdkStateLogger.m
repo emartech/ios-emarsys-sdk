@@ -35,7 +35,7 @@
     NSLog(@"EmarsysSDK - %@ - %@", @"MerchantId ", self.meRequestContext);
     NSLog(@"EmarsysSDK - %@ - %@", @"ExperimentalFeatures ", self.config.experimentalFeatures.description);
 
-    NSLog(@"EmarsysSDK - %@ - %@", @"HardwareId ", self.meRequestContext.deviceInfo.hardwareId);
+    NSLog(@"EmarsysSDK - %@ - %@", @"ClientId ", self.meRequestContext.deviceInfo.clientId);
     NSLog(@"EmarsysSDK - %@ - %@", @"EventServiceUrl ", self.endpoint.eventServiceUrl);
     NSLog(@"EmarsysSDK - %@ - %@", @"ClientServiceUrl ", self.endpoint.clientServiceUrl);
     NSLog(@"EmarsysSDK - %@ - %@", @"DeeplinkUrl ", self.endpoint.deeplinkUrl);

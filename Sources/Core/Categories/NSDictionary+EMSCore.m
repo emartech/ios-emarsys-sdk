@@ -195,4 +195,34 @@
     return result;
 }
 
+- (nullable NSString *)asJSONString {
+    NSString *result = nil;
+    NSError *error;
+    NSString *exceptionReason = nil;
+    @try {
+        NSData *selfData = [NSJSONSerialization dataWithJSONObject:self
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&error];
+
+        if (selfData) {
+            result = [[NSString alloc] initWithData:selfData
+                                           encoding:NSUTF8StringEncoding];
+        }
+    } @catch (NSException *exception) {
+        exceptionReason = exception.reason;
+    } @finally {
+        if (error) {
+            NSMutableDictionary *status = [NSMutableDictionary dictionary];
+            status[@"jsonSerializationError"] = [error description];
+            status[@"jsonExceptionReason"] = exceptionReason;
+            EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
+                                                                     sel:_cmd
+                                                              parameters:nil
+                                                                  status:[NSDictionary dictionaryWithDictionary:status]];
+            EMSLog(logEntry, LogLevelError);
+        }
+    }
+    return result;
+}
+
 @end

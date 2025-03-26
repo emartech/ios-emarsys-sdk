@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "EMSAppEventLog.h"
+#import "NSDictionary+EMSCore.h"
 
 @interface EMSAppEventLogTests : XCTestCase
 
@@ -39,7 +40,7 @@
 - (void)testData {
     NSDictionary *expectedData = @{
         @"eventName": self.eventName,
-        @"eventAttributes": self.payload
+        @"eventAttributes": [self.payload asJSONString]
     };
 
     XCTAssertEqualObjects(self.appEventLog.data, expectedData);

@@ -80,7 +80,7 @@
 
     OCMStub(self.mockTimestampProvider.provideTimestamp).andReturn(self.timestamp);
     OCMStub(self.mockUUIDProvider.provideUUIDString).andReturn(@"requestId");
-    OCMStub(self.mockDeviceInfo.hardwareId).andReturn(@"hardwareId");
+    OCMStub(self.mockDeviceInfo.clientId).andReturn(@"hardwareId");
     OCMStub(self.mockDeviceInfo.deviceType).andReturn(@"testDeviceType");
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
 
@@ -569,7 +569,7 @@
 
 - (void)testCreateInlineInappRequestModel_when_MobileEngageIsDisabled_isNil {
     [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
-    
+
     EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
 
     XCTAssertNil(result);

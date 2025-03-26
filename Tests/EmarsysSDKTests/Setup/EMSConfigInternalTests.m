@@ -966,12 +966,12 @@
     [self.configInternal changeMerchantId:newMerchantId];
 }
 
-- (void)testHardwareId {
-    OCMStub([self.mockDeviceInfo hardwareId]).andReturn(@"testHardwareId");
+- (void)testClientId {
+    OCMStub([self.mockDeviceInfo clientId]).andReturn(@"testClientId");
 
-    NSString *result = [self.configInternal hardwareId];
+    NSString *result = [self.configInternal clientId];
 
-    XCTAssertEqualObjects(result, @"testHardwareId");
+    XCTAssertEqualObjects(result, @"testClientId");
 }
 
 - (void)testLanguageCode {

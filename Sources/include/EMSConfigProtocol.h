@@ -26,7 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSNumber *)contactFieldId;
 
-- (NSString *)hardwareId;
+
+- (NSString *)hardwareId __deprecated_msg("use clientId instead");
+
+- (NSString *)clientId;
 
 - (NSString *)languageCode;
 
