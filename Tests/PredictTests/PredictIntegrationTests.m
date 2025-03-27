@@ -57,365 +57,363 @@
 
 @end
 
-SPEC_BEGIN(PredictIntegrationTests)
 
-        __block NSArray<XCTestExpectation *> *expectations;
-        __block PredictIntegrationDependencyContainer *dependencyContainer;
+@interface PredictIntegrationTests : XCTestCase
 
-        beforeEach(^{
-            EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
-                [builder setMerchantId:@"1428C8EE286EC34B"];
-            }];
+@property(nonatomic, strong) PredictIntegrationDependencyContainer *dependencyContainer;
+@property(nonatomic, strong) NSArray<XCTestExpectation *> *expectations;
 
-            expectations = @[
-                    [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
-            dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
-                                                                                   expectations:expectations];
-            [EmarsysTestUtils setupEmarsysWithConfig:config 
-                                 dependencyContainer:dependencyContainer];
+@end
 
-            [self waitATickOnOperationQueue:dependencyContainer.publicApiOperationQueue];
-            [self waitATickOnOperationQueue:dependencyContainer.coreOperationQueue];
-        });
+@implementation PredictIntegrationTests
 
-        afterEach(^{
-            [EmarsysTestUtils tearDownEmarsys];
-        });
+- (void)setUp {
+    EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
+        [builder setMerchantId:@"1428C8EE286EC34B"];
+    }];
+    
+    self.expectations = @[
+        [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
+    self.dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
+                                                                                expectations:self.expectations];
+    [EmarsysTestUtils setupEmarsysWithConfig:config
+                         dependencyContainer:self.dependencyContainer];
+    
+    [self waitATickOnOperationQueue:self.dependencyContainer.publicApiOperationQueue];
+    [self waitATickOnOperationQueue:self.dependencyContainer.coreOperationQueue];
+}
 
-        describe(@"trackCartWithCartItems:", ^{
+- (void)tearDown {
+    [self waitATickOnOperationQueue:self.dependencyContainer.publicApiOperationQueue];
+    [self waitATickOnOperationQueue:self.dependencyContainer.coreOperationQueue];
+    [self.dependencyContainer.expectations removeAllObjects];
+    [EmarsysTestUtils tearDownEmarsys];
+}
 
-            it(@"should send request with cartItems", ^{
-                NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
+-(void)testTrackCart_shouldSendRequest_withCartItems {
+    NSString *expectedQueryParams = @"ca=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
+    
+    [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+    
+    [Emarsys.predict trackCartWithCartItems:@[
+        [EMSCartItem itemWithItemId:@"2508"
+                              price:200.0
+                           quantity:100.0],
+        [EMSCartItem itemWithItemId:@"2073"
+                              price:201.0
+                           quantity:101.0]
+    ]];
+    
+    [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
+                           timeout:10];
+    
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel statusCode] >= 200 && [self.dependencyContainer.lastResponseModel statusCode] <= 299);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+}
 
-                [Emarsys.predict trackCartWithCartItems:@[
-                        [EMSCartItem itemWithItemId:@"2508"
-                                              price:200.0
-                                           quantity:100.0],
-                        [EMSCartItem itemWithItemId:@"2073"
-                                              price:201.0
-                                           quantity:101.0]
-                ]];
+-(void)testTrackPurchaseWithOrderId_shouldSendRequest_withOrderIdAndItems {
+    NSString *expectedOrderIdQueryParams = @"oi=orderId";
+    NSString *expectedItemsQueryParams = @"co=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
+    
+    [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+    
+    [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
+                                        items:@[
+        [EMSCartItem itemWithItemId:@"2508"
+                              price:200.0
+                           quantity:100.0],
+        [EMSCartItem itemWithItemId:@"2073"
+                              price:201.0
+                           quantity:101.0]
+    ]];
+    
+    [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedOrderIdQueryParams]);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedItemsQueryParams]);
+}
 
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
+-(void)testTrackCategoryViewWithCategoryPath_shouldSendRequest_withCategoryPath {
+    NSString *expectedQueryParams = @"vc=DESIGNS%3ELiving%20Room";
+    
+    [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+    
+    [Emarsys.predict trackCategoryViewWithCategoryPath:@"DESIGNS>Living Room"];
+    
+    [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+}
 
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] beBetween:theValue(200)
-                                                                                             and:theValue(299)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-            });
-        });
+- (void)testTrackItemViewWithItemId_shouldSendRequest_withItemId {
+    NSString *expectedQueryParams = @"v=i%3A2508%252B";
+    
+    [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+    
+    [Emarsys.predict trackItemViewWithItemId:@"2508+"];
+    
+    [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+}
 
-        describe(@"trackPurchaseWithOrderId:items:", ^{
-
-            it(@"should send request with orderId and items", ^{
-                NSString *expectedOrderIdQueryParams = @"oi=orderId";
-                NSString *expectedItemsQueryParams = @"co=i%3A2508%2Cp%3A200%2Cq%3A100%7Ci%3A2073%2Cp%3A201%2Cq%3A101";
-
-                [Emarsys.predict trackPurchaseWithOrderId:@"orderId"
-                                                    items:@[
-                                                            [EMSCartItem itemWithItemId:@"2508"
-                                                                                  price:200.0
-                                                                               quantity:100.0],
-                                                            [EMSCartItem itemWithItemId:@"2073"
-                                                                                  price:201.0
-                                                                               quantity:101.0]
-                                                    ]];
-
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
-
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedOrderIdQueryParams];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedItemsQueryParams];
-            });
-        });
-
-        describe(@"trackCategoryViewWithCategoryPath:", ^{
-
-            it(@"should send request with category path", ^{
-                NSString *expectedQueryParams = @"vc=DESIGNS%3ELiving%20Room";
-
-                [Emarsys.predict trackCategoryViewWithCategoryPath:@"DESIGNS>Living Room"];
-
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
-
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-            });
-        });
-
-        describe(@"trackItemViewWithItemId:", ^{
-
-            it(@"should send request with item id", ^{
-                NSString *expectedQueryParams = @"v=i%3A2508%252B";
-
-                [Emarsys.predict trackItemViewWithItemId:@"2508+"];
-
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
-
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-            });
-        });
-
-        describe(@"trackRecommendationClick:", ^{
-
-            it(@"should send request with product", ^{
-                NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature%2Cc%3AtestCohort";
-
-                [self retryWithRunnerBlock:^(XCTestExpectation *expectation) {
-                            EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
-                                [builder setRequiredFieldsWithProductId:@"2508"
-                                                                  title:@"testTitle"
-                                                                linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
-                                                                feature:@"testFeature"
-                                                                 cohort:@"testCohort"];
-                            }];
-
-                            [Emarsys.predict trackRecommendationClick:product];
-
-                            [expectation fulfill];
-
-                        }
-                            assertionBlock:^(XCTWaiterResult waiterResult) {
-                                [EMSWaiter waitForExpectations:expectations
-                                                       timeout:10];
-
-                                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-                            }
-                                retryCount:3];
-
-            });
-        });
-
-        describe(@"trackSearchWithSearchTerm:", ^{
-
-            it(@"should send request with search term", ^{
-                NSString *expectedQueryParams = @"q=searchTerm";
-
-                [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-
-                [EMSWaiter waitForExpectations:expectations
-                                       timeout:10];
-
-                [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-                [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-            });
-        });
-
-describe(@"visitorId",
- ^{
-
-    it(@"should simulate login flow",
-       ^{
-        XCTestExpectation *expectationSetContact = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
-        XCTestExpectation *expectationClearContact = [[XCTestExpectation alloc] initWithDescription:@"waitForClearContact"];
-        XCTestExpectation *expectationSearchTerm = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
-        XCTestExpectation *expectationTrackItemWithItemId = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackItemWithItemId"];
-        [dependencyContainer setExpectations:[@[expectationSearchTerm,
-                                                expectationClearContact,
-                                                expectationSetContact,
-                                                expectationTrackItemWithItemId] mutableCopy]];
-
-        NSString *expectedQueryParams = @"q=searchTerm";
-        NSString *expectedTrackingQueryParams = @"v=i%3A2508%252B";
-        NSString *expectedContactUrl = @"contact-token";
-        NSString *visitorId;
-        NSString *visitorId2;
-
-        [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-        [EMSWaiter waitForExpectations:@[expectationSearchTerm]
-                               timeout:10];
-
-        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedQueryParams];
-        visitorId = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-        [[visitorId shouldNot] beNil];
-
-        [Emarsys clearContact];
-                
-        [Emarsys setContactWithContactFieldId:@62470 
-                            contactFieldValue:@"test2@test.com"
-                              completionBlock:^(NSError * _Nullable error) {
-                    
+- (void)testTrackRecommendationClick_shouldSendRequest_withProduct {
+    NSString *expectedQueryParams = @"v=i%3A2508%2Ct%3AtestFeature%2Cc%3AtestCohort";
+    
+    [self retryWithRunnerBlock:^(XCTestExpectation *expectation) {
+        EMSProduct *product = [EMSProduct makeWithBuilder:^(EMSProductBuilder *builder) {
+            [builder setRequiredFieldsWithProductId:@"2508"
+                                              title:@"testTitle"
+                                            linkUrl:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]
+                                            feature:@"testFeature"
+                                             cohort:@"testCohort"];
         }];
-                
-        [EMSWaiter waitForExpectations:@[expectationSetContact]
+        
+        [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+        
+        [Emarsys.predict trackRecommendationClick:product];
+        
+        [expectation fulfill];
+        
+    }
+                assertionBlock:^(XCTWaiterResult waiterResult) {
+        [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
                                timeout:10];
-                
-        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedContactUrl];
+        
+        XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+        XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+    }
+                    retryCount:3];
+    
+}
 
-        [Emarsys.predict trackItemViewWithItemId:@"2508+"];
-        [EMSWaiter waitForExpectations:@[expectationTrackItemWithItemId]
-                               timeout:10];
+-(void)testTrackSearchWithSearchTerm_shouldSendRequest_withSearchTerm {
+    NSString *expectedQueryParams = @"q=searchTerm";
+    
+    [self.dependencyContainer.expectations addObject:[[XCTestExpectation alloc] initWithDescription:@"waitForPredictFunction"]];
+    
+    [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
+    
+    [EMSWaiter waitForExpectations:self.dependencyContainer.expectations
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+}
 
-        [[theValue([dependencyContainer.lastResponseModel statusCode]) should] equal:theValue(200)];
-        [[dependencyContainer.lastResponseModel.requestModel.url.absoluteString should] containString:expectedTrackingQueryParams];
-        visitorId2 = dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-        [[visitorId2 shouldNot] beNil];
-    });
-});
+- (void)testVisitorId_shouldSimulateLoginFlow {
+    if (self.dependencyContainer.expectations.count > 0) {
+        [self waitForExpectations:self.dependencyContainer.expectations];
+    }
+    
+    XCTestExpectation *expectationSetContact = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
+    XCTestExpectation *expectationClearContact = [[XCTestExpectation alloc] initWithDescription:@"waitForClearContact"];
+    XCTestExpectation *expectationSearchTerm = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
+    XCTestExpectation *expectationTrackItemWithItemId = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackItemWithItemId"];
+    [self.dependencyContainer setExpectations:[@[expectationSearchTerm,
+                                            expectationClearContact,
+                                            expectationSetContact,
+                                            expectationTrackItemWithItemId] mutableCopy]];
+    
+    NSString *expectedQueryParams = @"q=searchTerm";
+    NSString *expectedTrackingQueryParams = @"v=i%3A2508%252B";
+    NSString *expectedContactUrl = @"contact-token";
+    NSString *visitorId;
+    NSString *visitorId2;
+    
+    [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
+    [EMSWaiter waitForExpectations:@[expectationSearchTerm]
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+    visitorId = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+    [[visitorId shouldNot] beNil];
+    
+    [Emarsys clearContact];
+    
+    [Emarsys setContactWithContactFieldId:@62470
+                        contactFieldValue:@"test2@test.com"
+                          completionBlock:^(NSError * _Nullable error) {
+    }];
+    
+    [EMSWaiter waitForExpectations:@[expectationSetContact, expectationClearContact]
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedContactUrl]);
+    
+    [Emarsys.predict trackItemViewWithItemId:@"2508+"];
+    [EMSWaiter waitForExpectations:@[expectationTrackItemWithItemId]
+                           timeout:10];
+    
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedTrackingQueryParams]);
+    visitorId2 = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
+    [[visitorId2 shouldNot] beNil];
+}
 
-        describe(@"recommendProducts", ^{
-            NSString *searchTerm = @"Ropa";
-            NSString *categoryPath = @"Ropa bebe nina>Ropa Interior";
+NSString *searchTerm = @"Ropa";
+NSString *categoryPath = @"Ropa bebe nina>Ropa Interior";
 
-            void (^assertWithLogic)(EMSLogic *logic, int expectedCount) = ^(EMSLogic *logic, int expectedCount) {
-                __block NSArray *returnedProducts = nil;
+void (^assertWithLogic)(EMSLogic *logic, int expectedCount) = ^(EMSLogic *logic, int expectedCount) {
+    __block NSArray *returnedProducts = nil;
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+    [Emarsys.predict recommendProductsWithLogic:logic
+                                        filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                          isValue:@""]]
+                                          limit:@2
+                                  productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+        returnedProducts = products;
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:30];
+    XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+    XCTAssertNotNil(returnedProducts);
+    XCTAssertEqual([returnedProducts count], expectedCount);
+};
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-                [Emarsys.predict recommendProductsWithLogic:logic
-                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
-                                                                                                      isValue:@""]]
-                                                      limit:@2
-                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
-                                                  returnedProducts = products;
-                                                  [expectation fulfill];
-                                              }];
-                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:30];
-                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
-                XCTAssertNotNil(returnedProducts);
-                XCTAssertEqual([returnedProducts count], expectedCount);
-            };
+- (void)testRecommendProductsSearch_shouldRecommendProductsBySearchTerm_withSearchTerm {
+    __block NSArray *returnedProducts = nil;
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+    [Emarsys.predict recommendProductsWithLogic:[EMSLogic searchWithSearchTerm: searchTerm]
+                                        filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                          isValue:@""]]
+                                          limit:@2
+                                  productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+        returnedProducts = products;
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:30];
+    XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+    XCTAssertNotNil(returnedProducts);
+}
 
-            it(@"search should recommend products by searchTerm with searchTerm", ^{
-                __block NSArray *returnedProducts = nil;
+- (void)testRecommendProductsSearch_shouldRecommendProductsBySearchTerm {
+    [Emarsys.predict trackSearchWithSearchTerm: searchTerm];
+    
+    __block NSArray *returnedProducts = nil;
+    
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
+    [Emarsys.predict recommendProductsWithLogic:EMSLogic.search
+                                        filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
+                                                                                          isValue:@""]]
+                                          limit:@2
+                                  productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
+        returnedProducts = products;
+        [expectation fulfill];
+    }];
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
+                                                          timeout:30];
+    XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
+    XCTAssertNotNil(returnedProducts);
+}
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-                [Emarsys.predict recommendProductsWithLogic:[EMSLogic searchWithSearchTerm: searchTerm]
-                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
-                                                                                                      isValue:@""]]
-                                                      limit:@2
-                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
-                                                  returnedProducts = products;
-                                                  [expectation fulfill];
-                                              }];
-                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:30];
-                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
-                XCTAssertNotNil(returnedProducts);
-            });
+- (void)testRecommendProductsCart_shouldRecommendProductsByCartItems_withCartItems {
+    EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                           price:123
+                                                        quantity:1];
+    EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                           price:456
+                                                        quantity:2];
+    
+    EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
+    assertWithLogic(logic, 2);
+}
 
-            it(@"search should recommend products by searchTerm", ^{
-                [Emarsys.predict trackSearchWithSearchTerm: searchTerm];
+- (void)testRecommendProductsCart_shouldRecommendProductsByCartItems {
+    EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
+                                                           price:123
+                                                        quantity:1];
+    EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
+                                                           price:456
+                                                        quantity:2];
+    
+    [Emarsys.predict trackCartWithCartItems:@[cartItem1, cartItem2]];
+    assertWithLogic(EMSLogic.cart, 2);
+}
 
-                __block NSArray *returnedProducts = nil;
+- (void)testRecommendProductsRelated_shouldRecommendProductsByViewItemId_withViewItemId {
+    [Emarsys.predict trackItemViewWithItemId:@"2200"];
+    
+    assertWithLogic(EMSLogic.related, 2);
+}
 
-                XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForProducts"];
-                [Emarsys.predict recommendProductsWithLogic:EMSLogic.search
-                                                    filters:@[[EMSRecommendationFilter excludeFilterWithField:@"price"
-                                                                                                      isValue:@""]]
-                                                      limit:@2
-                                              productsBlock:^(NSArray<EMSProduct *> *products, NSError *error) {
-                                                  returnedProducts = products;
-                                                  [expectation fulfill];
-                                              }];
-                XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                                      timeout:30];
-                XCTAssertEqual(XCTWaiterResultCompleted, waiterResult);
-                XCTAssertNotNil(returnedProducts);
-            });
+- (void)testRecommendProductsRelated_shouldRecommendProductsByViewItemId {
+    EMSLogic *logic = [EMSLogic relatedWithViewItemId:@"2200"];
+    
+    assertWithLogic(logic, 2);
+}
 
-            it(@"cart should recommend products by cartItems with cartItems", ^{
-                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
-                                                                       price:123
-                                                                    quantity:1];
-                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
-                                                                       price:456
-                                                                    quantity:2];
+- (void)testRecommendProductsCategory_shouldRecommendProductsByCategoryPath_withCategoryPath {
+    EMSLogic *logic = [EMSLogic categoryWithCategoryPath: categoryPath];
+    
+    assertWithLogic(logic, 2);
+}
 
-                EMSLogic *logic = [EMSLogic cartWithCartItems:@[cartItem1, cartItem2]];
-                assertWithLogic(logic, 2);
-            });
+- (void)testRecommendProductsPersonal_shouldRecommendProducts_withPersonal {
+    EMSLogic *logic = [EMSLogic personal];
+    
+    assertWithLogic(logic, 2);
+}
 
-            it(@"cart should recommend products by cartItems", ^{
-                EMSCartItem *cartItem1 = [[EMSCartItem alloc] initWithItemId:@"cartItemId1"
-                                                                       price:123
-                                                                    quantity:1];
-                EMSCartItem *cartItem2 = [[EMSCartItem alloc] initWithItemId:@"cartItemId2"
-                                                                       price:456
-                                                                    quantity:2];
+- (void)testRecommendProductsPersonal_shouldRecommendProducts_withPersonalVariants {
+    EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
+    
+    assertWithLogic(logic, 6);
+}
 
-                [Emarsys.predict trackCartWithCartItems:@[cartItem1, cartItem2]];
-                assertWithLogic(EMSLogic.cart, 2);
-            });
+- (void)testRecommendProductsHome_shouldRecommendProducts_withHome {
+    EMSLogic *logic = [EMSLogic home];
+    
+    assertWithLogic(logic, 2);
+}
 
-            it(@"related should recommend products by viewItemId with viewItemId", ^{
-                [Emarsys.predict trackItemViewWithItemId:@"2200"];
+- (void)testRecommendProductsHome_shouldRecommendProducts_withProductVariants {
+    EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
+    
+    assertWithLogic(logic, 6);
+}
 
-                assertWithLogic(EMSLogic.related, 2);
-            });
+- (void)testRecommendProductsCategory_shouldRecommendProductsByCategoryPath {
+    [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
+    
+    assertWithLogic(EMSLogic.category, 2);
+}
 
-            it(@"related should recommend products by viewItemId", ^{
-                EMSLogic *logic = [EMSLogic relatedWithViewItemId:@"2200"];
+- (void)testAlsoBought_shouldRecommendProductsByViewItemId_withViewItemId {
+    EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"2200"];
+    
+    assertWithLogic(logic, 2);
+}
 
-                assertWithLogic(logic, 2);
-            });
+- (void)testAlsoBought_shouldRecommendProductsByViewItemId {
+    [Emarsys.predict trackItemViewWithItemId:@"2200"];
+    
+    assertWithLogic(EMSLogic.alsoBought, 2);
+}
 
-            it(@"category should recommend products by categoryPath with categoryPath", ^{
-                EMSLogic *logic = [EMSLogic categoryWithCategoryPath: categoryPath];
+- (void)testPopular_shouldRecommendProductsByCategoryPath_withCategoryPath {
+    EMSLogic *logic = [EMSLogic popularWithCategoryPath: categoryPath];
+    
+    assertWithLogic(logic, 2);
+}
 
-                assertWithLogic(logic, 2);
-            });
+- (void)testPopular_shouldRecommendProductsByCategoryPath {
+    [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
+    
+    assertWithLogic(EMSLogic.popular, 2);
+    
+}
 
-            it(@"personal should recommend products", ^{
-                EMSLogic *logic = [EMSLogic personal];
-
-                assertWithLogic(logic, 2);
-            });
-
-            it(@"personal should recommend products", ^{
-                EMSLogic *logic = [EMSLogic personalWithVariants:@[@"1", @"2", @"3"]];
-
-                assertWithLogic(logic, 6);
-            });
-
-            it(@"home should recommend products", ^{
-                EMSLogic *logic = [EMSLogic home];
-
-                assertWithLogic(logic, 2);
-            });
-
-            it(@"home should recommend products", ^{
-                EMSLogic *logic = [EMSLogic homeWithVariants:@[@"1", @"2", @"3"]];
-
-                assertWithLogic(logic, 6);
-            });
-
-            it(@"category should recommend products by categoryPath", ^{
-                [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
-
-                assertWithLogic(EMSLogic.category, 2);
-            });
-
-            it(@"also bought should recommend products by viewItemId with viewItemId", ^{
-                EMSLogic *logic = [EMSLogic alsoBoughtWithViewItemId:@"2200"];
-
-                assertWithLogic(logic, 2);
-            });
-
-            it(@"also bought should recommend products by viewItemId", ^{
-                [Emarsys.predict trackItemViewWithItemId:@"2200"];
-
-                assertWithLogic(EMSLogic.alsoBought, 2);
-            });
-
-            it(@"popular should recommend products by categoryPath with categoryPath", ^{
-                EMSLogic *logic = [EMSLogic popularWithCategoryPath: categoryPath];
-
-                assertWithLogic(logic, 2);
-            });
-
-            it(@"popular should recommend products by categoryPath", ^{
-                [Emarsys.predict trackCategoryViewWithCategoryPath: categoryPath];
-
-                assertWithLogic(EMSLogic.popular, 2);
-            });
-        });
-
-SPEC_END
+@end
