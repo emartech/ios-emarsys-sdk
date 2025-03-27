@@ -121,6 +121,9 @@
                 if (weakSelf.requestContext.contactFieldValue) {
                     mutablePayload[@"contactFieldValue"] = weakSelf.requestContext.contactFieldValue;
                 }
+                if (weakSelf.requestContext.openIdToken) {
+                    mutablePayload[@"openIdToken"] = weakSelf.requestContext.openIdToken;
+                }
             }
 
         }
