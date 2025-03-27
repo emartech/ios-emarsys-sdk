@@ -453,6 +453,31 @@
     [MEExperimental reset];
 }
 
+- (void)testCreateLinkContactRequestModel_predictOnly {
+    OCMStub(self.mockPredictRequestContext.merchantId).andReturn(@"testMerchantId");
+    OCMStub(self.mockRequestContext.contactFieldId).andReturn(@"testContactFieldId");
+    OCMStub(self.mockRequestContext.openIdToken).andReturn(@"testOpenIdToken");
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    [MEExperimental enableFeature:EMSInnerFeature.predict];
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/contact-token"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"contactFieldId": @"testContactFieldId",
+                                                                                       @"openIdToken": @"testOpenIdToken"
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createPredictOnlyContactRequestModelWithRefresh:NO];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+    [MEExperimental reset];
+}
+
 - (void)testCreateRefreshTokenRequestModel_when_ApplicationCode_isNil {
     EMSRequestModel *result = [self.requestFactory createRefreshTokenRequestModel];
 
