@@ -84,6 +84,10 @@
         parameters[@"key"] = key;
         NSMutableDictionary *statusDict = [NSMutableDictionary dictionary];
         statusDict[@"osStatus"] = @(status);
+        if (self.accessGroup) {
+            statusDict[@"self.accessGroup"] = self.accessGroup;
+        }
+        statusDict[@"accessGroupWasUsed"] = @NO;
         EMSStatusLog *logEntry = [[EMSStatusLog alloc] initWithClass:[self class]
                                                                  sel:_cmd
                                                           parameters:[NSDictionary dictionaryWithDictionary:parameters]
@@ -155,15 +159,26 @@
 
 - (void)setDictionary:(nullable NSDictionary *)dictionary
                forKey:(NSString *)key {
-    NSError *error;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:dictionary
-                                         requiringSecureCoding:NO
-                                                         error:&error];
+    NSData *data = nil;
+    NSError *error = nil;
+    NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+    if (dictionary) {
+        @try {
+            data = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                   options:0
+                                                     error:&error];
+        } @catch (NSException *exception) {
+            statusDictionary[@"dictJsonException"] = exception.reason;
+        } @finally {
+            if (error) {
+                statusDictionary[@"dictJsonError"] = error.description;
+            }
+        }
+    }
     if (error) {
         NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
         parameterDictionary[@"dictionary"] = dictionary;
         parameterDictionary[@"key"] = key;
-        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
         if (data) {
             statusDictionary[@"data"] = [[NSString alloc] initWithData:data
                                                               encoding:NSUTF8StringEncoding];
@@ -186,7 +201,6 @@
     if (!result) {
         for (NSUserDefaults *userDefaults in self.userDefaultsArray) {
             id userDefaultsValue = [userDefaults objectForKey:key];
-            
             if ([userDefaultsValue isKindOfClass:[NSString class]]) {
                 userDefaultsValue = [userDefaultsValue dataUsingEncoding:NSUTF8StringEncoding];
             } else if ([userDefaultsValue isKindOfClass:[NSNumber class]]) {
@@ -212,14 +226,22 @@
                 }
             } else if ([userDefaultsValue isKindOfClass:[NSDictionary class]]) {
                 NSError *error;
-                userDefaultsValue = [NSKeyedArchiver archivedDataWithRootObject:userDefaultsValue
-                                                          requiringSecureCoding:NO
+                NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+                @try {
+                    userDefaultsValue = [NSJSONSerialization dataWithJSONObject:userDefaultsValue
+                                                                        options:0
                                                                           error:&error];
+                } @catch (NSException *exception) {
+                    statusDictionary[@"userDefaultsFallbackJsonException"] = exception.reason;
+                } @finally {
+                    if (error) {
+                        statusDictionary[@"userDefaultsFallbackJsonError"] = error.description;
+                    }
+                }
                 if (error) {
                     NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
                     parameterDictionary[@"userDefaultsValue"] = userDefaultsValue;
                     parameterDictionary[@"key"] = key;
-                    NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
                     if (userDefaultsValue) {
                         statusDictionary[@"data"] = [[NSString alloc] initWithData:userDefaultsValue
                                                                           encoding:NSUTF8StringEncoding];
@@ -297,13 +319,24 @@
 - (nullable NSDictionary *)dictionaryForKey:(NSString *)key {
     NSData *data = [self dataForKey:key];
     NSError *error;
-    NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSNull class], [NSNumber class], [NSString class], [NSArray class], [NSDictionary class]]]
-                                                               fromData:data
-                                                                  error:&error];;
+    NSDictionary *result = nil;
+    NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
+    if (data) {
+        @try {
+            result = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:0
+                                                       error:&error];
+        } @catch (NSException *exception) {
+            statusDictionary[@"dataToDictJsonException"] = exception.reason;
+        } @finally {
+            if (error) {
+                statusDictionary[@"dataToDictJsonError"] = error.description;
+            }
+        }
+    }
     if (error) {
         NSMutableDictionary *parameterDictionary = [NSMutableDictionary new];
         parameterDictionary[@"key"] = key;
-        NSMutableDictionary *statusDictionary = [NSMutableDictionary new];
         if (result) {
             statusDictionary[@"data"] = result;
         }
@@ -354,7 +387,9 @@ forKeyedSubscript:(NSString *)key {
     NSMutableDictionary *mutableQuery = [NSMutableDictionary new];
     mutableQuery[(id) kSecClass] = (id) kSecClassGenericPassword;
     mutableQuery[(id) kSecAttrAccount] = key;
-    mutableQuery[(id) kSecAttrAccessGroup] = accessGroup;
+    if (accessGroup) {
+        mutableQuery[(id) kSecAttrAccessGroup] = accessGroup;
+    }
     return mutableQuery;
 }
 
