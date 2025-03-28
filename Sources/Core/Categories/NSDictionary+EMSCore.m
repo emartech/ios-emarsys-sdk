@@ -115,15 +115,11 @@
 }
 
 - (nullable id)valueForInsensitiveKey:(NSString *)key {
-    id result = nil;
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     for (id dictKey in self.allKeys) {
-        BOOL isString = [dictKey isKindOfClass:[NSString class]];
-        if (isString && [[dictKey lowercaseString] isEqualToString:[key lowercaseString]]) {
-            result = self[dictKey];
-            break;
-        }
+        dict[[dictKey lowercaseString]] = self[dictKey];
     }
-    return result;
+    return dict[[key lowercaseString]];
 }
 
 - (nullable id)nullSafeValueForKey:(NSString *)key {
