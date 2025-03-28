@@ -333,9 +333,9 @@ static NSString *const kTestValue2String = @"testValue2";
     [self.storage setDictionary:self.testDictionary
                          forKey:kTestKey];
 
-    NSDictionary *result = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[[NSDictionary class], [NSString class], [NSNumber class], [NSArray class], [NSNull class]]]
-                                                               fromData:self.storage[kTestKey]
-                                                                  error:nil];
+    NSDictionary *result = [NSJSONSerialization JSONObjectWithData:self.storage[kTestKey]
+                                                           options:0
+                                                             error:nil];
 
     XCTAssertEqualObjects(result, self.testDictionary);
 }
