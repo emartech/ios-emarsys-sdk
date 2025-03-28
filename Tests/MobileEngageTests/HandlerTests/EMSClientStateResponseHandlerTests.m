@@ -84,22 +84,9 @@
     XCTAssertTrue(shouldHandle);
 }
 
-- (void)testShouldHandleResponse_shouldReturnFalse_whenRequestIsNotMobileEngage {
-    BOOL shouldHandle = [self.responseHandler shouldHandleResponse:[self createResponseModelWithHeaders:@{@"X-Client-State": @"TEST-CLIENT-STATE-VALUE"}
-                                                                                                    url:[[NSURL alloc] initWithString:@"https://not-ems-me-client.herokuapp.com/"]]];
-
-    XCTAssertFalse(shouldHandle);
-}
-
 - (void)testShouldHandleResponse_shouldReturnFalse_whenClientStateIsNotPresent {
     BOOL shouldHandle = [self.responseHandler shouldHandleResponse:[self createResponseModelWithHeaders:nil]];
 
-    XCTAssertFalse(shouldHandle);
-}
-
-- (void)testShouldHandleResponse_shouldReturnFalse_whenUrlIsNotPresent {
-    BOOL shouldHandle = [self.responseHandler shouldHandleResponse:[self createResponseModelWithHeaders:@{@"X-Client-State": @"TEST-CLIENT-STATE-VALUE"}
-                                                                                                    url:nil]];
     XCTAssertFalse(shouldHandle);
 }
 

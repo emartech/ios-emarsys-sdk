@@ -20,7 +20,7 @@
 
 - (BOOL)shouldHandleResponse:(EMSResponseModel *)response {
     BOOL result = NO;
-    if ([response.requestModel.url.absoluteString hasPrefix:[self.endpoint clientServiceUrl]] && [response.headers valueForInsensitiveKey:CLIENT_STATE]) {
+    if ([response.headers valueForInsensitiveKey:CLIENT_STATE]) {
         result = YES;
     }
     return result;
