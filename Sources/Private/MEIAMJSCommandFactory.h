@@ -15,7 +15,7 @@
 @property(readonly, nonatomic, weak) id <MEIAMProtocol> meIam;
 @property(nonatomic, readonly) MEButtonClickRepository *buttonClickRepository;
 @property(nonatomic, readonly) EMSEventHandlerBlock appEventHandlerBlock;
-@property(nonatomic, readonly) id <EMSIAMCloseProtocol> closeProtocol;
+@property(nonatomic, readonly, weak) id <EMSIAMCloseProtocol> closeProtocol;
 @property(nonatomic, strong) MEInAppMessage *inAppMessage;
 @property(nonatomic, strong) UIPasteboard *pasteboard;
 
