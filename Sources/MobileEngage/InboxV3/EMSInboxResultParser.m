@@ -57,6 +57,7 @@
                                                                    title:[messageDict nullSafeValueForKey:@"title"]
                                                                     body:[messageDict nullSafeValueForKey:@"body"]
                                                                 imageUrl:[messageDict nullSafeValueForKey:@"imageUrl"]
+                                                            imageAltText:[messageDict nullSafeValueForKey:@"imageAltText"]
                                                               receivedAt:[messageDict nullSafeValueForKey:@"receivedAt"]
                                                                updatedAt:[messageDict nullSafeValueForKey:@"updatedAt"]
                                                                expiresAt:[messageDict nullSafeValueForKey:@"expiresAt"]

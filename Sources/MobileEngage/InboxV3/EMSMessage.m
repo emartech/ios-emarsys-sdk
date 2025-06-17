@@ -13,6 +13,7 @@
                      title:(NSString *)title
                       body:(NSString *)body
                   imageUrl:(nullable NSString *)imageUrl
+              imageAltText:(nullable NSString *)imageAltText
                 receivedAt:(NSNumber *)receivedAt
                  updatedAt:(nullable NSNumber *)updatedAt
                  expiresAt:(nullable NSNumber *)expiresAt
@@ -26,6 +27,7 @@
         _title = title;
         _body = body;
         _imageUrl = imageUrl;
+        _imageAltText = imageAltText;
         _receivedAt = receivedAt;
         _updatedAt = updatedAt;
         _expiresAt = expiresAt;
@@ -62,6 +64,8 @@
         return NO;
     if (self.imageUrl != message.imageUrl && ![self.imageUrl isEqualToString:message.imageUrl])
         return NO;
+    if (self.imageAltText != message.imageAltText && ![self.imageAltText isEqualToString:message.imageAltText])
+        return NO;
     if (self.receivedAt != message.receivedAt && ![self.receivedAt isEqualToNumber:message.receivedAt])
         return NO;
     if (self.updatedAt != message.updatedAt && ![self.updatedAt isEqualToNumber:message.updatedAt])
@@ -84,6 +88,7 @@
     hash = hash * 31u + [self.title hash];
     hash = hash * 31u + [self.body hash];
     hash = hash * 31u + [self.imageUrl hash];
+    hash = hash * 31u + [self.imageAltText hash];
     hash = hash * 31u + [self.receivedAt hash];
     hash = hash * 31u + [self.updatedAt hash];
     hash = hash * 31u + [self.expiresAt hash];

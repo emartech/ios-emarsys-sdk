@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSString *title;
 @property(nonatomic, strong) NSString *body;
 @property(nonatomic, strong, nullable) NSString *imageUrl;
+@property(nonatomic, strong, nullable) NSString *imageAltText;
 @property(nonatomic, strong) NSNumber *receivedAt;
 @property(nonatomic, strong, nullable) NSNumber *updatedAt;
 @property(nonatomic, strong, nullable) NSNumber *expiresAt;
@@ -29,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
                      title:(NSString *)title
                       body:(NSString *)body
                   imageUrl:(nullable NSString *)imageUrl
+              imageAltText:(nullable NSString *)imageAltText
                 receivedAt:(NSNumber *)receivedAt
                  updatedAt:(nullable NSNumber *)updatedAt
                  expiresAt:(nullable NSNumber *)expiresAt

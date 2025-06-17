@@ -36,6 +36,7 @@
                            "        \"title\": \"title\",\n"
                            "        \"body\": \"body\",\n"
                            "        \"imageUrl\": \"https://example.com/image.jpg\",\n"
+                           "        \"imageAltText\": \"Image description\",\n"
                            "        \"receivedAt\": 142141412515,\n"
                            "        \"updatedAt\": 142141412599,\n"
                            "        \"expiresAt\": 142141412599,\n"
@@ -71,6 +72,7 @@
                            "        \"title\": \"title2\",\n"
                            "        \"body\": \"body2\",\n"
                            "        \"imageUrl\": \"https://example.com/image2.jpg\",\n"
+                           "        \"imageAltText\": \"Image description 2\",\n"
                            "        \"receivedAt\": 2222,\n"
                            "        \"updatedAt\": 2222,\n"
                            "        \"expiresAt\": 250,\n"
@@ -105,6 +107,7 @@
                            "        \"title\": \"title3\",\n"
                            "        \"body\": \"body3\",\n"
                            "        \"imageUrl\": null,\n"
+                           "        \"imageAltText\": null,\n"
                            "        \"receivedAt\": 2222,\n"
                            "        \"updatedAt\": null,\n"
                            "        \"expiresAt\": null,\n"
@@ -131,6 +134,7 @@
                                                     title:@"title"
                                                      body:@"body"
                                                  imageUrl:@"https://example.com/image.jpg"
+                                             imageAltText:@"Image description"
                                                receivedAt:@(142141412515)
                                                 updatedAt:@(142141412599)
                                                 expiresAt:@(142141412599)
@@ -158,6 +162,7 @@
                                                     title:@"title2"
                                                      body:@"body2"
                                                  imageUrl:@"https://example.com/image2.jpg"
+                                             imageAltText:@"Image description 2"
                                                receivedAt:@(2222)
                                                 updatedAt:@(2222)
                                                 expiresAt:@(250)
@@ -184,6 +189,7 @@
                                                     title:@"title3"
                                                      body:@"body3"
                                                  imageUrl:nil
+                                             imageAltText:nil
                                                receivedAt:@(2222)
                                                 updatedAt:nil
                                                 expiresAt:nil
@@ -255,6 +261,7 @@
                            "        \"title\": \"title\",\n"
                            "        \"body\": \"body\",\n"
                            "        \"imageUrl\": \"https://example.com/image.jpg\",\n"
+                           "        \"imageAltText\": \"Image description\",\n"
                            "        \"receivedAt\": 142141412515,\n"
                            "        \"updatedAt\": 142141412599,\n"
                            "        \"expiresAt\": 142141412599,\n"
@@ -301,6 +308,7 @@
                                                    title:@"title"
                                                     body:@"body"
                                                 imageUrl:@"https://example.com/image.jpg"
+                                            imageAltText:@"Image description"
                                               receivedAt:@(142141412515)
                                                updatedAt:@(142141412599)
                                                expiresAt:@(142141412599)

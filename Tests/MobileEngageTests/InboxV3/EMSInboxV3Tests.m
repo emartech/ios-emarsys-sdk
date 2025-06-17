@@ -532,6 +532,7 @@
                                     title:@"title"
                                      body:@"body"
                                  imageUrl:@"https://example.com/image.jpg"
+                             imageAltText:@"Image description"
                                receivedAt:@(142141412515)
                                 updatedAt:@(142141412599)
                                 expiresAt:@(142141412659)
