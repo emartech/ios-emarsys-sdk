@@ -216,10 +216,10 @@
     }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
-
+    
     OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
                                                   additionalData:(@{
-                                                          @"queue": @"testRunnerQueue",
+                                                          @"queue": @"operationQueueForTesting",
                                                           @"wrapper": @"testWrapper",
                                                           @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]])
                                                   })]]);
@@ -261,7 +261,7 @@
 
     [EMSWaiter waitForExpectations:@[expectation]];
     NSDictionary *expectedAdditionalData = @{
-        @"queue": @"testRunnerQueue",
+        @"queue": @"operationQueueForTesting",
         @"wrapper": @"testWrapper",
         @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]]),
         @"breadcrumbs": @[expectedBreadcrumb]
@@ -315,7 +315,7 @@
 
     [EMSWaiter waitForExpectations:@[expectation]];
     NSDictionary *expectedAdditionalData = @{
-        @"queue": @"testRunnerQueue",
+        @"queue": @"operationQueueForTesting",
         @"wrapper": @"testWrapper",
         @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]]),
         @"breadcrumbs": expectedBreadcrumbs
@@ -480,7 +480,7 @@
 
     NSMutableDictionary *mutableData = [self.data mutableCopy];
     mutableData[@"level"] = @"INFO";
-    mutableData[@"queue"] = @"testRunnerQueue";
+    mutableData[@"queue"] = @"operationQueueForTesting";
     mutableData[@"wrapper"] = @"testWrapper";
     mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]];
 
@@ -532,7 +532,7 @@
             @"key2": [date description]
     } mutableCopy];
     mutableData[@"level"] = @"INFO";
-    mutableData[@"queue"] = @"testRunnerQueue";
+    mutableData[@"queue"] = @"operationQueueForTesting";
     mutableData[@"wrapper"] = @"testWrapper";
     mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]];
 

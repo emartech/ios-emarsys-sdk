@@ -68,43 +68,45 @@
 
 - (void)log:(id <EMSLogEntryProtocol>)entry
       level:(LogLevel)level {
-    [self consoleLogLogEntry:entry
-                  entryLevel:level];
-    id url = entry.data[@"url"];
-    if (level == LogLevelDebug || level == LogLevelInfo) {
-        if ([self.breadCrumbsQueue count] >= 10) {
-            [self.breadCrumbsQueue removeLastObject];
+    __weak typeof(self) weakSelf = self;
+    [self.operationQueue addOperationWithBlock:^{
+        [weakSelf consoleLogLogEntry:entry
+                      entryLevel:level];
+        id url = entry.data[@"url"];
+        if (level == LogLevelDebug || level == LogLevelInfo) {
+            if ([weakSelf.breadCrumbsQueue count] >= 10) {
+                [weakSelf.breadCrumbsQueue removeLastObject];
+            }
+            [weakSelf.breadCrumbsQueue insertObject:entry atIndex:0];
         }
-        [self.breadCrumbsQueue insertObject:entry atIndex:0];
-    }
-    
-    if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && (level >= self.logLevel || [entry.topic isEqualToString:@"app:start"]) &&
-        ![entry isKindOfClass:[EMSMethodNotAllowed class]]) {
-        NSString *currentQueue = [NSOperationQueue currentQueue].name;
-        __weak typeof(self) weakSelf = self;
-        [self.operationQueue addOperationWithBlock:^{
+        
+        if (!([entry.topic isEqualToString:@"log_request"] && url && [url isEqualToString:EMSLogEndpoint]) && (level >= weakSelf.logLevel || [entry.topic isEqualToString:@"app:start"]) &&
+            ![entry isKindOfClass:[EMSMethodNotAllowed class]]) {
+            NSString *currentQueue = [NSOperationQueue currentQueue].name;
+            
             [weakSelf.shardRepository add:[EMSShard makeWithBuilder:^(EMSShardBuilder *builder) {
-                        [builder setType:[entry topic]];
-                        NSMutableDictionary *mutableData = [entry.data mutableCopy];
-                        mutableData[@"level"] = [weakSelf logLevelStringFromLogLevel:level];
-                        mutableData[@"queue"] = currentQueue;
-                        mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[[weakSelf.timestampProvider provideTimestamp] numberValueInMillis]];
-                        if (![weakSelf.wrapperChecker.wrapper isEqualToString:@"none"]) {
-                            mutableData[@"wrapper"] = weakSelf.wrapperChecker.wrapper;
-                        }
+                [builder setType:[entry topic]];
+                NSMutableDictionary *mutableData = [entry.data mutableCopy];
+                mutableData[@"level"] = [weakSelf logLevelStringFromLogLevel:level];
+                mutableData[@"queue"] = currentQueue;
+                mutableData[@"timestamp"] = [NSString stringWithFormat:@"%@",[[weakSelf.timestampProvider provideTimestamp] numberValueInMillis]];
+                if (![weakSelf.wrapperChecker.wrapper isEqualToString:@"none"]) {
+                    mutableData[@"wrapper"] = weakSelf.wrapperChecker.wrapper;
+                }
                 
-                        if (level == LogLevelError) {
-                            mutableData[@"breadcrumbs"] = [weakSelf collectBreadcrumbs];
-                        }
+                if (level == LogLevelError) {
+                    mutableData[@"breadcrumbs"] = [weakSelf collectBreadcrumbs];
+                }
                 
-                        [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
-                    }
+                [builder addPayloadEntries:[mutableData dictionaryWithAllowedTypes:[NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDictionary class], [NSArray class]]]]];
+            }
                                                   timestampProvider:weakSelf.timestampProvider
                                                        uuidProvider:weakSelf.uuidProvider]];
-        }];
-    } else {
-        return;
-    }
+            
+        } else {
+            return;
+        }
+    }];
 }
 
 - (NSArray *)collectBreadcrumbs {
@@ -164,8 +166,8 @@
     NSMutableString *result = [NSMutableString string];
     for (NSString *key in [data allKeys]) {
         [result appendString:[NSString stringWithFormat:@"%@: %@ \n",
-                                                        key,
-                                                        data[key]]];
+                              key,
+                              data[key]]];
     }
     return [NSString stringWithString:result];
 }

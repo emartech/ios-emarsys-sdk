@@ -190,11 +190,12 @@ didFinishNavigation:(WKNavigation *)navigation {
 }
 
 - (void)fetchInlineInappMessage {
-    if (self.viewId) {
+    __block NSString *viewId = [self.viewId copy];
+    if (viewId) {
         __weak typeof(self) weakSelf = self;
         [EMSDependencyInjection.dependencyContainer.coreOperationQueue addOperationWithBlock:^{
             EMSRequestFactory *requestFactory = EMSDependencyInjection.dependencyContainer.requestFactory;
-            EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:weakSelf.viewId];
+            EMSRequestModel *requestModel = [requestFactory createInlineInappRequestModelWithViewId:viewId];
             [EMSDependencyInjection.dependencyContainer.requestManager submitRequestModelNow:requestModel
                                                                                 successBlock:^(NSString *requestId, EMSResponseModel *response) {
                                                                                     MEInAppMessage *inAppMessage = [weakSelf filterMessagesByViewId:response];

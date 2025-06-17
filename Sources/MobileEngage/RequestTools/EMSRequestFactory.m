@@ -171,7 +171,9 @@
 - (EMSRequestModel *_Nullable)createInlineInappRequestModelWithViewId:(NSString *)viewId {
     __weak typeof(self) weakSelf = self;
     NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
-    payload[@"viewIds"] = @[viewId];
+    if (viewId) {
+        payload[@"viewIds"] = @[viewId];
+    }
     payload[@"clicks"] = [self clickRepresentations];
     return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
