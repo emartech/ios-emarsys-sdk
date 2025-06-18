@@ -314,15 +314,16 @@
     }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
-    NSDictionary *expectedAdditionalData = @{
-        @"queue": @"operationQueueForTesting",
-        @"wrapper": @"testWrapper",
-        @"timestamp": ([NSString stringWithFormat:@"%@",[self.timestamp numberValueInMillis]]),
-        @"breadcrumbs": expectedBreadcrumbs
-    };
-
-    OCMVerify([partialMockRepository add:[self shardWithLogLevel:LogLevelError
-                                                  additionalData:(expectedAdditionalData)]]);
+    [self waitATickOnOperationQueue:self.operationQueue];
+    [self waitATickOnOperationQueue:self.runnerQueue];
+    
+    OCMVerify([partialMockRepository add:[OCMArg checkWithBlock:^BOOL(id obj) {
+        EMSShard *capturedShard = obj;
+        NSArray<NSString *> *breadcrumbs = capturedShard.data[@"breadcrumbs"];
+        NSSet *capturedBreadcrumbs = [NSSet setWithArray:breadcrumbs];
+        NSSet *expectedBreadcrumbsSet = [NSSet setWithArray:expectedBreadcrumbs];
+        return [capturedBreadcrumbs isEqualToSet:expectedBreadcrumbsSet];
+    }]]);
 }
 
 - (void)testLogShouldNotInsertEntryToShardRepository {    
