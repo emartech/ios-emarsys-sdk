@@ -10,8 +10,6 @@ jobs:
       with:
         ref: dev
         fetch-depth: 0
-    - name: Select Xcode version
-      run: sudo xcode-select -s '/Applications/Xcode_15.4.app/Contents/Developer'
     - name: Remove old directories
       run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
       shell: bash
