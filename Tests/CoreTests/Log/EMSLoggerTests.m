@@ -65,8 +65,9 @@
     
     _mockLogEntry = logEntry;
     
-    _operationQueue = [NSOperationQueue new];
+    _operationQueue = [self createTestOperationQueue];
     self.operationQueue.name = @"operationQueueForTesting";
+
     _runnerQueue = [NSOperationQueue new];
     self.runnerQueue.name = @"testRunnerQueue";
     
@@ -299,8 +300,9 @@
                                                             sel:_cmd
                                                      parameters:@{@"differentKey": @"differentValue"}
                                                          status:nil];
-    
-    [logger log:differentBreadcrumbLog level:LogLevelDebug];
+    [self.runnerQueue addOperationWithBlock:^{
+        [logger log:differentBreadcrumbLog level:LogLevelDebug];
+    }];
     
     NSMutableDictionary* differentLogDict = [[differentBreadcrumbLog data] mutableCopy];
     differentLogDict[@"topic"] = [differentBreadcrumbLog topic];
@@ -314,8 +316,6 @@
     }];
 
     [EMSWaiter waitForExpectations:@[expectation]];
-    [self waitATickOnOperationQueue:self.operationQueue];
-    [self waitATickOnOperationQueue:self.runnerQueue];
     
     OCMVerify([partialMockRepository add:[OCMArg checkWithBlock:^BOOL(id obj) {
         EMSShard *capturedShard = obj;
