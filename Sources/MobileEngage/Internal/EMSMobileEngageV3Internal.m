@@ -85,7 +85,7 @@
 - (void)setContactWithContactFieldId:(nullable NSNumber *)contactFieldId
                    contactFieldValue:(nullable NSString *)contactFieldValue
                      completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
-    BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue];
+    BOOL shouldRestartSession = ![contactFieldValue isEqualToString:self.requestContext.contactFieldValue] || !(contactFieldId == self.requestContext.contactFieldId);
     if (shouldRestartSession) {
         [self sendContactRequestWithContactFieldId:contactFieldId
                                  contactFieldValue:contactFieldValue
