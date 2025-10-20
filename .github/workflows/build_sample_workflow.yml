@@ -11,18 +11,18 @@ jobs:
         ref: dev
         fetch-depth: 0
     - name: Remove old directories
-      run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
+      run: rm -rf ~/tmp | rm -rf ~/Library/Developer/Xcode/UserData
       shell: bash
     - name: Setup Sample Provisioning Profile
       uses: davidSchuppa/base64Secret-toFile-action@v1
       with:
-        destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+        destination-path: ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/
         filename: EmarsysSampleProvProf.mobileprovision
         secret: ${{ secrets.DEV_ACCOUNT_EMARSYS_SAMPLE_PROV_PROF_BASE64 }}
     - name: Setup NotificationService Provisioning Profile
       uses: davidSchuppa/base64Secret-toFile-action@v1
       with:
-        destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+        destination-path: ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/
         filename: EmarsysSampleNotificationServiceProvProf.mobileprovision
         secret: ${{ secrets.DEV_ACCOUNT_EMARSYS_SAMPLE_NOTIFICATION_SERVICE_PROV_PROF_BASE64 }}
     - name: Setup export options plist

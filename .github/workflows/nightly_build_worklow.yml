@@ -12,12 +12,12 @@ jobs:
           fetch-depth: 0
           ref: dev
       - name: Remove old directories
-        run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
+        run: rm -rf ~/tmp | rm -rf ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/
         shell: bash
       - name: Install provisioning profile for tests
         uses: davidSchuppa/base64Secret-toFile-action@v1
         with:
-          destination-path: ~/Library/MobileDevice/Provisioning\ Profiles/
+          destination-path: ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/
           filename: SDKHost.mobileprovision
           secret: ${{ secrets.SDK_HOST_MOBILEPROVISION_BASE64 }}
       - name: Authenticate to Google Cloud
