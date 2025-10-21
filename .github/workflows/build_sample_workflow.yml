@@ -30,7 +30,7 @@ jobs:
       with:
         destination-path: ./Emarsys\ Sample
         filename: exportOptions.plist
-        secret: ${{ secrets.TESTFLIGHT_EXPORT_OPTIONS_PLIST_BASE64 }}
+        secret: ${{ secrets.TESTFLIGHT_EXPORT_OPTIONS_PLIST_BASE64 }}  # can be found in the root of the repo as ExportOptions.plist
     - name: Setup Dev Account Dist Cert
       uses: apple-actions/import-codesign-certs@v1
       with:

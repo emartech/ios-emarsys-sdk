@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store-connect</string>
+    <key>teamID</key>
+    <string>4J5FXBB97U</string>
+    <key>teamName</key>
+    <string>EMARSYS-Technologies Informatikai Szolgaltato Korlatolt Felelossegu Tarsasag</string>
+    <key>provisioningProfiles</key>
+	<dict>
+		<key>com.emarsys.EmarsysSample</key>
+		<string>EmarsysSampleProvProf</string>
+		<key>com.emarsys.EmarsysSample.NotificationService</key>
+		<string>EmarsysSampleNotificationServiceProvProf</string>
+	</dict>
+</dict>
+</plist>
