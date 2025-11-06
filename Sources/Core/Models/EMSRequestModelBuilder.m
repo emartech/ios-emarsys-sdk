@@ -7,6 +7,7 @@
 #import "EMSUUIDProvider.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
+#import "NSURL+EMSCore.h"
 
 @implementation EMSRequestModelBuilder
 
@@ -56,22 +57,12 @@
     return self;
 }
 
-- (EMSRequestModelBuilder *)setUrl:(NSString *)url
+- (EMSRequestModelBuilder *)setUrl:(NSString *)urlString
                    queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters {
-    NSURL *urlToCheck = [NSURL URLWithString:url];
-    if (urlToCheck && urlToCheck.scheme && urlToCheck.host) {
-        NSURLComponents *components = [[NSURLComponents alloc] initWithURL:urlToCheck
-                                                   resolvingAgainstBaseURL:YES];
-        NSMutableArray *queryItems = [NSMutableArray array];
-        for (NSString *name in queryParameters.allKeys) {
-            NSString *const queryParameterValue = queryParameters[name];
-            if ([queryParameterValue isKindOfClass:[NSString class]]) {
-                [queryItems addObject:[[NSURLQueryItem alloc] initWithName:name
-                                                                     value:queryParameterValue]];
-            }
-        }
-        [components setQueryItems:queryItems];
-        _requestUrl = [components URL];
+    NSURL *url = [NSURL urlWithBaseUrl:urlString
+                       queryParameters:queryParameters];
+    if (url) {
+        _requestUrl = url;
     } else {
         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
         parameters[@"url"] = url;

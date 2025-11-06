@@ -9,18 +9,18 @@
 + (NSURL *)urlWithBaseUrl:(NSString *)urlString
           queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters {
     NSParameterAssert(urlString);
-    NSParameterAssert(queryParameters);
-    NSURL __unused *url = [NSURL URLWithString:urlString];
-    NSParameterAssert(url.scheme);
-    NSParameterAssert(url.host);
-
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
+    NSAssert((components), @"Invalid parameter not satisfying: %@", urlString);
+    NSAssert((components.host && [components.host length] > 0), @"Invalid parameter not satisfying: %@", urlString);
+    NSAssert((components.scheme), @"Invalid parameter not satisfying: %@", urlString);
+    
     NSMutableString *fullUrl = [NSMutableString stringWithFormat:@"%@?", urlString];
-    [queryParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
-        [fullUrl appendFormat:@"%@=%@&",
-         [[NSString stringWithFormat:@"%@", key] percentEncode],
-         [[NSString stringWithFormat:@"%@", value] percentEncode]];
-    }];
-    [fullUrl deleteCharactersInRange:NSMakeRange(fullUrl.length - 1, 1)];
+        [queryParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+            [fullUrl appendFormat:@"%@=%@&",
+             [[NSString stringWithFormat:@"%@", key] percentEncode],
+             [[NSString stringWithFormat:@"%@", value] percentEncode]];
+        }];
+        [fullUrl deleteCharactersInRange:NSMakeRange(fullUrl.length - 1, 1)];
     return [NSURL URLWithString:fullUrl];
 }
 

@@ -2,94 +2,82 @@
 //  Copyright © 2018. Emarsys. All rights reserved.
 //
 
-#import "Kiwi.h"
+#import <XCTest/XCTest.h>
 #import "NSURL+EMSCore.h"
 
-SPEC_BEGIN(NSURLEMSCoreTests)
+@interface NSURLEMSCoreTests : XCTestCase
 
-        describe(@"urlWithBaseUrl:queryParameters", ^{
+@end
 
-            it(@"should throw exception when baseURL is nil", ^{
-                @try {
-                    [NSURL urlWithBaseUrl:nil
-                          queryParameters:@{@"1": @"a"}];
-                    fail(@"Expected Exception when baseURL is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: urlString"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+@implementation NSURLEMSCoreTests
 
-            it(@"should throw exception when baseURL exists but there is no scheme", ^{
-                @try {
-                    [NSURL urlWithBaseUrl:@"url.com"
-                          queryParameters:@{@"1": @"a"}];
-                    fail(@"Expected Exception when there is no scheme!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: url.scheme"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+- (void)testUrlWithBaseUrl_shouldThrowExceptionWhenBaseURLIsNil {
+    @try {
+        [NSURL urlWithBaseUrl:nil
+                  queryParameters:@{@"1": @"a"}];
+        XCTFail(@"Expected Exception when baseURL is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: urlString");
+        XCTAssertNotNil(exception);
+    }
+}
 
-            it(@"should throw exception when baseURL exists but there is no host", ^{
-                @try {
-                    [NSURL urlWithBaseUrl:@"https://"
-                          queryParameters:@{@"1": @"a"}];
-                    fail(@"Expected Exception when there is no host!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: url.host"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+- (void)testUrlWithBaseUrl_shouldThrowExceptionWhenBaseURLExistsButThereIsNoScheme {
+    @try {
+        [NSURL urlWithBaseUrl:@"url.com"
+                  queryParameters:@{@"1": @"a"}];
+        XCTFail(@"Expected Exception when there is no scheme!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: url.com");
+        XCTAssertNotNil(exception);
+    }
+}
 
-            it(@"should throw exception when queryParameters is nil", ^{
-                @try {
-                    [NSURL urlWithBaseUrl:@"URL"
-                          queryParameters:nil];
-                    fail(@"Expected Exception when queryParameters is nil!");
-                } @catch (NSException *exception) {
-                    [[exception.reason should] equal:@"Invalid parameter not satisfying: queryParameters"];
-                    [[theValue(exception) shouldNot] beNil];
-                }
-            });
+- (void)testUrlWithBaseUrl_shouldThrowExceptionWhenBaseURLExistsButThereIsNoHost {
+    @try {
+        [NSURL urlWithBaseUrl:@"https://"
+                  queryParameters:@{@"1": @"a"}];
+        XCTFail(@"Expected Exception when there is no host!");
+    } @catch (NSException *exception) {
+        XCTAssertEqualObjects(exception.reason, @"Invalid parameter not satisfying: https://");
+        XCTAssertNotNil(exception);
+    }
+}
 
-            it(@"should build URL with queryParameters when fields are set", ^{
-                NSURL *result = [NSURL urlWithBaseUrl:@"http://myurl.com"
-                                      queryParameters:@{
-                                          @"1": @"a",
-                                          @"2": @"b"
-                                      }];
-                [[result.absoluteString should] equal:@"http://myurl.com?1=a&2=b"];
-            });
+- (void)testUrlWithBaseUrl_shouldBuildURLWithQueryParametersWhenFieldsAreSet {
+    NSURL *result = [NSURL urlWithBaseUrl:@"https://myurl.com"
+                          queryParameters:@{
+                              @"1": @"a",
+                              @"2": @"b"
+                          }];
+    XCTAssertEqualObjects(result.absoluteString, @"https://myurl.com?1=a&2=b");
+}
 
-            it(@"should build URL with queryParameters when fields are set and has special characters", ^{
-                NSURL *result = [NSURL urlWithBaseUrl:@"http://myurl.com"
-                                      queryParameters:@{
-                                          @"1": @"a",
-                                          @"<>,": @"\"`;/?:^%#@&=$+{}<>,|\\ !'()*[]"
-                                      }];
-                [[result.absoluteString should] equal:@"http://myurl.com?1=a&%3C%3E%2C=%22%60%3B%2F%3F%3A%5E%25%23%40%26%3D%24%2B%7B%7D%3C%3E%2C%7C%5C%20%21%27%28%29%2A%5B%5D"];
-            });
+- (void)testUrlWithBaseUrl_shouldBuildURLWithQueryParametersWhenFieldsAreSetAndHasSpecialCharacters {
+    NSURL *result = [NSURL urlWithBaseUrl:@"https://myurl.com"
+                          queryParameters:@{
+                              @"1": @"a",
+                              @"<>,": @"\"`;/?:^%#@&=$+{}<>,|\\ !'()*[]"
+                          }];
+    XCTAssertEqualObjects(result.absoluteString, @"https://myurl.com?1=a&%3C%3E%2C=%22%60%3B%2F%3F%3A%5E%25%23%40%26%3D%24%2B%7B%7D%3C%3E%2C%7C%5C%20%21%27%28%29%2A%5B%5D");
+}
 
-            it(@"should build URL with queryParameters when fields are set and value has not String characters", ^{
-                NSURL *result = [NSURL urlWithBaseUrl:@"http://myurl.com"
-                                      queryParameters:@{
-                                          @"1": @"a",
-                                          @"2": @2
-                                      }];
-                [[result.absoluteString should] equal:@"http://myurl.com?1=a&2=2"];
-            });
+- (void)testUrlWithBaseUrl_shouldBuildURLWithQueryParametersWhenFieldsAreSetAndValueHasNotStringCharacters {
+    NSURL *result = [NSURL urlWithBaseUrl:@"https://myurl.com"
+                          queryParameters:@{
+                              @"1": @"a",
+                              @"2": @2
+                          }];
+    XCTAssertEqualObjects(result.absoluteString, @"https://myurl.com?1=a&2=2");
+}
 
-            it(@"should build URL with queryParameters when fields are set and key has not String characters", ^{
-                NSURL *result = [NSURL urlWithBaseUrl:@"http://myurl.com"
-                                      queryParameters:@{
-                                          @"1": @"a",
-                                          @3: @"3"
-                                      }];
-                [[result.absoluteString should] equal:@"http://myurl.com?1=a&3=3"];
-            });
+- (void)testUrlWithBaseUrl_shouldBuildURLWithQueryParametersWhenFieldsAreSetAndKeyHasNotStringCharacters {
+    NSURL *result = [NSURL urlWithBaseUrl:@"https://myurl.com"
+                          queryParameters:@{
+                              @"1": @"a",
+                              @3: @"3"
+                          }];
+    XCTAssertEqualObjects(result.absoluteString, @"https://myurl.com?1=a&3=3");
+}
 
-        });
-
-
-SPEC_END
+@end
