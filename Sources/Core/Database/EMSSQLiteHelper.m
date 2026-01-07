@@ -85,7 +85,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 - (void)open {
     __weak typeof(self) weakSelf = self;
     [self.operationQueue runSynchronized:^{
-        sqlite3_initialize();
         int sqlResult = sqlite3_open_v2([weakSelf.dbPath UTF8String], &self->_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
         if (sqlResult == SQLITE_OK) {
             int version = [weakSelf version];
@@ -107,7 +106,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     __weak typeof(self) weakSelf = self;
     [self.operationQueue runSynchronized:^{
         sqlite3_close_v2(weakSelf.db);
-        sqlite3_shutdown();
     }];
 }
 
