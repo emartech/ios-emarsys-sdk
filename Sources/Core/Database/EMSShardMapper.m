@@ -34,10 +34,12 @@
         if (!data) {
             data = @{};
         }
+    } else {
+        data = @{};
     }
     NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_double(statement, 3)];
     NSTimeInterval ttl = sqlite3_column_double(statement, 4);
-    if (!shardId || !type || !data || !timestamp || !ttl) {
+    if (!shardId || !type || !data || !timestamp) {
         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
         parameters[@"shardId"] = shardId;
         parameters[@"type"] = type;
@@ -49,6 +51,7 @@
                                                           parameters:[NSDictionary dictionaryWithDictionary:parameters]
                                                               status:nil];
         EMSLog(logEntry, LogLevelError);
+        return nil;
     }
     return [[EMSShard alloc] initWithShardId:shardId
                                         type:type
