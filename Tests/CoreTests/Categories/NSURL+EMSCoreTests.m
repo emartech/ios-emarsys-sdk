@@ -80,4 +80,39 @@
     XCTAssertEqualObjects(result.absoluteString, @"https://myurl.com?1=a&3=3");
 }
 
+- (void)testIsEqualIgnoringQueryParamOrderTo_shouldReturnNO_whenHostIsDifferent {
+    NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com"];
+    NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.notemarsys.com"];
+    BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+    XCTAssertFalse(result);
+}
+
+- (void)testIsEqualIgnoringQueryParamOrderTo_shouldReturnNO_whenPathIsDifferent {
+    NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path"];
+    NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/differentPath"];
+    BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+    XCTAssertFalse(result);
+}
+
+- (void)testIsEqualIgnoringQueryParamOrderTo_shouldReturnNO_whenQueryParamsAreDifferent {
+    NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=original"];
+    NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=different"];
+    BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+    XCTAssertFalse(result);
+}
+
+- (void)testIsEqualIgnoringQueryParamOrderTo_shouldReturnYES_whenUrlsAreTheSame {
+    NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+    NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+    BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+    XCTAssertTrue(result);
+}
+
+- (void)testIsEqualIgnoringQueryParamOrderTo_shouldReturnYES_whenQueryParamsAreTheSameButOrderIsDifferent {
+    NSURL *url = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param1=same&param2=same"];
+    NSURL *otherUrl = [[NSURL alloc] initWithString:@"https://www.emarsys.com/path?param2=same&param1=same"];
+    BOOL result = [url isEqualIgnoringQueryParamOrderTo:otherUrl];
+    XCTAssertTrue(result);
+}
+
 @end

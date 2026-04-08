@@ -1,20 +1,20 @@
 //
 // Copyright (c) 2019 Emarsys. All rights reserved.
 //
-#import "EMSContactTokenMapper.h"
-#import "MERequestContext.h"
+#import "EMSMerchantIdMapper.h"
+#import "PRERequestContext.h"
 #import "EMSRequestModel.h"
 #import "EMSEndpoint.h"
 
-@interface EMSContactTokenMapper()
+@interface EMSMerchantIdMapper()
 
 - (BOOL)isNotSetContactAndNotRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel;
 
 @end
 
-@implementation EMSContactTokenMapper
+@implementation EMSMerchantIdMapper
 
-- (instancetype)initWithRequestContext:(MERequestContext *)requestContext endpoint:(EMSEndpoint *)endpoint {
+- (instancetype)initWithRequestContext:(PRERequestContext *)requestContext endpoint:(EMSEndpoint *)endpoint {
     NSParameterAssert(requestContext);
     NSParameterAssert(endpoint);
     if (self = [super init]) {
@@ -25,7 +25,7 @@
 }
 
 - (BOOL)shouldHandleWithRequestModel:(EMSRequestModel *)requestModel {
-    return ([self isNotSetContactAndNotRefreshContactTokenMobileEngageRequest:requestModel] || [self isPredictRequest:requestModel]) && self.requestContext.contactToken;
+    return ([self isSetContactOrRefreshContactTokenMobileEngageRequest:requestModel] || [self isPredictOnlySetContactRequest:requestModel]) && self.requestContext.merchantId;
 }
 
 - (EMSRequestModel *)modelFromModel:(EMSRequestModel *)requestModel {
@@ -37,27 +37,28 @@
                                               payload:requestModel.payload
                                               headers:[self headers:requestModel]
                                                extras:requestModel.extras];
-
+    
 }
 
 - (NSDictionary *)headers:(EMSRequestModel *)requestModel {
     NSMutableDictionary *mergedHeaders = [NSMutableDictionary dictionaryWithDictionary:requestModel.headers];
-    mergedHeaders[@"X-Contact-Token"] = self.requestContext.contactToken;
+    mergedHeaders[@"X-Merchant-Id"] = self.requestContext.merchantId;
     NSDictionary *headers = [NSDictionary dictionaryWithDictionary:mergedHeaders];
     return headers;
 }
 
 
-- (BOOL)isNotSetContactAndNotRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel {
+- (BOOL)isSetContactOrRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
+    NSString *path = requestModel.url.path;
     return [self.endpoint isMobileEngageUrl:url] &&
-    ![url hasSuffix:@"/contact-token"] &&
-    ![url hasSuffix:@"/client/contact"];
+    ([path hasSuffix:@"/client/contact-token"] || [path hasSuffix:@"/client/contact"]);
 }
 
-- (BOOL)isPredictRequest:(EMSRequestModel *)requestModel {
+- (BOOL)isPredictOnlySetContactRequest:(EMSRequestModel *)requestModel {
     NSString *url = requestModel.url.absoluteString;
-    return [url hasPrefix:[self.endpoint predictUrl]];
+    NSString *path = requestModel.url.path;
+    return [self.endpoint isMobileEngageUrl:url] && [path hasSuffix:@"/contact-token"] && ![path containsString:@"apps"];
 }
 
 @end

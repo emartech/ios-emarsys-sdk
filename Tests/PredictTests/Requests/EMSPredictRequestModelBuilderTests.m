@@ -173,7 +173,6 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = @"testVisitorId";
-    mutableQueryParams[@"ci"] = @"testCustomerId";
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -190,7 +189,6 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = @"testVisitorId";
-    mutableQueryParams[@"ci"] = @"testCustomerId";
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -207,7 +205,6 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -224,7 +221,6 @@
     NSMutableDictionary *mutableQueryParams = [NSMutableDictionary dictionary];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:123,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {
@@ -490,7 +486,6 @@
     NSMutableDictionary *mutableQueryParams = [queryParams mutableCopy];
     mutableQueryParams[@"f"] = [NSString stringWithFormat:@"f:%@,l:5,o:0", logic.logic];
     mutableQueryParams[@"vi"] = self.mockContext.visitorId;
-    mutableQueryParams[@"ci"] = self.mockContext.contactFieldValue;
     [self assertForUrl:@"https://recommender.scarabresearch.com/merchants/testMerchantId/"
        queryParameters:[NSDictionary dictionaryWithDictionary:mutableQueryParams]
           builderBlock:^(EMSPredictRequestModelBuilder *builder) {

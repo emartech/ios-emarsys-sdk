@@ -4,6 +4,7 @@
 #import "EMSRequestFactory.h"
 #import "EMSRequestModel.h"
 #import "MERequestContext.h"
+#import "PRERequestContext.h"
 #import "EMSEndpoint.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
 #import "NSDate+EMSCore.h"
@@ -20,6 +21,7 @@
 @interface EMSRequestFactory ()
 
 @property(nonatomic, strong) MERequestContext *requestContext;
+@property(nonatomic, strong) PRERequestContext *predictRequestContext;
 @property(nonatomic, strong) EMSDeviceInfo *deviceInfo;
 @property(nonatomic, strong) EMSEndpoint *endpoint;
 @property(nonatomic, strong) MEButtonClickRepository *buttonClickRepository;
@@ -33,17 +35,20 @@
 @implementation EMSRequestFactory
 
 - (instancetype)initWithRequestContext:(MERequestContext *)requestContext
+                 predictRequestContext:(PRERequestContext *)predictRequestContext
                               endpoint:(EMSEndpoint *)endpoint
                  buttonClickRepository:(MEButtonClickRepository *)buttonClickRepository
                        sessionIdHolder:(EMSSessionIdHolder *)sessionIdHolder
                                storage:(id <EMSStorageProtocol>)storage {
     NSParameterAssert(requestContext);
+    NSParameterAssert(predictRequestContext);
     NSParameterAssert(endpoint);
     NSParameterAssert(buttonClickRepository);
     NSParameterAssert(sessionIdHolder);
     NSParameterAssert(storage);
     if (self = [super init]) {
         _requestContext = requestContext;
+        _predictRequestContext = predictRequestContext;
         _deviceInfo = requestContext.deviceInfo;
         _endpoint = endpoint;
         _buttonClickRepository = buttonClickRepository;
@@ -100,6 +105,40 @@
             }];
 }
 
+- (EMSRequestModel *_Nullable)createPredictOnlyContactRequestModelWithRefresh:(BOOL)shouldRefresh {
+    __weak typeof(self) weakSelf = self;
+    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setMethod:HTTPMethodPOST];
+                [builder setUrl:[weakSelf.endpoint contactUrlPredictOnly]];
+                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+        if (shouldRefresh) {
+            if (weakSelf.requestContext.refreshToken) {
+                mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
+            }
+        } else {
+            if (weakSelf.requestContext.contactFieldId && [weakSelf.requestContext hasContactIdentification]) {
+                mutablePayload[@"contactFieldId"] = weakSelf.requestContext.contactFieldId;
+                if (weakSelf.requestContext.contactFieldValue) {
+                    mutablePayload[@"contactFieldValue"] = weakSelf.requestContext.contactFieldValue;
+                }
+                if (weakSelf.requestContext.openIdToken) {
+                    mutablePayload[@"openIdToken"] = weakSelf.requestContext.openIdToken;
+                }
+            }
+
+        }
+                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+            }];
+}
+
+- (EMSRequestModel *_Nullable)createPredictOnlyClearContactRequestModel {
+    __weak typeof(self) weakSelf = self;
+    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
+                [builder setMethod:HTTPMethodDELETE];
+                [builder setUrl:[weakSelf.endpoint contactUrlPredictOnly]];
+            }];
+}
+
 - (EMSRequestModel *_Nullable)createEventRequestModelWithEventName:(NSString *)eventName
                                           eventAttributes:(nullable NSDictionary<NSString *, NSString *> *)eventAttributes
                                                 eventType:(EventType)eventType {
@@ -126,13 +165,19 @@
 
 - (EMSRequestModel *_Nullable)createRefreshTokenRequestModel {
     __weak typeof(self) weakSelf = self;
-    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setMethod:HTTPMethodPOST];
-                [builder setUrl:[weakSelf.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
-                NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
-                mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
-                [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
-            }];
+    EMSRequestModel *result;
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        result = [self createPredictOnlyContactRequestModelWithRefresh:YES];
+    } else if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        result = [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
+            [builder setMethod:HTTPMethodPOST];
+            [builder setUrl:[weakSelf.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+            NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
+            mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
+            [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+        }];
+    }
+    return result;
 }
 
 - (EMSRequestModel *)createDeepLinkRequestModelWithTrackingId:(NSString *)trackingId {
@@ -169,17 +214,22 @@
 }
 
 - (EMSRequestModel *_Nullable)createInlineInappRequestModelWithViewId:(NSString *)viewId {
-    __weak typeof(self) weakSelf = self;
-    NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
-    if (viewId && [viewId isKindOfClass:[NSString class]] && viewId.length > 0) {
-        payload[@"viewIds"] = @[viewId];
+    EMSRequestModel *requestModel = nil;
+    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        __weak typeof(self) weakSelf = self;
+        NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
+        if (viewId && [viewId isKindOfClass:[NSString class]] && viewId.length > 0) {
+            payload[@"viewIds"] = @[viewId];
+        }
+        payload[@"clicks"] = [self clickRepresentations];
+        requestModel = [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
+                    [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
+                    [builder setMethod:HTTPMethodPOST];
+                    [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
+                }];
     }
-    payload[@"clicks"] = [self clickRepresentations];
-    return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
-                [builder setUrl:[weakSelf.endpoint inlineInappUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
-                [builder setMethod:HTTPMethodPOST];
-                [builder setPayload:[NSDictionary dictionaryWithDictionary:payload]];
-            }];
+
+    return requestModel;
 }
 
 - (NSString *)eventTypeStringRepresentationFromEventType:(EventType)eventType {
@@ -201,7 +251,7 @@
 
 - (EMSRequestModel *)requestModelWithBuilder:(EMSRequestBuilderBlock)builderBlock {
     EMSRequestModel *result = nil;
-    if (self.requestContext.applicationCode) {
+    if (self.requestContext.applicationCode || self.predictRequestContext.merchantId) {
         result = [EMSRequestModel makeWithBuilder:builderBlock
                                 timestampProvider:self.requestContext.timestampProvider
                                      uuidProvider:self.requestContext.uuidProvider];

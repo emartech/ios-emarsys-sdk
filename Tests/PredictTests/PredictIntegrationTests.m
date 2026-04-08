@@ -68,7 +68,7 @@
 
 - (void)setUp {
     [super setUp];
-    
+
     EMSConfig *config = [EMSConfig makeWithBuilder:^(EMSConfigBuilder *builder) {
         [builder setMerchantId:@"1428C8EE286EC34B"];
     }];
@@ -194,36 +194,55 @@
 }
 
 - (void)testVisitorId_shouldSimulateLoginFlow {
-    XCTestExpectation *expectationSearchTerm1 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
-    XCTestExpectation *expectationSearchTerm2 = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm2"];
-    [self.dependencyContainer setExpectations:[@[expectationSearchTerm1, expectationSearchTerm2] mutableCopy]];
+    if (self.dependencyContainer.expectations.count > 0) {
+        [self waitForExpectations:self.dependencyContainer.expectations];
+    }
+
+    XCTestExpectation *expectationSetContact = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
+    XCTestExpectation *expectationClearContact = [[XCTestExpectation alloc] initWithDescription:@"waitForClearContact"];
+    XCTestExpectation *expectationSearchTerm = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
+    XCTestExpectation *expectationTrackItemWithItemId = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackItemWithItemId"];
+    [self.dependencyContainer setExpectations:[@[expectationSearchTerm,
+            expectationClearContact,
+            expectationSetContact,
+            expectationTrackItemWithItemId] mutableCopy]];
 
     NSString *expectedQueryParams = @"q=searchTerm";
+    NSString *expectedTrackingQueryParams = @"v=i%3A2508%252B";
+    NSString *expectedContactUrl = @"contact-token";
     NSString *visitorId;
     NSString *visitorId2;
 
     [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-    [EMSWaiter waitForExpectations:@[expectationSearchTerm1]
+    [EMSWaiter waitForExpectations:@[expectationSearchTerm]
                            timeout:10];
 
-    XCTAssertEqual([self.dependencyContainer.lastResponseModel statusCode], 200);
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
     XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
     visitorId = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-    XCTAssertNotNil(visitorId);
+    [[visitorId shouldNot] beNil];
 
     [Emarsys clearContact];
 
-    [Emarsys setContactWithContactFieldId:@3
-                        contactFieldValue:@"test@test.com"];
+    [Emarsys setContactWithContactFieldId:@62470
+                        contactFieldValue:@"test2@test.com"
+                          completionBlock:^(NSError * _Nullable error) {
+                          }];
 
-    [Emarsys.predict trackSearchWithSearchTerm:@"searchTerm"];
-    [EMSWaiter waitForExpectations:@[expectationSearchTerm2]
+    [EMSWaiter waitForExpectations:@[expectationSetContact, expectationClearContact]
                            timeout:10];
 
-    XCTAssertEqual([self.dependencyContainer.lastResponseModel statusCode], 200);
-    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedContactUrl]);
+
+    [Emarsys.predict trackItemViewWithItemId:@"2508+"];
+    [EMSWaiter waitForExpectations:@[expectationTrackItemWithItemId]
+                           timeout:10];
+
+    XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
+    XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedTrackingQueryParams]);
     visitorId2 = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-    XCTAssertNotNil(visitorId2);
+    [[visitorId2 shouldNot] beNil];
 }
 
 #pragma mark - recommendProducts

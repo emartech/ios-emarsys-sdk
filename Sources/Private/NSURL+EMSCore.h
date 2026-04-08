@@ -8,4 +8,6 @@
 + (NSURL *)urlWithBaseUrl:(NSString *)url
           queryParameters:(NSDictionary<NSString *, NSString *> *)queryParameters;
 
+- (BOOL)isEqualIgnoringQueryParamOrderTo:(NSURL *)otherURL;
+
 @end

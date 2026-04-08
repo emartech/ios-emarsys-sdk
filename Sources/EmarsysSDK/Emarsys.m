@@ -14,6 +14,7 @@
 #import "MERequestContext.h"
 #import "EMSDeepLinkProtocol.h"
 #import "EMSMobileEngageProtocol.h"
+#import "EMSContactClientProtocol.h"
 #import "EMSInnerFeature.h"
 #import "MEExperimental.h"
 
@@ -33,7 +34,7 @@ static dispatch_once_t once_token;
 
 + (void)setupWithConfig:(EMSConfig *)config {
     NSParameterAssert(config);
-    
+
     dispatch_once(&once_token, ^{
         if (config.applicationCode) {
             [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
@@ -42,24 +43,23 @@ static dispatch_once_t once_token;
         if (config.merchantId) {
             [MEExperimental enableFeature:EMSInnerFeature.predict];
         }
-        
+
         [self initializeDefaultCategory];
-        
+
         [EMSDependencyInjection setupWithDependencyContainer:[[EMSDependencyContainer alloc] initWithConfig:config]];
-        
+
         EMSDependencyContainer *dependencyContainer = EMSDependencyInjection.dependencyContainer;
-        
+
         [dependencyContainer.publicApiOperationQueue addOperationWithBlock:^{
             [Emarsys resetRequestContextOnReinstall];
             [Emarsys registerAppStartBlock];
             if (!dependencyContainer.requestContext.contactToken && !dependencyContainer.requestContext.hasContactIdentification) {
                 [dependencyContainer.deviceInfoClient trackDeviceInfoWithCompletionBlock:nil];
-                [dependencyContainer.mobileEngage clearContact];
+                [dependencyContainer.contactClient clearContact];
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:@"EmarsysSDKDidFinishSetupNotification"
                                                                 object:nil];
         }];
-        
         [dependencyContainer.publicApiOperationQueue waitUntilAllOperationsAreFinished];
     });
 }
@@ -93,14 +93,9 @@ static dispatch_once_t once_token;
                                   completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldId);
     NSParameterAssert(openIdToken);
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
-        (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage setAuthenticatedContactWithContactFieldId:contactFieldId
-                                                                                               openIdToken:openIdToken
-                                                                                           completionBlock:completionBlock];
-    }
-    
-    [MEExperimental disableFeature:EMSInnerFeature.predict];
+    [EMSDependencyInjection.dependencyContainer.contactClient setAuthenticatedContactWithContactFieldId:contactFieldId
+                                                                                            openIdToken:openIdToken
+                                                                                        completionBlock:completionBlock];
 }
 
 + (void)setContactWithContactFieldId:(NSNumber *)contactFieldId
@@ -115,17 +110,9 @@ static dispatch_once_t once_token;
                      completionBlock:(_Nullable EMSCompletionBlock)completionBlock {
     NSParameterAssert(contactFieldId);
     NSParameterAssert(contactFieldValue);
-    
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
-        (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage setContactWithContactFieldId:contactFieldId
-                                                                            contactFieldValue:contactFieldValue
-                                                                              completionBlock:completionBlock];
-    }
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
-        [EMSDependencyInjection.dependencyContainer.predict setContactWithContactFieldId:contactFieldId
-                                                                       contactFieldValue:contactFieldValue];
-    }
+    [EMSDependencyInjection.dependencyContainer.contactClient setContactWithContactFieldId:contactFieldId
+                                                                         contactFieldValue:contactFieldValue
+                                                                           completionBlock:completionBlock];
 }
 
 + (void)clearContact {
@@ -133,14 +120,7 @@ static dispatch_once_t once_token;
 }
 
 + (void)clearContactWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] ||
-        (![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.predict])) {
-        [EMSDependencyInjection.dependencyContainer.mobileEngage clearContactWithCompletionBlock:completionBlock];
-    }
-    if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict]) {
-        [EMSDependencyInjection.dependencyContainer.predict clearContact];
-    }
+    [EMSDependencyInjection.dependencyContainer.contactClient clearContactWithCompletionBlock:completionBlock];
 }
 
 + (void)trackCustomEventWithName:(NSString *)eventName

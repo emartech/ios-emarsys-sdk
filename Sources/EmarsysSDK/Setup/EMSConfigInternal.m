@@ -4,7 +4,6 @@
 
 #import <UIKit/UIKit.h>
 #import "EMSConfigInternal.h"
-#import "EMSMobileEngageV3Internal.h"
 #import "MERequestContext.h"
 #import "EMSPushV3Internal.h"
 #import "PRERequestContext.h"
@@ -22,6 +21,7 @@
 #import "EMSInnerFeature.h"
 #import "EMSRemoteConfig.h"
 #import "EmarsysSDKVersion.h"
+#import "EMSContactClientInternal.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
 
@@ -29,7 +29,7 @@
 
 @interface EMSConfigInternal ()
 
-@property(nonatomic, strong) EMSMobileEngageV3Internal *mobileEngage;
+@property(nonatomic, strong) EMSContactClientInternal *contactClient;
 @property(nonatomic, strong) MERequestContext *meRequestContext;
 @property(nonatomic, strong) PRERequestContext *preRequestContext;
 @property(nonatomic, strong) EMSPushV3Internal *pushInternal;
@@ -56,7 +56,7 @@
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                       meRequestContext:(MERequestContext *)meRequestContext
                      preRequestContext:(PRERequestContext *)preRequestContext
-                          mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+                         contactClient:(id <EMSContactClientProtocol>)contactClient
                           pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
@@ -70,7 +70,7 @@
     NSParameterAssert(requestManager);
     NSParameterAssert(meRequestContext);
     NSParameterAssert(preRequestContext);
-    NSParameterAssert(mobileEngage);
+    NSParameterAssert(contactClient);
     NSParameterAssert(pushInternal);
     NSParameterAssert(deviceInfo);
     NSParameterAssert(emarsysRequestFactory);
@@ -83,7 +83,7 @@
     NSParameterAssert(deviceInfoClient);
     if (self = [super init]) {
         _requestManager = requestManager;
-        _mobileEngage = mobileEngage;
+        _contactClient = contactClient;
         _meRequestContext = meRequestContext;
         _preRequestContext = preRequestContext;
         _pushInternal = pushInternal;
@@ -221,7 +221,7 @@
 - (NSError *)clearContact {
     __weak typeof(self) weakSelf = self;
     return [self synchronizeMethodWithRunnerBlock:^(EMSCompletionBlock completion) {
-        [weakSelf.mobileEngage clearContactWithCompletionBlock:completion];
+        [weakSelf.contactClient clearContactWithCompletionBlock:completion];
     }];
 }
 
@@ -266,20 +266,24 @@
 }
 
 - (void)changeMerchantId:(nullable NSString *)merchantId {
-    self.preRequestContext.merchantId = merchantId;
+    [self changeMerchantId:merchantId
+           completionBlock:nil];
 }
 
 - (void)changeMerchantId:(NSString *)merchantId
          completionBlock:(EMSCompletionBlock)completionHandler {
-    self.preRequestContext.merchantId = merchantId;
     [self.waiter enter];
     __weak typeof(self) weakSelf = self;
     [self.coreQueue addOperationWithBlock:^{
+        [self.contactClient clearContact];
+        self.preRequestContext.merchantId = merchantId;
         [weakSelf.waiter exit];
     }];
     [self.waiter waitWithInterval:5];
     if (completionHandler) {
-        completionHandler(nil);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(nil);
+        });
     }
 }
 

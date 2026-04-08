@@ -8,8 +8,7 @@
 
 @protocol EMSDeviceInfoClientProtocol;
 @protocol EMSPushNotificationProtocol;
-@protocol EMSMobileEngageProtocol;
-@class EMSMobileEngageV3Internal;
+@protocol EMSContactClientProtocol;
 @class MERequestContext;
 @class EMSPushV3Internal;
 @class PRERequestContext;
@@ -29,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithRequestManager:(EMSRequestManager *)requestManager
                       meRequestContext:(MERequestContext *)meRequestContext
                      preRequestContext:(PRERequestContext *)preRequestContext
-                          mobileEngage:(id <EMSMobileEngageProtocol>)mobileEngage
+                         contactClient:(id <EMSContactClientProtocol>)contactClient
                           pushInternal:(id <EMSPushNotificationProtocol>)pushInternal
                             deviceInfo:(EMSDeviceInfo *)deviceInfo
                  emarsysRequestFactory:(EMSEmarsysRequestFactory *)emarsysRequestFactory
