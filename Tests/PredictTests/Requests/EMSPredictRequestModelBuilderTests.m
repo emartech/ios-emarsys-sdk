@@ -436,7 +436,7 @@
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
-    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f%3APERSONAL_1%2Cl%3A5%2Co%3A0%7Cf%3APERSONAL_2%2Cl%3A5%2Co%3A0%7Cf%3APERSONAL_3%2Cl%3A5%2Co%3A0&ci=testCustomerId&vi=testVisitorId");
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f%3APERSONAL_1%2Cl%3A5%2Co%3A0%7Cf%3APERSONAL_2%2Cl%3A5%2Co%3A0%7Cf%3APERSONAL_3%2Cl%3A5%2Co%3A0&vi=testVisitorId");
 }
 
 - (void)testHomeLogic {
@@ -450,7 +450,7 @@
     [builder withLogic:logic];
     EMSRequestModel *requestModel = [builder build];
 
-    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f%3AHOME_1%2Cl%3A5%2Co%3A0%7Cf%3AHOME_2%2Cl%3A5%2Co%3A0%7Cf%3AHOME_3%2Cl%3A5%2Co%3A0&ci=testCustomerId&vi=testVisitorId");
+    XCTAssertEqualObjects(requestModel.url.absoluteString, @"https://recommender.scarabresearch.com/merchants/testMerchantId/?f=f%3AHOME_1%2Cl%3A5%2Co%3A0%7Cf%3AHOME_2%2Cl%3A5%2Co%3A0%7Cf%3AHOME_3%2Cl%3A5%2Co%3A0&vi=testVisitorId");
 }
 
 - (void)assertWithParameterizedSel:(SEL)parameterizedSel

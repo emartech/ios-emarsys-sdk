@@ -631,12 +631,12 @@
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 
-- (void)testChangeApplicationCode_shouldNotCallClearContact_whenSendPushTokenReturnsError {
+- (void)testChangeApplicationCode_shouldCallClearContact_beforeSendPushToken {
     NSError *error = [NSError errorWithCode:-1000 localizedDescription:@"testError"];
 
     OCMStub([self.mockMeRequestContext applicationCode]).andReturn(@"oldAppCode");
 
-    OCMReject([self.mockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
+    OCMStub([self.mockContactClient clearContactWithCompletionBlock:[OCMArg invokeBlock]]);
 
     _configInternal = [[EMSConfigInternal alloc] initWithRequestManager:self.mockRequestManager
                                                        meRequestContext:self.mockMeRequestContext
@@ -658,15 +658,19 @@
     OCMStub([partialMockConfigInternal clearPushToken]).andReturn(nil);
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionHandler"];
+    __block NSError *returnedError = nil;
     [partialMockConfigInternal changeApplicationCode:@"newApplicationCode"
                                      completionBlock:^(NSError *error) {
+                                         returnedError = error;
                                          [expectation fulfill];
                                      }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
                                                           timeout:20];
 
+    OCMVerify([self.mockContactClient clearContactWithCompletionBlock:[OCMArg any]]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertNotNil(returnedError);
 }
 
 - (void)testChangeApplicationCode_setPushToken_shouldCallCompletionBlockWithError {

@@ -38,7 +38,7 @@
 
 - (void)testConfig_changeApplicationCode_withPushToken {
     [EmarsysTestUtils waitForSetPushToken];
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
 
     NSString *expectedApplicationCode = @"EMS4C-9A869";
 
@@ -62,7 +62,7 @@
 }
 
 - (void)testConfig_changeApplicationCode_withoutPushToken {
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
 
     NSString *expectedApplicationCode = @"EMS4C-9A869";
 
@@ -87,7 +87,7 @@
 
 - (void)testConfig_changeApplicationCode_forInvalidApplicationCode {
     [EmarsysTestUtils waitForSetPushToken];
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
 
     XCTAssertEqualObjects(Emarsys.config.applicationCode, @"EMS11-C3FD3");
 
@@ -110,7 +110,7 @@
 
 - (void)testConfig_changeApplicationCode_whenApplicationCodeIsNil {
     [EmarsysTestUtils waitForSetPushToken];
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
 
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
     __block NSError *returnedError = [NSError errorWithCode:1400
@@ -155,7 +155,7 @@
 
 - (void)testConfig_changeMerchantId_whenNil {
     [EmarsysTestUtils waitForSetPushToken];
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
 
     XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSPredictInternal class]);
 
@@ -168,7 +168,7 @@
 
 - (void)testConfig_changeMerchantId_whenHasValue {
     [EmarsysTestUtils waitForSetPushToken];
-    [EmarsysTestUtils waitForSetCustomer];
+    [EmarsysTestUtils waitForSetCustomerWithContactFieldValue:@"test1@test.com"];
     [MEExperimental disableFeature:EMSInnerFeature.predict];
 
     XCTAssertEqualObjects([((EMSQueueDelegator *) Emarsys.predict).instanceRouter.instance class], [EMSLoggingPredictInternal class]);

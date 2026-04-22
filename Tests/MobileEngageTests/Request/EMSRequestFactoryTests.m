@@ -272,7 +272,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,
@@ -300,7 +300,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,

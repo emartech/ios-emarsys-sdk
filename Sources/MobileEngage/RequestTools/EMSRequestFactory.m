@@ -89,18 +89,17 @@
     __weak typeof(self) weakSelf = self;
     return [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
                 [builder setMethod:HTTPMethodPOST];
-                BOOL anonymousLogin = NO;
                 NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
                 if (weakSelf.requestContext.contactFieldId && [weakSelf.requestContext hasContactIdentification]) {
                     mutablePayload[@"contactFieldId"] = weakSelf.requestContext.contactFieldId;
                     if (weakSelf.requestContext.contactFieldValue) {
                         mutablePayload[@"contactFieldValue"] = weakSelf.requestContext.contactFieldValue;
                     }
+                    [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
                 } else {
-                    anonymousLogin = YES;
+                    [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
+                    queryParameters:@{@"anonymous": @"true"}];
                 }
-                [builder setUrl:[weakSelf.endpoint contactUrlWithApplicationCode:weakSelf.requestContext.applicationCode]
-                queryParameters:@{@"anonymous": anonymousLogin ? @"true" : @"false"}];
                 [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
             }];
 }

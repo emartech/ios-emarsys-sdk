@@ -24,6 +24,7 @@
 
 + (void)waitForSetPushToken;
 + (void)waitForSetCustomer;
++ (void)waitForSetCustomerWithContactFieldValue:(NSString *)contactFieldValue;
 
 + (void)tearDownOperationQueue:(NSOperationQueue *)operationQueue;
 

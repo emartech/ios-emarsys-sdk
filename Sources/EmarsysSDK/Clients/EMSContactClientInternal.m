@@ -126,9 +126,12 @@
     [self.requestManager submitRequestModel:requestModel
                         withCompletionBlock:[self.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
         if (!error) {
-            [weakSelf.session stopSessionWithCompletionBlock:[weakSelf.completionBlockProvider provideCompletionBlock:^(NSError * _Nullable error) {
-                [weakSelf.session startSessionWithCompletionBlock:completionBlock];
-            }]];
+            [weakSelf.session stopSessionWithCompletionBlock:^(NSError * _Nullable error) {
+                [weakSelf.session startSessionWithCompletionBlock:nil];
+            }];
+            if (completionBlock) {
+                completionBlock(nil);
+            }
         } else {
             [weakSelf.requestContext resetPreviousContactValues];
             EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]

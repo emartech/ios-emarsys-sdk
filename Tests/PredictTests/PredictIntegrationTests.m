@@ -73,15 +73,22 @@
         [builder setMerchantId:@"1428C8EE286EC34B"];
     }];
 
-    self.expectations = @[
-        [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
+    XCTestExpectation *setupExpectation = [[XCTestExpectation alloc] initWithDescription:@"waitForSetup"];
     self.dependencyContainer = [[PredictIntegrationDependencyContainer alloc] initWithConfig:config
-                                                                               expectations:self.expectations];
+                                                                               expectations:@[setupExpectation]];
     [EmarsysTestUtils setupEmarsysWithConfig:config
                          dependencyContainer:self.dependencyContainer];
 
+    [XCTWaiter waitForExpectations:@[setupExpectation]
+                           timeout:10];
+
+    [self.dependencyContainer setExpectations:[@[] mutableCopy]];
     [self waitATickOnOperationQueue:self.dependencyContainer.publicApiOperationQueue];
     [self waitATickOnOperationQueue:self.dependencyContainer.coreOperationQueue];
+
+    self.expectations = @[
+        [[XCTestExpectation alloc] initWithDescription:@"waitForExpectation"]];
+    [self.dependencyContainer setExpectations:self.expectations.mutableCopy];
 }
 
 - (void)tearDown {
@@ -194,10 +201,6 @@
 }
 
 - (void)testVisitorId_shouldSimulateLoginFlow {
-    if (self.dependencyContainer.expectations.count > 0) {
-        [self waitForExpectations:self.dependencyContainer.expectations];
-    }
-
     XCTestExpectation *expectationSetContact = [[XCTestExpectation alloc] initWithDescription:@"waitForSetContact"];
     XCTestExpectation *expectationClearContact = [[XCTestExpectation alloc] initWithDescription:@"waitForClearContact"];
     XCTestExpectation *expectationSearchTerm = [[XCTestExpectation alloc] initWithDescription:@"waitForTrackSearchWithSearchTerm1"];
@@ -220,12 +223,12 @@
     XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
     XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedQueryParams]);
     visitorId = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-    [[visitorId shouldNot] beNil];
+    XCTAssertNotNil(visitorId);
 
     [Emarsys clearContact];
 
-    [Emarsys setContactWithContactFieldId:@62470
-                        contactFieldValue:@"test2@test.com"
+    [Emarsys setContactWithContactFieldId:@2575
+                        contactFieldValue:@"test1@test.com"
                           completionBlock:^(NSError * _Nullable error) {
                           }];
 
@@ -242,7 +245,7 @@
     XCTAssertEqual(self.dependencyContainer.lastResponseModel.statusCode, 200);
     XCTAssertTrue([self.dependencyContainer.lastResponseModel.requestModel.url.absoluteString containsString:expectedTrackingQueryParams]);
     visitorId2 = self.dependencyContainer.lastResponseModel.cookies[@"cdv"].value;
-    [[visitorId2 shouldNot] beNil];
+    XCTAssertNotNil(visitorId2);
 }
 
 #pragma mark - recommendProducts

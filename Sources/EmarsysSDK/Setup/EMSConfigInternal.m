@@ -185,26 +185,23 @@
 - (void)changeApplicationCode:(nullable NSString *)applicationCode
               completionBlock:(_Nullable EMSCompletionBlock)completionHandler; {
     NSData *pushToken = self.pushInternal.deviceToken;
-    BOOL hasContactIdentification = self.meRequestContext.hasContactIdentification;
     __block NSError *error = nil;
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (weakSelf.meRequestContext.applicationCode && pushToken) {
-            error = [weakSelf clearPushToken];
+            [weakSelf clearPushToken];
         }
-        if (!error && weakSelf.meRequestContext.applicationCode && [weakSelf.meRequestContext hasContactIdentification]) {
-            error = [weakSelf clearContact];
+        if (weakSelf.meRequestContext.applicationCode && [weakSelf.meRequestContext hasContactIdentification]) {
+            [weakSelf clearContact];
         }
-        if (!error) {
-            weakSelf.meRequestContext.applicationCode = applicationCode;
-            if (applicationCode) {
-                error = [weakSelf sendDeviceInfo];
-                if (pushToken) {
-                    error = [weakSelf sendPushToken:pushToken];
-                }
-                if (!error && !hasContactIdentification) {
-                    error = [weakSelf clearContact];
-                }
+        weakSelf.meRequestContext.applicationCode = applicationCode;
+        if (applicationCode) {
+            error = [weakSelf sendDeviceInfo];
+            if (!error) {
+                error = [weakSelf clearContact];
+            }
+            if (!error && pushToken) {
+                error = [weakSelf sendPushToken:pushToken];
             }
         }
         if (error) {
