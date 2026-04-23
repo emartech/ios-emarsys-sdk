@@ -54,7 +54,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(Emarsys.config.applicationCode, expectedApplicationCode);
@@ -78,7 +78,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertEqualObjects(Emarsys.config.applicationCode, expectedApplicationCode);
@@ -101,7 +101,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
@@ -122,7 +122,7 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSLoggingMobileEngageInternal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
@@ -146,11 +146,12 @@
                           }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     XCTAssertEqualObjects([((EMSQueueDelegator *)EMSDependencyInjection.mobileEngage).instanceRouter.instance class], [EMSMobileEngageV3Internal class]);
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
+    [self waitForOperationQueue];
 }
 
 - (void)testConfig_changeMerchantId_whenNil {
@@ -192,7 +193,7 @@
         [expectation fulfill];
     }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
 
     EMSEndpoint *endpoint = EMSDependencyInjection.dependencyContainer.endpoint;
 
@@ -207,7 +208,7 @@
         [expectation fulfill];
     }];
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:20];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
 }
 

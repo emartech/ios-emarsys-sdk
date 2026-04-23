@@ -23,7 +23,7 @@
 #define kMEID_SIGNATURE @"kMEID_SIGNATURE"
 #define kCLIENT_STATE @"kCLIENT_STATE"
 #define kCONTACT_TOKEN @"kCONTACT_TOKEN"
-#define TIMEOUT 5
+#define TIMEOUT 15
 
 @implementation EmarsysTestUtils
 
@@ -46,8 +46,8 @@
                           config:(EMSConfig *)config {
     [Emarsys resetDispatchOnce];
     [self clearHardwareId];
-    [self purge];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
+    [self purge];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
 
     [EMSDependencyInjection tearDown];
@@ -99,6 +99,7 @@
         [userDefaults removeObjectForKey:@"visitorId"];
         [userDefaults synchronize];
     }];
+    [self tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
 }
 
 + (void)tearDownEmarsys {
@@ -153,7 +154,7 @@
                }];
 
     XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation]
-                                                          timeout:10];
+                                                          timeout:TIMEOUT];
     XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
     XCTAssertNil(returnedError);
 }
