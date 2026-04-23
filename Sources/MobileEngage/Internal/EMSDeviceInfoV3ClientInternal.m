@@ -6,6 +6,8 @@
 #import "EMSRequestFactory.h"
 #import "MERequestContext.h"
 #import "EMSDeviceInfo+MEClientPayload.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSDeviceInfoV3ClientInternal ()
 
@@ -49,9 +51,16 @@
 }
 
 - (void)sendDeviceInfoWithCompletionBlock:(EMSCompletionBlock)completionBlock {
-    EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
-    [self.requestManager submitRequestModel:deviceInfoRequest
-                        withCompletionBlock:completionBlock];
+    if([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        EMSRequestModel *deviceInfoRequest = [self.requestFactory createDeviceInfoRequestModel];
+        [self.requestManager submitRequestModel:deviceInfoRequest
+                            withCompletionBlock:completionBlock];
+    } else {
+        if (completionBlock) {
+            completionBlock(nil);
+        }
+    }
+    
 }
 
 @end

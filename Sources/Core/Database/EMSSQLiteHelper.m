@@ -85,7 +85,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 - (void)open {
     __weak typeof(self) weakSelf = self;
     [self.operationQueue runSynchronized:^{
-        sqlite3_initialize();
         int sqlResult = sqlite3_open_v2([weakSelf.dbPath UTF8String], &self->_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
         if (sqlResult == SQLITE_OK) {
             int version = [weakSelf version];
@@ -107,7 +106,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     __weak typeof(self) weakSelf = self;
     [self.operationQueue runSynchronized:^{
         sqlite3_close_v2(weakSelf.db);
-        sqlite3_shutdown();
     }];
 }
 
@@ -135,13 +133,13 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
         if (sqlResult != SQLITE_OK) {
             result = NO;
             NSString *error = nil;
-            if (error != NULL) {
+            if (utf8Error != NULL) {
                 error = [NSString stringWithUTF8String:utf8Error];
             }
             [self logWithSel:_cmd
                    sqlResult:sqlResult
                        error:error
-                         sql:[NSString stringWithUTF8String:kCommitTransactionSQL]];
+                         sql:command];
         }
         return result;
     }];
@@ -242,7 +240,10 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                 do {
                     stepResult = sqlite3_step(statement);
                     if (stepResult == SQLITE_ROW) {
-                        [models addObject:[mapper modelFromStatement:statement]];
+                        id model = [mapper modelFromStatement:statement];
+                        if (model) {
+                            [models addObject:model];
+                        }
                     } else if (stepResult != SQLITE_DONE) {
                         result = NO;
                         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
@@ -354,7 +355,10 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                 do {
                     stepResult = sqlite3_step(statement);
                     if (stepResult == SQLITE_ROW) {
-                        [models addObject:[mapper modelFromStatement:statement]];
+                        id model = [mapper modelFromStatement:statement];
+                        if (model) {
+                            [models addObject:model];
+                        }
                     } else if (stepResult != SQLITE_DONE) {
                         result = NO;
                         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
@@ -435,7 +439,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     int execResult = sqlite3_exec(self.db, kBeginTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
-        if (error != NULL) {
+        if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
         }
         [self logWithSel:_cmd
@@ -450,7 +454,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     int execResult = sqlite3_exec(self.db, kCommitTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
-        if (error != NULL) {
+        if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
         }
         [self logWithSel:_cmd
@@ -465,7 +469,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     int execResult = sqlite3_exec(self.db, kRollbackTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
-        if (error != NULL) {
+        if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
         }
         [self logWithSel:_cmd

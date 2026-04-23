@@ -57,6 +57,10 @@
                        applicationCode:applicationCode];
 }
 
+- (NSString *)contactUrlPredictOnly {
+    return [NSString stringWithFormat:@"%@/v3/contact-token", self.clientServiceUrl];
+}
+
 - (NSString *)pushTokenUrlWithApplicationCode:(NSString *)applicationCode {
     return [NSString stringWithFormat:@"%@/push-token", [self clientUrlWithApplicationCode:applicationCode]];
 }

@@ -45,6 +45,7 @@
          withDependencyContainer:(id <EMSDependencyContainerProtocol>)dependencyContainer
                           config:(EMSConfig *)config {
     [Emarsys resetDispatchOnce];
+    [self clearHardwareId];
     [self purge];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.publicApiOperationQueue];
     [EmarsysTestUtils tearDownOperationQueue:EMSDependencyInjection.dependencyContainer.coreOperationQueue];
@@ -80,6 +81,7 @@
         [userDefaults removeObjectForKey:kEMSLastAppLoginPayload];
         [userDefaults removeObjectForKey:kCLIENT_STATE];
         [userDefaults removeObjectForKey:kCONTACT_TOKEN];
+        [userDefaults removeObjectForKey:kCONTACT_FIELD_VALUE];
         [userDefaults removeObjectForKey:@"kSDKAlreadyInstalled"];
         [userDefaults removeObjectForKey:@"CLIENT_SERVICE_URL"];
         [userDefaults removeObjectForKey:@"EVENT_SERVICE_URL"];
@@ -89,10 +91,9 @@
         [userDefaults synchronize];
 
         userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
-        [userDefaults setObject:@"IntegrationTests"
-                         forKey:@"kHardwareIdKey"];
+        [userDefaults removeObjectForKey:@"kHardwareIdKey"];
         [userDefaults synchronize];
-        
+
         userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.predict"];
         [userDefaults removeObjectForKey:@"contactFieldValue"];
         [userDefaults removeObjectForKey:@"visitorId"];
@@ -118,12 +119,16 @@
 }
 
 + (void)waitForSetCustomer {
+    [self waitForSetCustomerWithContactFieldValue:@"test2@test.com"];
+}
+
++ (void)waitForSetCustomerWithContactFieldValue:(NSString *)contactFieldValue {
     __block NSError *returnedErrorForSetCustomer = [NSError errorWithCode:-1400
                                                      localizedDescription:@"testErrorForSetCustomer"];
 
     XCTestExpectation *setCustomerExpectation = [[XCTestExpectation alloc] initWithDescription:@"setCustomer"];
     [Emarsys setContactWithContactFieldId:@2575
-                        contactFieldValue:@"test2@test.com"
+                        contactFieldValue:contactFieldValue
                           completionBlock:^(NSError *error) {
                               returnedErrorForSetCustomer = error;
                               [setCustomerExpectation fulfill];
@@ -157,6 +162,18 @@
     [operationQueue waitUntilAllOperationsAreFinished];
     [operationQueue setSuspended:YES];
     [operationQueue cancelAllOperations];
+}
+
++ (void)clearHardwareId {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.emarsys.core"];
+    [userDefaults removeObjectForKey:@"kHardwareIdKey"];
+    [userDefaults synchronize];
+
+    NSDictionary *keychainQuery = @{
+        (id)kSecClass: (id)kSecClassGenericPassword,
+        (id)kSecAttrAccount: @"kHardwareIdKey"
+    };
+    SecItemDelete((__bridge CFDictionaryRef)keychainQuery);
 }
 
 + (void)clearDb:(EMSSQLiteHelper *)dbHelper {

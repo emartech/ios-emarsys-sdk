@@ -8,7 +8,8 @@
 @implementation NSString (EMSCore)
 
 - (NSString *)percentEncode {
-    NSCharacterSet *allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"`;/?:^%#@&=$+{}<>,|\\ !'()*[]"] invertedSet];
+    NSMutableCharacterSet *allowedCharacters = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
+    [allowedCharacters removeCharactersInString:@"!#$&'()*+,/:;=?@[]"];
     return [self stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 

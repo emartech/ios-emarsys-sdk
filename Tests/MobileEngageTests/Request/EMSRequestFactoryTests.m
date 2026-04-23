@@ -22,11 +22,13 @@
 #import "EMSInnerFeature.h"
 #import "MEExperimental+Test.h"
 #import "EMSStorageProtocol.h"
+#import "PRERequestContext.h"
 
 @interface EMSRequestFactoryTests : XCTestCase
 
 @property(nonatomic, strong) EMSRequestFactory *requestFactory;
 @property(nonatomic, strong) MERequestContext *mockRequestContext;
+@property(nonatomic, strong) PRERequestContext *mockPredictRequestContext;
 @property(nonatomic, strong) EMSTimestampProvider *mockTimestampProvider;
 @property(nonatomic, strong) EMSUUIDProvider *mockUUIDProvider;
 @property(nonatomic, strong) EMSDeviceInfo *mockDeviceInfo;
@@ -43,6 +45,7 @@
 
 - (void)setUp {
     _mockRequestContext = OCMClassMock([MERequestContext class]);
+    _mockPredictRequestContext = OCMClassMock([PRERequestContext class]);
     _mockTimestampProvider = OCMClassMock([EMSTimestampProvider class]);
     _mockUUIDProvider = OCMClassMock([EMSUUIDProvider class]);
     _mockDeviceInfo = OCMClassMock([EMSDeviceInfo class]);
@@ -82,6 +85,7 @@
     OCMStub(self.mockDeviceInfo.osVersion).andReturn(@"testOSVersion");
 
     _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                  predictRequestContext:self.mockPredictRequestContext
                                                                endpoint:self.endpoint
                                                   buttonClickRepository:self.mockButtonClickRepository
                                                         sessionIdHolder:self.sessionIdHolder
@@ -97,6 +101,7 @@
 - (void)testInit_requestContext_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:nil
+                                    predictRequestContext:self.mockPredictRequestContext
                                                  endpoint:OCMClassMock([EMSEndpoint class])
                                     buttonClickRepository:self.mockButtonClickRepository
                                           sessionIdHolder:self.sessionIdHolder
@@ -107,9 +112,24 @@
     }
 }
 
+- (void)testInit_predictRequestContext_mustNotBeNil {
+    @try {
+        [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                    predictRequestContext:nil
+                                                 endpoint:OCMClassMock([EMSEndpoint class])
+                                    buttonClickRepository:self.mockButtonClickRepository
+                                          sessionIdHolder:self.sessionIdHolder
+                                                  storage:self.mockStorage];
+        XCTFail(@"Expected Exception when predictRequestContext is nil!");
+    } @catch (NSException *exception) {
+        XCTAssertTrue([exception.reason isEqualToString:@"Invalid parameter not satisfying: predictRequestContext"]);
+    }
+}
+
 - (void)testInit_endpoint_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                    predictRequestContext:self.mockPredictRequestContext
                                                  endpoint:nil
                                     buttonClickRepository:self.mockButtonClickRepository
                                           sessionIdHolder:self.sessionIdHolder
@@ -123,6 +143,7 @@
 - (void)testInit_buttonClickRepository_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                    predictRequestContext:self.mockPredictRequestContext
                                                  endpoint:self.endpoint
                                     buttonClickRepository:nil
                                           sessionIdHolder:self.sessionIdHolder
@@ -136,6 +157,7 @@
 - (void)testInit_sessionIdHolder_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                    predictRequestContext:self.mockPredictRequestContext
                                                  endpoint:self.endpoint
                                     buttonClickRepository:self.mockButtonClickRepository
                                           sessionIdHolder:nil
@@ -149,6 +171,7 @@
 - (void)testInit_storage_mustNotBeNil {
     @try {
         [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                    predictRequestContext:self.mockPredictRequestContext
                                                  endpoint:self.endpoint
                                     buttonClickRepository:self.mockButtonClickRepository
                                           sessionIdHolder:self.sessionIdHolder
@@ -249,7 +272,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,
@@ -277,7 +300,7 @@
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
                                                                                 expiry:FLT_MAX
-                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact?anonymous=false"]
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/apps/testApplicationCode/client/contact"]
                                                                                 method:@"POST"
                                                                                payload:@{
                                                                                        @"contactFieldId": @3,
@@ -390,6 +413,7 @@
 
 - (void)testCreateRefreshTokenRequestModel {
     OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
 
     EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
                                                                              timestamp:self.timestamp
@@ -405,6 +429,53 @@
     EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];
 
     XCTAssertEqualObjects(requestModel, expectedRequestModel);
+    [MEExperimental reset];
+}
+
+- (void)testCreateRefreshTokenRequestModel_predictOnly {
+    OCMStub(self.mockPredictRequestContext.merchantId).andReturn(@"testMerchantId");
+    [MEExperimental enableFeature:EMSInnerFeature.predict];
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/contact-token"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"refreshToken": @"testRefreshToken"
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createRefreshTokenRequestModel];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+    [MEExperimental reset];
+}
+
+- (void)testCreateLinkContactRequestModel_predictOnly {
+    OCMStub(self.mockPredictRequestContext.merchantId).andReturn(@"testMerchantId");
+    OCMStub(self.mockRequestContext.contactFieldId).andReturn(@"testContactFieldId");
+    OCMStub(self.mockRequestContext.openIdToken).andReturn(@"testOpenIdToken");
+    OCMStub([self.mockRequestContext hasContactIdentification]).andReturn(YES);
+    [MEExperimental enableFeature:EMSInnerFeature.predict];
+
+    EMSRequestModel *expectedRequestModel = [[EMSRequestModel alloc] initWithRequestId:@"requestId"
+                                                                             timestamp:self.timestamp
+                                                                                expiry:FLT_MAX
+                                                                                   url:[[NSURL alloc] initWithString:@"https://me-client.eservice.emarsys.net/v3/contact-token"]
+                                                                                method:@"POST"
+                                                                               payload:@{
+                                                                                       @"contactFieldId": @"testContactFieldId",
+                                                                                       @"openIdToken": @"testOpenIdToken"
+                                                                               }
+                                                                               headers:nil
+                                                                                extras:nil];
+
+    EMSRequestModel *requestModel = [self.requestFactory createPredictOnlyContactRequestModelWithRefresh:NO];
+
+    XCTAssertEqualObjects(requestModel, expectedRequestModel);
+    [MEExperimental reset];
 }
 
 - (void)testCreateRefreshTokenRequestModel_when_ApplicationCode_isNil {
@@ -479,7 +550,8 @@
     XCTAssertNil(result);
 }
 
-- (void)testCreateInlineInappRequestModel {
+- (void)testCreateInlineInappRequestModel_whenMobileEngageIsEnabled_andApplicationCodeIsSet {
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
     OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
 
     NSArray<MEButtonClick *> *clicks = @[
@@ -515,6 +587,14 @@
 }
 
 - (void)testCreateInlineInappRequestModel_when_ApplicationCode_isNil {
+    EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
+
+    XCTAssertNil(result);
+}
+
+- (void)testCreateInlineInappRequestModel_when_MobileEngageIsDisabled_isNil {
+    [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
+
     EMSRequestModel *result = [self.requestFactory createInlineInappRequestModelWithViewId:@"testViewId"];
 
     XCTAssertNil(result);

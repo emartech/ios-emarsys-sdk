@@ -106,6 +106,7 @@
     self.contactToken = nil;
     self.refreshToken = nil;
     self.openIdToken = nil;
+    self.clientState = nil;
 }
 
 - (void)resetPreviousContactValues {

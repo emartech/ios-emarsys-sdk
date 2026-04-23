@@ -14,6 +14,8 @@
 #import "EMSStatusLog.h"
 #import "EMSSQLiteHelper.h"
 #import "EMSCompletionBlockProvider.h"
+#import "MEExperimental.h"
+#import "EMSInnerFeature.h"
 
 @interface EMSAppStartBlockProvider ()
 
@@ -72,7 +74,7 @@
     return ^{
         EMSLog([[EMSAppEventLog alloc] initWithEventName:@"app:start"
                                               attributes:nil], LogLevelInfo);
-        if (weakSelf.requestContext.contactToken) {
+        if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage] && weakSelf.requestContext.contactToken) {
             EMSRequestModel *requestModel = [weakSelf.requestFactory createEventRequestModelWithEventName:@"app:start"
                                                                                           eventAttributes:nil
                                                                                                 eventType:EventTypeInternal];

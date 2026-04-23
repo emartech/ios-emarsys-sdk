@@ -26,7 +26,8 @@ let package = Package(
             path: "Sources",
             resources: [.copy("PrivacyInfo.xcprivacy")],
             cSettings: [
-                .headerSearchPath("./Private/")
+                .headerSearchPath("./Private/"),
+                .define("NS_BLOCK_ASSERTIONS", .when(configuration: .release))
             ]
         )
     ]

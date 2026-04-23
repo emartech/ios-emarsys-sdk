@@ -33,6 +33,7 @@
 @class EMSEndpoint;
 @class MEButtonClickRepository;
 @protocol EMSOnEventActionProtocol;
+@protocol EMSContactClientProtocol;
 @class EMSWrapperChecker;
 @class EMSSession;
 
@@ -43,6 +44,10 @@
 - (id <EMSMobileEngageProtocol>)mobileEngage;
 
 - (id <EMSMobileEngageProtocol>)loggingMobileEngage;
+
+- (id <EMSContactClientProtocol>)contactClient;
+
+- (id <EMSContactClientProtocol>)loggingContactClient;
 
 - (id <EMSDeepLinkProtocol>)deepLink;
 
