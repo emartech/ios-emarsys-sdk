@@ -24,6 +24,7 @@
 #import "EMSContactClientInternal.h"
 #import "EMSMacros.h"
 #import "EMSStatusLog.h"
+#import "EMSCrashLog.h"
 
 #define METHOD_TIMEOUT 60
 
@@ -188,29 +189,34 @@
     __block NSError *error = nil;
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (weakSelf.meRequestContext.applicationCode && pushToken) {
-            [weakSelf clearPushToken];
-        }
-        if (weakSelf.meRequestContext.applicationCode && [weakSelf.meRequestContext hasContactIdentification]) {
-            [weakSelf clearContact];
-        }
-        weakSelf.meRequestContext.applicationCode = applicationCode;
-        if (applicationCode) {
-            error = [weakSelf sendDeviceInfo];
-            if (!error) {
-                error = [weakSelf clearContact];
+        @try {
+            if (weakSelf.meRequestContext.applicationCode && pushToken) {
+                [weakSelf clearPushToken];
             }
-            if (!error && pushToken) {
-                error = [weakSelf sendPushToken:pushToken];
+            if (weakSelf.meRequestContext.applicationCode && [weakSelf.meRequestContext hasContactIdentification]) {
+                [weakSelf clearContact];
             }
-        }
-        if (error) {
-            weakSelf.meRequestContext.applicationCode = nil;
-        }
-        if (completionHandler) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionHandler(error);
-            });
+            weakSelf.meRequestContext.applicationCode = applicationCode;
+            if (applicationCode) {
+                error = [weakSelf sendDeviceInfo];
+                if (!error) {
+                    error = [weakSelf clearContact];
+                }
+                if (!error && pushToken) {
+                    error = [weakSelf sendPushToken:pushToken];
+                }
+            }
+            if (error) {
+                weakSelf.meRequestContext.applicationCode = nil;
+            }
+        } @catch (NSException *exception) {
+            EMSLog([[EMSCrashLog alloc] initWithException:exception], LogLevelError);
+        } @finally {
+            if (completionHandler) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionHandler(error);
+                });
+            }
         }
     });
 }

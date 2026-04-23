@@ -93,6 +93,7 @@
         [MEExperimental enableFeature:EMSInnerFeature.eventServiceV4];
     } else {
         [MEExperimental disableFeature:EMSInnerFeature.mobileEngage];
+        [MEExperimental disableFeature:EMSInnerFeature.eventServiceV4];
     }
 }
 

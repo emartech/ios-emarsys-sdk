@@ -278,6 +278,7 @@ describe(@"requestContext",
             
             [context setApplicationCode:nil];
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beNo];
+            [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beNo];
         });
         
         it(@"should enableWithCompletionBlock: mobileEngage, v4 feature when appCode is set",
