@@ -13,6 +13,7 @@
     NSAssert((components), @"Invalid parameter not satisfying: %@", urlString);
     NSAssert((components.host && [components.host length] > 0), @"Invalid parameter not satisfying: %@", urlString);
     NSAssert((components.scheme), @"Invalid parameter not satisfying: %@", urlString);
+    [components path];
 
     NSMutableString *fullUrl = [NSMutableString stringWithFormat:@"%@?", urlString];
     [queryParameters enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {

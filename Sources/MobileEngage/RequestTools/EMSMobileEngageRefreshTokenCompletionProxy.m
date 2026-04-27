@@ -66,7 +66,6 @@
             [weakSelf.contactResponseHandler processResponse:responseModel];
             [NSThread sleepForTimeInterval:0.5f];
             weakSelf.retryCount += 1;
-            EMSRequestModel *requestModel = weakSelf.originalRequestModel;
             [weakSelf.restClient executeWithRequestModel:weakSelf.originalRequestModel
                                      coreCompletionProxy:weakSelf];
         } else {
