@@ -7,7 +7,7 @@ jobs:
     runs-on: macos-15-xlarge
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Remove old directories
         run: rm -rf ~/tmp | rm -rf ~/Library/MobileDevice
         shell: bash
@@ -21,13 +21,13 @@ jobs:
         run: xcodebuild -workspace ~/work/ios-emarsys-sdk/ios-emarsys-sdk/EmarsysSDK.xcworkspace -scheme Tests -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16 Pro' -derivedDataPath ~/tmp test -quiet
         shell: bash
       - name: Trigger Sample App Build
-        uses: peter-evans/repository-dispatch@v1
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           event-type: build-sample
       - if: ${{ failure() }}
         name: Slack Notification On Error
-        uses: megamegax/slack_action@0.3.1
+        uses: megamegax/slack_action@0.3.2
         with:
           webhook_url: '${{env.SLACK_WEBHOOK}}'
           actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'

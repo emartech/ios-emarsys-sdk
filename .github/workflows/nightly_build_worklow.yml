@@ -7,7 +7,7 @@ jobs:
     runs-on: macos-15-xlarge
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: dev
@@ -21,16 +21,16 @@ jobs:
           filename: SDKHost.mobileprovision
           secret: ${{ secrets.SDK_HOST_MOBILEPROVISION_BASE64 }}
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
           service_account_key: ${{ secrets.FIREBASE_SERVICE_KEY_BASE64 }}
       - name: Setup Test Certs
-        uses: apple-actions/import-codesign-certs@v1
+        uses: apple-actions/import-codesign-certs@v7
         with:
           keychain-password: ${{ secrets.KEYCHAIN_PASS }}
           p12-file-base64: ${{ secrets.SDK_TEAM_P12_BASE64 }}
@@ -45,20 +45,20 @@ jobs:
         run: cd ~/tmp/Build/Products && zip -r ~/Tests.zip ./
         shell: bash
       - name: Run tests on Firebase
-        uses: nick-invision/retry@v2
+        uses: nick-invision/retry@v4
         with:
           command: gcloud firebase test ios run --quiet --test ~/Tests.zip --device model=iphone13pro,version=16.6,locale=en_GB --device model=iphone8,version=15.7,locale=en_GB --device model=iphone12pro,version=14.8,locale=en_GB
           max_attempts: 3
           retry_on: error
           timeout_minutes: 30
       - name: Trigger Sample App Build
-        uses: peter-evans/repository-dispatch@v1
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           event-type: build-sample
       - if: ${{ failure() }}
         name: Slack Notification On Error
-        uses: megamegax/slack_action@0.3.1
+        uses: megamegax/slack_action@0.3.2
         with:
           webhook_url: '${{env.SLACK_WEBHOOK}}'
           actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
