@@ -43,10 +43,10 @@
                     id ems = [messageDict nullSafeValueForKey:@"ems"];
                     id actions = [ems nullSafeValueForKey:@"actions"];
                     if (actions && [actions isKindOfClass:[NSArray class]] && [actions count] > 0) {
-                        mutableActions = [NSMutableArray array];
                         for (NSDictionary *actionDictionary in actions) {
                             id <EMSActionModelProtocol> action = [self createActionFromDictionary:actionDictionary];
                             if (action) {
+                                if (!mutableActions) mutableActions = [NSMutableArray array];
                                 [mutableActions addObject:action];
                             }
                         }
@@ -69,36 +69,58 @@
             }
             [result setMessages:resultMessages];
         }
-
-
     }
     return result;
 }
 
 - (id <EMSActionModelProtocol>)createActionFromDictionary:(NSDictionary *)actionDictionary {
+    if (![actionDictionary isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+    NSString *actionId = [actionDictionary stringValueForKey:@"id"];
+    NSString *title = [actionDictionary stringValueForKey:@"title"];
+    NSString *type = [actionDictionary stringValueForKey:@"type"];
+    if (!actionId || !title || !type) {
+        return nil;
+    }
     id <EMSActionModelProtocol> action = nil;
-    if ([actionDictionary[@"type"] isEqualToString:@"MEAppEvent"]) {
-        action = [[EMSAppEventActionModel alloc] initWithId:actionDictionary[@"id"]
-                                                      title:actionDictionary[@"title"]
-                                                       type:actionDictionary[@"type"]
-                                                       name:actionDictionary[@"name"]
+    if ([type isEqualToString:@"MEAppEvent"]) {
+        NSString *name = [actionDictionary stringValueForKey:@"name"];
+        if (!name) {
+            return nil;
+        }
+        action = [[EMSAppEventActionModel alloc] initWithId:actionId
+                                                      title:title
+                                                       type:type
+                                                       name:name
                                                     payload:actionDictionary[@"payload"]];
-    } else if ([actionDictionary[@"type"] isEqualToString:@"OpenExternalUrl"]) {
-        NSURL *url = [[NSURL alloc] initWithString:actionDictionary[@"url"]];
-        action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionDictionary[@"id"]
-                                                             title:actionDictionary[@"title"]
-                                                              type:actionDictionary[@"type"]
-        url:url ? url : [NSURL new]];
-    } else if ([actionDictionary[@"type"] isEqualToString:@"MECustomEvent"]) {
-        action = [[EMSCustomEventActionModel alloc] initWithId:actionDictionary[@"id"]
-                                                         title:actionDictionary[@"title"]
-                                                          type:actionDictionary[@"type"]
-                                                          name:actionDictionary[@"name"]
+    } else if ([type isEqualToString:@"OpenExternalUrl"]) {
+        NSString *urlString = [actionDictionary stringValueForKey:@"url"];
+        if (!urlString) {
+            return nil;
+        }
+        NSURL *url = [[NSURL alloc] initWithString:urlString];
+        if (!url || !url.scheme) {
+            return nil;
+        }
+        action = [[EMSOpenExternalUrlActionModel alloc] initWithId:actionId
+                                                             title:title
+                                                              type:type
+                                                               url:url];
+    } else if ([type isEqualToString:@"MECustomEvent"]) {
+        NSString *name = [actionDictionary stringValueForKey:@"name"];
+        if (!name) {
+            return nil;
+        }
+        action = [[EMSCustomEventActionModel alloc] initWithId:actionId
+                                                         title:title
+                                                          type:type
+                                                          name:name
                                                        payload:actionDictionary[@"payload"]];
-    } else if ([actionDictionary[@"type"] isEqualToString:@"Dismiss"]) {
-        action = [[EMSDismissActionModel alloc] initWithId:actionDictionary[@"id"]
-                                                     title:actionDictionary[@"title"]
-                                                      type:actionDictionary[@"type"]];
+    } else if ([type isEqualToString:@"Dismiss"]) {
+        action = [[EMSDismissActionModel alloc] initWithId:actionId
+                                                     title:title
+                                                      type:type];
     }
     return action;
 }
