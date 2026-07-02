@@ -48,7 +48,7 @@
 - (EMSRESTClientCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
-        if (weakSelf.retryCount >= 3 || (error && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url])) {
+        if (weakSelf.retryCount >= 3 || ((error || !responseModel.isSuccess) && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url])) {
             EMSRequestModel *request = weakSelf.originalRequestModel;
             EMSResponseModel *response = weakSelf.originalResponseModel;
             
