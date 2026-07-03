@@ -293,20 +293,73 @@ describe(@"requestContext",
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beYes];
         });
         
-        it(@"should call reset when appCode is set",
+        it(@"should call reset when appCode is set to a different non-nil value",
            ^{
             MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:applicationCode
                                                                              uuidProvider:uuidProvider
                                                                         timestampProvider:timestampProvider
                                                                                deviceInfo:deviceInfo
                                                                                   storage:storage];
-            
+
             MERequestContext *partialMockContext = OCMPartialMock(context);
-            
+
             [partialMockContext setApplicationCode:@"EMS11-C3FD3"];
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) should] beYes];
             [[theValue([MEExperimental isFeatureEnabled:EMSInnerFeature.eventServiceV4]) should] beYes];
             OCMVerify([partialMockContext reset]);
+        });
+
+        it(@"should NOT reset when appCode is set to the SAME value",
+           ^{
+            NSString *sameCode = @"EMS11-C3FD3";
+            MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:sameCode
+                                                                             uuidProvider:uuidProvider
+                                                                        timestampProvider:timestampProvider
+                                                                               deviceInfo:deviceInfo
+                                                                                  storage:storage];
+            [context setContactToken:@"testContactToken"];
+            [context setRefreshToken:@"testRefreshToken"];
+            [context setClientState:@"testClientState"];
+
+            [context setApplicationCode:sameCode];
+
+            [[context.contactToken should] equal:@"testContactToken"];
+            [[context.refreshToken should] equal:@"testRefreshToken"];
+            [[context.clientState should] equal:@"testClientState"];
+        });
+
+        it(@"should reset when appCode changes to a different value",
+           ^{
+            MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:@"EMS11-C3FD3"
+                                                                             uuidProvider:uuidProvider
+                                                                        timestampProvider:timestampProvider
+                                                                               deviceInfo:deviceInfo
+                                                                                  storage:storage];
+            [context setContactToken:@"testContactToken"];
+            [context setRefreshToken:@"testRefreshToken"];
+            [context setClientState:@"testClientState"];
+
+            [context setApplicationCode:@"EMS22-DIFFERENT"];
+
+            [context.contactToken shouldBeNil];
+            [context.refreshToken shouldBeNil];
+            [context.clientState shouldBeNil];
+        });
+
+        it(@"should reset when appCode is cleared to nil",
+           ^{
+            MERequestContext *context = [[MERequestContext alloc] initWithApplicationCode:@"EMS11-C3FD3"
+                                                                             uuidProvider:uuidProvider
+                                                                        timestampProvider:timestampProvider
+                                                                               deviceInfo:deviceInfo
+                                                                                  storage:storage];
+            [context setContactToken:@"testContactToken"];
+            [context setRefreshToken:@"testRefreshToken"];
+
+            [context setApplicationCode:nil];
+
+            [context.contactToken shouldBeNil];
+            [context.refreshToken shouldBeNil];
         });
     });
     

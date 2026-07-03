@@ -56,11 +56,17 @@
             [response setStatusCode:418];
             weakSelf.completionProxy.completionBlock(request, response, error);
         } else if (responseModel.statusCode == 401 && ([weakSelf.endpoint isMobileEngageUrl:requestModel.url.absoluteString] || [weakSelf isPredictRequest:requestModel])) {
+            EMSRequestModel *refreshRequest = [weakSelf.requestFactory createRefreshTokenRequestModel];
+            if (!refreshRequest) {
+                [weakSelf reset];
+                weakSelf.completionProxy.completionBlock(requestModel, responseModel, error);
+                return;
+            }
             [weakSelf.storage setData:nil
                                forKey:kEMSPushTokenKey];
             weakSelf.originalRequestModel = requestModel;
             weakSelf.originalResponseModel = responseModel;
-            [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
+            [weakSelf.restClient executeWithRequestModel:refreshRequest
                                      coreCompletionProxy:weakSelf];
         } else if (responseModel.isSuccess && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url] && weakSelf.originalRequestModel) {
             [weakSelf.contactResponseHandler processResponse:responseModel];

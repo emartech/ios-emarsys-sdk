@@ -290,6 +290,27 @@
     XCTAssertEqualObjects(self.refreshCompletionProxy.originalRequestModel, requestModel);
 }
 
+- (void)testCompletionBlock_shouldGiveUp_whenRefreshTokenRequestModelIsNil {
+    EMSRequestModel *requestModel = [self generateRequestModelWithUrlString:[self.endpoint eventUrlWithApplicationCode:@"testApplicationCode"]];
+    EMSResponseModel *responseModel = [self generateResponseWithStatusCode:401];
+
+    OCMStub([self.mockRequestFactory createRefreshTokenRequestModel]).andReturn(nil);
+    OCMReject([self.mockRestClient executeWithRequestModel:[OCMArg any] coreCompletionProxy:[OCMArg any]]);
+
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"waitForCompletionBlock"];
+    __block EMSResponseModel *forwardedResponse = nil;
+    OCMStub([self.mockCompletionProxy completionBlock]).andReturn(^(EMSRequestModel *req, EMSResponseModel *resp, NSError *err) {
+        forwardedResponse = resp;
+        [expectation fulfill];
+    });
+
+    self.refreshCompletionProxy.completionBlock(requestModel, responseModel, self.error);
+
+    XCTWaiterResult waiterResult = [XCTWaiter waitForExpectations:@[expectation] timeout:1];
+    XCTAssertEqual(waiterResult, XCTWaiterResultCompleted);
+    XCTAssertEqual(forwardedResponse.statusCode, 401);
+}
+
 - (void)testCompletionBlock_shouldHandleResponse {
     EMSRequestModel *requestModel = [self generateRequestModel: @"contact-token"];
     EMSRequestModel *mockOriginalRequestModel = [self generateRequestModel: @""];

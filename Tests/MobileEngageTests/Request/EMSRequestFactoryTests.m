@@ -484,6 +484,27 @@
     XCTAssertNil(result);
 }
 
+- (void)testCreateRefreshTokenRequestModel_when_RefreshToken_isNil_shouldReturnNil {
+    _mockRequestContext = OCMClassMock([MERequestContext class]);
+    OCMStub(self.mockRequestContext.timestampProvider).andReturn(self.mockTimestampProvider);
+    OCMStub(self.mockRequestContext.deviceInfo).andReturn(self.mockDeviceInfo);
+    OCMStub(self.mockRequestContext.uuidProvider).andReturn(self.mockUUIDProvider);
+    OCMStub(self.mockRequestContext.applicationCode).andReturn(@"testApplicationCode");
+
+    _requestFactory = [[EMSRequestFactory alloc] initWithRequestContext:self.mockRequestContext
+                                                  predictRequestContext:self.mockPredictRequestContext
+                                                               endpoint:self.endpoint
+                                                  buttonClickRepository:self.mockButtonClickRepository
+                                                        sessionIdHolder:self.sessionIdHolder
+                                                                storage:self.mockStorage];
+    [MEExperimental enableFeature:EMSInnerFeature.mobileEngage];
+
+    EMSRequestModel *result = [self.requestFactory createRefreshTokenRequestModel];
+
+    XCTAssertNil(result);
+    [MEExperimental reset];
+}
+
 - (void)testCreateDeepLinkRequestModel {
     NSString *const value = @"dl_value";
     NSString *userAgent = [NSString stringWithFormat:@"Emarsys SDK %@ %@ %@", EMARSYS_SDK_VERSION,

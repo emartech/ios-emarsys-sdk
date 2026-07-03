@@ -168,12 +168,13 @@
     if ([MEExperimental isFeatureEnabled:EMSInnerFeature.predict] && ![MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
         result = [self createPredictOnlyContactRequestModelWithRefresh:YES];
     } else if ([MEExperimental isFeatureEnabled:EMSInnerFeature.mobileEngage]) {
+        if (!self.requestContext.refreshToken) {
+            return nil;
+        }
         result = [self requestModelWithBuilder:^(EMSRequestModelBuilder *builder) {
             [builder setMethod:HTTPMethodPOST];
             [builder setUrl:[weakSelf.endpoint contactTokenUrlWithApplicationCode:weakSelf.requestContext.applicationCode]];
-            NSMutableDictionary *mutablePayload = [NSMutableDictionary dictionary];
-            mutablePayload[@"refreshToken"] = weakSelf.requestContext.refreshToken;
-            [builder setPayload:[NSDictionary dictionaryWithDictionary:mutablePayload]];
+            [builder setPayload:@{@"refreshToken": weakSelf.requestContext.refreshToken}];
         }];
     }
     return result;
