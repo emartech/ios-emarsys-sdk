@@ -320,17 +320,176 @@
                                                          [[EMSOpenExternalUrlActionModel alloc] initWithId:@"testId1"
                                                                                                      title:@"testTitle1"
                                                                                                       type:@"OpenExternalUrl"
-                                                                                                       url:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]],
-                                                         [[EMSOpenExternalUrlActionModel alloc] initWithId:@"testId2"
-                                                                                                     title:@"testTitle2"
-                                                                                                      type:@"OpenExternalUrl"
-                                                                                                       url:[NSURL new]
-                                                         ]]];
+                                                                                                       url:[[NSURL alloc] initWithString:@"https://www.emarsys.com"]]
+                                                         ]];
 
     [expectedResult setMessages:@[message]];
     EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
 
     XCTAssertEqualObjects(result, expectedResult);
+}
+
+- (void)testParseFromResponse_whenOpenExternalUrlActionHasNoUrlKey_actionIsSkipped {
+    NSString *bodyString = @"{\n"
+                           "  \"count\": 1,\n"
+                           "  \"messages\": [\n"
+                           "    {\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
+                           "        \"title\": \"title\",\n"
+                           "        \"body\": \"body\",\n"
+                           "        \"receivedAt\": 142141412515,\n"
+                           "        \"updatedAt\": 142141412599,\n"
+                           "         \"ems\":{"
+                           "            \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"OpenExternalUrl\""
+                           "            }"
+                           "        ]"
+                           "      }\n"
+                           "    }\n"
+                           "  ]"
+                           "}";
+
+    NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    NSDictionary *parsedBody = [NSJSONSerialization JSONObjectWithData:bodyData
+                                                               options:0
+                                                                 error:nil];
+    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
+
+    EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
+
+    XCTAssertEqual(result.messages.count, 1);
+    XCTAssertNil(result.messages.firstObject.actions);
+}
+
+- (void)testParseFromResponse_whenOpenExternalUrlActionHasNullUrl_actionIsSkipped {
+    NSString *bodyString = @"{\n"
+                           "  \"count\": 1,\n"
+                           "  \"messages\": [\n"
+                           "    {\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
+                           "        \"title\": \"title\",\n"
+                           "        \"body\": \"body\",\n"
+                           "        \"receivedAt\": 142141412515,\n"
+                           "        \"updatedAt\": 142141412599,\n"
+                           "         \"ems\":{"
+                           "            \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": null"
+                           "            }"
+                           "        ]"
+                           "      }\n"
+                           "    }\n"
+                           "  ]"
+                           "}";
+
+    NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    NSDictionary *parsedBody = [NSJSONSerialization JSONObjectWithData:bodyData
+                                                               options:0
+                                                                 error:nil];
+    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
+
+    EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
+
+    XCTAssertEqual(result.messages.count, 1);
+    XCTAssertNil(result.messages.firstObject.actions);
+}
+
+- (void)testParseFromResponse_whenOpenExternalUrlActionHasUnparsableUrlString_actionIsSkipped {
+    NSString *bodyString = @"{\n"
+                           "  \"count\": 1,\n"
+                           "  \"messages\": [\n"
+                           "    {\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
+                           "        \"title\": \"title\",\n"
+                           "        \"body\": \"body\",\n"
+                           "        \"receivedAt\": 142141412515,\n"
+                           "        \"updatedAt\": 142141412599,\n"
+                           "         \"ems\":{"
+                           "            \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": \"https://emarsys.invalid||/5%\""
+                           "            }"
+                           "        ]"
+                           "      }\n"
+                           "    }\n"
+                           "  ]"
+                           "}";
+
+    NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    NSDictionary *parsedBody = [NSJSONSerialization JSONObjectWithData:bodyData
+                                                               options:0
+                                                                 error:nil];
+    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
+
+    EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
+
+    XCTAssertEqual(result.messages.count, 1);
+    XCTAssertNil(result.messages.firstObject.actions);
+}
+
+- (void)testParseFromResponse_whenOpenExternalUrlActionHasGarbageUrlString_actionIsSkipped {
+    NSString *bodyString = @"{\n"
+                           "  \"count\": 1,\n"
+                           "  \"messages\": [\n"
+                           "    {\n"
+                           "        \"id\": \"ef14afa4\",\n"
+                           "        \"campaignId\": \"campaignId\",\n"
+                           "        \"collapseId\": \"collapseId\",\n"
+                           "        \"title\": \"title\",\n"
+                           "        \"body\": \"body\",\n"
+                           "        \"receivedAt\": 142141412515,\n"
+                           "        \"updatedAt\": 142141412599,\n"
+                           "         \"ems\":{"
+                           "            \"actions\": ["
+                           "            {"
+                           "                \"id\": \"testId1\","
+                           "                \"title\": \"testTitle1\","
+                           "                \"type\": \"OpenExternalUrl\","
+                           "                \"url\": \"not a url at all\""
+                           "            }"
+                           "        ]"
+                           "      }\n"
+                           "    }\n"
+                           "  ]"
+                           "}";
+
+    NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+    EMSRequestModel *mockRequestModel = OCMClassMock([EMSRequestModel class]);
+    OCMStub([mockRequestModel requestId]).andReturn(@"testRequestModelId");
+    EMSResponseModel *mockResponseModel = OCMClassMock([EMSResponseModel class]);
+    NSDictionary *parsedBody = [NSJSONSerialization JSONObjectWithData:bodyData
+                                                               options:0
+                                                                 error:nil];
+    OCMStub([mockResponseModel parsedBody]).andReturn(parsedBody);
+
+    EMSInboxResult *result = [self.parser parseFromResponse:mockResponseModel];
+
+    XCTAssertEqual(result.messages.count, 1);
+    XCTAssertNil(result.messages.firstObject.actions);
 }
 
 @end

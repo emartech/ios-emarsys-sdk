@@ -48,7 +48,7 @@
 - (EMSRESTClientCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
     return ^(EMSRequestModel *requestModel, EMSResponseModel *responseModel, NSError *error) {
-        if (weakSelf.retryCount >= 3 || (error && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url])) {
+        if (weakSelf.retryCount >= 3 || ((error || !responseModel.isSuccess) && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url])) {
             EMSRequestModel *request = weakSelf.originalRequestModel;
             EMSResponseModel *response = weakSelf.originalResponseModel;
             
@@ -56,11 +56,17 @@
             [response setStatusCode:418];
             weakSelf.completionProxy.completionBlock(request, response, error);
         } else if (responseModel.statusCode == 401 && ([weakSelf.endpoint isMobileEngageUrl:requestModel.url.absoluteString] || [weakSelf isPredictRequest:requestModel])) {
+            EMSRequestModel *refreshRequest = [weakSelf.requestFactory createRefreshTokenRequestModel];
+            if (!refreshRequest) {
+                [weakSelf reset];
+                weakSelf.completionProxy.completionBlock(requestModel, responseModel, error);
+                return;
+            }
             [weakSelf.storage setData:nil
                                forKey:kEMSPushTokenKey];
             weakSelf.originalRequestModel = requestModel;
             weakSelf.originalResponseModel = responseModel;
-            [weakSelf.restClient executeWithRequestModel:[weakSelf.requestFactory createRefreshTokenRequestModel]
+            [weakSelf.restClient executeWithRequestModel:refreshRequest
                                      coreCompletionProxy:weakSelf];
         } else if (responseModel.isSuccess && [weakSelf.endpoint isRefreshContactTokenUrl:requestModel.url] && weakSelf.originalRequestModel) {
             [weakSelf.contactResponseHandler processResponse:responseModel];
