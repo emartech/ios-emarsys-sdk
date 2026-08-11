@@ -14,6 +14,11 @@
 
 typedef BOOL (^EMSSQLLiteTransactionBlock)(void);
 
+static NSString *EMSSQLiteErrorMessage(sqlite3 *db) {
+    if (db == NULL) return nil;
+    return [[NSString alloc] initWithUTF8String:sqlite3_errmsg(db)];
+}
+
 const char *kBeginTransactionSQL = "BEGIN DEFERRED TRANSACTION;";
 const char *kCommitTransactionSQL = "COMMIT TRANSACTION;";
 const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
@@ -64,7 +69,6 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (int)version {
-    NSParameterAssert(_db);
     __block int version = 0;
     __weak typeof(self) weakSelf = self;
     [weakSelf executeTransaction:^BOOL{
@@ -103,9 +107,9 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (void)close {
-    __weak typeof(self) weakSelf = self;
     [self.operationQueue runSynchronized:^{
-        sqlite3_close_v2(weakSelf.db);
+        sqlite3_close_v2(self->_db);
+        self->_db = NULL;
     }];
 }
 
@@ -128,13 +132,14 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     __weak typeof(self) weakSelf = self;
     return [self executeTransaction:^BOOL{
         BOOL result = YES;
-        char *utf8Error;
+        char *utf8Error = NULL;
         int sqlResult = sqlite3_exec(weakSelf.db, [command UTF8String], NULL, NULL, &utf8Error);
         if (sqlResult != SQLITE_OK) {
             result = NO;
             NSString *error = nil;
             if (utf8Error != NULL) {
                 error = [NSString stringWithUTF8String:utf8Error];
+                sqlite3_free(utf8Error);
             }
             [self logWithSel:_cmd
                    sqlResult:sqlResult
@@ -181,8 +186,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                     parameters[@"sql"] = sql;
                     parameters[@"stepResult"] = [NSString stringWithFormat:@"%@", @(stepResult)];
-                    NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(weakSelf.db)];
-                    parameters[@"sqlDBError"] = sqlDBError;
+                    parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(weakSelf.db);
                     EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                            sel:@selector(removeFromTable:selection:selectionArgs:)
                                                     parameters:parameters
@@ -249,8 +253,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                         parameters[@"sql"] = sql;
                         parameters[@"stepResult"] = [NSString stringWithFormat:@"%@", @(stepResult)];
-                        NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(weakSelf.db)];
-                        parameters[@"sqlDBError"] = sqlDBError;
+                        parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(weakSelf.db);;
                         EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                                sel:@selector(queryWithTable:selection:selectionArgs:orderBy:limit:mapper:)
                                                         parameters:parameters
@@ -295,8 +298,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                     parameters[@"sql"] = insertSQL;
                     parameters[@"model"] = [model description];
-                    NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(weakSelf.db)];
-                    parameters[@"sqlDBError"] = sqlDBError;
+                    parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(weakSelf.db);
                     parameters[@"stepResult"] = [NSString stringWithFormat:@"%@", @(stepResult)];
                     EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                            sel:@selector(insertModel:withQuery:mapper:)
@@ -363,8 +365,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                         result = NO;
                         NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                         parameters[@"sql"] = query;
-                        NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(weakSelf.db)];
-                        parameters[@"sqlDBError"] = sqlDBError;
+                        parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(weakSelf.db);
                         parameters[@"stepResult"] = [NSString stringWithFormat:@"%@", @(stepResult)];
                         EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                                sel:@selector(executeQuery:mapper:)
@@ -376,8 +377,7 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
                 result = NO;
                 NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
                 parameters[@"sql"] = query;
-                NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(weakSelf.db)];
-                parameters[@"sqlDBError"] = sqlDBError;
+                parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(weakSelf.db);
                 parameters[@"prepareResult"] = [NSString stringWithFormat:@"%@", @(prepareResult)];
                 EMSLog([[EMSStatusLog alloc] initWithClass:[weakSelf class]
                                                        sel:@selector(executeQuery:mapper:)
@@ -424,6 +424,19 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (BOOL)executeTransaction:(EMSSQLLiteTransactionBlock)transactionBlock {
+    if (self.db == NULL) {
+        NSString *callStack = [[NSThread callStackSymbols] componentsJoinedByString:@"\n"];
+        NSDictionary *parameters = @{
+            @"reason": @"db is NULL",
+            @"dbPath": self.dbPath ?: @"unknown",
+            @"callStack": callStack
+        };
+        EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
+                                               sel:_cmd
+                                        parameters:parameters
+                                            status:nil], LogLevelError);
+        return NO;
+    }
     [self beginTransaction];
     BOOL success = transactionBlock();
     if (success) {
@@ -435,12 +448,13 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (void)beginTransaction {
-    char *utf8Error;
+    char *utf8Error = NULL;
     int execResult = sqlite3_exec(self.db, kBeginTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
         if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
+            sqlite3_free(utf8Error);
         }
         [self logWithSel:_cmd
                sqlResult:execResult
@@ -450,12 +464,13 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (void)commitTransaction {
-    char *utf8Error;
+    char *utf8Error = NULL;
     int execResult = sqlite3_exec(self.db, kCommitTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
         if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
+            sqlite3_free(utf8Error);
         }
         [self logWithSel:_cmd
                sqlResult:execResult
@@ -465,12 +480,13 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
 }
 
 - (void)rollbackTransaction {
-    char *utf8Error;
+    char *utf8Error = NULL;
     int execResult = sqlite3_exec(self.db, kRollbackTransactionSQL, NULL, NULL, &utf8Error);
     if (execResult != SQLITE_OK) {
         NSString *error = nil;
         if (utf8Error != NULL) {
             error = [NSString stringWithUTF8String:utf8Error];
+            sqlite3_free(utf8Error);
         }
         [self logWithSel:_cmd
                sqlResult:execResult
@@ -487,8 +503,9 @@ const char *kRollbackTransactionSQL = "ROLLBACK TRANSACTION;";
     parameters[@"sql"] = sql;
     parameters[@"sqlResult"] = [NSString stringWithFormat:@"%@", @(sqlResult)];
     parameters[@"error"] = error;
-    NSString *sqlDBError = [[NSString alloc] initWithUTF8String:sqlite3_errmsg(self.db)];
-    parameters[@"sqlDBError"] = sqlDBError;
+    if (self.db != NULL) {
+        parameters[@"sqlDBError"] = EMSSQLiteErrorMessage(self.db);
+    }
     EMSLog([[EMSStatusLog alloc] initWithClass:[self class]
                                            sel:sel
                                     parameters:parameters
