@@ -6,12 +6,6 @@
 #import "EMSRequestModel.h"
 #import "EMSEndpoint.h"
 
-@interface EMSMerchantIdMapper()
-
-- (BOOL)isNotSetContactAndNotRefreshContactTokenMobileEngageRequest:(EMSRequestModel *)requestModel;
-
-@end
-
 @implementation EMSMerchantIdMapper
 
 - (instancetype)initWithRequestContext:(PRERequestContext *)requestContext endpoint:(EMSEndpoint *)endpoint {

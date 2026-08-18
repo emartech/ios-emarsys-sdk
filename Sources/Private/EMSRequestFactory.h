@@ -36,8 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EMSRequestModel *_Nullable)createContactRequestModel;
 
-- (EMSRequestModel *_Nullable)createClearContactRequestModel;
-
 - (EMSRequestModel *_Nullable)createPredictOnlyContactRequestModelWithRefresh:(BOOL)shouldRefresh;
 
 - (EMSRequestModel *_Nullable)createPredictOnlyClearContactRequestModel;
