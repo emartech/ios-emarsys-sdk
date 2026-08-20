@@ -70,6 +70,7 @@ didFinishNavigation:(null_unspecified WKNavigation *)navigation {
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.completionHandler();
+            weakSelf.completionHandler = nil;
         });
     }
 }
