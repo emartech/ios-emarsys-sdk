@@ -30,7 +30,7 @@ jobs:
       with:
         destination-path: ./Emarsys\ Sample
         filename: exportOptions.plist
-        secret: ${{ secrets.TESTFLIGHT_EXPORT_OPTIONS_PLIST_BASE64 }}  # can be found in the root of the repo as ExportOptions.plist
+        secret: ${{ vars.TESTFLIGHT_EXPORT_OPTIONS_PLIST_BASE64 }}  # can be found in the root of the repo as ExportOptions.plist
     - name: Setup Dev Account Dist Cert
       uses: apple-actions/import-codesign-certs@v7
       with:
@@ -62,8 +62,8 @@ jobs:
       uses: apple-actions/upload-testflight-build@v5
       with:
         app-path: '${{ github.workspace }}/Emarsys Sample/Emarsys-Sample.ipa'
-        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-        api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+        issuer-id: ${{ vars.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ vars.APPSTORE_API_KEY_ID }}
         api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
     - if: ${{ failure() }}
       name: Slack Notification On Error
@@ -71,7 +71,7 @@ jobs:
       with:
         webhook_url: '${{env.SLACK_WEBHOOK}}'
         actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
-        channel: ${{ secrets.SLACK_CHANNEL }}
+        channel: ${{ vars.SLACK_CHANNEL }}
         job_status: failure
         message: 'EmarsysSample build failed! :sob:'
         user_icon: 'https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png'
@@ -81,7 +81,7 @@ jobs:
       with:
         webhook_url: '${{env.SLACK_WEBHOOK}}'
         actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" }]'
-        channel: ${{ secrets.SLACK_CHANNEL }}
+        channel: ${{ vars.SLACK_CHANNEL }}
         job_status: success
         message: 'Build successful! :man-gesturing-ok: :jobs:'
         user_icon: 'https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png'

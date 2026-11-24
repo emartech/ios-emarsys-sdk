@@ -27,7 +27,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
         with:
-          project_id: ${{ secrets.GCP_PROJECT }}
+          project_id: ${{ vars.GCP_PROJECT }}
           service_account_key: ${{ secrets.FIREBASE_SERVICE_KEY_BASE64 }}
       - name: Setup Test Certs
         uses: apple-actions/import-codesign-certs@v7
@@ -62,7 +62,7 @@ jobs:
         with:
           webhook_url: '${{env.SLACK_WEBHOOK}}'
           actions: '[{ "type": "button", "text": "View actions", "url": "https://github.com/emartech/ios-emarsys-sdk/actions" },{ "type": "button", "text": "View Firebase", "url": "https://console.firebase.google.com/project/ems-mobile-sdk/testlab/histories/" }]'
-          channel: ${{ secrets.SLACK_CHANNEL }}
+          channel: ${{ vars.SLACK_CHANNEL }}
           job_status: failure
           message: 'Nightly build failed! :sob:'
           user_icon: https://img.pngio.com/rotten-apple-png-images-vectors-and-psd-files-free-download-on-png-rotten-apple-260_391.png
